@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -10,6 +11,7 @@ import (
 )
 
 var cfgFile string
+var dbPath string
 var rootCmd = &cobra.Command{
 	Use:   "subtitle-manager",
 	Short: "Subtitle Manager CLI",
@@ -26,10 +28,12 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.subtitle-manager.yaml)")
+	rootCmd.PersistentFlags().StringVar(&dbPath, "db", "", "database file (default is $HOME/.subtitle-manager.db)")
 	rootCmd.PersistentFlags().String("log-level", "info", "log level (debug, info, warn, error)")
 	viper.BindPFlag("log-level", rootCmd.PersistentFlags().Lookup("log-level"))
 	rootCmd.PersistentFlags().StringToString("log-levels", nil, "per component log levels")
 	viper.BindPFlag("log_levels", rootCmd.PersistentFlags().Lookup("log-levels"))
+	viper.BindPFlag("db_path", rootCmd.PersistentFlags().Lookup("db"))
 
 	rootCmd.AddCommand(convertCmd)
 	rootCmd.AddCommand(mergeCmd)
@@ -45,6 +49,7 @@ func initConfig() {
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".subtitle-manager")
+		viper.SetDefault("db_path", filepath.Join(home, ".subtitle-manager.db"))
 	}
 
 	if err := viper.ReadInConfig(); err == nil {

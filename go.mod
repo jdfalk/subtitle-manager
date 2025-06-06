@@ -4,6 +4,7 @@ go 1.23.8
 
 require (
 	github.com/asticode/go-astisub v0.34.0
+	github.com/mattn/go-sqlite3 v1.14.21
 	github.com/sashabaranov/go-openai v1.40.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.9.1
