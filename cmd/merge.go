@@ -1,0 +1,42 @@
+package cmd
+
+import (
+	"os"
+	"sort"
+
+	"github.com/asticode/go-astisub"
+	"github.com/spf13/cobra"
+
+	"subtitle-manager/pkg/logging"
+)
+
+var mergeCmd = &cobra.Command{
+	Use:   "merge [sub1] [sub2] [output]",
+	Short: "Merge two subtitles into one",
+	Args:  cobra.ExactArgs(3),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		logger := logging.GetLogger("merge")
+		sub1, err := astisub.OpenFile(args[0])
+		if err != nil {
+			return err
+		}
+		sub2, err := astisub.OpenFile(args[1])
+		if err != nil {
+			return err
+		}
+		sub1.Items = append(sub1.Items, sub2.Items...)
+		sort.Slice(sub1.Items, func(i, j int) bool {
+			return sub1.Items[i].StartAt < sub1.Items[j].StartAt
+		})
+		f, err := os.Create(args[2])
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		if err := sub1.WriteToSRT(f); err != nil {
+			return err
+		}
+		logger.Infof("Merged %s and %s into %s", args[0], args[1], args[2])
+		return nil
+	},
+}
