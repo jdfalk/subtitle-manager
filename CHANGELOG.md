@@ -9,3 +9,4 @@ All notable changes to this project will be documented in this file.
 - Google Translate and ChatGPT support.
 - SQLite storage for translation history.
 - Component based logging with adjustable levels.
+- Documentation updates and initial technical design.

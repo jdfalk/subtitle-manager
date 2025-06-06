@@ -45,6 +45,7 @@ translate_service: google
 Tests can be run with `go test ./...`.
 
 The project aims to eventually reach feature parity with [Bazarr](https://github.com/morpheus65535/bazarr) while offering improved configuration and logging. See `TODO.md` for the full roadmap and implementation plan.
+Additional architectural details are available in `docs/TECHNICAL_DESIGN.md`.
 
 ## License
 
