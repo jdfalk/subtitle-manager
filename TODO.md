@@ -52,10 +52,15 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Write tests for database interactions and translation providers.
    - Test command behaviour with edge cases.
 
-6. **Future Enhancements**
+6. **Remote Services**
+   - Expose translation via a gRPC server and client.
+   - Document protobuf messages and regeneration steps.
+
+7. **Future Enhancements**
    - Replace manual HTTP calls with provider SDKs where available.
    - Consider asynchronous processing for bulk translations.
    - Evaluate performance of subtitle merging and translation.
+   - Add optional web interface for managing subtitles.
 
 ## Additional Documentation
 

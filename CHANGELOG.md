@@ -10,3 +10,8 @@ All notable changes to this project will be documented in this file.
 - SQLite storage for translation history.
 - Component based logging with adjustable levels.
 - Documentation updates and initial technical design.
+
+## [0.1.1] - 2025-06-06
+### Added
+- Expanded technical design document with detailed implementation plans.
+- Updated README and TODO to reference the comprehensive documentation.
