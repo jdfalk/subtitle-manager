@@ -48,6 +48,7 @@ The project aims to eventually reach feature parity with [Bazarr](https://github
 Extensive architectural details and design decisions are documented in
 `docs/TECHNICAL_DESIGN.md`. New contributors should review this document to
 understand package responsibilities and future plans.
+For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
 
 ## License
 
