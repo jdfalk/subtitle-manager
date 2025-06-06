@@ -66,3 +66,4 @@ This file tracks planned work, architectural decisions, and implementation statu
 
 For a detailed description of the planned file layout, key functions and
 Protobuf definitions, see `docs/TECHNICAL_DESIGN.md`.
+The file `docs/BAZARR_FEATURES.md` enumerates all Bazarr features to ensure parity.

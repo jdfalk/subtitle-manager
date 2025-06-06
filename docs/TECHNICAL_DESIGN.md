@@ -2,6 +2,8 @@
 
 This document provides an in depth description of the architecture, data flows and components that make up **Subtitle Manager**. It consolidates design decisions and implementation details to help contributors understand the codebase. The design aims to meet the project goals of feature parity with [Bazarr](https://github.com/morpheus65535/bazarr), robust configuration via Cobra and Viper, pluggable translation services, and an extensible database model.
 
+For a summary of Bazarr's capabilities used as a target feature set, see [docs/BAZARR_FEATURES.md](BAZARR_FEATURES.md).
+
 ## 1. Directory Structure
 
 The repository is organised using a standard Go project layout. Top level directories include command implementations, reusable packages and documentation.
@@ -446,3 +448,7 @@ A summary of key files and their responsibilities:
 
 Keeping these files small and focused allows new contributors to quickly understand the responsibilities of each package.
 
+
+## 27. Bazarr Feature Reference
+
+The file [BAZARR_FEATURES.md](BAZARR_FEATURES.md) lists the important functions, features and subtitle providers implemented by Bazarr. Subtitle Manager aims to implement equivalent capabilities. Use that document as a checklist when evaluating progress toward full feature parity.
