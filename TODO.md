@@ -56,3 +56,8 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Replace manual HTTP calls with provider SDKs where available.
    - Consider asynchronous processing for bulk translations.
    - Evaluate performance of subtitle merging and translation.
+
+## Additional Documentation
+
+For a detailed description of the planned file layout, key functions and
+Protobuf definitions, see `docs/TECHNICAL_DESIGN.md`.
