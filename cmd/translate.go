@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/translator"
 )
@@ -48,6 +49,14 @@ var translateCmd = &cobra.Command{
 		defer f.Close()
 		if err := sub.WriteToSRT(f); err != nil {
 			return err
+		}
+		if dbPath := viper.GetString("db_path"); dbPath != "" {
+			if db, err := database.Open(dbPath); err == nil {
+				_ = database.InsertSubtitle(db, in, lang, service)
+				db.Close()
+			} else {
+				logger.Warnf("db open: %v", err)
+			}
 		}
 		logger.Infof("Translated %s to %s in %s", in, lang, out)
 		return nil
