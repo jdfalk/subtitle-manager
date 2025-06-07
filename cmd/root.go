@@ -38,6 +38,7 @@ func init() {
 	rootCmd.AddCommand(convertCmd)
 	rootCmd.AddCommand(mergeCmd)
 	rootCmd.AddCommand(translateCmd)
+	rootCmd.AddCommand(fetchCmd)
 }
 
 func initConfig() {

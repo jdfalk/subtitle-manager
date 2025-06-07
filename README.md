@@ -10,6 +10,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Store translation history in an SQLite database.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
+- Download subtitles from OpenSubtitles.
 
 ## Installation
 
@@ -29,6 +30,7 @@ subtitle-manager merge [sub1] [sub2] [output]
 subtitle-manager translate [input] [output] [lang]
 subtitle-manager history
 subtitle-manager extract [media] [output]
+subtitle-manager fetch opensubtitles [media] [lang] [output]
 ```
 
 ### Web UI

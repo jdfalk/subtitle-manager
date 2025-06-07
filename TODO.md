@@ -6,7 +6,7 @@ This file tracks planned work, architectural decisions, and implementation statu
 
 1. **Feature Parity with Bazarr**
    - Monitor media libraries for new subtitles.
-   - Support multiple subtitle providers.
+   - Support multiple subtitle providers. *(OpenSubtitles implemented)*
    - Download, manage and upgrade subtitles automatically.
    - Integrate with media servers (e.g. Plex, Emby).
 
