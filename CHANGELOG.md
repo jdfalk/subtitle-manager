@@ -25,3 +25,6 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Subtitle extraction from media containers using `ffmpeg`.
 - New `extract` CLI command.
+- React based web UI built with Vite under `webui/`.
+- `web` command to serve the embedded single page application.
+- Technical design and TODO updated with web front end plan.

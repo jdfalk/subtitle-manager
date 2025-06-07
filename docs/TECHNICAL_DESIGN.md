@@ -379,7 +379,7 @@ The project follows the Go community style guide in addition to rules in `AGENTS
 
 Additional features under consideration:
 
-- **Web Interface** – Provide a lightweight web UI for managing translations and history.
+- **Web Interface** – Provide a lightweight web UI for managing translations and history. Implementation uses a React app built with Vite in `webui`. `go generate` builds the frontend and embeds it using the `embed` package for serving via the `web` command.
 - **Asynchronous Queue** – Use a worker queue for heavy translation tasks.
 - **Cloud Storage** – Allow storing subtitles and history in cloud buckets.
 - **Internationalisation** – Localise CLI messages and documentation.
