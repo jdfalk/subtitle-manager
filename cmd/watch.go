@@ -9,8 +9,16 @@ import (
 
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
+	"subtitle-manager/pkg/providers/addic7ed"
+	"subtitle-manager/pkg/providers/betaseries"
+	"subtitle-manager/pkg/providers/bsplayer"
+	"subtitle-manager/pkg/providers/greeksubs"
+	"subtitle-manager/pkg/providers/legendasdivx"
 	"subtitle-manager/pkg/providers/opensubtitles"
+	"subtitle-manager/pkg/providers/podnapisi"
 	"subtitle-manager/pkg/providers/subscene"
+	"subtitle-manager/pkg/providers/titlovi"
+	"subtitle-manager/pkg/providers/tvsubtitles"
 	"subtitle-manager/pkg/watcher"
 )
 
@@ -30,6 +38,22 @@ var watchCmd = &cobra.Command{
 			p = opensubtitles.New(key)
 		case "subscene":
 			p = subscene.New()
+		case "addic7ed":
+			p = addic7ed.New()
+		case "betaseries":
+			p = betaseries.New()
+		case "bsplayer":
+			p = bsplayer.New()
+		case "podnapisi":
+			p = podnapisi.New()
+		case "tvsubtitles":
+			p = tvsubtitles.New()
+		case "titlovi":
+			p = titlovi.New()
+		case "legendasdivx":
+			p = legendasdivx.New()
+		case "greeksubs":
+			p = greeksubs.New()
 		default:
 			return fmt.Errorf("unknown provider %s", name)
 		}
