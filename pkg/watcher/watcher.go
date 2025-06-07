@@ -10,6 +10,7 @@ import (
 
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
+	"subtitle-manager/pkg/scanner"
 )
 
 var videoExtensions = []string{".mkv", ".mp4", ".avi", ".mov"}
@@ -47,20 +48,9 @@ func WatchDirectory(ctx context.Context, dir, lang string, p providers.Provider)
 			logger.Warnf("watch error: %v", err)
 		case ev := <-w.Events:
 			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(ev.Name) {
-				out := strings.TrimSuffix(ev.Name, filepath.Ext(ev.Name)) + "." + lang + ".srt"
-				if _, err := os.Stat(out); err == nil {
-					continue
+				if err := scanner.ProcessFile(ctx, ev.Name, lang, p, false); err != nil {
+					logger.Warnf("process %s: %v", ev.Name, err)
 				}
-				data, err := p.Fetch(ctx, ev.Name, lang)
-				if err != nil {
-					logger.Warnf("fetch %s: %v", ev.Name, err)
-					continue
-				}
-				if err := os.WriteFile(out, data, 0644); err != nil {
-					logger.Warnf("write %s: %v", out, err)
-					continue
-				}
-				logger.Infof("downloaded subtitle %s", out)
 			}
 		}
 	}
@@ -102,20 +92,9 @@ func WatchDirectoryRecursive(ctx context.Context, dir, lang string, p providers.
 				}
 			}
 			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(ev.Name) {
-				out := strings.TrimSuffix(ev.Name, filepath.Ext(ev.Name)) + "." + lang + ".srt"
-				if _, err := os.Stat(out); err == nil {
-					continue
+				if err := scanner.ProcessFile(ctx, ev.Name, lang, p, false); err != nil {
+					logger.Warnf("process %s: %v", ev.Name, err)
 				}
-				data, err := p.Fetch(ctx, ev.Name, lang)
-				if err != nil {
-					logger.Warnf("fetch %s: %v", ev.Name, err)
-					continue
-				}
-				if err := os.WriteFile(out, data, 0644); err != nil {
-					logger.Warnf("write %s: %v", out, err)
-					continue
-				}
-				logger.Infof("downloaded subtitle %s", out)
 			}
 		}
 	}

@@ -17,13 +17,16 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Batch translate multiple files concurrently.
 - Monitor directories and automatically download subtitles.
 - Scan existing libraries and fetch missing or upgraded subtitles.
+- High performance scanning using concurrent workers.
 - Recursive directory watching with -r flag.
+- Integrate with Sonarr and Radarr using dedicated commands.
 - Run a translation gRPC server.
 - Delete subtitle files and remove history records.
 - Provider registry simplifies adding new sources.
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
 - Integrated authentication system with password, token, OAuth2 and API key support.
+- Minimal React web UI with login page.
 - Role based access control with sensible defaults and session storage in the database.
 
 ### Supported Subtitle Providers

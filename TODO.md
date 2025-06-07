@@ -8,7 +8,8 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Monitor media libraries for new subtitles. *(watch command implemented)*
    - Support multiple subtitle providers. *(Full Bazarr provider list implemented)*
    - Download, manage and upgrade subtitles automatically. *(scan command implemented)*
-   - Integrate with media servers (e.g. Plex, Emby, Sonarr, Radarr).
+   - Integrate with media servers (e.g. Plex, Emby, Sonarr, Radarr). *(sonarr/radarr commands added)*
+   - Concurrent directory scanning for improved performance.
 
 2. **Configuration with Cobra & Viper**
    - Centralise configuration using Viper.
@@ -75,7 +76,7 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Replace manual HTTP calls with provider SDKs where available.
    - Asynchronous processing for bulk translations implemented via the `batch` command.
    - Evaluate performance of subtitle merging and translation.
-   - Add optional web interface for managing subtitles.
+   - Add optional web interface for managing subtitles. *(initial login page implemented)*
    - Distribute official Docker image via GitHub Actions. *(implemented in v0.1.10)*
 
 ## Additional Documentation

@@ -12,6 +12,7 @@ import (
 )
 
 var upgrade bool
+var scanWorkers int
 
 // scanCmd scans a directory for video files and downloads subtitles.
 var scanCmd = &cobra.Command{
@@ -28,11 +29,12 @@ var scanCmd = &cobra.Command{
 		}
 		logger.Infof("scanning %s", dir)
 		ctx := context.Background()
-		return scanner.ScanDirectory(ctx, dir, lang, p, upgrade)
+		return scanner.ScanDirectory(ctx, dir, lang, p, upgrade, scanWorkers)
 	},
 }
 
 func init() {
 	scanCmd.Flags().BoolVarP(&upgrade, "upgrade", "u", false, "replace existing subtitles")
+	scanCmd.Flags().IntVarP(&scanWorkers, "workers", "w", 4, "number of concurrent downloads")
 	rootCmd.AddCommand(scanCmd)
 }

@@ -1,3 +1,9 @@
+## [0.3.0] - 2025-06-18
+### Added
+- Concurrent directory scanning with worker pool.
+- Sonarr and Radarr integration commands.
+- Initial React web UI with login page.
+
 ## [0.2.1] - 2025-06-17
 ### Added
 - Authentication system supporting password login, one time tokens, OAuth2 and API keys.
