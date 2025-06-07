@@ -63,3 +63,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Implemented the remaining subtitle providers from Bazarr's list.
 - Unified provider selection via a registry.
+
+## [0.1.10] - 2025-06-15
+### Added
+- Dockerfile and GitHub Actions workflow for container images.
+- Documentation updates describing provider registry and Docker usage.

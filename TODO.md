@@ -41,6 +41,7 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Build utilities using the `go-astisub` library to read and manipulate subtitles.
    - Implement merging and translation logic in commands.
   - Implement extraction of subtitles from media containers. *(implemented in v0.1.3)*
+   - Register providers via a registry for unified selection. *(implemented in v0.1.9)*
 
 3. **Translation Services**
    - Provide Google Translate and ChatGPT implementations behind a common interface.
@@ -67,6 +68,7 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Asynchronous processing for bulk translations implemented via the `batch` command.
    - Evaluate performance of subtitle merging and translation.
    - Add optional web interface for managing subtitles.
+   - Distribute official Docker image via GitHub Actions.
 
 ## Additional Documentation
 
