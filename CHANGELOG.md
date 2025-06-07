@@ -47,3 +47,8 @@ All notable changes to this project will be documented in this file.
 - Customisable ffmpeg path for subtitle extraction.
 - Recursive directory watching.
 - `delete` command and database deletion helper.
+
+## [0.1.7] - 2025-06-12
+### Added
+- Environment variable configuration via `SM_` prefix.
+- GitHub Actions workflow for continuous integration.

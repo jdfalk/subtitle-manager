@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -43,6 +44,9 @@ func init() {
 }
 
 func initConfig() {
+	viper.SetEnvPrefix("SM")
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	viper.AutomaticEnv()
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {

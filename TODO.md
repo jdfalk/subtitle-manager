@@ -29,7 +29,7 @@ This file tracks planned work, architectural decisions, and implementation statu
 
 6. **Quality Assurance**
    - Unit tests for all packages.
-   - Continuous integration workflow (future work).
+   - Continuous integration workflow using GitHub Actions.
 
 ## Implementation Plan
 

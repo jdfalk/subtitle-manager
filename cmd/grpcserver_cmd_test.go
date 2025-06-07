@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"context"
+	"io"
 	"net"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"google.golang.org/grpc"
@@ -16,10 +19,14 @@ func TestServerTranslate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("listen: %v", err)
 	}
-	// Replace the google provider with a stub to avoid network calls.
-	orig := translator.GoogleTranslate
-	translator.GoogleTranslate = func(text, lang, key string) (string, error) { return "ok", nil }
-	defer func() { translator.GoogleTranslate = orig }()
+	// Replace the Google API endpoint with a stub server.
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		io.WriteString(w, `{"data":{"translations":[{"translatedText":"ok"}]}}`)
+	}))
+	defer ts.Close()
+	translator.SetGoogleAPIURL(ts.URL)
+	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
 
 	s := grpc.NewServer()
 	pb.RegisterTranslatorServer(s, &server{})
