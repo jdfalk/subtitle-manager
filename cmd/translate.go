@@ -22,13 +22,14 @@ var translateCmd = &cobra.Command{
 		service := viper.GetString("translate_service")
 		gKey := viper.GetString("google_api_key")
 		gptKey := viper.GetString("openai_api_key")
+		grpcAddr := viper.GetString("grpc_addr")
 		sub, err := astisub.OpenFile(in)
 		if err != nil {
 			return err
 		}
 		for _, item := range sub.Items {
 			text := item.String()
-			t, err := translator.Translate(service, text, lang, gKey, gptKey)
+			t, err := translator.Translate(service, text, lang, gKey, gptKey, grpcAddr)
 			if err != nil {
 				return err
 			}
@@ -56,10 +57,12 @@ var translateCmd = &cobra.Command{
 }
 
 func init() {
-	translateCmd.Flags().String("service", "google", "translation service: google or gpt")
+	translateCmd.Flags().String("service", "google", "translation service: google, gpt or grpc")
 	viper.BindPFlag("translate_service", translateCmd.Flags().Lookup("service"))
 	translateCmd.Flags().String("google-key", "", "Google Translate API key")
 	viper.BindPFlag("google_api_key", translateCmd.Flags().Lookup("google-key"))
 	translateCmd.Flags().String("openai-key", "", "OpenAI API key")
 	viper.BindPFlag("openai_api_key", translateCmd.Flags().Lookup("openai-key"))
+	translateCmd.Flags().String("grpc", "", "use remote gRPC translator at host:port")
+	viper.BindPFlag("grpc_addr", translateCmd.Flags().Lookup("grpc"))
 }

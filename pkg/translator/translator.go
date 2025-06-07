@@ -11,6 +11,10 @@ import (
 	"strings"
 
 	openai "github.com/sashabaranov/go-openai"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
+	pb "subtitle-manager/pkg/translatorpb/proto"
 )
 
 var ErrUnsupportedService = errors.New("unsupported translation service")
@@ -91,15 +95,39 @@ func GPTTranslate(text, targetLang, apiKey string) (string, error) {
 	return strings.TrimSpace(resp.Choices[0].Message.Content), nil
 }
 
+// GRPCTranslate translates text using a remote gRPC translation service.
+// The addr parameter specifies the server address (host:port).
+// It returns the translated text provided by the service.
+func GRPCTranslate(text, targetLang, addr string) (string, error) {
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return "", err
+	}
+	defer conn.Close()
+	client := pb.NewTranslatorClient(conn)
+	resp, err := client.Translate(context.Background(), &pb.TranslateRequest{
+		Text:     text,
+		Language: targetLang,
+	})
+	if err != nil {
+		return "", err
+	}
+	return resp.TranslatedText, nil
+}
+
 var providers = map[string]TranslateFunc{
 	"google":  GoogleTranslate,
 	"gpt":     GPTTranslate,
 	"chatgpt": GPTTranslate,
+	"grpc":    GRPCTranslate,
 }
 
 // Translate selects a provider and performs translation.
 // googleKey and gptKey are used depending on the provider.
-func Translate(service, text, targetLang, googleKey, gptKey string) (string, error) {
+// Translate selects the provider identified by service and performs the
+// translation using the given credentials. googleKey, gptKey and grpcAddr are
+// used depending on the provider.
+func Translate(service, text, targetLang, googleKey, gptKey, grpcAddr string) (string, error) {
 	fn, ok := providers[service]
 	if !ok {
 		return "", ErrUnsupportedService
@@ -107,6 +135,8 @@ func Translate(service, text, targetLang, googleKey, gptKey string) (string, err
 	key := googleKey
 	if service == "gpt" || service == "chatgpt" {
 		key = gptKey
+	} else if service == "grpc" {
+		key = grpcAddr
 	}
 	return fn(text, targetLang, key)
 }

@@ -53,7 +53,7 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Test command behaviour with edge cases.
 
 6. **Remote Services**
-   - Expose translation via a gRPC server and client.
+   - Expose translation via a gRPC server and client. *(client implemented)*
    - Document protobuf messages and regeneration steps.
 
 7. **Future Enhancements**
