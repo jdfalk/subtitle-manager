@@ -39,6 +39,7 @@ func init() {
 	rootCmd.AddCommand(mergeCmd)
 	rootCmd.AddCommand(translateCmd)
 	rootCmd.AddCommand(fetchCmd)
+	rootCmd.AddCommand(batchCmd)
 }
 
 func initConfig() {

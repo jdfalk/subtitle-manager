@@ -33,3 +33,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - OpenSubtitles provider and `fetch` CLI command.
 - Provider implementation documented in README and TODO.
+
+## [0.1.5] - 2025-06-10
+### Added
+- Batch translation command for concurrent processing of multiple files.
+- Helper functions `TranslateFileToSRT` and `TranslateFilesToSRT` in `pkg/subtitles`.
+- Documentation updates for the new command and concurrency model.
