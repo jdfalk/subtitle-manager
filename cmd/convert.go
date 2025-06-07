@@ -3,10 +3,10 @@ package cmd
 import (
 	"os"
 
-	"github.com/asticode/go-astisub"
 	"github.com/spf13/cobra"
 
 	"subtitle-manager/pkg/logging"
+	"subtitle-manager/pkg/subtitles"
 )
 
 var convertCmd = &cobra.Command{
@@ -16,7 +16,7 @@ var convertCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("convert")
 		in, out := args[0], args[1]
-		sub, err := astisub.OpenFile(in)
+		data, err := subtitles.ConvertToSRT(in)
 		if err != nil {
 			return err
 		}
@@ -25,7 +25,7 @@ var convertCmd = &cobra.Command{
 			return err
 		}
 		defer f.Close()
-		if err := sub.WriteToSRT(f); err != nil {
+		if _, err := f.Write(data); err != nil {
 			return err
 		}
 		logger.Infof("Converted %s to %s", in, out)

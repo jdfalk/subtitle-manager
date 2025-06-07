@@ -23,7 +23,7 @@ func SetGoogleAPIURL(u string) {
 }
 
 // TranslateFunc defines the function signature for translation services.
-type TranslateFunc func(text, targetLang string) (string, error)
+type TranslateFunc func(text, targetLang, apiKey string) (string, error)
 
 // GoogleTranslate translates text using Google Translate API.
 func GoogleTranslate(text, targetLang, apiKey string) (string, error) {
@@ -89,4 +89,24 @@ func GPTTranslate(text, targetLang, apiKey string) (string, error) {
 		return "", fmt.Errorf("no translation returned")
 	}
 	return strings.TrimSpace(resp.Choices[0].Message.Content), nil
+}
+
+var providers = map[string]TranslateFunc{
+	"google":  GoogleTranslate,
+	"gpt":     GPTTranslate,
+	"chatgpt": GPTTranslate,
+}
+
+// Translate selects a provider and performs translation.
+// googleKey and gptKey are used depending on the provider.
+func Translate(service, text, targetLang, googleKey, gptKey string) (string, error) {
+	fn, ok := providers[service]
+	if !ok {
+		return "", ErrUnsupportedService
+	}
+	key := googleKey
+	if service == "gpt" || service == "chatgpt" {
+		key = gptKey
+	}
+	return fn(text, targetLang, key)
 }

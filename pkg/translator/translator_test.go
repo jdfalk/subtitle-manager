@@ -39,3 +39,21 @@ func TestUnsupportedServiceError(t *testing.T) {
 		t.Fatal("error string empty")
 	}
 }
+
+func TestTranslate(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
+	}))
+	defer srv.Close()
+	origURL := googleAPIURL
+	SetGoogleAPIURL(srv.URL)
+	defer SetGoogleAPIURL(origURL)
+
+	got, err := Translate("google", "hello", "es", "test", "")
+	if err != nil {
+		t.Fatalf("translate: %v", err)
+	}
+	if got != "hola" {
+		t.Fatalf("expected hola, got %s", got)
+	}
+}

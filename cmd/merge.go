@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"os"
-	"sort"
 
 	"github.com/asticode/go-astisub"
 	"github.com/spf13/cobra"
 
 	"subtitle-manager/pkg/logging"
+	"subtitle-manager/pkg/subtitles"
 )
 
 var mergeCmd = &cobra.Command{
@@ -24,10 +24,7 @@ var mergeCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		sub1.Items = append(sub1.Items, sub2.Items...)
-		sort.Slice(sub1.Items, func(i, j int) bool {
-			return sub1.Items[i].StartAt < sub1.Items[j].StartAt
-		})
+		sub1.Items = subtitles.MergeTracks(sub1.Items, sub2.Items)
 		f, err := os.Create(args[2])
 		if err != nil {
 			return err
