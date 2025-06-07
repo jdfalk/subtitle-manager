@@ -1,3 +1,8 @@
+## [0.2.0] - 2025-06-16
+### Added
+- Library scanning command to automatically download and upgrade subtitles.
+- Updated README and TODO for new feature.
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

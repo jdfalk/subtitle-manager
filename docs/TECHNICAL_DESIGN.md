@@ -267,8 +267,9 @@ The following steps outline the order of implementation to achieve the project g
 6. **History Command** – allow users to view past translation actions.
 7. **Provider Integrations** – add subtitle download modules for popular services.
 8. **Media Library Monitoring** – implement watchers to detect new media and automatically download subtitles.
-9. **gRPC API (Optional)** – provide remote translation capabilities.
-10. **Testing and CI** – expand unit tests and add CI workflows.
+9. **Library Scanning** – add command to scan existing directories and fetch missing or improved subtitles.
+10. **gRPC API (Optional)** – provide remote translation capabilities.
+11. **Testing and CI** – expand unit tests and add CI workflows.
 
 This plan aligns with the tasks listed in `TODO.md`.
 
