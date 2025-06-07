@@ -23,6 +23,8 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Provider registry simplifies adding new sources.
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
+- Integrated authentication system with password, token, OAuth2 and API key support.
+- Role based access control with sensible defaults and session storage in the database.
 
 ### Supported Subtitle Providers
 
@@ -107,6 +109,9 @@ subtitle-manager watch opensubtitles [directory] [lang] [-r]
 subtitle-manager watch subscene [directory] [lang] [-r]
 subtitle-manager grpc-server --addr :50051
 subtitle-manager delete [file]
+subtitle-manager login [username] [password]
+subtitle-manager user add [username] [email] [password]
+subtitle-manager user apikey [username]
 ```
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.

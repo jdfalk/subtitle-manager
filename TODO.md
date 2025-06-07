@@ -17,7 +17,15 @@ This file tracks planned work, architectural decisions, and implementation statu
 3. **Logging Improvements**
    - Component based logging with adjustable levels via flags or config.
 
-4. **Subtitle Processing**
+4. **Authentication & Authorization**
+   - Password authentication with hashed credentials stored in the database. *(implemented)*
+   - One time token generation for email logins. *(initial support implemented)*
+   - OAuth2 integration for third party login providers. *(planned)*
+   - API key management allowing multiple keys per user. *(implemented)*
+   - Command line and web interfaces share the same user store and sessions.
+   - Role based access control with default `admin`, `user` and `viewer` roles.
+   - Session data persisted in the database for portability across front ends.
+5. **Subtitle Processing**
    - Merge two subtitles in different languages into one.
    - Extract subtitles from various container formats and convert them to SRT.
    - Translate subtitles through Google Translate or ChatGPT.

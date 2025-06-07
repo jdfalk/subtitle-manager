@@ -28,14 +28,69 @@ func Open(path string) (*sql.DB, error) {
 }
 
 func initSchema(db *sql.DB) error {
-	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS subtitles (
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS subtitles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         file TEXT NOT NULL,
         language TEXT NOT NULL,
         service TEXT NOT NULL,
         created_at TIMESTAMP NOT NULL
-    )`)
-	return err
+    )`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        email TEXT,
+        role TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS api_keys (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        key TEXT UNIQUE NOT NULL,
+        created_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        token TEXT UNIQUE NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS permissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        role TEXT NOT NULL,
+        permission TEXT NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	// Seed default roles and permissions if empty
+	var count int
+	row := db.QueryRow(`SELECT COUNT(1) FROM permissions`)
+	if err := row.Scan(&count); err != nil {
+		return err
+	}
+	if count == 0 {
+		if _, err := db.Exec(`INSERT INTO permissions (role, permission) VALUES
+                ('admin', 'all'),
+                ('user', 'basic'),
+                ('viewer', 'read')`); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func InsertSubtitle(db *sql.DB, file, lang, service string) error {
