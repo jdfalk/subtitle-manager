@@ -202,6 +202,8 @@ type Provider interface {
 ```
 
 Providers share common configuration such as API keys or user credentials via Viper. Future work includes supporting services used by Bazarr (OpenSubtitles, Addic7ed, Subscene, etc.).
+An initial provider based on the OpenSubtitles REST API has been implemented
+under `pkg/providers/opensubtitles` and exposed through the `fetch` command.
 
 ## 10. Concurrency Model
 

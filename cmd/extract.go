@@ -22,11 +22,7 @@ var extractCmd = &cobra.Command{
 			return err
 		}
 		sub := astisub.NewSubtitles()
-		var convertedItems []astisub.Item
-		for _, item := range items {
-			convertedItems = append(convertedItems, *item)
-		}
-		sub.Items = convertedItems
+		sub.Items = items
 		f, err := os.Create(out)
 		if err != nil {
 			return err

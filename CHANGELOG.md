@@ -28,3 +28,8 @@ All notable changes to this project will be documented in this file.
 - React based web UI built with Vite under `webui/`.
 - `web` command to serve the embedded single page application.
 - Technical design and TODO updated with web front end plan.
+
+## [0.1.4] - 2025-06-09
+### Added
+- OpenSubtitles provider and `fetch` CLI command.
+- Provider implementation documented in README and TODO.
