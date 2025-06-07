@@ -29,5 +29,9 @@ func ExtractFromMedia(mediaPath string) ([]astisub.Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	return sub.Items, nil
+	items := make([]*astisub.Item, len(sub.Items))
+	for i := range sub.Items {
+		items[i] = &sub.Items[i]
+	}
+	return items, nil
 }
