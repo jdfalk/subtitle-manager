@@ -12,7 +12,7 @@ import (
 // ExtractFromMedia extracts the first subtitle stream from the given media
 // container using the `ffmpeg` command line tool. The resulting subtitle items
 // are returned. The `ffmpeg` binary must be available in $PATH.
-func ExtractFromMedia(mediaPath string) ([]*astisub.Item, error) {
+func ExtractFromMedia(mediaPath string) ([]astisub.Item, error) {
 	tmp, err := os.CreateTemp("", "subextract-*.srt")
 	if err != nil {
 		return nil, err
