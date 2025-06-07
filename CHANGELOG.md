@@ -20,3 +20,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Documented Bazarr feature set in `docs/BAZARR_FEATURES.md`
 - Linked feature reference from README, TODO and TECHNICAL_DESIGN
+
+## [0.1.3] - 2025-06-08
+### Added
+- Subtitle extraction from media containers using `ffmpeg`.
+- New `extract` CLI command.
