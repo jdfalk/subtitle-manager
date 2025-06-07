@@ -1,15 +1,12 @@
 package cmd
 
 import (
-	"os"
-
-	"github.com/asticode/go-astisub"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
-	"subtitle-manager/pkg/translator"
+	"subtitle-manager/pkg/subtitles"
 )
 
 var translateCmd = &cobra.Command{
@@ -23,24 +20,7 @@ var translateCmd = &cobra.Command{
 		gKey := viper.GetString("google_api_key")
 		gptKey := viper.GetString("openai_api_key")
 		grpcAddr := viper.GetString("grpc_addr")
-		sub, err := astisub.OpenFile(in)
-		if err != nil {
-			return err
-		}
-		for _, item := range sub.Items {
-			text := item.String()
-			t, err := translator.Translate(service, text, lang, gKey, gptKey, grpcAddr)
-			if err != nil {
-				return err
-			}
-			item.Lines = []astisub.Line{{Items: []astisub.LineItem{{Text: t}}}}
-		}
-		f, err := os.Create(out)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		if err := sub.WriteToSRT(f); err != nil {
+		if err := subtitles.TranslateFileToSRT(in, out, lang, service, gKey, gptKey, grpcAddr); err != nil {
 			return err
 		}
 		if dbPath := viper.GetString("db_path"); dbPath != "" {

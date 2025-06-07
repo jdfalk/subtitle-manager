@@ -58,7 +58,7 @@ This file tracks planned work, architectural decisions, and implementation statu
 
 7. **Future Enhancements**
    - Replace manual HTTP calls with provider SDKs where available.
-   - Consider asynchronous processing for bulk translations.
+   - Asynchronous processing for bulk translations implemented via the `batch` command.
    - Evaluate performance of subtitle merging and translation.
    - Add optional web interface for managing subtitles.
 

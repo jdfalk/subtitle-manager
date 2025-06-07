@@ -69,6 +69,14 @@ subtitle-manager translate <input> <output> <language>
 
 Translates a subtitle file to the target language. The translator command uses `translator.Translate` which selects the translation backend (Google or ChatGPT) based on configuration. Translation results are stored in the database via `database.InsertSubtitle`.
 
+#### batch
+
+```
+subtitle-manager batch <language> <files...>
+```
+
+Translates multiple subtitle files concurrently. The command invokes `subtitles.TranslateFilesToSRT` which utilises the `conc` package to limit the number of worker goroutines.
+
 #### history
 
 Displays previously translated files. `database.ListSubtitles` returns rows which are printed in a tabular format.
