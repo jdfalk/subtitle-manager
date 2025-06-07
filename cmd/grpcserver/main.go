@@ -18,7 +18,7 @@ type server struct {
 }
 
 func (s *server) Translate(ctx context.Context, req *pb.TranslateRequest) (*pb.TranslateResponse, error) {
-	text, err := translator.Translate("google", req.Text, req.Language, s.googleKey, s.gptKey)
+	text, err := translator.Translate("google", req.Text, req.Language, s.googleKey, s.gptKey, "")
 	if err != nil {
 		return nil, err
 	}
