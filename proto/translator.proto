@@ -1,0 +1,16 @@
+syntax = "proto3";
+package translator;
+option go_package = "subtitle-manager/pkg/translatorpb";
+
+service Translator {
+  rpc Translate(TranslateRequest) returns (TranslateResponse);
+}
+
+message TranslateRequest {
+  string text = 1;
+  string language = 2;
+}
+
+message TranslateResponse {
+  string translated_text = 1;
+}

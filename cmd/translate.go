@@ -28,15 +28,7 @@ var translateCmd = &cobra.Command{
 		}
 		for _, item := range sub.Items {
 			text := item.String()
-			var t string
-			switch service {
-			case "google":
-				t, err = translator.GoogleTranslate(text, lang, gKey)
-			case "gpt":
-				t, err = translator.GPTTranslate(text, lang, gptKey)
-			default:
-				err = translator.ErrUnsupportedService
-			}
+			t, err := translator.Translate(service, text, lang, gKey, gptKey)
 			if err != nil {
 				return err
 			}
