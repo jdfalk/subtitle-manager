@@ -31,6 +31,10 @@ subtitle-manager history
 subtitle-manager extract [media] [output]
 ```
 
+### Web UI
+
+Run `subtitle-manager web` to start the embedded React interface on `:8080`. The SPA is built via `go generate` in the `webui` directory and embedded using Go 1.16's `embed` package.
+
 Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. API keys may be specified via flags `--google-key` and `--openai-key` or in the configuration file. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`.  Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`.
 
 Example configuration:

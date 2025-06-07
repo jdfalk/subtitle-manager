@@ -67,3 +67,28 @@ This file tracks planned work, architectural decisions, and implementation statu
 For a detailed description of the planned file layout, key functions and
 Protobuf definitions, see `docs/TECHNICAL_DESIGN.md`.
 The file `docs/BAZARR_FEATURES.md` enumerates all Bazarr features to ensure parity.
+
+## Web Front End Plan
+
+The Bazarr project exposes many pages in its web UI. Pages identified in the repository include:
+- Authentication
+- Blacklist (Movies, Series)
+- Episodes
+- History (Movies, Series, Statistics)
+- Movies (Details, Editor)
+- Series (Editor)
+- Settings (General, Languages, Notifications, Plex, Providers, Radarr, Scheduler, Sonarr, Subtitles, UI)
+- System (Announcements, Backups, Logs, Providers, Releases, Status, Tasks)
+- Wanted (Movies, Series)
+- Various error pages and utility views
+
+Subtitle Manager will initially implement a simplified set of pages organised for faster navigation:
+- **Dashboard** – landing page summarising recent activity.
+- **History** – combined view of translated subtitles.
+- **Settings** – grouped configuration panels similar to Bazarr's settings sections.
+- **System** – log viewer and task status.
+- **Wanted** – missing subtitle search page.
+
+Additional pages such as blacklist management or per-movie editors can be added once core functionality matches Bazarr.
+
+The front end is built with React and Vite under `webui/`. `go generate ./webui` builds the single page application which is embedded into the binary and served by the `web` command.
