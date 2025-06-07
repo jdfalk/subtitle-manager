@@ -58,3 +58,8 @@ All notable changes to this project will be documented in this file.
 - Comprehensive subtitle provider list from Bazarr documented in README and TODO.
 - Implemented Addic7ed, BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi,
   LegendasDivx and GreekSubs providers.
+
+## [0.1.9] - 2025-06-14
+### Added
+- Implemented the remaining subtitle providers from Bazarr's list.
+- Unified provider selection via a registry.
