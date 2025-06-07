@@ -10,13 +10,69 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Store translation history in an SQLite database.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
-- Download subtitles from OpenSubtitles.
-- Download subtitles from Subscene.
+- Download subtitles from multiple providers including OpenSubtitles, Subscene, Addic7ed,
+  BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi, LegendasDivx and GreekSubs.
 - Batch translate multiple files concurrently.
 - Monitor directories and automatically download subtitles.
 - Recursive directory watching with -r flag.
 - Run a translation gRPC server.
 - Delete subtitle files and remove history records.
+
+### Supported Subtitle Providers
+
+The project aims to match Bazarr's extensive provider selection. The following
+services are referenced from Bazarr's README:
+
+- Addic7ed
+- AnimeKalesi
+- Animetosho
+- Assrt
+- AvistaZ / CinemaZ
+- BetaSeries
+- BSplayer
+- Embedded Subtitles
+- Gestdown.info
+- GreekSubs
+- GreekSubtitles
+- HDBits.org
+- Hosszupuska
+- Karagarga.in
+- Ktuvit
+- LegendasDivx
+- Legendas.net
+- Napiprojekt
+- Napisy24
+- Nekur
+- OpenSubtitles.com
+- OpenSubtitles.org (VIP)
+- Podnapisi
+- RegieLive
+- Sous-Titres.eu
+- Subdivx
+- subf2m.co
+- Subs.sab.bz
+- Subs4Free
+- Subs4Series
+- Subscene
+- Subscenter
+- Subsunacs.net
+- SubSynchro
+- Subtitrari-noi.ro
+- subtitri.id.lv
+- Subtitulamos.tv
+- Supersubtitles
+- Titlovi
+- Titrari.ro
+- Titulky.com
+- Turkcealtyazi.org
+- TuSubtitulo
+- TVSubtitles
+- Whisper (requires external web service)
+- Wizdom
+- XSubs
+- Yavka.net
+- YIFY Subtitles
+- Zimuku
 
 ## Installation
 

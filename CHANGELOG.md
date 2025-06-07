@@ -52,3 +52,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Environment variable configuration via `SM_` prefix.
 - GitHub Actions workflow for continuous integration.
+
+## [0.1.8] - 2025-06-13
+### Added
+- Comprehensive subtitle provider list from Bazarr documented in README and TODO.
+- Implemented Addic7ed, BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi,
+  LegendasDivx and GreekSubs providers.

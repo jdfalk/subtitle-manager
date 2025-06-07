@@ -6,7 +6,19 @@ This file tracks planned work, architectural decisions, and implementation statu
 
 1. **Feature Parity with Bazarr**
    - Monitor media libraries for new subtitles. *(watch command implemented)*
-   - Support multiple subtitle providers. *(OpenSubtitles and Subscene implemented)*
+   - Support multiple subtitle providers. *(OpenSubtitles, Subscene, Addic7ed, BetaSeries,
+     BSplayer, Podnapisi, TVSubtitles, Titlovi, LegendasDivx and GreekSubs implemented)*
+     The full list of providers used by Bazarr includes:
+     Addic7ed, AnimeKalesi, Animetosho, Assrt, AvistaZ / CinemaZ, BetaSeries,
+     BSplayer, Embedded Subtitles, Gestdown.info, GreekSubs, GreekSubtitles,
+     HDBits.org, Hosszupuska, Karagarga.in, Ktuvit, LegendasDivx, Legendas.net,
+     Napiprojekt, Napisy24, Nekur, OpenSubtitles.com, OpenSubtitles.org (VIP),
+     Podnapisi, RegieLive, Sous-Titres.eu, Subdivx, subf2m.co, Subs.sab.bz,
+     Subs4Free, Subs4Series, Subscene, Subscenter, Subsunacs.net, SubSynchro,
+     Subtitrari-noi.ro, subtitri.id.lv, Subtitulamos.tv, Supersubtitles, Titlovi,
+     Titrari.ro, Titulky.com, Turkcealtyazi.org, TuSubtitulo, TVSubtitles,
+     Whisper (requires external web service), Wizdom, XSubs, Yavka.net,
+     YIFY Subtitles and Zimuku.
    - Download, manage and upgrade subtitles automatically.
    - Integrate with media servers (e.g. Plex, Emby, Sonarr, Radarr).
 
