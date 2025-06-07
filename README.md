@@ -10,8 +10,10 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Store translation history in an SQLite database.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
-- Download subtitles from multiple providers including OpenSubtitles, Subscene, Addic7ed,
-  BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi, LegendasDivx and GreekSubs.
+- Download subtitles from a comprehensive list of providers based on Bazarr,
+  including Addic7ed, AnimeKalesi, Animetosho, Assrt, Avistaz, BetaSeries,
+  BSplayer, GreekSubs, Podnapisi, Subscene, TVSubtitles, Titlovi, LegendasDivx
+  and many more.
 - Batch translate multiple files concurrently.
 - Monitor directories and automatically download subtitles.
 - Recursive directory watching with -r flag.
@@ -20,8 +22,8 @@ Subtitle Manager is a command line application written in Go for converting, mer
 
 ### Supported Subtitle Providers
 
-The project aims to match Bazarr's extensive provider selection. The following
-services are referenced from Bazarr's README:
+Subtitle Manager now supports the full provider list from Bazarr. The following
+services are available:
 
 - Addic7ed
 - AnimeKalesi
