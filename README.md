@@ -9,6 +9,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Translate subtitles via Google Translate or ChatGPT APIs.
 - Store translation history in an SQLite database.
 - Per component logging with adjustable levels.
+- Extract subtitles from media containers using ffmpeg.
 
 ## Installation
 
@@ -27,6 +28,7 @@ subtitle-manager convert [input] [output]
 subtitle-manager merge [sub1] [sub2] [output]
 subtitle-manager translate [input] [output] [lang]
 subtitle-manager history
+subtitle-manager extract [media] [output]
 ```
 
 Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. API keys may be specified via flags `--google-key` and `--openai-key` or in the configuration file. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`.  Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`.

@@ -38,7 +38,7 @@ This file tracks planned work, architectural decisions, and implementation statu
 2. **Subtitle Operations**
    - Build utilities using the `go-astisub` library to read and manipulate subtitles.
    - Implement merging and translation logic in commands.
-   - Implement extraction of subtitles from media containers.
+  - Implement extraction of subtitles from media containers. *(implemented in v0.1.3)*
 
 3. **Translation Services**
    - Provide Google Translate and ChatGPT implementations behind a common interface.
