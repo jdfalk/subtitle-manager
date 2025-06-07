@@ -5,10 +5,10 @@ This file tracks planned work, architectural decisions, and implementation statu
 ## Roadmap
 
 1. **Feature Parity with Bazarr**
-   - Monitor media libraries for new subtitles.
-   - Support multiple subtitle providers. *(OpenSubtitles implemented)*
+   - Monitor media libraries for new subtitles. *(watch command implemented)*
+   - Support multiple subtitle providers. *(OpenSubtitles implemented; others pending)*
    - Download, manage and upgrade subtitles automatically.
-   - Integrate with media servers (e.g. Plex, Emby).
+   - Integrate with media servers (e.g. Plex, Emby, Sonarr, Radarr).
 
 2. **Configuration with Cobra & Viper**
    - Centralise configuration using Viper.
@@ -56,7 +56,11 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Expose translation via a gRPC server and client. *(client implemented)*
    - Document protobuf messages and regeneration steps.
 
-7. **Future Enhancements**
+7. **Media Library Monitoring**
+   - Implement filesystem watchers to detect new video files.
+   - Automatically fetch subtitles when media appears.
+
+8. **Future Enhancements**
    - Replace manual HTTP calls with provider SDKs where available.
    - Asynchronous processing for bulk translations implemented via the `batch` command.
    - Evaluate performance of subtitle merging and translation.
