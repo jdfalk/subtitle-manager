@@ -67,4 +67,5 @@ All notable changes to this project will be documented in this file.
 ## [0.1.10] - 2025-06-15
 ### Added
 - Dockerfile and GitHub Actions workflow for container images.
+- Container images published to GitHub Container Registry.
 - Documentation updates describing provider registry and Docker usage.

@@ -68,7 +68,7 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Asynchronous processing for bulk translations implemented via the `batch` command.
    - Evaluate performance of subtitle merging and translation.
    - Add optional web interface for managing subtitles.
-   - Distribute official Docker image via GitHub Actions.
+   - Distribute official Docker image via GitHub Actions. *(implemented in v0.1.10)*
 
 ## Additional Documentation
 

@@ -21,6 +21,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Delete subtitle files and remove history records.
 - Provider registry simplifies adding new sources.
 - Dockerfile and workflow for container builds.
+- Prebuilt images published to GitHub Container Registry.
 
 ### Supported Subtitle Providers
 
@@ -134,6 +135,12 @@ Run commands inside the container:
 
 ```bash
 $ docker run --rm subtitle-manager [command]
+```
+
+Prebuilt images are published to the GitHub Container Registry:
+
+```bash
+$ docker pull ghcr.io/jdfalk/subtitle-manager:latest
 ```
 
 ## Development
