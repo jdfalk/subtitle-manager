@@ -7,7 +7,7 @@ This file tracks planned work, architectural decisions, and implementation statu
 1. **Feature Parity with Bazarr**
    - Monitor media libraries for new subtitles. *(watch command implemented)*
    - Support multiple subtitle providers. *(Full Bazarr provider list implemented)*
-   - Download, manage and upgrade subtitles automatically.
+   - Download, manage and upgrade subtitles automatically. *(scan command implemented)*
    - Integrate with media servers (e.g. Plex, Emby, Sonarr, Radarr).
 
 2. **Configuration with Cobra & Viper**
