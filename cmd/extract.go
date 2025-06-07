@@ -5,6 +5,7 @@ import (
 
 	"github.com/asticode/go-astisub"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/subtitles"
@@ -17,6 +18,9 @@ var extractCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("extract")
 		media, out := args[0], args[1]
+		if ff := viper.GetString("ffmpeg_path"); ff != "" {
+			subtitles.SetFFmpegPath(ff)
+		}
 		items, err := subtitles.ExtractFromMedia(media)
 		if err != nil {
 			return err
@@ -37,5 +41,7 @@ var extractCmd = &cobra.Command{
 }
 
 func init() {
+	extractCmd.Flags().String("ffmpeg", "", "path to ffmpeg binary")
+	viper.BindPFlag("ffmpeg_path", extractCmd.Flags().Lookup("ffmpeg"))
 	rootCmd.AddCommand(extractCmd)
 }

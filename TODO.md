@@ -6,7 +6,7 @@ This file tracks planned work, architectural decisions, and implementation statu
 
 1. **Feature Parity with Bazarr**
    - Monitor media libraries for new subtitles. *(watch command implemented)*
-   - Support multiple subtitle providers. *(OpenSubtitles implemented; others pending)*
+   - Support multiple subtitle providers. *(OpenSubtitles and Subscene implemented)*
    - Download, manage and upgrade subtitles automatically.
    - Integrate with media servers (e.g. Plex, Emby, Sonarr, Radarr).
 
@@ -21,6 +21,8 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Merge two subtitles in different languages into one.
    - Extract subtitles from various container formats and convert them to SRT.
    - Translate subtitles through Google Translate or ChatGPT.
+   - Allow configuring the `ffmpeg` binary path.
+   - Delete external subtitles directly from disk.
 
 5. **Database Schema**
    - Design an efficient schema to store subtitle metadata and history.
@@ -53,12 +55,12 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Test command behaviour with edge cases.
 
 6. **Remote Services**
-   - Expose translation via a gRPC server and client. *(client implemented)*
+   - Expose translation via a gRPC server and client. *(client and server implemented)*
    - Document protobuf messages and regeneration steps.
 
 7. **Media Library Monitoring**
    - Implement filesystem watchers to detect new video files.
-   - Automatically fetch subtitles when media appears.
+   - Automatically fetch subtitles when media appears. *(recursive watching implemented)*
 
 8. **Future Enhancements**
    - Replace manual HTTP calls with provider SDKs where available.
