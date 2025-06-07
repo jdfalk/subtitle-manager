@@ -39,3 +39,11 @@ All notable changes to this project will be documented in this file.
 - Batch translation command for concurrent processing of multiple files.
 - Helper functions `TranslateFileToSRT` and `TranslateFilesToSRT` in `pkg/subtitles`.
 - Documentation updates for the new command and concurrency model.
+
+## [0.1.6] - 2025-06-11
+### Added
+- Subscene provider with `fetch` and `watch` support.
+- `grpc-server` command to expose translation service.
+- Customisable ffmpeg path for subtitle extraction.
+- Recursive directory watching.
+- `delete` command and database deletion helper.

@@ -9,6 +9,14 @@ import (
 	"github.com/asticode/go-astisub"
 )
 
+// ffmpegPath is the name or path of the ffmpeg binary used for extraction.
+var ffmpegPath = "ffmpeg"
+
+// SetFFmpegPath allows tests or callers to override the ffmpeg binary path.
+func SetFFmpegPath(path string) {
+	ffmpegPath = path
+}
+
 // ExtractFromMedia extracts the first subtitle stream from the given media
 // container using the `ffmpeg` command line tool. The resulting subtitle items
 // are returned. The `ffmpeg` binary must be available in $PATH.
@@ -20,7 +28,7 @@ func ExtractFromMedia(mediaPath string) ([]*astisub.Item, error) {
 	tmp.Close()
 	defer os.Remove(tmp.Name())
 
-	cmd := exec.CommandContext(context.Background(), "ffmpeg", "-y", "-i", mediaPath, "-map", "0:s:0", tmp.Name())
+	cmd := exec.CommandContext(context.Background(), ffmpegPath, "-y", "-i", mediaPath, "-map", "0:s:0", tmp.Name())
 	if out, err := cmd.CombinedOutput(); err != nil {
 		return nil, fmt.Errorf("ffmpeg: %v: %s", err, out)
 	}

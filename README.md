@@ -11,8 +11,12 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
 - Download subtitles from OpenSubtitles.
+- Download subtitles from Subscene.
 - Batch translate multiple files concurrently.
 - Monitor directories and automatically download subtitles.
+- Recursive directory watching with -r flag.
+- Run a translation gRPC server.
+- Delete subtitle files and remove history records.
 
 ## Installation
 
@@ -33,9 +37,15 @@ subtitle-manager translate [input] [output] [lang]
 subtitle-manager history
 subtitle-manager extract [media] [output]
 subtitle-manager fetch opensubtitles [media] [lang] [output]
+subtitle-manager fetch subscene [media] [lang] [output]
 subtitle-manager batch [lang] [files...]
-subtitle-manager watch opensubtitles [directory] [lang]
+subtitle-manager watch opensubtitles [directory] [lang] [-r]
+subtitle-manager watch subscene [directory] [lang] [-r]
+subtitle-manager grpc-server --addr :50051
+subtitle-manager delete [file]
 ```
+
+The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
 ### Web UI
 

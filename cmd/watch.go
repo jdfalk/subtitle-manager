@@ -10,8 +10,11 @@ import (
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
 	"subtitle-manager/pkg/providers/opensubtitles"
+	"subtitle-manager/pkg/providers/subscene"
 	"subtitle-manager/pkg/watcher"
 )
+
+var recursive bool
 
 var watchCmd = &cobra.Command{
 	Use:   "watch [provider] [directory] [lang]",
@@ -25,15 +28,21 @@ var watchCmd = &cobra.Command{
 		case "opensubtitles":
 			key := viper.GetString("opensubtitles.api_key")
 			p = opensubtitles.New(key)
+		case "subscene":
+			p = subscene.New()
 		default:
 			return fmt.Errorf("unknown provider %s", name)
 		}
 		logger.Infof("watching %s", dir)
 		ctx := context.Background()
+		if recursive {
+			return watcher.WatchDirectoryRecursive(ctx, dir, lang, p)
+		}
 		return watcher.WatchDirectory(ctx, dir, lang, p)
 	},
 }
 
 func init() {
+	watchCmd.Flags().BoolVarP(&recursive, "recursive", "r", false, "watch directories recursively")
 	rootCmd.AddCommand(watchCmd)
 }

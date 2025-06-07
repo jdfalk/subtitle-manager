@@ -65,3 +65,58 @@ func WatchDirectory(ctx context.Context, dir, lang string, p providers.Provider)
 		}
 	}
 }
+
+// WatchDirectoryRecursive works like WatchDirectory but monitors dir and all
+// of its subdirectories. New directories created while watching are added
+// automatically.
+func WatchDirectoryRecursive(ctx context.Context, dir, lang string, p providers.Provider) error {
+	logger := logging.GetLogger("watcher")
+	w, err := fsnotify.NewWatcher()
+	if err != nil {
+		return err
+	}
+	defer w.Close()
+
+	if err := filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return w.Add(path)
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case err := <-w.Errors:
+			logger.Warnf("watch error: %v", err)
+		case ev := <-w.Events:
+			if ev.Op&fsnotify.Create != 0 {
+				if info, err := os.Stat(ev.Name); err == nil && info.IsDir() {
+					_ = w.Add(ev.Name)
+				}
+			}
+			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(ev.Name) {
+				out := strings.TrimSuffix(ev.Name, filepath.Ext(ev.Name)) + "." + lang + ".srt"
+				if _, err := os.Stat(out); err == nil {
+					continue
+				}
+				data, err := p.Fetch(ctx, ev.Name, lang)
+				if err != nil {
+					logger.Warnf("fetch %s: %v", ev.Name, err)
+					continue
+				}
+				if err := os.WriteFile(out, data, 0644); err != nil {
+					logger.Warnf("write %s: %v", out, err)
+					continue
+				}
+				logger.Infof("downloaded subtitle %s", out)
+			}
+		}
+	}
+}

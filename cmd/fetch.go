@@ -12,6 +12,7 @@ import (
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
 	"subtitle-manager/pkg/providers/opensubtitles"
+	"subtitle-manager/pkg/providers/subscene"
 )
 
 // fetchCmd downloads subtitles for a media file using a provider.
@@ -27,6 +28,8 @@ var fetchCmd = &cobra.Command{
 		case "opensubtitles":
 			key := viper.GetString("opensubtitles.api_key")
 			p = opensubtitles.New(key)
+		case "subscene":
+			p = subscene.New()
 		default:
 			return fmt.Errorf("unknown provider %s", name)
 		}

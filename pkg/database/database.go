@@ -61,3 +61,9 @@ func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
 	}
 	return recs, rows.Err()
 }
+
+// DeleteSubtitle removes subtitle records matching file from the database.
+func DeleteSubtitle(db *sql.DB, file string) error {
+	_, err := db.Exec(`DELETE FROM subtitles WHERE file = ?`, file)
+	return err
+}
