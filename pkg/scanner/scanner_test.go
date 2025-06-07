@@ -20,7 +20,7 @@ func TestScanDirectory(t *testing.T) {
 		t.Fatalf("create video: %v", err)
 	}
 	// first scan creates subtitle
-	if err := ScanDirectory(context.Background(), dir, "en", fakeProvider{[]byte("a")}, false); err != nil {
+	if err := ScanDirectory(context.Background(), dir, "en", fakeProvider{[]byte("a")}, false, 2); err != nil {
 		t.Fatalf("scan: %v", err)
 	}
 	sub := filepath.Join(dir, "movie.en.srt")
@@ -32,7 +32,7 @@ func TestScanDirectory(t *testing.T) {
 		t.Fatalf("unexpected subtitle %q", data)
 	}
 	// second scan without upgrade should keep existing subtitle
-	if err := ScanDirectory(context.Background(), dir, "en", fakeProvider{[]byte("b")}, false); err != nil {
+	if err := ScanDirectory(context.Background(), dir, "en", fakeProvider{[]byte("b")}, false, 2); err != nil {
 		t.Fatalf("scan 2: %v", err)
 	}
 	data, _ = os.ReadFile(sub)
@@ -40,7 +40,7 @@ func TestScanDirectory(t *testing.T) {
 		t.Fatalf("subtitle overwritten without upgrade")
 	}
 	// scan with upgrade should replace subtitle
-	if err := ScanDirectory(context.Background(), dir, "en", fakeProvider{[]byte("c")}, true); err != nil {
+	if err := ScanDirectory(context.Background(), dir, "en", fakeProvider{[]byte("c")}, true, 2); err != nil {
 		t.Fatalf("scan upgrade: %v", err)
 	}
 	data, _ = os.ReadFile(sub)

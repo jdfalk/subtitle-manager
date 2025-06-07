@@ -41,6 +41,8 @@ func init() {
 	rootCmd.AddCommand(translateCmd)
 	rootCmd.AddCommand(fetchCmd)
 	rootCmd.AddCommand(batchCmd)
+	rootCmd.AddCommand(sonarrCmd)
+	rootCmd.AddCommand(radarrCmd)
 }
 
 func initConfig() {
