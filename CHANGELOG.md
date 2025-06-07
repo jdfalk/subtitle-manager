@@ -1,3 +1,9 @@
+## [0.2.1] - 2025-06-17
+### Added
+- Authentication system supporting password login, one time tokens, OAuth2 and API keys.
+- Simple user manager commands for creating users and generating API keys.
+- RBAC with default roles and database backed session storage.
+
 ## [0.2.0] - 2025-06-16
 ### Added
 - Library scanning command to automatically download and upgrade subtitles.
