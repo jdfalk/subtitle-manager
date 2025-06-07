@@ -51,7 +51,7 @@ The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
 Run `subtitle-manager web` to start the embedded React interface on `:8080`. The SPA is built via `go generate` in the `webui` directory and embedded using Go 1.16's `embed` package.
 
-Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. API keys may be specified via flags `--google-key` and `--openai-key` or in the configuration file. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`.  Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`.
+Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key` and `--openai-key` or in the configuration file. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`.  Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`.
 
 Example configuration:
 
@@ -65,6 +65,7 @@ translate_service: google
 ## Development
 
 Tests can be run with `go test ./...`.
+Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
 
 The project aims to eventually reach feature parity with [Bazarr](https://github.com/morpheus65535/bazarr) while offering improved configuration and logging. See `TODO.md` for the full roadmap and implementation plan.
 Extensive architectural details and design decisions are documented in
