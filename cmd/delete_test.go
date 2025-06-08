@@ -23,7 +23,7 @@ func TestDeleteCmd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open db: %v", err)
 	}
-	if err := database.InsertSubtitle(db, file, "en", "test"); err != nil {
+	if err := database.InsertSubtitle(db, file, file, "en", "test", "", false); err != nil {
 		t.Fatalf("insert: %v", err)
 	}
 	db.Close()

@@ -113,14 +113,17 @@ Logging levels can be updated at runtime through configuration reload (future wo
 
 ## 5. Database Layer
 
-The application stores metadata in an SQLite database managed by `pkg/database`. The current schema is defined below and future revisions will add additional tables for subtitle providers and media libraries.
+The application stores metadata in an SQLite database managed by `pkg/database`. A PebbleDB implementation provides a drop-in replacement through the `SubtitleStore` interface. The current SQLite schema is defined below and future revisions will add additional tables for subtitle providers and media libraries.
 
 ```sql
 CREATE TABLE IF NOT EXISTS subtitles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     file TEXT NOT NULL,
+    video_file TEXT,
+    release TEXT,
     language TEXT NOT NULL,
     service TEXT NOT NULL,
+    embedded INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL
 );
 
@@ -130,7 +133,9 @@ CREATE INDEX IF NOT EXISTS subtitles_file_idx ON subtitles(file);
 ### 5.1 Functions
 
 - `Open(path string) (*sql.DB, error)` – opens or creates the database and runs migrations.
-- `InsertSubtitle(db *sql.DB, file, lang, service string) error` – inserts a translation record.
+- `OpenSQLStore(path string) (*SQLStore, error)` – opens an SQLite backed `SubtitleStore`.
+- `OpenStore(path, backend string) (SubtitleStore, error)` – returns either the SQLite or Pebble implementation based on `backend`.
+- `InsertSubtitle(db *sql.DB, file, video, lang, service, release string, embedded bool) error` – inserts a translation record with metadata.
 - `ListSubtitles(db *sql.DB) ([]SubtitleRecord, error)` – retrieves history sorted by most recent.
 
 Each function uses context-aware queries and prepares statements for efficiency.

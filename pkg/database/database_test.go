@@ -9,7 +9,7 @@ func TestInsertAndList(t *testing.T) {
 	}
 	defer db.Close()
 
-	if err := InsertSubtitle(db, "file.srt", "es", "google"); err != nil {
+	if err := InsertSubtitle(db, "file.srt", "video.mkv", "es", "google", "", false); err != nil {
 		t.Fatalf("insert: %v", err)
 	}
 
@@ -33,7 +33,7 @@ func TestDeleteSubtitle(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if err := InsertSubtitle(db, "file.srt", "es", "google"); err != nil {
+	if err := InsertSubtitle(db, "file.srt", "video.mkv", "es", "google", "", false); err != nil {
 		t.Fatalf("insert: %v", err)
 	}
 	if err := DeleteSubtitle(db, "file.srt"); err != nil {
