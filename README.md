@@ -159,6 +159,17 @@ $ docker pull ghcr.io/jdfalk/subtitle-manager:latest
 Tests can be run with `go test ./...`.
 Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
 
+### Issue updates
+
+Pushing an `issue_updates.txt` file to the repository root allows the `update-issues` workflow to modify issue states using the repository `GITHUB_TOKEN`. Each line in the file should contain an issue number and the desired state:
+
+```text
+28 closed
+42 open
+```
+
+The workflow runs on every push to `main` and updates the referenced tickets accordingly.
+
 The project aims to eventually reach feature parity with [Bazarr](https://github.com/morpheus65535/bazarr) while offering improved configuration and logging. See `TODO.md` for the full roadmap and implementation plan.
 Extensive architectural details and design decisions are documented in
 `docs/TECHNICAL_DESIGN.md`. New contributors should review this document to
