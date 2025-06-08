@@ -13,17 +13,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Update GitHub issues
-        if: ${{ hashFiles('issue_updates.txt') != '' }}
+        if: ${{ hashFiles('issue_updates.json') != '' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
-          while read -r num state; do
-            [ -z "$num" ] && continue
-            echo "Updating issue $num -> $state"
-            curl -s -X PATCH \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${REPO}/issues/$num" \
-              -d "{\"state\":\"$state\"}"
-          done < issue_updates.txt
+          jq -c '.[]' issue_updates.json | while read -r item; do
+            action=$(echo "$item" | jq -r '.action')
+            if [ "$action" = "create" ]; then
+              echo "Creating issue"
+              curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${REPO}/issues" \
+                -d "$(echo "$item" | jq 'del(.action)')"
+            elif [ "$action" = "update" ]; then
+              num=$(echo "$item" | jq -r '.number')
+              echo "Updating issue $num"
+              curl -s -X PATCH \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${REPO}/issues/$num" \
+                -d "$(echo "$item" | jq 'del(.action, .number)')"
+            elif [ "$action" = "delete" ]; then
+              num=$(echo "$item" | jq -r '.number')
+              echo "Deleting issue $num"
+              node_id=$(curl -s \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${REPO}/issues/$num" | jq -r '.node_id')
+              mutation=$(printf '{"query":"mutation{deleteIssue(input:{issueId:\"%s\"}){clientMutationId}}"}' "$node_id")
+              curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                https://api.github.com/graphql \
+                -d "$mutation"
+            fi
+          done
