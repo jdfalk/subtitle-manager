@@ -2,20 +2,33 @@ package database
 
 import (
 	"database/sql"
+	"strconv"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// SubtitleRecord represents a subtitle file that has been processed.
+// VideoFile is the path to the media file the subtitle belongs to.
+// Release denotes the original release name including group when known.
 type SubtitleRecord struct {
-	ID        int64
+	ID        string
 	File      string
+	VideoFile string
+	Release   string
 	Language  string
 	Service   string
+	Embedded  bool
 	CreatedAt time.Time
 }
 
-func Open(path string) (*sql.DB, error) {
+// SQLStore implements SubtitleStore using an SQLite database.
+type SQLStore struct {
+	db *sql.DB
+}
+
+// OpenSQLStore opens or creates an SQLite database and returns a SQLStore.
+func OpenSQLStore(path string) (*SQLStore, error) {
 	db, err := sql.Open("sqlite3", path)
 	if err != nil {
 		return nil, err
@@ -24,15 +37,27 @@ func Open(path string) (*sql.DB, error) {
 		db.Close()
 		return nil, err
 	}
-	return db, nil
+	return &SQLStore{db: db}, nil
+}
+
+// Open maintains backward compatibility by returning the raw *sql.DB.
+func Open(path string) (*sql.DB, error) {
+	s, err := OpenSQLStore(path)
+	if err != nil {
+		return nil, err
+	}
+	return s.db, nil
 }
 
 func initSchema(db *sql.DB) error {
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS subtitles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         file TEXT NOT NULL,
+        video_file TEXT,
+        release TEXT,
         language TEXT NOT NULL,
         service TEXT NOT NULL,
+        embedded INTEGER NOT NULL DEFAULT 0,
         created_at TIMESTAMP NOT NULL
     )`); err != nil {
 		return err
@@ -93,14 +118,19 @@ func initSchema(db *sql.DB) error {
 	return nil
 }
 
-func InsertSubtitle(db *sql.DB, file, lang, service string) error {
-	_, err := db.Exec(`INSERT INTO subtitles (file, language, service, created_at) VALUES (?, ?, ?, ?)`,
-		file, lang, service, time.Now())
+// Close closes the underlying SQLite database.
+func (s *SQLStore) Close() error { return s.db.Close() }
+
+// InsertSubtitle stores a new subtitle record with associated metadata.
+func (s *SQLStore) InsertSubtitle(rec *SubtitleRecord) error {
+	_, err := s.db.Exec(`INSERT INTO subtitles (file, video_file, release, language, service, embedded, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		rec.File, rec.VideoFile, rec.Release, rec.Language, rec.Service, boolToInt(rec.Embedded), time.Now())
 	return err
 }
 
-func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
-	rows, err := db.Query(`SELECT id, file, language, service, created_at FROM subtitles ORDER BY id DESC`)
+// ListSubtitles retrieves subtitle records ordered by most recent.
+func (s *SQLStore) ListSubtitles() ([]SubtitleRecord, error) {
+	rows, err := s.db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -109,9 +139,48 @@ func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
 	var recs []SubtitleRecord
 	for rows.Next() {
 		var r SubtitleRecord
-		if err := rows.Scan(&r.ID, &r.File, &r.Language, &r.Service, &r.CreatedAt); err != nil {
+		var embedded int
+		var id int64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &r.CreatedAt); err != nil {
 			return nil, err
 		}
+		r.ID = strconv.FormatInt(id, 10)
+		r.Embedded = embedded == 1
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// DeleteSubtitle removes subtitle records matching file from the database.
+func (s *SQLStore) DeleteSubtitle(file string) error {
+	_, err := s.db.Exec(`DELETE FROM subtitles WHERE file = ?`, file)
+	return err
+}
+
+// InsertSubtitle stores a new subtitle record with associated metadata.
+func InsertSubtitle(db *sql.DB, file, video, lang, service, release string, embedded bool) error {
+	_, err := db.Exec(`INSERT INTO subtitles (file, video_file, release, language, service, embedded, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		file, video, release, lang, service, boolToInt(embedded), time.Now())
+	return err
+}
+
+func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
+	rows, err := db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var recs []SubtitleRecord
+	for rows.Next() {
+		var r SubtitleRecord
+		var embedded int
+		var id int64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		r.Embedded = embedded == 1
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -121,4 +190,11 @@ func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
 func DeleteSubtitle(db *sql.DB, file string) error {
 	_, err := db.Exec(`DELETE FROM subtitles WHERE file = ?`, file)
 	return err
+}
+
+func boolToInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
 }

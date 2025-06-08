@@ -21,9 +21,10 @@ var deleteCmd = &cobra.Command{
 			return err
 		}
 		if dbPath := viper.GetString("db_path"); dbPath != "" {
-			if db, err := database.Open(dbPath); err == nil {
-				_ = database.DeleteSubtitle(db, path)
-				db.Close()
+			backend := viper.GetString("db_backend")
+			if store, err := database.OpenStore(dbPath, backend); err == nil {
+				_ = store.DeleteSubtitle(path)
+				store.Close()
 			} else {
 				logger.Warnf("db open: %v", err)
 			}

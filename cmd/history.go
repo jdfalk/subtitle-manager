@@ -17,18 +17,19 @@ var historyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("history")
 		dbPath := viper.GetString("db_path")
-		db, err := database.Open(dbPath)
+		backend := viper.GetString("db_backend")
+		store, err := database.OpenStore(dbPath, backend)
 		if err != nil {
 			return err
 		}
-		defer db.Close()
+		defer store.Close()
 
-		recs, err := database.ListSubtitles(db)
+		recs, err := store.ListSubtitles()
 		if err != nil {
 			return err
 		}
 		for _, r := range recs {
-			fmt.Printf("%d\t%s\t%s\t%s\t%s\n", r.ID, r.File, r.Language, r.Service, r.CreatedAt.Format(time.RFC3339))
+			fmt.Printf("%s\t%s\t%s\t%s\t%s\n", r.ID, r.File, r.Language, r.Service, r.CreatedAt.Format(time.RFC3339))
 		}
 		logger.Infof("listed %d records", len(recs))
 		return nil

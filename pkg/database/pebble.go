@@ -1,0 +1,109 @@
+package database
+
+import (
+	"encoding/json"
+	"sort"
+	"strings"
+	"time"
+
+	"github.com/cockroachdb/pebble"
+	"github.com/google/uuid"
+)
+
+// PebbleStore wraps a Pebble database and implements basic CRUD operations
+// for SubtitleRecord documents.
+// Keys are generated using UUIDs with the "subtitle:" prefix.
+// Values are stored as JSON encoded SubtitleRecord structures.
+type PebbleStore struct {
+	db *pebble.DB
+}
+
+// OpenPebble opens a Pebble database at path and returns a PebbleStore.
+func OpenPebble(path string) (*PebbleStore, error) {
+	db, err := pebble.Open(path, &pebble.Options{})
+	if err != nil {
+		return nil, err
+	}
+	return &PebbleStore{db: db}, nil
+}
+
+// Close closes the underlying Pebble database.
+func (p *PebbleStore) Close() error { return p.db.Close() }
+
+// InsertSubtitle stores a subtitle translation record.
+// The ID field of rec will be filled with a generated UUID if empty.
+func (p *PebbleStore) InsertSubtitle(rec *SubtitleRecord) error {
+	if rec.ID == "" {
+		rec.ID = uuid.NewString()
+	}
+	if rec.CreatedAt.IsZero() {
+		rec.CreatedAt = time.Now()
+	}
+	b, err := json.Marshal(rec)
+	if err != nil {
+		return err
+	}
+	key := []byte("subtitle:" + rec.ID)
+	return p.db.Set(key, b, pebble.Sync)
+}
+
+// ListSubtitles returns all stored subtitle records sorted by creation time
+// in descending order.
+func (p *PebbleStore) ListSubtitles() ([]SubtitleRecord, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+	var recs []SubtitleRecord
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "subtitle:") {
+			continue
+		}
+		var r SubtitleRecord
+		if err := json.Unmarshal(iter.Value(), &r); err != nil {
+			return nil, err
+		}
+		recs = append(recs, r)
+	}
+	if err := iter.Error(); err != nil {
+		return nil, err
+	}
+	sort.Slice(recs, func(i, j int) bool {
+		return recs[i].CreatedAt.After(recs[j].CreatedAt)
+	})
+	return recs, nil
+}
+
+// DeleteSubtitle removes all records matching file from the store.
+func (p *PebbleStore) DeleteSubtitle(file string) error {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return err
+	}
+	defer iter.Close()
+	var keys [][]byte
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "subtitle:") {
+			continue
+		}
+		var r SubtitleRecord
+		if err := json.Unmarshal(iter.Value(), &r); err != nil {
+			return err
+		}
+		if r.File == file {
+			k := make([]byte, len(iter.Key()))
+			copy(k, iter.Key())
+			keys = append(keys, k)
+		}
+	}
+	if err := iter.Error(); err != nil {
+		return err
+	}
+	for _, k := range keys {
+		if err := p.db.Delete(k, pebble.Sync); err != nil {
+			return err
+		}
+	}
+	return nil
+}

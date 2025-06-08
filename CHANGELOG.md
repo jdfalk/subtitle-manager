@@ -1,3 +1,8 @@
+## [0.3.1] - 2025-06-19
+### Added
+- PebbleDB backend with migration command.
+- Configurable database backend via `--db-backend` flag.
+
 ## [0.3.0] - 2025-06-18
 ### Added
 - Concurrent directory scanning with worker pool.

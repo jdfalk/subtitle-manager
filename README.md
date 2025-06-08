@@ -7,7 +7,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Convert subtitles from many formats to SRT.
 - Merge two subtitle tracks sorted by start time.
 - Translate subtitles via Google Translate or ChatGPT APIs.
-- Store translation history in an SQLite database.
+- Store translation history in an SQLite database or optional PebbleDB store. The backend can be selected with `--db-backend`.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
 - Download subtitles from a comprehensive list of providers based on Bazarr,
@@ -123,7 +123,8 @@ The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
 Run `subtitle-manager web` to start the embedded React interface on `:8080`. The SPA is built via `go generate` in the `webui` directory and embedded using Go 1.16's `embed` package.
 
-Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key` and `--openai-key` or in the configuration file. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`.  Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`.
+Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key` and `--openai-key` or in the configuration file. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble` engines. When using PebbleDB a directory path may be supplied instead of a file. Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`.
+Run `subtitle-manager migrate old.db newdir` to copy existing subtitle history from SQLite to PebbleDB.
 
 Example configuration:
 
