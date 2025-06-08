@@ -77,19 +77,24 @@ func (p *PebbleStore) ListSubtitles() ([]SubtitleRecord, error) {
 
 // DeleteSubtitle removes all records matching file from the store.
 func (p *PebbleStore) DeleteSubtitle(file string) error {
-	prefix := []byte("subtitle:file:" + file + ":")
-	iter, err := p.db.NewIter(&pebble.IterOptions{LowerBound: prefix, UpperBound: append(prefix, 0xFF)})
+	iter, err := p.db.NewIter(nil)
 	if err != nil {
 		return err
 	}
 	defer iter.Close()
 	for iter.First(); iter.Valid(); iter.Next() {
-		if err := p.db.Delete(iter.Key(), pebble.Sync); err != nil {
+		if !strings.HasPrefix(string(iter.Key()), "subtitle:") {
+			continue
+		}
+		var r SubtitleRecord
+		if err := json.Unmarshal(iter.Value(), &r); err != nil {
 			return err
 		}
+		if r.File == file {
+			if err := p.db.Delete(iter.Key(), pebble.Sync); err != nil {
+				return err
+			}
+		}
 	}
-	if err := iter.Error(); err != nil {
-		return err
-	}
-	return nil
+	return iter.Error()
 }
