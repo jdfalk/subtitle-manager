@@ -26,7 +26,7 @@ var translateCmd = &cobra.Command{
 		if dbPath := viper.GetString("db_path"); dbPath != "" {
 			backend := viper.GetString("db_backend")
 			if store, err := database.OpenStore(dbPath, backend); err == nil {
-				_ = store.InsertSubtitle(&database.SubtitleRecord{File: in, VideoFile: in, Language: lang, Service: service})
+				_ = store.InsertSubtitle(&database.SubtitleRecord{File: in, Language: lang, Service: service})
 				store.Close()
 			} else {
 				logger.Warnf("db open: %v", err)
