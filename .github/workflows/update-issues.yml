@@ -6,7 +6,6 @@ on:
 
 jobs:
   update:
-    if: ${{ hashFiles('issue_updates.txt') != '' }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -14,6 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Update GitHub issues
+        if: ${{ hashFiles('issue_updates.txt') != '' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
