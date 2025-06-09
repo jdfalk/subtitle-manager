@@ -4,7 +4,7 @@ go 1.23.8
 
 require (
 	github.com/asticode/go-astisub v0.34.0
-	github.com/fsnotify/fsnotify v1.8.0
+	github.com/cockroachdb/pebble v1.1.5
 	github.com/google/uuid v1.6.0
 	github.com/mattn/go-sqlite3 v1.14.21
 	github.com/sashabaranov/go-openai v1.40.1
@@ -14,13 +14,14 @@ require (
 	github.com/spf13/viper v1.20.1
 	golang.org/x/crypto v0.39.0
 	golang.org/x/oauth2 v0.25.0
-require github.com/klauspost/compress v1.16.0 // indirect
-
-	github.com/cockroachdb/pebble v1.1.5
+	google.golang.org/grpc v1.67.3
 	google.golang.org/protobuf v1.36.1
 )
 
-require github.com/klauspost/compress v1.16.0 // indirect
+require (
+	github.com/fsnotify/fsnotify v1.8.0 // indirect
+	github.com/klauspost/compress v1.16.0 // indirect
+)
 
 require (
 	github.com/DataDog/zstd v1.4.5 // indirect
@@ -31,7 +32,6 @@ require (
 	github.com/cockroachdb/errors v1.11.3 // indirect
 	github.com/cockroachdb/fifo v0.0.0-20240606204812-0bbfbd93a7ce // indirect
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
-	github.com/cockroachdb/pebble v1.1.5
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06 // indirect
 	github.com/getsentry/sentry-go v0.27.0 // indirect
