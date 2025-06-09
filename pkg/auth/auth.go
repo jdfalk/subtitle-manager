@@ -79,3 +79,25 @@ func ValidateAPIKey(db *sql.DB, key string) (int64, error) {
 	}
 	return userID, nil
 }
+
+// GetOrCreateUser returns the existing user ID for email or inserts a new user
+// with the provided username, email and role if none exists. The password is
+// left empty for OAuth2 users.
+func GetOrCreateUser(db *sql.DB, username, email, role string) (int64, error) {
+	var id int64
+	row := db.QueryRow(`SELECT id FROM users WHERE email = ?`, email)
+	err := row.Scan(&id)
+	if err == nil {
+		return id, nil
+	}
+	if err != sql.ErrNoRows {
+		return 0, err
+	}
+	res, err := db.Exec(`INSERT INTO users (username, password_hash, email, role, created_at) VALUES (?, '', ?, ?, ?)`,
+		username, email, role, time.Now())
+	if err != nil {
+		return 0, err
+	}
+	id, err = res.LastInsertId()
+	return id, err
+}

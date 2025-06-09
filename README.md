@@ -27,6 +27,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
 - Integrated authentication system with password, token, OAuth2 and API key support.
+- GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
 - Minimal React web UI with login page.
 - Role based access control with sensible defaults and session storage in the database.
 
@@ -141,6 +142,9 @@ providers:
     username: myuser
     password: secret
     api_key: token123
+github_client_id: yourClientID
+github_client_secret: yourClientSecret
+github_redirect_url: http://localhost:8080/api/oauth/github/callback
 ```
 
 ### Docker

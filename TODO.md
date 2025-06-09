@@ -21,7 +21,7 @@ This file tracks planned work, architectural decisions, and implementation statu
 4. **Authentication & Authorization**
    - Password authentication with hashed credentials stored in the database. *(implemented)*
    - One time token generation for email logins. *(initial support implemented)*
-   - OAuth2 integration for third party login providers. *(planned)*
+   - OAuth2 integration for third party login providers. *(GitHub provider implemented)*
    - API key management allowing multiple keys per user. *(implemented)*
    - Command line and web interfaces share the same user store and sessions.
    - Role based access control with default `admin`, `user` and `viewer` roles.
