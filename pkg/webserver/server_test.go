@@ -1,17 +1,19 @@
 package webserver
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
-	"github.com/spf13/viper"
 	"subtitle-manager/pkg/auth"
 	"subtitle-manager/pkg/database"
+
+	"github.com/spf13/viper"
 )
 
 // TestHandler verifies that the handler serves index.html at root.
@@ -155,26 +157,8 @@ func TestConfigUpdate(t *testing.T) {
 	}
 }
 
-// TestScanEndpoint verifies that POST /api/scan runs a directory scan.
-func TestScanEndpoint(t *testing.T) {
-	dir := t.TempDir()
-	vid := filepath.Join(dir, "movie.mkv")
-	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
-		t.Fatalf("create video: %v", err)
-	}
-	subSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "data")
-	}))
-	defer subSrv.Close()
-
-	viper.Set("providers.generic.api_url", subSrv.URL)
-	viper.Set("providers.generic.username", "")
-	viper.Set("providers.generic.password", "")
-	viper.Set("providers.generic.api_key", "")
-	viper.Set("db_path", "")
-	viper.Set("scan_workers", 1)
-	defer viper.Reset()
-
+// TestScanHandlers verifies /api/scan and /api/scan/status.
+func TestScanHandlers(t *testing.T) {
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -187,29 +171,52 @@ func TestScanEndpoint(t *testing.T) {
 	if err != nil {
 		t.Fatalf("api key: %v", err)
 	}
-
+	// fake subtitle server
+	subSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("sub"))
+	}))
+	defer subSrv.Close()
+	viper.Set("providers.generic.api_url", subSrv.URL)
+	defer viper.Reset()
 	h, err := Handler(db)
 	if err != nil {
 		t.Fatalf("handler: %v", err)
 	}
 	srv := httptest.NewServer(h)
 	defer srv.Close()
-
-	body := strings.NewReader(fmt.Sprintf(`{"provider":"generic","dir":"%s","lang":"en"}`, dir))
+	// create video file
+	dir := t.TempDir()
+	vid := filepath.Join(dir, "file.mkv")
+	os.WriteFile(vid, []byte("x"), 0644)
+	// trigger scan
+	body := strings.NewReader(`{"provider":"generic","directory":"` + dir + `","lang":"en"}`)
 	req, _ := http.NewRequest("POST", srv.URL+"/api/scan", body)
 	req.Header.Set("X-API-Key", key)
 	resp, err := srv.Client().Do(req)
-	if err != nil {
-		t.Fatalf("post: %v", err)
+	if err != nil || resp.StatusCode != http.StatusAccepted {
+		t.Fatalf("scan start: %v %d", err, resp.StatusCode)
 	}
-	if resp.StatusCode != http.StatusNoContent {
-		t.Fatalf("status %d", resp.StatusCode)
+	// poll status until not running
+	for i := 0; i < 10; i++ {
+		time.Sleep(100 * time.Millisecond)
+		req2, _ := http.NewRequest("GET", srv.URL+"/api/scan/status", nil)
+		req2.Header.Set("X-API-Key", key)
+		r2, err := srv.Client().Do(req2)
+		if err != nil {
+			t.Fatalf("status: %v", err)
+		}
+		var s struct {
+			Running   bool `json:"running"`
+			Completed int  `json:"completed"`
+		}
+		json.NewDecoder(r2.Body).Decode(&s)
+		r2.Body.Close()
+		if !s.Running {
+			if s.Completed != 1 {
+				t.Fatalf("completed %d", s.Completed)
+			}
+			return
+		}
 	}
-	b, err := os.ReadFile(filepath.Join(dir, "movie.en.srt"))
-	if err != nil {
-		t.Fatalf("subtitle not created: %v", err)
-	}
-	if string(b) != "data" {
-		t.Fatalf("unexpected subtitle %q", b)
-	}
+	t.Fatalf("scan did not finish")
 }

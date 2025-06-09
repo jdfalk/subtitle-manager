@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Settings from "./Settings.jsx";
+import Dashboard from "./Dashboard.jsx";
 import "./App.css";
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
   const [authed, setAuthed] = useState(false);
+  const [page, setPage] = useState("dashboard");
 
   useEffect(() => {
     fetch("/api/config").then((res) => {
@@ -46,7 +48,15 @@ function App() {
     );
   }
 
-  return <Settings />;
+  return (
+    <div>
+      <nav>
+        <button onClick={() => setPage("dashboard")}>Dashboard</button>
+        <button onClick={() => setPage("settings")}>Settings</button>
+      </nav>
+      {page === "settings" ? <Settings /> : <Dashboard />}
+    </div>
+  );
 }
 
 export default App;
