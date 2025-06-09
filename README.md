@@ -17,6 +17,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Batch translate multiple files concurrently.
 - Monitor directories and automatically download subtitles.
 - Scan existing libraries and fetch missing or upgraded subtitles.
+- Parse file names and retrieve movie or episode details from TheMovieDB.
 - High performance scanning using concurrent workers.
 - Recursive directory watching with -r flag.
 - Integrate with Sonarr and Radarr using dedicated commands.
