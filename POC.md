@@ -4,7 +4,7 @@ This document enumerates the small steps required to demonstrate a working proto
 
 ## 1. Media Library Scanning
 - [ ] Create `pkg/metadata` package to parse file names and query TheMovieDB for movie/episode details.
-- [ ] Extend database schema with a `media_items` table storing video path, title, season and episode numbers.
+- [x] Extend database schema with a `media_items` table storing video path, title, season and episode numbers.
 - [ ] Add CLI command `scanlib` that uses the new metadata package to populate the table.
 - [ ] Implement REST endpoint `/api/scan` to trigger a library scan from the web UI.
 - [ ] Display scan progress and results in React dashboard.

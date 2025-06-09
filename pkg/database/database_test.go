@@ -75,3 +75,34 @@ func TestDownloadHistory(t *testing.T) {
 		t.Fatalf("expected 0 records, got %d", len(recs))
 	}
 }
+
+func TestMediaItems(t *testing.T) {
+	db, err := Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	if err := InsertMediaItem(db, "video.mkv", "Show", 1, 2); err != nil {
+		t.Fatalf("insert media item: %v", err)
+	}
+
+	items, err := ListMediaItems(db)
+	if err != nil {
+		t.Fatalf("list media items: %v", err)
+	}
+	if len(items) != 1 || items[0].Title != "Show" || items[0].Season != 1 {
+		t.Fatalf("unexpected items %+v", items)
+	}
+
+	if err := DeleteMediaItem(db, "video.mkv"); err != nil {
+		t.Fatalf("delete media item: %v", err)
+	}
+	items, err = ListMediaItems(db)
+	if err != nil {
+		t.Fatalf("list media items: %v", err)
+	}
+	if len(items) != 0 {
+		t.Fatalf("expected 0 items, got %d", len(items))
+	}
+}

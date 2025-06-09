@@ -115,3 +115,7 @@ All notable changes to this project will be documented in this file.
 ## [0.3.7] - 2025-06-24
 ### Added
 - `user list` command to display existing accounts.
+
+## [0.3.8] - 2025-06-25
+### Added
+- `media_items` table to store video metadata for library scanning.
