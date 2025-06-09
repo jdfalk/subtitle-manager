@@ -11,6 +11,8 @@ import (
 
 	"subtitle-manager/pkg/auth"
 	"subtitle-manager/pkg/database"
+	"subtitle-manager/pkg/providers"
+	"subtitle-manager/pkg/scanner"
 	"subtitle-manager/webui"
 )
 
@@ -25,6 +27,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle("/api/oauth/github/login", githubLoginHandler(db))
 	mux.Handle("/api/oauth/github/callback", githubCallbackHandler(db))
 	mux.Handle("/api/config", authMiddleware(db, "basic", configHandler()))
+	mux.Handle("/api/scan", authMiddleware(db, "basic", scanHandler()))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle("/", authMiddleware(db, "read", fsHandler))
 	return mux, nil
@@ -98,5 +101,50 @@ func configHandler() http.Handler {
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
+	})
+}
+
+// scanHandler runs a library scan using the scanner package.
+// It expects a JSON body containing provider, dir, lang and optional upgrade.
+// On success the scan is executed synchronously and HTTP 204 is returned.
+func scanHandler() http.Handler {
+	type scanRequest struct {
+		Provider string `json:"provider"`
+		Dir      string `json:"dir"`
+		Lang     string `json:"lang"`
+		Upgrade  bool   `json:"upgrade"`
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		var req scanRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		p, err := providers.Get(req.Provider, viper.GetString("opensubtitles.api_key"))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		workers := viper.GetInt("scan_workers")
+		var store database.SubtitleStore
+		if dbPath := viper.GetString("db_path"); dbPath != "" {
+			backend := viper.GetString("db_backend")
+			if s, err := database.OpenStore(dbPath, backend); err == nil {
+				store = s
+				defer s.Close()
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
+		if err := scanner.ScanDirectory(r.Context(), req.Dir, req.Lang, req.Provider, p, req.Upgrade, workers, store); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
 	})
 }
