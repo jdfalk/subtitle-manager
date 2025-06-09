@@ -14,7 +14,9 @@ require (
 	github.com/spf13/viper v1.20.1
 	golang.org/x/crypto v0.39.0
 	golang.org/x/oauth2 v0.25.0
-	google.golang.org/grpc v1.67.3
+require github.com/klauspost/compress v1.16.0 // indirect
+
+	github.com/cockroachdb/pebble v1.1.5
 	google.golang.org/protobuf v1.36.1
 )
 

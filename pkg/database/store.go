@@ -14,6 +14,12 @@ type SubtitleStore interface {
 	ListDownloads() ([]DownloadRecord, error)
 	// DeleteDownload removes download records for the specified subtitle file.
 	DeleteDownload(file string) error
+	// InsertDownload stores a download record.
+	InsertDownload(rec *DownloadRecord) error
+	// ListDownloads retrieves all download records sorted by creation time.
+	ListDownloads() ([]DownloadRecord, error)
+	// DeleteDownload removes download records for the specified subtitle file.
+	DeleteDownload(file string) error
 	// Close releases any resources held by the store.
 	Close() error
 }
