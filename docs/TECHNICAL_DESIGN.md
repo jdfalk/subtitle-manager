@@ -375,7 +375,7 @@ To support additional features such as subtitle provider history and media libra
 
 - `providers` – list of configured subtitle providers, credentials and status.
 - `media_items` – records of movies or episodes by unique hash.
-- `downloads` – history of downloaded subtitles with provider references.
+- `downloads` – history of downloaded subtitles with provider references. *Implemented in v0.3.2*
 
 Each migration file is numbered sequentially and includes both `up` and `down` SQL scripts.
 

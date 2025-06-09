@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
 )
@@ -31,6 +32,15 @@ var fetchCmd = &cobra.Command{
 		}
 		if err := os.WriteFile(out, data, 0644); err != nil {
 			return err
+		}
+		if dbPath := viper.GetString("db_path"); dbPath != "" {
+			backend := viper.GetString("db_backend")
+			if store, err := database.OpenStore(dbPath, backend); err == nil {
+				_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: media, Provider: name, Language: lang})
+				store.Close()
+			} else {
+				logger.Warnf("db open: %v", err)
+			}
 		}
 		logger.Infof("downloaded subtitle to %s", out)
 		return nil

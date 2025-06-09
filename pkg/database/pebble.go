@@ -98,3 +98,71 @@ func (p *PebbleStore) DeleteSubtitle(file string) error {
 	}
 	return iter.Error()
 }
+
+// InsertDownload stores a download record in PebbleDB.
+// The ID field is generated when empty.
+func (p *PebbleStore) InsertDownload(rec *DownloadRecord) error {
+	if rec.ID == "" {
+		rec.ID = uuid.NewString()
+	}
+	if rec.CreatedAt.IsZero() {
+		rec.CreatedAt = time.Now()
+	}
+	b, err := json.Marshal(rec)
+	if err != nil {
+		return err
+	}
+	key := []byte("download:" + rec.ID)
+	return p.db.Set(key, b, pebble.Sync)
+}
+
+// ListDownloads returns all download records sorted by creation time descending.
+func (p *PebbleStore) ListDownloads() ([]DownloadRecord, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+	var recs []DownloadRecord
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "download:") {
+			continue
+		}
+		var r DownloadRecord
+		if err := json.Unmarshal(iter.Value(), &r); err != nil {
+			return nil, err
+		}
+		recs = append(recs, r)
+	}
+	if err := iter.Error(); err != nil {
+		return nil, err
+	}
+	sort.Slice(recs, func(i, j int) bool {
+		return recs[i].CreatedAt.After(recs[j].CreatedAt)
+	})
+	return recs, nil
+}
+
+// DeleteDownload removes download records for the given subtitle file.
+func (p *PebbleStore) DeleteDownload(file string) error {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return err
+	}
+	defer iter.Close()
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "download:") {
+			continue
+		}
+		var r DownloadRecord
+		if err := json.Unmarshal(iter.Value(), &r); err != nil {
+			return err
+		}
+		if r.File == file {
+			if err := p.db.Delete(iter.Key(), pebble.Sync); err != nil {
+				return err
+			}
+		}
+	}
+	return iter.Error()
+}

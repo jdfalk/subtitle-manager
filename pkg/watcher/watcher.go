@@ -8,6 +8,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
+	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
 	"subtitle-manager/pkg/scanner"
@@ -28,7 +29,7 @@ func isVideoFile(path string) bool {
 // WatchDirectory monitors dir for new video files and downloads subtitles using
 // provider p for the given language. Subtitles are written next to the media
 // file with the language code appended before the extension.
-func WatchDirectory(ctx context.Context, dir, lang string, p providers.Provider) error {
+func WatchDirectory(ctx context.Context, dir, lang, providerName string, p providers.Provider, store database.SubtitleStore) error {
 	logger := logging.GetLogger("watcher")
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -48,7 +49,7 @@ func WatchDirectory(ctx context.Context, dir, lang string, p providers.Provider)
 			logger.Warnf("watch error: %v", err)
 		case ev := <-w.Events:
 			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(ev.Name) {
-				if err := scanner.ProcessFile(ctx, ev.Name, lang, p, false); err != nil {
+				if err := scanner.ProcessFile(ctx, ev.Name, lang, providerName, p, false, store); err != nil {
 					logger.Warnf("process %s: %v", ev.Name, err)
 				}
 			}
@@ -59,7 +60,7 @@ func WatchDirectory(ctx context.Context, dir, lang string, p providers.Provider)
 // WatchDirectoryRecursive works like WatchDirectory but monitors dir and all
 // of its subdirectories. New directories created while watching are added
 // automatically.
-func WatchDirectoryRecursive(ctx context.Context, dir, lang string, p providers.Provider) error {
+func WatchDirectoryRecursive(ctx context.Context, dir, lang, providerName string, p providers.Provider, store database.SubtitleStore) error {
 	logger := logging.GetLogger("watcher")
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -92,7 +93,7 @@ func WatchDirectoryRecursive(ctx context.Context, dir, lang string, p providers.
 				}
 			}
 			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(ev.Name) {
-				if err := scanner.ProcessFile(ctx, ev.Name, lang, p, false); err != nil {
+				if err := scanner.ProcessFile(ctx, ev.Name, lang, providerName, p, false, store); err != nil {
 					logger.Warnf("process %s: %v", ev.Name, err)
 				}
 			}

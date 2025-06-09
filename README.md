@@ -22,6 +22,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Integrate with Sonarr and Radarr using dedicated commands.
 - Run a translation gRPC server.
 - Delete subtitle files and remove history records.
+- Track subtitle download history and list with `downloads` command.
 - Provider registry simplifies adding new sources.
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
@@ -112,6 +113,7 @@ subtitle-manager watch opensubtitles [directory] [lang] [-r]
 subtitle-manager watch subscene [directory] [lang] [-r]
 subtitle-manager grpc-server --addr :50051
 subtitle-manager delete [file]
+subtitle-manager downloads
 subtitle-manager login [username] [password]
 subtitle-manager user add [username] [email] [password]
 subtitle-manager user apikey [username]
