@@ -24,13 +24,12 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Delete subtitle files and remove history records.
 - Track subtitle download history and list with `downloads` command.
 - GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
-- Track subtitle download history and list with `downloads` command.
+- Manually search for subtitles with `search` command.
 - Provider registry simplifies adding new sources.
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
 - Integrated authentication system with password, token, OAuth2 and API key support.
 - Generate one time login tokens using `user token` and authenticate with `login-token`.
-- GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
 - Minimal React web UI with login page.
 - Role based access control with sensible defaults and session storage in the database.
 
@@ -114,6 +113,7 @@ subtitle-manager history
 subtitle-manager extract [media] [output]
 subtitle-manager fetch opensubtitles [media] [lang] [output]
 subtitle-manager fetch subscene [media] [lang] [output]
+subtitle-manager search opensubtitles [media] [lang]
 subtitle-manager batch [lang] [files...]
 subtitle-manager scan opensubtitles [directory] [lang] [-u]
 subtitle-manager scan subscene [directory] [lang] [-u]

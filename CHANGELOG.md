@@ -108,3 +108,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - One time login tokens with `user token` and `login-token` commands.
 
+## [0.3.6] - 2025-06-24
+### Added
+- Manual subtitle search command with `search` functionality.
+

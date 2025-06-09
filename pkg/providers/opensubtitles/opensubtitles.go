@@ -40,8 +40,8 @@ func New(apiKey string) *Client {
 	}
 }
 
-// Fetch downloads the first matching subtitle for mediaPath in lang.
-func (c *Client) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error) {
+// Search returns download URLs for matching subtitles without downloading them.
+func (c *Client) Search(ctx context.Context, mediaPath, lang string) ([]string, error) {
 	hash, size, err := fileHashFunc(mediaPath)
 	if err != nil {
 		return nil, err
@@ -69,10 +69,23 @@ func (c *Client) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, err
 	if err := json.NewDecoder(resp.Body).Decode(&results); err != nil {
 		return nil, err
 	}
-	if len(results) == 0 {
+	urls := make([]string, len(results))
+	for i, r := range results {
+		urls[i] = r.SubDownloadLink
+	}
+	return urls, nil
+}
+
+// Fetch downloads the first matching subtitle for mediaPath in lang.
+func (c *Client) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error) {
+	urls, err := c.Search(ctx, mediaPath, lang)
+	if err != nil {
+		return nil, err
+	}
+	if len(urls) == 0 {
 		return nil, fmt.Errorf("no subtitles found")
 	}
-	dlReq, err := http.NewRequestWithContext(ctx, http.MethodGet, results[0].SubDownloadLink, nil)
+	dlReq, err := http.NewRequestWithContext(ctx, http.MethodGet, urls[0], nil)
 	if err != nil {
 		return nil, err
 	}

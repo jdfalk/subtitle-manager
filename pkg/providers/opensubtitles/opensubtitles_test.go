@@ -45,6 +45,26 @@ func TestFetch(t *testing.T) {
 	}
 }
 
+// TestSearch lists download links without downloading.
+func TestSearch(t *testing.T) {
+	srv := httptest.NewServer(mockHandler{})
+	defer srv.Close()
+	c := New("")
+	c.APIURL = srv.URL
+	c.HTTPClient = srv.Client()
+	orig := fileHashFunc
+	fileHashFunc = func(string) (uint64, int64, error) { return 1, 1, nil }
+	defer func() { fileHashFunc = orig }()
+
+	urls, err := c.Search(context.Background(), "dummy.mkv", "en")
+	if err != nil {
+		t.Fatalf("search error: %v", err)
+	}
+	if len(urls) != 1 || !strings.Contains(urls[0], "/download") {
+		t.Fatalf("unexpected urls: %v", urls)
+	}
+}
+
 // TestNewUsesConfig verifies that viper settings override defaults.
 func TestNewUsesConfig(t *testing.T) {
 	viper.Set("opensubtitles.api_url", "http://api")
