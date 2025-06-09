@@ -16,16 +16,16 @@ func TestMigrateToPebble(t *testing.T) {
 	if err := s.InsertDownload(&DownloadRecord{File: "b.srt", VideoFile: "b.mkv", Provider: "p", Language: "en"}); err != nil {
 		t.Fatalf("insert download: %v", err)
 	}
-	dRecs, err := p.ListDownloads()
+
+	// Verify data in SQLite before migration
+	dRecs, err := s.ListDownloads()
 	if err != nil {
 		t.Fatalf("list downloads: %v", err)
 	}
 	if len(dRecs) != 1 || dRecs[0].File != "b.srt" {
 		t.Fatalf("unexpected download records %+v", dRecs)
 	}
-	if err := s.InsertDownload(&DownloadRecord{File: "b.srt", VideoFile: "b.mkv", Provider: "p", Language: "en"}); err != nil {
-		t.Fatalf("insert download: %v", err)
-	}
+
 	s.Close()
 
 	if err := MigrateToPebble(sqlitePath, pebblePath); err != nil {
@@ -45,7 +45,7 @@ func TestMigrateToPebble(t *testing.T) {
 	if len(recs) != 1 || recs[0].File != "a.srt" {
 		t.Fatalf("unexpected records %+v", recs)
 	}
-	dRecs, err := p.ListDownloads()
+	dRecs, err = p.ListDownloads()
 	if err != nil {
 		t.Fatalf("list downloads: %v", err)
 	}
