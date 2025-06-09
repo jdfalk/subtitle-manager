@@ -15,6 +15,10 @@
 - Role based access control enforced on web routes.
 - `user role` command to modify user permissions.
 
+## [0.3.5] - 2025-06-23
+### Added
+- One time login tokens with `user token` and `login-token` commands.
+
 ## [0.3.2] - 2025-06-20
 ### Added
 - Download history stored in database with new `downloads` command.

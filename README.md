@@ -29,6 +29,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
 - Integrated authentication system with password, token, OAuth2 and API key support.
+- Generate one time login tokens using `user token` and authenticate with `login-token`.
 - GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
 - Minimal React web UI with login page.
 - Role based access control with sensible defaults and session storage in the database.
@@ -122,8 +123,10 @@ subtitle-manager grpc-server --addr :50051
 subtitle-manager delete [file]
 subtitle-manager downloads
 subtitle-manager login [username] [password]
+subtitle-manager login-token [token]
 subtitle-manager user add [username] [email] [password]
 subtitle-manager user apikey [username]
+subtitle-manager user token [email]
 subtitle-manager user role [username] [role]
 ```
 

@@ -70,6 +70,31 @@ var apiKeyCmd = &cobra.Command{
 	},
 }
 
+var userTokenCmd = &cobra.Command{
+	Use:   "token [email]",
+	Args:  cobra.ExactArgs(1),
+	Short: "Generate one time login token",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		email := args[0]
+		db, err := database.Open(viper.GetString("db_path"))
+		if err != nil {
+			return err
+		}
+		defer db.Close()
+		var id int64
+		row := db.QueryRow(`SELECT id FROM users WHERE email = ?`, email)
+		if err := row.Scan(&id); err != nil {
+			return err
+		}
+		token, err := auth.GenerateOneTimeToken(db, id, time.Hour)
+		if err != nil {
+			return err
+		}
+		cmd.Println("Token:", token)
+		return nil
+	},
+}
+
 var loginCmd = &cobra.Command{
 	Use:   "login [username] [password]",
 	Args:  cobra.ExactArgs(2),
@@ -94,10 +119,36 @@ var loginCmd = &cobra.Command{
 	},
 }
 
+var loginTokenCmd = &cobra.Command{
+	Use:   "login-token [token]",
+	Args:  cobra.ExactArgs(1),
+	Short: "Authenticate using a one time token",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		t := args[0]
+		db, err := database.Open(viper.GetString("db_path"))
+		if err != nil {
+			return err
+		}
+		defer db.Close()
+		id, err := auth.ConsumeOneTimeToken(db, t)
+		if err != nil {
+			return err
+		}
+		session, err := auth.GenerateSession(db, id, 24*time.Hour)
+		if err != nil {
+			return err
+		}
+		cmd.Println("Session Token:", session)
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(userCmd)
 	userCmd.AddCommand(userAddCmd)
 	userCmd.AddCommand(apiKeyCmd)
 	userCmd.AddCommand(userRoleCmd)
+	userCmd.AddCommand(userTokenCmd)
 	rootCmd.AddCommand(loginCmd)
+	rootCmd.AddCommand(loginTokenCmd)
 }
