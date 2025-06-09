@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/asticode/go-astisub"
 	"github.com/spf13/viper"
 
 	"subtitle-manager/pkg/auth"
