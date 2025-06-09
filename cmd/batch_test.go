@@ -32,14 +32,14 @@ func TestBatchCmd(t *testing.T) {
 	}
 
 	viper.Set("translate_service", "google")
-	viper.Set("google_api_key", "k")
-	viper.Set("openai_api_key", "")
-	viper.Set("grpc_addr", "")
-	defer viper.Reset()
-	batchCmd.Flags().Parse([]string{"--workers=2"})
-	if err := batchCmd.RunE(batchCmd, append([]string{"es"}, inputs...)); err != nil {
-		t.Fatalf("batch: %v", err)
-	}
+        viper.Set("google_api_key", "k")
+        viper.Set("openai_api_key", "")
+        viper.Set("grpc_addr", "")
+        viper.Set("batch_workers", 2)
+        defer viper.Reset()
+        if err := batchCmd.RunE(batchCmd, append([]string{"es"}, inputs...)); err != nil {
+                t.Fatalf("batch: %v", err)
+        }
 	for _, in := range inputs {
 		out := strings.TrimSuffix(in, filepath.Ext(in)) + ".es.srt"
 		data, err := os.ReadFile(out)

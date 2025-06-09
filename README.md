@@ -127,7 +127,7 @@ The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
 Run `subtitle-manager web` to start the embedded React interface on `:8080`. The SPA is built via `go generate` in the `webui` directory and embedded using Go 1.16's `embed` package.
 
-Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key` and `--openai-key` or in the configuration file. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble` engines. When using PebbleDB a directory path may be supplied instead of a file. Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`. Generic provider options may also be set with variables like `SM_PROVIDERS_GENERIC_API_URL`.
+Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key`, `--openai-key` and `--opensubtitles-key` or in the configuration file. Additional flags include `--ffmpeg-path` for a custom ffmpeg binary, `--batch-workers` and `--scan-workers` to control concurrency. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble` engines. When using PebbleDB a directory path may be supplied instead of a file. Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`. Generic provider options may also be set with variables like `SM_PROVIDERS_GENERIC_API_URL`.
 Run `subtitle-manager migrate old.db newdir` to copy existing subtitle history from SQLite to PebbleDB.
 
 Example configuration:
@@ -137,6 +137,17 @@ log-level: info
 log_levels:
   translate: debug
 translate_service: google
+google_api_key: your-google-api-key
+openai_api_key: your-openai-api-key
+google_api_url: https://translation.googleapis.com/language/translate/v2
+openai_model: gpt-3.5-turbo
+ffmpeg_path: /usr/bin/ffmpeg
+batch_workers: 4
+scan_workers: 4
+opensubtitles:
+  api_key: your-os-key
+  api_url: https://rest.opensubtitles.org
+  user_agent: subtitle-manager/0.1
 providers:
   generic:
     api_url: https://example.com/subtitles
