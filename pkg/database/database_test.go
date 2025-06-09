@@ -75,31 +75,3 @@ func TestDownloadHistory(t *testing.T) {
 		t.Fatalf("expected 0 records, got %d", len(recs))
 	}
 }
-
-func TestDownloadHistory(t *testing.T) {
-	db, err := Open(":memory:")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer db.Close()
-	if err := InsertDownload(db, "file.srt", "video.mkv", "opensubtitles", "en"); err != nil {
-		t.Fatalf("insert download: %v", err)
-	}
-	recs, err := ListDownloads(db)
-	if err != nil {
-		t.Fatalf("list downloads: %v", err)
-	}
-	if len(recs) != 1 || recs[0].Provider != "opensubtitles" {
-		t.Fatalf("unexpected records %+v", recs)
-	}
-	if err := DeleteDownload(db, "file.srt"); err != nil {
-		t.Fatalf("delete download: %v", err)
-	}
-	recs, err = ListDownloads(db)
-	if err != nil {
-		t.Fatalf("list downloads: %v", err)
-	}
-	if len(recs) != 0 {
-		t.Fatalf("expected 0 records, got %d", len(recs))
-	}
-}

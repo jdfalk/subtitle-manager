@@ -34,29 +34,6 @@ type DownloadRecord struct {
 	CreatedAt time.Time
 }
 
-	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS downloads (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        file TEXT NOT NULL,
-        video_file TEXT NOT NULL,
-        provider TEXT NOT NULL,
-        language TEXT NOT NULL,
-        created_at TIMESTAMP NOT NULL
-    )`); err != nil {
-		return err
-	}
-
-// DownloadRecord represents a downloaded subtitle file.
-// File is the path to the subtitle file stored on disk.
-// VideoFile is the media file the subtitle corresponds to.
-type DownloadRecord struct {
-	ID        string
-	File      string
-	VideoFile string
-	Provider  string
-	Language  string
-	CreatedAt time.Time
-}
-
 // SQLStore implements SubtitleStore using an SQLite database.
 type SQLStore struct {
 	db *sql.DB
@@ -155,6 +132,16 @@ func initSchema(db *sql.DB) error {
 	}
 	if count == 0 {
 		if _, err := db.Exec(`INSERT INTO permissions (role, permission) VALUES
+            ('admin', 'all'),
+            ('user', 'read'),
+            ('user', 'download')`); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // InsertDownload stores a download record.
 func (s *SQLStore) InsertDownload(rec *DownloadRecord) error {
 	_, err := s.db.Exec(`INSERT INTO downloads (file, video_file, provider, language, created_at) VALUES (?, ?, ?, ?, ?)`,
@@ -219,15 +206,6 @@ func ListDownloads(db *sql.DB) ([]DownloadRecord, error) {
 func DeleteDownload(db *sql.DB, file string) error {
 	_, err := db.Exec(`DELETE FROM downloads WHERE file = ?`, file)
 	return err
-}
-
-                ('admin', 'all'),
-                ('user', 'basic'),
-                ('viewer', 'read')`); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // Close closes the underlying SQLite database.
@@ -269,39 +247,6 @@ func (s *SQLStore) DeleteSubtitle(file string) error {
 	return err
 }
 
-// InsertDownload stores a download record.
-func (s *SQLStore) InsertDownload(rec *DownloadRecord) error {
-	_, err := s.db.Exec(`INSERT INTO downloads (file, video_file, provider, language, created_at) VALUES (?, ?, ?, ?, ?)`,
-		rec.File, rec.VideoFile, rec.Provider, rec.Language, time.Now())
-	return err
-}
-
-// ListDownloads retrieves download records ordered by most recent.
-func (s *SQLStore) ListDownloads() ([]DownloadRecord, error) {
-	rows, err := s.db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads ORDER BY id DESC`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var recs []DownloadRecord
-	for rows.Next() {
-		var r DownloadRecord
-		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
-			return nil, err
-		}
-		r.ID = strconv.FormatInt(id, 10)
-		recs = append(recs, r)
-	}
-	return recs, rows.Err()
-}
-
-// DeleteDownload removes download records matching file from the database.
-func (s *SQLStore) DeleteDownload(file string) error {
-	_, err := s.db.Exec(`DELETE FROM downloads WHERE file = ?`, file)
-	return err
-}
-
 // InsertSubtitle stores a new subtitle record with associated metadata.
 func InsertSubtitle(db *sql.DB, file, video, lang, service, release string, embedded bool) error {
 	_, err := db.Exec(`INSERT INTO subtitles (file, video_file, release, language, service, embedded, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -334,39 +279,6 @@ func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
 // DeleteSubtitle removes subtitle records matching file from the database.
 func DeleteSubtitle(db *sql.DB, file string) error {
 	_, err := db.Exec(`DELETE FROM subtitles WHERE file = ?`, file)
-	return err
-}
-
-// InsertDownload stores a download record using a raw *sql.DB.
-func InsertDownload(db *sql.DB, file, video, provider, lang string) error {
-	_, err := db.Exec(`INSERT INTO downloads (file, video_file, provider, language, created_at) VALUES (?, ?, ?, ?, ?)`,
-		file, video, provider, lang, time.Now())
-	return err
-}
-
-// ListDownloads retrieves download records using a raw *sql.DB.
-func ListDownloads(db *sql.DB) ([]DownloadRecord, error) {
-	rows, err := db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads ORDER BY id DESC`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var recs []DownloadRecord
-	for rows.Next() {
-		var r DownloadRecord
-		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
-			return nil, err
-		}
-		r.ID = strconv.FormatInt(id, 10)
-		recs = append(recs, r)
-	}
-	return recs, rows.Err()
-}
-
-// DeleteDownload removes download records matching file using a raw *sql.DB.
-func DeleteDownload(db *sql.DB, file string) error {
-	_, err := db.Exec(`DELETE FROM downloads WHERE file = ?`, file)
 	return err
 }
 
