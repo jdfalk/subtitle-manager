@@ -1,0 +1,58 @@
+package cmd
+
+import (
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/spf13/viper"
+
+	"subtitle-manager/pkg/database"
+)
+
+// TestExtractCmdStoresRecord verifies that running the extract command
+// records the generated subtitle in the database.
+func TestExtractCmdStoresRecord(t *testing.T) {
+	dir := t.TempDir()
+	script := filepath.Join(dir, "ffmpeg")
+	data := "#!/bin/sh\ncp ../testdata/simple.srt \"$6\"\n"
+	if err := os.WriteFile(script, []byte(data), 0755); err != nil {
+		t.Fatalf("write script: %v", err)
+	}
+	out := filepath.Join(dir, "out.srt")
+	dbPath := filepath.Join(dir, "test.db")
+
+	origPath := os.Getenv("PATH")
+	os.Setenv("PATH", dir+":"+origPath)
+	defer os.Setenv("PATH", origPath)
+
+	origDB := viper.GetString("db_path")
+	origBackend := viper.GetString("db_backend")
+	viper.Set("db_path", dbPath)
+	viper.Set("db_backend", "sqlite")
+	defer func() {
+		viper.Set("db_path", origDB)
+		viper.Set("db_backend", origBackend)
+	}()
+
+	if err := extractCmd.RunE(extractCmd, []string{"video.mkv", out}); err != nil {
+		t.Fatalf("run: %v", err)
+	}
+
+	db, err := database.Open(dbPath)
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+	recs, err := database.ListSubtitles(db)
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if len(recs) != 1 {
+		t.Fatalf("expected 1 record, got %d", len(recs))
+	}
+	r := recs[0]
+	if r.File != out || r.VideoFile != "video.mkv" || !r.Embedded {
+		t.Fatalf("unexpected record %+v", r)
+	}
+}

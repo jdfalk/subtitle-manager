@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/subtitles"
 )
@@ -34,6 +35,20 @@ var extractCmd = &cobra.Command{
 		defer f.Close()
 		if err := sub.WriteToSRT(f); err != nil {
 			return err
+		}
+		if dbPath := viper.GetString("db_path"); dbPath != "" {
+			backend := viper.GetString("db_backend")
+			if store, err := database.OpenStore(dbPath, backend); err == nil {
+				_ = store.InsertSubtitle(&database.SubtitleRecord{
+					File:      out,
+					VideoFile: media,
+					Service:   "extract",
+					Embedded:  true,
+				})
+				store.Close()
+			} else {
+				logger.Warnf("db open: %v", err)
+			}
 		}
 		logger.Infof("extracted subtitles from %s to %s", media, out)
 		return nil
