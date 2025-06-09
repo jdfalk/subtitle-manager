@@ -20,10 +20,16 @@ import (
 var ErrUnsupportedService = errors.New("unsupported translation service")
 
 var googleAPIURL = "https://translation.googleapis.com/language/translate/v2"
+var openAIModel = openai.GPT3Dot5Turbo
 
 // SetGoogleAPIURL overrides the Google Translate API URL (useful for testing).
 func SetGoogleAPIURL(u string) {
 	googleAPIURL = u
+}
+
+// SetOpenAIModel overrides the default ChatGPT model.
+func SetOpenAIModel(m string) {
+	openAIModel = m
 }
 
 // TranslateFunc defines the function signature for translation services.
@@ -73,7 +79,7 @@ func GoogleTranslate(text, targetLang, apiKey string) (string, error) {
 func GPTTranslate(text, targetLang, apiKey string) (string, error) {
 	client := openai.NewClient(apiKey)
 	req := openai.ChatCompletionRequest{
-		Model: openai.GPT3Dot5Turbo,
+		Model: openAIModel,
 		Messages: []openai.ChatCompletionMessage{
 			{
 				Role:    openai.ChatMessageRoleSystem,

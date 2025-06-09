@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/spf13/viper"
 )
 
 type mockHandler struct{}
@@ -40,5 +42,19 @@ func TestFetch(t *testing.T) {
 	}
 	if string(data) != "sub data" {
 		t.Fatalf("unexpected data: %s", data)
+	}
+}
+
+// TestNewUsesConfig verifies that viper settings override defaults.
+func TestNewUsesConfig(t *testing.T) {
+	viper.Set("opensubtitles.api_url", "http://api")
+	viper.Set("opensubtitles.user_agent", "ua")
+	defer viper.Reset()
+	c := New("k")
+	if c.APIURL != "http://api" {
+		t.Fatalf("expected api_url http://api, got %s", c.APIURL)
+	}
+	if c.UserAgent != "ua" {
+		t.Fatalf("expected user_agent ua, got %s", c.UserAgent)
 	}
 }

@@ -311,17 +311,20 @@ log_levels:
 database: /var/lib/subtitle-manager/app.db
 
 # Translator selection and API keys
-translator: chatgpt
-translator_api_keys:
-  google: YOUR_GOOGLE_API_KEY
-  chatgpt: YOUR_CHATGPT_API_KEY
+translate_service: chatgpt
+google_api_key: YOUR_GOOGLE_API_KEY
+openai_api_key: YOUR_CHATGPT_API_KEY
+google_api_url: https://translation.googleapis.com/language/translate/v2
+openai_model: gpt-3.5-turbo
+ffmpeg_path: /usr/bin/ffmpeg
+batch_workers: 4
+scan_workers: 4
+opensubtitles:
+  api_key: YOUR_OS_API_KEY
+  api_url: https://rest.opensubtitles.org
+  user_agent: subtitle-manager/0.1
 
-# Provider configuration (future)
 providers:
-  opensubtitles:
-    username: myuser
-    password: secret
-    api_url: https://api.opensubtitles.org
   generic:
     api_url: https://example.com/subtitles
     username: myuser

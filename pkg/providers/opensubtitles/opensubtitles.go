@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 // Client implements the providers.Provider interface for OpenSubtitles.
@@ -22,9 +24,17 @@ type Client struct {
 
 // New returns a new Client with the provided API key.
 func New(apiKey string) *Client {
+	apiURL := viper.GetString("opensubtitles.api_url")
+	if apiURL == "" {
+		apiURL = "https://rest.opensubtitles.org"
+	}
+	ua := viper.GetString("opensubtitles.user_agent")
+	if ua == "" {
+		ua = "subtitle-manager/0.1"
+	}
 	return &Client{
-		APIURL:     "https://rest.opensubtitles.org",
-		UserAgent:  "subtitle-manager/0.1",
+		APIURL:     apiURL,
+		UserAgent:  ua,
 		HTTPClient: &http.Client{Timeout: 15 * time.Second},
 		APIKey:     apiKey,
 	}

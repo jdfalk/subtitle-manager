@@ -40,10 +40,6 @@ var translateCmd = &cobra.Command{
 func init() {
 	translateCmd.Flags().String("service", "google", "translation service: google, gpt or grpc")
 	viper.BindPFlag("translate_service", translateCmd.Flags().Lookup("service"))
-	translateCmd.Flags().String("google-key", "", "Google Translate API key")
-	viper.BindPFlag("google_api_key", translateCmd.Flags().Lookup("google-key"))
-	translateCmd.Flags().String("openai-key", "", "OpenAI API key")
-	viper.BindPFlag("openai_api_key", translateCmd.Flags().Lookup("openai-key"))
 	translateCmd.Flags().String("grpc", "", "use remote gRPC translator at host:port")
 	viper.BindPFlag("grpc_addr", translateCmd.Flags().Lookup("grpc"))
 }

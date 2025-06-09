@@ -13,7 +13,6 @@ import (
 )
 
 var upgrade bool
-var scanWorkers int
 
 // scanCmd scans a directory for video files and downloads subtitles.
 var scanCmd = &cobra.Command{
@@ -29,23 +28,23 @@ var scanCmd = &cobra.Command{
 			return err
 		}
 		logger.Infof("scanning %s", dir)
-		ctx := context.Background()
-		var store database.SubtitleStore
-		if dbPath := viper.GetString("db_path"); dbPath != "" {
-			backend := viper.GetString("db_backend")
-			if s, err := database.OpenStore(dbPath, backend); err == nil {
-				store = s
-				defer s.Close()
-			} else {
-				logger.Warnf("db open: %v", err)
-			}
-		}
-		return scanner.ScanDirectory(ctx, dir, lang, name, p, upgrade, scanWorkers, store)
+ctx := context.Background()
+var store database.SubtitleStore
+if dbPath := viper.GetString("db_path"); dbPath != "" {
+	backend := viper.GetString("db_backend")
+	if s, err := database.OpenStore(dbPath, backend); err == nil {
+		store = s
+		defer s.Close()
+	} else {
+		logger.Warnf("db open: %v", err)
+	}
+}
+workers := viper.GetInt("scan_workers")
+return scanner.ScanDirectory(ctx, dir, lang, name, p, upgrade, workers, store)
 	},
 }
 
 func init() {
 	scanCmd.Flags().BoolVarP(&upgrade, "upgrade", "u", false, "replace existing subtitles")
-	scanCmd.Flags().IntVarP(&scanWorkers, "workers", "w", 4, "number of concurrent downloads")
 	rootCmd.AddCommand(scanCmd)
 }

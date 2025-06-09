@@ -8,8 +8,6 @@ import (
 	"subtitle-manager/pkg/subtitles"
 )
 
-var workers int
-
 var batchCmd = &cobra.Command{
 	Use:   "batch [lang] [files...]",
 	Short: "Translate multiple subtitle files concurrently",
@@ -22,6 +20,7 @@ var batchCmd = &cobra.Command{
 		gKey := viper.GetString("google_api_key")
 		gptKey := viper.GetString("openai_api_key")
 		grpcAddr := viper.GetString("grpc_addr")
+		workers := viper.GetInt("batch_workers")
 		if err := subtitles.TranslateFilesToSRT(files, lang, service, gKey, gptKey, grpcAddr, workers); err != nil {
 			return err
 		}
@@ -31,6 +30,5 @@ var batchCmd = &cobra.Command{
 }
 
 func init() {
-	batchCmd.Flags().IntVar(&workers, "workers", 4, "number of concurrent workers")
 	rootCmd.AddCommand(batchCmd)
 }

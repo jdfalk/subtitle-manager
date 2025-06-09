@@ -108,3 +108,13 @@ type mockServer struct {
 func (mockServer) Translate(ctx context.Context, req *pb.TranslateRequest) (*pb.TranslateResponse, error) {
 	return &pb.TranslateResponse{TranslatedText: "hola"}, nil
 }
+
+// TestSetOpenAIModel verifies that the model can be changed.
+func TestSetOpenAIModel(t *testing.T) {
+	orig := openAIModel
+	SetOpenAIModel("test-model")
+	if openAIModel != "test-model" {
+		t.Fatalf("expected test-model, got %s", openAIModel)
+	}
+	SetOpenAIModel(orig)
+}
