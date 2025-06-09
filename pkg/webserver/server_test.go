@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -151,5 +152,64 @@ func TestConfigUpdate(t *testing.T) {
 	}
 	if !strings.Contains(string(data), "test_key: new") {
 		t.Fatalf("config not written")
+	}
+}
+
+// TestScanEndpoint verifies that POST /api/scan runs a directory scan.
+func TestScanEndpoint(t *testing.T) {
+	dir := t.TempDir()
+	vid := filepath.Join(dir, "movie.mkv")
+	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
+		t.Fatalf("create video: %v", err)
+	}
+	subSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "data")
+	}))
+	defer subSrv.Close()
+
+	viper.Set("providers.generic.api_url", subSrv.URL)
+	viper.Set("providers.generic.username", "")
+	viper.Set("providers.generic.password", "")
+	viper.Set("providers.generic.api_key", "")
+	viper.Set("db_path", "")
+	viper.Set("scan_workers", 1)
+	defer viper.Reset()
+
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	body := strings.NewReader(fmt.Sprintf(`{"provider":"generic","dir":"%s","lang":"en"}`, dir))
+	req, _ := http.NewRequest("POST", srv.URL+"/api/scan", body)
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusNoContent {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "movie.en.srt"))
+	if err != nil {
+		t.Fatalf("subtitle not created: %v", err)
+	}
+	if string(b) != "data" {
+		t.Fatalf("unexpected subtitle %q", b)
 	}
 }
