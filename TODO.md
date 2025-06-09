@@ -10,6 +10,7 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Download, manage and upgrade subtitles automatically. *(scan command implemented)*
    - Integrate with media servers (e.g. Plex, Emby, Sonarr, Radarr). *(sonarr/radarr commands added)*
    - Concurrent directory scanning for improved performance.
+   - Manual subtitle search on demand. *(search command implemented)*
 
 2. **Configuration with Cobra & Viper**
    - Centralise configuration using Viper.
