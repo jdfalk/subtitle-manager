@@ -2,12 +2,14 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	"subtitle-manager/pkg/translator"
 	pb "subtitle-manager/pkg/translatorpb/proto"
 )
@@ -37,6 +39,14 @@ type server struct {
 	pb.UnimplementedTranslatorServer
 	googleKey string
 	gptKey    string
+}
+
+func (s *server) GetConfig(ctx context.Context, _ *emptypb.Empty) (*pb.ConfigResponse, error) {
+	out := make(map[string]string)
+	for k, v := range viper.AllSettings() {
+		out[k] = fmt.Sprintf("%v", v)
+	}
+	return &pb.ConfigResponse{Settings: out}, nil
 }
 
 func (s *server) Translate(ctx context.Context, req *pb.TranslateRequest) (*pb.TranslateResponse, error) {
