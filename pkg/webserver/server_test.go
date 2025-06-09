@@ -220,3 +220,57 @@ func TestScanHandlers(t *testing.T) {
 	}
 	t.Fatalf("scan did not finish")
 }
+
+// TestExtract verifies that POST /api/extract returns subtitle items.
+func TestExtract(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+
+	dir := t.TempDir()
+	script := filepath.Join(dir, "ffmpeg")
+	data := "#!/bin/sh\ncp ../../testdata/simple.srt \"$6\"\n"
+	if err := os.WriteFile(script, []byte(data), 0755); err != nil {
+		t.Fatalf("write script: %v", err)
+	}
+	oldPath := os.Getenv("PATH")
+	os.Setenv("PATH", dir+":"+oldPath)
+	defer os.Setenv("PATH", oldPath)
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	body := strings.NewReader(`{"path":"dummy.mkv"}`)
+	req, _ := http.NewRequest("POST", srv.URL+"/api/extract", body)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+	var items []any
+	if err := json.NewDecoder(resp.Body).Decode(&items); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if len(items) == 0 {
+		t.Fatalf("no items returned")
+	}
+}

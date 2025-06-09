@@ -11,8 +11,8 @@ This document enumerates the small steps required to demonstrate a working proto
 
 ## 2. Subtitle Extraction
 - [ ] Expose `subtitles.ExtractFromMedia` via new REST endpoint `/api/extract`.
-- [ ] Allow the UI to request extraction for a selected media item.
- - [x] Store extracted subtitle paths in the database for later reference.
+- [x] Allow the UI to request extraction for a selected media item.
+- [x] Store extracted subtitle paths in the database for later reference.
 
 ## 3. Subtitle Downloading
 - [ ] Implement REST endpoint `/api/download` calling `providers.Get` and `scanner.ProcessFile`.
