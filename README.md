@@ -119,6 +119,7 @@ subtitle-manager search opensubtitles [media] [lang]
 subtitle-manager batch [lang] [files...]
 subtitle-manager scan opensubtitles [directory] [lang] [-u]
 subtitle-manager scan subscene [directory] [lang] [-u]
+subtitle-manager scanlib [directory]
 subtitle-manager watch opensubtitles [directory] [lang] [-r]
 subtitle-manager watch subscene [directory] [lang] [-r]
 subtitle-manager grpc-server --addr :50051

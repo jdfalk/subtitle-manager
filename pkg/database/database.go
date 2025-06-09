@@ -38,11 +38,12 @@ type DownloadRecord struct {
 // Path is the absolute location on disk. Title is the parsed show or movie name.
 // Season and Episode provide optional numbering for TV episodes.
 type MediaItem struct {
-	ID      string
-	Path    string
-	Title   string
-	Season  int
-	Episode int
+	ID        string
+	Path      string
+	Title     string
+	Season    int
+	Episode   int
+	CreatedAt time.Time
 }
 
 // SQLStore implements SubtitleStore using an SQLite database.
@@ -102,7 +103,8 @@ func initSchema(db *sql.DB) error {
         path TEXT NOT NULL,
         title TEXT NOT NULL,
         season INTEGER,
-        episode INTEGER
+        episode INTEGER,
+        created_at TIMESTAMP NOT NULL
     )`); err != nil {
 		return err
 	}
@@ -273,6 +275,39 @@ func DeleteDownload(db *sql.DB, file string) error {
 	return err
 }
 
+// InsertMediaItem stores a media library record.
+func (s *SQLStore) InsertMediaItem(rec *MediaItem) error {
+	_, err := s.db.Exec(`INSERT INTO media_items (path, title, season, episode, created_at) VALUES (?, ?, ?, ?, ?)`,
+		rec.Path, rec.Title, rec.Season, rec.Episode, time.Now())
+	return err
+}
+
+// ListMediaItems retrieves all media items sorted by creation time.
+func (s *SQLStore) ListMediaItems() ([]MediaItem, error) {
+	rows, err := s.db.Query(`SELECT id, path, title, season, episode, created_at FROM media_items ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []MediaItem
+	for rows.Next() {
+		var r MediaItem
+		var id int64
+		if err := rows.Scan(&id, &r.Path, &r.Title, &r.Season, &r.Episode, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// DeleteMediaItem removes a media item matching path.
+func (s *SQLStore) DeleteMediaItem(path string) error {
+	_, err := s.db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
+	return err
+}
+
 // Close closes the underlying SQLite database.
 func (s *SQLStore) Close() error { return s.db.Close() }
 
@@ -347,16 +382,16 @@ func DeleteSubtitle(db *sql.DB, file string) error {
 	return err
 }
 
-// InsertMediaItem stores a library item using a raw *sql.DB.
+// InsertMediaItem stores a media item using a raw *sql.DB.
 func InsertMediaItem(db *sql.DB, path, title string, season, episode int) error {
-	_, err := db.Exec(`INSERT INTO media_items (path, title, season, episode) VALUES (?, ?, ?, ?)`,
-		path, title, season, episode)
+	_, err := db.Exec(`INSERT INTO media_items (path, title, season, episode, created_at) VALUES (?, ?, ?, ?, ?)`,
+		path, title, season, episode, time.Now())
 	return err
 }
 
 // ListMediaItems retrieves media items using a raw *sql.DB.
 func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
-	rows, err := db.Query(`SELECT id, path, title, season, episode FROM media_items ORDER BY id DESC`)
+	rows, err := db.Query(`SELECT id, path, title, season, episode, created_at FROM media_items ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -365,7 +400,7 @@ func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
 	for rows.Next() {
 		var it MediaItem
 		var id int64
-		if err := rows.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode); err != nil {
+		if err := rows.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode, &it.CreatedAt); err != nil {
 			return nil, err
 		}
 		it.ID = strconv.FormatInt(id, 10)
@@ -375,6 +410,22 @@ func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
 }
 
 // DeleteMediaItem removes media items with the given path using a raw *sql.DB.
+=======
+	var recs []MediaItem
+	for rows.Next() {
+		var r MediaItem
+		var id int64
+		if err := rows.Scan(&id, &r.Path, &r.Title, &r.Season, &r.Episode, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// DeleteMediaItem removes a media item using a raw *sql.DB.
+>>>>>>> d8aef35 (feat(scanlib): add library scan command)
 func DeleteMediaItem(db *sql.DB, path string) error {
 	_, err := db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
 	return err

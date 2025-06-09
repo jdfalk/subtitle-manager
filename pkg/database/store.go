@@ -14,6 +14,12 @@ type SubtitleStore interface {
 	ListDownloads() ([]DownloadRecord, error)
 	// DeleteDownload removes download records for the specified subtitle file.
 	DeleteDownload(file string) error
+	// InsertMediaItem stores a media library record.
+	InsertMediaItem(rec *MediaItem) error
+	// ListMediaItems retrieves all media items sorted by creation time.
+	ListMediaItems() ([]MediaItem, error)
+	// DeleteMediaItem removes a record for the specified media path.
+	DeleteMediaItem(path string) error
 	// Close releases any resources held by the store.
 	Close() error
 }
