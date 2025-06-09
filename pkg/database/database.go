@@ -34,6 +34,17 @@ type DownloadRecord struct {
 	CreatedAt time.Time
 }
 
+// MediaItem represents a video file discovered in the library.
+// Path is the absolute location on disk. Title is the parsed show or movie name.
+// Season and Episode provide optional numbering for TV episodes.
+type MediaItem struct {
+	ID      string
+	Path    string
+	Title   string
+	Season  int
+	Episode int
+}
+
 // SQLStore implements SubtitleStore using an SQLite database.
 type SQLStore struct {
 	db *sql.DB
@@ -82,6 +93,16 @@ func initSchema(db *sql.DB) error {
         provider TEXT NOT NULL,
         language TEXT NOT NULL,
         created_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        path TEXT NOT NULL,
+        title TEXT NOT NULL,
+        season INTEGER,
+        episode INTEGER
     )`); err != nil {
 		return err
 	}
@@ -183,6 +204,39 @@ func (s *SQLStore) ListDownloads() ([]DownloadRecord, error) {
 // DeleteDownload removes download records matching file from the database.
 func (s *SQLStore) DeleteDownload(file string) error {
 	_, err := s.db.Exec(`DELETE FROM downloads WHERE file = ?`, file)
+	return err
+}
+
+// InsertMediaItem adds a library entry to the media_items table.
+func (s *SQLStore) InsertMediaItem(item *MediaItem) error {
+	_, err := s.db.Exec(`INSERT INTO media_items (path, title, season, episode) VALUES (?, ?, ?, ?)`,
+		item.Path, item.Title, item.Season, item.Episode)
+	return err
+}
+
+// ListMediaItems retrieves all stored media items ordered by id descending.
+func (s *SQLStore) ListMediaItems() ([]MediaItem, error) {
+	rows, err := s.db.Query(`SELECT id, path, title, season, episode FROM media_items ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MediaItem
+	for rows.Next() {
+		var it MediaItem
+		var id int64
+		if err := rows.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode); err != nil {
+			return nil, err
+		}
+		it.ID = strconv.FormatInt(id, 10)
+		items = append(items, it)
+	}
+	return items, rows.Err()
+}
+
+// DeleteMediaItem removes all records matching path from the database.
+func (s *SQLStore) DeleteMediaItem(path string) error {
+	_, err := s.db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
 	return err
 }
 
@@ -290,6 +344,39 @@ func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
 // DeleteSubtitle removes subtitle records matching file from the database.
 func DeleteSubtitle(db *sql.DB, file string) error {
 	_, err := db.Exec(`DELETE FROM subtitles WHERE file = ?`, file)
+	return err
+}
+
+// InsertMediaItem stores a library item using a raw *sql.DB.
+func InsertMediaItem(db *sql.DB, path, title string, season, episode int) error {
+	_, err := db.Exec(`INSERT INTO media_items (path, title, season, episode) VALUES (?, ?, ?, ?)`,
+		path, title, season, episode)
+	return err
+}
+
+// ListMediaItems retrieves media items using a raw *sql.DB.
+func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
+	rows, err := db.Query(`SELECT id, path, title, season, episode FROM media_items ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MediaItem
+	for rows.Next() {
+		var it MediaItem
+		var id int64
+		if err := rows.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode); err != nil {
+			return nil, err
+		}
+		it.ID = strconv.FormatInt(id, 10)
+		items = append(items, it)
+	}
+	return items, rows.Err()
+}
+
+// DeleteMediaItem removes media items with the given path using a raw *sql.DB.
+func DeleteMediaItem(db *sql.DB, path string) error {
+	_, err := db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
 	return err
 }
 

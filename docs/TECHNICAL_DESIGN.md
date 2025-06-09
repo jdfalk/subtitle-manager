@@ -130,6 +130,18 @@ CREATE TABLE IF NOT EXISTS subtitles (
 CREATE INDEX IF NOT EXISTS subtitles_file_idx ON subtitles(file);
 ```
 
+The library scan feature stores discovered videos in a dedicated table:
+
+```sql
+CREATE TABLE IF NOT EXISTS media_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    path TEXT NOT NULL,
+    title TEXT NOT NULL,
+    season INTEGER,
+    episode INTEGER
+);
+```
+
 ### 5.1 Functions
 
 - `Open(path string) (*sql.DB, error)` – opens or creates the database and runs migrations.
@@ -137,6 +149,8 @@ CREATE INDEX IF NOT EXISTS subtitles_file_idx ON subtitles(file);
 - `OpenStore(path, backend string) (SubtitleStore, error)` – returns either the SQLite or Pebble implementation based on `backend`.
 - `InsertSubtitle(db *sql.DB, file, video, lang, service, release string, embedded bool) error` – inserts a translation record with metadata.
 - `ListSubtitles(db *sql.DB) ([]SubtitleRecord, error)` – retrieves history sorted by most recent.
+- `InsertMediaItem(db *sql.DB, path, title string, season, episode int) error` – records a media file in the library table.
+- `ListMediaItems(db *sql.DB) ([]MediaItem, error)` – retrieves stored library entries.
 
 Each function uses context-aware queries and prepares statements for efficiency.
 
@@ -377,7 +391,7 @@ To support additional features such as subtitle provider history and media libra
 ### 19.1 Planned Tables
 
 - `providers` – list of configured subtitle providers, credentials and status.
-- `media_items` – records of movies or episodes by unique hash.
+- `media_items` – records of movies or episodes by unique hash. *Implemented in v0.3.8*
 - `downloads` – history of downloaded subtitles with provider references. *Implemented in v0.3.2*
 
 Each migration file is numbered sequentially and includes both `up` and `down` SQL scripts.
