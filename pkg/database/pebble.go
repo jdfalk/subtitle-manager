@@ -166,3 +166,68 @@ func (p *PebbleStore) DeleteDownload(file string) error {
 	}
 	return iter.Error()
 }
+
+// InsertMediaItem stores a media item.
+func (p *PebbleStore) InsertMediaItem(rec *MediaItem) error {
+	if rec.ID == "" {
+		rec.ID = uuid.NewString()
+	}
+	if rec.CreatedAt.IsZero() {
+		rec.CreatedAt = time.Now()
+	}
+	b, err := json.Marshal(rec)
+	if err != nil {
+		return err
+	}
+	key := []byte("media:" + rec.ID)
+	return p.db.Set(key, b, pebble.Sync)
+}
+
+// ListMediaItems returns stored media items sorted by creation time.
+func (p *PebbleStore) ListMediaItems() ([]MediaItem, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+	var recs []MediaItem
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "media:") {
+			continue
+		}
+		var r MediaItem
+		if err := json.Unmarshal(iter.Value(), &r); err != nil {
+			return nil, err
+		}
+		recs = append(recs, r)
+	}
+	if err := iter.Error(); err != nil {
+		return nil, err
+	}
+	sort.Slice(recs, func(i, j int) bool { return recs[i].CreatedAt.After(recs[j].CreatedAt) })
+	return recs, nil
+}
+
+// DeleteMediaItem removes records with matching path.
+func (p *PebbleStore) DeleteMediaItem(path string) error {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return err
+	}
+	defer iter.Close()
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "media:") {
+			continue
+		}
+		var r MediaItem
+		if err := json.Unmarshal(iter.Value(), &r); err != nil {
+			return err
+		}
+		if r.Path == path {
+			if err := p.db.Delete(iter.Key(), pebble.Sync); err != nil {
+				return err
+			}
+		}
+	}
+	return iter.Error()
+}

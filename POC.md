@@ -3,14 +3,14 @@
 This document enumerates the small steps required to demonstrate a working prototype of Subtitle Manager with a web interface.
 
 ## 1. Media Library Scanning
-- [ ] Create `pkg/metadata` package to parse file names and query TheMovieDB for movie/episode details.
+- [x] Create `pkg/metadata` package to parse file names and query TheMovieDB for movie/episode details.
 - [x] Extend database schema with a `media_items` table storing video path, title, season and episode numbers.
-- [ ] Add CLI command `scanlib` that uses the new metadata package to populate the table.
+- [x] Add CLI command `scanlib` that uses the new metadata package to populate the table.
 - [ ] Implement REST endpoint `/api/scan` to trigger a library scan from the web UI.
 - [x] Display scan progress and results in React dashboard.
 
 ## 2. Subtitle Extraction
-- [ ] Expose `subtitles.ExtractFromMedia` via new REST endpoint `/api/extract`.
+- [x] Expose `subtitles.ExtractFromMedia` via new REST endpoint `/api/extract`.
 - [x] Allow the UI to request extraction for a selected media item.
 - [x] Store extracted subtitle paths in the database for later reference.
 
