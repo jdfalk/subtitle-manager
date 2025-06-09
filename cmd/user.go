@@ -15,6 +15,26 @@ var userCmd = &cobra.Command{
 	Short: "Manage users",
 }
 
+var userListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all users",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		db, err := database.Open(viper.GetString("db_path"))
+		if err != nil {
+			return err
+		}
+		defer db.Close()
+		users, err := auth.ListUsers(db)
+		if err != nil {
+			return err
+		}
+		for _, u := range users {
+			cmd.Printf("%s\t%s\t%s\t%s\n", u.ID, u.Username, u.Role, u.Email)
+		}
+		return nil
+	},
+}
+
 var userRoleCmd = &cobra.Command{
 	Use:   "role [username] [role]",
 	Args:  cobra.ExactArgs(2),
@@ -148,6 +168,7 @@ func init() {
 	userCmd.AddCommand(userAddCmd)
 	userCmd.AddCommand(apiKeyCmd)
 	userCmd.AddCommand(userRoleCmd)
+	userCmd.AddCommand(userListCmd)
 	userCmd.AddCommand(userTokenCmd)
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(loginTokenCmd)
