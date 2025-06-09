@@ -36,6 +36,7 @@ This file tracks planned work, architectural decisions, and implementation statu
 5. **Database Schema**
    - Design an efficient schema to store subtitle metadata and history.
   - PebbleDB backend implemented with migration from SQLite.
+  - Download history table and command implemented.
 
 6. **Quality Assurance**
    - Unit tests for all packages.

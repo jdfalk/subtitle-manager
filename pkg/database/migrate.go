@@ -12,6 +12,10 @@ func MigrateToPebble(sqlitePath, pebblePath string) error {
 	if err != nil {
 		return err
 	}
+	downloads, err := sqlStore.ListDownloads()
+	if err != nil {
+		return err
+	}
 
 	pebbleStore, err := OpenPebble(pebblePath)
 	if err != nil {
@@ -22,6 +26,12 @@ func MigrateToPebble(sqlitePath, pebblePath string) error {
 	for _, r := range recs {
 		rec := r
 		if err := pebbleStore.InsertSubtitle(&rec); err != nil {
+			return err
+		}
+	}
+	for _, d := range downloads {
+		dr := d
+		if err := pebbleStore.InsertDownload(&dr); err != nil {
 			return err
 		}
 	}

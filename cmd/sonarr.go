@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
 	"subtitle-manager/pkg/scanner"
@@ -33,7 +34,17 @@ var sonarrCmd = &cobra.Command{
 		}
 		ctx := context.Background()
 		logger.Infof("processing %s", path)
-		return scanner.ProcessFile(ctx, path, lang, p, true)
+		var store database.SubtitleStore
+		if dbPath := viper.GetString("db_path"); dbPath != "" {
+			backend := viper.GetString("db_backend")
+			if s, err := database.OpenStore(dbPath, backend); err == nil {
+				store = s
+				defer s.Close()
+			} else {
+				logger.Warnf("db open: %v", err)
+			}
+		}
+		return scanner.ProcessFile(ctx, path, lang, providerName, p, true, store)
 	},
 }
 

@@ -19,7 +19,7 @@ func TestWatchDirectory(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan struct{})
 	go func() {
-		if err := WatchDirectory(ctx, dir, "en", fakeProvider{}); err != context.Canceled {
+		if err := WatchDirectory(ctx, dir, "en", "test", fakeProvider{}, nil); err != context.Canceled {
 			t.Errorf("watch: %v", err)
 		}
 		close(done)
@@ -53,7 +53,7 @@ func TestWatchDirectoryRecursive(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan struct{})
 	go func() {
-		if err := WatchDirectoryRecursive(ctx, dir, "en", fakeProvider{}); err != context.Canceled {
+		if err := WatchDirectoryRecursive(ctx, dir, "en", "test", fakeProvider{}, nil); err != context.Canceled {
 			t.Errorf("watch recursive: %v", err)
 		}
 		close(done)

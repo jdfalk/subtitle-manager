@@ -1,3 +1,7 @@
+## [0.3.2] - 2025-06-20
+### Added
+- Download history stored in database with new `downloads` command.
+
 ## [0.3.1] - 2025-06-19
 ### Added
 - PebbleDB backend with migration command.

@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
 	"subtitle-manager/pkg/watcher"
@@ -27,10 +28,20 @@ var watchCmd = &cobra.Command{
 		}
 		logger.Infof("watching %s", dir)
 		ctx := context.Background()
-		if recursive {
-			return watcher.WatchDirectoryRecursive(ctx, dir, lang, p)
+		var store database.SubtitleStore
+		if dbPath := viper.GetString("db_path"); dbPath != "" {
+			backend := viper.GetString("db_backend")
+			if s, err := database.OpenStore(dbPath, backend); err == nil {
+				store = s
+				defer s.Close()
+			} else {
+				logger.Warnf("db open: %v", err)
+			}
 		}
-		return watcher.WatchDirectory(ctx, dir, lang, p)
+		if recursive {
+			return watcher.WatchDirectoryRecursive(ctx, dir, lang, name, p, store)
+		}
+		return watcher.WatchDirectory(ctx, dir, lang, name, p, store)
 	},
 }
 
