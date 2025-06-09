@@ -1,50 +1,3 @@
-## [0.3.3] - 2025-06-21
-### Added
-- GitHub OAuth2 login support with new web server endpoints.
-
-## [0.3.2] - 2025-06-20
-### Added
-- Download history stored in database with new `downloads` command.
-
-## [0.3.3] - 2025-06-21
-### Added
-- GitHub OAuth2 login support with new web server endpoints.
-
-## [0.3.4] - 2025-06-22
-### Added
-- Role based access control enforced on web routes.
-- `user role` command to modify user permissions.
-
-## [0.3.5] - 2025-06-23
-### Added
-- One time login tokens with `user token` and `login-token` commands.
-
-## [0.3.2] - 2025-06-20
-### Added
-- Download history stored in database with new `downloads` command.
-
-## [0.3.1] - 2025-06-19
-### Added
-- PebbleDB backend with migration command.
-- Configurable database backend via `--db-backend` flag.
-
-## [0.3.0] - 2025-06-18
-### Added
-- Concurrent directory scanning with worker pool.
-- Sonarr and Radarr integration commands.
-- Initial React web UI with login page.
-
-## [0.2.1] - 2025-06-17
-### Added
-- Authentication system supporting password login, one time tokens, OAuth2 and API keys.
-- Simple user manager commands for creating users and generating API keys.
-- RBAC with default roles and database backed session storage.
-
-## [0.2.0] - 2025-06-16
-### Added
-- Library scanning command to automatically download and upgrade subtitles.
-- Updated README and TODO for new feature.
-
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -103,8 +56,7 @@ All notable changes to this project will be documented in this file.
 ## [0.1.8] - 2025-06-13
 ### Added
 - Comprehensive subtitle provider list from Bazarr documented in README and TODO.
-- Implemented Addic7ed, BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi,
-  LegendasDivx and GreekSubs providers.
+- Implemented Addic7ed, BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi, LegendasDivx and GreekSubs providers.
 
 ## [0.1.9] - 2025-06-14
 ### Added
@@ -116,3 +68,43 @@ All notable changes to this project will be documented in this file.
 - Dockerfile and GitHub Actions workflow for container images.
 - Container images published to GitHub Container Registry.
 - Documentation updates describing provider registry and Docker usage.
+
+## [0.2.0] - 2025-06-16
+### Added
+- Library scanning command to automatically download and upgrade subtitles.
+- Updated README and TODO for new feature.
+
+## [0.2.1] - 2025-06-17
+### Added
+- Authentication system supporting password login, one time tokens, OAuth2 and API keys.
+- Simple user manager commands for creating users and generating API keys.
+- RBAC with default roles and database backed session storage.
+
+## [0.3.0] - 2025-06-18
+### Added
+- Concurrent directory scanning with worker pool.
+- Sonarr and Radarr integration commands.
+- Initial React web UI with login page.
+
+## [0.3.1] - 2025-06-19
+### Added
+- PebbleDB backend with migration command.
+- Configurable database backend via `--db-backend` flag.
+
+## [0.3.2] - 2025-06-20
+### Added
+- Download history stored in database with new `downloads` command.
+
+## [0.3.3] - 2025-06-21
+### Added
+- GitHub OAuth2 login support with new web server endpoints.
+
+## [0.3.4] - 2025-06-22
+### Added
+- Role based access control enforced on web routes.
+- `user role` command to modify user permissions.
+
+## [0.3.5] - 2025-06-23
+### Added
+- One time login tokens with `user token` and `login-token` commands.
+
