@@ -32,6 +32,7 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Generate one time login tokens using `user token` and authenticate with `login-token`.
 - Minimal React web UI with login page.
 - Role based access control with sensible defaults and session storage in the database.
+- Manage accounts with `user add`, `user role`, `user token` and `user list` commands.
 
 ### Supported Subtitle Providers
 
@@ -128,6 +129,7 @@ subtitle-manager user add [username] [email] [password]
 subtitle-manager user apikey [username]
 subtitle-manager user token [email]
 subtitle-manager user role [username] [role]
+subtitle-manager user list
 ```
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.

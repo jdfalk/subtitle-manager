@@ -112,3 +112,6 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Manual subtitle search command with `search` functionality.
 
+## [0.3.7] - 2025-06-24
+### Added
+- `user list` command to display existing accounts.

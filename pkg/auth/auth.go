@@ -2,6 +2,7 @@ package auth
 
 import (
 	"database/sql"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -138,4 +139,34 @@ func ConsumeOneTimeToken(db *sql.DB, token string) (int64, error) {
 		return 0, err
 	}
 	return userID, nil
+}
+
+// User represents an account in the system.
+// ID is stored as a string for convenience when printing.
+type User struct {
+	ID        string
+	Username  string
+	Email     string
+	Role      string
+	CreatedAt time.Time
+}
+
+// ListUsers returns all users ordered by ID.
+func ListUsers(db *sql.DB) ([]User, error) {
+	rows, err := db.Query(`SELECT id, username, email, role, created_at FROM users ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []User
+	for rows.Next() {
+		var u User
+		var id int64
+		if err := rows.Scan(&id, &u.Username, &u.Email, &u.Role, &u.CreatedAt); err != nil {
+			return nil, err
+		}
+		u.ID = strconv.FormatInt(id, 10)
+		out = append(out, u)
+	}
+	return out, rows.Err()
 }

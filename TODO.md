@@ -25,7 +25,8 @@ This file tracks planned work, architectural decisions, and implementation statu
    - OAuth2 integration for third party login providers. *(GitHub provider implemented)*
    - API key management allowing multiple keys per user. *(implemented)*
    - Command line and web interfaces share the same user store and sessions.
-  - Download history table and command implemented.
+   - List users via the CLI with `user list`. *(implemented in v0.3.6)*
+   - Download history table and command implemented.
    - Role based access control with default `admin`, `user` and `viewer` roles. *(implemented)*
    - Session data persisted in the database for portability across front ends.
 5. **Subtitle Processing**

@@ -52,3 +52,27 @@ func TestOneTimeToken(t *testing.T) {
 		t.Fatal("expected second consume to fail")
 	}
 }
+
+func TestListUsers(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	defer db.Close()
+	if err := CreateUser(db, "u1", "p1", "e1@example.com", "user"); err != nil {
+		t.Fatalf("create: %v", err)
+	}
+	if err := CreateUser(db, "u2", "p2", "e2@example.com", "admin"); err != nil {
+		t.Fatalf("create2: %v", err)
+	}
+	users, err := ListUsers(db)
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if len(users) != 2 {
+		t.Fatalf("expected 2 users, got %d", len(users))
+	}
+	if users[0].Username != "u1" || users[1].Username != "u2" {
+		t.Fatalf("unexpected users %+v", users)
+	}
+}
