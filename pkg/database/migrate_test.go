@@ -16,6 +16,16 @@ func TestMigrateToPebble(t *testing.T) {
 	if err := s.InsertDownload(&DownloadRecord{File: "b.srt", VideoFile: "b.mkv", Provider: "p", Language: "en"}); err != nil {
 		t.Fatalf("insert download: %v", err)
 	}
+	dRecs, err := p.ListDownloads()
+	if err != nil {
+		t.Fatalf("list downloads: %v", err)
+	}
+	if len(dRecs) != 1 || dRecs[0].File != "b.srt" {
+		t.Fatalf("unexpected download records %+v", dRecs)
+	}
+	if err := s.InsertDownload(&DownloadRecord{File: "b.srt", VideoFile: "b.mkv", Provider: "p", Language: "en"}); err != nil {
+		t.Fatalf("insert download: %v", err)
+	}
 	s.Close()
 
 	if err := MigrateToPebble(sqlitePath, pebblePath); err != nil {

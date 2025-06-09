@@ -23,6 +23,8 @@ Subtitle Manager is a command line application written in Go for converting, mer
 - Run a translation gRPC server.
 - Delete subtitle files and remove history records.
 - Track subtitle download history and list with `downloads` command.
+- GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
+- Track subtitle download history and list with `downloads` command.
 - Provider registry simplifies adding new sources.
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
@@ -87,6 +89,10 @@ services are available:
 - YIFY Subtitles
 - Zimuku
 
+subtitle-manager downloads
+github_client_id: yourClientID
+github_client_secret: yourClientSecret
+github_redirect_url: http://localhost:8080/api/oauth/github/callback
 ## Installation
 
 ```bash

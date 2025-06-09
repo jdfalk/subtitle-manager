@@ -9,6 +9,16 @@ import (
 	"github.com/spf13/viper"
 
 	"subtitle-manager/pkg/database"
+		if dbPath := viper.GetString("db_path"); dbPath != "" {
+			backend := viper.GetString("db_backend")
+			if store, err := database.OpenStore(dbPath, backend); err == nil {
+				_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: media, Provider: name, Language: lang})
+				store.Close()
+			} else {
+				logger.Warnf("db open: %v", err)
+			}
+		}
+	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
 )

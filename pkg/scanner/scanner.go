@@ -9,13 +9,18 @@ import (
 	"github.com/sourcegraph/conc/pool"
 
 	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/logging"
-	"subtitle-manager/pkg/providers"
-)
-
-// ScanDirectory traverses dir looking for video files and downloads subtitles
 // using provider p for the given language. providerName is stored in download
 // history. If upgrade is false existing
+func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p providers.Provider, upgrade bool, workers int, store database.SubtitleStore) error {
+			return ProcessFile(ctx, f, lang, providerName, p, upgrade, store)
+// ProcessFile downloads a subtitle for path using providerName for history
+// tracking. The subtitle is saved next to the media file with the language
+// code appended before the extension. If upgrade is false an existing subtitle
+// file is left untouched.
+func ProcessFile(ctx context.Context, path, lang string, providerName string, p providers.Provider, upgrade bool, store database.SubtitleStore) error {
+	if store != nil {
+		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
+	}
 // subtitle files are skipped. Subtitles are saved next to the video with the
 // language code appended before the extension.
 func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p providers.Provider, upgrade bool, workers int, store database.SubtitleStore) error {
