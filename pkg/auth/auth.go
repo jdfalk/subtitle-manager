@@ -80,6 +80,12 @@ func ValidateAPIKey(db *sql.DB, key string) (int64, error) {
 	return userID, nil
 }
 
+// SetUserRole updates the role for the specified username.
+func SetUserRole(db *sql.DB, username, role string) error {
+	_, err := db.Exec(`UPDATE users SET role = ? WHERE username = ?`, role, username)
+	return err
+}
+
 // GetOrCreateUser returns the existing user ID for email or inserts a new user
 // with the provided username, email and role if none exists. The password is
 // left empty for OAuth2 users.

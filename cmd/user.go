@@ -15,6 +15,21 @@ var userCmd = &cobra.Command{
 	Short: "Manage users",
 }
 
+var userRoleCmd = &cobra.Command{
+	Use:   "role [username] [role]",
+	Args:  cobra.ExactArgs(2),
+	Short: "Set user role",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		username, role := args[0], args[1]
+		db, err := database.Open(viper.GetString("db_path"))
+		if err != nil {
+			return err
+		}
+		defer db.Close()
+		return auth.SetUserRole(db, username, role)
+	},
+}
+
 var userAddCmd = &cobra.Command{
 	Use:   "add [username] [email] [password]",
 	Args:  cobra.ExactArgs(3),
@@ -83,5 +98,6 @@ func init() {
 	rootCmd.AddCommand(userCmd)
 	userCmd.AddCommand(userAddCmd)
 	userCmd.AddCommand(apiKeyCmd)
+	userCmd.AddCommand(userRoleCmd)
 	rootCmd.AddCommand(loginCmd)
 }

@@ -2,6 +2,11 @@
 ### Added
 - GitHub OAuth2 login support with new web server endpoints.
 
+## [0.3.4] - 2025-06-22
+### Added
+- Role based access control enforced on web routes.
+- `user role` command to modify user permissions.
+
 ## [0.3.2] - 2025-06-20
 ### Added
 - Download history stored in database with new `downloads` command.
