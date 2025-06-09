@@ -9,10 +9,9 @@ import (
 	"github.com/fsnotify/fsnotify"
 
 	"subtitle-manager/pkg/database"
-func WatchDirectory(ctx context.Context, dir, lang, providerName string, p providers.Provider, store database.SubtitleStore) error {
-				if err := scanner.ProcessFile(ctx, ev.Name, lang, providerName, p, false, store); err != nil {
-func WatchDirectoryRecursive(ctx context.Context, dir, lang, providerName string, p providers.Provider, store database.SubtitleStore) error {
-				if err := scanner.ProcessFile(ctx, ev.Name, lang, providerName, p, false, store); err != nil {
+	"subtitle-manager/pkg/logging"
+	"subtitle-manager/pkg/providers"
+	"subtitle-manager/pkg/scanner"
 )
 
 var videoExtensions = []string{".mkv", ".mp4", ".avi", ".mov"}
