@@ -11,6 +11,7 @@ import (
 	"subtitle-manager/pkg/providers/betaseries"
 	"subtitle-manager/pkg/providers/bsplayer"
 	"subtitle-manager/pkg/providers/embedded"
+	"subtitle-manager/pkg/providers/generic"
 	"subtitle-manager/pkg/providers/gestdown"
 	"subtitle-manager/pkg/providers/greeksubs"
 	"subtitle-manager/pkg/providers/greeksubtitles"
@@ -66,6 +67,7 @@ var factories = map[string]func() Provider{
 	"bsplayer":         func() Provider { return bsplayer.New() },
 	"embedded":         func() Provider { return embedded.New() },
 	"gestdown":         func() Provider { return gestdown.New() },
+	"generic":          func() Provider { return generic.New() },
 	"greeksubs":        func() Provider { return greeksubs.New() },
 	"greeksubtitles":   func() Provider { return greeksubtitles.New() },
 	"hdbits":           func() Provider { return hdbits.New() },

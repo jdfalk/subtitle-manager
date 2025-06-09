@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"database/sql"
+	"encoding/json"
 	"io/fs"
 	"net/http"
 	"time"
@@ -21,6 +22,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	}
 	mux := http.NewServeMux()
 	mux.Handle("/api/login", loginHandler(db))
+	mux.Handle("/api/config", authMiddleware(db, configHandler()))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle("/", authMiddleware(db, fsHandler))
 	return mux, nil
@@ -60,5 +62,13 @@ func loginHandler(db *sql.DB) http.Handler {
 			return
 		}
 		http.SetCookie(w, &http.Cookie{Name: "session", Value: token, Path: "/", HttpOnly: true})
+	})
+}
+
+// configHandler returns the complete configuration as JSON.
+func configHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(viper.AllSettings())
 	})
 }

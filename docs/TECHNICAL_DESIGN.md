@@ -322,6 +322,11 @@ providers:
     username: myuser
     password: secret
     api_url: https://api.opensubtitles.org
+  generic:
+    api_url: https://example.com/subtitles
+    username: myuser
+    password: secret
+    api_key: token
 ```
 
 The CLI supports environment variable overrides using the prefix `SUBTITLE_MANAGER_`. For example `SUBTITLE_MANAGER_DATABASE=/tmp/test.db` will force the database location.

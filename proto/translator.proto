@@ -2,8 +2,11 @@ syntax = "proto3";
 package translator;
 option go_package = "subtitle-manager/pkg/translatorpb";
 
+import "google/protobuf/empty.proto";
+
 service Translator {
   rpc Translate(TranslateRequest) returns (TranslateResponse);
+  rpc GetConfig(google.protobuf.Empty) returns (ConfigResponse);
 }
 
 message TranslateRequest {
@@ -13,4 +16,8 @@ message TranslateRequest {
 
 message TranslateResponse {
   string translated_text = 1;
+}
+
+message ConfigResponse {
+  map<string, string> settings = 1;
 }

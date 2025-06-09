@@ -62,6 +62,10 @@ func initConfig() {
 		viper.SetConfigName(".subtitle-manager")
 		viper.SetDefault("db_path", filepath.Join(home, ".subtitle-manager.db"))
 		viper.SetDefault("db_backend", "sqlite")
+		viper.SetDefault("providers.generic.api_url", "")
+		viper.SetDefault("providers.generic.username", "")
+		viper.SetDefault("providers.generic.password", "")
+		viper.SetDefault("providers.generic.api_key", "")
 	}
 
 	if err := viper.ReadInConfig(); err == nil {
