@@ -118,6 +118,7 @@ subtitle-manager downloads
 subtitle-manager login [username] [password]
 subtitle-manager user add [username] [email] [password]
 subtitle-manager user apikey [username]
+subtitle-manager user role [username] [role]
 ```
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
