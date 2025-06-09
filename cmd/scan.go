@@ -7,17 +7,6 @@ import (
 	"github.com/spf13/viper"
 
 	"subtitle-manager/pkg/database"
-		var store database.SubtitleStore
-		if dbPath := viper.GetString("db_path"); dbPath != "" {
-			backend := viper.GetString("db_backend")
-			if s, err := database.OpenStore(dbPath, backend); err == nil {
-				store = s
-				defer s.Close()
-			} else {
-				logger.Warnf("db open: %v", err)
-			}
-		}
-		return scanner.ScanDirectory(ctx, dir, lang, name, p, upgrade, workers, store)
 	"subtitle-manager/pkg/logging"
 	"subtitle-manager/pkg/providers"
 	"subtitle-manager/pkg/scanner"
@@ -39,19 +28,19 @@ var scanCmd = &cobra.Command{
 			return err
 		}
 		logger.Infof("scanning %s", dir)
-ctx := context.Background()
-var store database.SubtitleStore
-if dbPath := viper.GetString("db_path"); dbPath != "" {
-	backend := viper.GetString("db_backend")
-	if s, err := database.OpenStore(dbPath, backend); err == nil {
-		store = s
-		defer s.Close()
-	} else {
-		logger.Warnf("db open: %v", err)
-	}
-}
-workers := viper.GetInt("scan_workers")
-return scanner.ScanDirectory(ctx, dir, lang, name, p, upgrade, workers, store)
+		ctx := context.Background()
+		var store database.SubtitleStore
+		if dbPath := viper.GetString("db_path"); dbPath != "" {
+			backend := viper.GetString("db_backend")
+			if s, err := database.OpenStore(dbPath, backend); err == nil {
+				store = s
+				defer s.Close()
+			} else {
+				logger.Warnf("db open: %v", err)
+			}
+		}
+		workers := viper.GetInt("scan_workers")
+		return scanner.ScanDirectory(ctx, dir, lang, name, p, upgrade, workers, store)
 	},
 }
 
