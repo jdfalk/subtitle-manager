@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import Settings from "./Settings.jsx";
-import Dashboard from "./Dashboard.jsx";
 import "./App.css";
+import Dashboard from "./Dashboard.jsx";
+import Extract from "./Extract.jsx";
+import Settings from "./Settings.jsx";
 
 function App() {
   const [username, setUsername] = useState("");
@@ -53,8 +54,9 @@ function App() {
       <nav>
         <button onClick={() => setPage("dashboard")}>Dashboard</button>
         <button onClick={() => setPage("settings")}>Settings</button>
+        <button onClick={() => setPage("extract")}>Extract</button>
       </nav>
-      {page === "settings" ? <Settings /> : <Dashboard />}
+      {page === "settings" ? <Settings /> : page === "extract" ? <Extract /> : <Dashboard />}
     </div>
   );
 }

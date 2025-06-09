@@ -11,6 +11,7 @@ import (
 
 	"subtitle-manager/pkg/auth"
 	"subtitle-manager/pkg/database"
+	"subtitle-manager/pkg/subtitles"
 	"subtitle-manager/webui"
 )
 
@@ -27,6 +28,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle("/api/config", authMiddleware(db, "basic", configHandler()))
 	mux.Handle("/api/scan", authMiddleware(db, "basic", scanHandler()))
 	mux.Handle("/api/scan/status", authMiddleware(db, "basic", scanStatusHandler()))
+	mux.Handle("/api/extract", authMiddleware(db, "basic", extractHandler()))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle("/", authMiddleware(db, "read", fsHandler))
 	return mux, nil
@@ -100,5 +102,33 @@ func configHandler() http.Handler {
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
+	})
+}
+
+// extractHandler extracts subtitles from the provided media file.
+//
+// POST requests expect a JSON body `{"path":"/file.mkv"}`. The subtitle items
+// extracted by subtitles.ExtractFromMedia are returned as JSON.
+func extractHandler() http.Handler {
+	type req struct {
+		Path string `json:"path"`
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		var q req
+		if err := json.NewDecoder(r.Body).Decode(&q); err != nil || q.Path == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		items, err := subtitles.ExtractFromMedia(q.Path)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(items)
 	})
 }
