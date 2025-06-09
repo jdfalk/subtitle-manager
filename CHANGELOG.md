@@ -122,3 +122,5 @@ All notable changes to this project will be documented in this file.
 - Library scan command `scanlib` populating the `media_items` table.
 - REST endpoint `/api/extract` exposing subtitle extraction from media.
 - `media_items` table to store video metadata for library scanning.
+- Library scan command `scanlib` populating the `media_items` table.
+- REST endpoint `/api/extract` exposing subtitle extraction from media.

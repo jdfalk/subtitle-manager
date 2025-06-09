@@ -383,6 +383,22 @@ func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
 }
 
 // DeleteMediaItem removes media items with the given path using a raw *sql.DB.
+=======
+	var recs []MediaItem
+	for rows.Next() {
+		var r MediaItem
+		var id int64
+		if err := rows.Scan(&id, &r.Path, &r.Title, &r.Season, &r.Episode, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// DeleteMediaItem removes a media item using a raw *sql.DB.
+>>>>>>> d8aef35 (feat(scanlib): add library scan command)
 func DeleteMediaItem(db *sql.DB, path string) error {
 	_, err := db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
 	return err
