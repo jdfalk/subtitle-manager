@@ -7,7 +7,7 @@ This document enumerates the small steps required to demonstrate a working proto
 - [x] Extend database schema with a `media_items` table storing video path, title, season and episode numbers.
 - [ ] Add CLI command `scanlib` that uses the new metadata package to populate the table.
 - [ ] Implement REST endpoint `/api/scan` to trigger a library scan from the web UI.
-- [ ] Display scan progress and results in React dashboard.
+- [x] Display scan progress and results in React dashboard.
 
 ## 2. Subtitle Extraction
 - [ ] Expose `subtitles.ExtractFromMedia` via new REST endpoint `/api/extract`.
