@@ -19,7 +19,7 @@ require (
 )
 
 require (
-	github.com/fsnotify/fsnotify v1.8.0 // indirect
+	github.com/fsnotify/fsnotify v1.8.0
 	github.com/klauspost/compress v1.16.0 // indirect
 )
 
