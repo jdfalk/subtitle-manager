@@ -24,8 +24,6 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle("/api/login", loginHandler(db))
 	mux.Handle("/api/oauth/github/login", githubLoginHandler(db))
 	mux.Handle("/api/oauth/github/callback", githubCallbackHandler(db))
-	mux.Handle("/api/oauth/github/login", githubLoginHandler(db))
-	mux.Handle("/api/oauth/github/callback", githubCallbackHandler(db))
 	mux.Handle("/api/config", authMiddleware(db, "basic", configHandler()))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle("/", authMiddleware(db, "read", fsHandler))

@@ -1,25 +1,167 @@
 # If you prefer the allow list template instead of the deny list, see community template:
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
+
+# ==============================================================================
+# Go
+# ==============================================================================
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
+subtitle-manager
+subtitle-manager.exe
 
 # Test binary, built with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+*.cover
+coverage.html
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Dependency directories
+vendor/
 
 # Go workspace file
 go.work
 go.work.sum
 
-# env file
+# Module download cache
+go/pkg/mod/
+
+# Build directories
+bin/
+dist/
+build/
+
+# ==============================================================================
+# IDE & Editors
+# ==============================================================================
+
+# Visual Studio Code
+# .vscode/settings.json    # Uncomment to ignore personal settings
+# .vscode/launch.json      # Uncomment to ignore personal launch configs
+# .vscode/extensions.json  # Uncomment to ignore personal extension recommendations
+# .vscode/tasks.json       # Uncomment to ignore shared tasks
+.vscode/c_cpp_properties.json
+
+# GoLand/IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# ==============================================================================
+# Operating Systems
+# ==============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+*.lnk
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.stackdump
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==============================================================================
+# Application Specific
+# ==============================================================================
+
+# Environment files
 .env
+.env.local
+.env.*.local
+
+# Log files
+*.log
+logs/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary subtitle files
+*.srt.bak
+*.ass.bak
+*.vtt.bak
+
+# Configuration overrides
+config.local.yaml
+config.local.json
+
+# PID files
+*.pid
+
+# Node modules (for webui)
+node_modules/
+
+# NPM/Yarn logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Generated files
+*.pb.go
+*_gen.go
+webui/dist/
