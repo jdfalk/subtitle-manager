@@ -3,8 +3,12 @@ package webserver
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/spf13/viper"
 	"subtitle-manager/pkg/auth"
 	"subtitle-manager/pkg/database"
 )
@@ -93,5 +97,59 @@ func TestRBAC(t *testing.T) {
 	}
 	if resp2.StatusCode != http.StatusOK {
 		t.Fatalf("admin status %d", resp2.StatusCode)
+	}
+}
+
+// TestConfigUpdate verifies that POST /api/config updates and persists values.
+func TestConfigUpdate(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	akey, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("admin key: %v", err)
+	}
+
+	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
+	viper.SetConfigFile(tmp)
+	viper.Set("test_key", "old")
+	if err := viper.WriteConfig(); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	defer viper.Reset()
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	body := strings.NewReader(`{"test_key":"new"}`)
+	req, _ := http.NewRequest("POST", srv.URL+"/api/config", body)
+	req.Header.Set("X-API-Key", akey)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusNoContent {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+
+	if viper.GetString("test_key") != "new" {
+		t.Fatalf("viper not updated")
+	}
+	data, err := os.ReadFile(tmp)
+	if err != nil {
+		t.Fatalf("read cfg: %v", err)
+	}
+	if !strings.Contains(string(data), "test_key: new") {
+		t.Fatalf("config not written")
 	}
 }

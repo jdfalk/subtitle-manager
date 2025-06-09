@@ -136,6 +136,8 @@ The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
 Run `subtitle-manager web` to start the embedded React interface on `:8080`. The SPA is built via `go generate` in the `webui` directory and embedded using Go 1.16's `embed` package.
 
+The interface now exposes a **Settings** page that mirrors Bazarr's options. Configuration values are retrieved from `/api/config` and saved back via a `POST` to the same endpoint. Any changes are written to the active YAML configuration file.
+
 Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key`, `--openai-key` and `--opensubtitles-key` or in the configuration file. Additional flags include `--ffmpeg-path` for a custom ffmpeg binary, `--batch-workers` and `--scan-workers` to control concurrency. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble` engines. When using PebbleDB a directory path may be supplied instead of a file. Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`. Generic provider options may also be set with variables like `SM_PROVIDERS_GENERIC_API_URL`.
 Run `subtitle-manager migrate old.db newdir` to copy existing subtitle history from SQLite to PebbleDB.
 

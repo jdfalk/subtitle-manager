@@ -68,9 +68,35 @@ func loginHandler(db *sql.DB) http.Handler {
 }
 
 // configHandler returns the complete configuration as JSON.
+// configHandler handles reading and updating configuration values.
+//
+// GET requests return the current configuration as JSON. POST requests accept a
+// JSON body of key/value pairs which are written into Viper and persisted to the
+// config file if one is in use.
 func configHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(viper.AllSettings())
+		switch r.Method {
+		case http.MethodGet:
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(viper.AllSettings())
+		case http.MethodPost:
+			var vals map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&vals); err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			for k, v := range vals {
+				viper.Set(k, v)
+			}
+			if cfg := viper.ConfigFileUsed(); cfg != "" {
+				if err := viper.WriteConfig(); err != nil {
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+			}
+			w.WriteHeader(http.StatusNoContent)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
 	})
 }
