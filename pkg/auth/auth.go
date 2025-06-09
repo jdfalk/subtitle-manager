@@ -107,3 +107,35 @@ func SetUserRole(db *sql.DB, username, role string) error {
 	_, err := db.Exec(`UPDATE users SET role = ? WHERE username = ?`, role, username)
 	return err
 }
+
+// GenerateOneTimeToken creates a single-use login token for the user.
+// The token expires after the provided duration.
+func GenerateOneTimeToken(db *sql.DB, userID int64, duration time.Duration) (string, error) {
+	token := uuid.NewString()
+	expires := time.Now().Add(duration)
+	_, err := db.Exec(`INSERT INTO login_tokens (user_id, token, expires_at, used, created_at) VALUES (?, ?, ?, 0, ?)`,
+		userID, token, expires, time.Now())
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+
+// ConsumeOneTimeToken validates and marks the token as used.
+// It returns the associated user ID when successful.
+func ConsumeOneTimeToken(db *sql.DB, token string) (int64, error) {
+	var userID int64
+	var expires time.Time
+	var used int
+	row := db.QueryRow(`SELECT user_id, expires_at, used FROM login_tokens WHERE token = ?`, token)
+	if err := row.Scan(&userID, &expires, &used); err != nil {
+		return 0, err
+	}
+	if used == 1 || time.Now().After(expires) {
+		return 0, sql.ErrNoRows
+	}
+	if _, err := db.Exec(`UPDATE login_tokens SET used = 1 WHERE token = ?`, token); err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
