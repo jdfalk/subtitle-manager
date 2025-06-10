@@ -209,38 +209,11 @@ func (s *SQLStore) DeleteDownload(file string) error {
 	return err
 }
 
-// InsertMediaItem adds a library entry to the media_items table.
-func (s *SQLStore) InsertMediaItem(item *MediaItem) error {
-	_, err := s.db.Exec(`INSERT INTO media_items (path, title, season, episode) VALUES (?, ?, ?, ?)`,
-		item.Path, item.Title, item.Season, item.Episode)
-	return err
-}
+// (Removed duplicate InsertMediaItem method - keeping the version with created_at)
 
-// ListMediaItems retrieves all stored media items ordered by id descending.
-func (s *SQLStore) ListMediaItems() ([]MediaItem, error) {
-	rows, err := s.db.Query(`SELECT id, path, title, season, episode FROM media_items ORDER BY id DESC`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []MediaItem
-	for rows.Next() {
-		var it MediaItem
-		var id int64
-		if err := rows.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode); err != nil {
-			return nil, err
-		}
-		it.ID = strconv.FormatInt(id, 10)
-		items = append(items, it)
-	}
-	return items, rows.Err()
-}
+// (Removed duplicate ListMediaItems method - keeping the version with created_at)
 
-// DeleteMediaItem removes all records matching path from the database.
-func (s *SQLStore) DeleteMediaItem(path string) error {
-	_, err := s.db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
-	return err
-}
+// (Removed duplicate DeleteMediaItem method - keeping the version with created_at)
 
 // InsertDownload stores a download record using a raw *sql.DB.
 func InsertDownload(db *sql.DB, file, video, provider, lang string) error {
@@ -410,22 +383,6 @@ func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
 }
 
 // DeleteMediaItem removes media items with the given path using a raw *sql.DB.
-=======
-	var recs []MediaItem
-	for rows.Next() {
-		var r MediaItem
-		var id int64
-		if err := rows.Scan(&id, &r.Path, &r.Title, &r.Season, &r.Episode, &r.CreatedAt); err != nil {
-			return nil, err
-		}
-		r.ID = strconv.FormatInt(id, 10)
-		recs = append(recs, r)
-	}
-	return recs, rows.Err()
-}
-
-// DeleteMediaItem removes a media item using a raw *sql.DB.
->>>>>>> d8aef35 (feat(scanlib): add library scan command)
 func DeleteMediaItem(db *sql.DB, path string) error {
 	_, err := db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
 	return err

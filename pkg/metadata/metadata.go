@@ -7,10 +7,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"subtitle-manager/pkg/database"
 )
 
 var tmdbAPIBase = "https://api.themoviedb.org/3"
@@ -171,4 +174,63 @@ func QueryEpisode(ctx context.Context, show string, season, episode int, apiKey 
 		return nil, err
 	}
 	return &MediaInfo{Type: TypeEpisode, Title: showName, Season: season, Episode: episode, EpisodeTitle: er.Name, TMDBID: er.ID}, nil
+}
+
+// ScanLibrary walks a directory tree and inserts video files into the media database.
+// It parses filenames to extract metadata and stores the results using the provided store.
+func ScanLibrary(ctx context.Context, dir string, store interface{}) error {
+	// Import the database types we need
+	type MediaStore interface {
+		InsertMediaItem(*database.MediaItem) error
+	}
+
+	mediaStore, ok := store.(MediaStore)
+	if !ok {
+		return fmt.Errorf("store does not implement MediaItem methods")
+	}
+
+	// Supported video extensions
+	videoExts := map[string]bool{
+		".mp4": true, ".mkv": true, ".avi": true, ".mov": true,
+		".wmv": true, ".flv": true, ".webm": true, ".m4v": true,
+	}
+
+	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip directories and non-video files
+		if info.IsDir() {
+			return nil
+		}
+
+		ext := strings.ToLower(filepath.Ext(path))
+		if !videoExts[ext] {
+			return nil
+		}
+
+		// Parse the filename to extract metadata
+		mediaInfo, err := ParseFileName(path)
+		if err != nil {
+			// If we can't parse, just use the base filename as title
+			name := filepath.Base(path)
+			name = strings.TrimSuffix(name, filepath.Ext(name))
+			mediaInfo = &MediaInfo{
+				Type:  TypeMovie, // Default to movie
+				Title: cleanTitle(name),
+			}
+		}
+
+		// Create database record
+		item := &database.MediaItem{
+			Path:    path,
+			Title:   mediaInfo.Title,
+			Season:  mediaInfo.Season,
+			Episode: mediaInfo.Episode,
+		}
+
+		// Insert into database
+		return mediaStore.InsertMediaItem(item)
+	})
 }
