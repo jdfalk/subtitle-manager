@@ -106,6 +106,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle("/api/scan", authMiddleware(db, "basic", scanHandler()))
 	mux.Handle("/api/scan/status", authMiddleware(db, "basic", scanStatusHandler()))
 	mux.Handle("/api/extract", authMiddleware(db, "basic", extractHandler()))
+	mux.Handle("/api/history", authMiddleware(db, "read", historyHandler(db)))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle("/", authMiddleware(db, "read", fsHandler))
 	return mux, nil
