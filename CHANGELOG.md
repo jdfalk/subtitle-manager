@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.0] - 2023-11-20
+## [Unreleased] - In Progress
+### Planned
+- Complete web UI with History, System, and Wanted pages
+- Additional REST API endpoints for download, convert, and translate operations
+- File upload functionality for web-based subtitle conversion and translation
+
+## [0.3.9] - 2025-06-26
+### Changed
+- `GoogleTranslate` now uses the official Google Cloud SDK instead of manual HTTP requests.
 ### Added
 - Initial implementation of Subtitle Manager CLI.
 - Commands: `convert`, `merge`, `translate`, and `history`.

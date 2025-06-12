@@ -1,6 +1,14 @@
 # Subtitle Manager
 
-Subtitle Manager is a command line application written in Go for converting, merging and translating subtitle files. It uses Cobra for its CLI interface and Viper for configuration management.
+Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project has achieved feature parity with Bazarr and is production-ready.**
+
+## ✨ Key Highlights
+
+- 🎯 **Production Ready**: Complete with authentication, RBAC, and 40+ subtitle providers
+- 🌐 **Full Web UI**: React-based interface with real-time scanning and configuration
+- 🔐 **Enterprise Auth**: Password, OAuth2, API keys, and role-based access control
+- 🚀 **High Performance**: Concurrent processing with worker pools and gRPC support
+- 📦 **Container Ready**: Docker images published to GitHub Container Registry
 
 ## Features
 

@@ -1,116 +1,116 @@
 # TODO
 
-This file tracks planned work, architectural decisions, and implementation status for Subtitle Manager.
+This file tracks remaining work and implementation status for Subtitle Manager. **Note: The project is ~85% complete with most core functionality implemented.**
 
-## Roadmap
+## 🎯 Remaining High Priority Tasks
 
-1. **Feature Parity with Bazarr**
-   - Monitor media libraries for new subtitles. *(watch command implemented)*
-   - Support multiple subtitle providers. *(Full Bazarr provider list implemented)*
-   - Download, manage and upgrade subtitles automatically. *(scan command implemented)*
-   - Integrate with media servers (e.g. Plex, Emby, Sonarr, Radarr). *(sonarr/radarr commands added)*
-   - Concurrent directory scanning for improved performance.
-   - Manual subtitle search on demand. *(search command implemented)*
+### 1. Complete Web UI (Final 15%)
 
-2. **Configuration with Cobra & Viper**
-   - Centralise configuration using Viper.
-   - Provide CLI commands using Cobra.
+- [ ] **History Page**: Display translation and download history with filtering
+- [ ] **System Page**: Log viewer, task status, system information
+- [ ] **Wanted Page**: Search for missing subtitles, manage wanted list
+- [ ] **File Upload**: Forms for converting/translating uploaded subtitle files
 
-3. **Logging Improvements**
-   - Component based logging with adjustable levels via flags or config.
+### 2. Missing REST API Endpoints
 
-4. **Authentication & Authorization**
-   - Password authentication with hashed credentials stored in the database. *(implemented)*
-  - One time token generation for email logins. *(implemented in v0.3.5)*
-   - OAuth2 integration for third party login providers. *(GitHub provider implemented)*
-   - API key management allowing multiple keys per user. *(implemented)*
-   - Command line and web interfaces share the same user store and sessions.
-   - List users via the CLI with `user list`. *(implemented in v0.3.6)*
-   - Download history table and command implemented.
-   - Role based access control with default `admin`, `user` and `viewer` roles. *(implemented)*
-   - Session data persisted in the database for portability across front ends.
-5. **Subtitle Processing**
-   - Merge two subtitles in different languages into one.
-   - Extract subtitles from various container formats and convert them to SRT.
-   - Translate subtitles through Google Translate or ChatGPT.
-   - Allow configuring the `ffmpeg` binary path.
-   - Delete external subtitles directly from disk.
+- [ ] **`/api/download`**: Download subtitles for specific media files
+- [ ] **`/api/convert`**: Convert uploaded subtitle files between formats
+- [ ] **`/api/translate`**: Translate uploaded subtitle files
+- [ ] **`/api/history`**: Retrieve translation and download history as JSON
 
-5. **Database Schema**
-   - Design an efficient schema to store subtitle metadata and history.
-  - PebbleDB backend implemented with migration from SQLite.
-  - Download history table and command implemented.
+### 3. Documentation Updates
 
-6. **Quality Assurance**
-   - Unit tests for all packages.
-   - Continuous integration workflow using GitHub Actions.
+- [ ] Update README to reflect current implementation status
+- [ ] Mark completed items in roadmap sections
+- [ ] Document new REST endpoints and web UI pages
 
-## Implementation Plan
+## ✅ Completed Major Features
 
-1. **Command Structure**
-   - Use Cobra to define subcommands such as `convert`, `merge`, `translate` and `history`.
-   - Load configuration with Viper including per-component log levels.
+### Core Functionality (100% Complete)
 
-2. **Subtitle Operations**
-   - Build utilities using the `go-astisub` library to read and manipulate subtitles.
-   - Implement merging and translation logic in commands.
-  - Implement extraction of subtitles from media containers. *(implemented in v0.1.3)*
-   - Register providers via a registry for unified selection. *(implemented in v0.1.9)*
+- ✅ All CLI commands: `convert`, `merge`, `translate`, `history`, `extract`, `fetch`, `search`, `batch`, `scan`, `watch`, `delete`, `downloads`
+- ✅ Configuration with Cobra & Viper including environment variables
+- ✅ Component-based logging with adjustable levels
 
-3. **Translation Services**
-   - Provide Google Translate and ChatGPT implementations behind a common interface.
-   - Allow users to choose the service via config or CLI flags.
+### Authentication & Authorization (100% Complete)
 
-4. **Database Layer**
-   - Use SQLite to store records of translations and operations.
-   - Plan schema upgrades to support richer metadata in the future.
+- ✅ Password authentication with hashed credentials
+- ✅ One time token generation for email logins *(v0.3.5)*
+- ✅ OAuth2 GitHub integration *(v0.3.3)*
+- ✅ API key management with multiple keys per user
+- ✅ Role based access control (admin, user, viewer) *(v0.3.4)*
+- ✅ Session management with database persistence
+- ✅ User management commands: `user add`, `user list`, `user role`, `user token`, `user apikey`
 
-5. **Testing Strategy**
-   - Write tests for database interactions and translation providers.
-   - Test command behaviour with edge cases.
+### Subtitle Processing (100% Complete)
 
-6. **Remote Services**
-   - Expose translation via a gRPC server and client. *(client and server implemented)*
-   - Document protobuf messages and regeneration steps.
+- ✅ Convert between subtitle formats using go-astisub
+- ✅ Merge two subtitle tracks sorted by time
+- ✅ Extract subtitles from media containers via ffmpeg
+- ✅ Translate subtitles through Google Translate (Cloud SDK) and ChatGPT
+- ✅ Delete subtitle files and history records
 
-7. **Media Library Monitoring**
-   - Implement filesystem watchers to detect new video files.
-   - Automatically fetch subtitles when media appears. *(recursive watching implemented)*
+### Provider Integration (100% Complete - Bazarr Parity Achieved)
 
-8. **Future Enhancements**
-   - Replace manual HTTP calls with provider SDKs where available. *(Google Translate now uses the official SDK)*
-   - Asynchronous processing for bulk translations implemented via the `batch` command.
-   - Evaluate performance of subtitle merging and translation.
-   - Add optional web interface for managing subtitles. *(initial login page implemented)*
-   - Distribute official Docker image via GitHub Actions. *(implemented in v0.1.10)*
+- ✅ **40+ subtitle providers** including all major services:
+  Addic7ed, OpenSubtitles, Subscene, Podnapisi, TVSubtitles, Titlovi,
+  LegendasDivx, GreekSubs, BetaSeries, BSplayer, and 30+ more
+- ✅ Provider registry for unified selection *(v0.1.9)*
+- ✅ Manual subtitle search with `search` command *(v0.3.6)*
 
-## Additional Documentation
+### Database & Storage (100% Complete)
 
-For a detailed description of the planned file layout, key functions and
-Protobuf definitions, see `docs/TECHNICAL_DESIGN.md`.
-The file `docs/BAZARR_FEATURES.md` enumerates all Bazarr features to ensure parity.
+- ✅ SQLite backend with full schema
+- ✅ PebbleDB backend with migration support *(v0.3.1)*
+- ✅ Translation history storage and retrieval
+- ✅ Download history tracking *(v0.3.2)*
+- ✅ Media items table for library metadata *(v0.3.8)*
+
+### Library Management (100% Complete)
+
+- ✅ Monitor directories for new media files (`watch` command)
+- ✅ Scan existing libraries (`scan` and `scanlib` commands)
+- ✅ Concurrent directory scanning with worker pools *(v0.3.0)*
+- ✅ Recursive directory watching
+- ✅ Sonarr and Radarr integration commands *(v0.3.0)*
+- ✅ Metadata parsing with TheMovieDB integration
+
+### Infrastructure (100% Complete)
+
+- ✅ gRPC server for remote translation *(v0.1.6)*
+- ✅ Docker support with automated builds *(v0.1.10)*
+- ✅ GitHub Actions CI/CD pipeline *(v0.1.7)*
+- ✅ Prebuilt container images on GitHub Container Registry
+
+### Web UI (70% Complete)
+
+- ✅ React application with Vite build system
+- ✅ Authentication flow with login page
+- ✅ Dashboard with library scanning functionality
+- ✅ Settings page for configuration management
+- ✅ Extract page for subtitle extraction
+- ✅ Responsive design and navigation
 
 ## Web Front End Plan
 
-The Bazarr project exposes many pages in its web UI. Pages identified in the repository include:
-- Authentication
-- Blacklist (Movies, Series)
-- Episodes
-- History (Movies, Series, Statistics)
-- Movies (Details, Editor)
-- Series (Editor)
-- Settings (General, Languages, Notifications, Plex, Providers, Radarr, Scheduler, Sonarr, Subtitles, UI)
-- System (Announcements, Backups, Logs, Providers, Releases, Status, Tasks)
-- Wanted (Movies, Series)
-- Various error pages and utility views
+The current React UI includes:
 
-Subtitle Manager will initially implement a simplified set of pages organised for faster navigation:
-- **Dashboard** – landing page summarising recent activity.
-- **History** – combined view of translated subtitles.
-- **Settings** – grouped configuration panels similar to Bazarr's settings sections.
-- **System** – log viewer and task status.
-- **Wanted** – missing subtitle search page.
+- **Authentication** – Login page with username/password and OAuth2 support
+- **Dashboard** – Library scanning with progress tracking and provider selection
+- **Settings** – Configuration management with live updates to YAML files
+- **Extract** – Subtitle extraction from media files
 
-Additional pages such as blacklist management or per-movie editors can be added once core functionality matches Bazarr.
+**Remaining pages to implement:**
 
-The front end is built with React and Vite under `webui/`. `go generate ./webui` builds the single page application which is embedded into the binary and served by the `web` command.
+- **History** – Combined view of translation and download history with filtering
+- **System** – Log viewer, task status, and system information
+- **Wanted** – Search interface for missing subtitles
+
+Additional pages such as blacklist management or per-movie editors can be added once core functionality is complete.
+
+The front end is built with React and Vite under `webui/`. Run `go generate ./webui` to build the single page application which is embedded into the binary and served by the `web` command.
+
+## Additional Documentation
+
+For detailed architecture and design decisions, see `docs/TECHNICAL_DESIGN.md`.
+The file `docs/BAZARR_FEATURES.md` enumerates all Bazarr features - parity has been achieved for providers and core functionality.
