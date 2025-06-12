@@ -110,7 +110,8 @@ github_redirect_url: http://localhost:8080/api/oauth/github/callback
 # clone repository
 $ git clone <this repository>
 $ cd subtitle-manager
-# install dependencies and build
+# install dependencies, build web UI and compile
+$ go generate ./webui
 $ go build
 ```
 
@@ -191,6 +192,9 @@ Build a container image using the provided `Dockerfile`:
 ```bash
 $ docker build -t subtitle-manager .
 ```
+
+The Docker build runs `go generate ./webui` so the final image contains the latest
+compiled web assets.
 
 Run commands inside the container:
 
