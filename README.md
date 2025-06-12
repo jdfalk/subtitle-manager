@@ -230,6 +230,14 @@ Pushing an `issue_updates.json` file to the repository root allows the `update-i
 
 The workflow runs on every push to `main` and processes the listed operations. After all entries are handled the file is removed on a new branch and a pull request is opened so that the cleanup can be merged back to `main`.
 
+### Duplicate ticket cleanup
+
+The `close-duplicates` workflow runs daily and on demand to detect open issues
+with the same title. The script chooses the lowest numbered ticket as the
+canonical reference and automatically closes the rest with a comment noting the
+duplicate. This keeps the issue tracker focused on a single discussion for each
+problem.
+
 The project aims to eventually reach feature parity with [Bazarr](https://github.com/morpheus65535/bazarr) while offering improved configuration and logging. See `TODO.md` for the full roadmap and implementation plan.
 Extensive architectural details and design decisions are documented in
 `docs/TECHNICAL_DESIGN.md`. New contributors should review this document to

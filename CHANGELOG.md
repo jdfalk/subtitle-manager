@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - File upload functionality for web-based subtitle conversion and translation
 - Build process now runs `go generate ./webui` to embed the latest web assets
   in the binary and container image.
+- Automated workflow closes duplicate issues by title
 
 ## [0.3.9] - 2025-06-26
 ### Changed
