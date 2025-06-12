@@ -565,6 +565,111 @@ func TestDownload(t *testing.T) {
 	}
 }
 
+// TestConvertUpload verifies that /api/convert returns an SRT file.
+func TestConvertUpload(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	buf := &bytes.Buffer{}
+	mw := multipart.NewWriter(buf)
+	fw, _ := mw.CreateFormFile("file", "in.srt")
+	data, _ := os.ReadFile("../../testdata/simple.srt")
+	fw.Write(data)
+	mw.Close()
+
+	req, _ := http.NewRequest("POST", srv.URL+"/api/convert", buf)
+	req.Header.Set("X-API-Key", key)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	b, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	if len(b) == 0 {
+		t.Fatalf("no data returned")
+	}
+}
+
+// TestTranslateUpload verifies that /api/translate performs translation using Google.
+func TestTranslateUpload(t *testing.T) {
+	// Mock the Google Translate API
+	srvTrans := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"data":{"translations":[{"translatedText":"hola"}]}}`))
+	}))
+	defer srvTrans.Close()
+	translator.SetGoogleAPIURL(srvTrans.URL)
+	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
+
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+
+	viper.Set("translate_service", "google")
+	defer viper.Reset()
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	buf := &bytes.Buffer{}
+	mw := multipart.NewWriter(buf)
+	fw, _ := mw.CreateFormFile("file", "in.srt")
+	data, _ := os.ReadFile("../../testdata/simple.srt")
+	fw.Write(data)
+	mw.WriteField("lang", "es")
+	mw.Close()
+
+	req, _ := http.NewRequest("POST", srv.URL+"/api/translate", buf)
+	req.Header.Set("X-API-Key", key)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	b, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	if !bytes.Contains(b, []byte("hola")) {
+		t.Fatalf("translation missing: %s", string(b))
+	}
+}
+
 // setupTestUser creates a test user with an API key and returns the key.
 func setupTestUser(t *testing.T, db *sql.DB) string {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
@@ -575,4 +680,3 @@ func setupTestUser(t *testing.T, db *sql.DB) string {
 		t.Fatalf("api key: %v", err)
 	}
 	return key
-}

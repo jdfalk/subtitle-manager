@@ -9,7 +9,7 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [ ] **History Page**: Display translation and download history with filtering
 - [x] **System Page**: Log viewer, task status, system information
 - [x] **Wanted Page**: Search for missing subtitles, manage wanted list
-- [ ] **File Upload**: Forms for converting/translating uploaded subtitle files
+- [x] **File Upload**: Forms for converting/translating uploaded subtitle files
 
 ### 2. Missing REST API Endpoints
 
@@ -98,13 +98,18 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - ✅ GitHub Actions CI/CD pipeline *(v0.1.7)*
 - ✅ Prebuilt container images on GitHub Container Registry
 
-### Web UI (70% Complete)
+### Web UI (85% Complete)
 
 - ✅ React application with Vite build system
 - ✅ Authentication flow with login page
 - ✅ Dashboard with library scanning functionality
 - ✅ Settings page for configuration management
 - ✅ Extract page for subtitle extraction
+- ✅ Convert page for file format conversion
+- ✅ Translate page for subtitle translation
+- ✅ System page with log viewer and task status
+- ✅ Wanted page for searching missing subtitles
+- [ ] History page for translation and download history
 - ✅ Responsive design and navigation
 
 ## Web Front End Plan

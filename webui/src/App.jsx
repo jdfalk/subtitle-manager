@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import Convert from "./Convert.jsx";
 import Dashboard from "./Dashboard.jsx";
 import Extract from "./Extract.jsx";
 import History from "./History.jsx";
 import Settings from "./Settings.jsx";
 import Setup from "./Setup.jsx";
 import System from "./System.jsx";
+import Translate from "./Translate.jsx";
 import Wanted from "./Wanted.jsx";
 
 function App() {
@@ -67,6 +69,8 @@ function App() {
         <button onClick={() => setPage("settings")}>Settings</button>
         <button onClick={() => setPage("extract")}>Extract</button>
         <button onClick={() => setPage("history")}>History</button>
+        <button onClick={() => setPage("convert")}>Convert</button>
+        <button onClick={() => setPage("translate")}>Translate</button>
         <button onClick={() => setPage("system")}>System</button>
         <button onClick={() => setPage("wanted")}>Wanted</button>
       </nav>
@@ -76,6 +80,10 @@ function App() {
         <Extract />
       ) : page === "history" ? (
         <History />
+      ) : page === "convert" ? (
+        <Convert />
+      ) : page === "translate" ? (
+        <Translate />
       ) : page === "system" ? (
         <System />
       ) : page === "wanted" ? (
