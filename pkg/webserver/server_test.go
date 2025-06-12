@@ -1,7 +1,10 @@
 package webserver
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -272,6 +275,62 @@ func TestExtract(t *testing.T) {
 	}
 	if len(items) == 0 {
 		t.Fatalf("no items returned")
+	}
+}
+
+// TestConvert verifies that POST /api/convert returns converted data.
+func TestConvert(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	data, err := os.ReadFile("../../testdata/simple.srt")
+	if err != nil {
+		t.Fatalf("read file: %v", err)
+	}
+	buf := &bytes.Buffer{}
+	mw := multipart.NewWriter(buf)
+	fw, err := mw.CreateFormFile("file", "simple.srt")
+	if err != nil {
+		t.Fatalf("form file: %v", err)
+	}
+	fw.Write(data)
+	mw.Close()
+
+	req, _ := http.NewRequest("POST", srv.URL+"/api/convert", buf)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	body, err := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		t.Fatalf("read: %v", err)
+	}
+	if len(body) == 0 {
+		t.Fatalf("no data returned")
 	}
 }
 

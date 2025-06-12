@@ -3,8 +3,10 @@ package webserver
 import (
 	"database/sql"
 	"encoding/json"
+	"io"
 	"io/fs"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/spf13/viper"
@@ -105,6 +107,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle("/api/config", authMiddleware(db, "basic", configHandler()))
 	mux.Handle("/api/scan", authMiddleware(db, "basic", scanHandler()))
 	mux.Handle("/api/scan/status", authMiddleware(db, "basic", scanStatusHandler()))
+	mux.Handle("/api/convert", authMiddleware(db, "basic", convertHandler()))
 	mux.Handle("/api/extract", authMiddleware(db, "basic", extractHandler()))
 	mux.Handle("/api/history", authMiddleware(db, "read", historyHandler(db)))
 	fsHandler := http.FileServer(http.FS(f))
@@ -208,5 +211,46 @@ func extractHandler() http.Handler {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(items)
+	})
+}
+
+// convertHandler converts an uploaded subtitle file to SRT format.
+//
+// POST requests must contain a multipart form with the file field named "file".
+// The converted subtitle bytes are returned in the response body.
+func convertHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		if err := r.ParseMultipartForm(32 << 20); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		f, _, err := r.FormFile("file")
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		defer f.Close()
+		tmp, err := os.CreateTemp("", "upload-*.srt")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		defer os.Remove(tmp.Name())
+		if _, err := io.Copy(tmp, f); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		tmp.Close()
+		data, err := subtitles.ConvertToSRT(tmp.Name())
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/plain")
+		_, _ = w.Write(data)
 	})
 }
