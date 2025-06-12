@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"io"
 	"mime/multipart"
@@ -15,6 +16,7 @@ import (
 
 	"subtitle-manager/pkg/auth"
 	"subtitle-manager/pkg/database"
+	"subtitle-manager/pkg/translator"
 
 	"github.com/spf13/viper"
 )
@@ -286,13 +288,7 @@ func TestConvert(t *testing.T) {
 	}
 	defer db.Close()
 
-	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
-		t.Fatalf("create admin: %v", err)
-	}
-	key, err := auth.GenerateAPIKey(db, 1)
-	if err != nil {
-		t.Fatalf("api key: %v", err)
-	}
+	key := setupTestUser(t, db)
 
 	h, err := Handler(db)
 	if err != nil {
@@ -331,6 +327,69 @@ func TestConvert(t *testing.T) {
 	}
 	if len(body) == 0 {
 		t.Fatalf("no data returned")
+	}
+}
+
+// TestTranslate verifies the subtitle translation API.
+func TestTranslate(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	// Mock the Google Translate API
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{
+			"data": {
+				"translations": [
+					{
+						"translatedText": "1\n00:00:01,000 --> 00:00:04,000\nhola mundo\n\n"
+					}
+				]
+			}
+		}`))
+	}))
+	defer ts.Close()
+	translator.SetGoogleAPIURL(ts.URL)
+	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
+
+	viper.Set("google_api_key", "test-key")
+	defer viper.Reset()
+
+	key := setupTestUser(t, db)
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	b, _ := os.ReadFile("../../testdata/simple.srt")
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	fw, _ := writer.CreateFormFile("file", "in.srt")
+	fw.Write(b)
+	writer.WriteField("lang", "es")
+	writer.WriteField("service", "google")
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", srv.URL+"/api/translate", body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	out, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	if !bytes.Contains(out, []byte("hola")) {
+		t.Fatalf("unexpected output: %s", out)
 	}
 }
 
@@ -436,4 +495,16 @@ func TestHistory(t *testing.T) {
 	if len(out2.Translations) != 0 || len(out2.Downloads) != 0 {
 		t.Fatalf("filter failed")
 	}
+}
+
+// setupTestUser creates a test user with an API key and returns the key.
+func setupTestUser(t *testing.T, db *sql.DB) string {
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+	return key
 }

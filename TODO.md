@@ -15,7 +15,7 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 
 - [ ] **`/api/download`**: Download subtitles for specific media files
 - [x] **`/api/convert`**: Convert uploaded subtitle files between formats
-- [ ] **`/api/translate`**: Translate uploaded subtitle files
+- [x] **`/api/translate`**: Translate uploaded subtitle files
 - [x] **`/api/history`**: Retrieve translation and download history as JSON
 
 ### 3. Documentation Updates

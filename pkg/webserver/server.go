@@ -113,6 +113,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle("/api/logs", authMiddleware(db, "basic", logsHandler()))
 	mux.Handle("/api/system", authMiddleware(db, "basic", systemHandler()))
 	mux.Handle("/api/tasks", authMiddleware(db, "basic", tasksHandler()))
+	mux.Handle("/api/translate", authMiddleware(db, "basic", translateHandler()))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle("/", authMiddleware(db, "read", fsHandler))
 	return mux, nil
