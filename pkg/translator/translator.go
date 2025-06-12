@@ -35,13 +35,42 @@ func SetOpenAIModel(m string) {
 // TranslateFunc defines the function signature for translation services.
 type TranslateFunc func(text, targetLang, apiKey string) (string, error)
 
-// GoogleTranslate translates text using Google Translate API.
-func GoogleTranslate(text, targetLang, apiKey string) (string, error) {
-	ctx := context.Background()
-	client, err := translate.NewClient(ctx,
+// GoogleClient wraps the methods used from the Google Translate SDK.
+// It allows tests to mock the SDK without real credentials.
+//
+//go:generate go run github.com/vektra/mockery/v2 --name=GoogleClient --output=./mocks --case=underscore
+type GoogleClient interface {
+	Translate(ctx context.Context, src []string, target language.Tag, opts *translate.Options) ([]translate.Translation, error)
+	Close() error
+}
+
+// defaultGoogleClient instantiates the real Google Translate client.
+var defaultGoogleClient = func(ctx context.Context, apiKey string) (GoogleClient, error) {
+	return translate.NewClient(ctx,
 		option.WithAPIKey(apiKey),
 		option.WithEndpoint(googleAPIURL+"/"),
 	)
+}
+
+// newGoogleClient is the factory used by GoogleTranslate to create clients.
+// It can be replaced in tests via SetGoogleClientFactory.
+var newGoogleClient = defaultGoogleClient
+
+// SetGoogleClientFactory replaces the Google client constructor.
+// Tests can use this to inject a mock implementation.
+func SetGoogleClientFactory(fn func(ctx context.Context, apiKey string) (GoogleClient, error)) {
+	newGoogleClient = fn
+}
+
+// ResetGoogleClientFactory restores the default Google client constructor.
+func ResetGoogleClientFactory() {
+	newGoogleClient = defaultGoogleClient
+}
+
+// GoogleTranslate translates text using Google Translate API.
+func GoogleTranslate(text, targetLang, apiKey string) (string, error) {
+	ctx := context.Background()
+	client, err := newGoogleClient(ctx, apiKey)
 	if err != nil {
 		return "", err
 	}
