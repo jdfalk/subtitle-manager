@@ -20,7 +20,7 @@ This document enumerates the small steps required to demonstrate a working proto
 - [ ] Record download events using `database.InsertDownload`.
 
 ## 4. Conversion and Translation
-- [ ] Add REST endpoint `/api/convert` wrapping the `convert` CLI logic.
+- [x] Add REST endpoint `/api/convert` wrapping the `convert` CLI logic.
 - [ ] Add REST endpoint `/api/translate` wrapping the `translate` CLI logic.
 - [ ] UI forms for converting and translating uploaded subtitle files.
 

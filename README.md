@@ -18,6 +18,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Store translation history in an SQLite database or optional PebbleDB store. The backend can be selected with `--db-backend`.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
+- Convert uploaded subtitle files to SRT via `/api/convert`.
 - Transcribe audio tracks to subtitles via Whisper.
 - Download subtitles from a comprehensive list of providers based on Bazarr,
   including Addic7ed, AnimeKalesi, Animetosho, Assrt, Avistaz, BetaSeries,

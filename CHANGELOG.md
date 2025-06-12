@@ -6,8 +6,10 @@ All notable changes to this project will be documented in this file.
 ### Planned
 - Complete web UI with History, System, and Wanted pages
 - Basic scheduler with `autoscan` command for periodic scans
-- Additional REST API endpoints for download, convert, and translate operations
+- Additional REST API endpoints for download and translate operations
 - File upload functionality for web-based subtitle conversion and translation
+### Added
+- REST endpoint `/api/convert` for subtitle file conversion
 - Build process now runs `go generate ./webui` to embed the latest web assets
   in the binary and container image.
 - Automated workflow closes duplicate issues by title
