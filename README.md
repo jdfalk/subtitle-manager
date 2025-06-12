@@ -15,7 +15,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Convert subtitles from many formats to SRT.
 - Merge two subtitle tracks sorted by start time.
 - Translate subtitles via Google Translate or ChatGPT APIs.
-- Store translation history in an SQLite database or optional PebbleDB store. The backend can be selected with `--db-backend`.
+- Store translation history in an SQLite database or optional PebbleDB store. Retrieve history via the `history` command or `/api/history` endpoint.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
 - Convert uploaded subtitle files to SRT via `/api/convert`.
@@ -34,7 +34,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Integrate with Sonarr, Radarr and Plex using dedicated commands.
 - Run a translation gRPC server.
 - Delete subtitle files and remove history records.
-- Track subtitle download history and list with `downloads` command.
+- Track subtitle download history and list with `downloads` command or `/api/history`.
 - GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
 - Manually search for subtitles with `search` command.
 - Provider registry simplifies adding new sources.
