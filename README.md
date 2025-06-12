@@ -27,6 +27,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Batch translate multiple files concurrently.
 - Monitor directories and automatically download subtitles.
 - Scan existing libraries and fetch missing or upgraded subtitles.
+- Download individual subtitles through the web API at `/api/download`.
 - Schedule periodic scans with the `autoscan` command.
 - Parse file names and retrieve movie or episode details from TheMovieDB.
 - High performance scanning using concurrent workers.

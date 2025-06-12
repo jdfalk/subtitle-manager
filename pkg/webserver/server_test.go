@@ -497,6 +497,74 @@ func TestHistory(t *testing.T) {
 	}
 }
 
+// TestDownload verifies that POST /api/download fetches a subtitle and records history.
+func TestDownload(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+
+	// fake subtitle provider
+	subSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("sub"))
+	}))
+	defer subSrv.Close()
+	viper.Set("providers.generic.api_url", subSrv.URL)
+	defer viper.Reset()
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	dir := t.TempDir()
+	vid := filepath.Join(dir, "video.mkv")
+	os.WriteFile(vid, []byte("x"), 0644)
+
+	body := strings.NewReader(`{"provider":"generic","path":"` + vid + `","lang":"en"}`)
+	req, _ := http.NewRequest("POST", srv.URL+"/api/download", body)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	var res struct {
+		File string `json:"file"`
+	}
+	json.NewDecoder(resp.Body).Decode(&res)
+	resp.Body.Close()
+
+	out := strings.TrimSuffix(vid, filepath.Ext(vid)) + ".en.srt"
+	if res.File != out {
+		t.Fatalf("returned %s", res.File)
+	}
+	if _, err := os.Stat(out); err != nil {
+		t.Fatalf("subtitle not written: %v", err)
+	}
+	recs, err := database.ListDownloads(db)
+	if err != nil || len(recs) != 1 {
+		t.Fatalf("records %v %d", err, len(recs))
+	}
+	if recs[0].File != out {
+		t.Fatalf("record file %s", recs[0].File)
+	}
+}
+
 // setupTestUser creates a test user with an API key and returns the key.
 func setupTestUser(t *testing.T, db *sql.DB) string {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
@@ -507,4 +575,5 @@ func setupTestUser(t *testing.T, db *sql.DB) string {
 		t.Fatalf("api key: %v", err)
 	}
 	return key
+}
 }

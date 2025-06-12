@@ -19,6 +19,9 @@ All notable changes to this project will be documented in this file.
   in the binary and container image.
 - Automated workflow closes duplicate issues by title
 
+### Added
+- REST endpoint `/api/download` for on-demand subtitle fetching
+
 ## [0.3.9] - 2025-06-26
 
 ### Changed

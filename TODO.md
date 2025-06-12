@@ -13,7 +13,7 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 
 ### 2. Missing REST API Endpoints
 
-- [ ] **`/api/download`**: Download subtitles for specific media files
+- [x] **`/api/download`**: Download subtitles for specific media files
 - [x] **`/api/convert`**: Convert uploaded subtitle files between formats
 - [x] **`/api/translate`**: Translate uploaded subtitle files
 - [x] **`/api/history`**: Retrieve translation and download history as JSON

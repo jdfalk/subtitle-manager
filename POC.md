@@ -15,7 +15,7 @@ This document enumerates the small steps required to demonstrate a working proto
 - [x] Store extracted subtitle paths in the database for later reference.
 
 ## 3. Subtitle Downloading
-- [ ] Implement REST endpoint `/api/download` calling `providers.Get` and `scanner.ProcessFile`.
+ - [x] Implement REST endpoint `/api/download` calling `providers.Get` and `scanner.ProcessFile`.
 - [ ] Provide UI controls to choose language and provider when requesting a download.
 - [ ] Record download events using `database.InsertDownload`.
 
