@@ -3,21 +3,29 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - In Progress
+
 ### Planned
+
 - Complete web UI with History, System, and Wanted pages
 - Basic scheduler with `autoscan` command for periodic scans
-- Additional REST API endpoints for download and translate operations
+- Additional REST API endpoints for download, convert, and translate operations
 - File upload functionality for web-based subtitle conversion and translation
+
 ### Added
+
 - REST endpoint `/api/convert` for subtitle file conversion
 - Build process now runs `go generate ./webui` to embed the latest web assets
   in the binary and container image.
 - Automated workflow closes duplicate issues by title
 
 ## [0.3.9] - 2025-06-26
+
 ### Changed
+
 - `GoogleTranslate` now uses the official Google Cloud SDK instead of manual HTTP requests.
+
 ### Added
+
 - Initial implementation of Subtitle Manager CLI.
 - Commands: `convert`, `merge`, `translate`, and `history`.
 - Google Translate and ChatGPT support.
@@ -26,17 +34,23 @@ All notable changes to this project will be documented in this file.
 - Documentation updates and initial technical design.
 
 ## [0.1.1] - 2025-06-06
+
 ### Added
+
 - Expanded technical design document with detailed implementation plans.
 - Updated README and TODO to reference the comprehensive documentation.
 
 ## [0.1.2] - 2025-06-07
+
 ### Added
+
 - Documented Bazarr feature set in `docs/BAZARR_FEATURES.md`
 - Linked feature reference from README, TODO and TECHNICAL_DESIGN
 
 ## [0.1.3] - 2025-06-08
+
 ### Added
+
 - Subtitle extraction from media containers using `ffmpeg`.
 - New `extract` CLI command.
 - React based web UI built with Vite under `webui/`.
@@ -44,18 +58,24 @@ All notable changes to this project will be documented in this file.
 - Technical design and TODO updated with web front end plan.
 
 ## [0.1.4] - 2025-06-09
+
 ### Added
+
 - OpenSubtitles provider and `fetch` CLI command.
 - Provider implementation documented in README and TODO.
 
 ## [0.1.5] - 2025-06-10
+
 ### Added
+
 - Batch translation command for concurrent processing of multiple files.
 - Helper functions `TranslateFileToSRT` and `TranslateFilesToSRT` in `pkg/subtitles`.
 - Documentation updates for the new command and concurrency model.
 
 ## [0.1.6] - 2025-06-11
+
 ### Added
+
 - Subscene provider with `fetch` and `watch` support.
 - `grpc-server` command to expose translation service.
 - Customisable ffmpeg path for subtitle extraction.
@@ -63,75 +83,105 @@ All notable changes to this project will be documented in this file.
 - `delete` command and database deletion helper.
 
 ## [0.1.7] - 2025-06-12
+
 ### Added
+
 - Environment variable configuration via `SM_` prefix.
 - GitHub Actions workflow for continuous integration.
 
 ## [0.1.8] - 2025-06-13
+
 ### Added
+
 - Comprehensive subtitle provider list from Bazarr documented in README and TODO.
 - Implemented Addic7ed, BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi, LegendasDivx and GreekSubs providers.
 
 ## [0.1.9] - 2025-06-14
+
 ### Added
+
 - Implemented the remaining subtitle providers from Bazarr's list.
 - Unified provider selection via a registry.
 
 ## [0.1.10] - 2025-06-15
+
 ### Added
+
 - Dockerfile and GitHub Actions workflow for container images.
 - Container images published to GitHub Container Registry.
 - Documentation updates describing provider registry and Docker usage.
 
 ## [0.2.0] - 2025-06-16
+
 ### Added
+
 - Library scanning command to automatically download and upgrade subtitles.
 - Updated README and TODO for new feature.
 
 ## [0.2.1] - 2025-06-17
+
 ### Added
+
 - Authentication system supporting password login, one time tokens, OAuth2 and API keys.
 - Simple user manager commands for creating users and generating API keys.
 - RBAC with default roles and database backed session storage.
 
 ## [0.3.0] - 2025-06-18
+
 ### Added
+
 - Concurrent directory scanning with worker pool.
 - Sonarr and Radarr integration commands.
 - Initial React web UI with login page.
 
 ## [0.3.1] - 2025-06-19
+
 ### Added
+
 - PebbleDB backend with migration command.
 - Configurable database backend via `--db-backend` flag.
 
 ## [0.3.2] - 2025-06-20
+
 ### Added
+
 - Download history stored in database with new `downloads` command.
 
 ## [0.3.3] - 2025-06-21
+
 ### Added
+
 - GitHub OAuth2 login support with new web server endpoints.
 
 ## [0.3.4] - 2025-06-22
+
 ### Added
+
 - Role based access control enforced on web routes.
 - `user role` command to modify user permissions.
 
 ## [0.3.5] - 2025-06-23
+
 ### Added
+
 - One time login tokens with `user token` and `login-token` commands.
 
 ## [0.3.6] - 2025-06-24
+
 ### Added
+
 - Manual subtitle search command with `search` functionality.
 
 ## [0.3.7] - 2025-06-24
+
 ### Added
+
 - `user list` command to display existing accounts.
 
 ## [0.3.8] - 2025-06-25
+
 ### Added
+
 - `media_items` table to store video metadata for library scanning.
 - Library scan command `scanlib` populating the `media_items` table.
 - REST endpoint `/api/extract` exposing subtitle extraction from media.
@@ -140,5 +190,7 @@ All notable changes to this project will be documented in this file.
 - REST endpoint `/api/extract` exposing subtitle extraction from media.
 
 ## [0.3.9] - 2025-06-26
+
 ### Changed
+
 - `GoogleTranslate` now uses the official Google Cloud SDK instead of manual HTTP requests.
