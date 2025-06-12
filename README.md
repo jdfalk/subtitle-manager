@@ -18,6 +18,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Store translation history in an SQLite database or optional PebbleDB store. The backend can be selected with `--db-backend`.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
+- Transcribe audio tracks to subtitles via Whisper.
 - Download subtitles from a comprehensive list of providers based on Bazarr,
   including Addic7ed, AnimeKalesi, Animetosho, Assrt, Avistaz, BetaSeries,
   BSplayer, GreekSubs, Podnapisi, Subscene, TVSubtitles, Titlovi, LegendasDivx
@@ -123,6 +124,7 @@ subtitle-manager merge [sub1] [sub2] [output]
 subtitle-manager translate [input] [output] [lang]
 subtitle-manager history
 subtitle-manager extract [media] [output]
+subtitle-manager transcribe [media] [output] [lang]
 subtitle-manager fetch opensubtitles [media] [lang] [output]
 subtitle-manager fetch subscene [media] [lang] [output]
 subtitle-manager search opensubtitles [media] [lang]
