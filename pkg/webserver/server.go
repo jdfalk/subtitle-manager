@@ -109,6 +109,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle("/api/scan/status", authMiddleware(db, "basic", scanStatusHandler()))
 	mux.Handle("/api/convert", authMiddleware(db, "basic", convertHandler()))
 	mux.Handle("/api/extract", authMiddleware(db, "basic", extractHandler()))
+	mux.Handle("/api/download", authMiddleware(db, "basic", downloadHandler(db)))
 	mux.Handle("/api/history", authMiddleware(db, "read", historyHandler(db)))
 	mux.Handle("/api/logs", authMiddleware(db, "basic", logsHandler()))
 	mux.Handle("/api/system", authMiddleware(db, "basic", systemHandler()))
