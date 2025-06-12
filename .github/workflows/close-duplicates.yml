@@ -1,0 +1,21 @@
+# file: .github/workflows/close-duplicates.yml
+name: Close Duplicate Issues
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  deduplicate:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Close duplicates
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: .github/scripts/close-duplicates.sh
