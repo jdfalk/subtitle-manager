@@ -16,11 +16,9 @@ import (
 
 func TestGoogleTranslate(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		body, _ := io.ReadAll(r.Body)
-		r.Body.Close()
-		s := string(body)
-		if !(strings.Contains(s, "q=hello") && strings.Contains(s, "target=es") && strings.Contains(s, "key=test")) {
-			t.Fatalf("unexpected request body: %s", s)
+		q := r.URL.RawQuery
+		if !(strings.Contains(q, "q=hello") && strings.Contains(q, "target=es") && strings.Contains(q, "key=test")) {
+			t.Fatalf("unexpected query: %s", q)
 		}
 		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
 	}))

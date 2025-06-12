@@ -10,6 +10,10 @@ import (
 	"net/url"
 	"strings"
 
+	translate "cloud.google.com/go/translate"
+	"golang.org/x/text/language"
+	"google.golang.org/api/option"
+
 	openai "github.com/sashabaranov/go-openai"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -37,42 +41,24 @@ type TranslateFunc func(text, targetLang, apiKey string) (string, error)
 
 // GoogleTranslate translates text using Google Translate API.
 func GoogleTranslate(text, targetLang, apiKey string) (string, error) {
-	form := url.Values{}
-	form.Set("q", text)
-	form.Set("target", targetLang)
-	form.Set("key", apiKey)
-
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, googleAPIURL, strings.NewReader(form.Encode()))
+	ctx := context.Background()
+	client, err := translate.NewClient(ctx,
+		option.WithAPIKey(apiKey),
+		option.WithEndpoint(googleAPIURL+"/"),
+	)
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	defer client.Close()
 
-	resp, err := http.DefaultClient.Do(req)
+	ts, err := client.Translate(ctx, []string{text}, language.Make(targetLang), nil)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	var gr struct {
-		Data struct {
-			Translations []struct {
-				TranslatedText string `json:"translatedText"`
-			} `json:"translations"`
-		} `json:"data"`
-	}
-	if err := json.Unmarshal(body, &gr); err != nil {
-		return "", err
-	}
-	if len(gr.Data.Translations) == 0 {
+	if len(ts) == 0 {
 		return "", fmt.Errorf("no translations")
 	}
-	return gr.Data.Translations[0].TranslatedText, nil
+	return ts[0].Text, nil
 }
 
 // GPTTranslate translates text using the ChatGPT API.

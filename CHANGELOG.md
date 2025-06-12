@@ -124,3 +124,7 @@ All notable changes to this project will be documented in this file.
 - `media_items` table to store video metadata for library scanning.
 - Library scan command `scanlib` populating the `media_items` table.
 - REST endpoint `/api/extract` exposing subtitle extraction from media.
+
+## [0.3.9] - 2025-06-26
+### Changed
+- `GoogleTranslate` now uses the official Google Cloud SDK instead of manual HTTP requests.
