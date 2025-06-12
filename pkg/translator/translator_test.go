@@ -68,7 +68,11 @@ func TestGRPCTranslate(t *testing.T) {
 	}
 	s := grpc.NewServer()
 	pb.RegisterTranslatorServer(s, &mockServer{})
-	go s.Serve(lis)
+	go func() {
+		if err := s.Serve(lis); err != nil {
+			t.Errorf("serve failed: %v", err)
+		}
+	}()
 	defer s.Stop()
 
 	got, err := GRPCTranslate("hello", "es", lis.Addr().String())
@@ -87,7 +91,11 @@ func TestTranslateGRPCProvider(t *testing.T) {
 	}
 	s := grpc.NewServer()
 	pb.RegisterTranslatorServer(s, &mockServer{})
-	go s.Serve(lis)
+	go func() {
+		if err := s.Serve(lis); err != nil {
+			t.Errorf("serve failed: %v", err)
+		}
+	}()
 	defer s.Stop()
 
 	got, err := Translate("grpc", "hello", "es", "", "", lis.Addr().String())
