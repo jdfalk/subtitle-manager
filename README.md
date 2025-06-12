@@ -44,7 +44,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Prebuilt images published to GitHub Container Registry.
 - Integrated authentication system with password, token, OAuth2 and API key support.
 - Generate one time login tokens using `user token` and authenticate with `login-token`.
-- Minimal React web UI with login page.
+- Minimal React web UI with login page and file upload forms for conversion and translation.
 - Role based access control with sensible defaults and session storage in the database.
 - Manage accounts with `user add`, `user role`, `user token` and `user list` commands.
 

@@ -21,8 +21,8 @@ This document enumerates the small steps required to demonstrate a working proto
 
 ## 4. Conversion and Translation
 - [x] Add REST endpoint `/api/convert` wrapping the `convert` CLI logic.
-- [ ] Add REST endpoint `/api/translate` wrapping the `translate` CLI logic.
-- [ ] UI forms for converting and translating uploaded subtitle files.
+- [x] Add REST endpoint `/api/translate` wrapping the `translate` CLI logic.
+- [x] UI forms for converting and translating uploaded subtitle files.
 
 ## 5. Saving Subtitles
 - [ ] Ensure downloaded or translated subtitles are written next to the video file using `<name>.<lang>.srt`.
