@@ -99,6 +99,8 @@ func initConfig() {
 		viper.SetDefault("providers.generic.username", "")
 		viper.SetDefault("providers.generic.password", "")
 		viper.SetDefault("providers.generic.api_key", "")
+		viper.SetDefault("plex.url", "http://localhost:32400")
+		viper.SetDefault("plex.token", "")
 	}
 
 	if err := viper.ReadInConfig(); err == nil {
