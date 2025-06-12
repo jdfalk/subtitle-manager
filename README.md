@@ -33,6 +33,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Recursive directory watching with -r flag.
 - Integrate with Sonarr, Radarr and Plex using dedicated commands.
 - Run a translation gRPC server.
+- Translate uploaded subtitles through `/api/translate` endpoint.
 - Delete subtitle files and remove history records.
 - Track subtitle download history and list with `downloads` command or `/api/history`.
 - GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
