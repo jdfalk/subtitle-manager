@@ -24,6 +24,15 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [ ] Mark completed items in roadmap sections
 - [ ] Document new REST endpoints and web UI pages
 
+### 4. Bazarr Configuration Import
+
+- [ ] Implement `import-bazarr` command that fetches settings from `/api/system/settings`
+  using the user's API key.
+- [ ] Map Bazarr preferences for languages, providers and network options into
+  the Viper configuration.
+- [ ] Document the synchronization process in `docs/BAZARR_SETTINGS_SYNC.md` and
+  expose it through the welcome workflow.
+
 ## ✅ Completed Major Features
 
 ### Core Functionality (100% Complete)
