@@ -2,12 +2,8 @@ package translator
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
 	"strings"
 
 	translate "cloud.google.com/go/translate"

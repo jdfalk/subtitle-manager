@@ -3,15 +3,15 @@ package translator
 import (
 	"context"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"google.golang.org/grpc"
 	pb "subtitle-manager/pkg/translatorpb/proto"
+
+	"google.golang.org/grpc"
 )
 
 func TestGoogleTranslate(t *testing.T) {
