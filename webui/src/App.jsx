@@ -3,18 +3,23 @@ import "./App.css";
 import Dashboard from "./Dashboard.jsx";
 import Extract from "./Extract.jsx";
 import Settings from "./Settings.jsx";
+import Setup from "./Setup.jsx";
 
 function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
   const [authed, setAuthed] = useState(false);
+  const [setupNeeded, setSetupNeeded] = useState(false);
   const [page, setPage] = useState("dashboard");
 
   useEffect(() => {
     fetch("/api/config").then((res) => {
       if (res.ok) setAuthed(true);
     });
+    fetch("/api/setup/status")
+      .then((r) => r.json())
+      .then((d) => setSetupNeeded(d.needed));
   }, []);
 
   const login = async () => {
@@ -29,6 +34,9 @@ function App() {
   };
 
   if (!authed) {
+    if (setupNeeded) {
+      return <Setup />;
+    }
     return (
       <div className="login">
         <h1>Subtitle Manager</h1>

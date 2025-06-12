@@ -274,3 +274,53 @@ func TestExtract(t *testing.T) {
 		t.Fatalf("no items returned")
 	}
 }
+
+// TestSetup verifies the initial setup workflow.
+func TestSetup(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	// status should report setup needed
+	resp, err := http.Get(srv.URL + "/api/setup/status")
+	if err != nil {
+		t.Fatalf("status: %v", err)
+	}
+	var st struct {
+		Needed bool `json:"needed"`
+	}
+	json.NewDecoder(resp.Body).Decode(&st)
+	resp.Body.Close()
+	if !st.Needed {
+		t.Fatalf("expected setup needed")
+	}
+
+	body := strings.NewReader(`{"server_name":"Test","admin_user":"a","admin_pass":"p"}`)
+	resp2, err := http.Post(srv.URL+"/api/setup", "application/json", body)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp2.StatusCode != http.StatusNoContent {
+		t.Fatalf("status %d", resp2.StatusCode)
+	}
+
+	// now status should be false
+	resp3, err := http.Get(srv.URL + "/api/setup/status")
+	if err != nil {
+		t.Fatalf("status2: %v", err)
+	}
+	json.NewDecoder(resp3.Body).Decode(&st)
+	resp3.Body.Close()
+	if st.Needed {
+		t.Fatalf("setup still needed")
+	}
+}

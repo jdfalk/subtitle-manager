@@ -15,6 +15,81 @@ import (
 	"subtitle-manager/webui"
 )
 
+// setupNeeded returns true when no user accounts exist.
+func setupNeeded(db *sql.DB) (bool, error) {
+	var c int
+	row := db.QueryRow(`SELECT COUNT(1) FROM users`)
+	if err := row.Scan(&c); err != nil {
+		return false, err
+	}
+	return c == 0, nil
+}
+
+// setupStatusHandler reports whether initial setup is required.
+func setupStatusHandler(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		needed, err := setupNeeded(db)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		_ = json.NewEncoder(w).Encode(map[string]bool{"needed": needed})
+	})
+}
+
+// setupHandler performs the initial configuration and creates the admin user.
+func setupHandler(db *sql.DB) http.Handler {
+	type req struct {
+		ServerName   string         `json:"server_name"`
+		ReverseProxy bool           `json:"reverse_proxy"`
+		AdminUser    string         `json:"admin_user"`
+		AdminPass    string         `json:"admin_pass"`
+		Integrations map[string]any `json:"integrations"`
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		needed, err := setupNeeded(db)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if !needed {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		var q req
+		if err := json.NewDecoder(r.Body).Decode(&q); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if q.AdminUser == "" || q.AdminPass == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if err := auth.CreateUser(db, q.AdminUser, q.AdminPass, "", "admin"); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if q.ServerName != "" {
+			viper.Set("server_name", q.ServerName)
+		}
+		viper.Set("reverse_proxy", q.ReverseProxy)
+		for k, v := range q.Integrations {
+			viper.Set("integrations."+k, v)
+		}
+		if cfg := viper.ConfigFileUsed(); cfg != "" {
+			if err := viper.WriteConfig(); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
+		w.WriteHeader(http.StatusNoContent)
+	})
+}
+
 // Handler returns an http.Handler that serves the embedded web UI.
 func Handler(db *sql.DB) (http.Handler, error) {
 	f, err := fs.Sub(webui.FS, "dist")
@@ -23,6 +98,8 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	}
 	mux := http.NewServeMux()
 	mux.Handle("/api/login", loginHandler(db))
+	mux.Handle("/api/setup/status", setupStatusHandler(db))
+	mux.Handle("/api/setup", setupHandler(db))
 	mux.Handle("/api/oauth/github/login", githubLoginHandler(db))
 	mux.Handle("/api/oauth/github/callback", githubCallbackHandler(db))
 	mux.Handle("/api/config", authMiddleware(db, "basic", configHandler()))
