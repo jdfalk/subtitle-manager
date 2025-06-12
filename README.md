@@ -205,6 +205,8 @@ $ docker pull ghcr.io/jdfalk/subtitle-manager:latest
 ## Development
 
 Tests can be run with `go test ./...`.
+Web UI unit tests live in `webui/src/__tests__` and are executed with `npm test` from the `webui` directory.
+End-to-end tests use Playwright and run with `npm run test:e2e` once browsers are installed via `npx playwright install`.
 Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
 
 ### Issue updates
