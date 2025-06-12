@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Dashboard from "./Dashboard.jsx";
 import Extract from "./Extract.jsx";
+import History from "./History.jsx";
 import Settings from "./Settings.jsx";
 import Setup from "./Setup.jsx";
 
@@ -63,8 +64,17 @@ function App() {
         <button onClick={() => setPage("dashboard")}>Dashboard</button>
         <button onClick={() => setPage("settings")}>Settings</button>
         <button onClick={() => setPage("extract")}>Extract</button>
+        <button onClick={() => setPage("history")}>History</button>
       </nav>
-      {page === "settings" ? <Settings /> : page === "extract" ? <Extract /> : <Dashboard />}
+      {page === "settings" ? (
+        <Settings />
+      ) : page === "extract" ? (
+        <Extract />
+      ) : page === "history" ? (
+        <History />
+      ) : (
+        <Dashboard />
+      )}
     </div>
   );
 }

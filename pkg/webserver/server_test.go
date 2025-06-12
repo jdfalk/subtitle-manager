@@ -324,3 +324,57 @@ func TestSetup(t *testing.T) {
 		t.Fatalf("setup still needed")
 	}
 }
+
+// TestHistory verifies that /api/history returns history records and filters by language.
+func TestHistory(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+	_ = database.InsertSubtitle(db, "a.srt", "a.mkv", "en", "google", "", false)
+	_ = database.InsertDownload(db, "b.srt", "b.mkv", "os", "en")
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+	req, _ := http.NewRequest("GET", srv.URL+"/api/history", nil)
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("history: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	var out struct {
+		Translations []database.SubtitleRecord `json:"translations"`
+		Downloads    []database.DownloadRecord `json:"downloads"`
+	}
+	json.NewDecoder(resp.Body).Decode(&out)
+	resp.Body.Close()
+	if len(out.Translations) != 1 || len(out.Downloads) != 1 {
+		t.Fatalf("unexpected counts %d %d", len(out.Translations), len(out.Downloads))
+	}
+	req2, _ := http.NewRequest("GET", srv.URL+"/api/history?lang=fr", nil)
+	req2.Header.Set("X-API-Key", key)
+	resp2, _ := srv.Client().Do(req2)
+	var out2 struct {
+		Translations []database.SubtitleRecord `json:"translations"`
+		Downloads    []database.DownloadRecord `json:"downloads"`
+	}
+	json.NewDecoder(resp2.Body).Decode(&out2)
+	resp2.Body.Close()
+	if len(out2.Translations) != 0 || len(out2.Downloads) != 0 {
+		t.Fatalf("filter failed")
+	}
+}
