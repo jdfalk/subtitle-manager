@@ -101,6 +101,13 @@ func initConfig() {
 		viper.SetDefault("providers.generic.api_key", "")
 		viper.SetDefault("plex.url", "http://localhost:32400")
 		viper.SetDefault("plex.token", "")
+		viper.SetDefault("server_name", "Subtitle Manager")
+		viper.SetDefault("reverse_proxy", false)
+		viper.SetDefault("integrations.sonarr.enabled", false)
+		viper.SetDefault("integrations.radarr.enabled", false)
+		viper.SetDefault("integrations.bazarr.import", false)
+		viper.SetDefault("integrations.plex.enabled", false)
+		viper.SetDefault("integrations.notifications.enabled", false)
 	}
 
 	if err := viper.ReadInConfig(); err == nil {
