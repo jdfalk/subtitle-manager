@@ -7,7 +7,7 @@ import Settings from "../Settings.jsx";
 describe("Settings component", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
-    global.fetch = vi.fn();
+    global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }));
   });
 
   test("loads and saves configuration", async () => {

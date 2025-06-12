@@ -110,6 +110,9 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle("/api/convert", authMiddleware(db, "basic", convertHandler()))
 	mux.Handle("/api/extract", authMiddleware(db, "basic", extractHandler()))
 	mux.Handle("/api/history", authMiddleware(db, "read", historyHandler(db)))
+	mux.Handle("/api/logs", authMiddleware(db, "basic", logsHandler()))
+	mux.Handle("/api/system", authMiddleware(db, "basic", systemHandler()))
+	mux.Handle("/api/tasks", authMiddleware(db, "basic", tasksHandler()))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle("/", authMiddleware(db, "read", fsHandler))
 	return mux, nil

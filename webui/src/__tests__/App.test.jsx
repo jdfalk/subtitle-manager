@@ -7,18 +7,13 @@ import App from "../App.jsx";
 describe("App component", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({ running: false, completed: 0, files: [] }),
-      }),
-    );
+    global.fetch = vi.fn(() => Promise.resolve({ ok: false, json: () => Promise.resolve({}) }));
   });
 
   test("shows login form when unauthenticated", async () => {
     fetch.mockResolvedValueOnce({ ok: false });
     fetch.mockResolvedValueOnce({
+      ok: true,
       json: () => Promise.resolve({ needed: false }),
     });
     render(<App />);
@@ -28,6 +23,7 @@ describe("App component", () => {
   test("successful login renders dashboard", async () => {
     fetch.mockResolvedValueOnce({ ok: false }); // config check
     fetch.mockResolvedValueOnce({
+      ok: true,
       json: () => Promise.resolve({ needed: false }),
     });
     render(<App />);
