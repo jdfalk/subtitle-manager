@@ -1,7 +1,7 @@
 // file: webui/src/__tests__/Dashboard.test.jsx
-import { vi, expect, describe, test, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import Dashboard from "../Dashboard.jsx";
 
 describe("Dashboard component", () => {

@@ -8,7 +8,7 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 
 - [ ] **History Page**: Display translation and download history with filtering
 - [ ] **System Page**: Log viewer, task status, system information
-- [ ] **Wanted Page**: Search for missing subtitles, manage wanted list
+- [x] **Wanted Page**: Search for missing subtitles, manage wanted list
 - [ ] **File Upload**: Forms for converting/translating uploaded subtitle files
 
 ### 2. Missing REST API Endpoints
@@ -120,7 +120,6 @@ The current React UI includes:
 
 - **History** – Combined view of translation and download history with filtering
 - **System** – Log viewer, task status, and system information
-- **Wanted** – Search interface for missing subtitles
 
 Additional pages such as blacklist management or per-movie editors can be added once core functionality is complete.
 
