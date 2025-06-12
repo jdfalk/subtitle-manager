@@ -2,14 +2,15 @@ package cmd
 
 import (
 	"context"
-	"io"
 	"net"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
+	translate "cloud.google.com/go/translate"
+	"github.com/stretchr/testify/mock"
+	"golang.org/x/text/language"
 	"google.golang.org/grpc"
 	"subtitle-manager/pkg/translator"
+	translatormocks "subtitle-manager/pkg/translator/mocks"
 	pb "subtitle-manager/pkg/translatorpb/proto"
 )
 
@@ -19,14 +20,12 @@ func TestServerTranslate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("listen: %v", err)
 	}
-	// Replace the Google API endpoint with a stub server.
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		io.WriteString(w, `{"data":{"translations":[{"translatedText":"ok"}]}}`)
-	}))
-	defer ts.Close()
-	translator.SetGoogleAPIURL(ts.URL)
-	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
+	m := translatormocks.NewGoogleClient(t)
+	translator.SetGoogleClientFactory(func(ctx context.Context, apiKey string) (translator.GoogleClient, error) { return m, nil })
+	defer translator.ResetGoogleClientFactory()
+
+	m.On("Translate", mock.Anything, []string{"x"}, language.Make("en"), (*translate.Options)(nil)).Return([]translate.Translation{{Text: "ok"}}, nil)
+	m.On("Close").Return(nil)
 
 	s := grpc.NewServer()
 	pb.RegisterTranslatorServer(s, &server{googleKey: "k"})

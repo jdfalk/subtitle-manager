@@ -2,31 +2,25 @@ package translator
 
 import (
 	"context"
-	"fmt"
 	"net"
-	"net/http"
-	"net/http/httptest"
-	"strings"
 	"testing"
 
+	translate "cloud.google.com/go/translate"
+	"github.com/stretchr/testify/mock"
+	"golang.org/x/text/language"
+	"google.golang.org/grpc"
 	pb "subtitle-manager/pkg/translatorpb/proto"
 
-	"google.golang.org/grpc"
+	"subtitle-manager/pkg/translator/mocks"
 )
 
 func TestGoogleTranslate(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.RawQuery
-		if !(strings.Contains(q, "q=hello") && strings.Contains(q, "target=es") && strings.Contains(q, "key=test")) {
-			t.Fatalf("unexpected query: %s", q)
-		}
-		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
-	}))
-	defer srv.Close()
+	m := mocks.NewGoogleClient(t)
+	SetGoogleClientFactory(func(ctx context.Context, apiKey string) (GoogleClient, error) { return m, nil })
+	defer ResetGoogleClientFactory()
 
-	origURL := googleAPIURL
-	SetGoogleAPIURL(srv.URL)
-	defer SetGoogleAPIURL(origURL)
+	m.On("Translate", mock.Anything, []string{"hello"}, language.Make("es"), (*translate.Options)(nil)).Return([]translate.Translation{{Text: "hola"}}, nil)
+	m.On("Close").Return(nil)
 
 	got, err := GoogleTranslate("hello", "es", "test")
 	if err != nil {
@@ -44,13 +38,12 @@ func TestUnsupportedServiceError(t *testing.T) {
 }
 
 func TestTranslate(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
-	}))
-	defer srv.Close()
-	origURL := googleAPIURL
-	SetGoogleAPIURL(srv.URL)
-	defer SetGoogleAPIURL(origURL)
+	m := mocks.NewGoogleClient(t)
+	SetGoogleClientFactory(func(ctx context.Context, apiKey string) (GoogleClient, error) { return m, nil })
+	defer ResetGoogleClientFactory()
+
+	m.On("Translate", mock.Anything, []string{"hello"}, language.Make("es"), (*translate.Options)(nil)).Return([]translate.Translation{{Text: "hola"}}, nil)
+	m.On("Close").Return(nil)
 
 	got, err := Translate("google", "hello", "es", "test", "", "")
 	if err != nil {
