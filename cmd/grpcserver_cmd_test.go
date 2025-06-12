@@ -29,7 +29,7 @@ func TestServerTranslate(t *testing.T) {
 	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
 
 	s := grpc.NewServer()
-	pb.RegisterTranslatorServer(s, &server{})
+	pb.RegisterTranslatorServer(s, &server{googleKey: "k"})
 	go s.Serve(lis)
 	defer s.Stop()
 
