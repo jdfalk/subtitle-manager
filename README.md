@@ -219,7 +219,7 @@ Continuous integration is provided via a GitHub Actions workflow that verifies f
 
 ### Issue updates
 
-Pushing an `issue_updates.json` file to the repository root allows the `update-issues` workflow to create, update or delete GitHub issues using the repository `GITHUB_TOKEN`. The file contains a JSON array where each object specifies an `action` and any supported issue fields. Example:
+Pushing an `issue_updates.json` file to the repository root allows the `update-issues` workflow to create, update or delete GitHub issues using the repository `GITHUB_TOKEN`. The file contains a JSON array where each object specifies an `action` and any supported issue fields. Duplicate issues are avoided by checking for an existing issue with the same title before creation. Example:
 
 ```json
 [
@@ -228,7 +228,7 @@ Pushing an `issue_updates.json` file to the repository root allows the `update-i
 ]
 ```
 
-The workflow runs on every push to `main` and processes the listed operations.
+The workflow runs on every push to `main` and processes the listed operations. After all entries are handled the file is removed on a new branch and a pull request is opened so that the cleanup can be merged back to `main`.
 
 The project aims to eventually reach feature parity with [Bazarr](https://github.com/morpheus65535/bazarr) while offering improved configuration and logging. See `TODO.md` for the full roadmap and implementation plan.
 Extensive architectural details and design decisions are documented in
