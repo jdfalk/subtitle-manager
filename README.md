@@ -28,7 +28,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Parse file names and retrieve movie or episode details from TheMovieDB.
 - High performance scanning using concurrent workers.
 - Recursive directory watching with -r flag.
-- Integrate with Sonarr and Radarr using dedicated commands.
+- Integrate with Sonarr, Radarr and Plex using dedicated commands.
 - Run a translation gRPC server.
 - Delete subtitle files and remove history records.
 - Track subtitle download history and list with `downloads` command.
