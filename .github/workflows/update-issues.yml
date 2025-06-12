@@ -13,20 +13,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Update GitHub issues
+        id: issues
         if: ${{ hashFiles('issue_updates.json') != '' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
+          processed=0
           jq -c '.[]' issue_updates.json | while read -r item; do
             action=$(echo "$item" | jq -r '.action')
             if [ "$action" = "create" ]; then
-              echo "Creating issue"
-              curl -s -X POST \
-                -H "Authorization: Bearer $GH_TOKEN" \
+              title=$(echo "$item" | jq -r '.title')
+              encoded_title=$(printf '%s' "$title" | jq -sRr @uri)
+              count=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
                 -H "Accept: application/vnd.github+json" \
-                "https://api.github.com/repos/${REPO}/issues" \
-                -d "$(echo "$item" | jq 'del(.action)')"
+                "https://api.github.com/search/issues?q=repo:${REPO}+is:issue+in:title+${encoded_title}" | jq '.total_count')
+              if [ "$count" -eq 0 ]; then
+                echo "Creating issue '$title'"
+                curl -s -X POST \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  "https://api.github.com/repos/${REPO}/issues" \
+                  -d "$(echo "$item" | jq 'del(.action)')"
+              else
+                echo "Issue '$title' already exists, skipping"
+              fi
             elif [ "$action" = "update" ]; then
               num=$(echo "$item" | jq -r '.number')
               echo "Updating issue $num"
@@ -49,4 +60,17 @@ jobs:
                 https://api.github.com/graphql \
                 -d "$mutation"
             fi
+            processed=1
           done
+          echo "processed=$processed" >> "$GITHUB_OUTPUT"
+      - name: Remove issue_updates.json
+        if: steps.issues.outputs.processed == '1'
+        run: rm issue_updates.json
+      - name: Create pull request for cleanup
+        if: steps.issues.outputs.processed == '1'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: issue-updates-${{ github.run_id }}
+          commit-message: 'Remove processed issue updates'
+          title: 'Remove processed issue updates'
+          body: 'Remove processed entries from issue_updates.json.'
