@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased] - In Progress
 ### Planned
 - Complete web UI with History, System, and Wanted pages
+- Basic scheduler with `autoscan` command for periodic scans
 - Additional REST API endpoints for download, convert, and translate operations
 - File upload functionality for web-based subtitle conversion and translation
 

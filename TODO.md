@@ -24,7 +24,14 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [ ] Mark completed items in roadmap sections
 - [ ] Document new REST endpoints and web UI pages
 
-### 4. Bazarr Configuration Import
+### 4. Remaining Bazarr Features
+- [ ] PostgreSQL database backend
+- [ ] Reverse proxy base URL support
+- [ ] Webhook endpoint for Plex events
+- [ ] Anti-captcha service integration
+- [ ] Scheduler for Sonarr/Radarr sync and subtitle upgrades
+
+### 5. Bazarr Configuration Import
 
 - [ ] Implement `import-bazarr` command that fetches settings from `/api/system/settings`
   using the user's API key.

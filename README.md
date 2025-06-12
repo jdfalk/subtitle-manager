@@ -1,6 +1,6 @@
 # Subtitle Manager
 
-Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project has achieved feature parity with Bazarr and is production-ready.**
+Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. The project aims to reach feature parity with Bazarr. Some advanced features such as scheduling and webhooks are still in progress.
 
 ## ✨ Key Highlights
 
@@ -25,6 +25,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Batch translate multiple files concurrently.
 - Monitor directories and automatically download subtitles.
 - Scan existing libraries and fetch missing or upgraded subtitles.
+- Schedule periodic scans with the `autoscan` command.
 - Parse file names and retrieve movie or episode details from TheMovieDB.
 - High performance scanning using concurrent workers.
 - Recursive directory watching with -r flag.
@@ -127,6 +128,7 @@ subtitle-manager search opensubtitles [media] [lang]
 subtitle-manager batch [lang] [files...]
 subtitle-manager scan opensubtitles [directory] [lang] [-u]
 subtitle-manager scan subscene [directory] [lang] [-u]
+subtitle-manager autoscan [provider] [directory] [lang] [-i duration] [-u]
 subtitle-manager scanlib [directory]
 subtitle-manager watch opensubtitles [directory] [lang] [-r]
 subtitle-manager watch subscene [directory] [lang] [-r]
