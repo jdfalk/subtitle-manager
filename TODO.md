@@ -78,7 +78,7 @@ This file tracks planned work, architectural decisions, and implementation statu
    - Automatically fetch subtitles when media appears. *(recursive watching implemented)*
 
 8. **Future Enhancements**
-   - Replace manual HTTP calls with provider SDKs where available.
+   - Replace manual HTTP calls with provider SDKs where available. *(Google Translate now uses the official SDK)*
    - Asynchronous processing for bulk translations implemented via the `batch` command.
    - Evaluate performance of subtitle merging and translation.
    - Add optional web interface for managing subtitles. *(initial login page implemented)*

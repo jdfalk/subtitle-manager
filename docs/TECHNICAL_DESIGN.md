@@ -181,7 +181,7 @@ type TranslateFunc func(ctx context.Context, text, lang string) (string, error)
 
 ### 7.1 Google Translate
 
-`GoogleTranslate(text, lang, apiKey string) (string, error)` issues a POST request to the Google Translate API endpoint. The result is parsed from JSON and returned. API keys are read from configuration.
+`GoogleTranslate(text, lang, apiKey string) (string, error)` uses the official Google Cloud client library. A client is created with `option.WithAPIKey` and the endpoint can be overridden for tests. The translation result is returned from the SDK response.
 
 ### 7.2 ChatGPT
 
