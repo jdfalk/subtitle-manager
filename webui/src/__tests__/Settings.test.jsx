@@ -1,7 +1,7 @@
 // file: webui/src/__tests__/Settings.test.jsx
-import { vi, expect, describe, test, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import Settings from "../Settings.jsx";
 
 describe("Settings component", () => {

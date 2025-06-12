@@ -5,6 +5,7 @@ import Extract from "./Extract.jsx";
 import History from "./History.jsx";
 import Settings from "./Settings.jsx";
 import Setup from "./Setup.jsx";
+import Wanted from "./Wanted.jsx";
 
 function App() {
   const [username, setUsername] = useState("");
@@ -65,6 +66,7 @@ function App() {
         <button onClick={() => setPage("settings")}>Settings</button>
         <button onClick={() => setPage("extract")}>Extract</button>
         <button onClick={() => setPage("history")}>History</button>
+        <button onClick={() => setPage("wanted")}>Wanted</button>
       </nav>
       {page === "settings" ? (
         <Settings />
@@ -72,6 +74,8 @@ function App() {
         <Extract />
       ) : page === "history" ? (
         <History />
+      ) : page === "wanted" ? (
+        <Wanted />
       ) : (
         <Dashboard />
       )}
