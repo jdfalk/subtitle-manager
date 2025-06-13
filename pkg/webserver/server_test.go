@@ -16,6 +16,7 @@ import (
 
 	"subtitle-manager/pkg/auth"
 	"subtitle-manager/pkg/database"
+	"subtitle-manager/pkg/testutil"
 	"subtitle-manager/pkg/translator"
 
 	"github.com/spf13/viper"
@@ -24,24 +25,16 @@ import (
 // TestHandler verifies that the handler serves index.html at root.
 func TestHandler(t *testing.T) {
 	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
 
 	// create test user and api key
-	if err := auth.CreateUser(db, "test", "pass", "", "admin"); err != nil {
-		t.Fatalf("create user: %v", err)
-	}
+	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
 	key, err := auth.GenerateAPIKey(db, 1)
-	if err != nil {
-		t.Fatalf("key: %v", err)
-	}
+	testutil.MustNoError(t, "generate key", err)
 
 	h, err := Handler(db)
-	if err != nil {
-		t.Fatalf("handler error: %v", err)
-	}
+	testutil.MustNoError(t, "create handler", err)
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 	req, _ := http.NewRequest("GET", srv.URL+"/", nil)
@@ -58,32 +51,21 @@ func TestHandler(t *testing.T) {
 // TestRBAC verifies that permissions are enforced for protected routes.
 func TestRBAC(t *testing.T) {
 	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
 
 	// viewer role should not access /api/config
-	if err := auth.CreateUser(db, "viewer", "p", "", "viewer"); err != nil {
-		t.Fatalf("create user: %v", err)
-	}
+	testutil.MustNoError(t, "create viewer", auth.CreateUser(db, "viewer", "p", "", "viewer"))
 	vkey, err := auth.GenerateAPIKey(db, 1)
-	if err != nil {
-		t.Fatalf("viewer key: %v", err)
-	}
+	testutil.MustNoError(t, "viewer key", err)
+
 	// admin role can access
-	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
-		t.Fatalf("create admin: %v", err)
-	}
+	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
 	akey, err := auth.GenerateAPIKey(db, 2)
-	if err != nil {
-		t.Fatalf("admin key: %v", err)
-	}
+	testutil.MustNoError(t, "admin key", err)
 
 	h, err := Handler(db)
-	if err != nil {
-		t.Fatalf("handler error: %v", err)
-	}
+	testutil.MustNoError(t, "create handler", err)
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 
@@ -111,31 +93,21 @@ func TestRBAC(t *testing.T) {
 // TestConfigUpdate verifies that POST /api/config updates and persists values.
 func TestConfigUpdate(t *testing.T) {
 	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
 
-	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
-		t.Fatalf("create admin: %v", err)
-	}
+	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
 	akey, err := auth.GenerateAPIKey(db, 1)
-	if err != nil {
-		t.Fatalf("admin key: %v", err)
-	}
+	testutil.MustNoError(t, "admin key", err)
 
 	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
 	viper.SetConfigFile(tmp)
 	viper.Set("test_key", "old")
-	if err := viper.WriteConfig(); err != nil {
-		t.Fatalf("write: %v", err)
-	}
+	testutil.MustNoError(t, "write config", viper.WriteConfig())
 	defer viper.Reset()
 
 	h, err := Handler(db)
-	if err != nil {
-		t.Fatalf("handler error: %v", err)
-	}
+	testutil.MustNoError(t, "create handler", err)
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 
@@ -153,10 +125,7 @@ func TestConfigUpdate(t *testing.T) {
 	if viper.GetString("test_key") != "new" {
 		t.Fatalf("viper not updated")
 	}
-	data, err := os.ReadFile(tmp)
-	if err != nil {
-		t.Fatalf("read cfg: %v", err)
-	}
+	data := testutil.MustGet(t, "read config", func() ([]byte, error) { return os.ReadFile(tmp) })
 	if !strings.Contains(string(data), "test_key: new") {
 		t.Fatalf("config not written")
 	}
@@ -253,9 +222,7 @@ func TestExtract(t *testing.T) {
 	defer os.Setenv("PATH", oldPath)
 
 	h, err := Handler(db)
-	if err != nil {
-		t.Fatalf("handler error: %v", err)
-	}
+	h = testutil.Must(t, "handler creation", h, err)
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 
@@ -672,12 +639,6 @@ func TestTranslateUpload(t *testing.T) {
 
 // setupTestUser creates a test user with an API key and returns the key.
 func setupTestUser(t *testing.T, db *sql.DB) string {
-	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
-		t.Fatalf("create admin: %v", err)
-	}
-	key, err := auth.GenerateAPIKey(db, 1)
-	if err != nil {
-		t.Fatalf("api key: %v", err)
-	}
-	return key
+	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
+	return testutil.MustGet(t, "api key", func() (string, error) { return auth.GenerateAPIKey(db, 1) })
 }
