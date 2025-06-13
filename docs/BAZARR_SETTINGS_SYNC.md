@@ -24,3 +24,14 @@ Existing Bazarr users can migrate their configuration to Subtitle Manager to avo
 - Reduces configuration errors by reusing verified settings.
 
 Further implementation details should consider error handling for unreachable Bazarr instances and partial imports when settings do not have direct equivalents.
+
+### Import Command Usage
+
+Run the CLI tool to automatically migrate your configuration:
+
+```bash
+subtitle-manager import-bazarr http://localhost:6767 MY_API_KEY
+```
+
+The command fetches `/api/system/settings`, maps the values to Subtitle Manager's
+configuration keys and writes them to your current config file.
