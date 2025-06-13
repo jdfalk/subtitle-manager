@@ -19,8 +19,10 @@ issues=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
   -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/${REPO}/issues?state=open&per_page=100")
 
-echo "$issues" | jq -c '.[] | {number, title}' | \
-  jq -s 'group_by(.title)[] | select(length>1)' | while read -r group; do
+# TODO: handle pagination if more than 100 open issues exist
+
+# Sort issues by title before grouping so that group_by works correctly.
+echo "$issues" | jq -c '[.[] | {number, title}] | sort_by(.title) | group_by(.title)[] | select(length>1)' | while read -r group; do
     canonical=$(echo "$group" | jq 'min_by(.number)')
     canonical_num=$(echo "$canonical" | jq -r '.number')
 
@@ -37,7 +39,7 @@ echo "$issues" | jq -c '.[] | {number, title}' | \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${REPO}/issues/$num/comments" \
-              -d "{\"body\":\"Duplicate of #$canonical_num\"}" > /dev/null
+              -d "$(printf '{"body":"Duplicate of #%s"}' "$canonical_num")" > /dev/null
         fi
     done
   done
