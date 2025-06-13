@@ -576,4 +576,3 @@ func setupTestUser(t *testing.T, db *sql.DB) string {
 	}
 	return key
 }
-}
