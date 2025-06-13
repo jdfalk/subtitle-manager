@@ -129,14 +129,48 @@ The project is fully functional for production use and provides feature parity w
 
 ## Installation
 
+### Using Make (Recommended)
+
 ```bash
-# clone repository
-$ git clone <this repository>
-$ cd subtitle-manager
-# install dependencies, build web UI and compile
-$ go generate ./webui
-$ go build
+# Clone repository
+git clone <this repository>
+cd subtitle-manager
+
+# Build everything with one command
+make build
+
+# Or for development
+make quick-build
+
+# See all available targets
+make help
 ```
+
+### Manual Installation
+
+```bash
+# Clone repository
+git clone <this repository>
+cd subtitle-manager
+
+# Install dependencies, build web UI and compile
+go generate ./webui
+go build
+```
+
+### Build Automation
+
+The project includes a comprehensive Makefile that automates all build, test, and deployment tasks:
+
+- **`make build`** - Complete build including web UI and Go binary
+- **`make quick-build`** - Fast build for development
+- **`make test-all`** - Run all tests (Go + Web UI)
+- **`make docker`** - Build Docker image
+- **`make fix-webui`** - Fix web UI dependency conflicts
+- **`make dev`** - Build and run in development mode
+- **`make help`** - Show all available targets
+
+The Makefile handles dependency resolution, web UI building, Go compilation, testing, Docker builds, and more.
 
 ## Usage
 
