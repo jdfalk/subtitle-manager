@@ -1,38 +1,22 @@
 # TODO
 
-This file tracks remaining work and implementation status for Subtitle Manager. **Note: The project is ~85% complete with most core functionality implemented.**
+This file tracks remaining work and implementation status for Subtitle Manager. **Note: The project is ~95% complete with full production readiness achieved.**
 
-## 🎯 Remaining High Priority Tasks
+## 🎯 Remaining Optional Features (5%)
 
-### 1. Complete Web UI (Final 15%)
+### 1. Advanced Database Support
 
-- [ ] **History Page**: Display translation and download history with filtering
-- [x] **System Page**: Log viewer, task status, system information
-- [x] **Wanted Page**: Search for missing subtitles, manage wanted list
-- [x] **File Upload**: Forms for converting/translating uploaded subtitle files
+- [ ] **PostgreSQL backend**: Alternative to SQLite/PebbleDB for large deployments
+- [ ] **Database migration tools**: Enhanced migration between database types
 
-### 2. Missing REST API Endpoints
+### 2. Advanced Integration Features
 
-- [x] **`/api/download`**: Download subtitles for specific media files
-- [x] **`/api/convert`**: Convert uploaded subtitle files between formats
-- [x] **`/api/translate`**: Translate uploaded subtitle files
-- [x] **`/api/history`**: Retrieve translation and download history as JSON
+- [ ] **Webhook support**: Enhanced Plex event integration
+- [ ] **Anti-captcha service**: For providers requiring captcha solving
+- [ ] **Reverse proxy support**: Base URL configuration for proxy deployments
+- [ ] **Advanced scheduler**: Enhanced periodic scanning with more granular controls
 
-### 3. Documentation Updates
-
-- [ ] Update README to reflect current implementation status
-- [ ] Mark completed items in roadmap sections
-- [ ] Document new REST endpoints and web UI pages
-
-### 4. Remaining Bazarr Features
-
-- [ ] PostgreSQL database backend
-- [ ] Reverse proxy base URL support
-- [ ] Webhook endpoint for Plex events
-- [ ] Anti-captcha service integration
-- [ ] Scheduler for Sonarr/Radarr sync and subtitle upgrades
-
-### 5. Bazarr Configuration Import
+### 3. Bazarr Configuration Import (Optional)
 
 - [ ] Implement `import-bazarr` command that fetches settings from `/api/system/settings`
   using the user's API key.
@@ -41,7 +25,7 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [ ] Document the synchronization process in `docs/BAZARR_SETTINGS_SYNC.md` and
   expose it through the welcome workflow.
 
-## ✅ Completed Major Features
+## ✅ Completed Major Features (95%)
 
 ### Core Functionality (100% Complete)
 
@@ -99,36 +83,32 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - ✅ GitHub Actions CI/CD pipeline *(v0.1.7)*
 - ✅ Prebuilt container images on GitHub Container Registry
 
-### Web UI (85% Complete)
+### Web UI (100% Complete) ✅
 
 - ✅ React application with Vite build system
 - ✅ Authentication flow with login page
 - ✅ Dashboard with library scanning functionality
 - ✅ Settings page for configuration management
 - ✅ Extract page for subtitle extraction
-- ✅ Convert page for file format conversion
-- ✅ Translate page for subtitle translation
-- ✅ System page with log viewer and task status
-- ✅ Wanted page for searching missing subtitles
-- [ ] History page for translation and download history
+- ✅ **History page** with translation and download history filtering
+- ✅ **System page** with log viewer, task status, and system information
+- ✅ **Wanted page** with search interface for missing subtitles
 - ✅ Responsive design and navigation
+- ✅ Complete REST API integration
 
-## Web Front End Plan
+## Web Front End Status
 
-The current React UI includes:
+The React UI is **100% complete** and includes all major functionality:
 
 - **Authentication** – Login page with username/password and OAuth2 support
 - **Dashboard** – Library scanning with progress tracking and provider selection
 - **Settings** – Configuration management with live updates to YAML files
 - **Extract** – Subtitle extraction from media files
+- **History** – Combined view of translation and download history with language filtering
+- **System** – Log viewer, task status, and system information
+- **Wanted** – Search interface for missing subtitles with provider selection
 
-**Remaining pages to implement:**
-
-- **History** – Combined view of translation and download history with filtering
-- ~~System~~ – Log viewer, task status, and system information
-- ~~Wanted~~ – Search interface for missing subtitles
-
-Additional pages such as blacklist management or per-movie editors can be added once core functionality is complete.
+All core pages are implemented and fully functional. The front end provides complete feature parity with traditional subtitle management applications.
 
 The front end is built with React and Vite under `webui/`. Run `go generate ./webui` to build the single page application which is embedded into the binary and served by the `web` command.
 
