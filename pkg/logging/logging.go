@@ -21,17 +21,17 @@ func GetLogger(component string) *logrus.Entry {
 	if l, ok := loggers[component]; ok {
 		return l.WithField("component", component)
 	}
-       l := logrus.New()
-       levelStr := viper.GetString("log_levels." + component)
-        if levelStr == "" {
-                levelStr = viper.GetString("log-level")
-        }
-        lvl, err := logrus.ParseLevel(levelStr)
-        if err != nil {
-                lvl = logrus.InfoLevel
-        }
-        l.SetLevel(lvl)
-       l.AddHook(Hook)
-        loggers[component] = l
-        return l.WithField("component", component)
+	l := logrus.New()
+	levelStr := viper.GetString("log_levels." + component)
+	if levelStr == "" {
+		levelStr = viper.GetString("log-level")
+	}
+	lvl, err := logrus.ParseLevel(levelStr)
+	if err != nil {
+		lvl = logrus.InfoLevel
+	}
+	l.SetLevel(lvl)
+	l.AddHook(Hook)
+	loggers[component] = l
+	return l.WithField("component", component)
 }
