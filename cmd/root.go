@@ -102,6 +102,7 @@ func initConfig() {
 		viper.SetDefault("plex.url", "http://localhost:32400")
 		viper.SetDefault("plex.token", "")
 		viper.SetDefault("server_name", "Subtitle Manager")
+		viper.SetDefault("base_url", "")
 		viper.SetDefault("reverse_proxy", false)
 		viper.SetDefault("integrations.sonarr.enabled", false)
 		viper.SetDefault("integrations.radarr.enabled", false)

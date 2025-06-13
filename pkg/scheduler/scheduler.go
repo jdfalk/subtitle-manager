@@ -3,6 +3,7 @@ package scheduler
 
 import (
 	"context"
+	"math/rand"
 	"time"
 
 	"subtitle-manager/pkg/logging"
@@ -25,6 +26,47 @@ func Run(ctx context.Context, interval time.Duration, fn func(context.Context) e
 		case <-ticker.C:
 			if err := fn(ctx); err != nil && ctx.Err() == nil {
 				logger.Warnf("scheduled run: %v", err)
+			}
+		}
+	}
+}
+
+// RunWithOptions executes fn according to the provided Options. When SkipFirst
+// is false the task runs immediately. Jitter is applied before each execution
+// (except the initial run) and MaxRuns limits the total number of runs.
+func RunWithOptions(ctx context.Context, opts Options, fn func(context.Context) error) error {
+	logger := logging.GetLogger("scheduler")
+	runs := 0
+	if !opts.SkipFirst {
+		if err := fn(ctx); err != nil {
+			return err
+		}
+		runs++
+		if opts.MaxRuns > 0 && runs >= opts.MaxRuns {
+			return nil
+		}
+	}
+	ticker := time.NewTicker(opts.Interval)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-ticker.C:
+			if opts.Jitter > 0 {
+				d := time.Duration(rand.Int63n(int64(opts.Jitter)))
+				select {
+				case <-ctx.Done():
+					return ctx.Err()
+				case <-time.After(d):
+				}
+			}
+			if err := fn(ctx); err != nil && ctx.Err() == nil {
+				logger.Warnf("scheduled run: %v", err)
+			}
+			runs++
+			if opts.MaxRuns > 0 && runs >= opts.MaxRuns {
+				return nil
 			}
 		}
 	}
