@@ -78,7 +78,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | Library scanning   | ✅ Complete            | [cmd/scan.go](cmd/scan.go)                         |
 | Directory watching | ✅ Complete            | [cmd/watch.go](cmd/watch.go)                       |
 | Webhooks           | 🔶 Basic (Plex only)   | [TODO] Advanced webhook system                     |
-| Notifications      | 🔶 Planned             | [TODO] Discord/Telegram/Email                      |
+| Notifications      | ✅ Basic               | [pkg/notifications/](pkg/notifications/)           |
 
 #### 6. Advanced Features 🔶 80% Complete
 
@@ -181,7 +181,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | **Post-Processing**          | ✅ Complete            | UTF-8 encoding                   | [Post-Processing](https://wiki.bazarr.media/Additional-Configuration/Settings/#post-processing)                                       |
 | **Languages**                | ✅ Complete            | 180+ languages                   | [Languages](https://wiki.bazarr.media/Additional-Configuration/Settings/#languages)                                                   |
 | **Providers**                | ✅ Complete            | Full registry                    | [Providers](https://wiki.bazarr.media/Additional-Configuration/Settings/#providers)                                                   |
-| **Notifications**            | 🔶 Planned             | Infrastructure ready             | [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)                                           |
+| **Notifications**            | ✅ Basic               | Infrastructure ready             | [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)                                           |
 | **Scheduler**                | ✅ Basic               | Auto-scan available              | [Scheduler](https://wiki.bazarr.media/Additional-Configuration/Settings/#scheduler)                                                   |
 
 ### Missing Features Analysis
@@ -199,10 +199,9 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
    - Reference: [Webhooks](https://wiki.bazarr.media/Additional-Configuration/Webhooks/)
 
 3. **Notification Services** - Discord, Telegram, Email alerts
-   - Status: 🔶 Infrastructure ready, providers needed
-   - Current: Basic notification framework exists
+   - Status: ✅ Basic support implemented
+   - Current: Discord, Telegram and SMTP notifiers available
    - Reference: [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)
-
 4. **Anti-Captcha Integration** - For challenging providers
    - Status: ✅ Basic captcha solving available
    - Current: Most providers work without captcha
@@ -280,8 +279,8 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | **Configuration**            | INI files                    | ✅ YAML + Environment vars          | ✅ **Modern config**                |
 | **Container Support**        | Docker available             | ✅ Multi-arch + GHCR                | ✅ **Cloud-native**                 |
 | **Library Integration**      | Sonarr/Radarr webhooks       | ✅ Direct commands + basic webhooks | 🔶 **Enhanced webhook system**      |
-| **Notifications**            | Apprise integration          | 🔶 Infrastructure ready             | 🔶 **Multi-provider notifications** |
-| **Anti-Captcha**             | Anti-captcha.com             | ✅ Basic implementation            | 🔶 **Optional enhancement**         |
+| **Notifications**            | Apprise integration          | ✅ Basic providers                  | 🔶 **Multi-provider notifications** |
+| **Anti-Captcha**             | Anti-captcha.com             | ✅ Basic implementation             | 🔶 **Optional enhancement**         |
 | **Translation**              | Not available                | ✅ Google + ChatGPT                 | ✅ **Unique feature**               |
 | **Transcription**            | External Whisper             | ✅ Integrated Whisper               | ✅ **Integrated solution**          |
 | **Reverse Proxy**            | Full base URL support        | 🔶 Basic support                    | 🔶 **Enhanced proxy support**       |
