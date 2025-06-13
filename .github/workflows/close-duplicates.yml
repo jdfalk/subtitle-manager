@@ -3,7 +3,7 @@ name: Close Duplicate Issues
 
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: "0 1 * * *"
   workflow_dispatch:
 
 jobs:
@@ -14,8 +14,14 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: pip install requests
       - name: Close duplicates
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-        run: .github/scripts/close-duplicates.sh
+        run: python .github/scripts/close-duplicates.py
