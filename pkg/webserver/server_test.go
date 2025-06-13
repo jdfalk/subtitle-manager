@@ -680,3 +680,4 @@ func setupTestUser(t *testing.T, db *sql.DB) string {
 		t.Fatalf("api key: %v", err)
 	}
 	return key
+}
