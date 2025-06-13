@@ -25,6 +25,7 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [ ] Document new REST endpoints and web UI pages
 
 ### 4. Remaining Bazarr Features
+
 - [ ] PostgreSQL database backend
 - [ ] Reverse proxy base URL support
 - [ ] Webhook endpoint for Plex events
