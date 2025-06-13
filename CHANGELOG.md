@@ -15,12 +15,10 @@ All notable changes to this project will be documented in this file.
 
 - REST endpoint `/api/convert` for subtitle file conversion
 - REST endpoint `/api/translate` for translating uploaded subtitle files
+- REST endpoint `/api/download` for on-demand subtitle fetching
 - Build process now runs `go generate ./webui` to embed the latest web assets
   in the binary and container image.
 - Automated workflow closes duplicate issues by title
-
-### Added
-- REST endpoint `/api/download` for on-demand subtitle fetching
 
 ## [0.3.9] - 2025-06-26
 
