@@ -13,6 +13,7 @@ import (
 	"subtitle-manager/pkg/auth"
 	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/subtitles"
+	"subtitle-manager/pkg/webhooks"
 	"subtitle-manager/webui"
 )
 
@@ -117,6 +118,9 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/logs", authMiddleware(db, "basic", logsHandler()))
 	mux.Handle(prefix+"/api/system", authMiddleware(db, "basic", systemHandler()))
 	mux.Handle(prefix+"/api/tasks", authMiddleware(db, "basic", tasksHandler()))
+	mux.Handle(prefix+"/api/webhooks/sonarr", webhooks.SonarrHandler())
+	mux.Handle(prefix+"/api/webhooks/radarr", webhooks.RadarrHandler())
+	mux.Handle(prefix+"/api/webhooks/custom", webhooks.CustomHandler())
 	mux.Handle(prefix+"/api/translate", authMiddleware(db, "basic", translateHandler()))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle(prefix+"/", authMiddleware(db, "read", http.StripPrefix(prefix+"/", fsHandler)))

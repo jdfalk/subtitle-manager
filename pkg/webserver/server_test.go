@@ -564,6 +564,46 @@ func TestDownload(t *testing.T) {
 	}
 }
 
+// TestWebhookSonarr verifies that Sonarr webhook triggers subtitle download.
+func TestWebhookSonarr(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	subSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("sub")) }))
+	defer subSrv.Close()
+	viper.Set("providers.generic.api_url", subSrv.URL)
+	defer viper.Reset()
+
+	dir := t.TempDir()
+	vid := filepath.Join(dir, "file.mkv")
+	os.WriteFile(vid, []byte("x"), 0644)
+
+	body := strings.NewReader(`{"provider":"generic","path":"` + vid + `","lang":"en"}`)
+	req, _ := http.NewRequest("POST", srv.URL+"/api/webhooks/sonarr", body)
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusNoContent {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	out := strings.TrimSuffix(vid, filepath.Ext(vid)) + ".en.srt"
+	if _, err := os.Stat(out); err != nil {
+		t.Fatalf("subtitle not written")
+	}
+}
+
 // TestConvertUpload verifies that /api/convert returns an SRT file.
 func TestConvertUpload(t *testing.T) {
 	db, err := database.Open(":memory:")

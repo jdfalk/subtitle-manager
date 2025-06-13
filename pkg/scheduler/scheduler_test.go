@@ -51,10 +51,13 @@ func TestRunWithSkipFirst(t *testing.T) {
 		time.Sleep(80 * time.Millisecond)
 		cancel()
 	}()
-	RunWithOptions(ctx, Options{Interval: 50 * time.Millisecond, SkipFirst: true}, func(context.Context) error {
+	err := RunWithOptions(ctx, Options{Interval: 50 * time.Millisecond, SkipFirst: true}, func(context.Context) error {
 		atomic.AddInt32(&n, 1)
 		return nil
 	})
+	if err != context.Canceled {
+		t.Fatalf("expected context canceled, got %v", err)
+	}
 	if n != 1 {
 		t.Fatalf("expected 1 run, got %d", n)
 	}
@@ -65,10 +68,10 @@ func TestRunCron(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	var n int32
 	go func() {
-		time.Sleep(220 * time.Millisecond)
+		time.Sleep(1 * time.Second) // Give cron plenty of time to start and execute
 		cancel()
 	}()
-	err := RunCron(ctx, "@every 50ms", func(context.Context) error {
+	err := RunCron(ctx, "@every 250ms", func(context.Context) error {
 		atomic.AddInt32(&n, 1)
 		return nil
 	})

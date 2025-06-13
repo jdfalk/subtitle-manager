@@ -82,12 +82,14 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 - [ ] Enhanced migration tools between database types
 
 ### Enterprise Integration
-- [ ] Advanced webhook system for Plex events
-- [x] Anti-captcha service integration for challenging providers
+
+- ✅ Sonarr/Radarr webhook system for events
+- ✅ Anti-captcha service integration for challenging providers
 - [ ] Reverse proxy base URL support for complex networks
 - [x] Enhanced scheduler with granular controls
 
 ### Optional Migration Tools
+
 - [ ] Bazarr configuration import command
 - [ ] Provider credential migration utilities
 
@@ -105,6 +107,7 @@ The project is **fully production-ready** with:
 ## Migration from Bazarr
 
 Users can migrate from Bazarr with:
+
 - **Provider compatibility**: All major Bazarr providers supported
 - **Configuration similarity**: Familiar settings structure
 - **Import capabilities**: Manual configuration transfer (automated import planned)

@@ -77,8 +77,8 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | Plex integration   | ✅ Complete            | [cmd/plex.go](cmd/plex.go), [pkg/plex/](pkg/plex/) |
 | Library scanning   | ✅ Complete            | [cmd/scan.go](cmd/scan.go)                         |
 | Directory watching | ✅ Complete            | [cmd/watch.go](cmd/watch.go)                       |
-| Webhooks           | 🔶 Basic (Plex only)   | [TODO] Advanced webhook system                     |
-| Notifications      | ✅ Basic               | [pkg/notifications/](pkg/notifications/)           |
+| Webhooks           | ✅ Complete            | [pkg/webhooks](pkg/webhooks/)                      |
+| Notifications      | 🔶 Planned             | [TODO] Discord/Telegram/Email                      |
 
 #### 6. Advanced Features 🔶 80% Complete
 
@@ -194,8 +194,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
    - Reference: [PostgreSQL Database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
 
 2. **Advanced Webhook System** - Enhanced event notifications
-   - Status: 🔶 Basic Plex webhooks exist
-   - Needed: Sonarr/Radarr/custom webhook endpoints
+   - Status: ✅ Sonarr/Radarr/custom webhook endpoints implemented
    - Reference: [Webhooks](https://wiki.bazarr.media/Additional-Configuration/Webhooks/)
 
 3. **Notification Services** - Discord, Telegram, Email alerts
