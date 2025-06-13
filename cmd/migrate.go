@@ -5,18 +5,38 @@ import (
 	"subtitle-manager/pkg/database"
 )
 
-// migrateCmd migrates subtitle history from SQLite to PebbleDB.
+// migrateCmd migrates subtitle history between database backends.
 var migrateCmd = &cobra.Command{
-	Use:   "migrate [sqlite-file] [pebble-dir]",
-	Short: "Migrate subtitles from SQLite to PebbleDB",
-	Args:  cobra.ExactArgs(2),
+	Use:   "migrate <src-backend> <src-path> <dest-backend> <dest-path>",
+	Short: "Migrate subtitles between database backends",
+	Args:  cobra.RangeArgs(2, 4),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		sqlitePath := args[0]
-		pebblePath := args[1]
-		if err := database.MigrateToPebble(sqlitePath, pebblePath); err != nil {
+		if len(args) == 2 {
+			// Backwards compatibility: sqlite to pebble
+			return database.MigrateToPebble(args[0], args[1])
+		}
+		srcBackend := args[0]
+		srcPath := args[1]
+		destBackend := args[2]
+		destPath := args[3]
+
+		src, err := database.OpenStore(srcPath, srcBackend)
+		if err != nil {
 			return err
 		}
-		cmd.Printf("Migrated subtitles from %s to %s\n", sqlitePath, pebblePath)
+		defer src.Close()
+
+		dest, err := database.OpenStore(destPath, destBackend)
+		if err != nil {
+			return err
+		}
+		defer dest.Close()
+
+		if err := database.Migrate(src, dest); err != nil {
+			return err
+		}
+
+		cmd.Printf("Migrated data from %s:%s to %s:%s\n", srcBackend, srcPath, destBackend, destPath)
 		return nil
 	},
 }
