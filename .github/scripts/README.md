@@ -6,10 +6,20 @@ This script automatically closes duplicate GitHub issues by title, keeping the l
 
 ### 1. Create a GitHub Personal Access Token
 
+#### Fine-Grained Personal Access Token (Recommended)
+1. Go to GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens
+2. Generate a new token with repository access to your repo
+3. Grant the following permissions:
+   - **Contents**: Read (to access repository)
+   - **Issues**: Write (to close issues and add comments)
+
+#### Classic Personal Access Token (Legacy)
 1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
 2. Generate a new token with the following permissions:
    - `repo` (Full control of private repositories)
    - `public_repo` (Access public repositories)
+
+> **Note**: The script automatically detects token type. Fine-grained tokens start with `github_pat_`, classic tokens start with `ghp_`, `gho_`, or `ghs_`.
 
 ### 2. Set Environment Variables
 
