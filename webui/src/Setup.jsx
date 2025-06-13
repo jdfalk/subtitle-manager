@@ -45,6 +45,11 @@ export default function Setup() {
   return (
     <div className="setup">
       <h1>Initial Setup</h1>
+      <p>
+        Already using Bazarr? Run
+        <code>subtitle-manager import-bazarr http://localhost:6767 MY_API_KEY</code>
+        to copy your settings.
+      </p>
       {step === 0 && (
         <div>
           <p>Server settings</p>
