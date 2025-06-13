@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"subtitle-manager/pkg/subtitles"
 )
@@ -18,13 +19,16 @@ func convertHandler() http.Handler {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		f, _, err := r.FormFile("file")
+		f, hdr, err := r.FormFile("file")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		defer f.Close()
-		tmp, err := os.CreateTemp("", "convert-*.sub")
+
+		// Preserve the original file extension for astisub format detection
+		ext := filepath.Ext(hdr.Filename)
+		tmp, err := os.CreateTemp("", "convert-*"+ext)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

@@ -285,7 +285,9 @@ func TestConvert(t *testing.T) {
 		t.Fatalf("post: %v", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("status %d", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		t.Fatalf("status %d, body: %s", resp.StatusCode, string(body))
 	}
 	body, err := io.ReadAll(resp.Body)
 	resp.Body.Close()
@@ -569,7 +571,9 @@ func TestConvertUpload(t *testing.T) {
 		t.Fatalf("post: %v", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("status %d", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		t.Fatalf("status %d, body: %s", resp.StatusCode, string(body))
 	}
 	b, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
@@ -603,6 +607,7 @@ func TestTranslateUpload(t *testing.T) {
 	}
 
 	viper.Set("translate_service", "google")
+	viper.Set("google_api_key", "test-key")
 	defer viper.Reset()
 
 	h, err := Handler(db)
@@ -628,7 +633,9 @@ func TestTranslateUpload(t *testing.T) {
 		t.Fatalf("post: %v", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("status %d", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		t.Fatalf("status %d, body: %s", resp.StatusCode, string(body))
 	}
 	b, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
