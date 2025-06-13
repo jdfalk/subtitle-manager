@@ -215,8 +215,8 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
    - Reference: [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md)
 
 2. **Advanced Scheduling** - Granular scan controls
-   - Status: 🔶 Basic autoscan exists
-   - Current: Simple periodic scanning available
+   - Status: ✅ Cron-based scheduler implemented
+   - Current: Supports interval or cron expression
    - Reference: [Scheduler](https://wiki.bazarr.media/Additional-Configuration/Settings/#scheduler)
 
 3. **Reverse Proxy Enhancement** - Base URL configuration
@@ -249,8 +249,8 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - [ ] **Reverse proxy support**: Base URL configuration for proxy deployments
   - Location: `pkg/webserver/server.go` (enhance existing)
   - Reference: [Reverse Proxy Help](https://wiki.bazarr.media/Additional-Configuration/Reverse-Proxy-Help/)
-- [ ] **Advanced scheduler**: Enhanced periodic scanning with more granular controls
-  - Location: `pkg/scheduler/` (enhance existing)
+- [x] **Advanced scheduler**: Enhanced periodic scanning with more granular controls
+  - Location: `pkg/scheduler/` (cron support added)
 
 ### 3. Bazarr Configuration Import (Optional)
 
