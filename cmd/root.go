@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"subtitle-manager/pkg/captcha"
 	"subtitle-manager/pkg/translator"
 )
 
@@ -61,6 +62,11 @@ func init() {
 	rootCmd.PersistentFlags().String("opensubtitles-user-agent", "", "OpenSubtitles user agent")
 	viper.BindPFlag("opensubtitles.user_agent", rootCmd.PersistentFlags().Lookup("opensubtitles-user-agent"))
 
+	rootCmd.PersistentFlags().String("anticaptcha-key", "", "Anti-Captcha API key")
+	viper.BindPFlag("anticaptcha.api_key", rootCmd.PersistentFlags().Lookup("anticaptcha-key"))
+	rootCmd.PersistentFlags().String("anticaptcha-api-url", "", "Anti-Captcha API base URL")
+	viper.BindPFlag("anticaptcha.api_url", rootCmd.PersistentFlags().Lookup("anticaptcha-api-url"))
+
 	rootCmd.AddCommand(convertCmd)
 	rootCmd.AddCommand(mergeCmd)
 	rootCmd.AddCommand(translateCmd)
@@ -95,6 +101,8 @@ func initConfig() {
 		viper.SetDefault("openai_model", "gpt-3.5-turbo")
 		viper.SetDefault("opensubtitles.api_url", "https://rest.opensubtitles.org")
 		viper.SetDefault("opensubtitles.user_agent", "subtitle-manager/0.1")
+		viper.SetDefault("anticaptcha.api_key", "")
+		viper.SetDefault("anticaptcha.api_url", "https://api.anti-captcha.com")
 		viper.SetDefault("providers.generic.api_url", "")
 		viper.SetDefault("providers.generic.username", "")
 		viper.SetDefault("providers.generic.password", "")
@@ -125,5 +133,8 @@ func initConfig() {
 	}
 	if m := viper.GetString("openai_model"); m != "" {
 		translator.SetOpenAIModel(m)
+	}
+	if u := viper.GetString("anticaptcha.api_url"); u != "" {
+		captcha.SetAPIURL(u)
 	}
 }

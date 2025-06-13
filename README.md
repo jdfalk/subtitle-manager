@@ -122,7 +122,7 @@ services are available:
 
 - PostgreSQL database backend (SQLite and PebbleDB fully implemented)
 - Advanced scheduler with webhook support
-- Anti-captcha service integration
+- Anti-captcha service integration for providers requiring captcha solving
 - Reverse proxy base URL support
 
 The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations.
