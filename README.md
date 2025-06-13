@@ -16,7 +16,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Convert subtitles from many formats to SRT.
 - Merge two subtitle tracks sorted by start time.
 - Translate subtitles via Google Translate or ChatGPT APIs.
-- Store translation history in an SQLite database or optional PebbleDB store. Retrieve history via the `history` command or `/api/history` endpoint.
+- Store translation history in SQLite, PebbleDB or PostgreSQL databases. Retrieve history via the `history` command or `/api/history` endpoint.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
 - Convert uploaded subtitle files to SRT via `/api/convert`.
@@ -117,11 +117,11 @@ services are available:
 - **Providers**: 40+ subtitle providers with full Bazarr parity
 - **APIs**: Complete REST API coverage for all operations
 - **Infrastructure**: Docker support, CI/CD, automated testing
+- **Database**: SQLite, PebbleDB and PostgreSQL backends
 
 ### 🔄 Optional Remaining Features
 
-- PostgreSQL database backend (SQLite and PebbleDB fully implemented)
-- Advanced scheduler with cron-based scanning and webhook support
+- Advanced scheduler with webhook support
 - Anti-captcha service integration
 - Reverse proxy base URL support
 
