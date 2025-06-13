@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/fs"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/spf13/viper"
@@ -96,25 +97,29 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	if err != nil {
 		return nil, err
 	}
+	prefix := strings.Trim(viper.GetString("base_url"), "/")
+	if prefix != "" {
+		prefix = "/" + prefix
+	}
 	mux := http.NewServeMux()
-	mux.Handle("/api/login", loginHandler(db))
-	mux.Handle("/api/setup/status", setupStatusHandler(db))
-	mux.Handle("/api/setup", setupHandler(db))
-	mux.Handle("/api/oauth/github/login", githubLoginHandler(db))
-	mux.Handle("/api/oauth/github/callback", githubCallbackHandler(db))
-	mux.Handle("/api/config", authMiddleware(db, "basic", configHandler()))
-	mux.Handle("/api/scan", authMiddleware(db, "basic", scanHandler()))
-	mux.Handle("/api/scan/status", authMiddleware(db, "basic", scanStatusHandler()))
-	mux.Handle("/api/convert", authMiddleware(db, "basic", convertHandler()))
-	mux.Handle("/api/extract", authMiddleware(db, "basic", extractHandler()))
-	mux.Handle("/api/download", authMiddleware(db, "basic", downloadHandler(db)))
-	mux.Handle("/api/history", authMiddleware(db, "read", historyHandler(db)))
-	mux.Handle("/api/logs", authMiddleware(db, "basic", logsHandler()))
-	mux.Handle("/api/system", authMiddleware(db, "basic", systemHandler()))
-	mux.Handle("/api/tasks", authMiddleware(db, "basic", tasksHandler()))
-	mux.Handle("/api/translate", authMiddleware(db, "basic", translateHandler()))
+	mux.Handle(prefix+"/api/login", loginHandler(db))
+	mux.Handle(prefix+"/api/setup/status", setupStatusHandler(db))
+	mux.Handle(prefix+"/api/setup", setupHandler(db))
+	mux.Handle(prefix+"/api/oauth/github/login", githubLoginHandler(db))
+	mux.Handle(prefix+"/api/oauth/github/callback", githubCallbackHandler(db))
+	mux.Handle(prefix+"/api/config", authMiddleware(db, "basic", configHandler()))
+	mux.Handle(prefix+"/api/scan", authMiddleware(db, "basic", scanHandler()))
+	mux.Handle(prefix+"/api/scan/status", authMiddleware(db, "basic", scanStatusHandler()))
+	mux.Handle(prefix+"/api/convert", authMiddleware(db, "basic", convertHandler()))
+	mux.Handle(prefix+"/api/extract", authMiddleware(db, "basic", extractHandler()))
+	mux.Handle(prefix+"/api/download", authMiddleware(db, "basic", downloadHandler(db)))
+	mux.Handle(prefix+"/api/history", authMiddleware(db, "read", historyHandler(db)))
+	mux.Handle(prefix+"/api/logs", authMiddleware(db, "basic", logsHandler()))
+	mux.Handle(prefix+"/api/system", authMiddleware(db, "basic", systemHandler()))
+	mux.Handle(prefix+"/api/tasks", authMiddleware(db, "basic", tasksHandler()))
+	mux.Handle(prefix+"/api/translate", authMiddleware(db, "basic", translateHandler()))
 	fsHandler := http.FileServer(http.FS(f))
-	mux.Handle("/", authMiddleware(db, "read", fsHandler))
+	mux.Handle(prefix+"/", authMiddleware(db, "read", http.StripPrefix(prefix+"/", fsHandler)))
 	return mux, nil
 }
 

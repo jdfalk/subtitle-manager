@@ -48,6 +48,36 @@ func TestHandler(t *testing.T) {
 	}
 }
 
+// TestBaseURL verifies that the handler respects the configured base URL.
+func TestBaseURL(t *testing.T) {
+	db, err := database.Open(":memory:")
+	testutil.MustNoError(t, "open db", err)
+	defer db.Close()
+
+	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
+	key := testutil.MustGet(t, "key", func() (string, error) { return auth.GenerateAPIKey(db, 1) })
+
+	viper.Set("base_url", "sub")
+	defer viper.Reset()
+
+	h, err := Handler(db)
+	testutil.MustNoError(t, "handler", err)
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest("GET", srv.URL+"/sub/", nil)
+	req.Header.Set("X-API-Key", key)
+	resp := testutil.MustGet(t, "request", func() (*http.Response, error) { return srv.Client().Do(req) })
+	testutil.MustEqual(t, "status", http.StatusOK, resp.StatusCode)
+
+	req2, _ := http.NewRequest("GET", srv.URL+"/", nil)
+	req2.Header.Set("X-API-Key", key)
+	resp2 := testutil.MustGet(t, "request2", func() (*http.Response, error) { return srv.Client().Do(req2) })
+	if resp2.StatusCode == http.StatusOK {
+		t.Fatalf("root path should not be served when base_url set")
+	}
+}
+
 // TestRBAC verifies that permissions are enforced for protected routes.
 func TestRBAC(t *testing.T) {
 	db, err := database.Open(":memory:")
