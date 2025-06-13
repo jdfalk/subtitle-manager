@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file.
 
 - PostgreSQL database backend for enterprise deployments
 - Advanced webhook system for enhanced Plex integration
-- Anti-captcha service integration for challenging providers
+ - Anti-captcha service integration for challenging providers (basic)
 - Reverse proxy base URL support for complex network setups
 
 ### Added
@@ -35,6 +35,7 @@ All notable changes to this project will be documented in this file.
 - Build process now runs `go generate ./webui` to embed the latest web assets
   in the binary and container image.
 - Automated workflow closes duplicate issues by title
+- Basic Anti-Captcha client for providers requiring captcha solving
 
 ## [0.4.0] - 2025-06-12
 

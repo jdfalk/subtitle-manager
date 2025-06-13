@@ -86,7 +86,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | --------------------- | --------------------- | -------------------------------------------- |
 | PostgreSQL support    | 🔶 Planned             | SQLite + PebbleDB complete                   |
 | Reverse proxy support | 🔶 Partial             | Basic configuration available                |
-| Anti-captcha service  | 🔶 Planned             | For challenging providers                    |
+| Anti-captcha service  | ✅ Basic               | [pkg/captcha/](pkg/captcha/)                 |
 | Performance tuning    | ✅ Complete            | Concurrent workers, pools                    |
 | Custom scheduling     | 🔶 Basic               | [cmd/autoscan.go](cmd/autoscan.go)           |
 | Bazarr config import  | 🔶 Partial             | [pkg/bazarr/client.go](pkg/bazarr/client.go) |
@@ -173,7 +173,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | **Subtitle Options**         | ✅ Complete            | [pkg/subtitles/](pkg/subtitles/) | [Subtitles](https://wiki.bazarr.media/Additional-Configuration/Settings/#subtitles)                                                   |
 | - Subtitle Folder            | ✅ Complete            | Config option                    | -                                                                                                                                     |
 | - Upgrade Logic              | ✅ Complete            | Auto-upgrade                     | [Upgrade Previously Downloaded](https://wiki.bazarr.media/Additional-Configuration/Settings/#upgrade-previously-downloaded-subtitles) |
-| **Anti-Captcha**             | 🔶 Planned             | Not implemented                  | [Anti-Captcha Options](https://wiki.bazarr.media/Additional-Configuration/Settings/#anti-captcha-options)                             |
+| **Anti-Captcha**             | ✅ Basic               | [pkg/captcha/](pkg/captcha/)     | [Anti-Captcha Options](https://wiki.bazarr.media/Additional-Configuration/Settings/#anti-captcha-options)                             |
 | **Performance/Optimization** | ✅ Complete            | Worker pools                     | [Performance](https://wiki.bazarr.media/Additional-Configuration/Settings/#performance-optimization)                                  |
 | - Adaptive Searching         | 🔶 Basic               | Simple scheduling                | [Adaptive Searching](https://wiki.bazarr.media/Additional-Configuration/Settings/#adaptive-searching)                                 |
 | - Simultaneous Search        | ✅ Complete            | Concurrent workers               | -                                                                                                                                     |
@@ -204,7 +204,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
    - Reference: [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)
 
 4. **Anti-Captcha Integration** - For challenging providers
-   - Status: 🔶 Optional for providers requiring captcha solving
+   - Status: ✅ Basic captcha solving available
    - Current: Most providers work without captcha
    - Reference: [Anti-Captcha Options](https://wiki.bazarr.media/Additional-Configuration/Settings/#anti-captcha-options)
 
@@ -281,7 +281,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | **Container Support**        | Docker available             | ✅ Multi-arch + GHCR                | ✅ **Cloud-native**                 |
 | **Library Integration**      | Sonarr/Radarr webhooks       | ✅ Direct commands + basic webhooks | 🔶 **Enhanced webhook system**      |
 | **Notifications**            | Apprise integration          | 🔶 Infrastructure ready             | 🔶 **Multi-provider notifications** |
-| **Anti-Captcha**             | Anti-captcha.com             | 🔶 Not implemented                  | 🔶 **Optional enhancement**         |
+| **Anti-Captcha**             | Anti-captcha.com             | ✅ Basic implementation            | 🔶 **Optional enhancement**         |
 | **Translation**              | Not available                | ✅ Google + ChatGPT                 | ✅ **Unique feature**               |
 | **Transcription**            | External Whisper             | ✅ Integrated Whisper               | ✅ **Integrated solution**          |
 | **Reverse Proxy**            | Full base URL support        | 🔶 Basic support                    | 🔶 **Enhanced proxy support**       |
@@ -311,7 +311,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 1. **PostgreSQL**: Enterprise database backend (5% of users)
 2. **Advanced Webhooks**: Enhanced notification system
 3. **Notifications**: Discord/Telegram/Email providers
-4. **Anti-Captcha**: For challenging subtitle providers
+4. **Anti-Captcha**: Basic integration for providers requiring captchas
 5. **Advanced Scheduling**: More granular control options
 
 **Conclusion**: Subtitle Manager has achieved **95% completion** with **full production readiness**. The remaining 5% consists entirely of optional enterprise features. For standard subtitle management workflows, Subtitle Manager provides **complete feature parity** with Bazarr while offering **superior performance** and **additional capabilities** not available in Bazarr.

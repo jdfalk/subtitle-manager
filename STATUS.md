@@ -83,7 +83,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 
 ### Enterprise Integration
 - [ ] Advanced webhook system for Plex events
-- [ ] Anti-captcha service integration for challenging providers
+- [x] Anti-captcha service integration for challenging providers
 - [ ] Reverse proxy base URL support for complex networks
 - [ ] Enhanced scheduler with granular controls
 
