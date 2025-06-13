@@ -29,7 +29,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Monitor directories and automatically download subtitles.
 - Scan existing libraries and fetch missing or upgraded subtitles.
 - Download individual subtitles through the web API at `/api/download`.
-- Schedule periodic scans with the `autoscan` command.
+- Schedule scans with the `autoscan` command using intervals or cron expressions.
 - Parse file names and retrieve movie or episode details from TheMovieDB.
 - High performance scanning using concurrent workers.
 - Recursive directory watching with -r flag.
@@ -121,8 +121,8 @@ services are available:
 ### 🔄 Optional Remaining Features
 
 - PostgreSQL database backend (SQLite and PebbleDB fully implemented)
-- Advanced scheduler with webhook support
-- Anti-captcha service integration for providers requiring captcha solving
+- Advanced scheduler with cron-based scanning and webhook support
+- Anti-captcha service integration
 - Reverse proxy base URL support
 
 The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations.
@@ -187,7 +187,7 @@ subtitle-manager search opensubtitles [media] [lang]
 subtitle-manager batch [lang] [files...]
 subtitle-manager scan opensubtitles [directory] [lang] [-u]
 subtitle-manager scan subscene [directory] [lang] [-u]
-subtitle-manager autoscan [provider] [directory] [lang] [-i duration] [-u]
+subtitle-manager autoscan [provider] [directory] [lang] [-i duration] [-s cron] [-u]
 subtitle-manager scanlib [directory]
 subtitle-manager watch opensubtitles [directory] [lang] [-r]
 subtitle-manager watch subscene [directory] [lang] [-r]

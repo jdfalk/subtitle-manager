@@ -14,6 +14,7 @@ import (
 )
 
 var interval time.Duration
+var scheduleSpec string
 
 // autoscanCmd periodically scans a directory for subtitles using a provider.
 var autoscanCmd = &cobra.Command{
@@ -40,12 +41,16 @@ var autoscanCmd = &cobra.Command{
 			}
 		}
 		workers := viper.GetInt("scan_workers")
+		if scheduleSpec != "" {
+			return scheduler.ScheduleScanDirectoryCron(ctx, scheduleSpec, dir, lang, name, p, upgrade, workers, store)
+		}
 		return scheduler.ScheduleScanDirectory(ctx, interval, dir, lang, name, p, upgrade, workers, store)
 	},
 }
 
 func init() {
 	autoscanCmd.Flags().DurationVarP(&interval, "interval", "i", time.Hour, "scan interval")
+	autoscanCmd.Flags().StringVarP(&scheduleSpec, "schedule", "s", "", "cron schedule expression")
 	autoscanCmd.Flags().BoolVarP(&upgrade, "upgrade", "u", false, "replace existing subtitles")
 	rootCmd.AddCommand(autoscanCmd)
 }
