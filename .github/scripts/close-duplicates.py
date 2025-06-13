@@ -25,22 +25,70 @@ def main():
 
     if not gh_token or not repo:
         print("GH_TOKEN and REPO must be set", file=sys.stderr)
+        if not gh_token:
+            print("GH_TOKEN is missing", file=sys.stderr)
+        if not repo:
+            print("REPO is missing", file=sys.stderr)
         sys.exit(1)
+
+    print(f"Using repo: {repo}")
+    print(f"Token length: {len(gh_token)} characters")
+
+    # Detect token type and set appropriate authorization header
+    # Fine-grained tokens start with "github_pat_"
+    # Classic tokens start with "ghp_" or "gho_" or "ghs_"
+    if gh_token.startswith('github_pat_'):
+        auth_header = f'token {gh_token}'
+        token_type = 'fine-grained'
+    else:
+        auth_header = f'Bearer {gh_token}'
+        token_type = 'classic'
+
+    print(f"Detected {token_type} token format")
 
     # Set up headers for GitHub API
     headers = {
-        'Authorization': f'Bearer {gh_token}',
+        'Authorization': auth_header,
         'Accept': 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28'
     }
 
+    # Test API access first
+    test_url = f"https://api.github.com/repos/{repo}"
+    try:
+        test_response = requests.get(test_url, headers=headers)
+        if test_response.status_code == 401:
+            print("Error: Invalid or expired GitHub token", file=sys.stderr)
+            print("Please check your GH_TOKEN environment variable", file=sys.stderr)
+            print(f"Detected {token_type} token format", file=sys.stderr)
+            if token_type == 'fine-grained':
+                print("Fine-grained tokens need 'Contents' and 'Issues' permissions", file=sys.stderr)
+            sys.exit(1)
+        elif test_response.status_code == 404:
+            print(f"Error: Repository '{repo}' not found or not accessible", file=sys.stderr)
+            sys.exit(1)
+        test_response.raise_for_status()
+        print("✓ GitHub API access verified")
+    except requests.exceptions.RequestException as e:
+        print(f"Error testing GitHub API access: {e}", file=sys.stderr)
+        sys.exit(1)
+
     # Fetch all open issues
     print("Fetching open issues...")
-    issues = fetch_all_issues(repo, headers)
+    try:
+        issues = fetch_all_issues(repo, headers)
+    except requests.exceptions.HTTPError as e:
+        print(f"Error fetching issues: {e}", file=sys.stderr)
+        sys.exit(1)
     print(f"Found {len(issues)} open issues")
 
     # Group issues by title
     title_groups = group_issues_by_title(issues)
+
+    # Check for dry-run mode
+    dry_run = os.environ.get('DRY_RUN', 'false').lower() in ('true', '1', 'yes')
+    if dry_run:
+        print("🔍 Running in DRY-RUN mode - no issues will be closed")
 
     # Find and close duplicates
     duplicates_found = False
@@ -48,7 +96,10 @@ def main():
         if len(issue_list) > 1:
             duplicates_found = True
             print(f"Found {len(issue_list)} issues with title: '{title}'")
-            close_duplicates(repo, headers, issue_list)
+            if dry_run:
+                print_duplicate_plan(issue_list)
+            else:
+                close_duplicates(repo, headers, issue_list)
 
     if not duplicates_found:
         print("No duplicate issues found")
@@ -146,6 +197,17 @@ def close_duplicates(repo: str, headers: Dict[str, str], issue_list: List[Dict[s
         else:
             print(f"Failed to add comment to issue #{duplicate['number']}: {comment_response.status_code}")
             print(f"Response: {comment_response.text}")
+
+
+def print_duplicate_plan(issue_list: List[Dict[str, Any]]):
+    """Print what would be done in dry-run mode."""
+    issue_list.sort(key=lambda x: x['number'])
+    canonical = issue_list[0]
+    duplicates = issue_list[1:]
+
+    print(f"  📌 Would keep issue #{canonical['number']} as canonical")
+    for duplicate in duplicates:
+        print(f"  🚫 Would close issue #{duplicate['number']} as duplicate")
 
 
 if __name__ == '__main__':
