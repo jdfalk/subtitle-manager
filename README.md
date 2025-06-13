@@ -221,6 +221,22 @@ Web UI unit tests live in `webui/src/__tests__` and are executed with `npm test`
 End-to-end tests use Playwright and run with `npm run test:e2e` once browsers are installed via `npx playwright install`.
 Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
 
+### Git Hooks
+
+To ensure code quality, install the pre-commit hook that automatically runs `gofmt` and `go vet`:
+
+```bash
+./scripts/install-hooks.sh
+```
+
+The pre-commit hook will:
+
+- Check Go file formatting with `gofmt -s`
+- Run `go vet` for static analysis
+- Prevent commits that don't pass these checks
+
+To bypass the hook temporarily, use `git commit --no-verify`.
+
 ### Issue updates
 
 Pushing an `issue_updates.json` file to the repository root allows the `update-issues` workflow to create, update or delete GitHub issues using the repository `GITHUB_TOKEN`. The file contains a JSON array where each object specifies an `action` and any supported issue fields. Duplicate issues are avoided by checking for an existing issue with the same title before creation. Example:
