@@ -1,23 +1,26 @@
 import {
   Transform as ConvertIcon,
+  Brightness4 as DarkModeIcon,
   Dashboard as DashboardIcon,
   Archive as ExtractIcon,
   History as HistoryIcon,
+  Brightness7 as LightModeIcon,
   Menu as MenuIcon,
   Settings as SettingsIcon,
   BugReport as SystemIcon,
   Translate as TranslateIcon,
   Download as WantedIcon,
-  Brightness4 as DarkModeIcon,
-  Brightness7 as LightModeIcon,
 } from "@mui/icons-material";
 import {
+  alpha,
   AppBar,
   Box,
   Button,
   Container,
+  createTheme,
   CssBaseline,
   Drawer,
+  Fab,
   IconButton,
   List,
   ListItem,
@@ -29,9 +32,6 @@ import {
   ThemeProvider,
   Toolbar,
   Typography,
-  createTheme,
-  alpha,
-  Fab,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import "./App.css";
@@ -189,8 +189,8 @@ const createAppTheme = (isDarkMode = true) => createTheme({
       styleOverrides: {
         root: {
           backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
-          boxShadow: isDarkMode 
-            ? '0 4px 8px rgba(0,0,0,0.3)' 
+          boxShadow: isDarkMode
+            ? '0 4px 8px rgba(0,0,0,0.3)'
             : '0 2px 8px rgba(0,0,0,0.1)',
           borderRadius: 16,
           border: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.08)}`,
@@ -330,10 +330,10 @@ function App() {
               justifyContent: 'center',
             }}
           >
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                p: 6, 
+            <Paper
+              elevation={0}
+              sx={{
+                p: 6,
                 width: '100%',
                 borderRadius: 3,
                 border: '1px solid',
@@ -349,7 +349,7 @@ function App() {
                   Sign in to access your subtitle management dashboard
                 </Typography>
               </Box>
-              
+
               <Box component="form" sx={{ mt: 1 }}>
                 <TextField
                   margin="normal"
@@ -404,13 +404,13 @@ function App() {
                 )}
               </Box>
             </Paper>
-            
+
             {/* Theme toggle for login page */}
             <Box sx={{ mt: 2 }}>
               <IconButton
                 onClick={toggleDarkMode}
                 aria-label="toggle dark mode"
-                sx={{ 
+                sx={{
                   backgroundColor: 'background.paper',
                   border: '1px solid',
                   borderColor: 'divider',
@@ -429,9 +429,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ display: 'flex' }}>
-        <AppBar 
-          position="fixed" 
-          sx={{ 
+        <AppBar
+          position="fixed"
+          sx={{
             zIndex: (theme) => theme.zIndex.drawer + 1,
             transition: theme.transitions.create(['margin'], {
               easing: theme.transitions.easing.sharp,
@@ -461,7 +461,7 @@ function App() {
             </IconButton>
           </Toolbar>
         </AppBar>
-        
+
         <Drawer
           variant="persistent"
           anchor="left"
@@ -497,7 +497,7 @@ function App() {
             </List>
           </Box>
         </Drawer>
-        
+
         <Box
           component="main"
           sx={{

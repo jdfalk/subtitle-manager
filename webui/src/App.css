@@ -210,7 +210,7 @@
   .no-print {
     display: none !important;
   }
-  
+
   .MuiAppBar-root,
   .MuiDrawer-root,
   .MuiFab-root {
@@ -223,7 +223,7 @@
   .mobile-full-width {
     width: 100% !important;
   }
-  
+
   .mobile-hide {
     display: none !important;
   }
@@ -243,7 +243,7 @@
   .MuiCard-root {
     border: 2px solid currentColor;
   }
-  
+
   .MuiButton-outlined {
     border-width: 2px;
   }
