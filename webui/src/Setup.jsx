@@ -114,6 +114,7 @@ export default function Setup() {
   const [bazarrURL, setBazarrURL] = useState("");
   const [bazarrAPIKey, setBazarrAPIKey] = useState("");
   const [bazarrSettings, setBazarrSettings] = useState(null);
+  const [bazarrMappings, setBazarrMappings] = useState([]);
   const [bazarrRawData, setBazarrRawData] = useState(null);
   const [selectedSettings, setSelectedSettings] = useState({});
   const [bazarrLoading, setBazarrLoading] = useState(false);
@@ -146,14 +147,25 @@ export default function Setup() {
         const data = await res.json();
         setBazarrRawData(data.raw_settings); // Store raw data for debugging
         setBazarrSettings(data.preview);
-        // Pre-select all settings for import
+        setBazarrMappings(data.mappings || []);
+
+        // Pre-select all settings for import based on mappings
         const selected = {};
-        Object.keys(data.preview).forEach(key => {
-          selected[key] = true;
-        });
+        if (data.mappings) {
+          data.mappings.forEach(mapping => {
+            selected[mapping.key] = true;
+          });
+        } else {
+          // Fallback for legacy response format
+          Object.keys(data.preview).forEach(key => {
+            selected[key] = true;
+          });
+        }
         setSelectedSettings(selected);
+
         console.log("Raw Bazarr data:", data.raw_settings);
         console.log("Mapped Bazarr data:", data.preview);
+        console.log("Mapping details:", data.mappings);
       } else {
         const errorText = await res.text();
         setBazarrError(errorText || "Failed to connect to Bazarr");
@@ -437,7 +449,133 @@ export default function Setup() {
                         </Paper>
                       )}
 
-                      {bazarrSettings && (
+                      {bazarrSettings && bazarrMappings.length > 0 && (
+                        <Box>
+                          <Typography variant="h6" gutterBottom>
+                            Found Settings ({bazarrMappings.length} items)
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" paragraph>
+                            Select which settings to import. Each setting shows where it will be mapped in Subtitle Manager:
+                          </Typography>
+
+                          {/* Action buttons */}
+                          <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              onClick={() => {
+                                const selected = {};
+                                bazarrMappings.forEach(mapping => {
+                                  selected[mapping.key] = true;
+                                });
+                                setSelectedSettings(selected);
+                              }}
+                            >
+                              Select All
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              onClick={() => setSelectedSettings({})}
+                            >
+                              Deselect All
+                            </Button>
+                          </Stack>
+
+                          {/* Group by section */}
+                          {Object.entries(
+                            bazarrMappings.reduce((groups, mapping) => {
+                              const section = mapping.section || 'Other';
+                              if (!groups[section]) groups[section] = [];
+                              groups[section].push(mapping);
+                              return groups;
+                            }, {})
+                          ).map(([section, mappings]) => (
+                            <Card key={section} variant="outlined" sx={{ mb: 2 }}>
+                              <CardContent>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                                  <Typography variant="h6" color="primary">
+                                    {section}
+                                  </Typography>
+                                  <Stack direction="row" spacing={1}>
+                                    <Button
+                                      variant="text"
+                                      size="small"
+                                      onClick={() => {
+                                        const updates = {};
+                                        mappings.forEach(mapping => {
+                                          updates[mapping.key] = true;
+                                        });
+                                        setSelectedSettings({...selectedSettings, ...updates});
+                                      }}
+                                    >
+                                      Select All
+                                    </Button>
+                                    <Button
+                                      variant="text"
+                                      size="small"
+                                      onClick={() => {
+                                        const updates = {};
+                                        mappings.forEach(mapping => {
+                                          updates[mapping.key] = false;
+                                        });
+                                        setSelectedSettings({...selectedSettings, ...updates});
+                                      }}
+                                    >
+                                      None
+                                    </Button>
+                                  </Stack>
+                                </Stack>
+                                <List dense>
+                                  {mappings.map((mapping, index) => (
+                                    <div key={mapping.key}>
+                                      <ListItem sx={{ pl: 0 }}>
+                                        <ListItemIcon>
+                                          <Checkbox
+                                            checked={selectedSettings[mapping.key] || false}
+                                            onChange={(e) => setSelectedSettings({
+                                              ...selectedSettings,
+                                              [mapping.key]: e.target.checked
+                                            })}
+                                          />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                          primary={
+                                            <Typography variant="body2" fontWeight="medium">
+                                              {mapping.description}
+                                            </Typography>
+                                          }
+                                          secondary={
+                                            <Box>
+                                              <Typography variant="caption" color="primary" sx={{ fontFamily: 'monospace', display: 'block' }}>
+                                                {mapping.key}
+                                              </Typography>
+                                              <Typography variant="caption" sx={{ fontFamily: 'monospace', display: 'block' }}>
+                                                Value: {typeof mapping.value === 'object' ? JSON.stringify(mapping.value) : String(mapping.value)}
+                                              </Typography>
+                                            </Box>
+                                          }
+                                        />
+                                      </ListItem>
+                                      {index < mappings.length - 1 && <Divider />}
+                                    </div>
+                                  ))}
+                                </List>
+                              </CardContent>
+                            </Card>
+                          ))}
+
+                          {/* Summary */}
+                          <Alert severity="info" sx={{ mt: 2 }}>
+                            <Typography variant="body2">
+                              {Object.values(selectedSettings).filter(Boolean).length} of {bazarrMappings.length} settings selected for import
+                            </Typography>
+                          </Alert>
+                        </Box>
+                      )}
+
+                      {/* Fallback for legacy format */}
+                      {bazarrSettings && bazarrMappings.length === 0 && (
                         <Box>
                           <Typography variant="h6" gutterBottom>
                             Found Settings

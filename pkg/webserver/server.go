@@ -298,9 +298,10 @@ func bazarrImportHandler(db *sql.DB) http.Handler {
 		APIKey string `json:"api_key"`
 	}
 	type resp struct {
-		RawSettings map[string]any `json:"raw_settings"`
-		Settings    map[string]any `json:"settings"`
-		Preview     map[string]any `json:"preview"`
+		RawSettings map[string]any       `json:"raw_settings"`
+		Settings    map[string]any       `json:"settings"`
+		Preview     map[string]any       `json:"preview"`
+		Mappings    []bazarr.MappingInfo `json:"mappings"`
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -337,13 +338,14 @@ func bazarrImportHandler(db *sql.DB) http.Handler {
 			return
 		}
 
-		// Map settings for preview
-		mapped := bazarr.MapSettings(settings)
+		// Map settings for preview with detailed mapping information
+		mapped, mappings := bazarr.MapSettingsWithInfo(settings)
 
 		result := resp{
 			RawSettings: settings,
 			Settings:    settings,
 			Preview:     mapped,
+			Mappings:    mappings,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -357,7 +359,8 @@ func bazarrImportHandler(db *sql.DB) http.Handler {
 // bazarrConfigUploadHandler accepts a Bazarr config.ini file upload and parses it
 func bazarrConfigUploadHandler(db *sql.DB) http.Handler {
 	type resp struct {
-		Preview map[string]any `json:"preview"`
+		Preview  map[string]any       `json:"preview"`
+		Mappings []bazarr.MappingInfo `json:"mappings"`
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -401,11 +404,12 @@ func bazarrConfigUploadHandler(db *sql.DB) http.Handler {
 		// Parse INI-style config (basic implementation)
 		configMap := parseINIConfig(string(content))
 
-		// Convert to Bazarr settings format and map
-		mapped := bazarr.MapSettings(configMap)
+		// Convert to Bazarr settings format and map with detailed mapping information
+		mapped, mappings := bazarr.MapSettingsWithInfo(configMap)
 
 		result := resp{
-			Preview: mapped,
+			Preview:  mapped,
+			Mappings: mappings,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
