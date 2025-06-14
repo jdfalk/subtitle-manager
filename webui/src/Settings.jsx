@@ -1,54 +1,58 @@
+// file: webui/src/Settings.jsx
+
 import {
+  Security as AuthIcon,
+  Storage as DatabaseIcon,
+  Settings as GeneralIcon,
   Download as ImportIcon,
-  Info as InfoIcon,
-  Refresh as RefreshIcon,
-  Save as SaveIcon,
+  Notifications as NotificationIcon,
+  CloudDownload as ProvidersIcon,
+  Refresh as RefreshIcon
 } from "@mui/icons-material";
 import {
   Alert,
   Box,
   Button,
-  Card,
-  CardContent,
-  Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
-  IconButton,
   Paper,
   Snackbar,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Tooltip,
+  Tab,
+  Tabs,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import ProviderCard from "./components/ProviderCard.jsx";
+import ProviderConfigDialog from "./components/ProviderConfigDialog.jsx";
 
 /**
- * Settings component renders a configuration form with Bazarr import functionality.
- * Values are loaded from `/api/config` and submitted back via POST to the same endpoint.
- * Supports importing settings from Bazarr via `/api/bazarr/import`.
+ * Settings component with modern tabbed interface for managing all aspects
+ * of subtitle manager configuration. Includes provider management similar to Bazarr.
  */
 export default function Settings() {
-  const [config, setConfig] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [_config, setConfig] = useState(null);
+  const [providers, setProviders] = useState([]);
   const [status, setStatus] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [providerConfigDialog, setProviderConfigDialog] = useState({ open: false, provider: null });
   const [bazarrConfig, setBazarrConfig] = useState(null);
   const [importing, setImporting] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadConfig();
+    loadProviders();
   }, []);
 
+  /**
+   * Load current configuration from the server
+   */
   const loadConfig = async () => {
     setLoading(true);
     try {
@@ -63,28 +67,158 @@ export default function Settings() {
     }
   };
 
-  const handleChange = (key, value) => {
-    setConfig({ ...config, [key]: value });
-  };
-
-  const save = async () => {
+  /**
+   * Load available providers and their current configuration
+   */
+  const loadProviders = async () => {
     try {
-      const res = await fetch("/api/config", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(config),
-      });
-      if (res.ok) {
-        setStatus("Configuration saved successfully");
-        setSnackbarOpen(true);
-      } else {
-        setStatus("Failed to save configuration");
+      const response = await fetch("/api/providers");
+      if (response.ok) {
+        const data = await response.json();
+        // Transform provider data to include display information
+        const providersWithMetadata = data.map(provider => ({
+          ...provider,
+          displayName: formatProviderName(provider.name),
+          description: getProviderDescription(provider.name),
+          languages: getProviderLanguages(provider.name),
+          configured: hasRequiredConfig(provider),
+        }));
+        setProviders(providersWithMetadata);
       }
-    } catch {
-      setStatus("Error saving configuration");
+    } catch (error) {
+      console.error("Failed to load providers:", error);
     }
   };
 
+  /**
+   * Format provider name for display (e.g., "opensubtitles" -> "OpenSubtitles")
+   */
+  const formatProviderName = (name) => {
+    const specialNames = {
+      opensubtitles: 'OpenSubtitles',
+      opensubtitlescom: 'OpenSubtitles.com',
+      opensubtitlesvip: 'OpenSubtitles VIP',
+      addic7ed: 'Addic7ed',
+      podnapisi: 'Podnapisi.NET',
+      subscene: 'Subscene',
+      yifysubtitles: 'YIFY Subtitles',
+      turkcealtyazi: 'Türkçe Altyazı',
+      greeksubtitles: 'Greek Subtitles',
+      legendasdivx: 'Legendas DivX',
+      legendasnet: 'Legendas.NET',
+      napiprojekt: 'NapiProjekt',
+    };
+
+    return specialNames[name] || name.split(/(?=[A-Z])/).map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  /**
+   * Get provider description based on provider type
+   */
+  const getProviderDescription = (name) => {
+    const descriptions = {
+      opensubtitles: 'Large community-driven subtitle database',
+      addic7ed: 'TV shows subtitle provider with high quality subs',
+      subscene: 'Popular subtitle site for movies and TV shows',
+      whisper: 'AI-powered speech recognition for subtitle generation',
+      embedded: 'Extract subtitles embedded in media files',
+      generic: 'Generic HTTP/API-based subtitle provider',
+    };
+
+    return descriptions[name] || `${formatProviderName(name)} subtitle provider`;
+  };
+
+  /**
+   * Get commonly supported languages for a provider
+   */
+  const getProviderLanguages = (name) => {
+    // This would ideally come from the provider metadata
+    const commonLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt'];
+    const specialLanguages = {
+      turkcealtyazi: ['tr', 'en'],
+      greeksubtitles: ['el', 'en'],
+      napiprojekt: ['pl', 'en'],
+      legendasdivx: ['pt', 'es', 'en'],
+    };
+
+    return specialLanguages[name] || commonLanguages;
+  };
+
+  /**
+   * Check if provider has required configuration
+   */
+  const hasRequiredConfig = (provider) => {
+    if (!provider.config) return false;
+
+    const requiredFields = {
+      opensubtitles: ['apiKey'],
+      addic7ed: ['username', 'password'],
+      generic: ['baseUrl'],
+    };
+
+    const required = requiredFields[provider.name] || [];
+    return required.every(field => provider.config[field]);
+  };
+
+  /**
+   * Toggle provider enabled state
+   */
+  const handleProviderToggle = async (providerName, enabled) => {
+    try {
+      const response = await fetch(`/api/providers/${providerName}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled }),
+      });
+
+      if (response.ok) {
+        setProviders(prev => prev.map(p =>
+          p.name === providerName ? { ...p, enabled } : p
+        ));
+        setStatus(`${formatProviderName(providerName)} ${enabled ? 'enabled' : 'disabled'}`);
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error('Failed to toggle provider:', error);
+    }
+  };
+
+  /**
+   * Open provider configuration dialog
+   */
+  const handleProviderConfigure = (provider) => {
+    setProviderConfigDialog({ open: true, provider });
+  };
+
+  /**
+   * Save provider configuration
+   */
+  const handleProviderSave = async (provider) => {
+    try {
+      const response = await fetch(`/api/providers/${provider.name}/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(provider.config),
+      });
+
+      if (response.ok) {
+        setProviders(prev => prev.map(p =>
+          p.name === provider.name ? { ...provider, configured: hasRequiredConfig(provider) } : p
+        ));
+        setProviderConfigDialog({ open: false, provider: null });
+        setStatus(`${formatProviderName(provider.name)} configuration saved`);
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error('Failed to save provider config:', error);
+    }
+  };
+
+  /**
+   * Import settings from Bazarr
+   */
   const openImportDialog = async () => {
     setImporting(true);
     try {
@@ -114,7 +248,8 @@ export default function Settings() {
         setStatus("Settings imported from Bazarr successfully");
         setImportDialogOpen(false);
         setSnackbarOpen(true);
-        await loadConfig(); // Reload configuration
+        await loadConfig();
+        await loadProviders();
       } else {
         setStatus("Failed to import from Bazarr");
       }
@@ -125,171 +260,126 @@ export default function Settings() {
     }
   };
 
-  const getConfigSections = () => {
-    if (!config) return {};
+  /**
+   * Render provider management tab
+   */
+  const renderProvidersTab = () => (
+    <Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Typography variant="h5">
+          Subtitle Providers
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={importing ? <RefreshIcon className="spin" /> : <ImportIcon />}
+          onClick={openImportDialog}
+          disabled={importing}
+        >
+          Import from Bazarr
+        </Button>
+      </Box>
 
-    const sections = {
-      'Server': {},
-      'Database': {},
-      'Providers': {},
-      'Authentication': {},
-      'General': {}
-    };
+      <Alert severity="info" sx={{ mb: 3 }}>
+        Enable and configure subtitle providers. Providers are checked in order,
+        so arrange them by preference. Disabled providers are skipped during searches.
+      </Alert>
 
-    Object.entries(config).forEach(([key, value]) => {
-      if (key.toLowerCase().includes('server') || key.toLowerCase().includes('port')) {
-        sections['Server'][key] = value;
-      } else if (key.toLowerCase().includes('db') || key.toLowerCase().includes('database')) {
-        sections['Database'][key] = value;
-      } else if (key.toLowerCase().includes('provider') || key.toLowerCase().includes('api')) {
-        sections['Providers'][key] = value;
-      } else if (key.toLowerCase().includes('auth') || key.toLowerCase().includes('user') || key.toLowerCase().includes('password')) {
-        sections['Authentication'][key] = value;
-      } else {
-        sections['General'][key] = value;
-      }
-    });
+      <Grid container spacing={3}>
+        {providers.map((provider) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={provider.name}>
+            <ProviderCard
+              provider={provider}
+              onToggle={handleProviderToggle}
+              onConfigure={handleProviderConfigure}
+            />
+          </Grid>
+        ))}
 
-    return sections;
-  };
+        {/* Add Provider Card */}
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <ProviderCard
+            isAddCard
+            onConfigure={() => {
+              // Handle adding custom provider
+              setProviderConfigDialog({
+                open: true,
+                provider: { name: 'custom', displayName: 'Custom Provider', config: {} }
+              });
+            }}
+          />
+        </Grid>
+      </Grid>
+    </Box>
+  );
+
+  const tabs = [
+    { label: 'Providers', icon: <ProvidersIcon />, component: renderProvidersTab },
+    { label: 'General', icon: <GeneralIcon />, component: () => <Typography>General settings coming soon</Typography> },
+    { label: 'Database', icon: <DatabaseIcon />, component: () => <Typography>Database settings coming soon</Typography> },
+    { label: 'Authentication', icon: <AuthIcon />, component: () => <Typography>Auth settings coming soon</Typography> },
+    { label: 'Notifications', icon: <NotificationIcon />, component: () => <Typography>Notification settings coming soon</Typography> },
+  ];
 
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-        <Typography>Loading configuration...</Typography>
+        <CircularProgress />
       </Box>
     );
   }
-
-  if (!config) {
-    return (
-      <Alert severity="error">
-        Failed to load configuration. Please try refreshing the page.
-      </Alert>
-    );
-  }
-
-  const sections = getConfigSections();
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4" component="h1">
-          Settings
-        </Typography>
-        <Box>
-          <Tooltip title="Import settings from Bazarr">
-            <Button
-              variant="outlined"
-              startIcon={importing ? <RefreshIcon className="spin" /> : <ImportIcon />}
-              onClick={openImportDialog}
-              disabled={importing}
-              sx={{ mr: 1 }}
-            >
-              Import from Bazarr
-            </Button>
-          </Tooltip>
-          <Button
-            variant="contained"
-            startIcon={<SaveIcon />}
-            onClick={save}
-          >
-            Save Configuration
-          </Button>
-        </Box>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Settings
+      </Typography>
+
+      <Paper sx={{ mb: 3 }}>
+        <Tabs
+          value={activeTab}
+          onChange={(e, newValue) => setActiveTab(newValue)}
+          variant="scrollable"
+          scrollButtons="auto"
+        >
+          {tabs.map((tab, index) => (
+            <Tab
+              key={index}
+              label={tab.label}
+              icon={tab.icon}
+              iconPosition="start"
+            />
+          ))}
+        </Tabs>
+      </Paper>
+
+      <Box>
+        {tabs[activeTab]?.component()}
       </Box>
 
-      <Grid container spacing={3}>
-        {Object.entries(sections).map(([sectionName, sectionConfig]) => {
-          if (Object.keys(sectionConfig).length === 0) return null;
+      {/* Provider Configuration Dialog */}
+      <ProviderConfigDialog
+        open={providerConfigDialog.open}
+        provider={providerConfigDialog.provider}
+        onClose={() => setProviderConfigDialog({ open: false, provider: null })}
+        onSave={handleProviderSave}
+      />
 
-          return (
-            <Grid item xs={12} key={sectionName}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {sectionName}
-                  </Typography>
-                  <TableContainer component={Paper} variant="outlined">
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell width="30%">Setting</TableCell>
-                          <TableCell>Value</TableCell>
-                          <TableCell width="10%">Info</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {Object.entries(sectionConfig).map(([key, value]) => (
-                          <TableRow key={key}>
-                            <TableCell>
-                              <Typography variant="body2" fontWeight="medium">
-                                {key}
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                fullWidth
-                                size="small"
-                                variant="outlined"
-                                value={value || ''}
-                                onChange={(e) => handleChange(key, e.target.value)}
-                                type={key.toLowerCase().includes('password') ? 'password' : 'text'}
-                                placeholder={`Enter ${key}`}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <IconButton size="small">
-                                <InfoIcon fontSize="small" />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
-      </Grid>
-
-      {/* Import Dialog */}
+      {/* Bazarr Import Dialog */}
       <Dialog open={importDialogOpen} onClose={() => setImportDialogOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>
-          Import Settings from Bazarr
-        </DialogTitle>
+        <DialogTitle>Import Settings from Bazarr</DialogTitle>
         <DialogContent>
           <Alert severity="info" sx={{ mb: 2 }}>
             This will import provider configurations, API keys, and other settings from your Bazarr installation.
             Existing settings will be merged or overwritten.
           </Alert>
           {bazarrConfig && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Preview of Bazarr Settings
-              </Typography>
-              <Paper sx={{ p: 2, maxHeight: 400, overflow: 'auto' }}>
-                <Grid container spacing={1}>
-                  {Object.entries(bazarrConfig).map(([key, value]) => (
-                    <Grid item xs={12} sm={6} key={key}>
-                      <Chip
-                        label={`${key}: ${String(value).substring(0, 30)}${String(value).length > 30 ? '...' : ''}`}
-                        variant="outlined"
-                        size="small"
-                      />
-                    </Grid>
-                  ))}
-                </Grid>
-              </Paper>
-            </Box>
+            <Paper sx={{ p: 2, maxHeight: 300, overflow: 'auto' }}>
+              <pre>{JSON.stringify(bazarrConfig, null, 2)}</pre>
+            </Paper>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setImportDialogOpen(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setImportDialogOpen(false)}>Cancel</Button>
           <Button
             onClick={importFromBazarr}
             variant="contained"
@@ -309,7 +399,7 @@ export default function Settings() {
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}
-          severity={status.includes('success') ? 'success' : 'error'}
+          severity={status.includes('success') || status.includes('enabled') || status.includes('disabled') || status.includes('saved') ? 'success' : 'error'}
           sx={{ width: '100%' }}
         >
           {status}
