@@ -11,6 +11,7 @@ import {
   BugReport as SystemIcon,
   Translate as TranslateIcon,
   Download as WantedIcon,
+  ChildFriendly as KidModeIcon,
 } from "@mui/icons-material";
 import {
   alpha,
@@ -51,9 +52,10 @@ import Wanted from "./Wanted.jsx";
  * Creates a Material Design 3 compliant theme with enhanced dark mode support
  * Following Google's Material Design guidelines for color schemes and accessibility
  * @param {boolean} isDarkMode - Whether to use dark mode
+ * @param {boolean} kidMode - Increase font sizes for children if true
  * @returns {Theme} Material UI theme object
  */
-const createAppTheme = (isDarkMode = true) => createTheme({
+const createAppTheme = (isDarkMode = true, kidMode = false) => createTheme({
   palette: {
     mode: isDarkMode ? 'dark' : 'light',
     ...(isDarkMode
@@ -136,6 +138,7 @@ const createAppTheme = (isDarkMode = true) => createTheme({
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    htmlFontSize: kidMode ? 20 : 16,
     h1: {
       fontSize: '2.5rem',
       fontWeight: 400,
@@ -233,6 +236,13 @@ const createAppTheme = (isDarkMode = true) => createTheme({
         },
       },
     },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          fontSize: kidMode ? '2rem' : undefined,
+        },
+      },
+    },
     MuiListItemButton: {
       styleOverrides: {
         root: {
@@ -264,9 +274,13 @@ function App() {
     if (saved !== null) return JSON.parse(saved);
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
+  const [kidMode, setKidMode] = useState(() => {
+    const saved = localStorage.getItem('kidMode');
+    return saved ? JSON.parse(saved) : false;
+  });
 
   // Create theme based on current dark mode state
-  const theme = createAppTheme(darkMode);
+  const theme = createAppTheme(darkMode, kidMode);
 
   /**
    * Toggle between light and dark mode themes
@@ -276,6 +290,16 @@ function App() {
     const newMode = !darkMode;
     setDarkMode(newMode);
     localStorage.setItem('darkMode', JSON.stringify(newMode));
+  };
+
+  /**
+   * Toggle kid friendly mode which increases font sizes
+   * for a simplified child interface.
+   */
+  const toggleKidMode = () => {
+    const newMode = !kidMode;
+    setKidMode(newMode);
+    localStorage.setItem('kidMode', JSON.stringify(newMode));
   };
 
   const navigationItems = [
@@ -421,6 +445,18 @@ function App() {
               >
                 {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
               </IconButton>
+              <IconButton
+                onClick={toggleKidMode}
+                aria-label="toggle kid mode"
+                sx={{
+                  backgroundColor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  ml: 1,
+                }}
+              >
+                <KidModeIcon />
+              </IconButton>
             </Box>
           </Box>
         </Container>
@@ -461,6 +497,13 @@ function App() {
               aria-label="toggle dark mode"
             >
               {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+            <IconButton
+              color="inherit"
+              onClick={toggleKidMode}
+              aria-label="toggle kid mode"
+            >
+              <KidModeIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
