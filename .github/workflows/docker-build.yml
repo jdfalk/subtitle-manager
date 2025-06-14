@@ -25,23 +25,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: webui/package-lock.json
+          # Disable caching to avoid corruption issues
+          # cache: "npm"
+          # cache-dependency-path: webui/package-lock.json
 
-      - name: Clear Go Module Cache
+      - name: Clear caches to avoid corruption
         run: |
           go clean -modcache
           rm -rf ~/.cache/go-build
+          rm -rf ~/.npm
 
       - name: Download Go dependencies
         run: go mod download
 
-      - name: Generate web UI assets
+      - name: Install Node.js dependencies
+        working-directory: webui
+        run: npm ci --legacy-peer-deps
+
+      - name: Build web UI assets
+        working-directory: webui
+        run: npm run build
+
+      - name: Verify dist directory exists
         run: |
-          cd webui
-          npm ci --legacy-peer-deps
-          npm run build
-          cd ..
+          ls -la webui/dist/
+          ls -la webui/dist/assets/
 
       - name: Run go generate
         run: go generate ./...
