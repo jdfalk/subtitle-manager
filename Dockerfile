@@ -42,5 +42,26 @@ RUN case ${TARGETARCH} in \
     esac
 
 FROM debian:bookworm-slim
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create directories for config and media
+RUN mkdir -p /config /media
+
 COPY --from=builder /src/subtitle-manager /subtitle-manager
+
+# Set default environment variables
+ENV SM_CONFIG_FILE=/config/subtitle-manager.yaml
+ENV SM_DB_PATH=/config/subtitle-manager.db
+ENV SM_LOG_LEVEL=info
+
+# Expose the web interface port
+EXPOSE 8080
+
+# Default command starts the web interface
 ENTRYPOINT ["/subtitle-manager"]
+CMD ["web", "--addr", ":8080"]
