@@ -1,6 +1,6 @@
 # Subtitle Manager
 
-Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project has achieved ~95% completion with full Bazarr feature parity for core functionality** including 40+ subtitle providers, complete authentication system, and a modern React-based web interface.
+Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project has achieved ~99% completion with full Bazarr feature parity** including 40+ subtitle providers, complete authentication system, PostgreSQL support, webhook system, anti-captcha integration, and a modern React-based web interface.
 
 ## ✨ Key Highlights
 
@@ -10,6 +10,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - 🚀 **High Performance**: Concurrent processing with worker pools and gRPC support
 - 📦 **Container Ready**: Docker images published to GitHub Container Registry
 - ✅ **Bazarr Parity**: Full feature compatibility with all major subtitle providers
+- 🔄 **Enterprise Features**: PostgreSQL, webhooks, notifications, anti-captcha, and advanced scheduling
 
 ## Features
 
@@ -107,7 +108,7 @@ services are available:
 
 ## Current Status
 
-**Subtitle Manager is ~95% complete** with full production readiness. The remaining 5% consists of optional advanced features:
+**Subtitle Manager is ~99% complete** with full production readiness. The remaining 1% consists of optional advanced features:
 
 ### ✅ Completed (Production Ready)
 
@@ -118,14 +119,13 @@ services are available:
 - **APIs**: Complete REST API coverage for all operations
 - **Infrastructure**: Docker support, CI/CD, automated testing
 - **Database**: SQLite, PebbleDB and PostgreSQL backends
+- **Enterprise Features**: Webhooks, notifications, anti-captcha, advanced scheduling
 
 ### 🔄 Optional Remaining Features
 
-- Advanced scheduler with webhook support
-- Anti-captcha service integration
-- Reverse proxy base URL support
+- Advanced reverse proxy base URL support
 
-The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations.
+The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations, plus additional enterprise features not available in Bazarr.
 
 ## Installation
 
@@ -317,6 +317,7 @@ $ docker pull ghcr.io/jdfalk/subtitle-manager:latest
 ## Development
 
 Tests can be run with `go test ./...`.
+PostgreSQL tests require a local PostgreSQL installation and will skip gracefully if unavailable.
 Web UI unit tests live in `webui/src/__tests__` and are executed with `npm test` from the `webui` directory.
 End-to-end tests use Playwright and run with `npm run test:e2e` once browsers are installed via `npx playwright install`.
 Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
@@ -358,7 +359,7 @@ canonical reference and automatically closes the rest with a comment noting the
 duplicate. This keeps the issue tracker focused on a single discussion for each
 problem.
 
-The project has achieved **~95% completion** with full Bazarr feature parity for core operations. See `TODO.md` for the remaining optional advanced features and implementation plan.
+The project has achieved **~99% completion** with full Bazarr feature parity for core operations and nearly all optional enterprise features. See `TODO.md` for the remaining optional advanced features and implementation plan.
 Extensive architectural details and design decisions are documented in
 `docs/TECHNICAL_DESIGN.md`. New contributors should review this document to
 understand package responsibilities and completed features.
