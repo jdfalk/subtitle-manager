@@ -33,6 +33,8 @@ RUN case ${TARGETARCH} in \
     export GOARCH=${TARGETARCH} && \
     go build -o subtitle-manager ./ ;; \
     "amd64") \
+    export CC=x86_64-linux-gnu-gcc && \
+    export CXX=x86_64-linux-gnu-g++ && \
     export CGO_ENABLED=1 && \
     export GOOS=${TARGETOS} && \
     export GOARCH=${TARGETARCH} && \
@@ -60,6 +62,9 @@ ENV SM_DB_PATH=/config/db
 ENV SM_DB_BACKEND=pebble
 ENV SM_SQLITE3_FILENAME=subtitle-manager.db
 ENV SM_LOG_LEVEL=info
+# Optional: Set these to automatically create admin user on first run
+# ENV SM_ADMIN_USER=admin
+# ENV SM_ADMIN_PASSWORD=changeme
 
 # Expose the web interface port
 EXPOSE 8080
