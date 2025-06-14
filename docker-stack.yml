@@ -1,0 +1,106 @@
+# file: docker-stack.yml
+# Docker Stack configuration for production deployment
+# Deploy with: docker stack deploy -c docker-stack.yml subtitle-manager
+
+
+services:
+  subtitle-manager:
+    image: ghcr.io/jdfalk/subtitle-manager:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      # Configuration and database storage (use named volumes in production)
+      - subtitle-manager-config:/config
+      # Media libraries (adjust paths to your actual media locations)
+      - /mnt/media/movies:/media/movies:ro
+      - /mnt/media/tv:/media/tv:ro
+      # Subtitle storage
+      - subtitle-manager-subtitles:/subtitles
+    environment:
+      # Core configuration with SM_ prefix (required by Viper)
+      - SM_LOG_LEVEL=info
+      - SM_CONFIG_FILE=/config/subtitle-manager.yaml
+      - SM_DB_PATH=/config/subtitle-manager.db
+      - SM_DB_BACKEND=sqlite
+
+      # Performance tuning for production
+      - SM_BATCH_WORKERS=8
+      - SM_SCAN_WORKERS=8
+
+      # Optional: Configure ffmpeg path if needed
+      # - SM_FFMPEG_PATH=/usr/bin/ffmpeg
+
+      # API Keys - Use Docker secrets in production for security
+      # - SM_GOOGLE_API_KEY_FILE=/run/secrets/google_api_key
+      # - SM_OPENAI_API_KEY_FILE=/run/secrets/openai_api_key
+      # - SM_OPENSUBTITLES_API_KEY_FILE=/run/secrets/opensubtitles_api_key
+
+    # Production deployment configuration
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+        reservations:
+          memory: 512M
+          cpus: "0.5"
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: stop-first
+      rollback_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: pause
+        order: stop-first
+
+    networks:
+      - subtitle-manager-network
+
+    # Healthcheck for production monitoring
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/api/system"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Optional: Use Docker secrets for sensitive data
+    # secrets:
+    #   - google_api_key
+    #   - openai_api_key
+    #   - opensubtitles_api_key
+
+networks:
+  subtitle-manager-network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  subtitle-manager-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/subtitle-manager/config
+  subtitle-manager-subtitles:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/subtitle-manager/subtitles
+# Optional: Define secrets for production
+# secrets:
+#   google_api_key:
+#     external: true
+#   openai_api_key:
+#     external: true
+#   opensubtitles_api_key:
+#     external: true
