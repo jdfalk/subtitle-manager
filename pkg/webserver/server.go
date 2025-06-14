@@ -505,7 +505,9 @@ func bazarrConfigHandler() http.Handler {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(mockBazarrConfig)
+		if err := json.NewEncoder(w).Encode(mockBazarrConfig); err != nil {
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
 	})
 }
 
