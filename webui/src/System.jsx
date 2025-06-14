@@ -1,33 +1,33 @@
 import {
-    Assessment as LogIcon,
-    Memory as MemoryIcon,
-    Refresh as RefreshIcon,
-    Storage as StorageIcon,
-    BugReport as SystemIcon,
-    Schedule as TaskIcon,
-    Code as CodeIcon,
-    ExpandMore as ExpandMoreIcon,
+  Code as CodeIcon,
+  ExpandMore as ExpandMoreIcon,
+  Assessment as LogIcon,
+  Memory as MemoryIcon,
+  Refresh as RefreshIcon,
+  Storage as StorageIcon,
+  BugReport as SystemIcon,
+  Schedule as TaskIcon,
 } from "@mui/icons-material";
 import {
-    Alert,
-    Box,
-    Card,
-    CardContent,
-    Chip,
-    CircularProgress,
-    Grid,
-    IconButton,
-    List,
-    ListItem,
-    ListItemText,
-    Paper,
-    Tooltip,
-    Typography,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-    useTheme,
-    alpha,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
+  alpha,
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  Tooltip,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -42,7 +42,7 @@ export default function System() {
   const [tasks, setTasks] = useState({});
   const [loading, setLoading] = useState(true);
   const [expandedRawData, setExpandedRawData] = useState(false);
-  
+
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
@@ -99,9 +99,9 @@ export default function System() {
           System Monitor
         </Typography>
         <Tooltip title="Refresh system data">
-          <IconButton 
+          <IconButton
             onClick={loadSystemData}
-            sx={{ 
+            sx={{
               backgroundColor: alpha(theme.palette.primary.main, 0.1),
               '&:hover': {
                 backgroundColor: alpha(theme.palette.primary.main, 0.2),
@@ -244,10 +244,10 @@ export default function System() {
 
         {/* Raw Data Section - Collapsible */}
         <Grid item xs={12}>
-          <Accordion 
-            expanded={expandedRawData} 
+          <Accordion
+            expanded={expandedRawData}
             onChange={() => setExpandedRawData(!expandedRawData)}
-            sx={{ 
+            sx={{
               border: '1px solid',
               borderColor: 'divider',
               borderRadius: 2,
