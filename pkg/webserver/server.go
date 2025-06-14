@@ -162,11 +162,45 @@ func StartServer(addr string) error {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
 	defer db.Close()
+
+	// Check for automatic admin user creation via environment variables
+	if err := createDefaultAdminIfNeeded(db); err != nil {
+		return fmt.Errorf("failed to create initial admin user: %w", err)
+	}
+
 	h, err := Handler(db)
 	if err != nil {
 		return err
 	}
 	return http.ListenAndServe(addr, h)
+}
+
+// createDefaultAdminIfNeeded creates a default admin user from environment variables
+// if no users exist and the required environment variables are set.
+func createDefaultAdminIfNeeded(db *sql.DB) error {
+	needed, err := setupNeeded(db)
+	if err != nil {
+		return fmt.Errorf("failed to check setup status: %w", err)
+	}
+
+	if !needed {
+		return nil // Setup already completed
+	}
+
+	adminUser := viper.GetString("admin_user")
+	adminPass := viper.GetString("admin_pass")
+
+	if adminUser == "" || adminPass == "" {
+		return nil // No environment variables set, manual setup required
+	}
+
+	// Create the admin user
+	if err := auth.CreateUser(db, adminUser, adminPass, "", "admin"); err != nil {
+		return fmt.Errorf("failed to create admin user: %w", err)
+	}
+
+	fmt.Printf("Created default admin user from environment variables: %s\n", adminUser)
+	return nil
 }
 
 // loginHandler authenticates a user and sets a session cookie.
