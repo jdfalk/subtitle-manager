@@ -45,15 +45,6 @@ func setupStatusHandler(db *sql.DB) http.Handler {
 
 // setupHandler performs the initial configuration and creates the admin user.
 func setupHandler(db *sql.DB) http.Handler {
-	type req struct {
-		ServerName   string         `json:"server_name"`
-		ReverseProxy bool           `json:"reverse_proxy"`
-		AdminUser    string         `json:"admin_user"`
-		AdminPass    string         `json:"admin_pass"`
-		Integrations map[string]any `json:"integrations"`
-		// Accept any additional settings from Bazarr import or other sources
-		AdditionalSettings map[string]any `json:"-"` // Will be populated from the remaining JSON fields
-	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -100,10 +91,8 @@ func setupHandler(db *sql.DB) http.Handler {
 		viper.Set("reverse_proxy", reverseProxy)
 
 		// Set integration settings
-		if integrations != nil {
-			for k, v := range integrations {
-				viper.Set("integrations."+k, v)
-			}
+		for k, v := range integrations {
+			viper.Set("integrations."+k, v)
 		}
 
 		// Import all other settings (like imported Bazarr configuration)
