@@ -48,7 +48,7 @@ export default function Settings() {
   useEffect(() => {
     loadConfig();
     loadProviders();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Load current configuration from the server
