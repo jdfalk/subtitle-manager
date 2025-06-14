@@ -1,0 +1,51 @@
+# file: docker-compose.yml
+# Docker Compose configuration for Subtitle Manager
+# Copy .env.example to .env and customize your settings
+
+services:
+  subtitle-manager:
+    image: ghcr.io/jdfalk/subtitle-manager:latest
+    container_name: subtitle-manager
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # Configuration and database storage
+      - ./config:/config
+      # Media libraries (adjust paths as needed)
+      - /path/to/your/movies:/media/movies:ro
+      - /path/to/your/tv:/media/tv:ro
+      # Optional: Custom subtitle storage location
+      - ./subtitles:/subtitles
+    env_file:
+      - .env
+    environment:
+      # Core configuration - these override .env file if set
+      - SM_CONFIG_FILE=/config/subtitle-manager.yaml
+      - SM_DB_PATH=/config/subtitle-manager.db
+      - SM_LOG_LEVEL=info
+
+      # Performance settings for Docker deployment
+      - SM_BATCH_WORKERS=4
+      - SM_SCAN_WORKERS=4
+
+    # Healthcheck to ensure container is working
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/api/system",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Optional: Define custom networks for isolation
+networks:
+  default:
+    name: subtitle-manager-network
