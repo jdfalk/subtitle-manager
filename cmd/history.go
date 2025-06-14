@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/logging"
@@ -16,8 +15,8 @@ var historyCmd = &cobra.Command{
 	Short: "Show translation history",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("history")
-		dbPath := viper.GetString("db_path")
-		backend := viper.GetString("db_backend")
+		dbPath := database.GetDatabasePath()
+		backend := database.GetDatabaseBackend()
 		store, err := database.OpenStore(dbPath, backend)
 		if err != nil {
 			return err
