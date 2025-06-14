@@ -129,7 +129,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/webhooks/custom", webhooks.CustomHandler())
 	mux.Handle(prefix+"/api/translate", authMiddleware(db, "basic", translateHandler()))
 	fsHandler := http.FileServer(http.FS(f))
-	mux.Handle(prefix+"/", setupAwareMiddleware(db, "read", http.StripPrefix(prefix+"/", fsHandler)))
+	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
 	return mux, nil
 }
 
