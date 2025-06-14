@@ -10,20 +10,30 @@ describe("Settings component", () => {
     global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }));
   });
 
-  test("loads and saves configuration", async () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ foo: "bar" }),
-    });
+  test("edits general settings", async () => {
+    fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ server_name: "Test" }),
+      })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) });
+
     render(<Settings />);
-    await screen.findByDisplayValue("bar");
+
+    fireEvent.click(screen.getByRole("tab", { name: /General/i }));
+    await screen.findByDisplayValue("Test");
+
     fetch.mockResolvedValueOnce({ ok: true });
-    fireEvent.change(screen.getByDisplayValue("bar"), {
-      target: { value: "baz" },
+    fireEvent.change(screen.getByLabelText("Server Name"), {
+      target: { value: "New" },
     });
     fireEvent.click(screen.getByText("Save"));
+
     await waitFor(() =>
-      expect(fetch).toHaveBeenLastCalledWith("/api/config", expect.any(Object)),
+      expect(fetch).toHaveBeenLastCalledWith(
+        "/api/config",
+        expect.objectContaining({ method: "POST" }),
+      ),
     );
   });
 });

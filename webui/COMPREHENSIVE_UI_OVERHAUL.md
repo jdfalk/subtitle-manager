@@ -41,7 +41,7 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 **New Implementation:**
 - **Modern Tabbed Interface**:
   - Providers tab with card-based management
-  - General, Database, Authentication, Notifications tabs (scaffolded)
+  - Full tabs for General, Database, Authentication and Notifications
 - **Provider Management Tab**:
   - Grid layout with provider cards
   - Add new provider functionality
