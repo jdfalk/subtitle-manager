@@ -2,7 +2,6 @@
 # Docker Stack configuration for production deployment
 # Deploy with: docker stack deploy -c docker-stack.yml subtitle-manager
 
-
 services:
   subtitle-manager:
     image: ghcr.io/jdfalk/subtitle-manager:latest
@@ -26,6 +25,10 @@ services:
       # Performance tuning for production
       - SM_BATCH_WORKERS=8
       - SM_SCAN_WORKERS=8
+
+      # Optional: Automatic admin user creation on first run
+      # - SM_ADMIN_USER=admin
+      # - SM_ADMIN_PASSWORD=changeme
 
       # Optional: Configure ffmpeg path if needed
       # - SM_FFMPEG_PATH=/usr/bin/ffmpeg

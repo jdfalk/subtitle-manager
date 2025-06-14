@@ -29,6 +29,10 @@ services:
       - SM_BATCH_WORKERS=4
       - SM_SCAN_WORKERS=4
 
+      # Optional: Automatic admin user creation on first run
+      # - SM_ADMIN_USER=admin
+      # - SM_ADMIN_PASSWORD=changeme
+
     # Healthcheck to ensure container is working
     healthcheck:
       test:
