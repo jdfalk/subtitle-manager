@@ -1,3 +1,7 @@
+<!-- file: .github/scripts/README.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 9b1d4f7e-8a2c-4b9d-1f7e-2a8c1f9b1d4f -->
+
 # Close Duplicates Script
 
 This script automatically closes duplicate GitHub issues by title, keeping the lowest numbered issue open.
