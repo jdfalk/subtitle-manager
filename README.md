@@ -293,26 +293,179 @@ github_redirect_url: http://localhost:8080/api/oauth/github/callback
 
 ### Docker
 
-Build a container image using the provided `Dockerfile`:
+Subtitle Manager provides official Docker images with the web interface enabled by default.
+
+#### Quick Start
 
 ```bash
-$ docker build -t subtitle-manager .
+# Simple start - web interface only
+docker run -p 8080:8080 ghcr.io/jdfalk/subtitle-manager:latest
+
+# Complete setup with persistent storage and media access
+docker run -d \
+  --name subtitle-manager \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -v $(pwd)/config:/config \
+  -v /path/to/your/movies:/media/movies:ro \
+  -v /path/to/your/tv:/media/tv:ro \
+  -v $(pwd)/subtitles:/subtitles \
+  -e SM_LOG_LEVEL=info \
+  ghcr.io/jdfalk/subtitle-manager:latest
+
+# User-requested format with variable substitution
+docker run -d \
+  --name subtitle-manager \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -v ${path_on_host_system_to_configdir}:/config \
+  -v ${path_on_host_system_to_media}:/media:ro \
+  ghcr.io/jdfalk/subtitle-manager:latest
+
+# Example with actual paths (update paths to match your system)
+docker run -d \
+  --name subtitle-manager \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -v /home/user/subtitle-manager/config:/config \
+  -v /media/movies:/media/movies:ro \
+  -v /media/tv:/media/tv:ro \
+  -v /home/user/subtitle-manager/subtitles:/subtitles \
+  ghcr.io/jdfalk/subtitle-manager:latest
 ```
 
-The Docker build runs `go generate ./webui` so the final image contains the latest
-compiled web assets.
+Access the web interface at `http://localhost:8080`
 
-Run commands inside the container:
+#### Environment Variables
+
+Configure Subtitle Manager using environment variables with the `SM_` prefix:
+
+**Basic Configuration:**
+- `SM_LOG_LEVEL` - Log level (debug, info, warn, error) - Default: `info`
+- `SM_CONFIG_FILE` - Path to configuration file - Default: `/config/subtitle-manager.yaml`
+- `SM_DB_PATH` - Database file path - Default: `/config/subtitle-manager.db`
+- `SM_DB_BACKEND` - Database backend (sqlite, pebble, postgres) - Default: `sqlite`
+
+**API Keys:**
+- `SM_GOOGLE_API_KEY` - Google Translate API key
+- `SM_OPENAI_API_KEY` - OpenAI/ChatGPT API key
+- `SM_OPENSUBTITLES_API_KEY` - OpenSubtitles API key
+
+**Performance Tuning:**
+- `SM_BATCH_WORKERS` - Number of concurrent translation workers - Default: `4`
+- `SM_SCAN_WORKERS` - Number of concurrent scanning workers - Default: `4`
+- `SM_FFMPEG_PATH` - Path to ffmpeg binary - Default: `/usr/bin/ffmpeg`
+
+**Provider Configuration:**
+- `SM_PROVIDERS_GENERIC_API_URL` - Generic provider API URL
+- `SM_PROVIDERS_GENERIC_USERNAME` - Generic provider username
+- `SM_PROVIDERS_GENERIC_PASSWORD` - Generic provider password
+- `SM_PROVIDERS_GENERIC_API_KEY` - Generic provider API key
+
+**GitHub OAuth (Optional):**
+- `SM_GITHUB_CLIENT_ID` - GitHub OAuth client ID
+- `SM_GITHUB_CLIENT_SECRET` - GitHub OAuth client secret
+- `SM_GITHUB_REDIRECT_URL` - OAuth redirect URL
+
+#### Volume Mounts
+
+**Required Volumes:**
+- `/config` - Configuration and database storage
+- `/media` - Media library access (read-only recommended)
+
+**Optional Volumes:**
+- `/subtitles` - Custom subtitle storage location
+
+#### Docker Compose
+
+For easier management, use the provided Docker Compose configuration:
 
 ```bash
-$ docker run --rm subtitle-manager [command]
+# Download the compose file
+curl -O https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-compose.yml
+
+# Edit the volume paths in docker-compose.yml to match your setup
+# Update /path/to/your/movies and /path/to/your/tv
+
+# Start the service
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the service
+docker-compose down
 ```
 
-Prebuilt images are published to the GitHub Container Registry:
+**Sample docker-compose.yml:**
+```yaml
+version: '3.8'
+services:
+  subtitle-manager:
+    image: ghcr.io/jdfalk/subtitle-manager:latest
+    container_name: subtitle-manager
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config:/config
+      - /path/to/your/movies:/media/movies:ro
+      - /path/to/your/tv:/media/tv:ro
+    environment:
+      - SM_LOG_LEVEL=info
+      - SM_GOOGLE_API_KEY=your_api_key_here
+```
+
+#### Production Deployment (Docker Swarm)
+
+For production deployments with Docker Swarm:
 
 ```bash
-$ docker pull ghcr.io/jdfalk/subtitle-manager:latest
+# Download the stack file
+curl -O https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-stack.yml
+
+# Edit volume paths and resource limits as needed
+
+# Deploy the stack
+docker stack deploy -c docker-stack.yml subtitle-manager
+
+# Check service status
+docker service ls
+docker service logs subtitle-manager_subtitle-manager
+
+# Update the service
+docker service update --image ghcr.io/jdfalk/subtitle-manager:latest subtitle-manager_subtitle-manager
+
+# Remove the stack
+docker stack rm subtitle-manager
 ```
+
+#### Building Custom Images
+
+Build a container image with your customizations:
+
+```bash
+# Clone the repository
+git clone https://github.com/jdfalk/subtitle-manager.git
+cd subtitle-manager
+
+# Build the image
+docker build -t subtitle-manager-custom .
+
+# Run your custom image
+docker run -d -p 8080:8080 subtitle-manager-custom
+```
+
+#### Initial Setup
+
+On first run, Subtitle Manager will start with the web interface where you can:
+
+1. Complete initial setup through the web UI at `http://localhost:8080`
+2. Create admin user account
+3. Configure API keys and provider settings
+4. Set up library paths
+
+All configuration will be persisted in the `/config` volume.
 
 ## Development
 
