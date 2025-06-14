@@ -51,6 +51,8 @@ func setupHandler(db *sql.DB) http.Handler {
 		AdminUser    string         `json:"admin_user"`
 		AdminPass    string         `json:"admin_pass"`
 		Integrations map[string]any `json:"integrations"`
+		// Accept any additional settings from Bazarr import or other sources
+		AdditionalSettings map[string]any `json:"-"` // Will be populated from the remaining JSON fields
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -66,26 +68,55 @@ func setupHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		var q req
-		if err := json.NewDecoder(r.Body).Decode(&q); err != nil {
+
+		// Parse the entire JSON body to capture all settings
+		var fullBody map[string]any
+		if err := json.NewDecoder(r.Body).Decode(&fullBody); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		if q.AdminUser == "" || q.AdminPass == "" {
+
+		// Extract the known fields
+		adminUser, _ := fullBody["admin_user"].(string)
+		adminPass, _ := fullBody["admin_pass"].(string)
+		serverName, _ := fullBody["server_name"].(string)
+		reverseProxy, _ := fullBody["reverse_proxy"].(bool)
+		integrations, _ := fullBody["integrations"].(map[string]any)
+
+		if adminUser == "" || adminPass == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		if err := auth.CreateUser(db, q.AdminUser, q.AdminPass, "", "admin"); err != nil {
+
+		if err := auth.CreateUser(db, adminUser, adminPass, "", "admin"); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		if q.ServerName != "" {
-			viper.Set("server_name", q.ServerName)
+
+		// Set the core settings
+		if serverName != "" {
+			viper.Set("server_name", serverName)
 		}
-		viper.Set("reverse_proxy", q.ReverseProxy)
-		for k, v := range q.Integrations {
-			viper.Set("integrations."+k, v)
+		viper.Set("reverse_proxy", reverseProxy)
+
+		// Set integration settings
+		if integrations != nil {
+			for k, v := range integrations {
+				viper.Set("integrations."+k, v)
+			}
 		}
+
+		// Import all other settings (like imported Bazarr configuration)
+		excludedKeys := map[string]bool{
+			"admin_user": true, "admin_pass": true, "server_name": true,
+			"reverse_proxy": true, "integrations": true,
+		}
+		for k, v := range fullBody {
+			if !excludedKeys[k] {
+				viper.Set(k, v)
+			}
+		}
+
 		if cfg := viper.ConfigFileUsed(); cfg != "" {
 			if err := viper.WriteConfig(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)

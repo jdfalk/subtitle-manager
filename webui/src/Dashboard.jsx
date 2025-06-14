@@ -11,7 +11,12 @@ export default function Dashboard() {
     const res = await fetch("/api/scan/status");
     if (res.ok) {
       const data = await res.json();
-      setStatus(data);
+      // Ensure files is always an array to prevent null reference errors
+      setStatus({
+        running: data.running || false,
+        completed: data.completed || 0,
+        files: data.files || []
+      });
       if (data.running) {
         setTimeout(poll, 1000);
       }
@@ -30,7 +35,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     poll();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="dashboard">

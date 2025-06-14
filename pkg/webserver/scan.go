@@ -22,7 +22,7 @@ type scanStatus struct {
 
 var (
 	scanMu sync.Mutex
-	status = scanStatus{}
+	status = scanStatus{Files: []string{}}
 )
 
 func scanHandler() http.Handler {
@@ -47,7 +47,7 @@ func scanHandler() http.Handler {
 			w.WriteHeader(http.StatusConflict)
 			return
 		}
-		status = scanStatus{Running: true}
+		status = scanStatus{Running: true, Files: []string{}}
 		scanMu.Unlock()
 		go func() {
 			key := viper.GetString("opensubtitles.api_key")
