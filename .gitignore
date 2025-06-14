@@ -165,3 +165,6 @@ yarn-error.log*
 *.pb.go
 *_gen.go
 webui/dist/
+test
+test/*
+subtitle-manager.yaml
