@@ -4,6 +4,7 @@ import {
   Dashboard as DashboardIcon,
   Archive as ExtractIcon,
   History as HistoryIcon,
+  VideoLibrary as LibraryIcon,
   Brightness7 as LightModeIcon,
   Menu as MenuIcon,
   Settings as SettingsIcon,
@@ -39,6 +40,7 @@ import Convert from "./Convert.jsx";
 import Dashboard from "./Dashboard.jsx";
 import Extract from "./Extract.jsx";
 import History from "./History.jsx";
+import MediaLibrary from "./MediaLibrary.jsx";
 import Settings from "./Settings.jsx";
 import Setup from "./Setup.jsx";
 import System from "./System.jsx";
@@ -278,6 +280,7 @@ function App() {
 
   const navigationItems = [
     { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
+    { id: "library", label: "Media Library", icon: <LibraryIcon /> },
     { id: "settings", label: "Settings", icon: <SettingsIcon /> },
     { id: "extract", label: "Extract", icon: <ExtractIcon /> },
     { id: "history", label: "History", icon: <HistoryIcon /> },
@@ -513,7 +516,9 @@ function App() {
           }}
         >
           <Toolbar />
-          {page === "settings" ? (
+          {page === "library" ? (
+            <MediaLibrary />
+          ) : page === "settings" ? (
             <Settings />
           ) : page === "extract" ? (
             <Extract />
