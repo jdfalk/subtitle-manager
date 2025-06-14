@@ -80,7 +80,7 @@ export default function Settings() {
       } else {
         setStatus("Failed to save configuration");
       }
-    } catch (error) {
+    } catch {
       setStatus("Error saving configuration");
     }
   };
@@ -96,7 +96,7 @@ export default function Settings() {
       } else {
         setStatus("Failed to fetch Bazarr configuration");
       }
-    } catch (error) {
+    } catch {
       setStatus("Error connecting to Bazarr");
     } finally {
       setImporting(false);
@@ -118,7 +118,7 @@ export default function Settings() {
       } else {
         setStatus("Failed to import from Bazarr");
       }
-    } catch (error) {
+    } catch {
       setStatus("Error importing from Bazarr");
     } finally {
       setImporting(false);
