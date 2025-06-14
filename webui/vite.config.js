@@ -12,10 +12,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Split MUI into separate chunks
-          'mui-core': ['@mui/material', '@mui/system'],
+          // Keep MUI packages together to avoid circular dependencies
+          'mui': ['@mui/material', '@mui/system', '@emotion/react', '@emotion/styled'],
           'mui-icons': ['@mui/icons-material'],
-          'mui-styles': ['@emotion/react', '@emotion/styled'],
           // Split React into separate chunk
           'react-vendor': ['react', 'react-dom'],
         }

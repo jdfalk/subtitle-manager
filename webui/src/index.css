@@ -1,68 +1,285 @@
+/* file: webui/src/index.css */
+
+/* Material Design 3 Global Styles */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Custom CSS properties for theme consistency */
+  --primary-color: #6750a4;
+  --primary-color-dark: #bb86fc;
+  --secondary-color: #625b71;
+  --secondary-color-dark: #03dac6;
+  --background-color: #fffbfe;
+  --background-color-dark: #121212;
+  --surface-color: #ffffff;
+  --surface-color-dark: #1e1e1e;
+  --text-color: #1c1b1f;
+  --text-color-dark: #e1e1e1;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* Reset and normalize */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
-a:hover {
-  color: #535bf2;
+
+html {
+  height: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  padding: 0;
   min-height: 100vh;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  overflow-x: hidden;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Dark mode styles */
+body[data-mui-color-scheme="dark"] {
+  background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  line-height: 1.2;
 }
 
-@media (prefers-color-scheme: light) {
+p {
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+}
+
+/* Link styles */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 200ms ease-in-out;
+}
+
+a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Dark mode link styles */
+body[data-mui-color-scheme="dark"] a {
+  color: var(--primary-color-dark);
+}
+
+body[data-mui-color-scheme="dark"] a:hover {
+  color: var(--primary-color-dark);
+}
+
+/* Button reset for better Material UI integration */
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
+}
+
+/* Form element improvements */
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Remove default focus styles in favor of Material UI */
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  outline: none;
+}
+
+/* Improve image handling */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Code elements */
+code {
+  font-family: 'Roboto Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875em;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 0.125em 0.25em;
+  border-radius: 4px;
+}
+
+body[data-mui-color-scheme="dark"] code {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+pre {
+  font-family: 'Roboto Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+  overflow-x: auto;
+  margin: 0;
+}
+
+/* Table improvements */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+body[data-mui-color-scheme="dark"] th,
+body[data-mui-color-scheme="dark"] td {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Utility classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Error states */
+.error {
+  color: #dc2626;
+}
+
+body[data-mui-color-scheme="dark"] .error {
+  color: #fca5a5;
+}
+
+/* Success states */
+.success {
+  color: #16a34a;
+}
+
+body[data-mui-color-scheme="dark"] .success {
+  color: #86efac;
+}
+
+/* Warning states */
+.warning {
+  color: #d97706;
+}
+
+body[data-mui-color-scheme="dark"] .warning {
+  color: #fcd34d;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 599px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 600px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Print styles */
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  
+  pre, blockquote {
+    page-break-inside: avoid;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --primary-color: #0000ff;
+    --primary-color-dark: #ffffff;
   }
-  a:hover {
-    color: #747bff;
+  
+  body[data-mui-color-scheme="dark"] {
+    --background-color-dark: #000000;
+    --text-color-dark: #ffffff;
   }
-  button {
-    background-color: #f9f9f9;
-  }
+}
+
+/* Focus indicators for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+body[data-mui-color-scheme="dark"] :focus-visible {
+  outline-color: var(--primary-color-dark);
 }
