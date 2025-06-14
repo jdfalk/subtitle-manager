@@ -111,6 +111,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/setup/status", setupStatusHandler(db))
 	mux.Handle(prefix+"/api/setup", setupHandler(db))
 	mux.Handle(prefix+"/api/setup/bazarr", bazarrImportHandler(db))
+	mux.Handle(prefix+"/api/setup/bazarr/upload", bazarrConfigUploadHandler(db))
 	mux.Handle(prefix+"/api/oauth/github/login", githubLoginHandler(db))
 	mux.Handle(prefix+"/api/oauth/github/callback", githubCallbackHandler(db))
 	mux.Handle(prefix+"/api/config", authMiddleware(db, "basic", configHandler()))
@@ -297,8 +298,9 @@ func bazarrImportHandler(db *sql.DB) http.Handler {
 		APIKey string `json:"api_key"`
 	}
 	type resp struct {
-		Settings map[string]any `json:"settings"`
-		Preview  map[string]any `json:"preview"`
+		RawSettings map[string]any `json:"raw_settings"`
+		Settings    map[string]any `json:"settings"`
+		Preview     map[string]any `json:"preview"`
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -339,11 +341,119 @@ func bazarrImportHandler(db *sql.DB) http.Handler {
 		mapped := bazarr.MapSettings(settings)
 
 		result := resp{
-			Settings: settings,
-			Preview:  mapped,
+			RawSettings: settings,
+			Settings:    settings,
+			Preview:     mapped,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(result)
+		if err := json.NewEncoder(w).Encode(result); err != nil {
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			return
+		}
 	})
+}
+
+// bazarrConfigUploadHandler accepts a Bazarr config.ini file upload and parses it
+func bazarrConfigUploadHandler(db *sql.DB) http.Handler {
+	type resp struct {
+		Preview map[string]any `json:"preview"`
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Allow this during setup phase
+		needed, err := setupNeeded(db)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if !needed {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
+		// Parse multipart form with file upload
+		if err := r.ParseMultipartForm(10 << 20); err != nil { // 10MB max
+			http.Error(w, "Failed to parse form", http.StatusBadRequest)
+			return
+		}
+
+		file, _, err := r.FormFile("config")
+		if err != nil {
+			http.Error(w, "No config file provided", http.StatusBadRequest)
+			return
+		}
+		defer file.Close()
+
+		// Read the config file
+		content := make([]byte, 1<<20) // 1MB max
+		n, err := file.Read(content)
+		if err != nil && err.Error() != "EOF" {
+			http.Error(w, "Failed to read config file", http.StatusBadRequest)
+			return
+		}
+		content = content[:n]
+
+		// Parse INI-style config (basic implementation)
+		configMap := parseINIConfig(string(content))
+
+		// Convert to Bazarr settings format and map
+		mapped := bazarr.MapSettings(configMap)
+
+		result := resp{
+			Preview: mapped,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(result); err != nil {
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
+// parseINIConfig parses a basic INI file format used by Bazarr
+func parseINIConfig(content string) map[string]any {
+	result := make(map[string]any)
+	currentSection := ""
+
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") || strings.HasPrefix(line, ";") {
+			continue
+		}
+
+		// Section header
+		if strings.HasPrefix(line, "[") && strings.HasSuffix(line, "]") {
+			currentSection = strings.Trim(line, "[]")
+			if result[currentSection] == nil {
+				result[currentSection] = make(map[string]any)
+			}
+			continue
+		}
+
+		// Key-value pair
+		if strings.Contains(line, "=") {
+			parts := strings.SplitN(line, "=", 2)
+			if len(parts) == 2 {
+				key := strings.TrimSpace(parts[0])
+				value := strings.TrimSpace(parts[1])
+
+				if currentSection != "" {
+					if section, ok := result[currentSection].(map[string]any); ok {
+						section[key] = value
+					}
+				} else {
+					result[key] = value
+				}
+			}
+		}
+	}
+
+	return result
 }

@@ -114,9 +114,11 @@ export default function Setup() {
   const [bazarrURL, setBazarrURL] = useState("");
   const [bazarrAPIKey, setBazarrAPIKey] = useState("");
   const [bazarrSettings, setBazarrSettings] = useState(null);
+  const [bazarrRawData, setBazarrRawData] = useState(null);
   const [selectedSettings, setSelectedSettings] = useState({});
   const [bazarrLoading, setBazarrLoading] = useState(false);
   const [bazarrError, setBazarrError] = useState("");
+  const [showDebug, setShowDebug] = useState(false);
 
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -142,6 +144,7 @@ export default function Setup() {
 
       if (res.ok) {
         const data = await res.json();
+        setBazarrRawData(data.raw_settings); // Store raw data for debugging
         setBazarrSettings(data.preview);
         // Pre-select all settings for import
         const selected = {};
@@ -149,6 +152,8 @@ export default function Setup() {
           selected[key] = true;
         });
         setSelectedSettings(selected);
+        console.log("Raw Bazarr data:", data.raw_settings);
+        console.log("Mapped Bazarr data:", data.preview);
       } else {
         const errorText = await res.text();
         setBazarrError(errorText || "Failed to connect to Bazarr");
@@ -402,15 +407,35 @@ export default function Setup() {
                         <Alert severity="error">{bazarrError}</Alert>
                       )}
 
-                      <Button
-                        variant="outlined"
-                        onClick={importBazarr}
-                        disabled={bazarrLoading}
-                        startIcon={bazarrLoading ? <CircularProgress size={20} /> : <CloudDownloadOutlined />}
-                        sx={{ alignSelf: 'flex-start' }}
-                      >
-                        {bazarrLoading ? "Connecting..." : "Connect to Bazarr"}
-                      </Button>
+                      <Stack direction="row" spacing={2} sx={{ alignSelf: 'flex-start' }}>
+                        <Button
+                          variant="outlined"
+                          onClick={importBazarr}
+                          disabled={bazarrLoading}
+                          startIcon={bazarrLoading ? <CircularProgress size={20} /> : <CloudDownloadOutlined />}
+                        >
+                          {bazarrLoading ? "Connecting..." : "Connect to Bazarr"}
+                        </Button>
+
+                        <Button
+                          variant="text"
+                          onClick={() => setShowDebug(!showDebug)}
+                          size="small"
+                        >
+                          {showDebug ? "Hide Debug" : "Show Debug"}
+                        </Button>
+                      </Stack>
+
+                      {showDebug && bazarrRawData && (
+                        <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
+                          <Typography variant="subtitle2" gutterBottom>
+                            Raw Bazarr API Response:
+                          </Typography>
+                          <pre style={{ fontSize: '12px', overflow: 'auto', maxHeight: '200px' }}>
+                            {JSON.stringify(bazarrRawData, null, 2)}
+                          </pre>
+                        </Paper>
+                      )}
 
                       {bazarrSettings && (
                         <Box>
