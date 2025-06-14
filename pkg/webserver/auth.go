@@ -61,3 +61,13 @@ func setupAwareMiddleware(db *sql.DB, perm string, next http.Handler) http.Handl
 		authMiddleware(db, perm, next).ServeHTTP(w, r)
 	})
 }
+
+// staticFileMiddleware allows unrestricted access to static files (HTML, CSS, JS, etc.)
+// This ensures the login page and app resources are always accessible.
+func staticFileMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Always allow access to static files - no authentication required
+		// This enables users to load the login form and app resources
+		next.ServeHTTP(w, r)
+	})
+}
