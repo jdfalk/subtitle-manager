@@ -6,12 +6,19 @@ All notable changes to this project will be documented in this file.
 
 ### Status Update
 
-- **Project ~95% Complete**: All core functionality implemented with full Bazarr parity
+- **Project ~99% Complete**: All core functionality implemented with full Bazarr parity
 - **Production Ready**: Complete authentication, Web UI, and provider support
-- **Remaining**: Only optional advanced features (PostgreSQL, webhooks, anti-captcha)
+- **Enterprise Features**: PostgreSQL, webhooks, notifications, anti-captcha, advanced scheduling complete
+- **Remaining**: Only optional reverse proxy base URL enhancements
 
-### Completed Since Last Release
+### Major Features Completed Since Last Release
 
+- **PostgreSQL Database Backend**: Complete enterprise database support with full test coverage
+- **Advanced Webhook System**: Sonarr/Radarr/custom webhook endpoints for library event integration
+- **Anti-Captcha Integration**: Support for Anti-Captcha.com and 2captcha.com services
+- **Notification Services**: Discord, Telegram, and SMTP notification providers
+- **Advanced Scheduler**: Cron-based scheduling with full expression support
+- **Bazarr Configuration Import**: Command-line tool for seamless Bazarr migration
 - Complete Web UI implementation with all major pages
 - Full REST API coverage for all operations
 - History page with translation and download filtering
@@ -20,23 +27,24 @@ All notable changes to this project will be documented in this file.
 - Comprehensive testing and documentation updates
 - Production-ready authentication and authorization
 
-### Planned (Optional Advanced Features)
+### Planned (Optional Enhancement)
 
-- PostgreSQL database backend for enterprise deployments
-- Advanced webhook system for enhanced Plex integration
- - Anti-captcha service integration for challenging providers (basic)
-- Reverse proxy base URL support for complex network setups
+- Advanced reverse proxy base URL support for complex network setups
 
 ### Added
 
+- **PostgreSQL database backend** with full enterprise support and graceful test skipping
+- **Advanced webhook system** with `/api/webhooks/sonarr`, `/api/webhooks/radarr`, and `/api/webhooks/custom` endpoints
+- **Anti-captcha integration** supporting Anti-Captcha.com and 2captcha.com services
+- **Notification services** with Discord, Telegram, and SMTP providers
+- **Advanced cron-based scheduler** with full expression support and granular controls
+- **Bazarr configuration import** command for seamless migration from existing Bazarr installations
 - REST endpoint `/api/convert` for subtitle file conversion
 - REST endpoint `/api/translate` for translating uploaded subtitle files
 - REST endpoint `/api/download` for on-demand subtitle fetching
-- REST endpoints `/api/webhooks/sonarr` and `/api/webhooks/radarr` for library event integration
 - Build process now runs `go generate ./webui` to embed the latest web assets
   in the binary and container image.
 - Automated workflow closes duplicate issues by title
-- Basic Anti-Captcha client for providers requiring captcha solving
 
 ## [0.4.0] - 2025-06-12
 
