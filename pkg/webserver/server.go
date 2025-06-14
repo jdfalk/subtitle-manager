@@ -507,6 +507,7 @@ func bazarrConfigHandler() http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(mockBazarrConfig); err != nil {
 			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			return
 		}
 	})
 }
@@ -541,6 +542,7 @@ func bazarrImportConfigHandler() http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(result); err != nil {
 			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			return
 		}
 	})
 }
