@@ -21,6 +21,14 @@ RUN apt-get update && apt-get install -y \
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
+
+# Build web UI assets first (ensure we're in the right directory)
+WORKDIR /src/webui
+RUN npm install --legacy-peer-deps
+RUN npm run build
+
+# Go back to source root and generate (which should skip npm since dist exists)
+WORKDIR /src
 RUN go generate ./webui
 
 # Build the Go application with proper CGO support
