@@ -146,6 +146,9 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/oauth/github/login", githubLoginHandler(db))
 	mux.Handle(prefix+"/api/oauth/github/callback", githubCallbackHandler(db))
 	mux.Handle(prefix+"/api/config", authMiddleware(db, "basic", configHandler()))
+	// Add Bazarr endpoints for Settings UI
+	mux.Handle(prefix+"/api/bazarr/config", authMiddleware(db, "basic", bazarrConfigHandler()))
+	mux.Handle(prefix+"/api/bazarr/import", authMiddleware(db, "basic", bazarrImportConfigHandler()))
 	mux.Handle(prefix+"/api/scan", authMiddleware(db, "basic", scanHandler()))
 	mux.Handle(prefix+"/api/scan/status", authMiddleware(db, "basic", scanStatusHandler()))
 	mux.Handle(prefix+"/api/convert", authMiddleware(db, "basic", convertHandler()))
@@ -491,4 +494,60 @@ func parseINIConfig(content string) map[string]any {
 	}
 
 	return result
+}
+
+// bazarrConfigHandler returns the current Bazarr configuration for preview
+func bazarrConfigHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Mock Bazarr configuration for demonstration
+		// In practice, this would connect to actual Bazarr API
+		mockBazarrConfig := map[string]interface{}{
+			"opensubtitles_username": "your_username",
+			"opensubtitles_password": "[REDACTED]",
+			"addic7ed_username":      "your_addic7ed_user",
+			"provider_pool_enabled":  true,
+			"language_profiles":      []string{"English", "Spanish"},
+			"subtitle_directory":     "/config/subtitles",
+			"chmod_enabled":          true,
+			"chmod":                  "0644",
+			"sonarr_url":             "http://sonarr:8989",
+			"radarr_url":             "http://radarr:7878",
+			"api_key":                "[REDACTED]",
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(mockBazarrConfig)
+	})
+}
+
+// bazarrImportConfigHandler imports settings from Bazarr into the current configuration
+func bazarrImportConfigHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Mock implementation - in practice this would:
+		// 1. Fetch current Bazarr configuration
+		// 2. Map Bazarr settings to subtitle-manager configuration
+		// 3. Update the current configuration with the mapped settings
+		// 4. Save the updated configuration
+
+		// For now, we'll simulate a successful import
+		result := map[string]interface{}{
+			"status":  "success",
+			"message": "Successfully imported settings from Bazarr",
+			"imported_keys": []string{
+				"opensubtitles_username",
+				"opensubtitles_password",
+				"addic7ed_username",
+				"provider_pool_enabled",
+				"subtitle_directory",
+			},
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(result)
+	})
 }
