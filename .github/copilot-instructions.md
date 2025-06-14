@@ -1,3 +1,7 @@
+<!-- file: .github/copilot-instructions.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 7a8b9c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d -->
+
 # Copilot Instructions
 
 ## File Identification
