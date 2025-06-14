@@ -1,3 +1,7 @@
+<!-- file: .github/code-style-typescript.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 8d1e4f2a-6b9c-4e7f-2a8d-5e1f4a8d1e2a -->
+
 # TypeScript Code Style Guide
 
 This guide follows Google's TypeScript Style Guide, which builds upon the JavaScript style guide with TypeScript-specific additions.

@@ -1,3 +1,7 @@
+<!-- file: .github/test-generation.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 9e2f5a8b-3c6d-4e9f-5a2b-8e3f5a9e2f5a -->
+
 # Test Generation Guidelines
 
 ## Test Structure

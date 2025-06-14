@@ -1,6 +1,27 @@
+<!-- file: .github/code-style-markdown.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: e2f8a5b1-9c4d-4e2f-8a5b-4d9c8a5b1e2f -->
+
 # Markdown Style Guide
 
 This guide follows common Markdown best practices and industry standards.
+
+## File Headers for .github Folder
+
+All Markdown files in the `.github` folder must include a standardized header format at the beginning of the file:
+
+```markdown
+<!-- file: .github/filename.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: unique-guid-here -->
+```
+
+- **File path comment**: Must be the exact relative path from the repository root
+- **Version comment**: Follow semantic versioning (start with 1.0.0)
+- **GUID comment**: Must be a unique GUID for the file (use online GUID generator)
+- **Placement**: These three comments must be the very first lines of the file
+- **Format**: Use HTML comment syntax with lowercase attributes
+- **Purpose**: Enables proper file identification and tracking
 
 ## Headers
 

@@ -1,3 +1,7 @@
+<!-- file: .github/code-style-javascript.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: f4b8c2d9-5e7a-4f8b-9c1d-3e6f2a4b8c9d -->
+
 # JavaScript Code Style Guide
 
 This guide follows Google's JavaScript Style Guide.

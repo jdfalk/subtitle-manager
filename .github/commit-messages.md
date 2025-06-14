@@ -1,3 +1,7 @@
+<!-- file: .github/commit-messages.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 5a8c2e6f-4b7d-4a8c-2e6f-7d4b2e5a8c2e -->
+
 # Conventional Commits Guide
 
 ## Format

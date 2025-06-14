@@ -1,3 +1,7 @@
+<!-- file: .github/pull-request-descriptions.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 6b4d7e1f-8a3c-4b6d-7e1f-1a4d7e6b4d7e -->
+
 # Pull Request Description Guidelines
 
 ## Structure

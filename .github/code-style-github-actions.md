@@ -1,6 +1,8 @@
-# GitHub Actions Code Style Guidelines
+<!-- file: .github/code-style-github-actions.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 1d3e6f9a-2c5b-4d3e-6f9a-5b2c6f1d3e6f -->
 
-<!-- file: code-style-github-actions.md -->
+# GitHub Actions Code Style Guidelines
 
 ## Workflow File Structure
 

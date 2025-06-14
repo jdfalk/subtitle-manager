@@ -1,3 +1,7 @@
+<!-- file: .github/code-style-protobuf.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 7e1a4b5c-2f8d-4e7a-1b5c-8d2f4b7e1a4b -->
+
 # Protocol Buffers Style Guide - Edition 2023
 
 ## Overview

@@ -1,3 +1,7 @@
+<!-- file: .github/code-style-python.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 2a5b7c8d-9e1f-4a2b-8c3d-6e9f1a5b7c8d -->
+
 # Python Code Style Guide
 
 This guide follows Google's Python Style Guide and incorporates PEP 8 standards.

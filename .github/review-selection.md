@@ -1,3 +1,7 @@
+<!-- file: .github/review-selection.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 3c6e9f1a-7d2b-4c8e-3f9a-7c1e9f3c6e2a -->
+
 # Code Review Guidelines
 
 ## Review Focus Areas

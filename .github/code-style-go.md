@@ -1,3 +1,7 @@
+<!-- file: .github/code-style-go.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 4c7f1a2d-5e8b-4c7f-1a2d-8b5e1a4c7f1a -->
+
 # Go Code Style Guide
 
 This guide follows the official Go style conventions and best practices.
