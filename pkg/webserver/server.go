@@ -188,7 +188,7 @@ func createDefaultAdminIfNeeded(db *sql.DB) error {
 	}
 
 	adminUser := viper.GetString("admin_user")
-	adminPass := viper.GetString("admin_pass")
+	adminPass := viper.GetString("admin_password")
 
 	if adminUser == "" || adminPass == "" {
 		return nil // No environment variables set, manual setup required
