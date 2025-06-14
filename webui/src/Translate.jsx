@@ -86,7 +86,7 @@ export default function Translate() {
         setStatus(`Translation failed: ${errorText || 'Unknown error'}`);
       }
     } catch (error) {
-      setStatus("Network error. Please check your connection.");
+      setStatus(`Network error: ${error.message || 'Please check your connection.'}`);
     } finally {
       setTranslating(false);
     }
