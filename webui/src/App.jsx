@@ -1,7 +1,7 @@
 import {
   Transform as ConvertIcon,
   Dashboard as DashboardIcon,
-  Unarchive as ExtractIcon,
+  Archive as ExtractIcon,
   History as HistoryIcon,
   Menu as MenuIcon,
   Settings as SettingsIcon,
