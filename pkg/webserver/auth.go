@@ -8,6 +8,11 @@ import (
 	"subtitle-manager/pkg/auth"
 )
 
+// userIDKey is a custom type for context keys to avoid collisions
+type userIDKey string
+
+const userIDContextKey userIDKey = "userID"
+
 // authMiddleware verifies session cookies or API keys.
 func authMiddleware(db *sql.DB, perm string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -33,32 +38,8 @@ func authMiddleware(db *sql.DB, perm string, next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
-		ctx := context.WithValue(r.Context(), "userID", id)
+		ctx := context.WithValue(r.Context(), userIDContextKey, id)
 		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}
-
-// setupAwareMiddleware conditionally applies authentication based on setup status.
-// If setup is needed, it bypasses authentication to allow access to the setup UI.
-// Otherwise, it applies normal authentication.
-func setupAwareMiddleware(db *sql.DB, perm string, next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Check if setup is needed
-		needed, err := setupNeeded(db)
-		if err != nil {
-			// If we can't determine setup status, err on the side of caution
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		// If setup is needed, bypass authentication
-		if needed {
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		// Otherwise, apply normal authentication
-		authMiddleware(db, perm, next).ServeHTTP(w, r)
 	})
 }
 
