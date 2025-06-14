@@ -3,9 +3,9 @@
 
 FROM golang:1.23 AS builder
 
-# Build arguments for cross-compilation
-ARG TARGETOS=linux
-ARG TARGETARCH=amd64
+# Build arguments for cross-compilation (auto-detected by Docker)
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /src
 
