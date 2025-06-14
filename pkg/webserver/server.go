@@ -3,8 +3,11 @@ package webserver
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/fs"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -129,9 +132,34 @@ func Handler(db *sql.DB) (http.Handler, error) {
 
 // StartServer starts an HTTP server on the given address serving the embedded UI.
 func StartServer(addr string) error {
-	db, err := database.Open(viper.GetString("db_path"))
+	// Get database configuration
+	backend := database.GetDatabaseBackend()
+	dbPath := viper.GetString("db_path")
+
+	var db *sql.DB
+	var err error
+
+	// For web server, we need SQL database for authentication
+	// If backend is not sqlite, we still need to create a SQLite DB for auth
+	if backend == "sqlite" {
+		fullPath := database.GetDatabasePath()
+		// Ensure directory exists
+		if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
+			return fmt.Errorf("failed to create database directory: %w", err)
+		}
+		db, err = database.Open(fullPath)
+	} else {
+		// For non-SQLite backends, create a separate SQLite DB for auth
+		authDbPath := filepath.Join(dbPath, "auth.db")
+		// Ensure directory exists
+		if err := os.MkdirAll(dbPath, 0755); err != nil {
+			return fmt.Errorf("failed to create database directory: %w", err)
+		}
+		db, err = database.Open(authDbPath)
+	}
+
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open database: %w", err)
 	}
 	defer db.Close()
 	h, err := Handler(db)

@@ -11,12 +11,14 @@ import (
 	"github.com/spf13/viper"
 
 	"subtitle-manager/pkg/captcha"
+	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/translator"
 )
 
 var cfgFile string
 var dbPath string
 var dbBackend string
+var sqliteFilename string
 var rootCmd = &cobra.Command{
 	Use:   "subtitle-manager",
 	Short: "Subtitle Manager CLI",
@@ -30,17 +32,29 @@ func Execute() {
 	}
 }
 
+// GetDatabasePath returns the full database path using the database package helper
+func GetDatabasePath() string {
+	return database.GetDatabasePath()
+}
+
+// GetDatabaseBackend returns the configured database backend using the database package helper
+func GetDatabaseBackend() string {
+	return database.GetDatabaseBackend()
+}
+
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.subtitle-manager.yaml)")
-	rootCmd.PersistentFlags().StringVar(&dbPath, "db", "", "database file (default is $HOME/.subtitle-manager.db)")
-	rootCmd.PersistentFlags().StringVar(&dbBackend, "db-backend", "sqlite", "database backend: sqlite or pebble")
+	rootCmd.PersistentFlags().StringVar(&dbPath, "db-path", "", "database path (default is $HOME/.subtitle-manager/db for pebble, $HOME for sqlite)")
+	rootCmd.PersistentFlags().StringVar(&dbBackend, "db-backend", "pebble", "database backend: sqlite, pebble, or postgres")
+	rootCmd.PersistentFlags().StringVar(&sqliteFilename, "sqlite3-filename", "subtitle-manager.db", "SQLite database filename (only used when db-backend=sqlite)")
 	rootCmd.PersistentFlags().String("log-level", "info", "log level (debug, info, warn, error)")
 	viper.BindPFlag("log-level", rootCmd.PersistentFlags().Lookup("log-level"))
 	rootCmd.PersistentFlags().StringToString("log-levels", nil, "per component log levels")
 	viper.BindPFlag("log_levels", rootCmd.PersistentFlags().Lookup("log-levels"))
-	viper.BindPFlag("db_path", rootCmd.PersistentFlags().Lookup("db"))
+	viper.BindPFlag("db_path", rootCmd.PersistentFlags().Lookup("db-path"))
 	viper.BindPFlag("db_backend", rootCmd.PersistentFlags().Lookup("db-backend"))
+	viper.BindPFlag("sqlite3_filename", rootCmd.PersistentFlags().Lookup("sqlite3-filename"))
 	rootCmd.PersistentFlags().String("google-key", "", "Google Translate API key")
 	viper.BindPFlag("google_api_key", rootCmd.PersistentFlags().Lookup("google-key"))
 	rootCmd.PersistentFlags().String("openai-key", "", "OpenAI API key")
@@ -88,8 +102,9 @@ func initConfig() {
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".subtitle-manager")
-		viper.SetDefault("db_path", filepath.Join(home, ".subtitle-manager.db"))
-		viper.SetDefault("db_backend", "sqlite")
+		viper.SetDefault("db_path", filepath.Join(home, ".subtitle-manager", "db"))
+		viper.SetDefault("db_backend", "pebble")
+		viper.SetDefault("sqlite3_filename", "subtitle-manager.db")
 		viper.SetDefault("translate_service", "google")
 		viper.SetDefault("google_api_key", "")
 		viper.SetDefault("openai_api_key", "")

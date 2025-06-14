@@ -2,11 +2,33 @@ package database
 
 import (
 	"database/sql"
+	"path/filepath"
 	"strconv"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/spf13/viper"
 )
+
+// GetDatabasePath returns the full database path based on the backend type.
+// For SQLite, it combines db_path with sqlite3_filename.
+// For other backends (pebble, postgres), it returns db_path as-is.
+func GetDatabasePath() string {
+	backend := viper.GetString("db_backend")
+	dbPath := viper.GetString("db_path")
+
+	if backend == "sqlite" {
+		filename := viper.GetString("sqlite3_filename")
+		return filepath.Join(dbPath, filename)
+	}
+
+	return dbPath
+}
+
+// GetDatabaseBackend returns the configured database backend
+func GetDatabaseBackend() string {
+	return viper.GetString("db_backend")
+}
 
 // SubtitleRecord represents a subtitle file that has been processed.
 // VideoFile is the path to the media file the subtitle belongs to.

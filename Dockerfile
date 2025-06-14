@@ -56,7 +56,9 @@ COPY --from=builder /src/subtitle-manager /subtitle-manager
 
 # Set default environment variables
 ENV SM_CONFIG_FILE=/config/subtitle-manager.yaml
-ENV SM_DB_PATH=/config/subtitle-manager.db
+ENV SM_DB_PATH=/config/db
+ENV SM_DB_BACKEND=pebble
+ENV SM_SQLITE3_FILENAME=subtitle-manager.db
 ENV SM_LOG_LEVEL=info
 
 # Expose the web interface port
