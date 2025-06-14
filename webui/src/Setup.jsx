@@ -1,9 +1,107 @@
+import {
+  CheckCircleOutlined,
+  CloudDownloadOutlined,
+  ConnectedTvOutlined,
+  ExtensionOutlined,
+  PersonAddOutlined,
+  PhoneAndroidOutlined,
+  SettingsOutlined,
+  SubtitlesOutlined,
+  TranslateOutlined,
+} from "@mui/icons-material";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  CircularProgress,
+  Container,
+  Divider,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Stack,
+  Step,
+  StepLabel,
+  Stepper,
+  TextField,
+  Typography
+} from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
-import "./Setup.css";
+
+// Material Design 3 theme
+const theme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#6750a4',
+    },
+    secondary: {
+      main: '#625b71',
+    },
+    background: {
+      default: '#fffbfe',
+      paper: '#ffffff',
+    },
+  },
+  shape: {
+    borderRadius: 16,
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h3: {
+      fontWeight: 600,
+    },
+    h4: {
+      fontWeight: 500,
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 24,
+          textTransform: 'none',
+          fontSize: '0.9rem',
+          fontWeight: 500,
+          padding: '10px 24px',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 24,
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 16,
+          },
+        },
+      },
+    },
+  },
+});
+
+const steps = ['Welcome', 'Import from Bazarr', 'Create Admin', 'Server Settings'];
 
 /**
  * Setup guides the user through initial configuration when no user exists.
- * Multi-step wizard: Welcome -> Bazarr Import (optional) -> Admin User -> Server Settings -> Complete
+ * Multi-step wizard with Material Design 3: Welcome -> Bazarr Import (optional) -> Admin User -> Server Settings -> Complete
  */
 export default function Setup() {
   const [step, setStep] = useState(0);
@@ -100,6 +198,7 @@ export default function Setup() {
         setStatus("error");
       }
     } catch (err) {
+      console.error("Setup failed:", err);
       setStatus("error");
     } finally {
       setLoading(false);
@@ -116,273 +215,384 @@ export default function Setup() {
 
   if (status === "complete") {
     return (
-      <div className="setup-container">
-        <div className="setup-card">
-          <div className="setup-success">
-            <div className="success-icon">✅</div>
-            <h1>Setup Complete!</h1>
-            <p>Your Subtitle Manager is ready to use.</p>
-            <p>Redirecting to login...</p>
-          </div>
-        </div>
-      </div>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Container maxWidth="sm" sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          py: 4
+        }}>
+          <Card elevation={3} sx={{ width: '100%', textAlign: 'center', p: 4 }}>
+            <CheckCircleOutlined color="success" sx={{ fontSize: 80, mb: 2 }} />
+            <Typography variant="h3" color="success.main" gutterBottom>
+              Setup Complete!
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              Your Subtitle Manager is ready to use.
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Redirecting to login...
+            </Typography>
+            <Box sx={{ mt: 3 }}>
+              <CircularProgress />
+            </Box>
+          </Card>
+        </Container>
+      </ThemeProvider>
     );
   }
 
   return (
-    <div className="setup-container">
-      <div className="setup-card">
-        <div className="setup-header">
-          <div className="setup-logo">
-            <div className="subtitle-icon">
-              <div className="subtitle-lines">
-                <div className="line"></div>
-                <div className="line"></div>
-                <div className="line"></div>
-              </div>
-            </div>
-          </div>
-          <div className="setup-progress">
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${(step + 1) * 25}%` }}
-              ></div>
-            </div>
-            <span className="progress-text">Step {step + 1} of 4</span>
-          </div>
-        </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 2
+      }}>
+        <Container maxWidth="md">
+          <Card elevation={8} sx={{ overflow: 'visible' }}>
+            {/* Header with progress */}
+            <Box sx={{
+              background: 'linear-gradient(135deg, #6750a4 0%, #8b5cf6 100%)',
+              color: 'white',
+              p: 4,
+              textAlign: 'center'
+            }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                <Paper sx={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(255,255,255,0.2)',
+                  backdropFilter: 'blur(10px)'
+                }}>
+                  <SubtitlesOutlined sx={{ fontSize: 40, color: 'white' }} />
+                </Paper>
+              </Box>
 
-        <div className="setup-content">
-          {step === 0 && (
-            <div className="setup-step">
-              <h1>Welcome to Subtitle Manager</h1>
-              <p className="subtitle">
-                A powerful, self-hosted subtitle management system that automates
-                subtitle downloading, translation, and organization for your media library.
-              </p>
+              <Typography variant="h4" gutterBottom>
+                Subtitle Manager Setup
+              </Typography>
 
-              <div className="features-grid">
-                <div className="feature">
-                  <div className="feature-icon">🔄</div>
-                  <h3>Automated Downloads</h3>
-                  <p>Automatically find and download subtitles for your movies and TV shows</p>
-                </div>
-                <div className="feature">
-                  <div className="feature-icon">🌐</div>
-                  <h3>Translation</h3>
-                  <p>Translate subtitles to any language using Google Translate or OpenAI</p>
-                </div>
-                <div className="feature">
-                  <div className="feature-icon">🔌</div>
-                  <h3>Integrations</h3>
-                  <p>Works seamlessly with Sonarr, Radarr, Plex, and other media tools</p>
-                </div>
-                <div className="feature">
-                  <div className="feature-icon">📱</div>
-                  <h3>Modern UI</h3>
-                  <p>Clean, responsive web interface accessible from any device</p>
-                </div>
-              </div>
+              <Box sx={{ mt: 3 }}>
+                <Stepper activeStep={step} alternativeLabel sx={{
+                  '& .MuiStepLabel-label': { color: 'rgba(255,255,255,0.8)' },
+                  '& .MuiStepLabel-label.Mui-active': { color: 'white' },
+                  '& .MuiStepLabel-label.Mui-completed': { color: 'white' },
+                  '& .MuiStepIcon-root': { color: 'rgba(255,255,255,0.5)' },
+                  '& .MuiStepIcon-root.Mui-active': { color: 'white' },
+                  '& .MuiStepIcon-root.Mui-completed': { color: 'white' },
+                }}>
+                  {steps.map((label) => (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+              </Box>
+            </Box>
 
-              <div className="setup-actions">
-                <button onClick={next} className="btn btn-primary">
-                  Get Started
-                </button>
-              </div>
-            </div>
-          )}
+            <CardContent sx={{ p: 5 }}>
+              {step === 0 && (
+                <Box>
+                  <Typography variant="h3" gutterBottom>
+                    Welcome to Subtitle Manager
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" paragraph>
+                    A powerful, self-hosted subtitle management system that automates
+                    subtitle downloading, translation, and organization for your media library.
+                  </Typography>
 
-          {step === 1 && (
-            <div className="setup-step">
-              <h1>Import from Bazarr</h1>
-              <p className="subtitle">
-                Already using Bazarr? Import your existing configuration to get started quickly.
-              </p>
+                  <Grid container spacing={3} sx={{ my: 4 }}>
+                    <Grid item xs={12} sm={6}>
+                      <Card variant="outlined" sx={{ p: 3, height: '100%', textAlign: 'center' }}>
+                        <CloudDownloadOutlined color="primary" sx={{ fontSize: 48, mb: 2 }} />
+                        <Typography variant="h6" gutterBottom>
+                          Automated Downloads
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Automatically find and download subtitles for your movies and TV shows
+                        </Typography>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Card variant="outlined" sx={{ p: 3, height: '100%', textAlign: 'center' }}>
+                        <TranslateOutlined color="primary" sx={{ fontSize: 48, mb: 2 }} />
+                        <Typography variant="h6" gutterBottom>
+                          Translation
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Translate subtitles to any language using Google Translate or OpenAI
+                        </Typography>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Card variant="outlined" sx={{ p: 3, height: '100%', textAlign: 'center' }}>
+                        <ExtensionOutlined color="primary" sx={{ fontSize: 48, mb: 2 }} />
+                        <Typography variant="h6" gutterBottom>
+                          Integrations
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Works seamlessly with Sonarr, Radarr, Plex, and other media tools
+                        </Typography>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Card variant="outlined" sx={{ p: 3, height: '100%', textAlign: 'center' }}>
+                        <PhoneAndroidOutlined color="primary" sx={{ fontSize: 48, mb: 2 }} />
+                        <Typography variant="h6" gutterBottom>
+                          Modern UI
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Clean, responsive web interface accessible from any device
+                        </Typography>
+                      </Card>
+                    </Grid>
+                  </Grid>
 
-              <div className="bazarr-import">
-                <div className="input-group">
-                  <label htmlFor="bazarr-url">Bazarr URL</label>
-                  <input
-                    id="bazarr-url"
-                    type="url"
-                    placeholder="http://localhost:6767"
-                    value={bazarrURL}
-                    onChange={(e) => setBazarrURL(e.target.value)}
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label htmlFor="bazarr-key">API Key</label>
-                  <input
-                    id="bazarr-key"
-                    type="password"
-                    placeholder="Your Bazarr API key"
-                    value={bazarrAPIKey}
-                    onChange={(e) => setBazarrAPIKey(e.target.value)}
-                    className="form-input"
-                  />
-                </div>
-
-                {bazarrError && (
-                  <div className="error-message">{bazarrError}</div>
-                )}
-
-                <button
-                  onClick={importBazarr}
-                  disabled={bazarrLoading}
-                  className="btn btn-secondary"
-                >
-                  {bazarrLoading ? "Connecting..." : "Connect to Bazarr"}
-                </button>
-
-                {bazarrSettings && (
-                  <div className="settings-preview">
-                    <h3>Found Settings</h3>
-                    <p>Select which settings to import:</p>
-                    <div className="settings-list">
-                      {Object.entries(bazarrSettings).map(([key, value]) => (
-                        <label key={key} className="setting-item">
-                          <input
-                            type="checkbox"
-                            checked={selectedSettings[key] || false}
-                            onChange={(e) => setSelectedSettings({
-                              ...selectedSettings,
-                              [key]: e.target.checked
-                            })}
-                          />
-                          <div className="setting-info">
-                            <span className="setting-key">{key}</span>
-                            <span className="setting-value">
-                              {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                            </span>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="setup-actions">
-                <button onClick={prev} className="btn btn-outline">Back</button>
-                <button onClick={skip} className="btn btn-outline">Skip</button>
-                <button
-                  onClick={next}
-                  disabled={!bazarrSettings}
-                  className="btn btn-primary"
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="setup-step">
-              <h1>Create Admin Account</h1>
-              <p className="subtitle">
-                Create your administrator account to manage Subtitle Manager.
-              </p>
-
-              <div className="form-group">
-                <div className="input-group">
-                  <label htmlFor="admin-user">Username</label>
-                  <input
-                    id="admin-user"
-                    type="text"
-                    placeholder="admin"
-                    value={adminUser}
-                    onChange={(e) => setAdminUser(e.target.value)}
-                    className="form-input"
-                    required
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label htmlFor="admin-pass">Password</label>
-                  <input
-                    id="admin-pass"
-                    type="password"
-                    placeholder="Choose a secure password"
-                    value={adminPass}
-                    onChange={(e) => setAdminPass(e.target.value)}
-                    className="form-input"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="setup-actions">
-                <button onClick={prev} className="btn btn-outline">Back</button>
-                <button
-                  onClick={next}
-                  disabled={!adminUser || !adminPass}
-                  className="btn btn-primary"
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="setup-step">
-              <h1>Server Configuration</h1>
-              <p className="subtitle">
-                Configure basic server settings for your deployment.
-              </p>
-
-              <div className="form-group">
-                <div className="input-group">
-                  <label htmlFor="server-name">Server Name</label>
-                  <input
-                    id="server-name"
-                    type="text"
-                    placeholder="Subtitle Manager"
-                    value={serverName}
-                    onChange={(e) => setServerName(e.target.value)}
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={reverseProxy}
-                      onChange={(e) => setReverseProxy(e.target.checked)}
-                    />
-                    <span className="checkmark"></span>
-                    Running behind a reverse proxy
-                  </label>
-                  <p className="help-text">
-                    Enable this if you're using nginx, Apache, or another reverse proxy
-                  </p>
-                </div>
-              </div>
-
-              {status === "error" && (
-                <div className="error-message">
-                  Setup failed. Please check your settings and try again.
-                </div>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+                    <Button variant="contained" size="large" onClick={next}>
+                      Get Started
+                    </Button>
+                  </Box>
+                </Box>
               )}
 
-              <div className="setup-actions">
-                <button onClick={prev} className="btn btn-outline">Back</button>
-                <button
-                  onClick={submit}
-                  disabled={loading}
-                  className="btn btn-primary"
-                >
-                  {loading ? "Setting up..." : "Complete Setup"}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+              {step === 1 && (
+                <Box>
+                  <Typography variant="h4" gutterBottom>
+                    Import from Bazarr
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" paragraph>
+                    Already using Bazarr? Import your existing configuration to get started quickly.
+                  </Typography>
+
+                  <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        fullWidth
+                        label="Bazarr URL"
+                        placeholder="http://localhost:6767"
+                        value={bazarrURL}
+                        onChange={(e) => setBazarrURL(e.target.value)}
+                        InputProps={{
+                          startAdornment: <ConnectedTvOutlined sx={{ mr: 1, color: 'text.secondary' }} />,
+                        }}
+                      />
+
+                      <TextField
+                        fullWidth
+                        label="API Key"
+                        type="password"
+                        placeholder="Your Bazarr API key"
+                        value={bazarrAPIKey}
+                        onChange={(e) => setBazarrAPIKey(e.target.value)}
+                      />
+
+                      {bazarrError && (
+                        <Alert severity="error">{bazarrError}</Alert>
+                      )}
+
+                      <Button
+                        variant="outlined"
+                        onClick={importBazarr}
+                        disabled={bazarrLoading}
+                        startIcon={bazarrLoading ? <CircularProgress size={20} /> : <CloudDownloadOutlined />}
+                        sx={{ alignSelf: 'flex-start' }}
+                      >
+                        {bazarrLoading ? "Connecting..." : "Connect to Bazarr"}
+                      </Button>
+
+                      {bazarrSettings && (
+                        <Box>
+                          <Typography variant="h6" gutterBottom>
+                            Found Settings
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" paragraph>
+                            Select which settings to import:
+                          </Typography>
+                          <Paper variant="outlined" sx={{ maxHeight: 300, overflow: 'auto' }}>
+                            <List>
+                              {Object.entries(bazarrSettings).map(([key, value], index) => (
+                                <div key={key}>
+                                  <ListItem>
+                                    <ListItemIcon>
+                                      <Checkbox
+                                        checked={selectedSettings[key] || false}
+                                        onChange={(e) => setSelectedSettings({
+                                          ...selectedSettings,
+                                          [key]: e.target.checked
+                                        })}
+                                      />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                      primary={
+                                        <Typography variant="body2" fontWeight="medium">
+                                          {key}
+                                        </Typography>
+                                      }
+                                      secondary={
+                                        <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
+                                          {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                        </Typography>
+                                      }
+                                    />
+                                  </ListItem>
+                                  {index < Object.keys(bazarrSettings).length - 1 && <Divider />}
+                                </div>
+                              ))}
+                            </List>
+                          </Paper>
+                        </Box>
+                      )}
+                    </Stack>
+                  </Paper>
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                    <Button variant="outlined" onClick={prev}>
+                      Back
+                    </Button>
+                    <Stack direction="row" spacing={2}>
+                      <Button variant="text" onClick={skip}>
+                        Skip
+                      </Button>
+                      <Button
+                        variant="contained"
+                        onClick={next}
+                        disabled={!bazarrSettings}
+                      >
+                        Continue
+                      </Button>
+                    </Stack>
+                  </Box>
+                </Box>
+              )}
+
+              {step === 2 && (
+                <Box>
+                  <Typography variant="h4" gutterBottom>
+                    Create Admin Account
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" paragraph>
+                    Create your administrator account to manage Subtitle Manager.
+                  </Typography>
+
+                  <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        fullWidth
+                        label="Username"
+                        placeholder="admin"
+                        value={adminUser}
+                        onChange={(e) => setAdminUser(e.target.value)}
+                        required
+                        InputProps={{
+                          startAdornment: <PersonAddOutlined sx={{ mr: 1, color: 'text.secondary' }} />,
+                        }}
+                      />
+
+                      <TextField
+                        fullWidth
+                        label="Password"
+                        type="password"
+                        placeholder="Choose a secure password"
+                        value={adminPass}
+                        onChange={(e) => setAdminPass(e.target.value)}
+                        required
+                      />
+                    </Stack>
+                  </Paper>
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                    <Button variant="outlined" onClick={prev}>
+                      Back
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={next}
+                      disabled={!adminUser || !adminPass}
+                    >
+                      Continue
+                    </Button>
+                  </Box>
+                </Box>
+              )}
+
+              {step === 3 && (
+                <Box>
+                  <Typography variant="h4" gutterBottom>
+                    Server Configuration
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" paragraph>
+                    Configure basic server settings for your deployment.
+                  </Typography>
+
+                  <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        fullWidth
+                        label="Server Name"
+                        placeholder="Subtitle Manager"
+                        value={serverName}
+                        onChange={(e) => setServerName(e.target.value)}
+                        InputProps={{
+                          startAdornment: <SettingsOutlined sx={{ mr: 1, color: 'text.secondary' }} />,
+                        }}
+                      />
+
+                      <FormGroup>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={reverseProxy}
+                              onChange={(e) => setReverseProxy(e.target.checked)}
+                            />
+                          }
+                          label="Running behind a reverse proxy"
+                        />
+                        <Typography variant="caption" color="text.secondary" sx={{ ml: 4 }}>
+                          Enable this if you're using nginx, Apache, or another reverse proxy
+                        </Typography>
+                      </FormGroup>
+                    </Stack>
+                  </Paper>
+
+                  {status === "error" && (
+                    <Alert severity="error" sx={{ mb: 3 }}>
+                      Setup failed. Please check your settings and try again.
+                    </Alert>
+                  )}
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                    <Button variant="outlined" onClick={prev}>
+                      Back
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      onClick={submit}
+                      disabled={loading}
+                      startIcon={loading ? <CircularProgress size={20} /> : <CheckCircleOutlined />}
+                    >
+                      {loading ? "Setting up..." : "Complete Setup"}
+                    </Button>
+                  </Box>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 }
+
