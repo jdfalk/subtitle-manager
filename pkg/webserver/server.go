@@ -151,6 +151,9 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/webhooks/radarr", webhooks.RadarrHandler())
 	mux.Handle(prefix+"/api/webhooks/custom", webhooks.CustomHandler())
 	mux.Handle(prefix+"/api/translate", authMiddleware(db, "basic", translateHandler()))
+	// New API endpoints for modern UI
+	mux.Handle(prefix+"/api/providers", authMiddleware(db, "basic", providersHandler()))
+	mux.Handle(prefix+"/api/library/browse", authMiddleware(db, "basic", libraryBrowseHandler()))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
 	return mux, nil
@@ -545,4 +548,374 @@ func bazarrImportConfigHandler() http.Handler {
 			return
 		}
 	})
+}
+
+// providersHandler returns information about available subtitle providers
+func providersHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			// Get list of all available providers from the registry
+			providers := getAvailableProviders()
+			w.Header().Set("Content-Type", "application/json")
+			if err := json.NewEncoder(w).Encode(providers); err != nil {
+				http.Error(w, "Failed to encode providers", http.StatusInternalServerError)
+				return
+			}
+		case http.MethodPost:
+			// Handle provider configuration updates
+			var req struct {
+				Name    string                 `json:"name"`
+				Enabled bool                   `json:"enabled"`
+				Config  map[string]interface{} `json:"config"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				http.Error(w, "Invalid request body", http.StatusBadRequest)
+				return
+			}
+
+			// Update provider configuration in viper
+			configKey := fmt.Sprintf("providers.%s", req.Name)
+			providerConfig := map[string]interface{}{
+				"enabled": req.Enabled,
+				"config":  req.Config,
+			}
+			viper.Set(configKey, providerConfig)
+
+			// Save configuration if using a config file
+			if cfg := viper.ConfigFileUsed(); cfg != "" {
+				if err := viper.WriteConfig(); err != nil {
+					http.Error(w, "Failed to save configuration", http.StatusInternalServerError)
+					return
+				}
+			}
+
+			w.WriteHeader(http.StatusNoContent)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
+}
+
+// libraryBrowseHandler provides directory browsing for media library
+func libraryBrowseHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		path := r.URL.Query().Get("path")
+		if path == "" {
+			path = "/"
+		}
+
+		items, err := browseDirectory(path)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to browse directory: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(items); err != nil {
+			http.Error(w, "Failed to encode directory listing", http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
+// Helper functions for new API endpoints
+
+type ProviderInfo struct {
+	Name        string                 `json:"name"`
+	DisplayName string                 `json:"displayName"`
+	Enabled     bool                   `json:"enabled"`
+	Config      map[string]interface{} `json:"config"`
+	Type        string                 `json:"type"`
+}
+
+type MediaItem struct {
+	Name        string     `json:"name"`
+	Path        string     `json:"path"`
+	IsDirectory bool       `json:"isDirectory"`
+	Size        int64      `json:"size,omitempty"`
+	ModTime     time.Time  `json:"modTime"`
+	Subtitles   []Subtitle `json:"subtitles,omitempty"`
+}
+
+type Subtitle struct {
+	Language string `json:"language"`
+	Path     string `json:"path"`
+	Format   string `json:"format"`
+}
+
+// getAvailableProviders returns a list of all available providers with their current configuration
+func getAvailableProviders() []ProviderInfo {
+	// List of all available providers (this matches the registry)
+	providerNames := []string{
+		"addic7ed", "animekalesi", "animetosho", "assrt", "avistaz",
+		"betaseries", "bsplayer", "embedded", "generic", "gestdown",
+		"greeksubs", "greeksubtitles", "hdbits", "hosszupuska", "karagarga",
+		"ktuvit", "legendasdivx", "legendasnet", "napiprojekt", "napisy24",
+		"nekur", "opensubtitles", "opensubtitlescom", "opensubtitlesvip",
+		"podnapisi", "regielive", "soustitres", "subdivx", "subf2m",
+		"subs4free", "subs4series", "subscene", "subscenter", "subssabbz",
+		"subsunacs", "subsynchro", "subtitrarinoi", "subtitriidlv",
+		"subtitulamos", "supersubtitles", "titlovi", "titrariro", "titulky",
+		"turkcealtyazi", "tusubtitulo", "tvsubtitles", "whisper", "wizdom",
+		"xsubs", "yavka", "yifysubtitles", "zimuku",
+	}
+
+	var providers []ProviderInfo
+	for _, name := range providerNames {
+		configKey := fmt.Sprintf("providers.%s", name)
+		providerConfig := viper.GetStringMap(configKey)
+
+		enabled := false
+		config := make(map[string]interface{})
+
+		if providerConfig != nil {
+			if enabledVal, ok := providerConfig["enabled"]; ok {
+				if enabledBool, ok := enabledVal.(bool); ok {
+					enabled = enabledBool
+				}
+			}
+			if configVal, ok := providerConfig["config"].(map[string]interface{}); ok {
+				config = configVal
+			}
+		}
+
+		providers = append(providers, ProviderInfo{
+			Name:        name,
+			DisplayName: formatProviderName(name),
+			Enabled:     enabled,
+			Config:      config,
+			Type:        getProviderType(name),
+		})
+	}
+
+	return providers
+}
+
+// formatProviderName formats provider names for display
+func formatProviderName(name string) string {
+	specialNames := map[string]string{
+		"opensubtitles":    "OpenSubtitles",
+		"opensubtitlescom": "OpenSubtitles.com",
+		"opensubtitlesvip": "OpenSubtitles VIP",
+		"addic7ed":         "Addic7ed",
+		"podnapisi":        "Podnapisi.NET",
+		"subscene":         "Subscene",
+		"yifysubtitles":    "YIFY Subtitles",
+		"turkcealtyazi":    "Türkçe Altyazı",
+		"greeksubtitles":   "Greek Subtitles",
+		"legendasdivx":     "Legendas DivX",
+		"legendasnet":      "Legendas.NET",
+		"napiprojekt":      "NapiProjekt",
+	}
+
+	if display, ok := specialNames[name]; ok {
+		return display
+	}
+
+	// Default formatting: split camelCase and capitalize each word
+	words := strings.Split(name, "")
+	var result []string
+	var currentWord strings.Builder
+
+	for i, char := range words {
+		if i > 0 && strings.ToUpper(char) == char && strings.ToLower(char) != char {
+			if currentWord.Len() > 0 {
+				result = append(result, strings.Title(currentWord.String()))
+				currentWord.Reset()
+			}
+		}
+		currentWord.WriteString(char)
+	}
+
+	if currentWord.Len() > 0 {
+		result = append(result, strings.Title(currentWord.String()))
+	}
+
+	if len(result) == 0 {
+		return strings.Title(name)
+	}
+
+	return strings.Join(result, " ")
+}
+
+// getProviderType returns the provider type/category
+func getProviderType(name string) string {
+	switch name {
+	case "whisper":
+		return "transcription"
+	case "embedded":
+		return "extraction"
+	case "generic":
+		return "custom"
+	default:
+		return "subtitle"
+	}
+}
+
+// browseDirectory lists media files and directories with subtitle information
+func browseDirectory(path string) ([]MediaItem, error) {
+	if path == "" || path == "/" {
+		// Return common media directories
+		return []MediaItem{
+			{Name: "Movies", Path: "/movies", IsDirectory: true, ModTime: time.Now()},
+			{Name: "TV Shows", Path: "/tv", IsDirectory: true, ModTime: time.Now()},
+			{Name: "Downloads", Path: "/downloads", IsDirectory: true, ModTime: time.Now()},
+		}, nil
+	}
+
+	// Check if path exists and is readable
+	info, err := os.Stat(path)
+	if err != nil {
+		return nil, fmt.Errorf("path not accessible: %v", err)
+	}
+
+	if !info.IsDir() {
+		return nil, fmt.Errorf("path is not a directory")
+	}
+
+	entries, err := os.ReadDir(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read directory: %v", err)
+	}
+
+	var items []MediaItem
+	for _, entry := range entries {
+		info, err := entry.Info()
+		if err != nil {
+			continue
+		}
+
+		fullPath := filepath.Join(path, entry.Name())
+		item := MediaItem{
+			Name:        entry.Name(),
+			Path:        fullPath,
+			IsDirectory: entry.IsDir(),
+			Size:        info.Size(),
+			ModTime:     info.ModTime(),
+		}
+
+		// If it's a media file, look for subtitles
+		if !entry.IsDir() && isMediaFile(entry.Name()) {
+			item.Subtitles = findSubtitles(fullPath)
+		}
+
+		items = append(items, item)
+	}
+
+	return items, nil
+}
+
+// isMediaFile checks if the file is a supported media file
+func isMediaFile(filename string) bool {
+	ext := strings.ToLower(filepath.Ext(filename))
+	mediaExtensions := []string{
+		".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm",
+		".m4v", ".3gp", ".ts", ".mts", ".m2ts", ".vob", ".mpg",
+		".mpeg", ".ogv", ".rm", ".rmvb", ".asf", ".divx",
+	}
+
+	for _, mediaExt := range mediaExtensions {
+		if ext == mediaExt {
+			return true
+		}
+	}
+	return false
+}
+
+// findSubtitles looks for subtitle files associated with a media file
+func findSubtitles(mediaPath string) []Subtitle {
+	dir := filepath.Dir(mediaPath)
+	baseName := strings.TrimSuffix(filepath.Base(mediaPath), filepath.Ext(mediaPath))
+
+	var subtitles []Subtitle
+
+	// Look for subtitle files with common patterns
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return subtitles
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+
+		name := entry.Name()
+		ext := strings.ToLower(filepath.Ext(name))
+
+		// Check if it's a subtitle file
+		if !isSubtitleFile(ext) {
+			continue
+		}
+
+		// Check if it matches our media file
+		if strings.HasPrefix(name, baseName) {
+			language := extractLanguageFromFilename(name)
+			subtitles = append(subtitles, Subtitle{
+				Language: language,
+				Path:     filepath.Join(dir, name),
+				Format:   strings.TrimPrefix(ext, "."),
+			})
+		}
+	}
+
+	return subtitles
+}
+
+// isSubtitleFile checks if the file extension indicates a subtitle file
+func isSubtitleFile(ext string) bool {
+	subtitleExtensions := []string{".srt", ".vtt", ".ass", ".ssa", ".sub", ".idx", ".sup"}
+	for _, subExt := range subtitleExtensions {
+		if ext == subExt {
+			return true
+		}
+	}
+	return false
+}
+
+// extractLanguageFromFilename tries to extract language code from filename
+func extractLanguageFromFilename(filename string) string {
+	// Look for common language patterns
+	lower := strings.ToLower(filename)
+
+	// Common language codes
+	langPatterns := map[string]string{
+		"en": "English",
+		"es": "Spanish",
+		"fr": "French",
+		"de": "German",
+		"it": "Italian",
+		"pt": "Portuguese",
+		"ru": "Russian",
+		"ja": "Japanese",
+		"ko": "Korean",
+		"zh": "Chinese",
+		"ar": "Arabic",
+		"hi": "Hindi",
+		"tr": "Turkish",
+		"pl": "Polish",
+		"nl": "Dutch",
+		"sv": "Swedish",
+		"no": "Norwegian",
+		"da": "Danish",
+		"fi": "Finnish",
+	}
+
+	for code, lang := range langPatterns {
+		if strings.Contains(lower, "."+code+".") ||
+			strings.Contains(lower, "_"+code+"_") ||
+			strings.Contains(lower, "-"+code+"-") ||
+			strings.HasSuffix(lower, "."+code+filepath.Ext(lower)) {
+			return lang
+		}
+	}
+
+	// Default to English if no language detected
+	return "English"
 }
