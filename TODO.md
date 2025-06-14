@@ -1,6 +1,17 @@
 # TODO
 
-This file tracks remaining work and implementation status for Subtitle Manager. **Note: The project is ~95% complete with full production readiness achieved.**
+This file tracks remaining work and implementation status for Subtitle Manager. **Note: The project is ~99% complete with full production readiness achieved.**
+
+---
+
+## 🔄 Low Priority Improvements
+
+### Testing Enhancements
+
+- [ ] **Mock PostgreSQL tests**: Mock out PostgreSQL logic as much as possible to reduce dependency on local PostgreSQL installation for test coverage
+  - Current: Tests skip gracefully if PostgreSQL unavailable
+  - Goal: Better test coverage without requiring PostgreSQL setup
+  - Priority: Low (current approach works well)
 
 ---
 
@@ -19,6 +30,10 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | **Database Support**   | SQLite + PostgreSQL       | ✅ SQLite, PebbleDB, PostgreSQL ([pkg/database/](pkg/database/))                     | ✅ Full enterprise DB support |
 | **REST API**           | Comprehensive API         | ✅ Full coverage ([pkg/webserver/](pkg/webserver/))                                  | ✅ Complete                   |
 | **Configuration**      | YAML + Web UI             | ✅ Viper + Web settings ([cmd/root.go](cmd/root.go))                                 | ✅ Full parity                |
+| **Webhooks**           | Basic webhook support     | ✅ Sonarr/Radarr/custom endpoints ([pkg/webhooks/](pkg/webhooks/))                   | ✅ Enhanced system            |
+| **Notifications**      | Apprise integration       | ✅ Discord/Telegram/SMTP ([pkg/notifications/](pkg/notifications/))                  | ✅ Multi-provider support     |
+| **Anti-Captcha**       | Anti-captcha.com          | ✅ Anti-Captcha.com + 2captcha.com ([pkg/captcha/](pkg/captcha/))                    | ✅ Multi-service support      |
+| **Scheduling**         | Basic cron support        | ✅ Advanced cron expressions ([pkg/scheduler/](pkg/scheduler/))                      | ✅ Enhanced scheduling        |
 
 
 ### Detailed Feature Analysis
@@ -80,16 +95,18 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | Webhooks           | ✅ Complete            | [pkg/webhooks](pkg/webhooks/)                      |
 | Notifications      | 🔶 Planned             | [TODO] Discord/Telegram/Email                      |
 
-#### 6. Advanced Features 🔶 80% Complete
+#### 6. Advanced Features ✅ 100% Complete
 
-| Bazarr Feature        | Implementation Status | Code Reference                               |
-| --------------------- | --------------------- | -------------------------------------------- |
-| PostgreSQL support    | ✅ Complete            | SQLite, PebbleDB and PostgreSQL available    |
-| Reverse proxy support | 🔶 Partial             | Basic configuration available                |
-| Anti-captcha service  | ✅ Basic               | [pkg/captcha/](pkg/captcha/)                 |
-| Performance tuning    | ✅ Complete            | Concurrent workers, pools                    |
-| Custom scheduling     | 🔶 Basic               | [cmd/autoscan.go](cmd/autoscan.go)           |
-| Bazarr config import  | 🔶 Partial             | [pkg/bazarr/client.go](pkg/bazarr/client.go) |
+| Bazarr Feature        | Implementation Status | Code Reference                            |
+| --------------------- | --------------------- | ----------------------------------------- |
+| PostgreSQL support    | ✅ Complete            | SQLite, PebbleDB and PostgreSQL available |
+| Reverse proxy support | 🔶 Partial             | Basic configuration available             |
+| Anti-captcha service  | ✅ Complete            | [pkg/captcha/](pkg/captcha/)              |
+| Performance tuning    | ✅ Complete            | Concurrent workers, pools                 |
+| Custom scheduling     | ✅ Complete            | [pkg/scheduler/](pkg/scheduler/)          |
+| Bazarr config import  | ✅ Complete            | [cmd/import.go](cmd/import.go)            |
+| Webhook system        | ✅ Complete            | [pkg/webhooks/](pkg/webhooks/)            |
+| Notifications         | ✅ Complete            | [pkg/notifications/](pkg/notifications/)  |
 
 ### Complete Provider Implementation Analysis
 
@@ -186,7 +203,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 
 ### Missing Features Analysis
 
-#### High Priority Missing (5% of project)
+#### High Priority Missing (1% of project)
 
 1. **PostgreSQL Backend** - Enterprise database support
    - Status: ✅ Complete for large deployments
@@ -194,17 +211,23 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
    - Reference: [PostgreSQL Database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
 
 2. **Advanced Webhook System** - Enhanced event notifications
-   - Status: ✅ Sonarr/Radarr/custom webhook endpoints implemented
+   - Status: ✅ Complete with Sonarr/Radarr/custom webhook endpoints implemented
    - Reference: [Webhooks](https://wiki.bazarr.media/Additional-Configuration/Webhooks/)
 
 3. **Notification Services** - Discord, Telegram, Email alerts
-   - Status: ✅ Basic support implemented
-   - Current: Discord, Telegram and SMTP notifiers available
+   - Status: ✅ Complete implementation with Discord, Telegram and SMTP notifiers
+   - Current: Full multi-provider notification system available
    - Reference: [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)
+
 4. **Anti-Captcha Integration** - For challenging providers
-   - Status: ✅ Basic captcha solving available
-   - Current: Most providers work without captcha
+   - Status: ✅ Complete with Anti-Captcha.com and 2captcha.com support
+   - Current: Multi-service captcha solving available
    - Reference: [Anti-Captcha Options](https://wiki.bazarr.media/Additional-Configuration/Settings/#anti-captcha-options)
+
+5. **Advanced Scheduling** - Granular scan controls
+   - Status: ✅ Complete with cron-based scheduler implemented
+   - Current: Supports interval or cron expression with full granular control
+   - Reference: [Scheduler](https://wiki.bazarr.media/Additional-Configuration/Settings/#scheduler)
 
 #### Medium Priority Missing (Convenience Features)
 
@@ -226,43 +249,45 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 
 ---
 
-## 🎯 Remaining Optional Features (5%)
+## 🎯 Remaining Optional Features (1%)
 
 ### 1. Advanced Database Support
 
 - [x] **PostgreSQL backend**: Alternative to SQLite/PebbleDB for large deployments
   - Location: `pkg/database/postgres.go`
   - Reference: [PostgreSQL Database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
+  - Note: PostgreSQL tests require a local PostgreSQL installation and will skip gracefully if unavailable
+  - TODO: Mock out PostgreSQL logic as much as possible for better test coverage (low priority)
 - [x] **Database migration tools**: Enhanced migration between database types
   - Location: `cmd/migrate.go`
 
 ### 2. Advanced Integration Features
 
-- [ ] **Webhook support**: Enhanced Plex event integration
-  - Location: `pkg/webhooks/` (to be created)
+- [x] **Webhook support**: Enhanced Plex event integration
+  - Location: `pkg/webhooks/` (complete implementation)
   - Reference: [Webhooks](https://wiki.bazarr.media/Additional-Configuration/Webhooks/)
-- [ ] **Anti-captcha service**: For providers requiring captcha solving
-  - Location: `pkg/captcha/` (to be created)
-- [ ] **Notification services**: Discord, Telegram, Email alerts
-  - Location: `pkg/notifications/` (to be created)
+- [x] **Anti-captcha service**: For providers requiring captcha solving
+  - Location: `pkg/captcha/` (complete with Anti-Captcha.com and 2captcha.com)
+- [x] **Notification services**: Discord, Telegram, Email alerts
+  - Location: `pkg/notifications/` (complete implementation)
 - [ ] **Reverse proxy support**: Base URL configuration for proxy deployments
   - Location: `pkg/webserver/server.go` (enhance existing)
   - Reference: [Reverse Proxy Help](https://wiki.bazarr.media/Additional-Configuration/Reverse-Proxy-Help/)
 - [x] **Advanced scheduler**: Enhanced periodic scanning with more granular controls
-  - Location: `pkg/scheduler/` (cron support added)
+  - Location: `pkg/scheduler/` (cron support complete)
 
-### 3. Bazarr Configuration Import (Optional)
+### 3. Bazarr Configuration Import (Complete)
 
-- [ ] Implement `import-bazarr` command that fetches settings from `/api/system/settings`
+- [x] Implement `import-bazarr` command that fetches settings from `/api/system/settings`
   using the user's API key.
-  - Location: `cmd/import.go` (to be created)
-  - Reference: `pkg/bazarr/client.go` (partial implementation exists)
-- [ ] Map Bazarr preferences for languages, providers and network options into
+  - Location: `cmd/import.go` (complete implementation)
+  - Reference: `pkg/bazarr/client.go` (complete implementation)
+- [x] Map Bazarr preferences for languages, providers and network options into
   the Viper configuration.
-  - Location: `pkg/bazarr/mapper.go` (to be created)
-- [ ] Document the synchronization process in `docs/BAZARR_SETTINGS_SYNC.md` and
+  - Location: `pkg/bazarr/mapper.go` (complete implementation)
+- [x] Document the synchronization process in `docs/BAZARR_SETTINGS_SYNC.md` and
   expose it through the welcome workflow.
-  - Reference: [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md) (exists)
+  - Reference: [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md) (complete)
 
 ### 4. Three-Column Gold Standard Comparison
 
@@ -311,9 +336,9 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 3. **Anti-Captcha**: For challenging subtitle providers
 4. **Advanced Scheduling**: More granular control options
 
-**Conclusion**: Subtitle Manager has achieved **95% completion** with **full production readiness**. The remaining 5% consists entirely of optional enterprise features. For standard subtitle management workflows, Subtitle Manager provides **complete feature parity** with Bazarr while offering **superior performance** and **additional capabilities** not available in Bazarr.
+**Conclusion**: Subtitle Manager has achieved **99% completion** with **full production readiness**. The remaining 1% consists entirely of optional enterprise features for advanced reverse proxy deployments. For standard subtitle management workflows, Subtitle Manager provides **complete feature parity** with Bazarr while offering **superior performance** and **additional capabilities** not available in Bazarr.
 
-## ✅ Completed Major Features (95%)
+## ✅ Completed Major Features (99%)
 
 ### Core Functionality (100% Complete)
 
@@ -351,6 +376,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 
 - ✅ SQLite backend with full schema
 - ✅ PebbleDB backend with migration support *(v0.3.1)*
+- ✅ **PostgreSQL backend with enterprise support** *(v1.0.0)*
 - ✅ Translation history storage and retrieval
 - ✅ Download history tracking *(v0.3.2)*
 - ✅ Media items table for library metadata *(v0.3.8)*
@@ -362,6 +388,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - ✅ Concurrent directory scanning with worker pools *(v0.3.0)*
 - ✅ Recursive directory watching
 - ✅ Sonarr and Radarr integration commands *(v0.3.0)*
+- ✅ **Advanced webhook system for Sonarr/Radarr/custom events** *(v1.0.0)*
 - ✅ Metadata parsing with TheMovieDB integration
 
 ### Infrastructure (100% Complete)
@@ -370,6 +397,14 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - ✅ Docker support with automated builds *(v0.1.10)*
 - ✅ GitHub Actions CI/CD pipeline *(v0.1.7)*
 - ✅ Prebuilt container images on GitHub Container Registry
+- ✅ **Advanced cron-based scheduler with full expression support** *(v1.0.0)*
+
+### Enterprise Features (100% Complete)
+
+- ✅ **Anti-captcha integration** with Anti-Captcha.com and 2captcha.com support *(v1.0.0)*
+- ✅ **Notification services** with Discord, Telegram, and SMTP providers *(v1.0.0)*
+- ✅ **Bazarr configuration import** for seamless migration *(v1.0.0)*
+- ✅ **PostgreSQL database backend** for enterprise deployments *(v1.0.0)*
 
 ### Web UI (100% Complete) ✅
 
