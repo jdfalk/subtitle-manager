@@ -236,16 +236,16 @@ body[data-mui-color-scheme="dark"] .warning {
     text-shadow: none !important;
     filter: none !important;
   }
-  
+
   body {
     font-size: 12pt;
     line-height: 1.4;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     page-break-after: avoid;
   }
-  
+
   pre, blockquote {
     page-break-inside: avoid;
   }
@@ -267,7 +267,7 @@ body[data-mui-color-scheme="dark"] .warning {
     --primary-color: #0000ff;
     --primary-color-dark: #ffffff;
   }
-  
+
   body[data-mui-color-scheme="dark"] {
     --background-color-dark: #000000;
     --text-color-dark: #ffffff;
