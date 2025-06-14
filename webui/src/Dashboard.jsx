@@ -32,7 +32,60 @@ export default function Dashboard() {
   const [status, setStatus] = useState({ running: false, completed: 0, files: [] });
   const [dir, setDir] = useState("");
   const [lang, setLang] = useState("en");
-  const [provider, setProvider] = useState("generic");
+  const [provider, setProvider] = useState("opensubtitles");
+  const [availableProviders, setAvailableProviders] = useState([]);
+
+  useEffect(() => {
+    poll();
+    loadProviders();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadProviders = async () => {
+    try {
+      const response = await fetch("/api/providers");
+      if (response.ok) {
+        const data = await response.json();
+        // Only show enabled providers
+        const enabledProviders = data.filter(p => p.enabled);
+        setAvailableProviders(enabledProviders);
+
+        // Set default provider to first enabled one
+        if (enabledProviders.length > 0 && !provider) {
+          setProvider(enabledProviders[0].name);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load providers:", error);
+      // Fallback to hardcoded providers if API fails
+      setAvailableProviders([
+        { name: "opensubtitles", displayName: "OpenSubtitles", enabled: true },
+        { name: "addic7ed", displayName: "Addic7ed", enabled: true },
+        { name: "subscene", displayName: "Subscene", enabled: true },
+        { name: "podnapisi", displayName: "Podnapisi", enabled: true },
+      ]);
+    }
+  };
+
+  const formatProviderName = (name) => {
+    const specialNames = {
+      opensubtitles: 'OpenSubtitles',
+      opensubtitlescom: 'OpenSubtitles.com',
+      opensubtitlesvip: 'OpenSubtitles VIP',
+      addic7ed: 'Addic7ed',
+      podnapisi: 'Podnapisi.NET',
+      subscene: 'Subscene',
+      yifysubtitles: 'YIFY Subtitles',
+      turkcealtyazi: 'Türkçe Altyazı',
+      greeksubtitles: 'Greek Subtitles',
+      legendasdivx: 'Legendas DivX',
+      legendasnet: 'Legendas.NET',
+      napiprojekt: 'NapiProjekt',
+    };
+
+    return specialNames[name] || name.split(/(?=[A-Z])/).map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
 
   const poll = async () => {
     const res = await fetch("/api/scan/status");
@@ -114,11 +167,28 @@ export default function Dashboard() {
                     onChange={(e) => setProvider(e.target.value)}
                     disabled={status.running}
                   >
-                    <MenuItem value="generic">Generic</MenuItem>
-                    <MenuItem value="opensubtitles">OpenSubtitles</MenuItem>
-                    <MenuItem value="addic7ed">Addic7ed</MenuItem>
-                    <MenuItem value="podnapisi">Podnapisi</MenuItem>
+                    {availableProviders.length > 0 ? (
+                      availableProviders.map((p) => (
+                        <MenuItem key={p.name} value={p.name}>
+                          {formatProviderName(p.name)}
+                          {!p.configured && <Chip label="Config Required" size="small" color="warning" sx={{ ml: 1 }} />}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      // Fallback options if providers haven't loaded
+                      [
+                        <MenuItem key="opensubtitles" value="opensubtitles">OpenSubtitles</MenuItem>,
+                        <MenuItem key="addic7ed" value="addic7ed">Addic7ed</MenuItem>,
+                        <MenuItem key="subscene" value="subscene">Subscene</MenuItem>,
+                        <MenuItem key="podnapisi" value="podnapisi">Podnapisi</MenuItem>,
+                      ]
+                    )}
                   </Select>
+                  {availableProviders.length === 0 && (
+                    <Alert severity="warning" sx={{ mt: 1, fontSize: '0.875rem' }}>
+                      No providers configured. Go to Settings → Providers to enable subtitle providers.
+                    </Alert>
+                  )}
                 </FormControl>
                 <Button
                   variant="contained"
