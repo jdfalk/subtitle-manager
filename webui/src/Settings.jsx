@@ -28,6 +28,10 @@ import {
 import { useEffect, useState } from "react";
 import ProviderCard from "./components/ProviderCard.jsx";
 import ProviderConfigDialog from "./components/ProviderConfigDialog.jsx";
+import GeneralSettings from "./components/GeneralSettings.jsx";
+import DatabaseSettings from "./components/DatabaseSettings.jsx";
+import AuthSettings from "./components/AuthSettings.jsx";
+import NotificationSettings from "./components/NotificationSettings.jsx";
 
 /**
  * Settings component with modern tabbed interface for managing all aspects
@@ -217,6 +221,32 @@ export default function Settings() {
   };
 
   /**
+   * Save general configuration values via the API
+   *
+   * @param {Object} values - Key/value pairs to persist
+   */
+  const saveSettings = async (values) => {
+    try {
+      const response = await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      });
+      if (response.ok) {
+        setStatus('Settings saved');
+        setSnackbarOpen(true);
+        await loadConfig();
+      } else {
+        setStatus('Failed to save settings');
+        setSnackbarOpen(true);
+      }
+    } catch {
+      setStatus('Error saving settings');
+      setSnackbarOpen(true);
+    }
+  };
+
+  /**
    * Import settings from Bazarr
    */
   const openImportDialog = async () => {
@@ -314,10 +344,18 @@ export default function Settings() {
 
   const tabs = [
     { label: 'Providers', icon: <ProvidersIcon />, component: renderProvidersTab },
-    { label: 'General', icon: <GeneralIcon />, component: () => <Typography>General settings coming soon</Typography> },
-    { label: 'Database', icon: <DatabaseIcon />, component: () => <Typography>Database settings coming soon</Typography> },
-    { label: 'Authentication', icon: <AuthIcon />, component: () => <Typography>Auth settings coming soon</Typography> },
-    { label: 'Notifications', icon: <NotificationIcon />, component: () => <Typography>Notification settings coming soon</Typography> },
+    { label: 'General', icon: <GeneralIcon />, component: () => (
+        <GeneralSettings config={_config} onSave={saveSettings} />
+      ) },
+    { label: 'Database', icon: <DatabaseIcon />, component: () => (
+        <DatabaseSettings config={_config} onSave={saveSettings} />
+      ) },
+    { label: 'Authentication', icon: <AuthIcon />, component: () => (
+        <AuthSettings config={_config} onSave={saveSettings} />
+      ) },
+    { label: 'Notifications', icon: <NotificationIcon />, component: () => (
+        <NotificationSettings config={_config} onSave={saveSettings} />
+      ) },
   ];
 
   if (loading) {
