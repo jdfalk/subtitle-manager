@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/viper"
 
 	"subtitle-manager/pkg/auth"
+	"subtitle-manager/pkg/bazarr"
 	"subtitle-manager/pkg/database"
 	"subtitle-manager/pkg/subtitles"
 	"subtitle-manager/pkg/webhooks"
@@ -109,6 +110,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/login", loginHandler(db))
 	mux.Handle(prefix+"/api/setup/status", setupStatusHandler(db))
 	mux.Handle(prefix+"/api/setup", setupHandler(db))
+	mux.Handle(prefix+"/api/setup/bazarr", bazarrImportHandler(db))
 	mux.Handle(prefix+"/api/oauth/github/login", githubLoginHandler(db))
 	mux.Handle(prefix+"/api/oauth/github/callback", githubCallbackHandler(db))
 	mux.Handle(prefix+"/api/config", authMiddleware(db, "basic", configHandler()))
@@ -285,5 +287,63 @@ func extractHandler() http.Handler {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(items)
+	})
+}
+
+// bazarrImportHandler imports settings from a Bazarr instance and returns the mapped settings for review
+func bazarrImportHandler(db *sql.DB) http.Handler {
+	type req struct {
+		URL    string `json:"url"`
+		APIKey string `json:"api_key"`
+	}
+	type resp struct {
+		Settings map[string]any `json:"settings"`
+		Preview  map[string]any `json:"preview"`
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Allow this during setup phase
+		needed, err := setupNeeded(db)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if !needed {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
+		var q req
+		if err := json.NewDecoder(r.Body).Decode(&q); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if q.URL == "" || q.APIKey == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		// Fetch settings from Bazarr
+		settings, err := bazarr.FetchSettings(q.URL, q.APIKey)
+		if err != nil {
+			http.Error(w, "Failed to connect to Bazarr: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Map settings for preview
+		mapped := bazarr.MapSettings(settings)
+
+		result := resp{
+			Settings: settings,
+			Preview:  mapped,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(result)
 	})
 }
