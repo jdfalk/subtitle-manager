@@ -539,6 +539,8 @@ func bazarrImportConfigHandler() http.Handler {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(result)
+		if err := json.NewEncoder(w).Encode(result); err != nil {
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
 	})
 }
