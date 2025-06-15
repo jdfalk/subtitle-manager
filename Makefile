@@ -230,8 +230,13 @@ docker-build-args: ## Build Docker image with build arguments
 
 .PHONY: docker-run
 docker-run: docker ## Build and run Docker container
+	@echo "$(COLOR_BLUE)Stopping and removing any existing subtitle-manager containers...$(COLOR_RESET)"
+	@docker ps -q --filter "ancestor=$(DOCKER_IMAGE):$(DOCKER_TAG)" | xargs -r docker stop || true
+	@docker ps -aq --filter "ancestor=$(DOCKER_IMAGE):$(DOCKER_TAG)" | xargs -r docker rm || true
+	@docker ps -q --filter "name=$(APP_NAME)" | xargs -r docker stop || true
+	@docker ps -aq --filter "name=$(APP_NAME)" | xargs -r docker rm || true
 	@echo "$(COLOR_BLUE)Running Docker container...$(COLOR_RESET)"
-	docker run --rm -p 8080:8080 $(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker run --rm --name $(APP_NAME) -p 8080:8080 $(DOCKER_IMAGE):$(DOCKER_TAG)
 
 .PHONY: docker-multiarch
 docker-multiarch: ## Build Docker image for multiple architectures using buildx
