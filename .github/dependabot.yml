@@ -16,7 +16,7 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "09:00"
-      timezone: "UTC"
+      timezone: America/New_York
     open-pull-requests-limit: 10
     reviewers:
       - "jdfalk"
@@ -29,7 +29,6 @@ updates:
     labels:
       - "dependencies"
       - "npm"
-    milestone: "Dependencies"
     target-branch: "main"
     versioning-strategy: "increase"
     allow:
@@ -66,7 +65,7 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "09:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -99,7 +98,7 @@ updates:
       interval: "weekly"
       day: "wednesday"
       time: "09:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 3
     reviewers:
       - "jdfalk"
@@ -119,7 +118,7 @@ updates:
       interval: "weekly"
       day: "thursday"
       time: "09:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -146,7 +145,7 @@ updates:
       interval: "weekly"
       day: "friday"
       time: "09:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -171,7 +170,7 @@ updates:
       interval: "weekly"
       day: "saturday"
       time: "09:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -196,7 +195,7 @@ updates:
       interval: "weekly"
       day: "sunday"
       time: "09:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -221,7 +220,7 @@ updates:
       interval: "weekly"
       day: "sunday"
       time: "10:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -246,7 +245,7 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "10:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -271,7 +270,7 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "10:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -296,7 +295,7 @@ updates:
       interval: "weekly"
       day: "wednesday"
       time: "10:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 3
     reviewers:
       - "jdfalk"
@@ -317,7 +316,7 @@ updates:
       interval: "weekly"
       day: "monday"
       time: "11:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
@@ -338,7 +337,7 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "11:00"
-      timezone: "UTC"
+      timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
       - "jdfalk"
