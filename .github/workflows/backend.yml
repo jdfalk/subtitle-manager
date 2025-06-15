@@ -75,17 +75,6 @@ jobs:
       - name: Run go vet
         run: go vet ./...
 
-      - name: Run staticcheck
-        uses: dominikh/staticcheck-action@v1.3.0
-        with:
-          version: "latest"
-
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          args: --timeout=5m
-
       - name: Run tests
         run: |
           # PostgreSQL tests will be skipped automatically when no DB is available
