@@ -55,7 +55,10 @@ function getId(user: User | number): string {
 - Keep generic functions simple and focused
 
 ```typescript
-function getProperty<TObject, TKey extends keyof TObject>(obj: TObject, key: TKey): TObject[TKey] {
+function getProperty<TObject, TKey extends keyof TObject>(
+  obj: TObject,
+  key: TKey,
+): TObject[TKey] {
   return obj[key];
 }
 ```
@@ -80,9 +83,9 @@ async function fetchUserData(userId: string): Promise<UserData> {
     if (!response.ok) {
       throw new Error(`HTTP error ${response.status}`);
     }
-    return await response.json() as UserData;
+    return (await response.json()) as UserData;
   } catch (error) {
-    console.error('Failed to fetch user data', error);
+    console.error("Failed to fetch user data", error);
     throw error;
   }
 }

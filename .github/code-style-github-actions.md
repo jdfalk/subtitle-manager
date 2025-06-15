@@ -118,7 +118,7 @@ jobs:
 
 ```yaml
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: "20"
 
 jobs:
   build:
@@ -127,7 +127,7 @@ jobs:
     steps:
       - name: Use specific variable
         env:
-          SPECIFIC_VAR: 'value'
+          SPECIFIC_VAR: "value"
         run: echo $SPECIFIC_VAR
 ```
 

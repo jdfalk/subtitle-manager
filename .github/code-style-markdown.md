@@ -96,7 +96,7 @@ All Markdown files in the `.github` folder must include a standardized header fo
 ````markdown
 ```javascript
 function example() {
-  const value = 'This is a code example';
+  const value = "This is a code example";
   return value;
 }
 ```
