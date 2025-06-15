@@ -19,10 +19,20 @@ var cfgFile string
 var dbPath string
 var dbBackend string
 var sqliteFilename string
+var showVersion bool
 var rootCmd = &cobra.Command{
 	Use:   "subtitle-manager",
 	Short: "Subtitle Manager CLI",
 	Long:  `A simple subtitle management tool built in Go`,
+	Run: func(cmd *cobra.Command, args []string) {
+		// Handle --version flag
+		if showVersion {
+			printVersion()
+			return
+		}
+		// If no subcommand is specified, show help
+		cmd.Help()
+	},
 }
 
 // Execute executes the root command
@@ -45,6 +55,7 @@ func GetDatabaseBackend() string {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.subtitle-manager.yaml)")
+	rootCmd.Flags().BoolVar(&showVersion, "version", false, "show version information")
 	rootCmd.PersistentFlags().StringVar(&dbPath, "db-path", "", "database path (default is $HOME/.subtitle-manager/db for pebble, $HOME for sqlite)")
 	rootCmd.PersistentFlags().StringVar(&dbBackend, "db-backend", "pebble", "database backend: sqlite, pebble, or postgres")
 	rootCmd.PersistentFlags().StringVar(&sqliteFilename, "sqlite3-filename", "subtitle-manager.db", "SQLite database filename (only used when db-backend=sqlite)")
