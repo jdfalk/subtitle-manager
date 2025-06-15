@@ -14,7 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:a11y": "echo 'Accessibility tests not yet configured'",
+    "test:a11y": "npx lhci autorun --config=./lighthouserc.json",
     "analyze": "echo 'Bundle analysis not yet configured'"
   },
   "dependencies": {
