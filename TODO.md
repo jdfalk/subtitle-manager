@@ -447,3 +447,4 @@ The file `docs/BAZARR_FEATURES.md` enumerates all Bazarr features - parity has b
 ## Automatic Subtitle Synchronization (WIP)
 
 A new subsystem will align external subtitles with media using audio analysis and embedded subtitle tracks. The initial implementation loads existing subtitle files and provides utilities to shift timing. Future work will integrate Whisper transcription and multi-track comparison to automatically compute offsets.
+Subtitles may now be translated to a target language during synchronization so foreign language files can be aligned without manual conversion.
