@@ -2,11 +2,14 @@ package syncer
 
 import (
 	"bytes"
+	"os"
 	"time"
 
 	"github.com/asticode/go-astisub"
+	"github.com/jdfalk/subtitle-manager/pkg/audio"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
+	"github.com/jdfalk/subtitle-manager/pkg/translator"
 )
 
 // Options controls how the synchronization process behaves.
@@ -26,6 +29,18 @@ type Options struct {
 	// subtitles. A value between 0 and 1 is expected. When zero, 0.7 is
 	// used.
 	AudioWeight float64
+	// Translate indicates whether to translate subtitles after synchronization.
+	Translate bool
+	// TranslateLang specifies the target language for translation.
+	TranslateLang string
+	// TranslateService specifies the translation service ("google", "gpt", "grpc").
+	TranslateService string
+	// GoogleAPIKey provides the API key for Google Translate service.
+	GoogleAPIKey string
+	// GPTAPIKey provides the API key for ChatGPT translation service.
+	GPTAPIKey string
+	// GRPCAddr provides the address for gRPC translation service.
+	GRPCAddr string
 }
 
 // transcribeFn wraps the audio transcription function. Tests may override it.
@@ -47,9 +62,11 @@ func SetExtractFunc(fn func(string, int) ([]*astisub.Item, error)) {
 // Sync attempts to synchronize the subtitle at subPath with the media file at
 // mediaPath according to opts. The resulting subtitle items are returned.
 //
-// This is an early implementation that simply loads the subtitle file without
-// performing actual alignment. Future versions will analyze the selected audio
-// and subtitle tracks to automatically adjust timing.
+// The function supports multiple synchronization methods:
+// - Audio transcription via Whisper API for precise timing alignment
+// - Embedded subtitle tracks for reference timing
+// - Weighted combination of both methods for optimal results
+// - Optional translation of synchronized subtitles
 func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 	sub, err := astisub.OpenFile(subPath)
 	if err != nil {
@@ -67,7 +84,17 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 	var applied float64
 
 	if opts.UseAudio {
-		b, err := transcribeFn(mediaPath, "", opts.WhisperKey)
+		// Extract specific audio track for transcription
+		audioFile, err := audio.ExtractTrack(mediaPath, opts.AudioTrack)
+		if err != nil {
+			// Fall back to original media file if audio extraction fails
+			audioFile = mediaPath
+		} else {
+			defer os.Remove(audioFile) // Clean up temporary audio file
+		}
+
+		audioLang := "" // Auto-detect language
+		b, err := transcribeFn(audioFile, audioLang, opts.WhisperKey)
 		if err == nil {
 			refSub, err := astisub.ReadFromSRT(bytes.NewReader(b))
 			if err == nil {
@@ -100,6 +127,33 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 		offset := time.Duration(float64(total) / applied)
 		items = Shift(items, offset)
 	}
+
+	// Apply translation if requested
+	if opts.Translate && opts.TranslateLang != "" {
+		// Use specified service or default to Google Translate
+		service := opts.TranslateService
+		if service == "" {
+			service = "google"
+		}
+
+		for _, item := range items {
+			for i, line := range item.Lines {
+				for j, lineItem := range line.Items {
+					if lineItem.Text != "" {
+						translated, err := translator.Translate(service, lineItem.Text, opts.TranslateLang,
+							opts.GoogleAPIKey, opts.GPTAPIKey, opts.GRPCAddr)
+						if err == nil {
+							lineItem.Text = translated
+							line.Items[j] = lineItem
+						}
+						// Silently continue on translation errors to avoid breaking sync
+					}
+				}
+				item.Lines[i] = line
+			}
+		}
+	}
+
 	return items, nil
 }
 

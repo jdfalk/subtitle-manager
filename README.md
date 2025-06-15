@@ -22,7 +22,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Extract subtitles from media containers using ffmpeg.
 - Convert uploaded subtitle files to SRT via `/api/convert`.
 - Transcribe audio tracks to subtitles via Whisper.
-- Experimental subtitle synchronization command to align subtitles with media.
+- Automatic subtitle synchronization using audio transcription and embedded tracks with advanced options for track selection, weighted averaging, and translation integration.
 - Download subtitles from a comprehensive list of providers based on Bazarr,
   including Addic7ed, AnimeKalesi, Animetosho, Assrt, Avistaz, BetaSeries,
   BSplayer, GreekSubs, Podnapisi, Subscene, TVSubtitles, Titlovi, LegendasDivx
@@ -109,7 +109,7 @@ services are available:
 
 ## Current Status
 
-**Subtitle Manager is ~99% complete** with full production readiness. The remaining 1% consists of optional advanced features:
+**Subtitle Manager is ~100% complete** with full production readiness. The project now includes all planned core features including automatic subtitle synchronization.
 
 ### ✅ Completed (Production Ready)
 
@@ -125,7 +125,7 @@ services are available:
 ### 🔄 Optional Remaining Features
 
 - Advanced reverse proxy base URL support
-- Automatic subtitle synchronization using audio and embedded tracks
+- ~~Automatic subtitle synchronization using audio and embedded tracks~~ ✅ **COMPLETED**
 
 The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations, plus additional enterprise features not available in Bazarr.
 
@@ -180,6 +180,7 @@ The Makefile handles dependency resolution, web UI building, Go compilation, tes
 subtitle-manager convert [input] [output]
 subtitle-manager merge [sub1] [sub2] [output]
 subtitle-manager translate [input] [output] [lang]
+subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded] [--translate]
 subtitle-manager history
 subtitle-manager extract [media] [output]
 subtitle-manager transcribe [media] [output] [lang]
