@@ -22,7 +22,7 @@ This project uses a modern CI/CD setup with separate workflows for frontend and 
   - Go formatting check with `gofmt`
   - Static analysis with `go vet` and `staticcheck`
   - Unit tests with race detection and coverage
-  - PostgreSQL integration testing
+  - Database testing (PostgreSQL tests skip if unavailable)
   - Binary build verification
   - Coverage reporting to Codecov
 
