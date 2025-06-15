@@ -75,6 +75,10 @@ jobs:
       - name: Run go vet
         run: go vet ./...
 
+      - name: Run staticcheck
+        uses: dominikh/staticcheck-action@v1.3.1
+        with:
+          version: "2023.1.6"
       - name: Run tests
         run: |
           # PostgreSQL tests will be skipped automatically when no DB is available
