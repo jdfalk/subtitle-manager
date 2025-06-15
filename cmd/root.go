@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"subtitle-manager/pkg/captcha"
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/translator"
+	"github.com/jdfalk/subtitle-manager/pkg/captcha"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/translator"
 )
 
 var cfgFile string
@@ -136,7 +136,7 @@ func initConfig() {
 	viper.SetDefault("google_api_url", "https://translation.googleapis.com/language/translate/v2")
 	viper.SetDefault("openai_model", "gpt-3.5-turbo")
 	viper.SetDefault("opensubtitles.api_url", "https://rest.opensubtitles.org")
-	viper.SetDefault("opensubtitles.user_agent", "subtitle-manager/0.1")
+	viper.SetDefault("opensubtitles.user_agent", "github.com/jdfalk/subtitle-manager/0.1")
 	viper.SetDefault("anticaptcha.api_key", "")
 	viper.SetDefault("anticaptcha.api_url", "https://api.anti-captcha.com")
 	viper.SetDefault("providers.generic.api_url", "")

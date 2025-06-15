@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"net/http"
 
-	"subtitle-manager/pkg/auth"
+	"github.com/jdfalk/subtitle-manager/pkg/auth"
 )
 
 // userIDKey is a custom type for context keys to avoid collisions

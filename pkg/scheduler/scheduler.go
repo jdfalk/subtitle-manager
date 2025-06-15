@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	"subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
 // Run executes fn immediately and then at each interval until ctx is canceled.

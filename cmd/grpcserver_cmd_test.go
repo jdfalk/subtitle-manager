@@ -6,12 +6,12 @@ import (
 	"testing"
 
 	translate "cloud.google.com/go/translate"
+	"github.com/jdfalk/subtitle-manager/pkg/translator"
+	translatormocks "github.com/jdfalk/subtitle-manager/pkg/translator/mocks"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
-	"subtitle-manager/pkg/translator"
-	translatormocks "subtitle-manager/pkg/translator/mocks"
-	pb "subtitle-manager/pkg/translatorpb/proto"
 )
 
 // TestServerTranslate verifies the gRPC Translate method.

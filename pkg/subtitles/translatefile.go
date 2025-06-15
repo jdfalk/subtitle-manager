@@ -9,7 +9,7 @@ import (
 	"github.com/asticode/go-astisub"
 	"github.com/sourcegraph/conc/pool"
 
-	"subtitle-manager/pkg/translator"
+	"github.com/jdfalk/subtitle-manager/pkg/translator"
 )
 
 // TranslateFileToSRT translates the subtitle file at inPath using the

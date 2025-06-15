@@ -18,10 +18,10 @@ import (
 	"testing"
 	"time"
 
-	"subtitle-manager/pkg/auth"
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/testutil"
-	"subtitle-manager/pkg/translator"
+	"github.com/jdfalk/subtitle-manager/pkg/auth"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
+	"github.com/jdfalk/subtitle-manager/pkg/translator"
 
 	"github.com/spf13/viper"
 )

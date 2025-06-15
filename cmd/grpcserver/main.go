@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 
-	"subtitle-manager/pkg/translator"
-	pb "subtitle-manager/pkg/translatorpb/proto"
+	"github.com/jdfalk/subtitle-manager/pkg/translator"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 )
 
 type server struct {

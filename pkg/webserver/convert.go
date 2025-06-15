@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"subtitle-manager/pkg/subtitles"
+	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 )
 
 // convertHandler handles POST /api/convert requests.

@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/logging"
-	"subtitle-manager/pkg/plex"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/plex"
 )
 
 var plexCmd = &cobra.Command{

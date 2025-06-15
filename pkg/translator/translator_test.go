@@ -6,12 +6,12 @@ import (
 	"testing"
 
 	translate "cloud.google.com/go/translate"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
-	pb "subtitle-manager/pkg/translatorpb/proto"
 
-	"subtitle-manager/pkg/translator/mocks"
+	"github.com/jdfalk/subtitle-manager/pkg/translator/mocks"
 )
 
 func TestGoogleTranslate(t *testing.T) {

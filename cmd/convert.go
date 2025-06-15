@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"subtitle-manager/pkg/logging"
-	"subtitle-manager/pkg/subtitles"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 )
 
 var convertCmd = &cobra.Command{

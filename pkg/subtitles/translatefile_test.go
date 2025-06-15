@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"subtitle-manager/pkg/translator"
+	"github.com/jdfalk/subtitle-manager/pkg/translator"
 )
 
 func TestTranslateFileToSRT(t *testing.T) {

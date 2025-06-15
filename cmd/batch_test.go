@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/jdfalk/subtitle-manager/pkg/translator"
 	"github.com/spf13/viper"
-	"subtitle-manager/pkg/translator"
 )
 
 // TestBatchCmd verifies the batch command translates multiple files concurrently.

@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 )
 
 // historyHandler returns translation and download history as JSON.

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
 // logsHandler returns recent log lines captured in memory.

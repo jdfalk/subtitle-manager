@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"subtitle-manager/pkg/bazarr"
+	"github.com/jdfalk/subtitle-manager/pkg/bazarr"
 )
 
 // importBazarrCmd imports configuration from a running Bazarr instance.

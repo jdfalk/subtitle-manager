@@ -8,7 +8,7 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 )
 
 // TestGitHubCallbackHandler verifies OAuth2 callback creates a session cookie.

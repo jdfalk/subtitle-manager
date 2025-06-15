@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	pb "subtitle-manager/pkg/translatorpb/proto"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 )
 
 var ErrUnsupportedService = errors.New("unsupported translation service")

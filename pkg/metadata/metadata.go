@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 )
 
 var tmdbAPIBase = "https://api.themoviedb.org/3"

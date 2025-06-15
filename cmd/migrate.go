@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/spf13/cobra"
-	"subtitle-manager/pkg/database"
 )
 
 // migrateCmd migrates subtitle history between database backends.

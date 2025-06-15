@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
 var historyCmd = &cobra.Command{

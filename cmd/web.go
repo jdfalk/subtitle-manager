@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/jdfalk/subtitle-manager/pkg/webserver"
 	"github.com/spf13/cobra"
-	"subtitle-manager/pkg/webserver"
 )
 
 var addr string

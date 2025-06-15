@@ -6,10 +6,10 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/logging"
-	"subtitle-manager/pkg/providers"
-	"subtitle-manager/pkg/scanner"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/providers"
+	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 )
 
 // RunCron executes fn immediately and then according to spec until ctx is canceled.

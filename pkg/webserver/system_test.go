@@ -6,9 +6,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"subtitle-manager/pkg/auth"
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/auth"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
 // TestSystemHandlers verifies /api/logs and /api/system endpoints.

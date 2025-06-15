@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 )
 
 // TestExtractCmdStoresRecord verifies that running the extract command

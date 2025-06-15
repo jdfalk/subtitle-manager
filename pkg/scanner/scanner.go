@@ -8,9 +8,9 @@ import (
 
 	"github.com/sourcegraph/conc/pool"
 
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/logging"
-	"subtitle-manager/pkg/providers"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/providers"
 )
 
 // ScanDirectory walks through the directory and downloads subtitles for video files

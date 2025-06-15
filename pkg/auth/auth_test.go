@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 )
 
 func TestSetUserRole(t *testing.T) {

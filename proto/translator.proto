@@ -1,6 +1,6 @@
 syntax = "proto3";
 package translator;
-option go_package = "subtitle-manager/pkg/translatorpb";
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/translatorpb";
 
 import "google/protobuf/empty.proto";
 

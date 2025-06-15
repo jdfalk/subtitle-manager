@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"subtitle-manager/pkg/subtitles"
+	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 )
 
 // translateHandler handles translating an uploaded subtitle file.

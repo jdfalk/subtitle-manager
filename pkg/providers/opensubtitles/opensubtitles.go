@@ -30,7 +30,7 @@ func New(apiKey string) *Client {
 	}
 	ua := viper.GetString("opensubtitles.user_agent")
 	if ua == "" {
-		ua = "subtitle-manager/0.1"
+		ua = "github.com/jdfalk/subtitle-manager/0.1"
 	}
 	return &Client{
 		APIURL:     apiURL,

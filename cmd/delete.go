@@ -1,12 +1,13 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"os"
 
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/logging"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
 // deleteCmd removes a subtitle file from disk and the database.

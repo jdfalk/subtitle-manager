@@ -12,7 +12,7 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
 
-	"subtitle-manager/pkg/auth"
+	"github.com/jdfalk/subtitle-manager/pkg/auth"
 )
 
 var githubAPIURL = "https://api.github.com/user"

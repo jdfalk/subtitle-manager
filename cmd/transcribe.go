@@ -6,8 +6,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"subtitle-manager/pkg/logging"
-	"subtitle-manager/pkg/transcriber"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
 )
 
 // transcribeCmd generates subtitles from audio using the Whisper API.

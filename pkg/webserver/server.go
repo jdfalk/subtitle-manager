@@ -13,12 +13,12 @@ import (
 
 	"github.com/spf13/viper"
 
-	"subtitle-manager/pkg/auth"
-	"subtitle-manager/pkg/bazarr"
-	"subtitle-manager/pkg/database"
-	"subtitle-manager/pkg/subtitles"
-	"subtitle-manager/pkg/webhooks"
-	"subtitle-manager/webui"
+	"github.com/jdfalk/subtitle-manager/pkg/auth"
+	"github.com/jdfalk/subtitle-manager/pkg/bazarr"
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
+	"github.com/jdfalk/subtitle-manager/pkg/webhooks"
+	"github.com/jdfalk/subtitle-manager/webui"
 )
 
 // setupNeeded returns true when no user accounts exist.
