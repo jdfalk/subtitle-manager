@@ -45,7 +45,6 @@ import { useEffect, useState } from "react";
 export default function MediaLibrary() {
   const [currentPath, setCurrentPath] = useState('/');
   const [items, setItems] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [actionMenu, setActionMenu] = useState({ anchor: null, file: null });
   const [bulkMode, setBulkMode] = useState(false);
@@ -319,9 +318,8 @@ export default function MediaLibrary() {
                   toggleFileSelection(item.path);
                 } else if (item.type === 'directory') {
                   navigateToPath(item.path);
-                } else {
-                  setSelectedFile(item);
                 }
+                // Individual file selection removed - use bulk mode for operations
               }}
             >
               <CardContent>
