@@ -38,7 +38,7 @@ type TranslateFunc func(text, targetLang, apiKey string) (string, error)
 // GoogleClient wraps the methods used from the Google Translate SDK.
 // It allows tests to mock the SDK without real credentials.
 //
-//go:generate go run github.com/vektra/mockery/v2 --name=GoogleClient --output=./mocks --case=underscore
+//go:generate go run github.com/vektra/mockery/v2
 type GoogleClient interface {
 	Translate(ctx context.Context, src []string, target language.Tag, opts *translate.Options) ([]translate.Translation, error)
 	Close() error
