@@ -259,6 +259,8 @@ The web server exposes a comprehensive REST API for all subtitle operations:
 - `GET /api/logs` - Get recent log entries
 - `GET /api/system` - System information (Go version, OS, architecture, goroutines)
 - `GET /api/tasks` - Current task status and progress
+- `GET /api/users` - List all users (admin only)
+- `POST /api/users/{id}/reset` - Reset a user's password and email credentials
 
 All endpoints require authentication via session cookies or API keys using the `X-API-Key` header. Role-based access control is enforced with three permission levels: `read`, `basic`, and `admin`.
 
