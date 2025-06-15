@@ -8,6 +8,14 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test-setup.js'],
+    // Exclude Playwright test files to avoid conflicts
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/tests/**', // Exclude Playwright e2e tests
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*'
+    ],
   },
   build: {
     rollupOptions: {
