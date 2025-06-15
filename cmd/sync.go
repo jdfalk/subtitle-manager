@@ -63,6 +63,10 @@ Examples:
 			GoogleAPIKey:     viper.GetString("google_api_key"),
 			GPTAPIKey:        viper.GetString("openai_api_key"),
 			GRPCAddr:         viper.GetString("grpc_addr"),
+			TargetLang:       viper.GetString("sync_language"),
+			Service:          viper.GetString("translate_service"),
+			GoogleKey:        viper.GetString("google_api_key"),
+			GPTKey:           viper.GetString("openai_api_key"),
 		}
 
 		// Default to embedded if no sync method specified
@@ -112,4 +116,10 @@ func init() {
 	syncCmd.Flags().StringVar(&syncTranslateService, "translate-service", "google", "Translation service to use ('google', 'gpt', 'grpc')")
 
 	rootCmd.AddCommand(syncCmd)
+	syncCmd.Flags().String("lang", "", "translate subtitles to language before syncing")
+	viper.BindPFlag("sync_language", syncCmd.Flags().Lookup("lang"))
+	syncCmd.Flags().String("service", "", "translation service")
+	viper.BindPFlag("translate_service", syncCmd.Flags().Lookup("service"))
+	syncCmd.Flags().String("grpc", "", "use remote gRPC translator")
+	viper.BindPFlag("grpc_addr", syncCmd.Flags().Lookup("grpc"))
 }

@@ -43,6 +43,18 @@ type Options struct {
 	// GRPCAddr provides the address for gRPC translation service.
 	GRPCAddr string
 
+	// TargetLang specifies the language to translate subtitles into. If empty
+	// no translation is performed.
+	TargetLang string
+	// Service selects the translation provider when TargetLang is set. Valid
+	// values are "google", "gpt" or "grpc".
+	Service string
+	// GoogleKey holds the API key for Google Translate when Service is
+	// "google".
+	GoogleKey string
+	// GPTKey holds the OpenAI API key when Service is "gpt".
+	GPTKey string
+
 	// Transcriber is the service used for audio transcription.
 	// If nil, the default transcriber.WhisperTranscribe will be used.
 	Transcriber Transcriber
@@ -163,7 +175,7 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 		items = Shift(items, offset)
 	}
 
-	// Apply translation if requested
+	// Apply translation if requested (supports both legacy and new translation options)
 	if opts.Translate && opts.TranslateLang != "" {
 		// Use specified service or default to Google Translate
 		service := opts.TranslateService
@@ -186,6 +198,14 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 				}
 				item.Lines[i] = line
 			}
+		}
+	}
+
+	// Alternative translation approach using TargetLang
+	if opts.TargetLang != "" {
+		items, err = Translate(items, opts.TargetLang, opts.Service, opts.GoogleKey, opts.GPTKey, opts.GRPCAddr)
+		if err != nil {
+			return nil, err
 		}
 	}
 	return items, nil
@@ -221,4 +241,22 @@ func computeOffset(ref, target []*astisub.Item) time.Duration {
 		sum += ref[i].StartAt - target[i].StartAt
 	}
 	return sum / time.Duration(n)
+}
+
+// Translate converts each subtitle item to lang using the selected service.
+// googleKey, gptKey and grpcAddr are passed to the underlying translator
+// depending on service. The returned slice contains translated items in the
+// same order as the input.
+func Translate(items []*astisub.Item, lang, service, googleKey, gptKey, grpcAddr string) ([]*astisub.Item, error) {
+	out := make([]*astisub.Item, len(items))
+	for i, it := range items {
+		t, err := translator.Translate(service, it.String(), lang, googleKey, gptKey, grpcAddr)
+		if err != nil {
+			return nil, err
+		}
+		c := *it
+		c.Lines = []astisub.Line{{Items: []astisub.LineItem{{Text: t}}}}
+		out[i] = &c
+	}
+	return out, nil
 }
