@@ -1,5 +1,8 @@
 // file: webui/src/Dashboard.jsx
-import { Folder as FolderIcon, PlayArrow as PlayIcon } from "@mui/icons-material";
+import {
+  Folder as FolderIcon,
+  PlayArrow as PlayIcon,
+} from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -29,10 +32,15 @@ import { useEffect, useState } from "react";
  */
 
 export default function Dashboard() {
-  const [status, setStatus] = useState({ running: false, completed: 0, files: [] });
+  const [status, setStatus] = useState({
+    running: false,
+    completed: 0,
+    files: [],
+  });
   const [dir, setDir] = useState("");
   const [lang, setLang] = useState("en");
-  const [provider, setProvider] = useState("opensubtitles");
+  // Default to embedded provider until others are added
+  const [provider, setProvider] = useState("embedded");
   const [availableProviders, setAvailableProviders] = useState([]);
 
   useEffect(() => {
@@ -46,7 +54,7 @@ export default function Dashboard() {
       if (response.ok) {
         const data = await response.json();
         // Only show enabled providers
-        const enabledProviders = data.filter(p => p.enabled);
+        const enabledProviders = data.filter((p) => p.enabled);
         setAvailableProviders(enabledProviders);
 
         // Set default provider to first enabled one
@@ -68,23 +76,27 @@ export default function Dashboard() {
 
   const formatProviderName = (name) => {
     const specialNames = {
-      opensubtitles: 'OpenSubtitles',
-      opensubtitlescom: 'OpenSubtitles.com',
-      opensubtitlesvip: 'OpenSubtitles VIP',
-      addic7ed: 'Addic7ed',
-      podnapisi: 'Podnapisi.NET',
-      subscene: 'Subscene',
-      yifysubtitles: 'YIFY Subtitles',
-      turkcealtyazi: 'Türkçe Altyazı',
-      greeksubtitles: 'Greek Subtitles',
-      legendasdivx: 'Legendas DivX',
-      legendasnet: 'Legendas.NET',
-      napiprojekt: 'NapiProjekt',
+      opensubtitles: "OpenSubtitles",
+      opensubtitlescom: "OpenSubtitles.com",
+      opensubtitlesvip: "OpenSubtitles VIP",
+      addic7ed: "Addic7ed",
+      podnapisi: "Podnapisi.NET",
+      subscene: "Subscene",
+      yifysubtitles: "YIFY Subtitles",
+      turkcealtyazi: "Türkçe Altyazı",
+      greeksubtitles: "Greek Subtitles",
+      legendasdivx: "Legendas DivX",
+      legendasnet: "Legendas.NET",
+      napiprojekt: "NapiProjekt",
     };
 
-    return specialNames[name] || name.split(/(?=[A-Z])/).map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    return (
+      specialNames[name] ||
+      name
+        .split(/(?=[A-Z])/)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+    );
   };
 
   const poll = async () => {
@@ -95,7 +107,7 @@ export default function Dashboard() {
       setStatus({
         running: data.running || false,
         completed: data.completed || 0,
-        files: data.files || []
+        files: data.files || [],
       });
       if (data.running) {
         setTimeout(poll, 1000);
@@ -131,7 +143,7 @@ export default function Dashboard() {
               <Typography variant="h6" gutterBottom>
                 Subtitle Scan
               </Typography>
-              <Box component="form" sx={{ '& > :not(style)': { m: 1 } }}>
+              <Box component="form" sx={{ "& > :not(style)": { m: 1 } }}>
                 <TextField
                   fullWidth
                   label="Directory Path"
@@ -140,7 +152,9 @@ export default function Dashboard() {
                   onChange={(e) => setDir(e.target.value)}
                   disabled={status.running}
                   InputProps={{
-                    startAdornment: <FolderIcon sx={{ mr: 1, color: 'action.active' }} />,
+                    startAdornment: (
+                      <FolderIcon sx={{ mr: 1, color: "action.active" }} />
+                    ),
                   }}
                 />
                 <FormControl fullWidth>
@@ -167,32 +181,55 @@ export default function Dashboard() {
                     onChange={(e) => setProvider(e.target.value)}
                     disabled={status.running}
                   >
-                    {availableProviders.length > 0 ? (
-                      availableProviders.map((p) => (
-                        <MenuItem key={p.name} value={p.name}>
-                          {formatProviderName(p.name)}
-                          {!p.configured && <Chip label="Config Required" size="small" color="warning" sx={{ ml: 1 }} />}
-                        </MenuItem>
-                      ))
-                    ) : (
-                      // Fallback options if providers haven't loaded
-                      [
-                        <MenuItem key="opensubtitles" value="opensubtitles">OpenSubtitles</MenuItem>,
-                        <MenuItem key="addic7ed" value="addic7ed">Addic7ed</MenuItem>,
-                        <MenuItem key="subscene" value="subscene">Subscene</MenuItem>,
-                        <MenuItem key="podnapisi" value="podnapisi">Podnapisi</MenuItem>,
-                      ]
-                    )}
+                    {availableProviders.length > 0
+                      ? availableProviders.map((p) => (
+                          <MenuItem key={p.name} value={p.name}>
+                            {formatProviderName(p.name)}
+                            {!p.configured && (
+                              <Chip
+                                label="Config Required"
+                                size="small"
+                                color="warning"
+                                sx={{ ml: 1 }}
+                              />
+                            )}
+                          </MenuItem>
+                        ))
+                      : // Fallback options if providers haven't loaded
+                        [
+                          <MenuItem key="opensubtitles" value="opensubtitles">
+                            OpenSubtitles
+                          </MenuItem>,
+                          <MenuItem key="addic7ed" value="addic7ed">
+                            Addic7ed
+                          </MenuItem>,
+                          <MenuItem key="subscene" value="subscene">
+                            Subscene
+                          </MenuItem>,
+                          <MenuItem key="podnapisi" value="podnapisi">
+                            Podnapisi
+                          </MenuItem>,
+                        ]}
                   </Select>
                   {availableProviders.length === 0 && (
-                    <Alert severity="warning" sx={{ mt: 1, fontSize: '0.875rem' }}>
-                      No providers configured. Go to Settings → Providers to enable subtitle providers.
+                    <Alert
+                      severity="warning"
+                      sx={{ mt: 1, fontSize: "0.875rem" }}
+                    >
+                      No providers configured. Go to Settings → Providers to
+                      enable subtitle providers.
                     </Alert>
                   )}
                 </FormControl>
                 <Button
                   variant="contained"
-                  startIcon={status.running ? <CircularProgress size={20} /> : <PlayIcon />}
+                  startIcon={
+                    status.running ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <PlayIcon />
+                    )
+                  }
                   onClick={start}
                   disabled={status.running || !dir}
                   fullWidth
@@ -221,13 +258,14 @@ export default function Dashboard() {
               </Box>
               {status.running && (
                 <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
                     Progress: {status.completed} files processed
                   </Typography>
-                  <LinearProgress
-                    variant="indeterminate"
-                    sx={{ mb: 1 }}
-                  />
+                  <LinearProgress variant="indeterminate" sx={{ mb: 1 }} />
                 </Box>
               )}
               {status.files.length > 0 && (
@@ -247,17 +285,17 @@ export default function Dashboard() {
                 <Typography variant="h6" gutterBottom>
                   Files ({status.files.length})
                 </Typography>
-                <Paper sx={{ maxHeight: 300, overflow: 'auto' }}>
+                <Paper sx={{ maxHeight: 300, overflow: "auto" }}>
                   <List dense>
                     {status.files.map((file, index) => (
                       <ListItem key={index} divider>
                         <ListItemText
                           primary={file}
                           sx={{
-                            '& .MuiListItemText-primary': {
-                              fontSize: '0.875rem',
-                              fontFamily: 'monospace'
-                            }
+                            "& .MuiListItemText-primary": {
+                              fontSize: "0.875rem",
+                              fontFamily: "monospace",
+                            },
                           }}
                         />
                       </ListItem>

@@ -143,6 +143,9 @@ func initConfig() {
 	viper.SetDefault("providers.generic.username", "")
 	viper.SetDefault("providers.generic.password", "")
 	viper.SetDefault("providers.generic.api_key", "")
+	// Enable embedded subtitle provider by default so users can start
+	// extracting subtitles without additional configuration.
+	viper.SetDefault("providers.embedded.enabled", true)
 	viper.SetDefault("plex.url", "http://localhost:32400")
 	viper.SetDefault("plex.token", "")
 	viper.SetDefault("server_name", "Subtitle Manager")

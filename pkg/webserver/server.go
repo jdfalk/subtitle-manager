@@ -685,6 +685,17 @@ func getAvailableProviders() []ProviderInfo {
 			}
 		}
 
+		// Skip providers that have not been explicitly enabled or
+		// configured, except for the embedded provider which should
+		// always be available.
+		if !enabled && len(config) == 0 && name != "embedded" {
+			if _, ok := providerConfig["enabled"]; !ok {
+				if _, ok2 := providerConfig["config"]; !ok2 {
+					continue
+				}
+			}
+		}
+
 		providers = append(providers, ProviderInfo{
 			Name:        name,
 			DisplayName: formatProviderName(name),
