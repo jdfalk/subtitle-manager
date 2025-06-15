@@ -1,9 +1,15 @@
 package syncer
 
 import (
+	"bytes"
+	"os"
 	"time"
 
 	"github.com/asticode/go-astisub"
+
+	"github.com/jdfalk/subtitle-manager/pkg/audio"
+	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
+	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
 )
 
 // Options controls how the synchronization process behaves.
@@ -16,6 +22,9 @@ type Options struct {
 	AudioTrack int
 	// SubtitleTracks selects embedded subtitle track indices when UseEmbedded is true.
 	SubtitleTracks []int
+	// OpenAIKey provides the API key used for Whisper transcription when
+	// UseAudio is enabled.
+	OpenAIKey string
 }
 
 // Sync attempts to synchronize the subtitle at subPath with the media file at
@@ -31,6 +40,44 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 	}
 	items := make([]*astisub.Item, len(sub.Items))
 	copy(items, sub.Items)
+
+	var ref []*astisub.Item
+
+	if opts.UseEmbedded {
+		for _, tr := range opts.SubtitleTracks {
+			r, err := subtitles.ExtractTrack(mediaPath, tr)
+			if err != nil {
+				return nil, err
+			}
+			ref = r
+			break
+		}
+	}
+
+	if opts.UseAudio {
+		aPath, err := audio.ExtractTrack(mediaPath, opts.AudioTrack)
+		if err != nil {
+			return nil, err
+		}
+		defer os.Remove(aPath)
+		data, err := transcriber.WhisperTranscribe(aPath, "", opts.OpenAIKey)
+		if err != nil {
+			return nil, err
+		}
+		tsub, err := astisub.ReadFromSRT(bytes.NewReader(data))
+		if err != nil {
+			return nil, err
+		}
+		if len(ref) == 0 {
+			ref = tsub.Items
+		}
+	}
+
+	if len(ref) > 0 && len(items) > 0 {
+		offset := ref[0].StartAt - items[0].StartAt
+		items = Shift(items, offset)
+	}
+
 	return items, nil
 }
 

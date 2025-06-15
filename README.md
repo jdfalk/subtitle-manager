@@ -125,7 +125,8 @@ services are available:
 ### 🔄 Optional Remaining Features
 
 - Advanced reverse proxy base URL support
-- Automatic subtitle synchronization using audio and embedded tracks
+- Automatic subtitle synchronization using audio and embedded tracks with selectable
+  audio and subtitle stream indices
 
 The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations, plus additional enterprise features not available in Bazarr.
 
