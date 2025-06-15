@@ -488,3 +488,7 @@ Keeping these files small and focused allows new contributors to quickly underst
 ## 27. Bazarr Feature Reference
 
 The file [BAZARR_FEATURES.md](BAZARR_FEATURES.md) lists the important functions, features and subtitle providers implemented by Bazarr. Subtitle Manager aims to implement equivalent capabilities. Use that document as a checklist when evaluating progress toward full feature parity.
+
+## 28. Subtitle Synchronization (WIP)
+
+Package `pkg/syncer` provides the foundation for aligning external subtitle files with media. The initial version simply loads subtitles and supports shifting by a constant offset. Future iterations will analyze audio tracks and embedded subtitles to calculate precise timing adjustments.

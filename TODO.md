@@ -443,3 +443,7 @@ The front end is built with React and Vite under `webui/`. Run `go generate ./we
 
 For detailed architecture and design decisions, see `docs/TECHNICAL_DESIGN.md`.
 The file `docs/BAZARR_FEATURES.md` enumerates all Bazarr features - parity has been achieved for providers and core functionality.
+
+## Automatic Subtitle Synchronization (WIP)
+
+A new subsystem will align external subtitles with media using audio analysis and embedded subtitle tracks. The initial implementation loads existing subtitle files and provides utilities to shift timing. Future work will integrate Whisper transcription and multi-track comparison to automatically compute offsets.
