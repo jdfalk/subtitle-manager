@@ -45,6 +45,8 @@ All notable changes to this project will be documented in this file.
 - Build process now runs `go generate ./webui` to embed the latest web assets
   in the binary and container image.
 - Automated workflow closes duplicate issues by title
+- Embedded provider now enabled by default. Other providers remain hidden
+  until explicitly added or imported.
 
 ## [0.4.0] - 2025-06-12
 

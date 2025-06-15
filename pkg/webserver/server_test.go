@@ -718,6 +718,49 @@ func TestTranslateUpload(t *testing.T) {
 	}
 }
 
+// TestProvidersDefault verifies that the providers endpoint only returns
+// the embedded provider when no other providers are configured.
+func TestProvidersDefault(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	key := setupTestUser(t, db)
+
+	viper.Reset()
+	viper.SetDefault("providers.embedded.enabled", true)
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest("GET", srv.URL+"/api/providers", nil)
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("get providers: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	var out []ProviderInfo
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	resp.Body.Close()
+	if len(out) != 1 {
+		t.Fatalf("expected 1 provider, got %d", len(out))
+	}
+	if out[0].Name != "embedded" || !out[0].Enabled {
+		t.Fatalf("unexpected provider %+v", out[0])
+	}
+}
+
 // setupTestUser creates a test user with an API key and returns the key.
 func setupTestUser(t *testing.T, db *sql.DB) string {
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))

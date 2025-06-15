@@ -27,7 +27,7 @@ import {
   Paper,
   Select,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -37,7 +37,8 @@ import { useEffect, useState } from "react";
  * selections are POSTed to `/api/wanted`.
  */
 export default function Wanted() {
-  const [provider, setProvider] = useState("generic");
+  // Start with embedded provider available out of the box
+  const [provider, setProvider] = useState("embedded");
   const [path, setPath] = useState("");
   const [lang, setLang] = useState("en");
   const [results, setResults] = useState([]);
@@ -129,7 +130,7 @@ export default function Wanted() {
         body: JSON.stringify({ url }),
       });
       if (res.ok) {
-        setWanted(wanted.filter(item => item !== url));
+        setWanted(wanted.filter((item) => item !== url));
       }
     } catch (error) {
       console.error("Failed to remove from wanted list:", error);
@@ -137,7 +138,7 @@ export default function Wanted() {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       search();
     }
   };
@@ -149,7 +150,8 @@ export default function Wanted() {
       </Typography>
 
       <Typography variant="body1" color="text.secondary" paragraph>
-        Search for subtitles across multiple providers and maintain a wanted list for automated downloads.
+        Search for subtitles across multiple providers and maintain a wanted
+        list for automated downloads.
       </Typography>
 
       <Grid container spacing={3}>
@@ -158,7 +160,7 @@ export default function Wanted() {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                <SearchIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                <SearchIcon sx={{ mr: 1, verticalAlign: "middle" }} />
                 Search Subtitles
               </Typography>
               <Grid container spacing={2} alignItems="center">
@@ -170,7 +172,9 @@ export default function Wanted() {
                       label="Provider"
                       onChange={(e) => setProvider(e.target.value)}
                       disabled={searching}
-                      startAdornment={<ProviderIcon sx={{ mr: 1, color: 'action.active' }} />}
+                      startAdornment={
+                        <ProviderIcon sx={{ mr: 1, color: "action.active" }} />
+                      }
                     >
                       {providers.map((p) => (
                         <MenuItem key={p.value} value={p.value}>
@@ -190,7 +194,9 @@ export default function Wanted() {
                     onKeyPress={handleKeyPress}
                     disabled={searching}
                     InputProps={{
-                      startAdornment: <MediaIcon sx={{ mr: 1, color: 'action.active' }} />,
+                      startAdornment: (
+                        <MediaIcon sx={{ mr: 1, color: "action.active" }} />
+                      ),
                     }}
                   />
                 </Grid>
@@ -202,7 +208,9 @@ export default function Wanted() {
                       label="Language"
                       onChange={(e) => setLang(e.target.value)}
                       disabled={searching}
-                      startAdornment={<LanguageIcon sx={{ mr: 1, color: 'action.active' }} />}
+                      startAdornment={
+                        <LanguageIcon sx={{ mr: 1, color: "action.active" }} />
+                      }
                     >
                       {languages.map((l) => (
                         <MenuItem key={l.code} value={l.code}>
@@ -222,13 +230,19 @@ export default function Wanted() {
                 <Grid item xs={12} sm={2}>
                   <Button
                     variant="contained"
-                    startIcon={searching ? <CircularProgress size={20} /> : <SearchIcon />}
+                    startIcon={
+                      searching ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <SearchIcon />
+                      )
+                    }
                     onClick={search}
                     disabled={searching || !path.trim()}
                     fullWidth
                     size="large"
                   >
-                    {searching ? 'Searching...' : 'Search'}
+                    {searching ? "Searching..." : "Search"}
                   </Button>
                 </Grid>
               </Grid>
@@ -249,20 +263,27 @@ export default function Wanted() {
                 </Box>
               ) : results.length === 0 ? (
                 <Alert severity="info">
-                  No search results. Try searching for a media file to find subtitles.
+                  No search results. Try searching for a media file to find
+                  subtitles.
                 </Alert>
               ) : (
-                <Paper variant="outlined" sx={{ maxHeight: 400, overflow: 'auto' }}>
+                <Paper
+                  variant="outlined"
+                  sx={{ maxHeight: 400, overflow: "auto" }}
+                >
                   <List>
                     {results.map((url, index) => (
-                      <ListItem key={index} divider={index < results.length - 1}>
+                      <ListItem
+                        key={index}
+                        divider={index < results.length - 1}
+                      >
                         <ListItemText
                           primary={
                             <Typography
                               variant="body2"
                               sx={{
-                                fontFamily: 'monospace',
-                                wordBreak: 'break-all'
+                                fontFamily: "monospace",
+                                wordBreak: "break-all",
                               }}
                             >
                               {url}
@@ -285,7 +306,7 @@ export default function Wanted() {
                             onClick={() => add(url)}
                             disabled={wanted.includes(url)}
                           >
-                            {wanted.includes(url) ? 'Added' : 'Add to Wanted'}
+                            {wanted.includes(url) ? "Added" : "Add to Wanted"}
                           </Button>
                         </ListItemSecondaryAction>
                       </ListItem>
@@ -302,7 +323,7 @@ export default function Wanted() {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                <WantedIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                <WantedIcon sx={{ mr: 1, verticalAlign: "middle" }} />
                 Wanted List ({wanted.length})
               </Typography>
               {loading ? (
@@ -314,7 +335,10 @@ export default function Wanted() {
                   No items in wanted list. Add subtitles from search results.
                 </Alert>
               ) : (
-                <Paper variant="outlined" sx={{ maxHeight: 400, overflow: 'auto' }}>
+                <Paper
+                  variant="outlined"
+                  sx={{ maxHeight: 400, overflow: "auto" }}
+                >
                   <List dense>
                     {wanted.map((url, index) => (
                       <ListItem key={index} divider={index < wanted.length - 1}>
@@ -323,9 +347,9 @@ export default function Wanted() {
                             <Typography
                               variant="body2"
                               sx={{
-                                fontFamily: 'monospace',
-                                fontSize: '0.75rem',
-                                wordBreak: 'break-all'
+                                fontFamily: "monospace",
+                                fontSize: "0.75rem",
+                                wordBreak: "break-all",
                               }}
                             >
                               {url}
