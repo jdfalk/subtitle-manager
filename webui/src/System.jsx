@@ -19,17 +19,16 @@ import {
   CardContent,
   Chip,
   CircularProgress,
-  Grid,
   IconButton,
   List,
   ListItem,
   ListItemText,
   Paper,
+  Tab,
+  Tabs,
   Tooltip,
   Typography,
   useTheme,
-  Tabs,
-  Tab,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import UserManagement from "./UserManagement.jsx";
@@ -121,237 +120,250 @@ export default function System() {
         <Tab label="System" />
         <Tab label="Users" />
       </Tabs>
-      {tab === 0 && (
-      <Grid container spacing={3}>
-        {/* System Information */}
-        <Grid item xs={12} md={6}>
-          <Card elevation={0}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <SystemIcon sx={{ mr: 1, color: 'primary.main' }} />
-                System Information
-              </Typography>
-              <List dense>
-                {Object.entries(info).map(([key, value]) => (
-                  <ListItem key={key} divider sx={{ px: 0 }}>
-                    <ListItemText
-                      primary={
-                        <Typography variant="body2" fontWeight={500} color="text.primary">
-                          {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
-                        </Typography>
-                      }
-                      secondary={
-                        <Typography variant="body2" color="text.secondary">
-                          {key.includes('memory') || key.includes('size')
-                            ? formatBytes(value)
-                            : key.includes('uptime')
-                            ? formatUptime(value)
-                            : String(value)}
-                        </Typography>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-        </Grid>
 
-        {/* Running Tasks */}
-        <Grid item xs={12} md={6}>
-          <Card elevation={0}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <TaskIcon sx={{ mr: 1, color: 'primary.main' }} />
-                Running Tasks
-              </Typography>
-              {Object.keys(tasks).length === 0 ? (
-                <Alert severity="info" sx={{ borderRadius: 2 }}>
-                  No running tasks
-                </Alert>
-              ) : (
+      {tab === 0 && (
+        <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+          {/* System Information */}
+          <Box>
+            <Card elevation={0}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <SystemIcon sx={{ mr: 1, color: 'primary.main' }} />
+                  System Information
+                </Typography>
                 <List dense>
-                  {Object.entries(tasks).map(([taskId, taskInfo]) => (
-                    <ListItem key={taskId} divider sx={{ px: 0 }}>
+                  {Object.entries(info).map(([key, value]) => (
+                    <ListItem key={key} divider sx={{ px: 0 }}>
                       <ListItemText
                         primary={
                           <Typography variant="body2" fontWeight={500} color="text.primary">
-                            {taskId}
+                            {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
                           </Typography>
                         }
                         secondary={
-                          <Box display="flex" alignItems="center" gap={1} mt={1}>
-                            <Chip
-                              label={taskInfo.status || 'Running'}
-                              size="small"
-                              color={taskInfo.status === 'completed' ? 'success' : 'primary'}
-                              sx={{ fontSize: '0.75rem' }}
-                            />
-                            {taskInfo.progress && (
-                              <Chip
-                                label={`${taskInfo.progress}%`}
-                                size="small"
-                                variant="outlined"
-                                sx={{ fontSize: '0.75rem' }}
-                              />
-                            )}
-                          </Box>
+                          <Typography variant="body2" color="text.secondary">
+                            {key.includes('memory') || key.includes('size')
+                              ? formatBytes(value)
+                              : key.includes('uptime')
+                              ? formatUptime(value)
+                              : String(value)}
+                          </Typography>
                         }
                       />
                     </ListItem>
                   ))}
                 </List>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
+              </CardContent>
+            </Card>
+          </Box>
 
-        {/* Recent Logs */}
-        <Grid item xs={12}>
-          <Card elevation={0}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <LogIcon sx={{ mr: 1, color: 'primary.main' }} />
-                Recent Logs
-              </Typography>
-              <Paper
-                variant="outlined"
-                sx={{
-                  maxHeight: 400,
-                  overflow: 'auto',
-                  backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
-                  borderRadius: 2,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                }}
-              >
-                <Box p={2}>
-                  {logs.length === 0 ? (
-                    <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                      No logs available
-                    </Typography>
-                  ) : (
-                    <pre
-                      data-testid="logs"
-                      style={{
-                        margin: 0,
-                        whiteSpace: 'pre-wrap',
-                        fontSize: '0.875rem',
-                        lineHeight: 1.5,
-                        color: isDarkMode ? '#e6edf3' : '#24292f',
-                        fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
-                      }}
-                    >
-                      {logs.join("\n")}
-                    </pre>
-                  )}
+          {/* Running Tasks */}
+          <Box>
+            <Card elevation={0}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <TaskIcon sx={{ mr: 1, color: 'primary.main' }} />
+                  Running Tasks
+                </Typography>
+                {Object.keys(tasks).length === 0 ? (
+                  <Alert severity="info" sx={{ borderRadius: 2 }}>
+                    No running tasks
+                  </Alert>
+                ) : (
+                  <List dense>
+                    {Object.entries(tasks).map(([taskId, taskInfo]) => {
+                      // Type-safe access to taskInfo properties
+                      const status = (taskInfo && typeof taskInfo === 'object' && 'status' in taskInfo && typeof taskInfo.status === 'string')
+                        ? taskInfo.status
+                        : 'Running';
+                      const progress = (taskInfo && typeof taskInfo === 'object' && 'progress' in taskInfo && typeof taskInfo.progress === 'number')
+                        ? taskInfo.progress
+                        : null;
+
+                      return (
+                        <ListItem key={taskId} divider sx={{ px: 0 }}>
+                          <ListItemText
+                            primary={
+                              <Typography variant="body2" fontWeight={500} color="text.primary">
+                                {taskId}
+                              </Typography>
+                            }
+                            secondary={
+                              <Box display="flex" alignItems="center" gap={1} mt={1}>
+                                <Chip
+                                  label={status}
+                                  size="small"
+                                  color={status === 'completed' ? 'success' : 'primary'}
+                                  sx={{ fontSize: '0.75rem' }}
+                                />
+                                {progress !== null && (
+                                  <Chip
+                                    label={`${progress}%`}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ fontSize: '0.75rem' }}
+                                  />
+                                )}
+                              </Box>
+                            }
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                )}
+              </CardContent>
+            </Card>
+          </Box>
+
+          {/* Recent Logs */}
+          <Box gridColumn={{ xs: '1', md: '1 / -1' }}>
+            <Card elevation={0}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <LogIcon sx={{ mr: 1, color: 'primary.main' }} />
+                  Recent Logs
+                </Typography>
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    maxHeight: 400,
+                    overflow: 'auto',
+                    backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Box p={2}>
+                    {logs.length === 0 ? (
+                      <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                        No logs available
+                      </Typography>
+                    ) : (
+                      <pre
+                        data-testid="logs"
+                        style={{
+                          margin: 0,
+                          whiteSpace: 'pre-wrap',
+                          fontSize: '0.875rem',
+                          lineHeight: 1.5,
+                          color: isDarkMode ? '#e6edf3' : '#24292f',
+                          fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
+                        }}
+                      >
+                        {logs.join("\n")}
+                      </pre>
+                    )}
+                  </Box>
+                </Paper>
+              </CardContent>
+            </Card>
+          </Box>
+
+          {/* Raw Data Section - Collapsible */}
+          <Box gridColumn={{ xs: '1', md: '1 / -1' }}>
+            <Accordion
+              expanded={expandedRawData}
+              onChange={() => setExpandedRawData(!expandedRawData)}
+              sx={{
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                '&:before': { display: 'none' },
+              }}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CodeIcon sx={{ mr: 1, color: 'primary.main' }} />
+                  Raw Data (Debug Information)
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+                  {/* Raw Tasks Data */}
+                  <Box>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                          <StorageIcon sx={{ mr: 1, color: 'secondary.main' }} />
+                          Tasks (Raw Data)
+                        </Typography>
+                        <Paper
+                          variant="outlined"
+                          sx={{
+                            maxHeight: 300,
+                            overflow: 'auto',
+                            backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
+                            borderRadius: 2,
+                          }}
+                        >
+                          <Box p={2}>
+                            <pre
+                              data-testid="tasks"
+                              style={{
+                                margin: 0,
+                                fontSize: '0.75rem',
+                                whiteSpace: 'pre-wrap',
+                                color: isDarkMode ? '#e6edf3' : '#24292f',
+                                fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
+                                lineHeight: 1.4,
+                              }}
+                            >
+                              {JSON.stringify(tasks, null, 2)}
+                            </pre>
+                          </Box>
+                        </Paper>
+                      </CardContent>
+                    </Card>
+                  </Box>
+
+                  {/* Raw System Info */}
+                  <Box>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                          <MemoryIcon sx={{ mr: 1, color: 'secondary.main' }} />
+                          System Info (Raw Data)
+                        </Typography>
+                        <Paper
+                          variant="outlined"
+                          sx={{
+                            maxHeight: 300,
+                            overflow: 'auto',
+                            backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
+                            borderRadius: 2,
+                          }}
+                        >
+                          <Box p={2}>
+                            <pre
+                              data-testid="info"
+                              style={{
+                                margin: 0,
+                                fontSize: '0.75rem',
+                                whiteSpace: 'pre-wrap',
+                                color: isDarkMode ? '#e6edf3' : '#24292f',
+                                fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
+                                lineHeight: 1.4,
+                              }}
+                            >
+                              {JSON.stringify(info, null, 2)}
+                            </pre>
+                          </Box>
+                        </Paper>
+                      </CardContent>
+                    </Card>
+                  </Box>
                 </Box>
-              </Paper>
-            </CardContent>
-          </Card>
-      </Grid>
+              </AccordionDetails>
+            </Accordion>
+          </Box>
+        </Box>
       )}
+
       {tab === 1 && (
         <UserManagement />
       )}
-      {/* Raw Data Section - Collapsible */}
-        <Grid item xs={12}>
-          <Accordion
-            expanded={expandedRawData}
-            onChange={() => setExpandedRawData(!expandedRawData)}
-            sx={{
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: 2,
-              '&:before': { display: 'none' },
-            }}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
-                <CodeIcon sx={{ mr: 1, color: 'primary.main' }} />
-                Raw Data (Debug Information)
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Grid container spacing={3}>
-                {/* Raw Tasks Data */}
-                <Grid item xs={12} md={6}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                        <StorageIcon sx={{ mr: 1, color: 'secondary.main' }} />
-                        Tasks (Raw Data)
-                      </Typography>
-                      <Paper
-                        variant="outlined"
-                        sx={{
-                          maxHeight: 300,
-                          overflow: 'auto',
-                          backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
-                          borderRadius: 2,
-                        }}
-                      >
-                        <Box p={2}>
-                          <pre
-                            data-testid="tasks"
-                            style={{
-                              margin: 0,
-                              fontSize: '0.75rem',
-                              whiteSpace: 'pre-wrap',
-                              color: isDarkMode ? '#e6edf3' : '#24292f',
-                              fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
-                              lineHeight: 1.4,
-                            }}
-                          >
-                            {JSON.stringify(tasks, null, 2)}
-                          </pre>
-                        </Box>
-                      </Paper>
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                {/* Raw System Info */}
-                <Grid item xs={12} md={6}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                        <MemoryIcon sx={{ mr: 1, color: 'secondary.main' }} />
-                        System Info (Raw Data)
-                      </Typography>
-                      <Paper
-                        variant="outlined"
-                        sx={{
-                          maxHeight: 300,
-                          overflow: 'auto',
-                          backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
-                          borderRadius: 2,
-                        }}
-                      >
-                        <Box p={2}>
-                          <pre
-                            data-testid="info"
-                            style={{
-                              margin: 0,
-                              fontSize: '0.75rem',
-                              whiteSpace: 'pre-wrap',
-                              color: isDarkMode ? '#e6edf3' : '#24292f',
-                              fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
-                              lineHeight: 1.4,
-                            }}
-                          >
-                            {JSON.stringify(info, null, 2)}
-                          </pre>
-                        </Box>
-                      </Paper>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-      </Grid>
     </Box>
   );
 }
