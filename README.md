@@ -121,11 +121,11 @@ services are available:
 - **Infrastructure**: Docker support, CI/CD, automated testing
 - **Database**: SQLite, PebbleDB and PostgreSQL backends
 - **Enterprise Features**: Webhooks, notifications, anti-captcha, advanced scheduling
+- **Automatic Subtitle Sync**: Align subtitles using audio or embedded tracks
 
 ### 🔄 Optional Remaining Features
 
 - Advanced reverse proxy base URL support
-- Automatic subtitle synchronization using audio and embedded tracks
 
 The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations, plus additional enterprise features not available in Bazarr.
 

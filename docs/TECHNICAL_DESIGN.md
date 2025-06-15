@@ -489,6 +489,6 @@ Keeping these files small and focused allows new contributors to quickly underst
 
 The file [BAZARR_FEATURES.md](BAZARR_FEATURES.md) lists the important functions, features and subtitle providers implemented by Bazarr. Subtitle Manager aims to implement equivalent capabilities. Use that document as a checklist when evaluating progress toward full feature parity.
 
-## 28. Subtitle Synchronization (WIP)
+## 28. Subtitle Synchronization
 
-Package `pkg/syncer` provides the foundation for aligning external subtitle files with media. The initial version simply loads subtitles and supports shifting by a constant offset. Future iterations will analyze audio tracks and embedded subtitles to calculate precise timing adjustments.
+Package `pkg/syncer` aligns external subtitle files with media. The implementation loads the target subtitle, optionally extracts embedded tracks or transcribes audio with Whisper, and calculates an offset based on the first cue. All subtitle items are shifted by this amount.
