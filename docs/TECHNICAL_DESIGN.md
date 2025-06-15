@@ -391,8 +391,8 @@ To support additional features such as subtitle provider history and media libra
 ### 19.1 Planned Tables
 
 - `providers` – list of configured subtitle providers, credentials and status.
-- `media_items` – records of movies or episodes by unique hash. *Implemented in v0.3.8*
-- `downloads` – history of downloaded subtitles with provider references. *Implemented in v0.3.2*
+- `media_items` – records of movies or episodes by unique hash. _Implemented in v0.3.8_
+- `downloads` – history of downloaded subtitles with provider references. _Implemented in v0.3.2_
 
 Each migration file is numbered sequentially and includes both `up` and `down` SQL scripts.
 
@@ -426,15 +426,15 @@ These ideas will be evaluated after core functionality is stable.
 
 ## 23. Frequently Asked Questions
 
-**Q:** *How do I contribute new subtitle providers?*
+**Q:** _How do I contribute new subtitle providers?_
 
 A: Create a package under `pkg/providers/<name>` that implements the `Provider` interface. Add configuration options to Viper and document them in README.
 
-**Q:** *Can I run the translator API on a remote server?*
+**Q:** _Can I run the translator API on a remote server?_
 
 A: Yes. Build the gRPC server (`cmd/grpcserver`) and start it on the desired host. Configure the CLI with `--grpc <address>` to use the remote server for translations.
 
-**Q:** *Where can I find example subtitles for testing?*
+**Q:** _Where can I find example subtitles for testing?_
 
 A: Sample subtitle files are located in `testdata/`. Tests reference these files to verify correct behaviour.
 
@@ -448,7 +448,6 @@ A: Sample subtitle files are located in `testdata/`. Tests reference these files
 - [Sourcegraph conc](https://github.com/sourcegraph/conc)
 
 These resources provide background on the tools and libraries used in the project.
-
 
 ## 25. ASCII Component Diagram
 
@@ -485,7 +484,6 @@ A summary of key files and their responsibilities:
 - `proto/translator.proto` – gRPC service definitions.
 
 Keeping these files small and focused allows new contributors to quickly understand the responsibilities of each package.
-
 
 ## 27. Bazarr Feature Reference
 
