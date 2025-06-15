@@ -22,7 +22,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Extract subtitles from media containers using ffmpeg.
 - Convert uploaded subtitle files to SRT via `/api/convert`.
 - Transcribe audio tracks to subtitles via Whisper.
-- Experimental subtitle synchronization command to align subtitles with media.
+- Automatic subtitle synchronization command using embedded subtitle tracks.
 - Download subtitles from a comprehensive list of providers based on Bazarr,
   including Addic7ed, AnimeKalesi, Animetosho, Assrt, Avistaz, BetaSeries,
   BSplayer, GreekSubs, Podnapisi, Subscene, TVSubtitles, Titlovi, LegendasDivx
@@ -125,7 +125,7 @@ services are available:
 ### 🔄 Optional Remaining Features
 
 - Advanced reverse proxy base URL support
-- Automatic subtitle synchronization using audio and embedded tracks
+- Automatic subtitle synchronization using audio tracks
 
 The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations, plus additional enterprise features not available in Bazarr.
 

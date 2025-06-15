@@ -1,6 +1,8 @@
 package syncer
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -24,5 +26,30 @@ func TestSync(t *testing.T) {
 	}
 	if len(items) == 0 {
 		t.Fatal("no items returned")
+	}
+}
+
+// TestSyncWithEmbedded verifies that embedded subtitles adjust timing.
+func TestSyncWithEmbedded(t *testing.T) {
+	dir := t.TempDir()
+	script := filepath.Join(dir, "ffmpeg")
+	data := "#!/bin/sh\ncp ../../testdata/simple.srt \"$6\"\n"
+	if err := os.WriteFile(script, []byte(data), 0755); err != nil {
+		t.Fatalf("write script: %v", err)
+	}
+	oldPath := os.Getenv("PATH")
+	os.Setenv("PATH", dir+":"+oldPath)
+	defer os.Setenv("PATH", oldPath)
+
+	opts := Options{UseEmbedded: true, SubtitleTracks: []int{0}}
+	items, err := Sync("dummy.mkv", "../../testdata/shifted.srt", opts)
+	if err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+	if len(items) == 0 {
+		t.Fatal("no items returned")
+	}
+	if items[0].StartAt != time.Second {
+		t.Fatalf("expected start 1s got %v", items[0].StartAt)
 	}
 }
