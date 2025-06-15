@@ -6,20 +6,19 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+
+	providersmocks "github.com/jdfalk/subtitle-manager/pkg/providers/mocks"
+	"github.com/stretchr/testify/mock"
 )
-
-type fakeProvider struct{}
-
-func (fakeProvider) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error) {
-	return []byte("sub"), nil
-}
 
 func TestWatchDirectory(t *testing.T) {
 	dir := t.TempDir()
 	ctx, cancel := context.WithCancel(context.Background())
+	m := providersmocks.NewProvider(t)
+	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("sub"), nil)
 	done := make(chan struct{})
 	go func() {
-		if err := WatchDirectory(ctx, dir, "en", "test", fakeProvider{}, nil); err != context.Canceled {
+		if err := WatchDirectory(ctx, dir, "en", "test", m, nil); err != context.Canceled {
 			t.Errorf("watch: %v", err)
 		}
 		close(done)
@@ -51,9 +50,11 @@ func TestWatchDirectoryRecursive(t *testing.T) {
 		t.Fatalf("mkdir: %v", err)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
+	m := providersmocks.NewProvider(t)
+	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("sub"), nil)
 	done := make(chan struct{})
 	go func() {
-		if err := WatchDirectoryRecursive(ctx, dir, "en", "test", fakeProvider{}, nil); err != context.Canceled {
+		if err := WatchDirectoryRecursive(ctx, dir, "en", "test", m, nil); err != context.Canceled {
 			t.Errorf("watch recursive: %v", err)
 		}
 		close(done)

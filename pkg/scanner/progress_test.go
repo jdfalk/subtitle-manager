@@ -6,14 +6,10 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	providersmocks "github.com/jdfalk/subtitle-manager/pkg/providers/mocks"
+	"github.com/stretchr/testify/mock"
 )
-
-// fakeProvider implements providers.Provider for testing.
-type fakeProvider2 struct{ data []byte }
-
-func (f fakeProvider2) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error) {
-	return f.data, nil
-}
 
 // TestScanDirectoryProgress verifies that the callback is invoked for each file.
 func TestScanDirectoryProgress(t *testing.T) {
@@ -24,10 +20,13 @@ func TestScanDirectoryProgress(t *testing.T) {
 	}
 	var called int
 	cb := func(string) { called++ }
-	err := ScanDirectoryProgress(context.Background(), dir, "en", "test", fakeProvider2{[]byte("a")}, false, 1, nil, cb)
+	m := providersmocks.NewProvider(t)
+	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("a"), nil)
+	err := ScanDirectoryProgress(context.Background(), dir, "en", "test", m, false, 1, nil, cb)
 	if err != nil {
 		t.Fatalf("scan: %v", err)
 	}
+	m.AssertExpectations(t)
 	if called != 1 {
 		t.Fatalf("callback not called")
 	}

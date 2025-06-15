@@ -6,13 +6,3 @@ with-expecter: true
 issue-845-fix: true
 resolve-type-alias: false
 disable-version-string: true
-
-packages:
-  github.com/jdfalk/subtitle-manager/pkg/translator:
-    interfaces:
-      GoogleClient:
-        config:
-          dir: "pkg/translator/mocks"
-          filename: "google_client.go"
-          mockname: "GoogleClient"
-          outpkg: "mocks"
