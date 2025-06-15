@@ -71,6 +71,6 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           branch: issue-updates-${{ github.run_id }}
-          commit-message: 'Remove processed issue updates'
-          title: 'Remove processed issue updates'
-          body: 'Remove processed entries from issue_updates.json.'
+          commit-message: "Remove processed issue updates"
+          title: "Remove processed issue updates"
+          body: "Remove processed entries from issue_updates.json."

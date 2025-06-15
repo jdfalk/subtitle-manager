@@ -11,6 +11,7 @@ This script automatically closes duplicate GitHub issues by title, keeping the l
 ### 1. Create a GitHub Personal Access Token
 
 #### Fine-Grained Personal Access Token (Recommended)
+
 1. Go to GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens
 2. Generate a new token with repository access to your repo
 3. Grant the following permissions:
@@ -18,6 +19,7 @@ This script automatically closes duplicate GitHub issues by title, keeping the l
    - **Issues**: Write (to close issues and add comments)
 
 #### Classic Personal Access Token (Legacy)
+
 1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
 2. Generate a new token with the following permissions:
    - `repo` (Full control of private repositories)
@@ -35,17 +37,20 @@ export REPO="jdfalk/subtitle-manager"
 ### 3. Test the Script
 
 #### Dry Run (Recommended First)
+
 ```bash
 export DRY_RUN="true"
 python .github/scripts/close-duplicates.py
 ```
 
 #### Test Logic Without API Calls
+
 ```bash
 python .github/scripts/test-duplicates.py
 ```
 
 #### Live Run (Will Actually Close Issues)
+
 ```bash
 python .github/scripts/close-duplicates.py
 ```
@@ -77,14 +82,17 @@ The GitHub Action runs daily at 1 AM UTC and can be triggered manually:
 ## Troubleshooting
 
 ### 401 Unauthorized
+
 - Check that `GH_TOKEN` is set correctly
 - Verify the token has the right permissions
 - Make sure the token hasn't expired
 
 ### 404 Not Found
+
 - Check that `REPO` is in the format `owner/repository`
 - Verify you have access to the repository
 
 ### No Duplicates Found
+
 - This is normal if there are no duplicate titles
 - The script only matches exact titles (case-sensitive)
