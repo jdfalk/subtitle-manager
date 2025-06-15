@@ -1,0 +1,149 @@
+name: Backend (Go) Tests
+
+on:
+  workflow_call:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+      - "pkg/**"
+      - "cmd/**"
+      - "proto/**"
+      - "scripts/**"
+      - ".github/workflows/backend.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+      - "pkg/**"
+      - "cmd/**"
+      - "proto/**"
+      - "scripts/**"
+      - ".github/workflows/backend.yml"
+
+jobs:
+  test:
+    name: Go Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: subtitle_manager_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Run go generate
+        run: go generate ./...
+
+      - name: Check formatting
+        run: |
+          if [ "$(gofmt -s -l $(find . -type f -name '*.go' -not -path './vendor/*') | wc -l)" -gt 0 ]; then
+            echo "The following files are not formatted:"
+            gofmt -s -l $(find . -type f -name '*.go' -not -path './vendor/*')
+            echo "Please run 'gofmt -s -w .' to fix formatting issues."
+            exit 1
+          fi
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Run staticcheck
+        uses: dominikh/staticcheck-action@v1.3.0
+        with:
+          version: "2023.1.6"
+
+      - name: Run tests
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: subtitle_manager_test
+        run: |
+          go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+
+      - name: Upload coverage to Codecov
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.out
+          flags: backend
+          name: backend-coverage
+
+  build:
+    name: Build Binary
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Build application
+        run: |
+          go build -v -o bin/subtitle-manager .
+
+      - name: Test binary execution
+        run: |
+          ./bin/subtitle-manager --version || echo "Version command not available"
+          ./bin/subtitle-manager --help
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: subtitle-manager-binary
+          path: bin/subtitle-manager
+          retention-days: 7
