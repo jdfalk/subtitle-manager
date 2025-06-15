@@ -121,7 +121,7 @@ export default function Translate() {
       </Typography>
 
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
               <Box textAlign="center" p={2}>
@@ -257,7 +257,7 @@ export default function Translate() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>

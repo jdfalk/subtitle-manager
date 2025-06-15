@@ -156,7 +156,7 @@ export default function Wanted() {
 
       <Grid container spacing={3}>
         {/* Search Form */}
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -164,7 +164,7 @@ export default function Wanted() {
                 Search Subtitles
               </Typography>
               <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} sm={3}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <FormControl fullWidth>
                     <InputLabel>Provider</InputLabel>
                     <Select
@@ -184,7 +184,7 @@ export default function Wanted() {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={5}>
+                <Grid size={{ xs: 12, sm: 5 }}>
                   <TextField
                     fullWidth
                     label="Media File Path"
@@ -200,7 +200,7 @@ export default function Wanted() {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid size={{ xs: 12, sm: 2 }}>
                   <FormControl fullWidth>
                     <InputLabel>Language</InputLabel>
                     <Select
@@ -227,7 +227,7 @@ export default function Wanted() {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid size={{ xs: 12, sm: 2 }}>
                   <Button
                     variant="contained"
                     startIcon={
@@ -251,7 +251,7 @@ export default function Wanted() {
         </Grid>
 
         {/* Search Results */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -319,7 +319,7 @@ export default function Wanted() {
         </Grid>
 
         {/* Wanted List */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>

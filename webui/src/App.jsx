@@ -4,6 +4,7 @@ import {
   Dashboard as DashboardIcon,
   Archive as ExtractIcon,
   History as HistoryIcon,
+  ChildFriendly as KidModeIcon,
   VideoLibrary as LibraryIcon,
   Brightness7 as LightModeIcon,
   Menu as MenuIcon,
@@ -11,7 +12,6 @@ import {
   BugReport as SystemIcon,
   Translate as TranslateIcon,
   Download as WantedIcon,
-  ChildFriendly as KidModeIcon,
 } from '@mui/icons-material';
 import {
   alpha,
@@ -276,7 +276,7 @@ function App() {
     // Check localStorage or system preference for initial theme
     const saved = localStorage.getItem('darkMode');
     if (saved !== null) return JSON.parse(saved);
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)')?.matches || false;
   });
   const [kidMode, setKidMode] = useState(() => {
     const saved = localStorage.getItem('kidMode');

@@ -20,10 +20,10 @@ describe('Translate component', () => {
     // Click on the select to open it and select a language
     const selectElement = screen.getByRole('combobox');
     fireEvent.mouseDown(selectElement);
-    const esOption = await screen.findByText('Spanish');
-    fireEvent.click(esOption);
+    const esOptions = await screen.findAllByText('Spanish');
+    fireEvent.click(esOptions[0]); // Click the first Spanish option
 
-    fireEvent.click(screen.getByText('Translate'));
+    fireEvent.click(screen.getByText(/Translate to/));
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/translate', expect.any(Object))
     );

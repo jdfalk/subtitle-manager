@@ -17,7 +17,7 @@ describe('Extract component', () => {
     fireEvent.change(screen.getByPlaceholderText('/path/to/media/file.mkv'), {
       target: { value: '/movie.mkv' },
     });
-    fireEvent.click(screen.getByText('Extract Subtitles'));
+    fireEvent.click(screen.getByRole('button', { name: 'Extract Subtitles' }));
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/extract', expect.any(Object))
     );

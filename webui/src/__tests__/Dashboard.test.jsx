@@ -23,14 +23,14 @@ describe('Dashboard component', () => {
     });
 
     // Click on the Language select to open it and select French
-    const languageSelect = screen.getByRole('combobox');
+    const languageSelect = screen.getAllByRole('combobox')[0]; // First combobox is language
     fireEvent.mouseDown(languageSelect);
     const frenchOption = await screen.findByText('French');
     fireEvent.click(frenchOption);
 
     // Skip provider selection for now since it's more complex
 
-    fireEvent.click(screen.getByText('Scan'));
+    fireEvent.click(screen.getByText('Start Scan'));
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/scan', expect.any(Object))
     );

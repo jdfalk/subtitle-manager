@@ -1,37 +1,37 @@
 // file: webui/src/Settings.jsx
 
 import {
-  Security as AuthIcon,
-  Storage as DatabaseIcon,
-  Settings as GeneralIcon,
-  Download as ImportIcon,
-  Notifications as NotificationIcon,
-  CloudDownload as ProvidersIcon,
-  Refresh as RefreshIcon,
+    Security as AuthIcon,
+    Storage as DatabaseIcon,
+    Settings as GeneralIcon,
+    Download as ImportIcon,
+    Notifications as NotificationIcon,
+    CloudDownload as ProvidersIcon,
+    Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Paper,
-  Snackbar,
-  Tab,
-  Tabs,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    Paper,
+    Snackbar,
+    Tab,
+    Tabs,
+    Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import AuthSettings from './components/AuthSettings.jsx';
+import DatabaseSettings from './components/DatabaseSettings.jsx';
+import GeneralSettings from './components/GeneralSettings.jsx';
+import NotificationSettings from './components/NotificationSettings.jsx';
 import ProviderCard from './components/ProviderCard.jsx';
 import ProviderConfigDialog from './components/ProviderConfigDialog.jsx';
-import GeneralSettings from './components/GeneralSettings.jsx';
-import DatabaseSettings from './components/DatabaseSettings.jsx';
-import AuthSettings from './components/AuthSettings.jsx';
-import NotificationSettings from './components/NotificationSettings.jsx';
 
 /**
  * Settings component with modern tabbed interface for managing all aspects
@@ -337,7 +337,7 @@ export default function Settings() {
 
       <Grid container spacing={3}>
         {providers.map(provider => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={provider.name}>
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={provider.name}>
             <ProviderCard
               provider={provider}
               onToggle={handleProviderToggle}
@@ -347,7 +347,7 @@ export default function Settings() {
         ))}
 
         {/* Add Provider Card */}
-        <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
           <ProviderCard
             isAddCard
             onConfigure={() => {
