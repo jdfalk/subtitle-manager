@@ -1,0 +1,4 @@
+# file: Dockerfile.assets
+# Lightweight container to store pre-built web assets
+FROM scratch
+COPY webui/dist /assets/

@@ -1,0 +1,82 @@
+# file: Dockerfile.hybrid
+# Hybrid approach: Install Node.js in Go builder for go generate compatibility
+
+# Stage 1: Node.js build stage (can be cached separately)
+FROM node:20-alpine AS node-builder
+WORKDIR /src/webui
+
+# Copy package files first for better caching
+COPY webui/package*.json ./
+RUN npm ci --legacy-peer-deps --production=false
+
+# Copy source and build
+COPY webui/ ./
+RUN npm run build
+
+# Stage 2: Go build stage with Node.js for go generate
+FROM golang:1.24-alpine AS go-builder
+WORKDIR /src
+
+# Install build dependencies including Node.js
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    sqlite-dev \
+    nodejs \
+    npm
+
+# Copy go.mod and go.sum first for better dependency caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Copy the built web assets from node-builder stage
+COPY --from=node-builder /src/webui/dist ./webui/dist
+
+# Run go generate (will skip npm commands since dist exists)
+RUN go generate ./webui
+
+# Build the application
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+RUN CGO_ENABLED=1 \
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH} \
+    go build -ldflags="-s -w" -o subtitle-manager ./
+
+# Stage 3: Final runtime image
+FROM alpine:3.19
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    ffmpeg \
+    ca-certificates \
+    tzdata
+
+# Create non-root user
+RUN addgroup -S subtitle && adduser -S subtitle -G subtitle
+
+# Create directories
+RUN mkdir -p /config /media && \
+    chown -R subtitle:subtitle /config /media
+
+# Copy binary
+COPY --from=go-builder /src/subtitle-manager /usr/local/bin/subtitle-manager
+RUN chmod +x /usr/local/bin/subtitle-manager
+
+# Switch to non-root user
+USER subtitle
+
+# Set default environment variables
+ENV SM_CONFIG_FILE=/config/subtitle-manager.yaml \
+    SM_DB_PATH=/config/db \
+    SM_DB_BACKEND=pebble \
+    SM_SQLITE3_FILENAME=subtitle-manager.db \
+    SM_LOG_LEVEL=info
+
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/local/bin/subtitle-manager"]
+CMD ["web", "--addr", ":8080"]

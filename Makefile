@@ -279,6 +279,53 @@ docker-test-arm64: ## Build and test Docker image for ARM64
 	@echo "$(COLOR_GREEN)✓ ARM64 Docker image built$(COLOR_RESET)"
 
 #
+# Fast Docker Build Targets
+.PHONY: docker-fast docker-assets docker-push-assets docker-optimized docker-benchmark
+
+# Build web assets as a separate Docker image
+docker-assets:
+	@echo "🏗️  Building web assets container..."
+	docker build -f Dockerfile.assets -t $(DOCKER_IMAGE)/assets:latest .
+	docker build -f Dockerfile.assets -t $(DOCKER_IMAGE)/assets:$(VERSION) .
+
+# Push assets to registry
+docker-push-assets: docker-assets
+	@echo "📦 Pushing assets to registry..."
+	docker push $(DOCKER_IMAGE)/assets:latest
+	docker push $(DOCKER_IMAGE)/assets:$(VERSION)
+
+# Fast build using pre-built assets
+docker-fast:
+	@echo "🚀 Fast Docker build using pre-built assets..."
+	@if docker pull $(DOCKER_IMAGE)/assets:latest; then \
+		docker build -f Dockerfile.fast -t $(DOCKER_IMAGE):$(VERSION)-fast .; \
+	else \
+		echo "⚠️  Pre-built assets not available, falling back to optimized build"; \
+		$(MAKE) docker-optimized; \
+	fi
+
+# Optimized multi-stage build
+docker-optimized:
+	@echo "🔧 Optimized Docker build with caching..."
+	DOCKER_BUILDKIT=1 docker build \
+		-f Dockerfile.optimized \
+		-t $(DOCKER_IMAGE):$(VERSION) \
+		-t $(DOCKER_IMAGE):latest \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
+		--cache-from $(DOCKER_IMAGE):latest \
+		.
+
+# Benchmark build times
+docker-benchmark:
+	@echo "⏱️  Benchmarking Docker build methods..."
+	@echo "Building with original Dockerfile..."
+	@time docker build -f Dockerfile -t $(DOCKER_IMAGE):original . &>/dev/null || echo "Original build failed"
+	@echo "Building with optimized Dockerfile..."
+	@time docker build -f Dockerfile.optimized -t $(DOCKER_IMAGE):optimized . &>/dev/null || echo "Optimized build failed"
+	@echo "Building with fast method (if assets available)..."
+	@time docker build -f Dockerfile.fast -t $(DOCKER_IMAGE):fast . &>/dev/null || echo "Fast build failed (assets not available)"
+
+#
 # Protocol Buffers
 #
 
