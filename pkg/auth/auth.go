@@ -10,13 +10,24 @@ import (
 )
 
 // CreateUser inserts a new user with a hashed password.
+// CreateUser inserts a new user with a hashed password and automatically
+// generates an API key for the user. The generated API key is stored in the
+// database but not returned to the caller.
 func CreateUser(db *sql.DB, username, password, email, role string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
-	_, err = db.Exec(`INSERT INTO users (username, password_hash, email, role, created_at) VALUES (?, ?, ?, ?, ?)`,
+	res, err := db.Exec(`INSERT INTO users (username, password_hash, email, role, created_at) VALUES (?, ?, ?, ?, ?)`,
 		username, string(hash), email, role, time.Now())
+	if err != nil {
+		return err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+	_, err = GenerateAPIKey(db, id)
 	return err
 }
 
@@ -79,6 +90,25 @@ func ValidateAPIKey(db *sql.DB, key string) (int64, error) {
 		return 0, err
 	}
 	return userID, nil
+}
+
+// ResetPassword generates a new password for the specified user ID, updates the
+// stored hash and returns the plaintext password. A new API key is also
+// generated and returned.
+func ResetPassword(db *sql.DB, userID int64) (string, string, error) {
+	pass := uuid.NewString()[:12]
+	hash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+	if err != nil {
+		return "", "", err
+	}
+	if _, err = db.Exec(`UPDATE users SET password_hash = ? WHERE id = ?`, string(hash), userID); err != nil {
+		return "", "", err
+	}
+	key, err := GenerateAPIKey(db, userID)
+	if err != nil {
+		return "", "", err
+	}
+	return pass, key, nil
 }
 
 // GetOrCreateUser returns the existing user ID for email or inserts a new user
