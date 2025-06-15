@@ -11,8 +11,8 @@ import (
 
 	"github.com/spf13/viper"
 
-	"subtitle-manager/pkg/auth"
-	"subtitle-manager/pkg/notifications"
+	"github.com/jdfalk/subtitle-manager/pkg/auth"
+	"github.com/jdfalk/subtitle-manager/pkg/notifications"
 )
 
 // usersHandler returns a list of all users.

@@ -11,7 +11,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/jdfalk/subtitle-manager/pkg/backups"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/providers"
+	"github.com/jdfalk/subtitle-manager/pkg/tasks"
 )
 
 // logsHandler returns recent log lines captured in memory.
