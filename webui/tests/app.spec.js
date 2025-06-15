@@ -15,12 +15,21 @@ test('login flow', async ({ page }) => {
 
   // Mock login endpoint - when login succeeds, update config route to return success
   await page.route('**/api/login', async route => {
-    // After successful login, change config to return 200
-    await page.unroute('**/api/config');
-    await page.route('**/api/config', route => {
-      route.fulfill({ status: 200, body: '{}' });
-    });
-    route.fulfill({ status: 200 });
+    const request = route.request();
+    if (request.method() === 'POST') {
+      // After successful login, change config to return authenticated user
+      await page.unroute('**/api/config');
+      await page.route('**/api/config', route => {
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ user: 'testuser', authenticated: true })
+        });
+      });
+      route.fulfill({ status: 200 });
+    } else {
+      route.continue();
+    }
   });
 
   await page.goto('/');
@@ -41,5 +50,10 @@ test('login flow', async ({ page }) => {
 
   // Wait for navigation to dashboard
   await page.waitForLoadState('networkidle');
-  await expect(page.locator('nav')).toBeVisible();
+
+  // Look for the app bar (navigation) that appears after successful login
+  await expect(page.locator('.MuiAppBar-root, [role="banner"], header')).toBeVisible();
+
+  // Also check that we can see the main navigation elements
+  await expect(page.getByText('Subtitle Manager')).toBeVisible();
 });

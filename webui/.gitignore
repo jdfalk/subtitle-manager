@@ -23,3 +23,7 @@ node_modules
 
 # Build generated files
 index.html
+*/test-results/*
+*/playwright-report/*
+*/coverage/*
+*/.nyc_output/*
