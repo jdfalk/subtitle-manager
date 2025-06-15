@@ -68,7 +68,7 @@ jobs:
         run: rm issue_updates.json
       - name: Create pull request for cleanup
         if: steps.issues.outputs.processed == '1'
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
           branch: issue-updates-${{ github.run_id }}
           commit-message: 'Remove processed issue updates'
