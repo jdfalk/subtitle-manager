@@ -44,15 +44,18 @@ class MockResizeObserver {
     // Simulate a resize event immediately
     if (this.callback) {
       try {
-        this.callback([
-          {
-            target: element,
-            contentRect: { width: 100, height: 100 },
-            borderBoxSize: [{ blockSize: 100, inlineSize: 100 }],
-            contentBoxSize: [{ blockSize: 100, inlineSize: 100 }],
-            devicePixelContentBoxSize: [{ blockSize: 100, inlineSize: 100 }]
-          }
-        ], this);
+        this.callback(
+          [
+            {
+              target: element,
+              contentRect: { width: 100, height: 100 },
+              borderBoxSize: [{ blockSize: 100, inlineSize: 100 }],
+              contentBoxSize: [{ blockSize: 100, inlineSize: 100 }],
+              devicePixelContentBoxSize: [{ blockSize: 100, inlineSize: 100 }],
+            },
+          ],
+          this
+        );
       } catch (error) {
         console.warn('ResizeObserver callback error:', error);
       }

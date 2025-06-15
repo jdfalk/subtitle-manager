@@ -276,7 +276,11 @@ function App() {
     // Check localStorage or system preference for initial theme
     const saved = localStorage.getItem('darkMode');
     if (saved !== null) return JSON.parse(saved);
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)')?.matches || false;
+    return (
+      (window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)')?.matches) ||
+      false
+    );
   });
   const [kidMode, setKidMode] = useState(() => {
     const saved = localStorage.getItem('kidMode');

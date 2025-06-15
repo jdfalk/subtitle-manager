@@ -26,9 +26,12 @@ describe('History component', () => {
   test('loads and filters history', async () => {
     render(<History />);
     await screen.findByText('a.srt');
-    fireEvent.change(screen.getByPlaceholderText('Filter by language (e.g., en, es, fr)'), {
-      target: { value: 'fr' },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText('Filter by language (e.g., en, es, fr)'),
+      {
+        target: { value: 'fr' },
+      }
+    );
     await waitFor(() =>
       expect(screen.queryByText('a.srt')).not.toBeInTheDocument()
     );
