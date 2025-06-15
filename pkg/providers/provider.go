@@ -9,6 +9,8 @@ type Provider interface {
 	Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error)
 }
 
+//go:generate go run github.com/vektra/mockery/v2 --name=Provider --output=mocks --outpkg=mocks --filename=provider.go
+
 // Searcher optionally exposes subtitle search functionality.
 type Searcher interface {
 	// Search returns download URLs for matching subtitles without fetching them.

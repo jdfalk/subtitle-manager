@@ -41,22 +41,29 @@ type Options struct {
 	GPTAPIKey string
 	// GRPCAddr provides the address for gRPC translation service.
 	GRPCAddr string
+
+	// Transcriber is the service used for audio transcription.
+	// If nil, the default transcriber.WhisperTranscribe will be used.
+	Transcriber Transcriber
+	// SubtitleExtractor is the service used for extracting embedded subtitles.
+	// If nil, the default subtitles.ExtractSubtitleTrack will be used.
+	SubtitleExtractor SubtitleExtractor
 }
 
-// transcribeFn wraps the audio transcription function. Tests may override it.
-var transcribeFn = transcriber.WhisperTranscribe
+// defaultTranscriber wraps the transcriber.WhisperTranscribe function to implement the Transcriber interface.
+type defaultTranscriber struct{}
 
-// extractFn wraps subtitle track extraction. Tests may override it.
-var extractFn = subtitles.ExtractSubtitleTrack
-
-// SetTranscribeFunc overrides the default audio transcription function.
-func SetTranscribeFunc(fn func(string, string, string) ([]byte, error)) {
-	transcribeFn = fn
+// Transcribe implements the Transcriber interface using the default WhisperTranscribe function.
+func (d defaultTranscriber) Transcribe(path, lang, apiKey string) ([]byte, error) {
+	return transcriber.WhisperTranscribe(path, lang, apiKey)
 }
 
-// SetExtractFunc overrides the default subtitle extraction function.
-func SetExtractFunc(fn func(string, int) ([]*astisub.Item, error)) {
-	extractFn = fn
+// defaultSubtitleExtractor wraps the subtitles.ExtractSubtitleTrack function to implement the SubtitleExtractor interface.
+type defaultSubtitleExtractor struct{}
+
+// ExtractTrack implements the SubtitleExtractor interface using the default ExtractSubtitleTrack function.
+func (d defaultSubtitleExtractor) ExtractTrack(mediaPath string, track int) ([]*astisub.Item, error) {
+	return subtitles.ExtractSubtitleTrack(mediaPath, track)
 }
 
 // Sync attempts to synchronize the subtitle at subPath with the media file at
@@ -83,6 +90,18 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 	var total time.Duration
 	var applied float64
 
+	// Use injected transcriber or fall back to default
+	transcriber := opts.Transcriber
+	if transcriber == nil {
+		transcriber = defaultTranscriber{}
+	}
+
+	// Use injected extractor or fall back to default
+	extractor := opts.SubtitleExtractor
+	if extractor == nil {
+		extractor = defaultSubtitleExtractor{}
+	}
+
 	if opts.UseAudio {
 		// Extract specific audio track for transcription
 		audioFile, err := audio.ExtractTrack(mediaPath, opts.AudioTrack)
@@ -94,7 +113,7 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 		}
 
 		audioLang := "" // Auto-detect language
-		b, err := transcribeFn(audioFile, audioLang, opts.WhisperKey)
+		b, err := transcriber.Transcribe(audioFile, audioLang, opts.WhisperKey)
 		if err == nil {
 			refSub, err := astisub.ReadFromSRT(bytes.NewReader(b))
 			if err == nil {
@@ -111,9 +130,16 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 			tracks = []int{0}
 		}
 		if len(tracks) > 0 {
-			per := (1 - weight) / float64(len(tracks))
+			// Calculate weight for embedded subtitles
+			// If audio is also used, embedded gets (1 - weight)
+			// If only embedded is used, it gets full weight (1.0)
+			embeddedWeight := 1.0
+			if opts.UseAudio {
+				embeddedWeight = 1 - weight
+			}
+			per := embeddedWeight / float64(len(tracks))
 			for _, t := range tracks {
-				refItems, err := extractFn(mediaPath, t)
+				refItems, err := extractor.ExtractTrack(mediaPath, t)
 				if err == nil {
 					off := computeOffset(refItems, items)
 					total += time.Duration(float64(off) * per)
@@ -123,7 +149,15 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 		}
 	}
 
-	if applied > 0 {
+	// Default behavior: use embedded subtitles if neither audio nor embedded is explicitly set
+	if !opts.UseAudio && !opts.UseEmbedded {
+		refItems, err := extractor.ExtractTrack(mediaPath, 0)
+		if err == nil {
+			offset := computeOffset(refItems, items)
+			items = Shift(items, offset)
+		}
+	} else if applied > 0 {
+		// Apply weighted offset if using audio and/or embedded methods
 		offset := time.Duration(float64(total) / applied)
 		items = Shift(items, offset)
 	}

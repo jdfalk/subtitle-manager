@@ -5,13 +5,10 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	providersmocks "github.com/jdfalk/subtitle-manager/pkg/providers/mocks"
+	"github.com/stretchr/testify/mock"
 )
-
-type fakeProvider struct{ data []byte }
-
-func (f fakeProvider) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error) {
-	return f.data, nil
-}
 
 func TestScanDirectory(t *testing.T) {
 	dir := t.TempDir()
@@ -20,9 +17,12 @@ func TestScanDirectory(t *testing.T) {
 		t.Fatalf("create video: %v", err)
 	}
 	// first scan creates subtitle
-	if err := ScanDirectory(context.Background(), dir, "en", "test", fakeProvider{[]byte("a")}, false, 2, nil); err != nil {
+	m := providersmocks.NewProvider(t)
+	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("a"), nil)
+	if err := ScanDirectory(context.Background(), dir, "en", "test", m, false, 2, nil); err != nil {
 		t.Fatalf("scan: %v", err)
 	}
+	m.AssertExpectations(t)
 	sub := filepath.Join(dir, "movie.en.srt")
 	data, err := os.ReadFile(sub)
 	if err != nil {
@@ -32,7 +32,8 @@ func TestScanDirectory(t *testing.T) {
 		t.Fatalf("unexpected subtitle %q", data)
 	}
 	// second scan without upgrade should keep existing subtitle
-	if err := ScanDirectory(context.Background(), dir, "en", "test", fakeProvider{[]byte("b")}, false, 2, nil); err != nil {
+	m2 := providersmocks.NewProvider(t)
+	if err := ScanDirectory(context.Background(), dir, "en", "test", m2, false, 2, nil); err != nil {
 		t.Fatalf("scan 2: %v", err)
 	}
 	data, _ = os.ReadFile(sub)
@@ -40,9 +41,12 @@ func TestScanDirectory(t *testing.T) {
 		t.Fatalf("subtitle overwritten without upgrade")
 	}
 	// scan with upgrade should replace subtitle
-	if err := ScanDirectory(context.Background(), dir, "en", "test", fakeProvider{[]byte("c")}, true, 2, nil); err != nil {
+	m3 := providersmocks.NewProvider(t)
+	m3.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("c"), nil)
+	if err := ScanDirectory(context.Background(), dir, "en", "test", m3, true, 2, nil); err != nil {
 		t.Fatalf("scan upgrade: %v", err)
 	}
+	m3.AssertExpectations(t)
 	data, _ = os.ReadFile(sub)
 	if string(data) != "c" {
 		t.Fatalf("subtitle not upgraded: %q", data)
