@@ -235,8 +235,33 @@ docker-run: docker ## Build and run Docker container
 	@docker ps -aq --filter "ancestor=$(DOCKER_IMAGE):$(DOCKER_TAG)" | xargs -r docker rm || true
 	@docker ps -q --filter "name=$(APP_NAME)" | xargs -r docker stop || true
 	@docker ps -aq --filter "name=$(APP_NAME)" | xargs -r docker rm || true
-	@echo "$(COLOR_BLUE)Running Docker container...$(COLOR_RESET)"
-	docker run --rm --name $(APP_NAME) -p 8080:8080 $(DOCKER_IMAGE):$(DOCKER_TAG)
+	@echo "$(COLOR_BLUE)Running Docker container in detached mode...$(COLOR_RESET)"
+	docker run -d --rm --name $(APP_NAME) -p 8080:8080 -v $(APP_NAME):/app/data $(DOCKER_IMAGE):$(DOCKER_TAG)
+	@echo "$(COLOR_GREEN)✓ Container started successfully$(COLOR_RESET)"
+	@echo "$(COLOR_CYAN)Application available at: http://localhost:8080$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Container commands:$(COLOR_RESET)"
+	@echo "  View logs:    docker logs $(APP_NAME)"
+	@echo "  Follow logs:  docker logs -f $(APP_NAME)"
+	@echo "  Stop:         docker stop $(APP_NAME)"
+	@echo "  Shell access: docker exec -it $(APP_NAME) /bin/sh"
+	@echo "$(COLOR_YELLOW)Volume mounted: $(APP_NAME) -> /app/data$(COLOR_RESET)"
+
+.PHONY: docker-run-clean
+docker-run-clean: ## Clean recreate volume and run Docker container
+	@echo "$(COLOR_BLUE)Stopping and removing any existing subtitle-manager containers...$(COLOR_RESET)"
+	@docker ps -q --filter "ancestor=$(DOCKER_IMAGE):$(DOCKER_TAG)" | xargs -r docker stop || true
+	@docker ps -aq --filter "ancestor=$(DOCKER_IMAGE):$(DOCKER_TAG)" | xargs -r docker rm || true
+	@docker ps -q --filter "name=$(APP_NAME)" | xargs -r docker stop || true
+	@docker ps -aq --filter "name=$(APP_NAME)" | xargs -r docker rm || true
+	@echo "$(COLOR_BLUE)Removing existing volume...$(COLOR_RESET)"
+	@docker volume rm $(APP_NAME) 2>/dev/null || true
+	@echo "$(COLOR_BLUE)Creating fresh volume...$(COLOR_RESET)"
+	docker volume create $(APP_NAME)
+	@echo "$(COLOR_BLUE)Running Docker container with fresh volume...$(COLOR_RESET)"
+	docker run -d --rm --name $(APP_NAME) -p 8080:8080 -v $(APP_NAME):/app/data $(DOCKER_IMAGE):$(DOCKER_TAG)
+	@echo "$(COLOR_GREEN)✓ Container started with fresh volume$(COLOR_RESET)"
+	@echo "$(COLOR_CYAN)Application available at: http://localhost:8080$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Fresh volume created: $(APP_NAME) -> /app/data$(COLOR_RESET)"
 
 .PHONY: docker-multiarch
 docker-multiarch: ## Build Docker image for multiple architectures using buildx
