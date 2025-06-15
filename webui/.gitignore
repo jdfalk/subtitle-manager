@@ -27,3 +27,5 @@ index.html
 */playwright-report/*
 */coverage/*
 */.nyc_output/*
+.lighthouseci
+.lighthouseci/*
