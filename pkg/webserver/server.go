@@ -128,6 +128,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	}
 	mux := http.NewServeMux()
 	mux.Handle(prefix+"/api/login", loginHandler(db))
+	mux.Handle(prefix+"/api/logout", logoutHandler(db))
 	mux.Handle(prefix+"/api/setup/status", setupStatusHandler(db))
 	mux.Handle(prefix+"/api/setup", setupHandler(db))
 	mux.Handle(prefix+"/api/setup/bazarr", bazarrImportHandler(db))
@@ -262,7 +263,48 @@ func loginHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		http.SetCookie(w, &http.Cookie{Name: "session", Value: token, Path: "/", HttpOnly: true})
+
+		// Set secure session cookie with proper security attributes
+		cookie := &http.Cookie{
+			Name:     "session",
+			Value:    token,
+			Path:     "/",
+			HttpOnly: true,                            // Prevents XSS attacks
+			Secure:   r.TLS != nil,                    // HTTPS only in production
+			SameSite: http.SameSiteStrictMode,         // CSRF protection
+			MaxAge:   int((24 * time.Hour).Seconds()), // Explicit expiration
+		}
+		http.SetCookie(w, cookie)
+	})
+}
+
+// logoutHandler invalidates the current session and clears the session cookie.
+func logoutHandler(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Get the session token from the cookie
+		if cookie, err := r.Cookie("session"); err == nil {
+			// Invalidate the session in the database
+			_ = auth.InvalidateSession(db, cookie.Value)
+		}
+
+		// Clear the session cookie by setting it with an expired date
+		clearCookie := &http.Cookie{
+			Name:     "session",
+			Value:    "",
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   r.TLS != nil,
+			SameSite: http.SameSiteStrictMode,
+			MaxAge:   -1, // This immediately expires the cookie
+		}
+		http.SetCookie(w, clearCookie)
+
+		w.WriteHeader(http.StatusOK)
 	})
 }
 

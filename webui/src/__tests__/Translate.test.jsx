@@ -20,9 +20,9 @@ describe('Translate component', () => {
     const mockAnchor = {
       href: '',
       download: '',
-      click: vi.fn()
+      click: vi.fn(),
     };
-    global.document.createElement = vi.fn((tagName) => {
+    global.document.createElement = vi.fn(tagName => {
       if (tagName === 'a') {
         return mockAnchor;
       }
