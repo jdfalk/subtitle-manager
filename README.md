@@ -23,6 +23,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Convert uploaded subtitle files to SRT via `/api/convert`.
 - Transcribe audio tracks to subtitles via Whisper.
 - Automatic subtitle synchronization using audio transcription and embedded tracks with advanced options for track selection, weighted averaging, and translation integration.
+- Synchronize and translate subtitles to any language during the sync process.
 - Download subtitles from a comprehensive list of providers based on Bazarr,
   including Addic7ed, AnimeKalesi, Animetosho, Assrt, Avistaz, BetaSeries,
   BSplayer, GreekSubs, Podnapisi, Subscene, TVSubtitles, Titlovi, LegendasDivx
