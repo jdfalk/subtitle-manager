@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-// TestExtractTrack verifies that audio track extraction works correctly.
+// TestExtractTrackWithFile verifies that audio track extraction works correctly.
 // This test requires ffmpeg to be available in the PATH.
-func TestExtractTrack(t *testing.T) {
+func TestExtractTrackWithFile(t *testing.T) {
 	// Skip test if ffmpeg is not available
 	if !isFFmpegAvailable() {
 		t.Skip("ffmpeg not available, skipping audio extraction test")

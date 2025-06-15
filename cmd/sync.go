@@ -70,7 +70,6 @@ Examples:
 			opts.UseEmbedded = true
 			logger.Info("no sync method specified, defaulting to embedded subtitles")
 		}
-
 		items, err := syncer.Sync(media, subPath, opts)
 		if err != nil {
 			return err
@@ -96,8 +95,6 @@ Examples:
 }
 
 func init() {
-	rootCmd.AddCommand(syncCmd)
-
 	// Audio transcription options
 	syncCmd.Flags().BoolVar(&syncUseAudio, "use-audio", false, "Use audio transcription for sync reference")
 	syncCmd.Flags().IntVar(&syncAudioTrack, "audio-track", 0, "Audio track index to use for transcription (default: 0)")
@@ -113,4 +110,6 @@ func init() {
 	syncCmd.Flags().BoolVar(&syncTranslate, "translate", false, "Translate subtitles after synchronization")
 	syncCmd.Flags().StringVar(&syncTranslateLang, "translate-lang", "", "Target language for translation (e.g., 'es', 'fr', 'de')")
 	syncCmd.Flags().StringVar(&syncTranslateService, "translate-service", "google", "Translation service to use ('google', 'gpt', 'grpc')")
+
+	rootCmd.AddCommand(syncCmd)
 }

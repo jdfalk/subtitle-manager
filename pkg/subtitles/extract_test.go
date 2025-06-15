@@ -45,8 +45,8 @@ func TestSetFFmpegPath(t *testing.T) {
 	}
 }
 
-// TestExtractSubtitleTrack verifies extraction of a specific subtitle track.
-func TestExtractSubtitleTrack(t *testing.T) {
+// TestExtractTrack verifies that a specific subtitle track can be extracted.
+func TestExtractTrack(t *testing.T) {
 	dir := t.TempDir()
 	script := filepath.Join(dir, "ffmpeg")
 	data := "#!/bin/sh\ncp ../../testdata/simple.srt \"$6\"\n"
@@ -57,9 +57,9 @@ func TestExtractSubtitleTrack(t *testing.T) {
 	os.Setenv("PATH", dir+":"+oldPath)
 	defer os.Setenv("PATH", oldPath)
 
-	items, err := ExtractSubtitleTrack("dummy.mkv", 0)
+	items, err := ExtractTrack("dummy.mkv", 1)
 	if err != nil {
-		t.Fatalf("extract track: %v", err)
+		t.Fatalf("extract: %v", err)
 	}
 	if len(items) == 0 {
 		t.Fatal("no items extracted")

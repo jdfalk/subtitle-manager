@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/asticode/go-astisub"
+
 	"github.com/jdfalk/subtitle-manager/pkg/audio"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
@@ -61,9 +62,9 @@ func (d defaultTranscriber) Transcribe(path, lang, apiKey string) ([]byte, error
 // defaultSubtitleExtractor wraps the subtitles.ExtractSubtitleTrack function to implement the SubtitleExtractor interface.
 type defaultSubtitleExtractor struct{}
 
-// ExtractTrack implements the SubtitleExtractor interface using the default ExtractSubtitleTrack function.
+// ExtractTrack implements the SubtitleExtractor interface using the default ExtractTrack function.
 func (d defaultSubtitleExtractor) ExtractTrack(mediaPath string, track int) ([]*astisub.Item, error) {
-	return subtitles.ExtractSubtitleTrack(mediaPath, track)
+	return subtitles.ExtractTrack(mediaPath, track)
 }
 
 // Sync attempts to synchronize the subtitle at subPath with the media file at
@@ -187,7 +188,6 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 			}
 		}
 	}
-
 	return items, nil
 }
 
