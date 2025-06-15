@@ -10,7 +10,9 @@ test('login flow', async ({ page }) => {
     { times: 1 }
   );
   // Subsequent calls succeed so the dashboard can load
-  await page.route('**/api/config', route => route.fulfill({ status: 200, body: '{}' }));
+  await page.route('**/api/config', route =>
+    route.fulfill({ status: 200, body: '{}' })
+  );
   await page.route('**/api/login', route => route.fulfill({ status: 200 }));
   await page.route('**/api/setup/status', route =>
     route.fulfill({ status: 200, body: JSON.stringify({ needed: false }) })
