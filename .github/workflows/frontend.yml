@@ -142,13 +142,19 @@ jobs:
       - name: Build application
         run: npm run build
 
+      - name: Verify build output
+        run: |
+          echo "Checking build output..."
+          ls -la dist/
+          echo "Build verification complete"
+
       - name: Run accessibility tests
         run: npm run test:a11y --if-present
 
       - name: Lighthouse CI
         uses: treosh/lighthouse-ci-action@v10
         with:
-          configPath: "./webui/lighthouserc.json"
+          configPath: "./lighthouserc.json"
           temporaryPublicStorage: true
           uploadArtifacts: true
 
