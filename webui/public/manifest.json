@@ -1,0 +1,17 @@
+{
+  "name": "Subtitle Manager",
+  "short_name": "SubMgr",
+  "description": "Manage, sync, and organize subtitles for your media collection",
+  "theme_color": "#1976d2",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

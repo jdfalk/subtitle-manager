@@ -31,10 +31,26 @@ export default defineConfig({
           'mui-icons': ['@mui/icons-material'],
           // Split React into separate chunk
           'react-vendor': ['react', 'react-dom'],
+          // Split router separately
+          'react-router': ['react-router-dom'],
         },
       },
     },
     // Increase chunk size warning limit to 750kb
     chunkSizeWarningLimit: 750,
+    // Enable minification and compression
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    // Enable source maps for better debugging
+    sourcemap: false,
+    // Optimize CSS
+    cssMinify: true,
+    // Optimize assets
+    assetsInlineLimit: 4096,
   },
 });

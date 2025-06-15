@@ -157,6 +157,7 @@ jobs:
           configPath: "./webui/lighthouserc.json"
           temporaryPublicStorage: true
           uploadArtifacts: true
+          artifactName: "lighthouse-report"
 
   security:
     name: Security Audit
