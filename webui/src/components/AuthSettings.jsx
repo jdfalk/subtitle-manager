@@ -3,59 +3,59 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
 /**
- * AuthSettings configures authentication credentials and API key.
+ * AuthSettings configures OAuth integration settings such as GitHub client
+ * credentials.
  *
  * @param {Object} props - Component properties
  * @param {Object} props.config - Current configuration values
  * @param {Function} props.onSave - Callback invoked with updated values
  */
 export default function AuthSettings({ config, onSave }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [apiKey, setApiKey] = useState("");
+  const [clientID, setClientID] = useState("");
+  const [clientSecret, setClientSecret] = useState("");
+  const [redirectURL, setRedirectURL] = useState("");
 
   useEffect(() => {
-    if (config && config.auth) {
-      setUsername(config.auth.username || "");
-      setPassword(config.auth.password || "");
-      setApiKey(config.auth.api_key || "");
+    if (config) {
+      setClientID(config.github_client_id || "");
+      setClientSecret(config.github_client_secret || "");
+      setRedirectURL(config.github_redirect_url || "");
     }
   }, [config]);
 
   const handleSave = () => {
     onSave({
-      "auth.username": username,
-      "auth.password": password,
-      "auth.api_key": apiKey,
+      github_client_id: clientID,
+      github_client_secret: clientSecret,
+      github_redirect_url: redirectURL,
     });
   };
 
   return (
     <Box sx={{ maxWidth: 500 }}>
       <Typography variant="h6" gutterBottom>
-        Authentication
+        OAuth Integrations
       </Typography>
       <TextField
-        label="Username"
+        label="GitHub Client ID"
         fullWidth
         sx={{ mb: 2 }}
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        value={clientID}
+        onChange={(e) => setClientID(e.target.value)}
       />
       <TextField
-        label="Password"
-        type="password"
+        label="GitHub Client Secret"
         fullWidth
         sx={{ mb: 2 }}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={clientSecret}
+        onChange={(e) => setClientSecret(e.target.value)}
       />
       <TextField
-        label="API Key"
+        label="GitHub Redirect URL"
         fullWidth
         sx={{ mb: 2 }}
-        value={apiKey}
-        onChange={(e) => setApiKey(e.target.value)}
+        value={redirectURL}
+        onChange={(e) => setRedirectURL(e.target.value)}
       />
       <Button variant="contained" onClick={handleSave}>
         Save

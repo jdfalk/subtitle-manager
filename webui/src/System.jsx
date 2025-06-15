@@ -28,8 +28,11 @@ import {
   Tooltip,
   Typography,
   useTheme,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import UserManagement from "./UserManagement.jsx";
 
 /**
  * System component displays system information, logs, and running tasks.
@@ -42,6 +45,7 @@ export default function System() {
   const [tasks, setTasks] = useState({});
   const [loading, setLoading] = useState(true);
   const [expandedRawData, setExpandedRawData] = useState(false);
+  const [tab, setTab] = useState(0);
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
@@ -113,6 +117,11 @@ export default function System() {
         </Tooltip>
       </Box>
 
+      <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ mb: 3 }}>
+        <Tab label="System" />
+        <Tab label="Users" />
+      </Tabs>
+      {tab === 0 && (
       <Grid container spacing={3}>
         {/* System Information */}
         <Grid item xs={12} md={6}>
@@ -240,9 +249,12 @@ export default function System() {
               </Paper>
             </CardContent>
           </Card>
-        </Grid>
-
-        {/* Raw Data Section - Collapsible */}
+      </Grid>
+      )}
+      {tab === 1 && (
+        <UserManagement />
+      )}
+      {/* Raw Data Section - Collapsible */}
         <Grid item xs={12}>
           <Accordion
             expanded={expandedRawData}
