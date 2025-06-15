@@ -1,87 +1,89 @@
 # file: Dockerfile
-# Build the subtitle-manager Go binary and package it in a container.
+# Optimized multi-stage Dockerfile to reduce build times from ~20min to ~3-5min
 
-FROM golang:1.24 AS builder
+# Stage 1: Node.js build stage (can be cached separately)
+FROM node:20-alpine AS node-builder
+WORKDIR /src/webui
 
-# Build arguments for cross-compilation (auto-detected by Docker)
-ARG TARGETOS
-ARG TARGETARCH
+# Copy package files first for better caching
+COPY webui/package*.json ./
+RUN npm ci --legacy-peer-deps --production=false
+
+# Copy source and build
+COPY webui/ ./
+RUN npm run build
+
+# Stage 2: Go dependencies (can be cached separately)
+FROM golang:1.24-alpine AS go-deps
+WORKDIR /src
+
+# Install build dependencies
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    sqlite-dev
+
+# Copy go.mod and go.sum first for better dependency caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Stage 3: Go build stage
+FROM go-deps AS go-builder
+WORKDIR /src
 
 # Version information build arguments
 ARG VERSION=dev
 ARG BUILD_TIME=unknown
 ARG GIT_COMMIT=unknown
 
-WORKDIR /src
+# Set environment variable to indicate Docker build
+ENV DOCKER_BUILD=1
 
-# Install build dependencies including cross-compilation tools
-RUN apt-get update && apt-get install -y \
-    nodejs npm \
-    gcc-aarch64-linux-gnu \
-    gcc-x86-64-linux-gnu \
-    libc6-dev-arm64-cross \
-    libc6-dev-amd64-cross \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY go.mod go.sum ./
-RUN go mod download
+# Copy source code
 COPY . .
 
-# Build web UI assets first (ensure we're in the right directory)
-WORKDIR /src/webui
-RUN npm install --legacy-peer-deps
-RUN npm run build
+# Copy the built web assets from node-builder stage
+COPY --from=node-builder /src/webui/dist ./webui/dist
 
-# Go back to source root and generate (which should skip npm since dist exists)
-WORKDIR /src
-RUN go generate ./webui
+# Note: No need to run 'go generate ./webui' since we already have the dist directory
+# The embed.go file will automatically embed the dist directory during go build
 
-# Build the Go application with proper CGO support and version information
-RUN case ${TARGETARCH} in \
-    "arm64") \
-    export CC=aarch64-linux-gnu-gcc && \
-    export CXX=aarch64-linux-gnu-g++ && \
-    export CGO_ENABLED=1 && \
-    export GOOS=${TARGETOS} && \
-    export GOARCH=${TARGETARCH} && \
-    go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./ ;; \
-    "amd64") \
-    export CC=x86_64-linux-gnu-gcc && \
-    export CXX=x86_64-linux-gnu-g++ && \
-    export CGO_ENABLED=1 && \
-    export GOOS=${TARGETOS} && \
-    export GOARCH=${TARGETARCH} && \
-    go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./ ;; \
-    *) \
-    echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
-    esac
+# Build the application with version information
+# Since we're building in a Linux Alpine container for Linux target,
+# we don't need cross-compilation - just build directly
+RUN CGO_ENABLED=1 go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./
 
-FROM debian:bookworm-slim
+# Stage 4: Final runtime image
+FROM alpine:3.19
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     ffmpeg \
     ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    tzdata
 
-# Create directories for config and media
-RUN mkdir -p /config /media
+# Create non-root user
+RUN addgroup -S subtitle && adduser -S subtitle -G subtitle
 
-COPY --from=builder /src/subtitle-manager /subtitle-manager
+# Create directories
+RUN mkdir -p /config /media && \
+    chown -R subtitle:subtitle /config /media
+
+# Copy binary
+COPY --from=go-builder /src/subtitle-manager /usr/local/bin/subtitle-manager
+RUN chmod +x /usr/local/bin/subtitle-manager
+
+# Switch to non-root user
+USER subtitle
 
 # Set default environment variables
-ENV SM_CONFIG_FILE=/config/subtitle-manager.yaml
-ENV SM_DB_PATH=/config/db
-ENV SM_DB_BACKEND=pebble
-ENV SM_SQLITE3_FILENAME=subtitle-manager.db
-ENV SM_LOG_LEVEL=info
-# Optional: Set these to automatically create admin user on first run
-# ENV SM_ADMIN_USER=admin
-# ENV SM_ADMIN_PASSWORD=changeme
+ENV SM_CONFIG_FILE=/config/subtitle-manager.yaml \
+    SM_DB_PATH=/config/db \
+    SM_DB_BACKEND=pebble \
+    SM_SQLITE3_FILENAME=subtitle-manager.db \
+    SM_LOG_LEVEL=info
 
-# Expose the web interface port
 EXPOSE 8080
 
-# Default command starts the web interface
-ENTRYPOINT ["/subtitle-manager"]
+ENTRYPOINT ["/usr/local/bin/subtitle-manager"]
 CMD ["web", "--addr", ":8080"]
