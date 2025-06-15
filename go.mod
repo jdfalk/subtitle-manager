@@ -2,8 +2,6 @@ module github.com/jdfalk/subtitle-manager
 
 go 1.24
 
-toolchain go1.24.4
-
 require (
 	cloud.google.com/go/translate v1.12.5
 	github.com/asticode/go-astisub v0.34.0
