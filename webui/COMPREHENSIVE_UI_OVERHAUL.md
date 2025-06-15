@@ -11,12 +11,14 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 ### 1. ✅ Provider System Completely Redesigned
 
 **Previous Issues:**
+
 - Only 4 hardcoded providers shown out of 48+ available
 - No dynamic provider loading
 - No provider configuration interface
 - No way to enable/disable providers
 
 **New Implementation:**
+
 - **Dynamic Provider Loading**: Fetches all 48+ providers from `/api/providers`
 - **Bazarr-Style Provider Cards**: Beautiful tile-based interface with:
   - Provider icons and descriptions
@@ -33,12 +35,14 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 ### 2. ✅ Settings Page Completely Rebuilt
 
 **Previous Issues:**
+
 - Generic text boxes showing `[object Object]`
 - No organization or structure
 - Impossible to configure providers properly
 - Terrible user experience
 
 **New Implementation:**
+
 - **Modern Tabbed Interface**:
   - Providers tab with card-based management
   - Full tabs for General, Database, Authentication and Notifications
@@ -55,12 +59,14 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 ### 3. ✅ Media Library with Integrated Extraction
 
 **Previous Issues:**
+
 - Separate extraction page was pointless
 - No integrated media file management
 - No way to see media files with their subtitles
 - No bulk operations
 
 **New Implementation:**
+
 - **New Media Library Component**:
   - File browser interface for media directories
   - Shows media files with their available subtitles
@@ -86,12 +92,14 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 ### New Components Created
 
 1. **`ProviderCard.jsx`**
+
    - Reusable provider tile component
    - Enable/disable functionality
    - Configuration status display
    - Add provider card for new providers
 
 2. **`ProviderConfigDialog.jsx`**
+
    - Dynamic configuration forms based on provider type
    - Field validation and error handling
    - Provider-specific help and documentation
@@ -106,11 +114,13 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 ### Enhanced Components
 
 1. **`Settings.jsx`** - Complete rewrite
+
    - Tabbed interface for different setting categories
    - Provider management integration
    - Modern Material Design 3 implementation
 
 2. **`Dashboard.jsx`** - Provider integration
+
    - Dynamic provider loading
    - Shows only enabled providers
    - Configuration status indicators
@@ -141,6 +151,7 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 ### Configuration Field Types
 
 The system supports various field types for provider configuration:
+
 - `text` - Basic text input
 - `password` - Password field with visibility toggle
 - `number` - Numeric input with min/max validation
@@ -169,11 +180,13 @@ POST /api/bulk-operation         # Bulk operations
 ### Provider Management (Bazarr-Style)
 
 1. **Visual Provider Overview**:
+
    - See all 48+ providers at a glance
    - Enabled/disabled status clearly visible
    - Configuration status indicators
 
 2. **Easy Configuration**:
+
    - Provider-specific configuration forms
    - Clear field labels and help text
    - Validation and error messages
@@ -186,11 +199,13 @@ POST /api/bulk-operation         # Bulk operations
 ### Media File Management
 
 1. **Integrated Workflow**:
+
    - Browse media files and see subtitle status
    - Perform operations directly on files
    - No need for separate extraction page
 
 2. **Bulk Operations**:
+
    - Select multiple files for batch processing
    - Progress indicators for long operations
    - Clear feedback on operation status
@@ -225,18 +240,21 @@ POST /api/bulk-operation         # Bulk operations
 ## Future Enhancements
 
 ### Provider System
+
 - Provider marketplace/discovery
 - Custom provider templates
 - Provider performance metrics
 - Automatic provider testing
 
 ### Media Library
+
 - Video thumbnails and previews
 - Subtitle synchronization tools
 - Automatic subtitle validation
 - Integration with media servers (Plex, Jellyfin)
 
 ### Settings
+
 - Configuration backup/restore
 - Settings profiles/presets
 - Advanced scheduling options

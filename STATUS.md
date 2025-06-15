@@ -9,6 +9,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 ## Completed Features ✅
 
 ### Core Infrastructure (100%)
+
 - ✅ Complete CLI with all 20+ commands
 - ✅ Configuration management with Viper + YAML
 - ✅ Component-based logging with adjustable levels
@@ -17,6 +18,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 - ✅ CI/CD pipeline with automated testing
 
 ### Authentication & Authorization (100%)
+
 - ✅ Password-based authentication with hashed storage
 - ✅ One-time token generation for email logins
 - ✅ GitHub OAuth2 integration
@@ -25,6 +27,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 - ✅ Session management with database persistence
 
 ### Subtitle Processing (100%)
+
 - ✅ Format conversion between all major subtitle formats
 - ✅ Track merging with time-based sorting
 - ✅ Media container extraction via ffmpeg
@@ -33,6 +36,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 - ✅ Batch processing with concurrent workers
 
 ### Provider Integration (100%)
+
 - ✅ **40+ subtitle providers** with full Bazarr parity:
   - OpenSubtitles, Subscene, Podnapisi, Addic7ed
   - TVSubtitles, Titlovi, LegendasDivx, GreekSubs
@@ -42,6 +46,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 - ✅ Automatic provider credential management
 
 ### Library Management (100%)
+
 - ✅ Directory monitoring with recursive watching
 - ✅ Existing library scanning with concurrent workers
 - ✅ Sonarr and Radarr integration commands
@@ -50,6 +55,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 - ✅ Automatic subtitle upgrading and management
 
 ### Web Interface (100%)
+
 - ✅ **Complete React application** with Vite build system
 - ✅ **Dashboard**: Library scanning with provider selection
 - ✅ **Settings**: Full configuration management mirroring Bazarr
@@ -60,6 +66,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 - ✅ Responsive design with modern UI components
 
 ### REST API (100%)
+
 - ✅ **Complete API coverage** for all operations
 - ✅ Authentication endpoints (login, setup, OAuth2)
 - ✅ Configuration management (GET/POST /api/config)
@@ -69,6 +76,7 @@ Subtitle Manager has achieved **production-ready status** with full Bazarr featu
 - ✅ Role-based access control enforcement
 
 ### Infrastructure Services (100%)
+
 - ✅ gRPC server for remote translation services
 - ✅ Background task management and monitoring
 - ✅ Memory-based log capture for web interface

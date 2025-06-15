@@ -343,28 +343,33 @@ Access the web interface at `http://localhost:8080`
 Configure Subtitle Manager using environment variables with the `SM_` prefix:
 
 **Basic Configuration:**
+
 - `SM_LOG_LEVEL` - Log level (debug, info, warn, error) - Default: `info`
 - `SM_CONFIG_FILE` - Path to configuration file - Default: `/config/subtitle-manager.yaml`
 - `SM_DB_PATH` - Database file path - Default: `/config/subtitle-manager.db`
 - `SM_DB_BACKEND` - Database backend (sqlite, pebble, postgres) - Default: `sqlite`
 
 **API Keys:**
+
 - `SM_GOOGLE_API_KEY` - Google Translate API key
 - `SM_OPENAI_API_KEY` - OpenAI/ChatGPT API key
 - `SM_OPENSUBTITLES_API_KEY` - OpenSubtitles API key
 
 **Performance Tuning:**
+
 - `SM_BATCH_WORKERS` - Number of concurrent translation workers - Default: `4`
 - `SM_SCAN_WORKERS` - Number of concurrent scanning workers - Default: `4`
 - `SM_FFMPEG_PATH` - Path to ffmpeg binary - Default: `/usr/bin/ffmpeg`
 
 **Provider Configuration:**
+
 - `SM_PROVIDERS_GENERIC_API_URL` - Generic provider API URL
 - `SM_PROVIDERS_GENERIC_USERNAME` - Generic provider username
 - `SM_PROVIDERS_GENERIC_PASSWORD` - Generic provider password
 - `SM_PROVIDERS_GENERIC_API_KEY` - Generic provider API key
 
 **GitHub OAuth (Optional):**
+
 - `SM_GITHUB_CLIENT_ID` - GitHub OAuth client ID
 - `SM_GITHUB_CLIENT_SECRET` - GitHub OAuth client secret
 - `SM_GITHUB_REDIRECT_URL` - OAuth redirect URL
@@ -372,10 +377,12 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 #### Volume Mounts
 
 **Required Volumes:**
+
 - `/config` - Configuration and database storage
 - `/media` - Media library access (read-only recommended)
 
 **Optional Volumes:**
+
 - `/subtitles` - Custom subtitle storage location
 
 #### Docker Compose
@@ -400,8 +407,9 @@ docker-compose down
 ```
 
 **Sample docker-compose.yml:**
+
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   subtitle-manager:
     image: ghcr.io/jdfalk/subtitle-manager:latest
