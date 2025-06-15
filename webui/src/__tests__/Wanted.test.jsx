@@ -1,7 +1,7 @@
 // file: webui/src/__tests__/Wanted.test.jsx
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, expect } from 'vitest';
 import '@testing-library/jest-dom';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { expect, vi } from 'vitest';
 import Wanted from '../Wanted.jsx';
 
 describe('Wanted component', () => {
@@ -22,13 +22,13 @@ describe('Wanted component', () => {
       ok: true,
       json: () => Promise.resolve(['u']),
     });
-    fireEvent.change(screen.getByPlaceholderText('Media path'), {
+    fireEvent.change(screen.getByPlaceholderText('/path/to/movie.mkv'), {
       target: { value: 'f' },
     });
     fireEvent.click(screen.getByText('Search'));
     await waitFor(() =>
       expect(fetch).toHaveBeenLastCalledWith(
-        '/api/search?provider=generic&path=f&lang=en'
+        '/api/search?provider=embedded&path=f&lang=en'
       )
     );
   });

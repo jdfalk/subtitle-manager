@@ -14,10 +14,10 @@ describe('Extract component', () => {
 
   test('posts path and displays status', async () => {
     render(<Extract />);
-    fireEvent.change(screen.getByPlaceholderText('/path/to/media'), {
+    fireEvent.change(screen.getByPlaceholderText('/path/to/media/file.mkv'), {
       target: { value: '/movie.mkv' },
     });
-    fireEvent.click(screen.getByText('Extract'));
+    fireEvent.click(screen.getByText('Extract Subtitles'));
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/extract', expect.any(Object))
     );

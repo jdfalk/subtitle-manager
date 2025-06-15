@@ -1,6 +1,6 @@
 // file: webui/src/__tests__/Convert.test.jsx
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import Convert from '../Convert.jsx';
 
@@ -16,7 +16,7 @@ describe('Convert component', () => {
     render(<Convert />);
     const file = new File(['foo'], 'f.srt', { type: 'text/plain' });
     fireEvent.change(screen.getByTestId('file'), { target: { files: [file] } });
-    fireEvent.click(screen.getByText('Convert'));
+    fireEvent.click(screen.getByText('Convert to SRT'));
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/convert', expect.any(Object))
     );

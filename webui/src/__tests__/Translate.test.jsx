@@ -1,6 +1,6 @@
 // file: webui/src/__tests__/Translate.test.jsx
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import Translate from '../Translate.jsx';
 
@@ -16,9 +16,13 @@ describe('Translate component', () => {
     render(<Translate />);
     const file = new File(['foo'], 'f.srt', { type: 'text/plain' });
     fireEvent.change(screen.getByTestId('file'), { target: { files: [file] } });
-    fireEvent.change(screen.getByPlaceholderText('Language'), {
-      target: { value: 'es' },
-    });
+
+    // Click on the select to open it and select a language
+    const selectElement = screen.getByRole('combobox');
+    fireEvent.mouseDown(selectElement);
+    const esOption = await screen.findByText('Spanish');
+    fireEvent.click(esOption);
+
     fireEvent.click(screen.getByText('Translate'));
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/translate', expect.any(Object))

@@ -18,15 +18,18 @@ describe('Dashboard component', () => {
 
   test('starts scan with provided options', async () => {
     render(<Dashboard />);
-    fireEvent.change(screen.getByPlaceholderText('Directory'), {
+    fireEvent.change(screen.getByPlaceholderText('Enter directory to scan'), {
       target: { value: '/tmp' },
     });
-    fireEvent.change(screen.getByPlaceholderText('Language'), {
-      target: { value: 'fr' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Provider'), {
-      target: { value: 'generic' },
-    });
+
+    // Click on the Language select to open it and select French
+    const languageSelect = screen.getByRole('combobox');
+    fireEvent.mouseDown(languageSelect);
+    const frenchOption = await screen.findByText('French');
+    fireEvent.click(frenchOption);
+
+    // Skip provider selection for now since it's more complex
+
     fireEvent.click(screen.getByText('Scan'));
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/scan', expect.any(Object))

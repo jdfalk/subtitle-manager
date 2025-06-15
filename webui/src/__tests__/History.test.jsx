@@ -1,7 +1,7 @@
 // file: webui/src/__tests__/History.test.jsx
-import { vi, expect, describe, test, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import History from '../History.jsx';
 
 describe('History component', () => {
@@ -26,7 +26,7 @@ describe('History component', () => {
   test('loads and filters history', async () => {
     render(<History />);
     await screen.findByText('a.srt');
-    fireEvent.change(screen.getByPlaceholderText('Filter language'), {
+    fireEvent.change(screen.getByPlaceholderText('Filter by language (e.g., en, es, fr)'), {
       target: { value: 'fr' },
     });
     await waitFor(() =>

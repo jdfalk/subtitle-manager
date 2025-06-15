@@ -22,7 +22,13 @@ describe('Settings component', () => {
 
     render(<Settings />);
 
+    // Wait for the settings to load and tabs to appear
+    await waitFor(() => screen.getByText('General'));
+
+    // Click the General tab
     fireEvent.click(screen.getByRole('tab', { name: /General/i }));
+
+    // Wait for the general settings form to load
     await screen.findByDisplayValue('Test');
 
     fetch.mockResolvedValueOnce({ ok: true });
