@@ -78,7 +78,9 @@ func TestRunCron(t *testing.T) {
 	if err != context.Canceled {
 		t.Fatalf("expected context canceled, got %v", err)
 	}
-	if n < 2 {
-		t.Fatalf("expected at least 2 executions, got %d", n)
+	// Use atomic load to avoid race condition
+	count := atomic.LoadInt32(&n)
+	if count < 2 {
+		t.Fatalf("expected at least 2 executions, got %d", count)
 	}
 }
