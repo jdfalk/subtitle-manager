@@ -213,6 +213,10 @@ func StartServer(addr string) error {
 	if err != nil {
 		return err
 	}
+
+	// Start periodic cleanup of expired sessions
+	go startSessionCleanup(db)
+
 	return http.ListenAndServe(addr, h)
 }
 
@@ -982,4 +986,19 @@ func extractLanguageFromFilename(filename string) string {
 
 	// Default to English if no language detected
 	return "English"
+}
+
+// startSessionCleanup runs a periodic cleanup of expired sessions.
+// This prevents the sessions table from growing indefinitely with expired tokens.
+func startSessionCleanup(db *sql.DB) {
+	ticker := time.NewTicker(1 * time.Hour) // Cleanup every hour
+	defer ticker.Stop()
+
+	for range ticker.C {
+		if err := auth.CleanupExpiredSessions(db); err != nil {
+			// Log the error but don't stop the cleanup routine
+			// In a production app, you'd use proper logging here
+			fmt.Printf("Failed to cleanup expired sessions: %v\n", err)
+		}
+	}
 }
