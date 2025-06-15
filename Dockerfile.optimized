@@ -31,6 +31,9 @@ RUN go mod download
 FROM go-deps AS go-builder
 WORKDIR /src
 
+# Set environment variable to indicate Docker build
+ENV DOCKER_BUILD=1
+
 # Copy source code
 COPY . .
 
@@ -41,12 +44,9 @@ COPY --from=node-builder /src/webui/dist ./webui/dist
 # The embed.go file will automatically embed the dist directory during go build
 
 # Build the application
-ARG TARGETOS=linux
-ARG TARGETARCH=amd64
-RUN CGO_ENABLED=1 \
-    GOOS=${TARGETOS} \
-    GOARCH=${TARGETARCH} \
-    go build -ldflags="-s -w" -o subtitle-manager ./
+# Since we're building in a Linux Alpine container for Linux target,
+# we don't need cross-compilation - just build directly
+RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o subtitle-manager ./
 
 # Stage 4: Final runtime image
 FROM alpine:3.19
