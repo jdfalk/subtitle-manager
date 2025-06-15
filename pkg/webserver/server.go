@@ -163,6 +163,8 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	// New API endpoints for modern UI
 	mux.Handle(prefix+"/api/providers", authMiddleware(db, "basic", providersHandler()))
 	mux.Handle(prefix+"/api/library/browse", authMiddleware(db, "basic", libraryBrowseHandler()))
+	mux.Handle(prefix+"/api/users", authMiddleware(db, "admin", usersHandler(db)))
+	mux.Handle(prefix+"/api/users/", authMiddleware(db, "admin", userResetHandler(db)))
 	fsHandler := http.FileServer(http.FS(f))
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
 	return mux, nil
