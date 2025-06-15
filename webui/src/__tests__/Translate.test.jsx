@@ -10,6 +10,24 @@ describe('Translate component', () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({ ok: true, blob: () => Promise.resolve(new Blob()) })
     );
+
+    // Mock DOM methods to prevent navigation warnings
+    global.URL.createObjectURL = vi.fn(() => 'mock-url');
+    global.URL.revokeObjectURL = vi.fn();
+
+    // Mock document.createElement and click to prevent navigation
+    const originalCreateElement = global.document.createElement;
+    const mockAnchor = {
+      href: '',
+      download: '',
+      click: vi.fn()
+    };
+    global.document.createElement = vi.fn((tagName) => {
+      if (tagName === 'a') {
+        return mockAnchor;
+      }
+      return originalCreateElement.call(document, tagName);
+    });
   });
 
   test('uploads file and language to translate endpoint', async () => {
