@@ -20,7 +20,17 @@ func SetFFmpegPath(path string) {
 // ExtractFromMedia extracts the first subtitle stream from the given media
 // container using the `ffmpeg` command line tool. The resulting subtitle items
 // are returned. The `ffmpeg` binary must be available in $PATH.
+// ExtractFromMedia extracts the first subtitle stream from the given media
+// container using ffmpeg. It is a convenience wrapper around ExtractTrack with
+// track index 0.
 func ExtractFromMedia(mediaPath string) ([]*astisub.Item, error) {
+	return ExtractTrack(mediaPath, 0)
+}
+
+// ExtractTrack extracts the specified subtitle track from the given media
+// container using the `ffmpeg` command line tool. The resulting subtitle items
+// are returned. The `ffmpeg` binary must be available in $PATH.
+func ExtractTrack(mediaPath string, track int) ([]*astisub.Item, error) {
 	tmp, err := os.CreateTemp("", "subextract-*.srt")
 	if err != nil {
 		return nil, err
@@ -28,7 +38,7 @@ func ExtractFromMedia(mediaPath string) ([]*astisub.Item, error) {
 	tmp.Close()
 	defer os.Remove(tmp.Name())
 
-	cmd := exec.CommandContext(context.Background(), ffmpegPath, "-y", "-i", mediaPath, "-map", "0:s:0", tmp.Name())
+	cmd := exec.CommandContext(context.Background(), ffmpegPath, "-y", "-i", mediaPath, "-map", fmt.Sprintf("0:s:%d", track), tmp.Name())
 	if out, err := cmd.CombinedOutput(); err != nil {
 		return nil, fmt.Errorf("ffmpeg: %v: %s", err, out)
 	}
