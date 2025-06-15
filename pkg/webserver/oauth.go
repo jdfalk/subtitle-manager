@@ -89,7 +89,18 @@ func githubCallbackHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		http.SetCookie(w, &http.Cookie{Name: "session", Value: tokenStr, Path: "/", HttpOnly: true})
+
+		// Set secure session cookie with proper security attributes
+		cookie := &http.Cookie{
+			Name:     "session",
+			Value:    tokenStr,
+			Path:     "/",
+			HttpOnly: true,                            // Prevents XSS attacks
+			Secure:   r.TLS != nil,                    // HTTPS only in production
+			SameSite: http.SameSiteStrictMode,         // CSRF protection
+			MaxAge:   int((24 * time.Hour).Seconds()), // Explicit expiration
+		}
+		http.SetCookie(w, cookie)
 		http.Redirect(w, r, "/", http.StatusFound)
 	})
 }

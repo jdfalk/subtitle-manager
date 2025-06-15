@@ -171,6 +171,26 @@ func ConsumeOneTimeToken(db *sql.DB, token string) (int64, error) {
 	return userID, nil
 }
 
+// InvalidateSession removes a session token from the database, effectively logging out the user.
+func InvalidateSession(db *sql.DB, token string) error {
+	_, err := db.Exec(`DELETE FROM sessions WHERE token = ?`, token)
+	return err
+}
+
+// InvalidateUserSessions removes all session tokens for a specific user.
+// This is useful for force-logout scenarios or when a user's permissions change.
+func InvalidateUserSessions(db *sql.DB, userID int64) error {
+	_, err := db.Exec(`DELETE FROM sessions WHERE user_id = ?`, userID)
+	return err
+}
+
+// CleanupExpiredSessions removes all expired session tokens from the database.
+// This should be called periodically to prevent the sessions table from growing indefinitely.
+func CleanupExpiredSessions(db *sql.DB) error {
+	_, err := db.Exec(`DELETE FROM sessions WHERE expires_at < ?`, time.Now())
+	return err
+}
+
 // User represents an account in the system.
 // ID is stored as a string for convenience when printing.
 type User struct {
