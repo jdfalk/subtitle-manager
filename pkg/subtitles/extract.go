@@ -17,10 +17,17 @@ func SetFFmpegPath(path string) {
 	ffmpegPath = path
 }
 
-// ExtractSubtitleTrack extracts the subtitle stream at the given track index
-// from mediaPath using `ffmpeg`. The resulting subtitle items are returned.
-// Track indexes start at 0. The `ffmpeg` binary must be available in $PATH.
-func ExtractSubtitleTrack(mediaPath string, track int) ([]*astisub.Item, error) {
+// ExtractFromMedia extracts the first subtitle stream from the given media
+// container using ffmpeg. It is a convenience wrapper around ExtractTrack with
+// track index 0.
+func ExtractFromMedia(mediaPath string) ([]*astisub.Item, error) {
+	return ExtractTrack(mediaPath, 0)
+}
+
+// ExtractTrack extracts the specified subtitle track from the given media
+// container using the `ffmpeg` command line tool. The resulting subtitle items
+// are returned. The `ffmpeg` binary must be available in $PATH.
+func ExtractTrack(mediaPath string, track int) ([]*astisub.Item, error) {
 	tmp, err := os.CreateTemp("", "subextract-*.srt")
 	if err != nil {
 		return nil, err
@@ -28,8 +35,7 @@ func ExtractSubtitleTrack(mediaPath string, track int) ([]*astisub.Item, error) 
 	tmp.Close()
 	defer os.Remove(tmp.Name())
 
-	mapArg := fmt.Sprintf("0:s:%d", track)
-	cmd := exec.CommandContext(context.Background(), ffmpegPath, "-y", "-i", mediaPath, "-map", mapArg, tmp.Name())
+	cmd := exec.CommandContext(context.Background(), ffmpegPath, "-y", "-i", mediaPath, "-map", fmt.Sprintf("0:s:%d", track), tmp.Name())
 	if out, err := cmd.CombinedOutput(); err != nil {
 		return nil, fmt.Errorf("ffmpeg: %v: %s", err, out)
 	}
@@ -41,11 +47,4 @@ func ExtractSubtitleTrack(mediaPath string, track int) ([]*astisub.Item, error) 
 	items := make([]*astisub.Item, len(sub.Items))
 	copy(items, sub.Items)
 	return items, nil
-}
-
-// ExtractFromMedia extracts the first subtitle stream from the given media
-// container using the `ffmpeg` command line tool. The resulting subtitle items
-// are returned. The `ffmpeg` binary must be available in $PATH.
-func ExtractFromMedia(mediaPath string) ([]*astisub.Item, error) {
-	return ExtractSubtitleTrack(mediaPath, 0)
 }

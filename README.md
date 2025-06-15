@@ -132,7 +132,7 @@ services are available:
 ### 🎯 Optional Remaining Features
 
 - Advanced reverse proxy base URL support
-- ~~Automatic subtitle synchronization using audio and embedded tracks~~ ✅ **COMPLETED**
+- ~~Automatic subtitle synchronization using audio and embedded tracks with selectable audio and subtitle stream indices~~ ✅ **COMPLETED**
 
 The backend provides full production functionality with feature parity to Bazarr for all core subtitle management operations, plus additional enterprise features. The frontend requires UI/UX improvements to match the backend's quality and completeness.
 

@@ -1,6 +1,9 @@
 package syncer
 
 import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -9,7 +12,10 @@ import (
 	"github.com/asticode/go-astisub"
 	"github.com/stretchr/testify/mock"
 
+	"github.com/jdfalk/subtitle-manager/pkg/audio"
+	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/syncer/mocks"
+	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
 )
 
 // TestShift verifies that the Shift function offsets subtitles by the given duration.
@@ -41,57 +47,28 @@ func TestComputeOffset(t *testing.T) {
 	}
 }
 
-// TestSyncWeighted verifies synchronization using both audio and embedded
-// subtitles with weighted averaging.
-func TestSyncWeighted(t *testing.T) {
-	base, err := astisub.OpenFile("../../testdata/simple.srt")
-	if err != nil {
-		t.Fatalf("open base: %v", err)
-	}
-	shifted := Shift(base.Items, -1*time.Second)
+// TestSyncEmbedded verifies that embedded subtitle tracks are used to adjust
+// timing.
+func TestSyncEmbedded(t *testing.T) {
 	dir := t.TempDir()
-	subFile := filepath.Join(dir, "shifted.srt")
-	f, err := os.Create(subFile)
-	if err != nil {
-		t.Fatalf("create temp: %v", err)
+	script := filepath.Join(dir, "ffmpeg")
+	data := `#!/bin/sh
+last=$(eval echo \${$#}); cp ../../testdata/simple.srt "$last"
+`
+	if err := os.WriteFile(script, []byte(data), 0755); err != nil {
+		t.Fatalf("write script: %v", err)
 	}
-	subs := astisub.Subtitles{Items: shifted}
-	if err := subs.WriteToSRT(f); err != nil {
-		t.Fatalf("write SRT: %v", err)
-	}
-	f.Close()
+	oldPath := os.Getenv("PATH")
+	os.Setenv("PATH", dir+":"+oldPath)
+	defer os.Setenv("PATH", oldPath)
 
-	// Create mocks
-	mockTranscriber := mocks.NewTranscriber(t)
-	mockExtractor := mocks.NewSubtitleExtractor(t)
+	subtitles.SetFFmpegPath("ffmpeg")
 
-	// Setup transcriber mock to return the original test file content
-	b, _ := os.ReadFile("../../testdata/simple.srt")
-	mockTranscriber.EXPECT().Transcribe(mock.AnythingOfType("string"), "", "test-key").
-		Return(b, nil)
-
-	// Setup extractor mock to return items shifted by 1 second
-	mockExtractor.EXPECT().ExtractTrack("dummy.mkv", 0).
-		Return(Shift(base.Items, time.Second), nil)
-
-	opts := Options{
-		UseAudio:          true,
-		UseEmbedded:       true,
-		AudioWeight:       0.7,
-		WhisperKey:        "test-key",
-		Transcriber:       mockTranscriber,
-		SubtitleExtractor: mockExtractor,
-	}
-
-	items, err := Sync("dummy.mkv", subFile, opts)
+	items, err := Sync("dummy.mkv", "../../testdata/simple_offset.srt", Options{UseEmbedded: true, SubtitleTracks: []int{0}})
 	if err != nil {
 		t.Fatalf("sync: %v", err)
 	}
-	if len(items) == 0 {
-		t.Fatal("no items returned")
-	}
-	exp := 1300 * time.Millisecond
-	if items[0].StartAt != exp {
+	if items[0].StartAt != time.Second {
 		t.Fatalf("unexpected start %v", items[0].StartAt)
 	}
 }
@@ -279,5 +256,96 @@ func TestSyncDefaultBehavior(t *testing.T) {
 
 	if len(items) == 0 {
 		t.Fatal("no items returned")
+	}
+}
+
+// TestSyncAudio verifies that audio transcription is used when requested.
+func TestSyncAudio(t *testing.T) {
+	ffdir := t.TempDir()
+	script := filepath.Join(ffdir, "ffmpeg")
+	data := `#!/bin/sh
+last=$(eval echo \${$#}); cp ../../testdata/simple.srt "$last"
+`
+	if err := os.WriteFile(script, []byte(data), 0755); err != nil {
+		t.Fatalf("write script: %v", err)
+	}
+	oldPath := os.Getenv("PATH")
+	os.Setenv("PATH", ffdir+":"+oldPath)
+	defer os.Setenv("PATH", oldPath)
+	audio.SetFFmpegPath("ffmpeg")
+
+	var gotPath string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotPath = r.URL.Path
+		fmt.Fprint(w, "1\n00:00:01,000 --> 00:00:02,000\nHello\n")
+	}))
+	defer srv.Close()
+	transcriber.SetBaseURL(srv.URL + "/v1")
+	defer transcriber.SetBaseURL("https://api.openai.com/v1")
+
+	items, err := Sync("dummy.mkv", "../../testdata/simple_offset.srt", Options{UseAudio: true, AudioTrack: 0, WhisperKey: "k"})
+	if err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+	if gotPath != "/v1/audio/transcriptions" {
+		t.Fatalf("unexpected path %s", gotPath)
+	}
+	if items[0].StartAt != time.Second {
+		t.Fatalf("unexpected start %v", items[0].StartAt)
+	}
+}
+
+// TestSyncWeighted verifies synchronization using both audio and embedded
+// subtitles with weighted averaging.
+func TestSyncWeighted(t *testing.T) {
+	base, err := astisub.OpenFile("../../testdata/simple.srt")
+	if err != nil {
+		t.Fatalf("open base: %v", err)
+	}
+	shifted := Shift(base.Items, -1*time.Second)
+	dir := t.TempDir()
+	subFile := filepath.Join(dir, "shifted.srt")
+	f, err := os.Create(subFile)
+	if err != nil {
+		t.Fatalf("create temp: %v", err)
+	}
+	subs := astisub.Subtitles{Items: shifted}
+	if err := subs.WriteToSRT(f); err != nil {
+		t.Fatalf("write SRT: %v", err)
+	}
+	f.Close()
+
+	// Create mocks
+	mockTranscriber := mocks.NewTranscriber(t)
+	mockExtractor := mocks.NewSubtitleExtractor(t)
+
+	// Setup transcriber mock to return the original test file content
+	b, _ := os.ReadFile("../../testdata/simple.srt")
+	mockTranscriber.EXPECT().Transcribe(mock.AnythingOfType("string"), "", "test-key").
+		Return(b, nil)
+
+	// Setup extractor mock to return items shifted by 1 second
+	mockExtractor.EXPECT().ExtractTrack("dummy.mkv", 0).
+		Return(Shift(base.Items, time.Second), nil)
+
+	opts := Options{
+		UseAudio:          true,
+		UseEmbedded:       true,
+		AudioWeight:       0.7,
+		WhisperKey:        "test-key",
+		Transcriber:       mockTranscriber,
+		SubtitleExtractor: mockExtractor,
+	}
+
+	items, err := Sync("dummy.mkv", subFile, opts)
+	if err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+	if len(items) == 0 {
+		t.Fatal("no items returned")
+	}
+	exp := 1300 * time.Millisecond
+	if items[0].StartAt != exp {
+		t.Fatalf("unexpected start %v", items[0].StartAt)
 	}
 }
