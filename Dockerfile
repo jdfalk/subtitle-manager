@@ -1,7 +1,7 @@
 # file: Dockerfile
 # Build the subtitle-manager Go binary and package it in a container.
 
-FROM golang:1.23 AS builder
+FROM golang:1.24 AS builder
 
 # Build arguments for cross-compilation (auto-detected by Docker)
 ARG TARGETOS

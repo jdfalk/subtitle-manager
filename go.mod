@@ -1,6 +1,8 @@
-module subtitle-manager
+module github.com/jdfalk/subtitle-manager
 
-go 1.23.8
+go 1.24
+
+toolchain go1.24.4
 
 require (
 	cloud.google.com/go/translate v1.12.5
