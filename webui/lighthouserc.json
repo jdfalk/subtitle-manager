@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": "./webui/dist",
+      "staticDistDir": "./dist",
       "numberOfRuns": 1
     },
     "assert": {
