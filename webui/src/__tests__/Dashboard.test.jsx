@@ -1,10 +1,10 @@
 // file: webui/src/__tests__/Dashboard.test.jsx
-import "@testing-library/jest-dom/vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import Dashboard from "../Dashboard.jsx";
+import '@testing-library/jest-dom/vitest';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import Dashboard from '../Dashboard.jsx';
 
-describe("Dashboard component", () => {
+describe('Dashboard component', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     global.fetch = vi.fn(() =>
@@ -12,24 +12,24 @@ describe("Dashboard component", () => {
         ok: true,
         json: () =>
           Promise.resolve({ running: false, completed: 0, files: [] }),
-      }),
+      })
     );
   });
 
-  test("starts scan with provided options", async () => {
+  test('starts scan with provided options', async () => {
     render(<Dashboard />);
-    fireEvent.change(screen.getByPlaceholderText("Directory"), {
-      target: { value: "/tmp" },
+    fireEvent.change(screen.getByPlaceholderText('Directory'), {
+      target: { value: '/tmp' },
     });
-    fireEvent.change(screen.getByPlaceholderText("Language"), {
-      target: { value: "fr" },
+    fireEvent.change(screen.getByPlaceholderText('Language'), {
+      target: { value: 'fr' },
     });
-    fireEvent.change(screen.getByPlaceholderText("Provider"), {
-      target: { value: "generic" },
+    fireEvent.change(screen.getByPlaceholderText('Provider'), {
+      target: { value: 'generic' },
     });
-    fireEvent.click(screen.getByText("Scan"));
+    fireEvent.click(screen.getByText('Scan'));
     await waitFor(() =>
-      expect(fetch).toHaveBeenCalledWith("/api/scan", expect.any(Object)),
+      expect(fetch).toHaveBeenCalledWith('/api/scan', expect.any(Object))
     );
   });
 });

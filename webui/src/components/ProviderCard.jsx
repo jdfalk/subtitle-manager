@@ -1,24 +1,24 @@
 // file: webui/src/components/ProviderCard.jsx
 
 import {
-    Add as AddIcon,
-    Delete as DeleteIcon,
-    CheckCircle as EnabledIcon,
-    Settings as SettingsIcon
-} from "@mui/icons-material";
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  CheckCircle as EnabledIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
 import {
-    Avatar,
-    Box,
-    Card,
-    CardActions,
-    CardContent,
-    Chip,
-    FormControlLabel,
-    IconButton,
-    Switch,
-    Tooltip,
-    Typography,
-} from "@mui/material";
+  Avatar,
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  Chip,
+  FormControlLabel,
+  IconButton,
+  Switch,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 
 /**
  * ProviderCard displays a single subtitle provider with enable/disable toggle
@@ -39,7 +39,7 @@ export default function ProviderCard({
   onToggle,
   onConfigure,
   onDelete,
-  isAddCard = false
+  isAddCard = false,
 }) {
   if (isAddCard) {
     return (
@@ -57,7 +57,7 @@ export default function ProviderCard({
           '&:hover': {
             backgroundColor: 'action.selected',
             transform: 'translateY(-2px)',
-          }
+          },
         }}
         onClick={onConfigure}
       >
@@ -69,7 +69,7 @@ export default function ProviderCard({
               mx: 'auto',
               mb: 1,
               backgroundColor: 'primary.main',
-              fontSize: '2rem'
+              fontSize: '2rem',
             }}
           >
             <AddIcon fontSize="large" />
@@ -85,7 +85,7 @@ export default function ProviderCard({
     );
   }
 
-  const getProviderIcon = (name) => {
+  const getProviderIcon = name => {
     // Return first letter or custom icons for well-known providers
     const customIcons = {
       opensubtitles: '🎬',
@@ -108,7 +108,7 @@ export default function ProviderCard({
         '&:hover': {
           transform: 'translateY(-2px)',
           boxShadow: 4,
-        }
+        },
       }}
     >
       <CardContent sx={{ pb: 1 }}>
@@ -119,7 +119,7 @@ export default function ProviderCard({
               height: 40,
               mr: 1,
               backgroundColor: provider.enabled ? 'success.main' : 'grey.400',
-              fontSize: '1.2rem'
+              fontSize: '1.2rem',
             }}
           >
             {getProviderIcon(provider.name)}
@@ -132,7 +132,7 @@ export default function ProviderCard({
               control={
                 <Switch
                   checked={provider.enabled}
-                  onChange={(e) => onToggle(provider.name, e.target.checked)}
+                  onChange={e => onToggle(provider.name, e.target.checked)}
                   size="small"
                 />
               }
@@ -154,12 +154,13 @@ export default function ProviderCard({
             WebkitBoxOrient: 'vertical',
           }}
         >
-          {provider.description || `${provider.displayName || provider.name} subtitle provider`}
+          {provider.description ||
+            `${provider.displayName || provider.name} subtitle provider`}
         </Typography>
 
         {provider.languages && provider.languages.length > 0 && (
           <Box display="flex" flexWrap="wrap" gap={0.5} mb={1}>
-            {provider.languages.slice(0, 3).map((lang) => (
+            {provider.languages.slice(0, 3).map(lang => (
               <Chip
                 key={lang}
                 label={lang.toUpperCase()}

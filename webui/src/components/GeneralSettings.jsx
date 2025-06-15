@@ -1,6 +1,14 @@
 // file: webui/src/components/GeneralSettings.jsx
-import { Box, Button, FormControlLabel, MenuItem, Switch, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  MenuItem,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
 /**
  * GeneralSettings provides configuration fields for core server options.
@@ -10,16 +18,16 @@ import { useEffect, useState } from "react";
  * @param {Function} props.onSave - Callback invoked with updated values
  */
 export default function GeneralSettings({ config, onSave }) {
-  const [serverName, setServerName] = useState("");
-  const [baseURL, setBaseURL] = useState("");
-  const [logLevel, setLogLevel] = useState("info");
+  const [serverName, setServerName] = useState('');
+  const [baseURL, setBaseURL] = useState('');
+  const [logLevel, setLogLevel] = useState('info');
   const [reverseProxy, setReverseProxy] = useState(false);
 
   useEffect(() => {
     if (config) {
-      setServerName(config.server_name || "");
-      setBaseURL(config.base_url || "");
-      setLogLevel(config.log_level || "info");
+      setServerName(config.server_name || '');
+      setBaseURL(config.base_url || '');
+      setLogLevel(config.log_level || 'info');
       setReverseProxy(config.reverse_proxy || false);
     }
   }, [config]);
@@ -43,14 +51,14 @@ export default function GeneralSettings({ config, onSave }) {
         fullWidth
         sx={{ mb: 2 }}
         value={serverName}
-        onChange={(e) => setServerName(e.target.value)}
+        onChange={e => setServerName(e.target.value)}
       />
       <TextField
         label="Base URL"
         fullWidth
         sx={{ mb: 2 }}
         value={baseURL}
-        onChange={(e) => setBaseURL(e.target.value)}
+        onChange={e => setBaseURL(e.target.value)}
         helperText="Path prefix when behind a reverse proxy"
       />
       <TextField
@@ -59,9 +67,9 @@ export default function GeneralSettings({ config, onSave }) {
         fullWidth
         sx={{ mb: 2 }}
         value={logLevel}
-        onChange={(e) => setLogLevel(e.target.value)}
+        onChange={e => setLogLevel(e.target.value)}
       >
-        {['debug', 'info', 'warn', 'error'].map((lvl) => (
+        {['debug', 'info', 'warn', 'error'].map(lvl => (
           <MenuItem key={lvl} value={lvl}>
             {lvl}
           </MenuItem>
@@ -69,7 +77,12 @@ export default function GeneralSettings({ config, onSave }) {
       </TextField>
       <FormControlLabel
         sx={{ mb: 2 }}
-        control={<Switch checked={reverseProxy} onChange={(e) => setReverseProxy(e.target.checked)} />}
+        control={
+          <Switch
+            checked={reverseProxy}
+            onChange={e => setReverseProxy(e.target.checked)}
+          />
+        }
         label="Running behind a reverse proxy"
       />
       <Button variant="contained" onClick={handleSave}>

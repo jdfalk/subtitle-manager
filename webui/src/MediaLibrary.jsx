@@ -1,41 +1,41 @@
 // file: webui/src/MediaLibrary.jsx
 
 import {
-    Download as DownloadIcon,
-    Archive as ExtractIcon,
-    Folder as FolderIcon,
-    Info as InfoIcon,
-    MoreVert as MoreIcon,
-    Movie as MovieIcon,
-    Refresh as RefreshIcon,
-    CloudDownload as SearchIcon,
-    Subtitles as SubtitleIcon,
-    Translate as TranslateIcon,
-    Tv as TvIcon
-} from "@mui/icons-material";
+  Download as DownloadIcon,
+  Archive as ExtractIcon,
+  Folder as FolderIcon,
+  Info as InfoIcon,
+  MoreVert as MoreIcon,
+  Movie as MovieIcon,
+  Refresh as RefreshIcon,
+  CloudDownload as SearchIcon,
+  Subtitles as SubtitleIcon,
+  Translate as TranslateIcon,
+  Tv as TvIcon,
+} from '@mui/icons-material';
 import {
-    Box,
-    Breadcrumbs,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Divider,
-    Grid,
-    IconButton,
-    LinearProgress,
-    Link,
-    Menu,
-    MenuItem,
-    Paper,
-    Typography
-} from "@mui/material";
-import { useEffect, useState } from "react";
+  Box,
+  Breadcrumbs,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Grid,
+  IconButton,
+  LinearProgress,
+  Link,
+  Menu,
+  MenuItem,
+  Paper,
+  Typography,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
 /**
  * MediaLibrary provides integrated media file and subtitle management.
@@ -49,13 +49,19 @@ export default function MediaLibrary() {
   const [actionMenu, setActionMenu] = useState({ anchor: null, file: null });
   const [bulkMode, setBulkMode] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState(new Set());
-  const [operationDialog, setOperationDialog] = useState({ open: false, type: null, file: null });
+  const [operationDialog, setOperationDialog] = useState({
+    open: false,
+    type: null,
+    file: null,
+  });
   const [progress, setProgress] = useState(null);
 
   const loadCurrentDirectory = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/library/browse?path=${encodeURIComponent(currentPath)}`);
+      const response = await fetch(
+        `/api/library/browse?path=${encodeURIComponent(currentPath)}`
+      );
       if (response.ok) {
         const data = await response.json();
         setItems(data.items || []);
@@ -74,7 +80,7 @@ export default function MediaLibrary() {
   /**
    * Navigate to a subdirectory
    */
-  const navigateToPath = (path) => {
+  const navigateToPath = path => {
     setCurrentPath(path);
     setSelectedFiles(new Set());
   };
@@ -98,7 +104,7 @@ export default function MediaLibrary() {
   /**
    * Get file type icon
    */
-  const getFileIcon = (item) => {
+  const getFileIcon = item => {
     if (item.type === 'directory') return <FolderIcon />;
     if (item.isVideo) return item.isTvShow ? <TvIcon /> : <MovieIcon />;
     if (item.isSubtitle) return <SubtitleIcon />;
@@ -170,12 +176,12 @@ export default function MediaLibrary() {
   /**
    * Handle bulk operations
    */
-  const handleBulkOperation = async (type) => {
+  const handleBulkOperation = async type => {
     if (selectedFiles.size === 0) return;
 
-    const files = Array.from(selectedFiles).map(path =>
-      items.find(item => item.path === path)
-    ).filter(Boolean);
+    const files = Array.from(selectedFiles)
+      .map(path => items.find(item => item.path === path))
+      .filter(Boolean);
 
     setProgress({ type, file: `${files.length} files`, progress: 0 });
 
@@ -186,7 +192,7 @@ export default function MediaLibrary() {
         body: JSON.stringify({
           type,
           files: files.map(f => f.path),
-          language: 'en'
+          language: 'en',
         }),
       });
 
@@ -202,7 +208,7 @@ export default function MediaLibrary() {
   /**
    * Toggle file selection for bulk operations
    */
-  const toggleFileSelection = (filePath) => {
+  const toggleFileSelection = filePath => {
     const newSelection = new Set(selectedFiles);
     if (newSelection.has(filePath)) {
       newSelection.delete(filePath);
@@ -214,7 +220,12 @@ export default function MediaLibrary() {
 
   if (loading && items.length === 0) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -223,13 +234,18 @@ export default function MediaLibrary() {
   return (
     <Box>
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4" component="h1">
           Media Library
         </Typography>
         <Box>
           <Button
-            variant={bulkMode ? "contained" : "outlined"}
+            variant={bulkMode ? 'contained' : 'outlined'}
             onClick={() => {
               setBulkMode(!bulkMode);
               setSelectedFiles(new Set());
@@ -297,7 +313,8 @@ export default function MediaLibrary() {
       {progress && (
         <Paper sx={{ p: 2, mb: 3 }}>
           <Typography variant="body2" gutterBottom>
-            {progress.type.charAt(0).toUpperCase() + progress.type.slice(1)}ing: {progress.file}
+            {progress.type.charAt(0).toUpperCase() + progress.type.slice(1)}ing:{' '}
+            {progress.file}
           </Typography>
           <LinearProgress />
         </Paper>
@@ -305,13 +322,17 @@ export default function MediaLibrary() {
 
       {/* File List */}
       <Grid container spacing={3}>
-        {items.map((item) => (
+        {items.map(item => (
           <Grid item xs={12} key={item.path}>
             <Card
               sx={{
                 cursor: item.type === 'directory' ? 'pointer' : 'default',
-                border: selectedFiles.has(item.path) ? '2px solid' : '1px solid',
-                borderColor: selectedFiles.has(item.path) ? 'primary.main' : 'divider',
+                border: selectedFiles.has(item.path)
+                  ? '2px solid'
+                  : '1px solid',
+                borderColor: selectedFiles.has(item.path)
+                  ? 'primary.main'
+                  : 'divider',
               }}
               onClick={() => {
                 if (bulkMode && item.type !== 'directory') {
@@ -324,9 +345,7 @@ export default function MediaLibrary() {
             >
               <CardContent>
                 <Box display="flex" alignItems="center">
-                  <Box sx={{ mr: 2 }}>
-                    {getFileIcon(item)}
-                  </Box>
+                  <Box sx={{ mr: 2 }}>{getFileIcon(item)}</Box>
 
                   <Box flex={1}>
                     <Typography variant="h6" noWrap>
@@ -335,7 +354,7 @@ export default function MediaLibrary() {
 
                     {item.isVideo && (
                       <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
-                        {item.subtitles?.map((sub) => (
+                        {item.subtitles?.map(sub => (
                           <Chip
                             key={sub.language}
                             label={`${sub.language.toUpperCase()} ${sub.format || 'SRT'}`}
@@ -356,17 +375,24 @@ export default function MediaLibrary() {
                     )}
 
                     {item.metadata && (
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        {item.metadata.resolution && `${item.metadata.resolution} • `}
-                        {item.metadata.duration && `${item.metadata.duration} • `}
-                        {item.size && `${(item.size / 1024 / 1024 / 1024).toFixed(1)} GB`}
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mt: 1 }}
+                      >
+                        {item.metadata.resolution &&
+                          `${item.metadata.resolution} • `}
+                        {item.metadata.duration &&
+                          `${item.metadata.duration} • `}
+                        {item.size &&
+                          `${(item.size / 1024 / 1024 / 1024).toFixed(1)} GB`}
                       </Typography>
                     )}
                   </Box>
 
                   {item.type !== 'directory' && (
                     <IconButton
-                      onClick={(e) => handleActionMenu(e, item)}
+                      onClick={e => handleActionMenu(e, item)}
                       size="small"
                     >
                       <MoreIcon />
@@ -394,23 +420,38 @@ export default function MediaLibrary() {
         onClose={closeActionMenu}
       >
         {actionMenu.file?.isVideo && [
-          <MenuItem key="extract" onClick={() => handleOperation('extract', actionMenu.file)}>
+          <MenuItem
+            key="extract"
+            onClick={() => handleOperation('extract', actionMenu.file)}
+          >
             <ExtractIcon sx={{ mr: 1 }} />
             Extract Embedded Subtitles
           </MenuItem>,
-          <MenuItem key="search" onClick={() => handleOperation('search', actionMenu.file)}>
+          <MenuItem
+            key="search"
+            onClick={() => handleOperation('search', actionMenu.file)}
+          >
             <SearchIcon sx={{ mr: 1 }} />
             Search for Subtitles
           </MenuItem>,
           <Divider key="divider" />,
         ]}
         {actionMenu.file?.isSubtitle && (
-          <MenuItem onClick={() => handleOperation('translate', actionMenu.file)}>
+          <MenuItem
+            onClick={() => handleOperation('translate', actionMenu.file)}
+          >
             <TranslateIcon sx={{ mr: 1 }} />
             Translate Subtitle
           </MenuItem>
         )}
-        <MenuItem onClick={() => window.open(`/api/download?path=${encodeURIComponent(actionMenu.file?.path)}`, '_blank')}>
+        <MenuItem
+          onClick={() =>
+            window.open(
+              `/api/download?path=${encodeURIComponent(actionMenu.file?.path)}`,
+              '_blank'
+            )
+          }
+        >
           <DownloadIcon sx={{ mr: 1 }} />
           Download File
         </MenuItem>
@@ -419,34 +460,36 @@ export default function MediaLibrary() {
       {/* Operation Dialog */}
       <Dialog
         open={operationDialog.open}
-        onClose={() => setOperationDialog({ open: false, type: null, file: null })}
+        onClose={() =>
+          setOperationDialog({ open: false, type: null, file: null })
+        }
       >
         <DialogTitle>
           {operationDialog.type &&
-            `${operationDialog.type.charAt(0).toUpperCase() + operationDialog.type.slice(1)} Subtitles`
-          }
+            `${operationDialog.type.charAt(0).toUpperCase() + operationDialog.type.slice(1)} Subtitles`}
         </DialogTitle>
         <DialogContent>
           <Typography>
             {operationDialog.type === 'extract' &&
-              'Extract embedded subtitle streams from this video file?'
-            }
+              'Extract embedded subtitle streams from this video file?'}
             {operationDialog.type === 'search' &&
-              'Search for subtitles for this video file using enabled providers?'
-            }
+              'Search for subtitles for this video file using enabled providers?'}
             {operationDialog.type === 'translate' &&
-              'Translate this subtitle file to another language?'
-            }
+              'Translate this subtitle file to another language?'}
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOperationDialog({ open: false, type: null, file: null })}>
+          <Button
+            onClick={() =>
+              setOperationDialog({ open: false, type: null, file: null })
+            }
+          >
             Cancel
           </Button>
           <Button onClick={executeOperation} variant="contained">
             {operationDialog.type &&
-              operationDialog.type.charAt(0).toUpperCase() + operationDialog.type.slice(1)
-            }
+              operationDialog.type.charAt(0).toUpperCase() +
+                operationDialog.type.slice(1)}
           </Button>
         </DialogActions>
       </Dialog>

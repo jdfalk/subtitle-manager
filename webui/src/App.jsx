@@ -12,7 +12,7 @@ import {
   Translate as TranslateIcon,
   Download as WantedIcon,
   ChildFriendly as KidModeIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   alpha,
   AppBar,
@@ -34,19 +34,19 @@ import {
   ThemeProvider,
   Toolbar,
   Typography,
-} from "@mui/material";
-import { useEffect, useState } from "react";
-import "./App.css";
-import Convert from "./Convert.jsx";
-import Dashboard from "./Dashboard.jsx";
-import Extract from "./Extract.jsx";
-import History from "./History.jsx";
-import MediaLibrary from "./MediaLibrary.jsx";
-import Settings from "./Settings.jsx";
-import Setup from "./Setup.jsx";
-import System from "./System.jsx";
-import Translate from "./Translate.jsx";
-import Wanted from "./Wanted.jsx";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import './App.css';
+import Convert from './Convert.jsx';
+import Dashboard from './Dashboard.jsx';
+import Extract from './Extract.jsx';
+import History from './History.jsx';
+import MediaLibrary from './MediaLibrary.jsx';
+import Settings from './Settings.jsx';
+import Setup from './Setup.jsx';
+import System from './System.jsx';
+import Translate from './Translate.jsx';
+import Wanted from './Wanted.jsx';
 
 /**
  * Creates a Material Design 3 compliant theme with enhanced dark mode support
@@ -55,218 +55,222 @@ import Wanted from "./Wanted.jsx";
  * @param {boolean} kidMode - Increase font sizes for children if true
  * @returns {Theme} Material UI theme object
  */
-const createAppTheme = (isDarkMode = true, kidMode = false) => createTheme({
-  palette: {
-    mode: isDarkMode ? 'dark' : 'light',
-    ...(isDarkMode
-      ? {
-          // Dark mode - Material Design 3 dark surface colors
-          primary: {
-            main: '#bb86fc',
-            light: '#d0bcff',
-            dark: '#9965f4',
-            contrastText: '#000000',
-          },
-          secondary: {
-            main: '#03dac6',
-            light: '#66fff9',
-            dark: '#00a896',
-            contrastText: '#000000',
-          },
-          background: {
-            default: '#121212',
-            paper: '#1e1e1e',
-          },
-          surface: {
-            main: '#1e1e1e',
-            variant: '#2d2d30',
-          },
-          text: {
-            primary: '#e1e1e1',
-            secondary: '#b3b3b3',
-          },
-          error: {
-            main: '#cf6679',
-            light: '#ff94a3',
-            dark: '#9a4052',
-          },
-          warning: {
-            main: '#ffb74d',
-            light: '#ffe97d',
-            dark: '#c88719',
-          },
-          info: {
-            main: '#64b5f6',
-            light: '#9be7ff',
-            dark: '#2286c3',
-          },
-          success: {
-            main: '#81c784',
-            light: '#b2fab4',
-            dark: '#519657',
-          },
-          divider: alpha('#ffffff', 0.12),
-        }
-      : {
-          // Light mode - Material Design 3 light surface colors
-          primary: {
-            main: '#6750a4',
-            light: '#9a82db',
-            dark: '#21005d',
-            contrastText: '#ffffff',
-          },
-          secondary: {
-            main: '#625b71',
-            light: '#8e82a2',
-            dark: '#463d52',
-            contrastText: '#ffffff',
-          },
-          background: {
-            default: '#fffbfe',
-            paper: '#ffffff',
-          },
-          surface: {
-            main: '#ffffff',
-            variant: '#f4f0f7',
-          },
-          text: {
-            primary: '#1c1b1f',
-            secondary: '#49454f',
-          },
-          divider: alpha('#000000', 0.12),
-        }),
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    htmlFontSize: kidMode ? 20 : 16,
-    h1: {
-      fontSize: '2.5rem',
-      fontWeight: 400,
-      letterSpacing: '-0.01562em',
+const createAppTheme = (isDarkMode = true, kidMode = false) =>
+  createTheme({
+    palette: {
+      mode: isDarkMode ? 'dark' : 'light',
+      ...(isDarkMode
+        ? {
+            // Dark mode - Material Design 3 dark surface colors
+            primary: {
+              main: '#bb86fc',
+              light: '#d0bcff',
+              dark: '#9965f4',
+              contrastText: '#000000',
+            },
+            secondary: {
+              main: '#03dac6',
+              light: '#66fff9',
+              dark: '#00a896',
+              contrastText: '#000000',
+            },
+            background: {
+              default: '#121212',
+              paper: '#1e1e1e',
+            },
+            surface: {
+              main: '#1e1e1e',
+              variant: '#2d2d30',
+            },
+            text: {
+              primary: '#e1e1e1',
+              secondary: '#b3b3b3',
+            },
+            error: {
+              main: '#cf6679',
+              light: '#ff94a3',
+              dark: '#9a4052',
+            },
+            warning: {
+              main: '#ffb74d',
+              light: '#ffe97d',
+              dark: '#c88719',
+            },
+            info: {
+              main: '#64b5f6',
+              light: '#9be7ff',
+              dark: '#2286c3',
+            },
+            success: {
+              main: '#81c784',
+              light: '#b2fab4',
+              dark: '#519657',
+            },
+            divider: alpha('#ffffff', 0.12),
+          }
+        : {
+            // Light mode - Material Design 3 light surface colors
+            primary: {
+              main: '#6750a4',
+              light: '#9a82db',
+              dark: '#21005d',
+              contrastText: '#ffffff',
+            },
+            secondary: {
+              main: '#625b71',
+              light: '#8e82a2',
+              dark: '#463d52',
+              contrastText: '#ffffff',
+            },
+            background: {
+              default: '#fffbfe',
+              paper: '#ffffff',
+            },
+            surface: {
+              main: '#ffffff',
+              variant: '#f4f0f7',
+            },
+            text: {
+              primary: '#1c1b1f',
+              secondary: '#49454f',
+            },
+            divider: alpha('#000000', 0.12),
+          }),
     },
-    h4: {
-      fontSize: '2.125rem',
-      fontWeight: 400,
-      letterSpacing: '0.00735em',
-    },
-    h6: {
-      fontSize: '1.25rem',
-      fontWeight: 500,
-      letterSpacing: '0.0075em',
-    },
-    body1: {
-      fontSize: '1rem',
-      letterSpacing: '0.00938em',
-    },
-    body2: {
-      fontSize: '0.875rem',
-      letterSpacing: '0.01071em',
-    },
-    button: {
-      fontSize: '0.875rem',
-      fontWeight: 500,
-      letterSpacing: '0.02857em',
-      textTransform: 'uppercase',
-    },
-  },
-  shape: {
-    borderRadius: 12, // More rounded corners for modern look
-  },
-  components: {
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          backgroundColor: isDarkMode ? '#1e1e1e' : '#6750a4',
-          backdropFilter: 'blur(8px)',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        },
+    typography: {
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      htmlFontSize: kidMode ? 20 : 16,
+      h1: {
+        fontSize: '2.5rem',
+        fontWeight: 400,
+        letterSpacing: '-0.01562em',
+      },
+      h4: {
+        fontSize: '2.125rem',
+        fontWeight: 400,
+        letterSpacing: '0.00735em',
+      },
+      h6: {
+        fontSize: '1.25rem',
+        fontWeight: 500,
+        letterSpacing: '0.0075em',
+      },
+      body1: {
+        fontSize: '1rem',
+        letterSpacing: '0.00938em',
+      },
+      body2: {
+        fontSize: '0.875rem',
+        letterSpacing: '0.01071em',
+      },
+      button: {
+        fontSize: '0.875rem',
+        fontWeight: 500,
+        letterSpacing: '0.02857em',
+        textTransform: 'uppercase',
       },
     },
-    MuiDrawer: {
-      styleOverrides: {
-        paper: {
-          backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
-          borderRight: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.12)}`,
-        },
-      },
+    shape: {
+      borderRadius: 12, // More rounded corners for modern look
     },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
-          boxShadow: isDarkMode
-            ? '0 4px 8px rgba(0,0,0,0.3)'
-            : '0 2px 8px rgba(0,0,0,0.1)',
-          borderRadius: 16,
-          border: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.08)}`,
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
-          '&.MuiPaper-outlined': {
-            border: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.12)}`,
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDarkMode ? '#1e1e1e' : '#6750a4',
+            backdropFilter: 'blur(8px)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           },
         },
       },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 20,
-          textTransform: 'none',
-          fontWeight: 500,
-        },
-        contained: {
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-          '&:hover': {
-            boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+      MuiDrawer: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
+            borderRight: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.12)}`,
           },
         },
       },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 12,
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
+            boxShadow: isDarkMode
+              ? '0 4px 8px rgba(0,0,0,0.3)'
+              : '0 2px 8px rgba(0,0,0,0.1)',
+            borderRadius: 16,
+            border: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.08)}`,
           },
         },
       },
-    },
-    MuiSvgIcon: {
-      styleOverrides: {
-        root: {
-          fontSize: kidMode ? '2rem' : undefined,
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
+            '&.MuiPaper-outlined': {
+              border: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.12)}`,
+            },
+          },
         },
       },
-    },
-    MuiListItemButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-          margin: '4px 8px',
-          '&.Mui-selected': {
-            backgroundColor: alpha(isDarkMode ? '#bb86fc' : '#6750a4', 0.12),
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 20,
+            textTransform: 'none',
+            fontWeight: 500,
+          },
+          contained: {
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
             '&:hover': {
-              backgroundColor: alpha(isDarkMode ? '#bb86fc' : '#6750a4', 0.16),
+              boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+            },
+          },
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 12,
+            },
+          },
+        },
+      },
+      MuiSvgIcon: {
+        styleOverrides: {
+          root: {
+            fontSize: kidMode ? '2rem' : undefined,
+          },
+        },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 12,
+            margin: '4px 8px',
+            '&.Mui-selected': {
+              backgroundColor: alpha(isDarkMode ? '#bb86fc' : '#6750a4', 0.12),
+              '&:hover': {
+                backgroundColor: alpha(
+                  isDarkMode ? '#bb86fc' : '#6750a4',
+                  0.16
+                ),
+              },
             },
           },
         },
       },
     },
-  },
-});
+  });
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [status, setStatus] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [status, setStatus] = useState('');
   const [authed, setAuthed] = useState(false);
   const [setupNeeded, setSetupNeeded] = useState(false);
-  const [page, setPage] = useState("dashboard");
+  const [page, setPage] = useState('dashboard');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     // Check localStorage or system preference for initial theme
@@ -303,34 +307,34 @@ function App() {
   };
 
   const navigationItems = [
-    { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
-    { id: "library", label: "Media Library", icon: <LibraryIcon /> },
-    { id: "settings", label: "Settings", icon: <SettingsIcon /> },
-    { id: "extract", label: "Extract", icon: <ExtractIcon /> },
-    { id: "history", label: "History", icon: <HistoryIcon /> },
-    { id: "convert", label: "Convert", icon: <ConvertIcon /> },
-    { id: "translate", label: "Translate", icon: <TranslateIcon /> },
-    { id: "system", label: "System", icon: <SystemIcon /> },
-    { id: "wanted", label: "Wanted", icon: <WantedIcon /> },
+    { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
+    { id: 'library', label: 'Media Library', icon: <LibraryIcon /> },
+    { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
+    { id: 'extract', label: 'Extract', icon: <ExtractIcon /> },
+    { id: 'history', label: 'History', icon: <HistoryIcon /> },
+    { id: 'convert', label: 'Convert', icon: <ConvertIcon /> },
+    { id: 'translate', label: 'Translate', icon: <TranslateIcon /> },
+    { id: 'system', label: 'System', icon: <SystemIcon /> },
+    { id: 'wanted', label: 'Wanted', icon: <WantedIcon /> },
   ];
 
   useEffect(() => {
-    fetch("/api/config").then((res) => {
+    fetch('/api/config').then(res => {
       if (res.ok) setAuthed(true);
     });
-    fetch("/api/setup/status")
-      .then((r) => r.json())
-      .then((d) => setSetupNeeded(d.needed));
+    fetch('/api/setup/status')
+      .then(r => r.json())
+      .then(d => setSetupNeeded(d.needed));
   }, []);
 
   const login = async () => {
     const form = new URLSearchParams({ username, password });
-    const res = await fetch("/api/login", { method: "POST", body: form });
+    const res = await fetch('/api/login', { method: 'POST', body: form });
     if (res.ok) {
-      setStatus("logged in");
+      setStatus('logged in');
       setAuthed(true);
     } else {
-      setStatus("login failed");
+      setStatus('login failed');
     }
   };
 
@@ -369,7 +373,12 @@ function App() {
               }}
             >
               <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <Typography component="h1" variant="h4" gutterBottom color="primary">
+                <Typography
+                  component="h1"
+                  variant="h4"
+                  gutterBottom
+                  color="primary"
+                >
                   Subtitle Manager
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
@@ -388,7 +397,7 @@ function App() {
                   autoComplete="username"
                   autoFocus
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={e => setUsername(e.target.value)}
                   variant="outlined"
                 />
                 <TextField
@@ -401,7 +410,7 @@ function App() {
                   id="password"
                   autoComplete="current-password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   variant="outlined"
                 />
                 <Button
@@ -419,8 +428,12 @@ function App() {
                     sx={{
                       p: 2,
                       mt: 2,
-                      backgroundColor: status.includes('failed') ? 'error.main' : 'success.main',
-                      color: status.includes('failed') ? 'error.contrastText' : 'success.contrastText',
+                      backgroundColor: status.includes('failed')
+                        ? 'error.main'
+                        : 'success.main',
+                      color: status.includes('failed')
+                        ? 'error.contrastText'
+                        : 'success.contrastText',
                       borderRadius: 2,
                     }}
                   >
@@ -471,7 +484,7 @@ function App() {
         <AppBar
           position="fixed"
           sx={{
-            zIndex: (theme) => theme.zIndex.drawer + 1,
+            zIndex: theme => theme.zIndex.drawer + 1,
             transition: theme.transitions.create(['margin'], {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
@@ -488,7 +501,12 @@ function App() {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ flexGrow: 1 }}
+            >
               Subtitle Manager
             </Typography>
             <IconButton
@@ -524,7 +542,7 @@ function App() {
           <Toolbar />
           <Box sx={{ overflow: 'auto', py: 1 }}>
             <List>
-              {navigationItems.map((item) => (
+              {navigationItems.map(item => (
                 <ListItem key={item.id} disablePadding>
                   <ListItemButton
                     selected={page === item.id}
@@ -559,21 +577,21 @@ function App() {
           }}
         >
           <Toolbar />
-          {page === "library" ? (
+          {page === 'library' ? (
             <MediaLibrary />
-          ) : page === "settings" ? (
+          ) : page === 'settings' ? (
             <Settings />
-          ) : page === "extract" ? (
+          ) : page === 'extract' ? (
             <Extract />
-          ) : page === "history" ? (
+          ) : page === 'history' ? (
             <History />
-          ) : page === "convert" ? (
+          ) : page === 'convert' ? (
             <Convert />
-          ) : page === "translate" ? (
+          ) : page === 'translate' ? (
             <Translate />
-          ) : page === "system" ? (
+          ) : page === 'system' ? (
             <System />
-          ) : page === "wanted" ? (
+          ) : page === 'wanted' ? (
             <Wanted />
           ) : (
             <Dashboard />

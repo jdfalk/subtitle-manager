@@ -2,7 +2,7 @@
 import {
   Folder as FolderIcon,
   PlayArrow as PlayIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -23,8 +23,8 @@ import {
   Select,
   TextField,
   Typography,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
 /**
  * Dashboard component for managing subtitle scanning operations.
@@ -37,10 +37,10 @@ export default function Dashboard() {
     completed: 0,
     files: [],
   });
-  const [dir, setDir] = useState("");
-  const [lang, setLang] = useState("en");
+  const [dir, setDir] = useState('');
+  const [lang, setLang] = useState('en');
   // Default to embedded provider until others are added
-  const [provider, setProvider] = useState("embedded");
+  const [provider, setProvider] = useState('embedded');
   const [availableProviders, setAvailableProviders] = useState([]);
 
   useEffect(() => {
@@ -50,11 +50,11 @@ export default function Dashboard() {
 
   const loadProviders = async () => {
     try {
-      const response = await fetch("/api/providers");
+      const response = await fetch('/api/providers');
       if (response.ok) {
         const data = await response.json();
         // Only show enabled providers
-        const enabledProviders = data.filter((p) => p.enabled);
+        const enabledProviders = data.filter(p => p.enabled);
         setAvailableProviders(enabledProviders);
 
         // Set default provider to first enabled one
@@ -63,44 +63,44 @@ export default function Dashboard() {
         }
       }
     } catch (error) {
-      console.error("Failed to load providers:", error);
+      console.error('Failed to load providers:', error);
       // Fallback to hardcoded providers if API fails
       setAvailableProviders([
-        { name: "opensubtitles", displayName: "OpenSubtitles", enabled: true },
-        { name: "addic7ed", displayName: "Addic7ed", enabled: true },
-        { name: "subscene", displayName: "Subscene", enabled: true },
-        { name: "podnapisi", displayName: "Podnapisi", enabled: true },
+        { name: 'opensubtitles', displayName: 'OpenSubtitles', enabled: true },
+        { name: 'addic7ed', displayName: 'Addic7ed', enabled: true },
+        { name: 'subscene', displayName: 'Subscene', enabled: true },
+        { name: 'podnapisi', displayName: 'Podnapisi', enabled: true },
       ]);
     }
   };
 
-  const formatProviderName = (name) => {
+  const formatProviderName = name => {
     const specialNames = {
-      opensubtitles: "OpenSubtitles",
-      opensubtitlescom: "OpenSubtitles.com",
-      opensubtitlesvip: "OpenSubtitles VIP",
-      addic7ed: "Addic7ed",
-      podnapisi: "Podnapisi.NET",
-      subscene: "Subscene",
-      yifysubtitles: "YIFY Subtitles",
-      turkcealtyazi: "Türkçe Altyazı",
-      greeksubtitles: "Greek Subtitles",
-      legendasdivx: "Legendas DivX",
-      legendasnet: "Legendas.NET",
-      napiprojekt: "NapiProjekt",
+      opensubtitles: 'OpenSubtitles',
+      opensubtitlescom: 'OpenSubtitles.com',
+      opensubtitlesvip: 'OpenSubtitles VIP',
+      addic7ed: 'Addic7ed',
+      podnapisi: 'Podnapisi.NET',
+      subscene: 'Subscene',
+      yifysubtitles: 'YIFY Subtitles',
+      turkcealtyazi: 'Türkçe Altyazı',
+      greeksubtitles: 'Greek Subtitles',
+      legendasdivx: 'Legendas DivX',
+      legendasnet: 'Legendas.NET',
+      napiprojekt: 'NapiProjekt',
     };
 
     return (
       specialNames[name] ||
       name
         .split(/(?=[A-Z])/)
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
     );
   };
 
   const poll = async () => {
-    const res = await fetch("/api/scan/status");
+    const res = await fetch('/api/scan/status');
     if (res.ok) {
       const data = await res.json();
       // Ensure files is always an array to prevent null reference errors
@@ -117,9 +117,9 @@ export default function Dashboard() {
 
   const start = async () => {
     const body = { provider, directory: dir, lang };
-    const res = await fetch("/api/scan", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const res = await fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
     if (res.ok) poll();
@@ -143,17 +143,17 @@ export default function Dashboard() {
               <Typography variant="h6" gutterBottom>
                 Subtitle Scan
               </Typography>
-              <Box component="form" sx={{ "& > :not(style)": { m: 1 } }}>
+              <Box component="form" sx={{ '& > :not(style)': { m: 1 } }}>
                 <TextField
                   fullWidth
                   label="Directory Path"
                   placeholder="Enter directory to scan"
                   value={dir}
-                  onChange={(e) => setDir(e.target.value)}
+                  onChange={e => setDir(e.target.value)}
                   disabled={status.running}
                   InputProps={{
                     startAdornment: (
-                      <FolderIcon sx={{ mr: 1, color: "action.active" }} />
+                      <FolderIcon sx={{ mr: 1, color: 'action.active' }} />
                     ),
                   }}
                 />
@@ -162,7 +162,7 @@ export default function Dashboard() {
                   <Select
                     value={lang}
                     label="Language"
-                    onChange={(e) => setLang(e.target.value)}
+                    onChange={e => setLang(e.target.value)}
                     disabled={status.running}
                   >
                     <MenuItem value="en">English</MenuItem>
@@ -178,11 +178,11 @@ export default function Dashboard() {
                   <Select
                     value={provider}
                     label="Provider"
-                    onChange={(e) => setProvider(e.target.value)}
+                    onChange={e => setProvider(e.target.value)}
                     disabled={status.running}
                   >
                     {availableProviders.length > 0
-                      ? availableProviders.map((p) => (
+                      ? availableProviders.map(p => (
                           <MenuItem key={p.name} value={p.name}>
                             {formatProviderName(p.name)}
                             {!p.configured && (
@@ -214,7 +214,7 @@ export default function Dashboard() {
                   {availableProviders.length === 0 && (
                     <Alert
                       severity="warning"
-                      sx={{ mt: 1, fontSize: "0.875rem" }}
+                      sx={{ mt: 1, fontSize: '0.875rem' }}
                     >
                       No providers configured. Go to Settings → Providers to
                       enable subtitle providers.
@@ -235,7 +235,7 @@ export default function Dashboard() {
                   fullWidth
                   size="large"
                 >
-                  {status.running ? "Scanning..." : "Start Scan"}
+                  {status.running ? 'Scanning...' : 'Start Scan'}
                 </Button>
               </Box>
             </CardContent>
@@ -251,9 +251,9 @@ export default function Dashboard() {
               </Typography>
               <Box sx={{ mb: 2 }}>
                 <Chip
-                  label={status.running ? "Running" : "Idle"}
-                  color={status.running ? "primary" : "default"}
-                  variant={status.running ? "filled" : "outlined"}
+                  label={status.running ? 'Running' : 'Idle'}
+                  color={status.running ? 'primary' : 'default'}
+                  variant={status.running ? 'filled' : 'outlined'}
                 />
               </Box>
               {status.running && (
@@ -285,16 +285,16 @@ export default function Dashboard() {
                 <Typography variant="h6" gutterBottom>
                   Files ({status.files.length})
                 </Typography>
-                <Paper sx={{ maxHeight: 300, overflow: "auto" }}>
+                <Paper sx={{ maxHeight: 300, overflow: 'auto' }}>
                   <List dense>
                     {status.files.map((file, index) => (
                       <ListItem key={index} divider>
                         <ListItemText
                           primary={file}
                           sx={{
-                            "& .MuiListItemText-primary": {
-                              fontSize: "0.875rem",
-                              fontFamily: "monospace",
+                            '& .MuiListItemText-primary': {
+                              fontSize: '0.875rem',
+                              fontFamily: 'monospace',
                             },
                           }}
                         />

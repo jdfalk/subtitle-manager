@@ -3,7 +3,7 @@ import {
   FilterList as FilterIcon,
   Language as LanguageIcon,
   Translate as TranslateIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   Avatar,
   Box,
@@ -20,9 +20,9 @@ import {
   TableRow,
   Tabs,
   TextField,
-  Typography
-} from "@mui/material";
-import { useEffect, useState } from "react";
+  Typography,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
 /**
  * History displays translation and download history with optional language filtering.
@@ -30,28 +30,33 @@ import { useEffect, useState } from "react";
  */
 export default function History() {
   const [data, setData] = useState({ translations: [], downloads: [] });
-  const [lang, setLang] = useState("");
+  const [lang, setLang] = useState('');
   const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
-    fetch("/api/history")
-      .then((r) => r.json())
+    fetch('/api/history')
+      .then(r => r.json())
       .then(setData);
   }, []);
 
   const translations = data.translations.filter(
-    (r) => !lang || r.Language === lang,
+    r => !lang || r.Language === lang
   );
-  const downloads = data.downloads.filter((r) => !lang || r.Language === lang);
+  const downloads = data.downloads.filter(r => !lang || r.Language === lang);
 
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = timestamp => {
     if (!timestamp) return 'N/A';
     return new Date(timestamp).toLocaleString();
   };
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4" component="h1">
           History
         </Typography>
@@ -59,16 +64,21 @@ export default function History() {
           size="small"
           placeholder="Filter by language (e.g., en, es, fr)"
           value={lang}
-          onChange={(e) => setLang(e.target.value)}
+          onChange={e => setLang(e.target.value)}
           InputProps={{
-            startAdornment: <FilterIcon sx={{ mr: 1, color: 'action.active' }} />,
+            startAdornment: (
+              <FilterIcon sx={{ mr: 1, color: 'action.active' }} />
+            ),
           }}
           sx={{ minWidth: 250 }}
         />
       </Box>
 
       <Card>
-        <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)}>
+        <Tabs
+          value={tabValue}
+          onChange={(e, newValue) => setTabValue(newValue)}
+        >
           <Tab
             icon={<TranslateIcon />}
             label={`Translations (${translations.length})`}
@@ -105,23 +115,37 @@ export default function History() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    translations.map((t) => (
+                    translations.map(t => (
                       <TableRow key={t.ID} hover>
                         <TableCell>
-                          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: 'monospace' }}
+                          >
                             {t.File}
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Box display="flex" alignItems="center">
-                            <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
+                            <Avatar
+                              sx={{
+                                width: 24,
+                                height: 24,
+                                mr: 1,
+                                fontSize: '0.75rem',
+                              }}
+                            >
                               <LanguageIcon fontSize="small" />
                             </Avatar>
                             <Chip label={t.Language} size="small" />
                           </Box>
                         </TableCell>
                         <TableCell>
-                          <Chip label={t.Service} variant="outlined" size="small" />
+                          <Chip
+                            label={t.Service}
+                            variant="outlined"
+                            size="small"
+                          />
                         </TableCell>
                         <TableCell>
                           <Chip
@@ -164,23 +188,37 @@ export default function History() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    downloads.map((d) => (
+                    downloads.map(d => (
                       <TableRow key={d.ID} hover>
                         <TableCell>
-                          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: 'monospace' }}
+                          >
                             {d.VideoFile}
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Box display="flex" alignItems="center">
-                            <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
+                            <Avatar
+                              sx={{
+                                width: 24,
+                                height: 24,
+                                mr: 1,
+                                fontSize: '0.75rem',
+                              }}
+                            >
                               <LanguageIcon fontSize="small" />
                             </Avatar>
                             <Chip label={d.Language} size="small" />
                           </Box>
                         </TableCell>
                         <TableCell>
-                          <Chip label={d.Provider} variant="outlined" size="small" />
+                          <Chip
+                            label={d.Provider}
+                            variant="outlined"
+                            size="small"
+                          />
                         </TableCell>
                         <TableCell>
                           <Chip

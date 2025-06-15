@@ -2,8 +2,8 @@ import {
   Transform as ConvertIcon,
   Delete as DeleteIcon,
   FilePresent as FileIcon,
-  CloudUpload as UploadIcon
-} from "@mui/icons-material";
+  CloudUpload as UploadIcon,
+} from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -16,8 +16,8 @@ import {
   Paper,
   Snackbar,
   Typography,
-} from "@mui/material";
-import { useState } from "react";
+} from '@mui/material';
+import { useState } from 'react';
 
 /**
  * Convert provides a form to upload a subtitle file which is
@@ -26,56 +26,62 @@ import { useState } from "react";
  */
 export default function Convert() {
   const [file, setFile] = useState(null);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
   const [converting, setConverting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const doConvert = async () => {
     if (!file) return;
     setConverting(true);
-    setStatus("");
+    setStatus('');
 
     try {
       const form = new FormData();
-      form.append("file", file);
-      const res = await fetch("/api/convert", { method: "POST", body: form });
+      form.append('file', file);
+      const res = await fetch('/api/convert', { method: 'POST', body: form });
 
       if (res.ok) {
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
+        const a = document.createElement('a');
         a.href = url;
-        a.download = file.name.replace(/\.[^/.]+$/, ".srt");
+        a.download = file.name.replace(/\.[^/.]+$/, '.srt');
         a.click();
         window.URL.revokeObjectURL(url);
-        setStatus("File converted and downloaded successfully!");
+        setStatus('File converted and downloaded successfully!');
         setSnackbarOpen(true);
       } else {
-        setStatus("Error converting file. Please try again.");
+        setStatus('Error converting file. Please try again.');
       }
     } catch {
-      setStatus("Network error. Please check your connection.");
+      setStatus('Network error. Please check your connection.');
     } finally {
       setConverting(false);
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = event => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
-    setStatus("");
+    setStatus('');
   };
 
   const handleRemoveFile = () => {
     setFile(null);
-    setStatus("");
+    setStatus('');
     // Reset the input element
     const fileInput = document.getElementById('subtitle-file-input');
     if (fileInput) fileInput.value = '';
   };
 
   const getSupportedFormats = () => [
-    'VTT', 'ASS', 'SSA', 'SUB', 'SBV', 'TTML', 'DFXP'
+    'VTT',
+    'ASS',
+    'SSA',
+    'SUB',
+    'SBV',
+    'TTML',
+    'DFXP',
   ];
 
   return (
@@ -85,7 +91,8 @@ export default function Convert() {
       </Typography>
 
       <Typography variant="body1" color="text.secondary" paragraph>
-        Upload a subtitle file to convert it to SRT format. Supported formats include VTT, ASS, SSA, SUB, SBV, TTML, and DFXP.
+        Upload a subtitle file to convert it to SRT format. Supported formats
+        include VTT, ASS, SSA, SUB, SBV, TTML, and DFXP.
       </Typography>
 
       <Card sx={{ maxWidth: 600, mx: 'auto' }}>
@@ -114,7 +121,9 @@ export default function Convert() {
                       },
                     }}
                   >
-                    <UploadIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                    <UploadIcon
+                      sx={{ fontSize: 48, color: 'primary.main', mb: 2 }}
+                    />
                     <Typography variant="h6" gutterBottom>
                       Click to upload subtitle file
                     </Typography>
@@ -127,7 +136,11 @@ export default function Convert() {
             ) : (
               <Box>
                 <Paper variant="outlined" sx={{ p: 3, mb: 2 }}>
-                  <Box display="flex" alignItems="center" justifyContent="space-between">
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
                     <Box display="flex" alignItems="center">
                       <FileIcon sx={{ mr: 2, color: 'primary.main' }} />
                       <Box>
@@ -169,7 +182,11 @@ export default function Convert() {
 
             {status && (
               <Alert
-                severity={status.includes('Error') || status.includes('error') ? 'error' : 'success'}
+                severity={
+                  status.includes('Error') || status.includes('error')
+                    ? 'error'
+                    : 'success'
+                }
                 sx={{ mt: 2 }}
               >
                 {status}
@@ -185,8 +202,13 @@ export default function Convert() {
             Supported Formats
           </Typography>
           <Box display="flex" flexWrap="wrap" gap={1}>
-            {getSupportedFormats().map((format) => (
-              <Chip key={format} label={format} variant="outlined" size="small" />
+            {getSupportedFormats().map(format => (
+              <Chip
+                key={format}
+                label={format}
+                variant="outlined"
+                size="small"
+              />
             ))}
           </Box>
         </CardContent>

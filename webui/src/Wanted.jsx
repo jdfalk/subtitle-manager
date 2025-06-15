@@ -6,7 +6,7 @@ import {
   CloudDownload as ProviderIcon,
   Search as SearchIcon,
   Download as WantedIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -28,8 +28,8 @@ import {
   Select,
   TextField,
   Typography,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
 /**
  * Wanted provides an interface for searching subtitles and maintaining
@@ -38,46 +38,46 @@ import { useEffect, useState } from "react";
  */
 export default function Wanted() {
   // Start with embedded provider available out of the box
-  const [provider, setProvider] = useState("embedded");
-  const [path, setPath] = useState("");
-  const [lang, setLang] = useState("en");
+  const [provider, setProvider] = useState('embedded');
+  const [path, setPath] = useState('');
+  const [lang, setLang] = useState('en');
   const [results, setResults] = useState([]);
   const [wanted, setWanted] = useState([]);
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const providers = [
-    { value: "generic", label: "Generic" },
-    { value: "opensubtitles", label: "OpenSubtitles" },
-    { value: "addic7ed", label: "Addic7ed" },
-    { value: "podnapisi", label: "Podnapisi" },
-    { value: "subscene", label: "Subscene" },
+    { value: 'generic', label: 'Generic' },
+    { value: 'opensubtitles', label: 'OpenSubtitles' },
+    { value: 'addic7ed', label: 'Addic7ed' },
+    { value: 'podnapisi', label: 'Podnapisi' },
+    { value: 'subscene', label: 'Subscene' },
   ];
 
   const languages = [
-    { code: "en", name: "English" },
-    { code: "es", name: "Spanish" },
-    { code: "fr", name: "French" },
-    { code: "de", name: "German" },
-    { code: "it", name: "Italian" },
-    { code: "pt", name: "Portuguese" },
-    { code: "ru", name: "Russian" },
-    { code: "ja", name: "Japanese" },
-    { code: "ko", name: "Korean" },
-    { code: "zh", name: "Chinese" },
+    { code: 'en', name: 'English' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
+    { code: 'it', name: 'Italian' },
+    { code: 'pt', name: 'Portuguese' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'ko', name: 'Korean' },
+    { code: 'zh', name: 'Chinese' },
   ];
 
   useEffect(() => {
     const loadWanted = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/wanted");
+        const res = await fetch('/api/wanted');
         if (res.ok) {
           const data = await res.json();
           setWanted(data || []);
         }
       } catch (error) {
-        console.error("Failed to load wanted list:", error);
+        console.error('Failed to load wanted list:', error);
       } finally {
         setLoading(false);
       }
@@ -101,44 +101,44 @@ export default function Wanted() {
         setResults(data || []);
       }
     } catch (error) {
-      console.error("Search failed:", error);
+      console.error('Search failed:', error);
     } finally {
       setSearching(false);
     }
   };
 
-  const add = async (url) => {
+  const add = async url => {
     try {
-      const res = await fetch("/api/wanted", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/wanted', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       });
       if (res.ok) {
         setWanted([...wanted, url]);
       }
     } catch (error) {
-      console.error("Failed to add to wanted list:", error);
+      console.error('Failed to add to wanted list:', error);
     }
   };
 
-  const remove = async (url) => {
+  const remove = async url => {
     try {
-      const res = await fetch("/api/wanted", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/wanted', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       });
       if (res.ok) {
-        setWanted(wanted.filter((item) => item !== url));
+        setWanted(wanted.filter(item => item !== url));
       }
     } catch (error) {
-      console.error("Failed to remove from wanted list:", error);
+      console.error('Failed to remove from wanted list:', error);
     }
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
+  const handleKeyPress = event => {
+    if (event.key === 'Enter') {
       search();
     }
   };
@@ -160,7 +160,7 @@ export default function Wanted() {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                <SearchIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+                <SearchIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
                 Search Subtitles
               </Typography>
               <Grid container spacing={2} alignItems="center">
@@ -170,13 +170,13 @@ export default function Wanted() {
                     <Select
                       value={provider}
                       label="Provider"
-                      onChange={(e) => setProvider(e.target.value)}
+                      onChange={e => setProvider(e.target.value)}
                       disabled={searching}
                       startAdornment={
-                        <ProviderIcon sx={{ mr: 1, color: "action.active" }} />
+                        <ProviderIcon sx={{ mr: 1, color: 'action.active' }} />
                       }
                     >
-                      {providers.map((p) => (
+                      {providers.map(p => (
                         <MenuItem key={p.value} value={p.value}>
                           {p.label}
                         </MenuItem>
@@ -190,12 +190,12 @@ export default function Wanted() {
                     label="Media File Path"
                     placeholder="/path/to/movie.mkv"
                     value={path}
-                    onChange={(e) => setPath(e.target.value)}
+                    onChange={e => setPath(e.target.value)}
                     onKeyPress={handleKeyPress}
                     disabled={searching}
                     InputProps={{
                       startAdornment: (
-                        <MediaIcon sx={{ mr: 1, color: "action.active" }} />
+                        <MediaIcon sx={{ mr: 1, color: 'action.active' }} />
                       ),
                     }}
                   />
@@ -206,13 +206,13 @@ export default function Wanted() {
                     <Select
                       value={lang}
                       label="Language"
-                      onChange={(e) => setLang(e.target.value)}
+                      onChange={e => setLang(e.target.value)}
                       disabled={searching}
                       startAdornment={
-                        <LanguageIcon sx={{ mr: 1, color: "action.active" }} />
+                        <LanguageIcon sx={{ mr: 1, color: 'action.active' }} />
                       }
                     >
-                      {languages.map((l) => (
+                      {languages.map(l => (
                         <MenuItem key={l.code} value={l.code}>
                           <Box display="flex" alignItems="center">
                             <Chip
@@ -242,7 +242,7 @@ export default function Wanted() {
                     fullWidth
                     size="large"
                   >
-                    {searching ? "Searching..." : "Search"}
+                    {searching ? 'Searching...' : 'Search'}
                   </Button>
                 </Grid>
               </Grid>
@@ -269,7 +269,7 @@ export default function Wanted() {
               ) : (
                 <Paper
                   variant="outlined"
-                  sx={{ maxHeight: 400, overflow: "auto" }}
+                  sx={{ maxHeight: 400, overflow: 'auto' }}
                 >
                   <List>
                     {results.map((url, index) => (
@@ -282,8 +282,8 @@ export default function Wanted() {
                             <Typography
                               variant="body2"
                               sx={{
-                                fontFamily: "monospace",
-                                wordBreak: "break-all",
+                                fontFamily: 'monospace',
+                                wordBreak: 'break-all',
                               }}
                             >
                               {url}
@@ -306,7 +306,7 @@ export default function Wanted() {
                             onClick={() => add(url)}
                             disabled={wanted.includes(url)}
                           >
-                            {wanted.includes(url) ? "Added" : "Add to Wanted"}
+                            {wanted.includes(url) ? 'Added' : 'Add to Wanted'}
                           </Button>
                         </ListItemSecondaryAction>
                       </ListItem>
@@ -323,7 +323,7 @@ export default function Wanted() {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                <WantedIcon sx={{ mr: 1, verticalAlign: "middle" }} />
+                <WantedIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
                 Wanted List ({wanted.length})
               </Typography>
               {loading ? (
@@ -337,7 +337,7 @@ export default function Wanted() {
               ) : (
                 <Paper
                   variant="outlined"
-                  sx={{ maxHeight: 400, overflow: "auto" }}
+                  sx={{ maxHeight: 400, overflow: 'auto' }}
                 >
                   <List dense>
                     {wanted.map((url, index) => (
@@ -347,9 +347,9 @@ export default function Wanted() {
                             <Typography
                               variant="body2"
                               sx={{
-                                fontFamily: "monospace",
-                                fontSize: "0.75rem",
-                                wordBreak: "break-all",
+                                fontFamily: 'monospace',
+                                fontSize: '0.75rem',
+                                wordBreak: 'break-all',
                               }}
                             >
                               {url}

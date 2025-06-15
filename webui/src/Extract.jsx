@@ -1,26 +1,26 @@
 import {
-    Archive as ExtractIcon,
-    Folder as FolderIcon,
-    Movie as MediaIcon,
-    Subtitles as SubtitleIcon,
-} from "@mui/icons-material";
+  Archive as ExtractIcon,
+  Folder as FolderIcon,
+  Movie as MediaIcon,
+  Subtitles as SubtitleIcon,
+} from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    LinearProgress,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Paper,
-    TextField,
-    Typography,
-} from "@mui/material";
-import { useState } from "react";
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { useState } from 'react';
 
 /**
  * Extract provides a simple form to request subtitle extraction for a media file.
@@ -28,44 +28,48 @@ import { useState } from "react";
  * extracted items is displayed.
  */
 export default function Extract() {
-  const [path, setPath] = useState("");
-  const [status, setStatus] = useState("");
+  const [path, setPath] = useState('');
+  const [status, setStatus] = useState('');
   const [extracting, setExtracting] = useState(false);
   const [extractedItems, setExtractedItems] = useState([]);
 
   const doExtract = async () => {
     if (!path.trim()) {
-      setStatus("Please enter a valid path");
+      setStatus('Please enter a valid path');
       return;
     }
 
     setExtracting(true);
-    setStatus("");
+    setStatus('');
     setExtractedItems([]);
 
     try {
-      const res = await fetch("/api/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path }),
       });
 
       if (res.ok) {
         const items = await res.json();
         setExtractedItems(items || []);
-        setStatus(`Successfully extracted ${items?.length || 0} subtitle streams`);
+        setStatus(
+          `Successfully extracted ${items?.length || 0} subtitle streams`
+        );
       } else {
         const errorText = await res.text();
         setStatus(`Error: ${errorText || 'Failed to extract subtitles'}`);
       }
     } catch (error) {
-      setStatus(`Network error: ${error.message || 'Please check your connection.'}`);
+      setStatus(
+        `Network error: ${error.message || 'Please check your connection.'}`
+      );
     } finally {
       setExtracting(false);
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = event => {
     if (event.key === 'Enter') {
       doExtract();
     }
@@ -78,7 +82,8 @@ export default function Extract() {
       </Typography>
 
       <Typography variant="body1" color="text.secondary" paragraph>
-        Extract embedded subtitle streams from media files (MKV, MP4, etc.) into separate subtitle files.
+        Extract embedded subtitle streams from media files (MKV, MP4, etc.) into
+        separate subtitle files.
       </Typography>
 
       <Card sx={{ maxWidth: 800, mx: 'auto' }}>
@@ -89,11 +94,13 @@ export default function Extract() {
               label="Media File Path"
               placeholder="/path/to/media/file.mkv"
               value={path}
-              onChange={(e) => setPath(e.target.value)}
+              onChange={e => setPath(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={extracting}
               InputProps={{
-                startAdornment: <FolderIcon sx={{ mr: 1, color: 'action.active' }} />,
+                startAdornment: (
+                  <FolderIcon sx={{ mr: 1, color: 'action.active' }} />
+                ),
               }}
               helperText="Enter the full path to a media file containing embedded subtitles"
             />
@@ -113,7 +120,12 @@ export default function Extract() {
           {extracting && (
             <Box mt={2}>
               <LinearProgress />
-              <Typography variant="body2" color="text.secondary" align="center" mt={1}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                align="center"
+                mt={1}
+              >
                 Analyzing media file and extracting subtitle streams...
               </Typography>
             </Box>
@@ -121,7 +133,11 @@ export default function Extract() {
 
           {status && (
             <Alert
-              severity={status.includes('Error') || status.includes('error') ? 'error' : 'success'}
+              severity={
+                status.includes('Error') || status.includes('error')
+                  ? 'error'
+                  : 'success'
+              }
               sx={{ mt: 2 }}
             >
               {status}
@@ -136,14 +152,22 @@ export default function Extract() {
               <Paper variant="outlined">
                 <List>
                   {extractedItems.map((item, index) => (
-                    <ListItem key={index} divider={index < extractedItems.length - 1}>
+                    <ListItem
+                      key={index}
+                      divider={index < extractedItems.length - 1}
+                    >
                       <ListItemIcon>
                         <SubtitleIcon color="primary" />
                       </ListItemIcon>
                       <ListItemText
                         primary={item.filename || `Stream ${index + 1}`}
                         secondary={
-                          <Box display="flex" alignItems="center" gap={1} mt={1}>
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            gap={1}
+                            mt={1}
+                          >
                             <Chip
                               label={item.language || 'Unknown'}
                               size="small"
@@ -181,9 +205,10 @@ export default function Extract() {
             Supported Media Formats
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            This tool can extract subtitles from media files that contain embedded subtitle streams,
-            including MKV, MP4, AVI, and other container formats. The extracted subtitles will be
-            saved as separate files in the same directory as the source media.
+            This tool can extract subtitles from media files that contain
+            embedded subtitle streams, including MKV, MP4, AVI, and other
+            container formats. The extracted subtitles will be saved as separate
+            files in the same directory as the source media.
           </Typography>
         </CardContent>
       </Card>

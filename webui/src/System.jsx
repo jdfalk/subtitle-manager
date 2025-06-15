@@ -7,7 +7,7 @@ import {
   Storage as StorageIcon,
   BugReport as SystemIcon,
   Schedule as TaskIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
@@ -29,9 +29,9 @@ import {
   Tooltip,
   Typography,
   useTheme,
-} from "@mui/material";
-import { useEffect, useState } from "react";
-import UserManagement from "./UserManagement.jsx";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import UserManagement from './UserManagement.jsx';
 
 /**
  * System component displays system information, logs, and running tasks.
@@ -53,16 +53,16 @@ export default function System() {
     setLoading(true);
     try {
       const [logsRes, infoRes, tasksRes] = await Promise.all([
-        fetch("/api/logs"),
-        fetch("/api/system"),
-        fetch("/api/tasks")
+        fetch('/api/logs'),
+        fetch('/api/system'),
+        fetch('/api/tasks'),
       ]);
 
       if (logsRes.ok) setLogs(await logsRes.json());
       if (infoRes.ok) setInfo(await infoRes.json());
       if (tasksRes.ok) setTasks(await tasksRes.json());
     } catch (error) {
-      console.error("Failed to load system data:", error);
+      console.error('Failed to load system data:', error);
     } finally {
       setLoading(false);
     }
@@ -72,14 +72,14 @@ export default function System() {
     loadSystemData();
   }, []);
 
-  const formatBytes = (bytes) => {
+  const formatBytes = bytes => {
     if (!bytes) return 'N/A';
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${Math.round(bytes / Math.pow(1024, i) * 100) / 100} ${sizes[i]}`;
+    return `${Math.round((bytes / Math.pow(1024, i)) * 100) / 100} ${sizes[i]}`;
   };
 
-  const formatUptime = (seconds) => {
+  const formatUptime = seconds => {
     if (!seconds) return 'N/A';
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
@@ -89,7 +89,12 @@ export default function System() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -97,7 +102,12 @@ export default function System() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4" component="h1" fontWeight={500}>
           System Monitor
         </Typography>
@@ -108,7 +118,7 @@ export default function System() {
               backgroundColor: alpha(theme.palette.primary.main, 0.1),
               '&:hover': {
                 backgroundColor: alpha(theme.palette.primary.main, 0.2),
-              }
+              },
             }}
           >
             <RefreshIcon />
@@ -122,12 +132,20 @@ export default function System() {
       </Tabs>
 
       {tab === 0 && (
-        <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+        <Box
+          display="grid"
+          gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }}
+          gap={3}
+        >
           {/* System Information */}
           <Box>
             <Card elevation={0}>
               <CardContent>
-                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ display: 'flex', alignItems: 'center', mb: 2 }}
+                >
                   <SystemIcon sx={{ mr: 1, color: 'primary.main' }} />
                   System Information
                 </Typography>
@@ -136,8 +154,13 @@ export default function System() {
                     <ListItem key={key} divider sx={{ px: 0 }}>
                       <ListItemText
                         primary={
-                          <Typography variant="body2" fontWeight={500} color="text.primary">
-                            {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
+                          <Typography
+                            variant="body2"
+                            fontWeight={500}
+                            color="text.primary"
+                          >
+                            {key.charAt(0).toUpperCase() +
+                              key.slice(1).replace(/([A-Z])/g, ' $1')}
                           </Typography>
                         }
                         secondary={
@@ -145,8 +168,8 @@ export default function System() {
                             {key.includes('memory') || key.includes('size')
                               ? formatBytes(value)
                               : key.includes('uptime')
-                              ? formatUptime(value)
-                              : String(value)}
+                                ? formatUptime(value)
+                                : String(value)}
                           </Typography>
                         }
                       />
@@ -161,7 +184,11 @@ export default function System() {
           <Box>
             <Card elevation={0}>
               <CardContent>
-                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ display: 'flex', alignItems: 'center', mb: 2 }}
+                >
                   <TaskIcon sx={{ mr: 1, color: 'primary.main' }} />
                   Running Tasks
                 </Typography>
@@ -173,27 +200,48 @@ export default function System() {
                   <List dense>
                     {Object.entries(tasks).map(([taskId, taskInfo]) => {
                       // Type-safe access to taskInfo properties
-                      const status = (taskInfo && typeof taskInfo === 'object' && 'status' in taskInfo && typeof taskInfo.status === 'string')
-                        ? taskInfo.status
-                        : 'Running';
-                      const progress = (taskInfo && typeof taskInfo === 'object' && 'progress' in taskInfo && typeof taskInfo.progress === 'number')
-                        ? taskInfo.progress
-                        : null;
+                      const status =
+                        taskInfo &&
+                        typeof taskInfo === 'object' &&
+                        'status' in taskInfo &&
+                        typeof taskInfo.status === 'string'
+                          ? taskInfo.status
+                          : 'Running';
+                      const progress =
+                        taskInfo &&
+                        typeof taskInfo === 'object' &&
+                        'progress' in taskInfo &&
+                        typeof taskInfo.progress === 'number'
+                          ? taskInfo.progress
+                          : null;
 
                       return (
                         <ListItem key={taskId} divider sx={{ px: 0 }}>
                           <ListItemText
                             primary={
-                              <Typography variant="body2" fontWeight={500} color="text.primary">
+                              <Typography
+                                variant="body2"
+                                fontWeight={500}
+                                color="text.primary"
+                              >
                                 {taskId}
                               </Typography>
                             }
                             secondary={
-                              <Box display="flex" alignItems="center" gap={1} mt={1}>
+                              <Box
+                                display="flex"
+                                alignItems="center"
+                                gap={1}
+                                mt={1}
+                              >
                                 <Chip
                                   label={status}
                                   size="small"
-                                  color={status === 'completed' ? 'success' : 'primary'}
+                                  color={
+                                    status === 'completed'
+                                      ? 'success'
+                                      : 'primary'
+                                  }
                                   sx={{ fontSize: '0.75rem' }}
                                 />
                                 {progress !== null && (
@@ -220,7 +268,11 @@ export default function System() {
           <Box gridColumn={{ xs: '1', md: '1 / -1' }}>
             <Card elevation={0}>
               <CardContent>
-                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ display: 'flex', alignItems: 'center', mb: 2 }}
+                >
                   <LogIcon sx={{ mr: 1, color: 'primary.main' }} />
                   Recent Logs
                 </Typography>
@@ -237,7 +289,10 @@ export default function System() {
                 >
                   <Box p={2}>
                     {logs.length === 0 ? (
-                      <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                      <Typography
+                        color="text.secondary"
+                        sx={{ fontStyle: 'italic' }}
+                      >
                         No logs available
                       </Typography>
                     ) : (
@@ -249,10 +304,11 @@ export default function System() {
                           fontSize: '0.875rem',
                           lineHeight: 1.5,
                           color: isDarkMode ? '#e6edf3' : '#24292f',
-                          fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
+                          fontFamily:
+                            '"Roboto Mono", "Consolas", "Monaco", monospace',
                         }}
                       >
-                        {logs.join("\n")}
+                        {logs.join('\n')}
                       </pre>
                     )}
                   </Box>
@@ -274,19 +330,32 @@ export default function System() {
               }}
             >
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography
+                  variant="h6"
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
                   <CodeIcon sx={{ mr: 1, color: 'primary.main' }} />
                   Raw Data (Debug Information)
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
+                <Box
+                  display="grid"
+                  gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }}
+                  gap={3}
+                >
                   {/* Raw Tasks Data */}
                   <Box>
                     <Card variant="outlined">
                       <CardContent>
-                        <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                          <StorageIcon sx={{ mr: 1, color: 'secondary.main' }} />
+                        <Typography
+                          variant="subtitle1"
+                          gutterBottom
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          <StorageIcon
+                            sx={{ mr: 1, color: 'secondary.main' }}
+                          />
                           Tasks (Raw Data)
                         </Typography>
                         <Paper
@@ -306,7 +375,8 @@ export default function System() {
                                 fontSize: '0.75rem',
                                 whiteSpace: 'pre-wrap',
                                 color: isDarkMode ? '#e6edf3' : '#24292f',
-                                fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
+                                fontFamily:
+                                  '"Roboto Mono", "Consolas", "Monaco", monospace',
                                 lineHeight: 1.4,
                               }}
                             >
@@ -322,7 +392,11 @@ export default function System() {
                   <Box>
                     <Card variant="outlined">
                       <CardContent>
-                        <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography
+                          variant="subtitle1"
+                          gutterBottom
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
                           <MemoryIcon sx={{ mr: 1, color: 'secondary.main' }} />
                           System Info (Raw Data)
                         </Typography>
@@ -343,7 +417,8 @@ export default function System() {
                                 fontSize: '0.75rem',
                                 whiteSpace: 'pre-wrap',
                                 color: isDarkMode ? '#e6edf3' : '#24292f',
-                                fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
+                                fontFamily:
+                                  '"Roboto Mono", "Consolas", "Monaco", monospace',
                                 lineHeight: 1.4,
                               }}
                             >
@@ -361,9 +436,7 @@ export default function System() {
         </Box>
       )}
 
-      {tab === 1 && (
-        <UserManagement />
-      )}
+      {tab === 1 && <UserManagement />}
     </Box>
   );
 }

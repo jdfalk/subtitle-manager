@@ -1,5 +1,5 @@
 // file: webui/src/UserManagement.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableRow,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 
 /**
  * UserManagement displays all users and allows password resets.
@@ -18,15 +18,15 @@ export default function UserManagement() {
   const [users, setUsers] = useState([]);
 
   const loadUsers = async () => {
-    const res = await fetch("/api/users");
+    const res = await fetch('/api/users');
     if (res.ok) setUsers(await res.json());
   };
 
-  const reset = async (id) => {
-    if (!window.confirm("Reset password for this user?")) return;
-    const res = await fetch(`/api/users/${id}/reset`, { method: "POST" });
+  const reset = async id => {
+    if (!window.confirm('Reset password for this user?')) return;
+    const res = await fetch(`/api/users/${id}/reset`, { method: 'POST' });
     if (res.ok) {
-      alert("Password reset and emailed");
+      alert('Password reset and emailed');
     }
   };
 
@@ -49,7 +49,7 @@ export default function UserManagement() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {users.map((u) => (
+          {users.map(u => (
             <TableRow key={u.id}>
               <TableCell>{u.username}</TableCell>
               <TableCell>{u.email}</TableCell>

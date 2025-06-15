@@ -1,34 +1,34 @@
 // file: webui/src/components/ProviderConfigDialog.jsx
 
 import {
-    Close as CloseIcon,
-    Save as SaveIcon,
-    Visibility as VisibilityIcon,
-    VisibilityOff as VisibilityOffIcon,
-} from "@mui/icons-material";
+  Close as CloseIcon,
+  Save as SaveIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+} from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    Chip,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Divider,
-    FormControl,
-    FormControlLabel,
-    Grid,
-    IconButton,
-    InputAdornment,
-    InputLabel,
-    MenuItem,
-    Select,
-    Switch,
-    TextField,
-    Typography,
-} from "@mui/material";
-import { useState } from "react";
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { useState } from 'react';
 
 /**
  * ProviderConfigDialog provides a comprehensive configuration interface
@@ -40,54 +40,125 @@ import { useState } from "react";
  * @param {Function} onClose - Close callback
  * @param {Function} onSave - Save callback with configuration
  */
-export default function ProviderConfigDialog({ open, provider, onClose, onSave }) {
+export default function ProviderConfigDialog({
+  open,
+  provider,
+  onClose,
+  onSave,
+}) {
   const [config, setConfig] = useState(provider?.config || {});
   const [showPasswords, setShowPasswords] = useState({});
   const [errors, setErrors] = useState({});
 
-  const getProviderFields = (providerName) => {
+  const getProviderFields = providerName => {
     // Define configuration fields for different providers
     const fieldConfigs = {
       opensubtitles: [
-        { name: 'apiKey', label: 'API Key', type: 'password', required: true,
-          description: 'Get your API key from opensubtitles.com' },
+        {
+          name: 'apiKey',
+          label: 'API Key',
+          type: 'password',
+          required: true,
+          description: 'Get your API key from opensubtitles.com',
+        },
         { name: 'username', label: 'Username', type: 'text', required: false },
-        { name: 'rateLimit', label: 'Rate Limit (requests/minute)', type: 'number',
-          defaultValue: 20, min: 1, max: 200 },
-        { name: 'languages', label: 'Preferred Languages', type: 'multiselect',
-          options: ['en', 'es', 'fr', 'de', 'it', 'pt', 'nl', 'ru', 'ja', 'ko'] },
+        {
+          name: 'rateLimit',
+          label: 'Rate Limit (requests/minute)',
+          type: 'number',
+          defaultValue: 20,
+          min: 1,
+          max: 200,
+        },
+        {
+          name: 'languages',
+          label: 'Preferred Languages',
+          type: 'multiselect',
+          options: ['en', 'es', 'fr', 'de', 'it', 'pt', 'nl', 'ru', 'ja', 'ko'],
+        },
       ],
       addic7ed: [
         { name: 'username', label: 'Username', type: 'text', required: true },
-        { name: 'password', label: 'Password', type: 'password', required: true },
-        { name: 'userAgent', label: 'User Agent', type: 'text',
-          defaultValue: 'Mozilla/5.0 (compatible; SubtitleManager)' },
+        {
+          name: 'password',
+          label: 'Password',
+          type: 'password',
+          required: true,
+        },
+        {
+          name: 'userAgent',
+          label: 'User Agent',
+          type: 'text',
+          defaultValue: 'Mozilla/5.0 (compatible; SubtitleManager)',
+        },
       ],
       subscene: [
-        { name: 'userAgent', label: 'User Agent', type: 'text',
-          defaultValue: 'Mozilla/5.0 (compatible; SubtitleManager)' },
-        { name: 'timeout', label: 'Timeout (seconds)', type: 'number',
-          defaultValue: 30, min: 5, max: 300 },
+        {
+          name: 'userAgent',
+          label: 'User Agent',
+          type: 'text',
+          defaultValue: 'Mozilla/5.0 (compatible; SubtitleManager)',
+        },
+        {
+          name: 'timeout',
+          label: 'Timeout (seconds)',
+          type: 'number',
+          defaultValue: 30,
+          min: 5,
+          max: 300,
+        },
       ],
       whisper: [
-        { name: 'model', label: 'Whisper Model', type: 'select',
-          options: ['tiny', 'base', 'small', 'medium', 'large'], defaultValue: 'base' },
-        { name: 'language', label: 'Force Language', type: 'select',
-          options: ['auto', 'en', 'es', 'fr', 'de', 'it', 'pt'], defaultValue: 'auto' },
-        { name: 'device', label: 'Device', type: 'select',
-          options: ['auto', 'cpu', 'cuda'], defaultValue: 'auto' },
+        {
+          name: 'model',
+          label: 'Whisper Model',
+          type: 'select',
+          options: ['tiny', 'base', 'small', 'medium', 'large'],
+          defaultValue: 'base',
+        },
+        {
+          name: 'language',
+          label: 'Force Language',
+          type: 'select',
+          options: ['auto', 'en', 'es', 'fr', 'de', 'it', 'pt'],
+          defaultValue: 'auto',
+        },
+        {
+          name: 'device',
+          label: 'Device',
+          type: 'select',
+          options: ['auto', 'cpu', 'cuda'],
+          defaultValue: 'auto',
+        },
       ],
       generic: [
         { name: 'baseUrl', label: 'Base URL', type: 'url', required: true },
         { name: 'apiKey', label: 'API Key', type: 'password' },
-        { name: 'timeout', label: 'Timeout (seconds)', type: 'number', defaultValue: 30 },
-      ]
+        {
+          name: 'timeout',
+          label: 'Timeout (seconds)',
+          type: 'number',
+          defaultValue: 30,
+        },
+      ],
     };
 
-    return fieldConfigs[providerName] || [
-      { name: 'enabled', label: 'Enable Provider', type: 'boolean', defaultValue: true },
-      { name: 'timeout', label: 'Timeout (seconds)', type: 'number', defaultValue: 30 },
-    ];
+    return (
+      fieldConfigs[providerName] || [
+        {
+          name: 'enabled',
+          label: 'Enable Provider',
+          type: 'boolean',
+          defaultValue: true,
+        },
+        {
+          name: 'timeout',
+          label: 'Timeout (seconds)',
+          type: 'number',
+          defaultValue: 30,
+        },
+      ]
+    );
   };
 
   const handleFieldChange = (fieldName, value) => {
@@ -97,7 +168,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
     }
   };
 
-  const togglePasswordVisibility = (fieldName) => {
+  const togglePasswordVisibility = fieldName => {
     setShowPasswords(prev => ({ ...prev, [fieldName]: !prev[fieldName] }));
   };
 
@@ -109,7 +180,11 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
       if (field.required && !config[field.name]) {
         newErrors[field.name] = `${field.label} is required`;
       }
-      if (field.type === 'url' && config[field.name] && !isValidUrl(config[field.name])) {
+      if (
+        field.type === 'url' &&
+        config[field.name] &&
+        !isValidUrl(config[field.name])
+      ) {
         newErrors[field.name] = 'Please enter a valid URL';
       }
       if (field.type === 'number' && config[field.name]) {
@@ -127,7 +202,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
     return Object.keys(newErrors).length === 0;
   };
 
-  const isValidUrl = (string) => {
+  const isValidUrl = string => {
     try {
       new URL(string);
       return true;
@@ -142,7 +217,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
     }
   };
 
-  const renderField = (field) => {
+  const renderField = field => {
     const value = config[field.name] ?? field.defaultValue ?? '';
 
     switch (field.type) {
@@ -152,7 +227,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
             control={
               <Switch
                 checked={Boolean(value)}
-                onChange={(e) => handleFieldChange(field.name, e.target.checked)}
+                onChange={e => handleFieldChange(field.name, e.target.checked)}
               />
             }
             label={field.label}
@@ -166,7 +241,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
             <Select
               value={value}
               label={field.label}
-              onChange={(e) => handleFieldChange(field.name, e.target.value)}
+              onChange={e => handleFieldChange(field.name, e.target.value)}
             >
               {field.options?.map(option => (
                 <MenuItem key={option} value={option}>
@@ -185,11 +260,15 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
               multiple
               value={Array.isArray(value) ? value : []}
               label={field.label}
-              onChange={(e) => handleFieldChange(field.name, e.target.value)}
-              renderValue={(selected) => (
+              onChange={e => handleFieldChange(field.name, e.target.value)}
+              renderValue={selected => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value.toUpperCase()} size="small" />
+                  {selected.map(value => (
+                    <Chip
+                      key={value}
+                      label={value.toUpperCase()}
+                      size="small"
+                    />
                   ))}
                 </Box>
               )}
@@ -210,7 +289,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
             label={field.label}
             type={showPasswords[field.name] ? 'text' : 'password'}
             value={value}
-            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            onChange={e => handleFieldChange(field.name, e.target.value)}
             error={Boolean(errors[field.name])}
             helperText={errors[field.name] || field.description}
             required={field.required}
@@ -221,7 +300,11 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
                     onClick={() => togglePasswordVisibility(field.name)}
                     edge="end"
                   >
-                    {showPasswords[field.name] ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    {showPasswords[field.name] ? (
+                      <VisibilityOffIcon />
+                    ) : (
+                      <VisibilityIcon />
+                    )}
                   </IconButton>
                 </InputAdornment>
               ),
@@ -236,7 +319,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
             label={field.label}
             type={field.type}
             value={value}
-            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            onChange={e => handleFieldChange(field.name, e.target.value)}
             error={Boolean(errors[field.name])}
             helperText={errors[field.name] || field.description}
             required={field.required}
@@ -269,13 +352,19 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
       <DialogContent>
         <Box sx={{ mb: 2 }}>
           <Alert severity="info" sx={{ mb: 2 }}>
-            Configure this provider to enable subtitle downloads. Required fields are marked with *.
+            Configure this provider to enable subtitle downloads. Required
+            fields are marked with *.
           </Alert>
         </Box>
 
         <Grid container spacing={3}>
-          {fields.map((field) => (
-            <Grid item xs={12} sm={field.type === 'boolean' ? 12 : 6} key={field.name}>
+          {fields.map(field => (
+            <Grid
+              item
+              xs={12}
+              sm={field.type === 'boolean' ? 12 : 6}
+              key={field.name}
+            >
               {renderField(field)}
             </Grid>
           ))}
@@ -286,9 +375,19 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
             <Divider sx={{ mb: 2 }} />
             <Alert severity="warning">
               <Typography variant="body2">
-                <strong>OpenSubtitles API Key Required:</strong><br />
-                1. Visit <a href="https://www.opensubtitles.com/api" target="_blank" rel="noopener noreferrer">opensubtitles.com/api</a><br />
-                2. Create an account and generate an API key<br />
+                <strong>OpenSubtitles API Key Required:</strong>
+                <br />
+                1. Visit{' '}
+                <a
+                  href="https://www.opensubtitles.com/api"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  opensubtitles.com/api
+                </a>
+                <br />
+                2. Create an account and generate an API key
+                <br />
                 3. Enter your API key above to enable this provider
               </Typography>
             </Alert>
@@ -297,9 +396,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
+        <Button onClick={onClose}>Cancel</Button>
         <Button
           onClick={handleSave}
           variant="contained"

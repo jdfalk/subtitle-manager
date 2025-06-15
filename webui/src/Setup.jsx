@@ -8,7 +8,7 @@ import {
   SettingsOutlined,
   SubtitlesOutlined,
   TranslateOutlined,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -32,11 +32,11 @@ import {
   StepLabel,
   Stepper,
   TextField,
-  Typography
-} from "@mui/material";
-import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
+  Typography,
+} from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
 
 // Material Design 3 theme
 const theme = createTheme({
@@ -81,7 +81,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 24,
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+          boxShadow:
+            '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
         },
       },
     },
@@ -97,7 +98,12 @@ const theme = createTheme({
   },
 });
 
-const steps = ['Welcome', 'Import from Bazarr', 'Create Admin', 'Server Settings'];
+const steps = [
+  'Welcome',
+  'Import from Bazarr',
+  'Create Admin',
+  'Server Settings',
+];
 
 /**
  * Setup guides the user through initial configuration when no user exists.
@@ -105,41 +111,41 @@ const steps = ['Welcome', 'Import from Bazarr', 'Create Admin', 'Server Settings
  */
 export default function Setup() {
   const [step, setStep] = useState(0);
-  const [serverName, setServerName] = useState("Subtitle Manager");
+  const [serverName, setServerName] = useState('Subtitle Manager');
   const [reverseProxy, setReverseProxy] = useState(false);
-  const [adminUser, setAdminUser] = useState("");
-  const [adminPass, setAdminPass] = useState("");
+  const [adminUser, setAdminUser] = useState('');
+  const [adminPass, setAdminPass] = useState('');
 
   // Bazarr import state
-  const [bazarrURL, setBazarrURL] = useState("");
-  const [bazarrAPIKey, setBazarrAPIKey] = useState("");
+  const [bazarrURL, setBazarrURL] = useState('');
+  const [bazarrAPIKey, setBazarrAPIKey] = useState('');
   const [bazarrSettings, setBazarrSettings] = useState(null);
   const [bazarrMappings, setBazarrMappings] = useState([]);
   const [bazarrRawData, setBazarrRawData] = useState(null);
   const [selectedSettings, setSelectedSettings] = useState({});
   const [bazarrLoading, setBazarrLoading] = useState(false);
-  const [bazarrError, setBazarrError] = useState("");
+  const [bazarrError, setBazarrError] = useState('');
   const [showDebug, setShowDebug] = useState(false);
 
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
   const importBazarr = async () => {
     if (!bazarrURL || !bazarrAPIKey) {
-      setBazarrError("Please enter both URL and API key");
+      setBazarrError('Please enter both URL and API key');
       return;
     }
 
     setBazarrLoading(true);
-    setBazarrError("");
+    setBazarrError('');
 
     try {
-      const res = await fetch("/api/setup/bazarr", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/setup/bazarr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url: bazarrURL,
-          api_key: bazarrAPIKey
+          api_key: bazarrAPIKey,
         }),
       });
 
@@ -163,15 +169,15 @@ export default function Setup() {
         }
         setSelectedSettings(selected);
 
-        console.log("Raw Bazarr data:", data.raw_settings);
-        console.log("Mapped Bazarr data:", data.preview);
-        console.log("Mapping details:", data.mappings);
+        console.log('Raw Bazarr data:', data.raw_settings);
+        console.log('Mapped Bazarr data:', data.preview);
+        console.log('Mapping details:', data.mappings);
       } else {
         const errorText = await res.text();
-        setBazarrError(errorText || "Failed to connect to Bazarr");
+        setBazarrError(errorText || 'Failed to connect to Bazarr');
       }
     } catch (err) {
-      setBazarrError("Network error: " + err.message);
+      setBazarrError('Network error: ' + err.message);
     } finally {
       setBazarrLoading(false);
     }
@@ -198,25 +204,25 @@ export default function Setup() {
       admin_user: adminUser,
       admin_pass: adminPass,
       integrations,
-      ...importedConfig // Merge Bazarr settings
+      ...importedConfig, // Merge Bazarr settings
     };
 
     try {
-      const res = await fetch("/api/setup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
 
       if (res.ok) {
-        setStatus("complete");
+        setStatus('complete');
         setTimeout(() => window.location.reload(), 2000);
       } else {
-        setStatus("error");
+        setStatus('error');
       }
     } catch (err) {
-      console.error("Setup failed:", err);
-      setStatus("error");
+      console.error('Setup failed:', err);
+      setStatus('error');
     } finally {
       setLoading(false);
     }
@@ -230,17 +236,20 @@ export default function Setup() {
     next();
   };
 
-  if (status === "complete") {
+  if (status === 'complete') {
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Container maxWidth="sm" sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          py: 4
-        }}>
+        <Container
+          maxWidth="sm"
+          sx={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            py: 4,
+          }}
+        >
           <Card elevation={3} sx={{ width: '100%', textAlign: 'center', p: 4 }}>
             <CheckCircleOutlined color="success" sx={{ fontSize: 80, mb: 2 }} />
             <Typography variant="h3" color="success.main" gutterBottom>
@@ -264,34 +273,40 @@ export default function Setup() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 2
-      }}>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 2,
+        }}
+      >
         <Container maxWidth="md">
           <Card elevation={8} sx={{ overflow: 'visible' }}>
             {/* Header with progress */}
-            <Box sx={{
-              background: 'linear-gradient(135deg, #6750a4 0%, #8b5cf6 100%)',
-              color: 'white',
-              p: 4,
-              textAlign: 'center'
-            }}>
+            <Box
+              sx={{
+                background: 'linear-gradient(135deg, #6750a4 0%, #8b5cf6 100%)',
+                color: 'white',
+                p: 4,
+                textAlign: 'center',
+              }}
+            >
               <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                <Paper sx={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'rgba(255,255,255,0.2)',
-                  backdropFilter: 'blur(10px)'
-                }}>
+                <Paper
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                >
                   <SubtitlesOutlined sx={{ fontSize: 40, color: 'white' }} />
                 </Paper>
               </Box>
@@ -301,15 +316,19 @@ export default function Setup() {
               </Typography>
 
               <Box sx={{ mt: 3 }}>
-                <Stepper activeStep={step} alternativeLabel sx={{
-                  '& .MuiStepLabel-label': { color: 'rgba(255,255,255,0.8)' },
-                  '& .MuiStepLabel-label.Mui-active': { color: 'white' },
-                  '& .MuiStepLabel-label.Mui-completed': { color: 'white' },
-                  '& .MuiStepIcon-root': { color: 'rgba(255,255,255,0.5)' },
-                  '& .MuiStepIcon-root.Mui-active': { color: 'white' },
-                  '& .MuiStepIcon-root.Mui-completed': { color: 'white' },
-                }}>
-                  {steps.map((label) => (
+                <Stepper
+                  activeStep={step}
+                  alternativeLabel
+                  sx={{
+                    '& .MuiStepLabel-label': { color: 'rgba(255,255,255,0.8)' },
+                    '& .MuiStepLabel-label.Mui-active': { color: 'white' },
+                    '& .MuiStepLabel-label.Mui-completed': { color: 'white' },
+                    '& .MuiStepIcon-root': { color: 'rgba(255,255,255,0.5)' },
+                    '& .MuiStepIcon-root.Mui-active': { color: 'white' },
+                    '& .MuiStepIcon-root.Mui-completed': { color: 'white' },
+                  }}
+                >
+                  {steps.map(label => (
                     <Step key={label}>
                       <StepLabel>{label}</StepLabel>
                     </Step>
@@ -325,58 +344,89 @@ export default function Setup() {
                     Welcome to Subtitle Manager
                   </Typography>
                   <Typography variant="body1" color="text.secondary" paragraph>
-                    A powerful, self-hosted subtitle management system that automates
-                    subtitle downloading, translation, and organization for your media library.
+                    A powerful, self-hosted subtitle management system that
+                    automates subtitle downloading, translation, and
+                    organization for your media library.
                   </Typography>
 
                   <Grid container spacing={3} sx={{ my: 4 }}>
                     <Grid item xs={12} sm={6}>
-                      <Card variant="outlined" sx={{ p: 3, height: '100%', textAlign: 'center' }}>
-                        <CloudDownloadOutlined color="primary" sx={{ fontSize: 48, mb: 2 }} />
+                      <Card
+                        variant="outlined"
+                        sx={{ p: 3, height: '100%', textAlign: 'center' }}
+                      >
+                        <CloudDownloadOutlined
+                          color="primary"
+                          sx={{ fontSize: 48, mb: 2 }}
+                        />
                         <Typography variant="h6" gutterBottom>
                           Automated Downloads
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Automatically find and download subtitles for your movies and TV shows
+                          Automatically find and download subtitles for your
+                          movies and TV shows
                         </Typography>
                       </Card>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Card variant="outlined" sx={{ p: 3, height: '100%', textAlign: 'center' }}>
-                        <TranslateOutlined color="primary" sx={{ fontSize: 48, mb: 2 }} />
+                      <Card
+                        variant="outlined"
+                        sx={{ p: 3, height: '100%', textAlign: 'center' }}
+                      >
+                        <TranslateOutlined
+                          color="primary"
+                          sx={{ fontSize: 48, mb: 2 }}
+                        />
                         <Typography variant="h6" gutterBottom>
                           Translation
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Translate subtitles to any language using Google Translate or OpenAI
+                          Translate subtitles to any language using Google
+                          Translate or OpenAI
                         </Typography>
                       </Card>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Card variant="outlined" sx={{ p: 3, height: '100%', textAlign: 'center' }}>
-                        <ExtensionOutlined color="primary" sx={{ fontSize: 48, mb: 2 }} />
+                      <Card
+                        variant="outlined"
+                        sx={{ p: 3, height: '100%', textAlign: 'center' }}
+                      >
+                        <ExtensionOutlined
+                          color="primary"
+                          sx={{ fontSize: 48, mb: 2 }}
+                        />
                         <Typography variant="h6" gutterBottom>
                           Integrations
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Works seamlessly with Sonarr, Radarr, Plex, and other media tools
+                          Works seamlessly with Sonarr, Radarr, Plex, and other
+                          media tools
                         </Typography>
                       </Card>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Card variant="outlined" sx={{ p: 3, height: '100%', textAlign: 'center' }}>
-                        <PhoneAndroidOutlined color="primary" sx={{ fontSize: 48, mb: 2 }} />
+                      <Card
+                        variant="outlined"
+                        sx={{ p: 3, height: '100%', textAlign: 'center' }}
+                      >
+                        <PhoneAndroidOutlined
+                          color="primary"
+                          sx={{ fontSize: 48, mb: 2 }}
+                        />
                         <Typography variant="h6" gutterBottom>
                           Modern UI
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Clean, responsive web interface accessible from any device
+                          Clean, responsive web interface accessible from any
+                          device
                         </Typography>
                       </Card>
                     </Grid>
                   </Grid>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}
+                  >
                     <Button variant="contained" size="large" onClick={next}>
                       Get Started
                     </Button>
@@ -390,7 +440,8 @@ export default function Setup() {
                     Import from Bazarr
                   </Typography>
                   <Typography variant="body1" color="text.secondary" paragraph>
-                    Already using Bazarr? Import your existing configuration to get started quickly.
+                    Already using Bazarr? Import your existing configuration to
+                    get started quickly.
                   </Typography>
 
                   <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
@@ -400,9 +451,13 @@ export default function Setup() {
                         label="Bazarr URL"
                         placeholder="http://localhost:6767"
                         value={bazarrURL}
-                        onChange={(e) => setBazarrURL(e.target.value)}
+                        onChange={e => setBazarrURL(e.target.value)}
                         InputProps={{
-                          startAdornment: <ConnectedTvOutlined sx={{ mr: 1, color: 'text.secondary' }} />,
+                          startAdornment: (
+                            <ConnectedTvOutlined
+                              sx={{ mr: 1, color: 'text.secondary' }}
+                            />
+                          ),
                         }}
                       />
 
@@ -412,21 +467,33 @@ export default function Setup() {
                         type="password"
                         placeholder="Your Bazarr API key"
                         value={bazarrAPIKey}
-                        onChange={(e) => setBazarrAPIKey(e.target.value)}
+                        onChange={e => setBazarrAPIKey(e.target.value)}
                       />
 
                       {bazarrError && (
                         <Alert severity="error">{bazarrError}</Alert>
                       )}
 
-                      <Stack direction="row" spacing={2} sx={{ alignSelf: 'flex-start' }}>
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        sx={{ alignSelf: 'flex-start' }}
+                      >
                         <Button
                           variant="outlined"
                           onClick={importBazarr}
                           disabled={bazarrLoading}
-                          startIcon={bazarrLoading ? <CircularProgress size={20} /> : <CloudDownloadOutlined />}
+                          startIcon={
+                            bazarrLoading ? (
+                              <CircularProgress size={20} />
+                            ) : (
+                              <CloudDownloadOutlined />
+                            )
+                          }
                         >
-                          {bazarrLoading ? "Connecting..." : "Connect to Bazarr"}
+                          {bazarrLoading
+                            ? 'Connecting...'
+                            : 'Connect to Bazarr'}
                         </Button>
 
                         <Button
@@ -434,16 +501,25 @@ export default function Setup() {
                           onClick={() => setShowDebug(!showDebug)}
                           size="small"
                         >
-                          {showDebug ? "Hide Debug" : "Show Debug"}
+                          {showDebug ? 'Hide Debug' : 'Show Debug'}
                         </Button>
                       </Stack>
 
                       {showDebug && bazarrRawData && (
-                        <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
+                        <Paper
+                          variant="outlined"
+                          sx={{ p: 2, bgcolor: 'grey.50' }}
+                        >
                           <Typography variant="subtitle2" gutterBottom>
                             Raw Bazarr API Response:
                           </Typography>
-                          <pre style={{ fontSize: '12px', overflow: 'auto', maxHeight: '200px' }}>
+                          <pre
+                            style={{
+                              fontSize: '12px',
+                              overflow: 'auto',
+                              maxHeight: '200px',
+                            }}
+                          >
                             {JSON.stringify(bazarrRawData, null, 2)}
                           </pre>
                         </Paper>
@@ -454,8 +530,13 @@ export default function Setup() {
                           <Typography variant="h6" gutterBottom>
                             Found Settings ({bazarrMappings.length} items)
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" paragraph>
-                            Select which settings to import. Each setting shows where it will be mapped in Subtitle Manager:
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            paragraph
+                          >
+                            Select which settings to import. Each setting shows
+                            where it will be mapped in Subtitle Manager:
                           </Typography>
 
                           {/* Action buttons */}
@@ -491,9 +572,18 @@ export default function Setup() {
                               return groups;
                             }, {})
                           ).map(([section, mappings]) => (
-                            <Card key={section} variant="outlined" sx={{ mb: 2 }}>
+                            <Card
+                              key={section}
+                              variant="outlined"
+                              sx={{ mb: 2 }}
+                            >
                               <CardContent>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                                <Stack
+                                  direction="row"
+                                  justifyContent="space-between"
+                                  alignItems="center"
+                                  sx={{ mb: 1 }}
+                                >
                                   <Typography variant="h6" color="primary">
                                     {section}
                                   </Typography>
@@ -506,7 +596,10 @@ export default function Setup() {
                                         mappings.forEach(mapping => {
                                           updates[mapping.key] = true;
                                         });
-                                        setSelectedSettings({...selectedSettings, ...updates});
+                                        setSelectedSettings({
+                                          ...selectedSettings,
+                                          ...updates,
+                                        });
                                       }}
                                     >
                                       Select All
@@ -519,7 +612,10 @@ export default function Setup() {
                                         mappings.forEach(mapping => {
                                           updates[mapping.key] = false;
                                         });
-                                        setSelectedSettings({...selectedSettings, ...updates});
+                                        setSelectedSettings({
+                                          ...selectedSettings,
+                                          ...updates,
+                                        });
                                       }}
                                     >
                                       None
@@ -532,32 +628,61 @@ export default function Setup() {
                                       <ListItem sx={{ pl: 0 }}>
                                         <ListItemIcon>
                                           <Checkbox
-                                            checked={selectedSettings[mapping.key] || false}
-                                            onChange={(e) => setSelectedSettings({
-                                              ...selectedSettings,
-                                              [mapping.key]: e.target.checked
-                                            })}
+                                            checked={
+                                              selectedSettings[mapping.key] ||
+                                              false
+                                            }
+                                            onChange={e =>
+                                              setSelectedSettings({
+                                                ...selectedSettings,
+                                                [mapping.key]: e.target.checked,
+                                              })
+                                            }
                                           />
                                         </ListItemIcon>
                                         <ListItemText
                                           primary={
-                                            <Typography variant="body2" fontWeight="medium">
+                                            <Typography
+                                              variant="body2"
+                                              fontWeight="medium"
+                                            >
                                               {mapping.description}
                                             </Typography>
                                           }
                                           secondary={
                                             <Box>
-                                              <Typography variant="caption" color="primary" sx={{ fontFamily: 'monospace', display: 'block' }}>
+                                              <Typography
+                                                variant="caption"
+                                                color="primary"
+                                                sx={{
+                                                  fontFamily: 'monospace',
+                                                  display: 'block',
+                                                }}
+                                              >
                                                 {mapping.key}
                                               </Typography>
-                                              <Typography variant="caption" sx={{ fontFamily: 'monospace', display: 'block' }}>
-                                                Value: {typeof mapping.value === 'object' ? JSON.stringify(mapping.value) : String(mapping.value)}
+                                              <Typography
+                                                variant="caption"
+                                                sx={{
+                                                  fontFamily: 'monospace',
+                                                  display: 'block',
+                                                }}
+                                              >
+                                                Value:{' '}
+                                                {typeof mapping.value ===
+                                                'object'
+                                                  ? JSON.stringify(
+                                                      mapping.value
+                                                    )
+                                                  : String(mapping.value)}
                                               </Typography>
                                             </Box>
                                           }
                                         />
                                       </ListItem>
-                                      {index < mappings.length - 1 && <Divider />}
+                                      {index < mappings.length - 1 && (
+                                        <Divider />
+                                      )}
                                     </div>
                                   ))}
                                 </List>
@@ -568,7 +693,12 @@ export default function Setup() {
                           {/* Summary */}
                           <Alert severity="info" sx={{ mt: 2 }}>
                             <Typography variant="body2">
-                              {Object.values(selectedSettings).filter(Boolean).length} of {bazarrMappings.length} settings selected for import
+                              {
+                                Object.values(selectedSettings).filter(Boolean)
+                                  .length
+                              }{' '}
+                              of {bazarrMappings.length} settings selected for
+                              import
                             </Typography>
                           </Alert>
                         </Box>
@@ -580,39 +710,62 @@ export default function Setup() {
                           <Typography variant="h6" gutterBottom>
                             Found Settings
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" paragraph>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            paragraph
+                          >
                             Select which settings to import:
                           </Typography>
-                          <Paper variant="outlined" sx={{ maxHeight: 300, overflow: 'auto' }}>
+                          <Paper
+                            variant="outlined"
+                            sx={{ maxHeight: 300, overflow: 'auto' }}
+                          >
                             <List>
-                              {Object.entries(bazarrSettings).map(([key, value], index) => (
-                                <div key={key}>
-                                  <ListItem>
-                                    <ListItemIcon>
-                                      <Checkbox
-                                        checked={selectedSettings[key] || false}
-                                        onChange={(e) => setSelectedSettings({
-                                          ...selectedSettings,
-                                          [key]: e.target.checked
-                                        })}
+                              {Object.entries(bazarrSettings).map(
+                                ([key, value], index) => (
+                                  <div key={key}>
+                                    <ListItem>
+                                      <ListItemIcon>
+                                        <Checkbox
+                                          checked={
+                                            selectedSettings[key] || false
+                                          }
+                                          onChange={e =>
+                                            setSelectedSettings({
+                                              ...selectedSettings,
+                                              [key]: e.target.checked,
+                                            })
+                                          }
+                                        />
+                                      </ListItemIcon>
+                                      <ListItemText
+                                        primary={
+                                          <Typography
+                                            variant="body2"
+                                            fontWeight="medium"
+                                          >
+                                            {key}
+                                          </Typography>
+                                        }
+                                        secondary={
+                                          <Typography
+                                            variant="caption"
+                                            sx={{ fontFamily: 'monospace' }}
+                                          >
+                                            {typeof value === 'object'
+                                              ? JSON.stringify(value)
+                                              : String(value)}
+                                          </Typography>
+                                        }
                                       />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                      primary={
-                                        <Typography variant="body2" fontWeight="medium">
-                                          {key}
-                                        </Typography>
-                                      }
-                                      secondary={
-                                        <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                                          {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                                        </Typography>
-                                      }
-                                    />
-                                  </ListItem>
-                                  {index < Object.keys(bazarrSettings).length - 1 && <Divider />}
-                                </div>
-                              ))}
+                                    </ListItem>
+                                    {index <
+                                      Object.keys(bazarrSettings).length -
+                                        1 && <Divider />}
+                                  </div>
+                                )
+                              )}
                             </List>
                           </Paper>
                         </Box>
@@ -620,7 +773,13 @@ export default function Setup() {
                     </Stack>
                   </Paper>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mt: 4,
+                    }}
+                  >
                     <Button variant="outlined" onClick={prev}>
                       Back
                     </Button>
@@ -646,7 +805,8 @@ export default function Setup() {
                     Create Admin Account
                   </Typography>
                   <Typography variant="body1" color="text.secondary" paragraph>
-                    Create your administrator account to manage Subtitle Manager.
+                    Create your administrator account to manage Subtitle
+                    Manager.
                   </Typography>
 
                   <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
@@ -656,10 +816,14 @@ export default function Setup() {
                         label="Username"
                         placeholder="admin"
                         value={adminUser}
-                        onChange={(e) => setAdminUser(e.target.value)}
+                        onChange={e => setAdminUser(e.target.value)}
                         required
                         InputProps={{
-                          startAdornment: <PersonAddOutlined sx={{ mr: 1, color: 'text.secondary' }} />,
+                          startAdornment: (
+                            <PersonAddOutlined
+                              sx={{ mr: 1, color: 'text.secondary' }}
+                            />
+                          ),
                         }}
                       />
 
@@ -669,13 +833,19 @@ export default function Setup() {
                         type="password"
                         placeholder="Choose a secure password"
                         value={adminPass}
-                        onChange={(e) => setAdminPass(e.target.value)}
+                        onChange={e => setAdminPass(e.target.value)}
                         required
                       />
                     </Stack>
                   </Paper>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mt: 4,
+                    }}
+                  >
                     <Button variant="outlined" onClick={prev}>
                       Back
                     </Button>
@@ -706,9 +876,13 @@ export default function Setup() {
                         label="Server Name"
                         placeholder="Subtitle Manager"
                         value={serverName}
-                        onChange={(e) => setServerName(e.target.value)}
+                        onChange={e => setServerName(e.target.value)}
                         InputProps={{
-                          startAdornment: <SettingsOutlined sx={{ mr: 1, color: 'text.secondary' }} />,
+                          startAdornment: (
+                            <SettingsOutlined
+                              sx={{ mr: 1, color: 'text.secondary' }}
+                            />
+                          ),
                         }}
                       />
 
@@ -717,25 +891,36 @@ export default function Setup() {
                           control={
                             <Checkbox
                               checked={reverseProxy}
-                              onChange={(e) => setReverseProxy(e.target.checked)}
+                              onChange={e => setReverseProxy(e.target.checked)}
                             />
                           }
                           label="Running behind a reverse proxy"
                         />
-                        <Typography variant="caption" color="text.secondary" sx={{ ml: 4 }}>
-                          Enable this if you're using nginx, Apache, or another reverse proxy
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ ml: 4 }}
+                        >
+                          Enable this if you're using nginx, Apache, or another
+                          reverse proxy
                         </Typography>
                       </FormGroup>
                     </Stack>
                   </Paper>
 
-                  {status === "error" && (
+                  {status === 'error' && (
                     <Alert severity="error" sx={{ mb: 3 }}>
                       Setup failed. Please check your settings and try again.
                     </Alert>
                   )}
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mt: 4,
+                    }}
+                  >
                     <Button variant="outlined" onClick={prev}>
                       Back
                     </Button>
@@ -744,9 +929,15 @@ export default function Setup() {
                       size="large"
                       onClick={submit}
                       disabled={loading}
-                      startIcon={loading ? <CircularProgress size={20} /> : <CheckCircleOutlined />}
+                      startIcon={
+                        loading ? (
+                          <CircularProgress size={20} />
+                        ) : (
+                          <CheckCircleOutlined />
+                        )
+                      }
                     >
-                      {loading ? "Setting up..." : "Complete Setup"}
+                      {loading ? 'Setting up...' : 'Complete Setup'}
                     </Button>
                   </Box>
                 </Box>
@@ -758,4 +949,3 @@ export default function Setup() {
     </ThemeProvider>
   );
 }
-

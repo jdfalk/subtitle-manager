@@ -3,8 +3,8 @@ import {
   FilePresent as FileIcon,
   Language as LanguageIcon,
   Translate as TranslateIcon,
-  CloudUpload as UploadIcon
-} from "@mui/icons-material";
+  CloudUpload as UploadIcon,
+} from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -22,8 +22,8 @@ import {
   Select,
   Snackbar,
   Typography,
-} from "@mui/material";
-import { useState } from "react";
+} from '@mui/material';
+import { useState } from 'react';
 
 /**
  * Translate provides a form to upload a subtitle file and request
@@ -32,75 +32,79 @@ import { useState } from "react";
  */
 export default function Translate() {
   const [file, setFile] = useState(null);
-  const [lang, setLang] = useState("es");
-  const [status, setStatus] = useState("");
+  const [lang, setLang] = useState('es');
+  const [status, setStatus] = useState('');
   const [translating, setTranslating] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const supportedLanguages = [
-    { code: "es", name: "Spanish" },
-    { code: "fr", name: "French" },
-    { code: "de", name: "German" },
-    { code: "it", name: "Italian" },
-    { code: "pt", name: "Portuguese" },
-    { code: "ru", name: "Russian" },
-    { code: "ja", name: "Japanese" },
-    { code: "ko", name: "Korean" },
-    { code: "zh", name: "Chinese" },
-    { code: "ar", name: "Arabic" },
-    { code: "hi", name: "Hindi" },
-    { code: "nl", name: "Dutch" },
-    { code: "sv", name: "Swedish" },
-    { code: "da", name: "Danish" },
-    { code: "no", name: "Norwegian" },
-    { code: "fi", name: "Finnish" },
-    { code: "pl", name: "Polish" },
-    { code: "cs", name: "Czech" },
-    { code: "tr", name: "Turkish" },
+    { code: 'es', name: 'Spanish' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
+    { code: 'it', name: 'Italian' },
+    { code: 'pt', name: 'Portuguese' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'ko', name: 'Korean' },
+    { code: 'zh', name: 'Chinese' },
+    { code: 'ar', name: 'Arabic' },
+    { code: 'hi', name: 'Hindi' },
+    { code: 'nl', name: 'Dutch' },
+    { code: 'sv', name: 'Swedish' },
+    { code: 'da', name: 'Danish' },
+    { code: 'no', name: 'Norwegian' },
+    { code: 'fi', name: 'Finnish' },
+    { code: 'pl', name: 'Polish' },
+    { code: 'cs', name: 'Czech' },
+    { code: 'tr', name: 'Turkish' },
   ];
 
   const doTranslate = async () => {
     if (!file) return;
     setTranslating(true);
-    setStatus("");
+    setStatus('');
 
     try {
       const form = new FormData();
-      form.append("file", file);
-      form.append("lang", lang);
-      const res = await fetch("/api/translate", { method: "POST", body: form });
+      form.append('file', file);
+      form.append('lang', lang);
+      const res = await fetch('/api/translate', { method: 'POST', body: form });
 
       if (res.ok) {
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
+        const a = document.createElement('a');
         a.href = url;
         const selectedLang = supportedLanguages.find(l => l.code === lang);
         a.download = file.name.replace(/\.[^/.]+$/, `_${lang}.srt`);
         a.click();
         window.URL.revokeObjectURL(url);
-        setStatus(`File translated to ${selectedLang?.name || lang} and downloaded successfully!`);
+        setStatus(
+          `File translated to ${selectedLang?.name || lang} and downloaded successfully!`
+        );
         setSnackbarOpen(true);
       } else {
         const errorText = await res.text();
         setStatus(`Translation failed: ${errorText || 'Unknown error'}`);
       }
     } catch (error) {
-      setStatus(`Network error: ${error.message || 'Please check your connection.'}`);
+      setStatus(
+        `Network error: ${error.message || 'Please check your connection.'}`
+      );
     } finally {
       setTranslating(false);
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = event => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
-    setStatus("");
+    setStatus('');
   };
 
   const handleRemoveFile = () => {
     setFile(null);
-    setStatus("");
+    setStatus('');
     const fileInput = document.getElementById('translate-file-input');
     if (fileInput) fileInput.value = '';
   };
@@ -112,7 +116,8 @@ export default function Translate() {
       </Typography>
 
       <Typography variant="body1" color="text.secondary" paragraph>
-        Upload a subtitle file and translate it to your target language using AI translation services.
+        Upload a subtitle file and translate it to your target language using AI
+        translation services.
       </Typography>
 
       <Grid container spacing={3} justifyContent="center">
@@ -143,7 +148,9 @@ export default function Translate() {
                           },
                         }}
                       >
-                        <UploadIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                        <UploadIcon
+                          sx={{ fontSize: 48, color: 'primary.main', mb: 2 }}
+                        />
                         <Typography variant="h6" gutterBottom>
                           Upload subtitle file for translation
                         </Typography>
@@ -156,7 +163,11 @@ export default function Translate() {
                 ) : (
                   <Box>
                     <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
-                      <Box display="flex" alignItems="center" justifyContent="space-between">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                      >
                         <Box display="flex" alignItems="center">
                           <FileIcon sx={{ mr: 2, color: 'primary.main' }} />
                           <Box>
@@ -179,11 +190,15 @@ export default function Translate() {
                       <Select
                         value={lang}
                         label="Target Language"
-                        onChange={(e) => setLang(e.target.value)}
+                        onChange={e => setLang(e.target.value)}
                         disabled={translating}
-                        startAdornment={<LanguageIcon sx={{ mr: 1, color: 'action.active' }} />}
+                        startAdornment={
+                          <LanguageIcon
+                            sx={{ mr: 1, color: 'action.active' }}
+                          />
+                        }
                       >
-                        {supportedLanguages.map((language) => (
+                        {supportedLanguages.map(language => (
                           <MenuItem key={language.code} value={language.code}>
                             <Box display="flex" alignItems="center">
                               <Chip
@@ -200,13 +215,17 @@ export default function Translate() {
 
                     <Button
                       variant="contained"
-                      startIcon={translating ? <LinearProgress /> : <TranslateIcon />}
+                      startIcon={
+                        translating ? <LinearProgress /> : <TranslateIcon />
+                      }
                       onClick={doTranslate}
                       disabled={translating}
                       size="large"
                       fullWidth
                     >
-                      {translating ? 'Translating...' : `Translate to ${supportedLanguages.find(l => l.code === lang)?.name || lang}`}
+                      {translating
+                        ? 'Translating...'
+                        : `Translate to ${supportedLanguages.find(l => l.code === lang)?.name || lang}`}
                     </Button>
                   </Box>
                 )}
@@ -215,14 +234,19 @@ export default function Translate() {
                   <Box mt={2}>
                     <LinearProgress />
                     <Typography variant="body2" color="text.secondary" mt={1}>
-                      Translating your subtitle file. This may take a few moments...
+                      Translating your subtitle file. This may take a few
+                      moments...
                     </Typography>
                   </Box>
                 )}
 
                 {status && (
                   <Alert
-                    severity={status.includes('failed') || status.includes('error') ? 'error' : 'success'}
+                    severity={
+                      status.includes('failed') || status.includes('error')
+                        ? 'error'
+                        : 'success'
+                    }
                     sx={{ mt: 2 }}
                   >
                     {status}
@@ -241,17 +265,19 @@ export default function Translate() {
                 Translation Info
               </Typography>
               <Typography variant="body2" color="text.secondary" paragraph>
-                Our AI-powered translation service supports over 15 languages with high accuracy for subtitle content.
+                Our AI-powered translation service supports over 15 languages
+                with high accuracy for subtitle content.
               </Typography>
               <Typography variant="body2" color="text.secondary" paragraph>
-                The translation preserves timing information and formatting while providing natural, context-aware translations.
+                The translation preserves timing information and formatting
+                while providing natural, context-aware translations.
               </Typography>
               <Box mt={2}>
                 <Typography variant="body2" fontWeight="medium" gutterBottom>
                   Supported Languages:
                 </Typography>
                 <Box display="flex" flexWrap="wrap" gap={0.5}>
-                  {supportedLanguages.slice(0, 8).map((language) => (
+                  {supportedLanguages.slice(0, 8).map(language => (
                     <Chip
                       key={language.code}
                       label={language.code.toUpperCase()}

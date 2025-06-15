@@ -1,6 +1,6 @@
 // file: webui/src/components/AuthSettings.jsx
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 /**
  * AuthSettings configures OAuth integration settings such as GitHub client
@@ -11,15 +11,15 @@ import { useEffect, useState } from "react";
  * @param {Function} props.onSave - Callback invoked with updated values
  */
 export default function AuthSettings({ config, onSave }) {
-  const [clientID, setClientID] = useState("");
-  const [clientSecret, setClientSecret] = useState("");
-  const [redirectURL, setRedirectURL] = useState("");
+  const [clientID, setClientID] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [redirectURL, setRedirectURL] = useState('');
 
   useEffect(() => {
     if (config) {
-      setClientID(config.github_client_id || "");
-      setClientSecret(config.github_client_secret || "");
-      setRedirectURL(config.github_redirect_url || "");
+      setClientID(config.github_client_id || '');
+      setClientSecret(config.github_client_secret || '');
+      setRedirectURL(config.github_redirect_url || '');
     }
   }, [config]);
 
@@ -41,21 +41,21 @@ export default function AuthSettings({ config, onSave }) {
         fullWidth
         sx={{ mb: 2 }}
         value={clientID}
-        onChange={(e) => setClientID(e.target.value)}
+        onChange={e => setClientID(e.target.value)}
       />
       <TextField
         label="GitHub Client Secret"
         fullWidth
         sx={{ mb: 2 }}
         value={clientSecret}
-        onChange={(e) => setClientSecret(e.target.value)}
+        onChange={e => setClientSecret(e.target.value)}
       />
       <TextField
         label="GitHub Redirect URL"
         fullWidth
         sx={{ mb: 2 }}
         value={redirectURL}
-        onChange={(e) => setRedirectURL(e.target.value)}
+        onChange={e => setRedirectURL(e.target.value)}
       />
       <Button variant="contained" onClick={handleSave}>
         Save
