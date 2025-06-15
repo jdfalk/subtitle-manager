@@ -7,9 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "format:check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,css,json,md}'",
+    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,json,md}'",
+    "type-check": "tsc --noEmit",
     "preview": "vite preview",
-    "test": "vitest",
-    "test:e2e": "playwright test"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:a11y": "echo 'Accessibility tests not yet configured'",
+    "analyze": "echo 'Bundle analysis not yet configured'"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -33,6 +39,8 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
     "vite": "^6.3.5",
     "vitest": "^1.5.0"
   }
