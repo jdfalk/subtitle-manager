@@ -34,6 +34,19 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set version information
+        id: version
+        run: |
+          VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "dev")
+          BUILD_TIME=$(date -u '+%Y-%m-%d_%I:%M:%S%p')
+          GIT_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "BUILD_TIME=${BUILD_TIME}" >> $GITHUB_OUTPUT
+          echo "GIT_COMMIT=${GIT_COMMIT}" >> $GITHUB_OUTPUT
+          echo "Version: ${VERSION}"
+          echo "Build Time: ${BUILD_TIME} (UTC)"
+          echo "Git Commit: ${GIT_COMMIT}"
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -58,3 +71,6 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             BUILDKIT_INLINE_CACHE=1
+            VERSION=${{ steps.version.outputs.VERSION }}
+            BUILD_TIME=${{ steps.version.outputs.BUILD_TIME }}
+            GIT_COMMIT=${{ steps.version.outputs.GIT_COMMIT }}

@@ -7,6 +7,11 @@ FROM golang:1.24 AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
+# Version information build arguments
+ARG VERSION=dev
+ARG BUILD_TIME=unknown
+ARG GIT_COMMIT=unknown
+
 WORKDIR /src
 
 # Install build dependencies including cross-compilation tools
@@ -31,7 +36,7 @@ RUN npm run build
 WORKDIR /src
 RUN go generate ./webui
 
-# Build the Go application with proper CGO support
+# Build the Go application with proper CGO support and version information
 RUN case ${TARGETARCH} in \
     "arm64") \
     export CC=aarch64-linux-gnu-gcc && \
@@ -39,14 +44,14 @@ RUN case ${TARGETARCH} in \
     export CGO_ENABLED=1 && \
     export GOOS=${TARGETOS} && \
     export GOARCH=${TARGETARCH} && \
-    go build -o subtitle-manager ./ ;; \
+    go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./ ;; \
     "amd64") \
     export CC=x86_64-linux-gnu-gcc && \
     export CXX=x86_64-linux-gnu-g++ && \
     export CGO_ENABLED=1 && \
     export GOOS=${TARGETOS} && \
     export GOARCH=${TARGETARCH} && \
-    go build -o subtitle-manager ./ ;; \
+    go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./ ;; \
     *) \
     echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
     esac

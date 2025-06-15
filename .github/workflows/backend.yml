@@ -113,13 +113,29 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Set version information
+        id: version
+        run: |
+          VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "dev")
+          BUILD_TIME=$(date -u '+%Y-%m-%d_%I:%M:%S%p')
+          GIT_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "BUILD_TIME=${BUILD_TIME}" >> $GITHUB_OUTPUT
+          echo "GIT_COMMIT=${GIT_COMMIT}" >> $GITHUB_OUTPUT
+          echo "Version: ${VERSION}"
+          echo "Build Time: ${BUILD_TIME} (UTC)"
+          echo "Git Commit: ${GIT_COMMIT}"
+
       - name: Build application
         run: |
-          go build -v -o bin/subtitle-manager .
+          go build -v \
+            -ldflags="-s -w -X 'main.Version=${{ steps.version.outputs.VERSION }}' -X 'main.BuildTime=${{ steps.version.outputs.BUILD_TIME }}' -X 'main.GitCommit=${{ steps.version.outputs.GIT_COMMIT }}'" \
+            -o bin/subtitle-manager .
 
       - name: Test binary execution
         run: |
-          ./bin/subtitle-manager --version || echo "Version command not available"
+          ./bin/subtitle-manager --version
+          ./bin/subtitle-manager version
           ./bin/subtitle-manager --help
 
       - name: Upload build artifacts
