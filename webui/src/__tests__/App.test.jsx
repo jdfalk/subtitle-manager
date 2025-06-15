@@ -30,7 +30,7 @@ describe('App component', () => {
     });
     render(<App />);
     fetch.mockResolvedValueOnce({ ok: true });
-    fireEvent.click(screen.getAllByText('Login')[0]);
+    fireEvent.click(screen.getByText('Sign In'));
     await waitFor(() =>
       expect(fetch).toHaveBeenLastCalledWith('/api/login', expect.any(Object))
     );
