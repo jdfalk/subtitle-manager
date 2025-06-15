@@ -154,7 +154,7 @@ jobs:
       - name: Lighthouse CI
         uses: treosh/lighthouse-ci-action@v10
         with:
-          configPath: "./lighthouserc.json"
+          configPath: "./webui/lighthouserc.json"
           temporaryPublicStorage: true
           uploadArtifacts: true
 
