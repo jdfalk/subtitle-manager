@@ -63,4 +63,17 @@ func TestSystemHandlers(t *testing.T) {
 	if info.GoVersion == "" {
 		t.Fatalf("no info")
 	}
+
+	req3, _ := http.NewRequest("GET", srv.URL+"/api/announcements", nil)
+	req3.Header.Set("X-API-Key", key)
+	r3, err := srv.Client().Do(req3)
+	if err != nil || r3.StatusCode != http.StatusOK {
+		t.Fatalf("announcements: %v %d", err, r3.StatusCode)
+	}
+	var ann []map[string]any
+	json.NewDecoder(r3.Body).Decode(&ann)
+	r3.Body.Close()
+	if len(ann) == 0 {
+		t.Fatalf("no announcements")
+	}
 }
