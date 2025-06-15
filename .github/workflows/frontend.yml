@@ -63,7 +63,7 @@ jobs:
 
       - name: Upload build artifacts
         if: matrix.node-version == '20' # Only upload from one Node version
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: webui/dist/
@@ -103,7 +103,7 @@ jobs:
         run: npm run test:e2e --if-present
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
@@ -204,7 +204,7 @@ jobs:
         run: npm run analyze --if-present
 
       - name: Upload bundle analysis
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bundle-analysis
           path: webui/dist/
