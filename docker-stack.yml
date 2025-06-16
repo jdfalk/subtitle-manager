@@ -6,13 +6,13 @@ services:
   subtitle-manager:
     image: ghcr.io/jdfalk/subtitle-manager:latest
     ports:
-      - "8080:8080"
+      - "78080:8080"
     volumes:
       # Configuration and database storage (use named volumes in production)
       - subtitle-manager-config:/config
       # Media libraries (adjust paths to your actual media locations)
-      - /mnt/media/movies:/media/movies:ro
-      - /mnt/media/tv:/media/tv:ro
+      - /mnt/media/movies:/media/movies
+      - /mnt/media/tv:/media/tv
       # Subtitle storage
       - subtitle-manager-subtitles:/subtitles
     environment:
