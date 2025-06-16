@@ -49,6 +49,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "$(COLOR_YELLOW)Examples:$(COLOR_RESET)"
 	@echo "  make build              # Build the application"
+	@echo "  make dev-air            # Start development with live reloading"
 	@echo "  make docker             # Build Docker image"
 	@echo "  make test-all           # Run all tests"
 	@echo "  make clean-all          # Clean everything"
@@ -422,6 +423,27 @@ dev-race: build-race ## Build with race detection and run
 	@echo "$(COLOR_BLUE)Starting development server with race detection...$(COLOR_RESET)"
 	$(BINARY_PATH)-race web
 
+.PHONY: dev-air
+dev-air: install-air ## Start development server with live reloading using Air
+	@echo "$(COLOR_BLUE)Starting Air for live reloading...$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Air will automatically rebuild and restart on Go file changes$(COLOR_RESET)"
+	@echo "$(COLOR_CYAN)Version will be set to: dev-air$(COLOR_RESET)"
+	air
+
+.PHONY: dev-air-verbose
+dev-air-verbose: install-air ## Start Air with verbose logging
+	@echo "$(COLOR_BLUE)Starting Air with verbose logging...$(COLOR_RESET)"
+	air -d
+
+.PHONY: install-air
+install-air: ## Install or update Air for live reloading
+	@echo "$(COLOR_BLUE)Installing/updating Air...$(COLOR_RESET)"
+	@which air > /dev/null 2>&1 || { \
+		echo "$(COLOR_YELLOW)Air not found, installing...$(COLOR_RESET)"; \
+		go install github.com/cosmtrek/air@latest; \
+	}
+	@echo "$(COLOR_GREEN)✓ Air is ready$(COLOR_RESET)"
+
 .PHONY: install
 install: build ## Install binary to $GOPATH/bin
 	@echo "$(COLOR_BLUE)Installing to GOPATH...$(COLOR_RESET)"
@@ -432,6 +454,7 @@ install: build ## Install binary to $GOPATH/bin
 install-tools: ## Install development tools
 	@echo "$(COLOR_BLUE)Installing development tools...$(COLOR_RESET)"
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/cosmtrek/air@latest
 	cd $(WEBUI_DIR) && npx playwright install
 	@echo "$(COLOR_GREEN)✓ Development tools installed$(COLOR_RESET)"
 
@@ -500,6 +523,13 @@ clean: ## Clean build artifacts
 	rm -f coverage.out coverage.html
 	@echo "$(COLOR_GREEN)✓ Build artifacts cleaned$(COLOR_RESET)"
 
+.PHONY: clean-air
+clean-air: ## Clean Air temporary files and logs
+	@echo "$(COLOR_BLUE)Cleaning Air artifacts...$(COLOR_RESET)"
+	rm -rf tmp/
+	rm -f build-errors.log
+	@echo "$(COLOR_GREEN)✓ Air artifacts cleaned$(COLOR_RESET)"
+
 .PHONY: clean-webui
 clean-webui: ## Clean web UI artifacts
 	@echo "$(COLOR_BLUE)Cleaning web UI artifacts...$(COLOR_RESET)"
@@ -508,7 +538,7 @@ clean-webui: ## Clean web UI artifacts
 	@echo "$(COLOR_GREEN)✓ Web UI artifacts cleaned$(COLOR_RESET)"
 
 .PHONY: clean-all
-clean-all: clean clean-webui docker-clean ## Clean everything
+clean-all: clean clean-air clean-webui docker-clean ## Clean everything
 	@echo "$(COLOR_GREEN)✓ Everything cleaned$(COLOR_RESET)"
 
 #
