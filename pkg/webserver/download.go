@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/spf13/viper"
-
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
@@ -39,8 +37,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		key := viper.GetString("opensubtitles.api_key")
-		p, err := providers.Get(q.Provider, key)
+		p, err := providers.Get(q.Provider, "")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return

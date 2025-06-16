@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/spf13/viper"
-
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
@@ -58,8 +56,7 @@ func handle(w http.ResponseWriter, r *http.Request, ev event) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	key := viper.GetString("opensubtitles.api_key")
-	p, err := providers.Get(ev.Provider, key)
+	p, err := providers.Get(ev.Provider, "")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/spf13/viper"
-
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 )
@@ -50,8 +48,7 @@ func scanHandler() http.Handler {
 		status = scanStatus{Running: true, Files: []string{}}
 		scanMu.Unlock()
 		go func() {
-			key := viper.GetString("opensubtitles.api_key")
-			p, err := providers.Get(q.Provider, key)
+			p, err := providers.Get(q.Provider, "")
 			if err != nil {
 				scanMu.Lock()
 				status.Running = false
