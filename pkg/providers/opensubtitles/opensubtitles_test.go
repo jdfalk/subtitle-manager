@@ -14,7 +14,7 @@ import (
 type mockHandler struct{}
 
 func (mockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if strings.HasPrefix(r.URL.Path, "/search") {
+	if strings.HasPrefix(r.URL.Path, "/search") || strings.HasPrefix(r.URL.Path, "/subtitles") {
 		fmt.Fprintf(w, `[{"SubDownloadLink":"http://%s/download"}]`, r.Host)
 		return
 	}

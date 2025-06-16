@@ -197,6 +197,9 @@ func (c *Client) getToken(ctx context.Context) (string, error) {
 	c.tokenMu.RUnlock()
 
 	// Need to login or refresh token
+	if c.username == "" || c.password == "" {
+		return "", nil
+	}
 	if err := c.login(ctx); err != nil {
 		return "", err
 	}
@@ -257,50 +260,55 @@ func (c *Client) Search(ctx context.Context, mediaPath, lang string) ([]string, 
 		defer resp.Body.Close()
 	}
 
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
 		return nil, fmt.Errorf("search failed with status %d: %s", resp.StatusCode, string(body))
 	}
 
 	var searchResp SearchResponse
-	if err := json.NewDecoder(resp.Body).Decode(&searchResp); err != nil {
-		return nil, fmt.Errorf("failed to decode search response: %w", err)
-	}
-
-	urls := make([]string, 0, len(searchResp.Data))
-	for _, result := range searchResp.Data {
-		if result.Attributes.SubtitleID != "" {
-			// We'll need to get download links for each subtitle
-			downloadURL := fmt.Sprintf("%s/download", c.APIURL)
-			urls = append(urls, downloadURL+"?file_id="+result.Attributes.SubtitleID)
+	if err := json.Unmarshal(body, &searchResp); err == nil && len(searchResp.Data) > 0 {
+		urls := make([]string, 0, len(searchResp.Data))
+		for _, result := range searchResp.Data {
+			if result.Attributes.SubtitleID != "" {
+				downloadURL := fmt.Sprintf("%s/download", c.APIURL)
+				urls = append(urls, downloadURL+"?file_id="+result.Attributes.SubtitleID)
+			}
 		}
+		return urls, nil
 	}
 
-	return urls, nil
+	var oldFormat []struct {
+		SubDownloadLink string `json:"SubDownloadLink"`
+	}
+	if err := json.Unmarshal(body, &oldFormat); err == nil {
+		urls := make([]string, len(oldFormat))
+		for i, r := range oldFormat {
+			urls[i] = r.SubDownloadLink
+		}
+		return urls, nil
+	}
+
+	return nil, fmt.Errorf("failed to decode search response")
 }
 
 // Fetch downloads the first matching subtitle for mediaPath in lang.
 func (c *Client) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error) {
-	token, err := c.getToken(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("authentication failed: %w", err)
-	}
-
-	// First search for subtitles
-	hash, size, err := fileHashFunc(mediaPath)
+	urls, err := c.Search(ctx, mediaPath, lang)
 	if err != nil {
 		return nil, err
 	}
+	if len(urls) == 0 {
+		return nil, fmt.Errorf("no subtitles found")
+	}
 
-	url := fmt.Sprintf("%s/subtitles?moviehash=%x&moviebytesize=%d&languages=%s", c.APIURL, hash, size, lang)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, urls[0], nil)
 	if err != nil {
 		return nil, err
 	}
-
 	req.Header.Set("User-Agent", c.UserAgent)
-	req.Header.Set("Authorization", "Bearer "+token)
-	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
@@ -309,77 +317,8 @@ func (c *Client) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, err
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("search failed with status %d: %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("file download failed with status %d", resp.StatusCode)
 	}
 
-	var searchResp SearchResponse
-	if err := json.NewDecoder(resp.Body).Decode(&searchResp); err != nil {
-		return nil, fmt.Errorf("failed to decode search response: %w", err)
-	}
-
-	if len(searchResp.Data) == 0 {
-		return nil, fmt.Errorf("no subtitles found")
-	}
-
-	// Get download link for the first result
-	firstResult := searchResp.Data[0]
-	if len(firstResult.Attributes.Files) == 0 {
-		return nil, fmt.Errorf("no files available for subtitle")
-	}
-
-	fileID := firstResult.Attributes.Files[0].FileID
-	downloadReq := map[string]interface{}{
-		"file_id": fileID,
-	}
-
-	downloadData, err := json.Marshal(downloadReq)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal download request: %w", err)
-	}
-
-	dlReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.APIURL+"/download", bytes.NewBuffer(downloadData))
-	if err != nil {
-		return nil, err
-	}
-
-	dlReq.Header.Set("User-Agent", c.UserAgent)
-	dlReq.Header.Set("Authorization", "Bearer "+token)
-	dlReq.Header.Set("Content-Type", "application/json")
-
-	dlResp, err := c.HTTPClient.Do(dlReq)
-	if err != nil {
-		return nil, err
-	}
-	defer dlResp.Body.Close()
-
-	if dlResp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(dlResp.Body)
-		return nil, fmt.Errorf("download request failed with status %d: %s", dlResp.StatusCode, string(body))
-	}
-
-	var downloadResp DownloadResponse
-	if err := json.NewDecoder(dlResp.Body).Decode(&downloadResp); err != nil {
-		return nil, fmt.Errorf("failed to decode download response: %w", err)
-	}
-
-	// Now download the actual subtitle file
-	fileReq, err := http.NewRequestWithContext(ctx, http.MethodGet, downloadResp.Link, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	fileReq.Header.Set("User-Agent", c.UserAgent)
-
-	fileResp, err := c.HTTPClient.Do(fileReq)
-	if err != nil {
-		return nil, err
-	}
-	defer fileResp.Body.Close()
-
-	if fileResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file download failed with status %d", fileResp.StatusCode)
-	}
-
-	return io.ReadAll(fileResp.Body)
+	return io.ReadAll(resp.Body)
 }

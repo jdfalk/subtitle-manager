@@ -12,6 +12,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/captcha"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 )
 
@@ -63,6 +64,8 @@ func init() {
 	viper.BindPFlag("log-level", rootCmd.PersistentFlags().Lookup("log-level"))
 	rootCmd.PersistentFlags().StringToString("log-levels", nil, "per component log levels")
 	viper.BindPFlag("log_levels", rootCmd.PersistentFlags().Lookup("log-levels"))
+	rootCmd.PersistentFlags().String("log-file", "", "log file path")
+	viper.BindPFlag("log_file", rootCmd.PersistentFlags().Lookup("log-file"))
 	viper.BindPFlag("db_path", rootCmd.PersistentFlags().Lookup("db-path"))
 	viper.BindPFlag("db_backend", rootCmd.PersistentFlags().Lookup("db-backend"))
 	viper.BindPFlag("sqlite3_filename", rootCmd.PersistentFlags().Lookup("sqlite3-filename"))
@@ -154,6 +157,7 @@ func initConfig() {
 	viper.SetDefault("providers.generic.username", "")
 	viper.SetDefault("providers.generic.password", "")
 	viper.SetDefault("providers.generic.api_key", "")
+	viper.SetDefault("log_file", "/config/logs/subtitle-manager.log")
 	// Enable embedded subtitle provider by default so users can start
 	// extracting subtitles without additional configuration.
 	viper.SetDefault("providers.embedded.enabled", true)
@@ -177,6 +181,7 @@ func initConfig() {
 		level = logrus.InfoLevel
 	}
 	logrus.SetLevel(level)
+	logging.Configure()
 	if u := viper.GetString("google_api_url"); u != "" {
 		translator.SetGoogleAPIURL(u)
 	}
