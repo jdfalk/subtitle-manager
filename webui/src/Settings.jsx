@@ -8,6 +8,7 @@ import {
     Notifications as NotificationIcon,
     CloudDownload as ProvidersIcon,
     Refresh as RefreshIcon,
+    People as UsersIcon,
 } from '@mui/icons-material';
 import {
     Alert,
@@ -32,6 +33,7 @@ import GeneralSettings from './components/GeneralSettings.jsx';
 import NotificationSettings from './components/NotificationSettings.jsx';
 import ProviderCard from './components/ProviderCard.jsx';
 import ProviderConfigDialog from './components/ProviderConfigDialog.jsx';
+import UserManagement from './UserManagement.jsx';
 import { apiService } from './services/api.js';
 
 /**
@@ -431,6 +433,13 @@ export default function Settings({ backendAvailable = true }) {
           onSave={saveSettings}
           backendAvailable={backendAvailable}
         />
+      ),
+    },
+    {
+      label: 'Users',
+      icon: <UsersIcon />,
+      component: () => (
+        <UserManagement backendAvailable={backendAvailable} />
       ),
     },
   ];
