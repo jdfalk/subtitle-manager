@@ -36,7 +36,6 @@ services:
       # API Keys - Use Docker secrets in production for security
       # - SM_GOOGLE_API_KEY_FILE=/run/secrets/google_api_key
       # - SM_OPENAI_API_KEY_FILE=/run/secrets/openai_api_key
-      # - SM_OPENSUBTITLES_API_KEY_FILE=/run/secrets/opensubtitles_api_key
 
     # Production deployment configuration
     deploy:
@@ -69,15 +68,7 @@ services:
 
     # Healthcheck for production monitoring
     healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--quiet",
-          "--tries=1",
-          "--spider",
-          "http://localhost:8080/api/system",
-        ]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/api/system"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -87,7 +78,6 @@ services:
     # secrets:
     #   - google_api_key
     #   - openai_api_key
-    #   - opensubtitles_api_key
 
 networks:
   subtitle-manager-network:
@@ -112,6 +102,4 @@ volumes:
 #   google_api_key:
 #     external: true
 #   openai_api_key:
-#     external: true
-#   opensubtitles_api_key:
 #     external: true
