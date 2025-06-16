@@ -23,7 +23,7 @@ test('login flow', async ({ page }) => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ user: 'testuser', authenticated: true })
+          body: JSON.stringify({ user: 'testuser', authenticated: true }),
         });
       });
       route.fulfill({ status: 200 });
@@ -52,7 +52,9 @@ test('login flow', async ({ page }) => {
   await page.waitForLoadState('networkidle');
 
   // Look for the app bar (navigation) that appears after successful login
-  await expect(page.locator('.MuiAppBar-root, [role="banner"], header')).toBeVisible();
+  await expect(
+    page.locator('.MuiAppBar-root, [role="banner"], header')
+  ).toBeVisible();
 
   // Also check that we can see the main navigation elements
   await expect(page.getByText('Subtitle Manager')).toBeVisible();

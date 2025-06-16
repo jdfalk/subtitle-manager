@@ -1,24 +1,24 @@
 import {
-    Archive as ExtractIcon,
-    Folder as FolderIcon,
-    Movie as MediaIcon,
-    Subtitles as SubtitleIcon,
+  Archive as ExtractIcon,
+  Folder as FolderIcon,
+  Movie as MediaIcon,
+  Subtitles as SubtitleIcon,
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    LinearProgress,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Paper,
-    TextField,
-    Typography,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  TextField,
+  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -85,7 +85,8 @@ export default function Extract({ backendAvailable = true }) {
 
       {!backendAvailable && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          Backend service is not available. Subtitle extraction is currently disabled.
+          Backend service is not available. Subtitle extraction is currently
+          disabled.
         </Alert>
       )}
 
@@ -125,8 +126,8 @@ export default function Extract({ backendAvailable = true }) {
             {!backendAvailable
               ? 'Backend Unavailable'
               : extracting
-              ? 'Extracting...'
-              : 'Extract Subtitles'}
+                ? 'Extracting...'
+                : 'Extract Subtitles'}
           </Button>
 
           {extracting && (

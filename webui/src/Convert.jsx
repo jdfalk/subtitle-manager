@@ -1,21 +1,21 @@
 import {
-    Transform as ConvertIcon,
-    Delete as DeleteIcon,
-    FilePresent as FileIcon,
-    CloudUpload as UploadIcon,
+  Transform as ConvertIcon,
+  Delete as DeleteIcon,
+  FilePresent as FileIcon,
+  CloudUpload as UploadIcon,
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    IconButton,
-    LinearProgress,
-    Paper,
-    Snackbar,
-    Typography,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  IconButton,
+  LinearProgress,
+  Paper,
+  Snackbar,
+  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -94,7 +94,8 @@ export default function Convert({ backendAvailable = true }) {
 
       {!backendAvailable && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          Backend service is not available. Subtitle conversion is currently disabled.
+          Backend service is not available. Subtitle conversion is currently
+          disabled.
         </Alert>
       )}
 
@@ -124,10 +125,14 @@ export default function Convert({ backendAvailable = true }) {
                       p: 4,
                       cursor: backendAvailable ? 'pointer' : 'not-allowed',
                       border: '2px dashed',
-                      borderColor: backendAvailable ? 'primary.main' : 'action.disabled',
+                      borderColor: backendAvailable
+                        ? 'primary.main'
+                        : 'action.disabled',
                       opacity: backendAvailable ? 1 : 0.5,
                       '&:hover': {
-                        backgroundColor: backendAvailable ? 'action.hover' : 'transparent',
+                        backgroundColor: backendAvailable
+                          ? 'action.hover'
+                          : 'transparent',
                       },
                     }}
                   >
@@ -179,8 +184,8 @@ export default function Convert({ backendAvailable = true }) {
                   {!backendAvailable
                     ? 'Backend Unavailable'
                     : converting
-                    ? 'Converting...'
-                    : 'Convert to SRT'}
+                      ? 'Converting...'
+                      : 'Convert to SRT'}
                 </Button>
               </Box>
             )}

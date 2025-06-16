@@ -1,33 +1,33 @@
 import {
-    Add as AddIcon,
-    Delete as DeleteIcon,
-    Language as LanguageIcon,
-    Movie as MediaIcon,
-    CloudDownload as ProviderIcon,
-    Search as SearchIcon,
-    Download as WantedIcon,
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Language as LanguageIcon,
+  Movie as MediaIcon,
+  CloudDownload as ProviderIcon,
+  Search as SearchIcon,
+  Download as WantedIcon,
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    CircularProgress,
-    FormControl,
-    Grid,
-    IconButton,
-    InputLabel,
-    List,
-    ListItem,
-    ListItemSecondaryAction,
-    ListItemText,
-    MenuItem,
-    Paper,
-    Select,
-    TextField,
-    Typography,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
@@ -158,7 +158,8 @@ export default function Wanted({ backendAvailable = true }) {
 
       {!backendAvailable && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          Backend service is not available. Search and wanted list features are currently disabled.
+          Backend service is not available. Search and wanted list features are
+          currently disabled.
         </Alert>
       )}
 

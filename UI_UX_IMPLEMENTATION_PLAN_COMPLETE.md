@@ -10,7 +10,6 @@ This comprehensive guide combines all sections of the Subtitle Manager UI/UX imp
 
 # Section 0: Project Summary and Overview
 
-
 This document provides a comprehensive overview of all UI/UX improvements identified for the Subtitle Manager web application, organized into 5 manageable implementation sections.
 
 ## Overview
@@ -79,11 +78,13 @@ Each section has its own detailed implementation plan:
 ### Priority Implementation Order
 
 1. **High Priority** (Sections 1-2): Basic navigation and user management fixes
+
    - Essential for basic usability
    - Foundation for other improvements
    - 18-26 hours
 
 2. **Medium Priority** (Sections 3-4): Settings and authentication enhancements
+
    - Significant UX improvements
    - Professional appearance
    - 36-50 hours
@@ -133,6 +134,7 @@ Each section has its own detailed implementation plan:
 ## Development Guidelines for Implementation
 
 ### Code Quality Standards
+
 - Follow existing Material Design 3 patterns
 - Maintain accessibility standards (WCAG 2.1 AA)
 - Implement proper error handling
@@ -140,6 +142,7 @@ Each section has its own detailed implementation plan:
 - Add comprehensive JSDoc documentation
 
 ### Testing Requirements
+
 - Test all components in light and dark modes
 - Verify responsive behavior on mobile devices
 - Test with backend unavailable scenarios
@@ -147,6 +150,7 @@ Each section has its own detailed implementation plan:
 - Test error states and validation
 
 ### Backend Integration
+
 - Use existing API patterns where possible
 - Add new endpoints as specified in each section
 - Maintain backwards compatibility
@@ -168,12 +172,14 @@ Upon completion of all sections, the frontend will:
 ## Maintenance and Future Enhancements
 
 ### Short-term Maintenance
+
 - Monitor user feedback for additional UX issues
 - Performance optimization based on usage patterns
 - Browser compatibility testing
 - Mobile app considerations
 
 ### Future Enhancement Opportunities
+
 - Advanced theme variants
 - Keyboard shortcuts
 - Bulk operation improvements
@@ -190,7 +196,6 @@ The total scope represents a significant but manageable improvement that will tr
 ---
 
 # Section 1: User Management and Navigation Basics
-
 
 This document provides a comprehensive implementation plan for resolving the UI/UX issues identified in the Subtitle Manager web interface. The plan is designed to help junior developers understand and implement the required changes step by step.
 
@@ -239,7 +244,7 @@ Before starting implementation, ensure you have:
 
 ```jsx
 // file: webui/src/UserManagement.jsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -253,7 +258,7 @@ import {
   CircularProgress,
   Paper,
   Chip,
-} from '@mui/material';
+} from "@mui/material";
 
 /**
  * UserManagement displays all users and allows password resets.
@@ -275,12 +280,12 @@ export default function UserManagement({ backendAvailable = true }) {
       setError(null);
 
       // Add proper error handling and debugging
-      const res = await fetch('/api/users', {
-        method: 'GET',
+      const res = await fetch("/api/users", {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include', // Ensure cookies are sent
+        credentials: "include", // Ensure cookies are sent
       });
 
       if (!res.ok) {
@@ -290,14 +295,15 @@ export default function UserManagement({ backendAvailable = true }) {
       const userData = await res.json();
 
       // Debug log to see what we're getting
-      console.log('User data received:', userData);
+      console.log("User data received:", userData);
 
       // Ensure we have an array
-      const userArray = Array.isArray(userData) ? userData : userData.users || [];
+      const userArray = Array.isArray(userData)
+        ? userData
+        : userData.users || [];
       setUsers(userArray);
-
     } catch (error) {
-      console.error('Failed to load users:', error);
+      console.error("Failed to load users:", error);
       setError(`Failed to load users: ${error.message}`);
     } finally {
       setLoading(false);
@@ -305,16 +311,16 @@ export default function UserManagement({ backendAvailable = true }) {
   };
 
   const reset = async (id) => {
-    if (!window.confirm('Reset password for this user?')) return;
+    if (!window.confirm("Reset password for this user?")) return;
 
     try {
       const res = await fetch(`/api/users/${id}/reset`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
       });
 
       if (res.ok) {
-        alert('Password reset and emailed');
+        alert("Password reset and emailed");
         // Reload users to reflect any changes
         await loadUsers();
       } else {
@@ -346,7 +352,8 @@ export default function UserManagement({ backendAvailable = true }) {
 
       {!backendAvailable && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          Backend service is not available. User management features are currently disabled.
+          Backend service is not available. User management features are
+          currently disabled.
         </Alert>
       )}
 
@@ -365,34 +372,40 @@ export default function UserManagement({ backendAvailable = true }) {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell><strong>Username</strong></TableCell>
-                <TableCell><strong>Email</strong></TableCell>
-                <TableCell><strong>Role</strong></TableCell>
-                <TableCell><strong>Status</strong></TableCell>
-                <TableCell><strong>Actions</strong></TableCell>
+                <TableCell>
+                  <strong>Username</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Email</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Role</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Status</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Actions</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {users.map((user, index) => (
                 <TableRow key={user.id || index}>
-                  <TableCell>
-                    {user.username || user.name || 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    {user.email || 'N/A'}
-                  </TableCell>
+                  <TableCell>{user.username || user.name || "N/A"}</TableCell>
+                  <TableCell>{user.email || "N/A"}</TableCell>
                   <TableCell>
                     <Chip
-                      label={user.role || 'user'}
+                      label={user.role || "user"}
                       size="small"
-                      color={user.role === 'admin' ? 'primary' : 'default'}
+                      color={user.role === "admin" ? "primary" : "default"}
                     />
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={user.active !== false ? 'Active' : 'Inactive'}
+                      label={user.active !== false ? "Active" : "Inactive"}
                       size="small"
-                      color={user.active !== false ? 'success' : 'default'}
+                      color={user.active !== false ? "success" : "default"}
                     />
                   </TableCell>
                   <TableCell>
@@ -413,7 +426,7 @@ export default function UserManagement({ backendAvailable = true }) {
       )}
 
       {/* Debug information - remove in production */}
-      {process.env.NODE_ENV === 'development' && (
+      {process.env.NODE_ENV === "development" && (
         <Box mt={2}>
           <Typography variant="caption" color="text.secondary">
             Debug: {users.length} users loaded
@@ -451,18 +464,18 @@ export default function UserManagement({ backendAvailable = true }) {
 // file: webui/src/Settings.jsx
 
 // Add import at the top
-import UserManagement from './UserManagement.jsx';
-import { People as UsersIcon } from '@mui/icons-material';
+import UserManagement from "./UserManagement.jsx";
+import { People as UsersIcon } from "@mui/icons-material";
 
 // In the tabs array, add:
 const tabs = [
   {
-    label: 'Providers',
+    label: "Providers",
     icon: <ProvidersIcon />,
     component: renderProvidersTab,
   },
   {
-    label: 'General',
+    label: "General",
     icon: <GeneralIcon />,
     component: () => (
       <GeneralSettings
@@ -474,11 +487,9 @@ const tabs = [
   },
   // ... existing tabs ...
   {
-    label: 'Users',
+    label: "Users",
     icon: <UsersIcon />,
-    component: () => (
-      <UserManagement backendAvailable={backendAvailable} />
-    ),
+    component: () => <UserManagement backendAvailable={backendAvailable} />,
   },
 ];
 ```
@@ -503,7 +514,7 @@ return (
     {tab === 0 && (
       <Box
         display="grid"
-        gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }}
+        gridTemplateColumns={{ xs: "1fr", md: "1fr 1fr" }}
         gap={3}
       >
         {/* ... existing system content ... */}
@@ -533,7 +544,6 @@ Each section will include detailed code examples, testing procedures, and implem
 
 # Section 2: Navigation Improvements
 
-
 This section covers issues 3-5: implementing back button functionality, sidebar pinning, and reorganizing navigation order.
 
 ## Issue 3: Implement Working Back Button
@@ -557,8 +567,14 @@ npm install react-router-dom
 // file: webui/src/App.jsx
 
 // Add imports
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowBack as BackIcon } from '@mui/icons-material';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import { ArrowBack as BackIcon } from "@mui/icons-material";
 
 // Create a new component for the main app content
 function AppContent() {
@@ -574,11 +590,15 @@ function AppContent() {
   };
 
   // Show back button when not on dashboard
-  const showBackButton = location.pathname !== '/' && location.pathname !== '/dashboard';
+  const showBackButton =
+    location.pathname !== "/" && location.pathname !== "/dashboard";
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
+    <Box sx={{ display: "flex" }}>
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -592,11 +612,7 @@ function AppContent() {
 
           {/* Add back button */}
           {showBackButton && (
-            <IconButton
-              color="inherit"
-              onClick={handleBack}
-              sx={{ mr: 2 }}
-            >
+            <IconButton color="inherit" onClick={handleBack} sx={{ mr: 2 }}>
               <BackIcon />
             </IconButton>
           )}
@@ -614,16 +630,46 @@ function AppContent() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         <Routes>
-          <Route path="/" element={<Dashboard backendAvailable={backendAvailable} />} />
-          <Route path="/dashboard" element={<Dashboard backendAvailable={backendAvailable} />} />
-          <Route path="/library" element={<MediaLibrary backendAvailable={backendAvailable} />} />
-          <Route path="/wanted" element={<Wanted backendAvailable={backendAvailable} />} />
-          <Route path="/history" element={<History backendAvailable={backendAvailable} />} />
-          <Route path="/settings" element={<Settings backendAvailable={backendAvailable} />} />
-          <Route path="/system" element={<System backendAvailable={backendAvailable} />} />
-          <Route path="/tools/extract" element={<Extract backendAvailable={backendAvailable} />} />
-          <Route path="/tools/convert" element={<Convert backendAvailable={backendAvailable} />} />
-          <Route path="/tools/translate" element={<Translate backendAvailable={backendAvailable} />} />
+          <Route
+            path="/"
+            element={<Dashboard backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/dashboard"
+            element={<Dashboard backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/library"
+            element={<MediaLibrary backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/wanted"
+            element={<Wanted backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/history"
+            element={<History backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/settings"
+            element={<Settings backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/system"
+            element={<System backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/tools/extract"
+            element={<Extract backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/tools/convert"
+            element={<Convert backendAvailable={backendAvailable} />}
+          />
+          <Route
+            path="/tools/translate"
+            element={<Translate backendAvailable={backendAvailable} />}
+          />
         </Routes>
       </Box>
     </Box>
@@ -658,21 +704,21 @@ function App() {
 
 ```jsx
 // Update the drawer navigation
-{navigationItems.map(item => (
-  <ListItem key={item.id} disablePadding>
-    <ListItemButton
-      component={Link}
-      to={item.path}
-      selected={location.pathname === item.path}
-      onClick={() => setDrawerOpen(false)}
-    >
-      <ListItemIcon sx={{ color: 'inherit' }}>
-        {item.icon}
-      </ListItemIcon>
-      <ListItemText primary={item.label} />
-    </ListItemButton>
-  </ListItem>
-))}
+{
+  navigationItems.map((item) => (
+    <ListItem key={item.id} disablePadding>
+      <ListItemButton
+        component={Link}
+        to={item.path}
+        selected={location.pathname === item.path}
+        onClick={() => setDrawerOpen(false)}
+      >
+        <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
+        <ListItemText primary={item.label} />
+      </ListItemButton>
+    </ListItem>
+  ));
+}
 ```
 
 ---
@@ -693,7 +739,7 @@ function App() {
 function AppContent() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerPinned, setDrawerPinned] = useState(() => {
-    const saved = localStorage.getItem('sidebarPinned');
+    const saved = localStorage.getItem("sidebarPinned");
     return saved ? JSON.parse(saved) : false;
   });
 
@@ -702,7 +748,7 @@ function AppContent() {
     if (drawerPinned) {
       // If pinned, just toggle the pinned state
       setDrawerPinned(false);
-      localStorage.setItem('sidebarPinned', 'false');
+      localStorage.setItem("sidebarPinned", "false");
     } else {
       setDrawerOpen(!drawerOpen);
     }
@@ -711,7 +757,7 @@ function AppContent() {
   const handleDrawerPin = () => {
     const newPinned = !drawerPinned;
     setDrawerPinned(newPinned);
-    localStorage.setItem('sidebarPinned', JSON.stringify(newPinned));
+    localStorage.setItem("sidebarPinned", JSON.stringify(newPinned));
     if (newPinned) {
       setDrawerOpen(true);
     }
@@ -721,7 +767,7 @@ function AppContent() {
   const isDrawerOpen = drawerPinned || drawerOpen;
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       {/* ... AppBar ... */}
 
       <Drawer
@@ -732,14 +778,14 @@ function AppContent() {
         sx={{
           width: 280,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: 280,
-            boxSizing: 'border-box',
+            boxSizing: "border-box",
           },
         }}
       >
         <Toolbar />
-        <Box sx={{ overflow: 'auto', py: 1 }}>
+        <Box sx={{ overflow: "auto", py: 1 }}>
           {/* Add pin button at top of drawer */}
           <Box sx={{ px: 2, pb: 1 }}>
             <Button
@@ -749,13 +795,11 @@ function AppContent() {
               onClick={handleDrawerPin}
               startIcon={<PinIcon />}
             >
-              {drawerPinned ? 'Unpin Sidebar' : 'Pin Sidebar'}
+              {drawerPinned ? "Unpin Sidebar" : "Pin Sidebar"}
             </Button>
           </Box>
 
-          <List>
-            {/* ... navigation items ... */}
-          </List>
+          <List>{/* ... navigation items ... */}</List>
         </Box>
       </Drawer>
 
@@ -764,8 +808,8 @@ function AppContent() {
         sx={{
           flexGrow: 1,
           p: 3,
-          marginLeft: drawerPinned ? '280px' : 0,
-          transition: theme.transitions.create('margin', {
+          marginLeft: drawerPinned ? "280px" : 0,
+          transition: theme.transitions.create("margin", {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
@@ -782,7 +826,7 @@ function AppContent() {
 
 ```jsx
 // file: webui/src/App.jsx
-import { PushPin as PinIcon } from '@mui/icons-material';
+import { PushPin as PinIcon } from "@mui/icons-material";
 ```
 
 ---
@@ -802,61 +846,61 @@ import { PushPin as PinIcon } from '@mui/icons-material';
 
 const navigationItems = [
   {
-    id: 'dashboard',
-    label: 'Dashboard',
+    id: "dashboard",
+    label: "Dashboard",
     icon: <DashboardIcon />,
-    path: '/dashboard'
+    path: "/dashboard",
   },
   {
-    id: 'library',
-    label: 'Media Library',
+    id: "library",
+    label: "Media Library",
     icon: <LibraryIcon />,
-    path: '/library'
+    path: "/library",
   },
   {
-    id: 'wanted',
-    label: 'Wanted',
+    id: "wanted",
+    label: "Wanted",
     icon: <WantedIcon />,
-    path: '/wanted'
+    path: "/wanted",
   },
   {
-    id: 'history',
-    label: 'History',
+    id: "history",
+    label: "History",
     icon: <HistoryIcon />,
-    path: '/history'
+    path: "/history",
   },
   {
-    id: 'settings',
-    label: 'Settings',
+    id: "settings",
+    label: "Settings",
     icon: <SettingsIcon />,
-    path: '/settings'
+    path: "/settings",
   },
   {
-    id: 'system',
-    label: 'System',
+    id: "system",
+    label: "System",
     icon: <SystemIcon />,
-    path: '/system'
+    path: "/system",
   },
 ];
 
 const toolsItems = [
   {
-    id: 'extract',
-    label: 'Extract',
+    id: "extract",
+    label: "Extract",
     icon: <ExtractIcon />,
-    path: '/tools/extract'
+    path: "/tools/extract",
   },
   {
-    id: 'convert',
-    label: 'Convert',
+    id: "convert",
+    label: "Convert",
     icon: <ConvertIcon />,
-    path: '/tools/convert'
+    path: "/tools/convert",
   },
   {
-    id: 'translate',
-    label: 'Translate',
+    id: "translate",
+    label: "Translate",
     icon: <TranslateIcon />,
-    path: '/tools/translate'
+    path: "/tools/translate",
   },
 ];
 ```
@@ -867,7 +911,7 @@ const toolsItems = [
 // file: webui/src/App.jsx
 
 <List>
-  {navigationItems.map(item => (
+  {navigationItems.map((item) => (
     <ListItem key={item.id} disablePadding>
       <ListItemButton
         component={Link}
@@ -875,9 +919,7 @@ const toolsItems = [
         selected={location.pathname === item.path}
         onClick={() => !drawerPinned && setDrawerOpen(false)}
       >
-        <ListItemIcon sx={{ color: 'inherit' }}>
-          {item.icon}
-        </ListItemIcon>
+        <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
         <ListItemText primary={item.label} />
       </ListItemButton>
     </ListItem>
@@ -889,7 +931,7 @@ const toolsItems = [
     Tools
   </ListSubheader>
 
-  {toolsItems.map(item => (
+  {toolsItems.map((item) => (
     <ListItem key={item.id} disablePadding>
       <ListItemButton
         component={Link}
@@ -898,7 +940,7 @@ const toolsItems = [
         onClick={() => !drawerPinned && setDrawerOpen(false)}
         sx={{ pl: 4 }} // Indent tools items
       >
-        <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+        <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
           {item.icon}
         </ListItemIcon>
         <ListItemText primary={item.label} />
@@ -912,29 +954,28 @@ const toolsItems = [
 
 ```jsx
 // file: webui/src/App.jsx
-import {
-  Divider,
-  ListSubheader,
-  Link
-} from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Divider, ListSubheader, Link } from "@mui/material";
+import { Link } from "react-router-dom";
 ```
 
 ## Testing Procedures
 
 ### For Issue 3 (Back Button)
+
 1. Navigate between pages
 2. Verify back button appears when not on dashboard
 3. Test back button functionality
 4. Ensure browser history works correctly
 
 ### For Issue 4 (Sidebar Pinning)
+
 1. Test pin/unpin functionality
 2. Verify state persists across browser refreshes
 3. Test drawer behavior in both pinned and unpinned modes
 4. Check responsive behavior
 
 ### For Issue 5 (Navigation Order)
+
 1. Verify navigation items appear in correct order
 2. Test Tools section functionality
 3. Ensure all routes work correctly
@@ -951,7 +992,6 @@ import { Link } from 'react-router-dom';
 ---
 
 # Section 3: Settings Page Enhancement
-
 
 This section covers issues 6-16: enhancing the settings page to match Bazarr functionality and improve the overall configuration experience.
 
@@ -987,43 +1027,47 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-} from '@mui/material';
-import { ExpandMore as ExpandIcon } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+} from "@mui/material";
+import { ExpandMore as ExpandIcon } from "@mui/icons-material";
+import { useEffect, useState } from "react";
 
 /**
  * Enhanced GeneralSettings component with Bazarr-compatible configuration options
  */
-export default function GeneralSettings({ config, onSave, backendAvailable = true }) {
+export default function GeneralSettings({
+  config,
+  onSave,
+  backendAvailable = true,
+}) {
   // Host Settings
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState("");
   const [port, setPort] = useState(8080);
-  const [baseURL, setBaseURL] = useState('');
+  const [baseURL, setBaseURL] = useState("");
 
   // Proxy Settings
   const [proxyEnabled, setProxyEnabled] = useState(false);
-  const [proxyType, setProxyType] = useState('http');
-  const [proxyHost, setProxyHost] = useState('');
-  const [proxyPort, setProxyPort] = useState('');
-  const [proxyUsername, setProxyUsername] = useState('');
-  const [proxyPassword, setProxyPassword] = useState('');
+  const [proxyType, setProxyType] = useState("http");
+  const [proxyHost, setProxyHost] = useState("");
+  const [proxyPort, setProxyPort] = useState("");
+  const [proxyUsername, setProxyUsername] = useState("");
+  const [proxyPassword, setProxyPassword] = useState("");
 
   // Updates Settings
   const [autoUpdate, setAutoUpdate] = useState(false);
-  const [updateBranch, setUpdateBranch] = useState('master');
-  const [updateFrequency, setUpdateFrequency] = useState('daily');
+  const [updateBranch, setUpdateBranch] = useState("master");
+  const [updateFrequency, setUpdateFrequency] = useState("daily");
 
   // Logging Settings
-  const [logLevel, setLogLevel] = useState('info');
-  const [logFilter, setLogFilter] = useState('');
+  const [logLevel, setLogLevel] = useState("info");
+  const [logFilter, setLogFilter] = useState("");
   const [logFilterRegex, setLogFilterRegex] = useState(false);
   const [logFilterIgnoreCase, setLogFilterIgnoreCase] = useState(true);
 
   // Backup Settings
   const [backupEnabled, setBackupEnabled] = useState(true);
-  const [backupFrequency, setBackupFrequency] = useState('weekly');
+  const [backupFrequency, setBackupFrequency] = useState("weekly");
   const [backupRetention, setBackupRetention] = useState(5);
-  const [backupLocation, setBackupLocation] = useState('');
+  const [backupLocation, setBackupLocation] = useState("");
 
   // Analytics Settings
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
@@ -1031,34 +1075,34 @@ export default function GeneralSettings({ config, onSave, backendAvailable = tru
   useEffect(() => {
     if (config) {
       // Host Settings
-      setAddress(config.address || '');
+      setAddress(config.address || "");
       setPort(config.port || 8080);
-      setBaseURL(config.base_url || '');
+      setBaseURL(config.base_url || "");
 
       // Proxy Settings
       setProxyEnabled(config.proxy_enabled || false);
-      setProxyType(config.proxy_type || 'http');
-      setProxyHost(config.proxy_host || '');
-      setProxyPort(config.proxy_port || '');
-      setProxyUsername(config.proxy_username || '');
-      setProxyPassword(config.proxy_password || '');
+      setProxyType(config.proxy_type || "http");
+      setProxyHost(config.proxy_host || "");
+      setProxyPort(config.proxy_port || "");
+      setProxyUsername(config.proxy_username || "");
+      setProxyPassword(config.proxy_password || "");
 
       // Updates Settings
       setAutoUpdate(config.auto_update || false);
-      setUpdateBranch(config.update_branch || 'master');
-      setUpdateFrequency(config.update_frequency || 'daily');
+      setUpdateBranch(config.update_branch || "master");
+      setUpdateFrequency(config.update_frequency || "daily");
 
       // Logging Settings
-      setLogLevel(config.log_level || 'info');
-      setLogFilter(config.log_filter || '');
+      setLogLevel(config.log_level || "info");
+      setLogFilter(config.log_filter || "");
       setLogFilterRegex(config.log_filter_regex || false);
       setLogFilterIgnoreCase(config.log_filter_ignore_case !== false);
 
       // Backup Settings
       setBackupEnabled(config.backup_enabled !== false);
-      setBackupFrequency(config.backup_frequency || 'weekly');
+      setBackupFrequency(config.backup_frequency || "weekly");
       setBackupRetention(config.backup_retention || 5);
-      setBackupLocation(config.backup_location || '');
+      setBackupLocation(config.backup_location || "");
 
       // Analytics Settings
       setAnalyticsEnabled(config.analytics_enabled || false);
@@ -1354,19 +1398,23 @@ import {
   DialogTitle,
   CircularProgress,
   LinearProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Storage as DatabaseIcon,
   Backup as BackupIcon,
   CleaningServices as OptimizeIcon,
   Assessment as StatsIcon,
-} from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+} from "@mui/icons-material";
+import { useEffect, useState } from "react";
 
 /**
  * Enhanced DatabaseSettings component with comprehensive database management
  */
-export default function DatabaseSettings({ config, onSave, backendAvailable = true }) {
+export default function DatabaseSettings({
+  config,
+  onSave,
+  backendAvailable = true,
+}) {
   const [dbInfo, setDbInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [backupDialog, setBackupDialog] = useState(false);
@@ -1378,19 +1426,19 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
 
     setLoading(true);
     try {
-      const response = await fetch('/api/database/info');
+      const response = await fetch("/api/database/info");
       if (response.ok) {
         const data = await response.json();
         setDbInfo(data);
       }
 
-      const statsResponse = await fetch('/api/database/stats');
+      const statsResponse = await fetch("/api/database/stats");
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setStats(statsData);
       }
     } catch (error) {
-      console.error('Failed to load database info:', error);
+      console.error("Failed to load database info:", error);
     } finally {
       setLoading(false);
     }
@@ -1402,40 +1450,47 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
 
   const handleBackup = async () => {
     try {
-      const response = await fetch('/api/database/backup', { method: 'POST' });
+      const response = await fetch("/api/database/backup", { method: "POST" });
       if (response.ok) {
-        alert('Database backup completed successfully');
+        alert("Database backup completed successfully");
         setBackupDialog(false);
         loadDatabaseInfo();
       }
     } catch (error) {
-      alert('Backup failed: ' + error.message);
+      alert("Backup failed: " + error.message);
     }
   };
 
   const handleOptimize = async () => {
     try {
-      const response = await fetch('/api/database/optimize', { method: 'POST' });
+      const response = await fetch("/api/database/optimize", {
+        method: "POST",
+      });
       if (response.ok) {
-        alert('Database optimization completed successfully');
+        alert("Database optimization completed successfully");
         setOptimizeDialog(false);
         loadDatabaseInfo();
       }
     } catch (error) {
-      alert('Optimization failed: ' + error.message);
+      alert("Optimization failed: " + error.message);
     }
   };
 
   const formatBytes = (bytes) => {
-    if (!bytes) return 'N/A';
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    if (!bytes) return "N/A";
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="200px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -1449,7 +1504,8 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
 
       {!backendAvailable && (
         <Alert severity="warning" sx={{ mb: 3 }}>
-          Backend service is not available. Database information cannot be loaded.
+          Backend service is not available. Database information cannot be
+          loaded.
         </Alert>
       )}
 
@@ -1458,7 +1514,12 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom color="primary" sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                color="primary"
+                sx={{ display: "flex", alignItems: "center" }}
+              >
                 <DatabaseIcon sx={{ mr: 1 }} />
                 Database Information
               </Typography>
@@ -1468,33 +1529,49 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell><strong>Type</strong></TableCell>
+                        <TableCell>
+                          <strong>Type</strong>
+                        </TableCell>
                         <TableCell>
                           <Chip
-                            label={dbInfo.type || 'Unknown'}
-                            color={dbInfo.type === 'postgresql' ? 'primary' : 'default'}
+                            label={dbInfo.type || "Unknown"}
+                            color={
+                              dbInfo.type === "postgresql"
+                                ? "primary"
+                                : "default"
+                            }
                             size="small"
                           />
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell><strong>Version</strong></TableCell>
-                        <TableCell>{dbInfo.version || 'N/A'}</TableCell>
+                        <TableCell>
+                          <strong>Version</strong>
+                        </TableCell>
+                        <TableCell>{dbInfo.version || "N/A"}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell><strong>Size</strong></TableCell>
+                        <TableCell>
+                          <strong>Size</strong>
+                        </TableCell>
                         <TableCell>{formatBytes(dbInfo.size)}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell><strong>Location</strong></TableCell>
-                        <TableCell>{dbInfo.path || 'N/A'}</TableCell>
+                        <TableCell>
+                          <strong>Location</strong>
+                        </TableCell>
+                        <TableCell>{dbInfo.path || "N/A"}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell><strong>Connection Status</strong></TableCell>
+                        <TableCell>
+                          <strong>Connection Status</strong>
+                        </TableCell>
                         <TableCell>
                           <Chip
-                            label={dbInfo.connected ? 'Connected' : 'Disconnected'}
-                            color={dbInfo.connected ? 'success' : 'error'}
+                            label={
+                              dbInfo.connected ? "Connected" : "Disconnected"
+                            }
+                            color={dbInfo.connected ? "success" : "error"}
                             size="small"
                           />
                         </TableCell>
@@ -1503,7 +1580,9 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
                   </Table>
                 </TableContainer>
               ) : (
-                <Alert severity="info">Database information not available</Alert>
+                <Alert severity="info">
+                  Database information not available
+                </Alert>
               )}
             </CardContent>
           </Card>
@@ -1513,7 +1592,12 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom color="primary" sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                color="primary"
+                sx={{ display: "flex", alignItems: "center" }}
+              >
                 <StatsIcon sx={{ mr: 1 }} />
                 Statistics
               </Typography>
@@ -1523,24 +1607,44 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell><strong>Total Records</strong></TableCell>
-                        <TableCell>{stats.totalRecords?.toLocaleString() || 'N/A'}</TableCell>
+                        <TableCell>
+                          <strong>Total Records</strong>
+                        </TableCell>
+                        <TableCell>
+                          {stats.totalRecords?.toLocaleString() || "N/A"}
+                        </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell><strong>Users</strong></TableCell>
+                        <TableCell>
+                          <strong>Users</strong>
+                        </TableCell>
                         <TableCell>{stats.users || 0}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell><strong>Downloads</strong></TableCell>
-                        <TableCell>{stats.downloads?.toLocaleString() || 0}</TableCell>
+                        <TableCell>
+                          <strong>Downloads</strong>
+                        </TableCell>
+                        <TableCell>
+                          {stats.downloads?.toLocaleString() || 0}
+                        </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell><strong>Media Items</strong></TableCell>
-                        <TableCell>{stats.mediaItems?.toLocaleString() || 0}</TableCell>
+                        <TableCell>
+                          <strong>Media Items</strong>
+                        </TableCell>
+                        <TableCell>
+                          {stats.mediaItems?.toLocaleString() || 0}
+                        </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell><strong>Last Backup</strong></TableCell>
-                        <TableCell>{stats.lastBackup ? new Date(stats.lastBackup).toLocaleDateString() : 'Never'}</TableCell>
+                        <TableCell>
+                          <strong>Last Backup</strong>
+                        </TableCell>
+                        <TableCell>
+                          {stats.lastBackup
+                            ? new Date(stats.lastBackup).toLocaleDateString()
+                            : "Never"}
+                        </TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -1592,12 +1696,15 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
         <DialogTitle>Create Database Backup</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            This will create a backup of your database. The process may take a few moments depending on the database size.
+            This will create a backup of your database. The process may take a
+            few moments depending on the database size.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setBackupDialog(false)}>Cancel</Button>
-          <Button onClick={handleBackup} variant="contained">Create Backup</Button>
+          <Button onClick={handleBackup} variant="contained">
+            Create Backup
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -1606,12 +1713,15 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
         <DialogTitle>Optimize Database</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            This will optimize your database by rebuilding indexes and cleaning up unused space. This process may take several minutes.
+            This will optimize your database by rebuilding indexes and cleaning
+            up unused space. This process may take several minutes.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOptimizeDialog(false)}>Cancel</Button>
-          <Button onClick={handleOptimize} variant="contained">Optimize</Button>
+          <Button onClick={handleOptimize} variant="contained">
+            Optimize
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -1629,6 +1739,7 @@ export default function DatabaseSettings({ config, onSave, backendAvailable = tr
 ## Next Section Preview
 
 The next section will cover Issues 8-16, including:
+
 - Authentication page redesign with cards
 - OAuth2 management features
 - Notifications system enhancement
@@ -1638,7 +1749,6 @@ The next section will cover Issues 8-16, including:
 ---
 
 # Section 4: Authentication and Notifications
-
 
 This section covers issues 8-16: redesigning authentication with cards, enhancing notifications, creating OAuth2 management, adding Languages page, and provider system improvements.
 
@@ -1673,7 +1783,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-} from '@mui/material';
+} from "@mui/material";
 import {
   GitHub as GitHubIcon,
   Key as ApiKeyIcon,
@@ -1684,13 +1794,17 @@ import {
   Delete as DeleteIcon,
   Visibility as ShowIcon,
   VisibilityOff as HideIcon,
-} from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+} from "@mui/icons-material";
+import { useEffect, useState } from "react";
 
 /**
  * Enhanced AuthSettings with card-based UI for each authentication method
  */
-export default function AuthSettings({ config, onSave, backendAvailable = true }) {
+export default function AuthSettings({
+  config,
+  onSave,
+  backendAvailable = true,
+}) {
   // Password Authentication
   const [passwordAuthEnabled, setPasswordAuthEnabled] = useState(true);
   const [requireStrongPasswords, setRequireStrongPasswords] = useState(true);
@@ -1702,19 +1816,19 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
 
   // GitHub OAuth
   const [githubEnabled, setGithubEnabled] = useState(false);
-  const [githubClientId, setGithubClientId] = useState('');
-  const [githubClientSecret, setGithubClientSecret] = useState('');
-  const [githubRedirectUrl, setGithubRedirectUrl] = useState('');
+  const [githubClientId, setGithubClientId] = useState("");
+  const [githubClientSecret, setGithubClientSecret] = useState("");
+  const [githubRedirectUrl, setGithubRedirectUrl] = useState("");
   const [showGithubSecret, setShowGithubSecret] = useState(false);
 
   // Generic OAuth2
   const [genericOAuthEnabled, setGenericOAuthEnabled] = useState(false);
-  const [oauthProvider, setOauthProvider] = useState('');
-  const [oauthClientId, setOauthClientId] = useState('');
-  const [oauthClientSecret, setOauthClientSecret] = useState('');
-  const [oauthAuthUrl, setOauthAuthUrl] = useState('');
-  const [oauthTokenUrl, setOauthTokenUrl] = useState('');
-  const [oauthUserUrl, setOauthUserUrl] = useState('');
+  const [oauthProvider, setOauthProvider] = useState("");
+  const [oauthClientId, setOauthClientId] = useState("");
+  const [oauthClientSecret, setOauthClientSecret] = useState("");
+  const [oauthAuthUrl, setOauthAuthUrl] = useState("");
+  const [oauthTokenUrl, setOauthTokenUrl] = useState("");
+  const [oauthUserUrl, setOauthUserUrl] = useState("");
   const [showOAuthSecret, setShowOAuthSecret] = useState(false);
 
   // Dialog states
@@ -1734,18 +1848,21 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
 
       // GitHub OAuth settings
       setGithubEnabled(config.github_oauth_enabled || false);
-      setGithubClientId(config.github_client_id || '');
-      setGithubClientSecret(config.github_client_secret || '');
-      setGithubRedirectUrl(config.github_redirect_url || `${window.location.origin}/api/oauth/github/callback`);
+      setGithubClientId(config.github_client_id || "");
+      setGithubClientSecret(config.github_client_secret || "");
+      setGithubRedirectUrl(
+        config.github_redirect_url ||
+          `${window.location.origin}/api/oauth/github/callback`,
+      );
 
       // Generic OAuth settings
       setGenericOAuthEnabled(config.generic_oauth_enabled || false);
-      setOauthProvider(config.oauth_provider || '');
-      setOauthClientId(config.oauth_client_id || '');
-      setOauthClientSecret(config.oauth_client_secret || '');
-      setOauthAuthUrl(config.oauth_auth_url || '');
-      setOauthTokenUrl(config.oauth_token_url || '');
-      setOauthUserUrl(config.oauth_user_url || '');
+      setOauthProvider(config.oauth_provider || "");
+      setOauthClientId(config.oauth_client_id || "");
+      setOauthClientSecret(config.oauth_client_secret || "");
+      setOauthAuthUrl(config.oauth_auth_url || "");
+      setOauthTokenUrl(config.oauth_token_url || "");
+      setOauthUserUrl(config.oauth_user_url || "");
     }
   }, [config]);
 
@@ -1781,50 +1898,54 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
 
   const generateGithubCredentials = async () => {
     try {
-      const response = await fetch('/api/oauth/github/generate', { method: 'POST' });
+      const response = await fetch("/api/oauth/github/generate", {
+        method: "POST",
+      });
       if (response.ok) {
         const data = await response.json();
         setGithubClientId(data.client_id);
         setGithubClientSecret(data.client_secret);
-        alert('New GitHub OAuth credentials generated successfully');
+        alert("New GitHub OAuth credentials generated successfully");
       }
     } catch (error) {
-      alert('Failed to generate credentials: ' + error.message);
+      alert("Failed to generate credentials: " + error.message);
     }
   };
 
   const regenerateGithubSecret = async () => {
     try {
-      const response = await fetch('/api/oauth/github/regenerate', { method: 'POST' });
+      const response = await fetch("/api/oauth/github/regenerate", {
+        method: "POST",
+      });
       if (response.ok) {
         const data = await response.json();
         setGithubClientSecret(data.client_secret);
-        alert('GitHub client secret regenerated successfully');
+        alert("GitHub client secret regenerated successfully");
       }
     } catch (error) {
-      alert('Failed to regenerate secret: ' + error.message);
+      alert("Failed to regenerate secret: " + error.message);
     }
   };
 
   const resetGithubConfig = () => {
-    setGithubClientId('');
-    setGithubClientSecret('');
+    setGithubClientId("");
+    setGithubClientSecret("");
     setGithubRedirectUrl(`${window.location.origin}/api/oauth/github/callback`);
     setGithubEnabled(false);
     setResetGithubDialog(false);
-    alert('GitHub OAuth configuration reset to defaults');
+    alert("GitHub OAuth configuration reset to defaults");
   };
 
   const resetOAuthConfig = () => {
-    setOauthProvider('');
-    setOauthClientId('');
-    setOauthClientSecret('');
-    setOauthAuthUrl('');
-    setOauthTokenUrl('');
-    setOauthUserUrl('');
+    setOauthProvider("");
+    setOauthClientId("");
+    setOauthClientSecret("");
+    setOauthAuthUrl("");
+    setOauthTokenUrl("");
+    setOauthUserUrl("");
     setGenericOAuthEnabled(false);
     setResetOAuthDialog(false);
-    alert('Generic OAuth configuration reset to defaults');
+    alert("Generic OAuth configuration reset to defaults");
   };
 
   return (
@@ -1835,17 +1956,18 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
 
       {!backendAvailable && (
         <Alert severity="warning" sx={{ mb: 3 }}>
-          Backend service is not available. Authentication settings cannot be modified.
+          Backend service is not available. Authentication settings cannot be
+          modified.
         </Alert>
       )}
 
       <Grid container spacing={3}>
         {/* Password Authentication Card */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ height: '100%' }}>
+          <Card sx={{ height: "100%" }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <PasswordIcon sx={{ mr: 1, color: 'primary.main' }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <PasswordIcon sx={{ mr: 1, color: "primary.main" }} />
                 <Typography variant="h6" color="primary">
                   Password Authentication
                 </Typography>
@@ -1858,7 +1980,8 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
               </Box>
 
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Traditional username and password authentication for local users.
+                Traditional username and password authentication for local
+                users.
               </Typography>
 
               {passwordAuthEnabled && (
@@ -1867,7 +1990,9 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
                     control={
                       <Switch
                         checked={requireStrongPasswords}
-                        onChange={(e) => setRequireStrongPasswords(e.target.checked)}
+                        onChange={(e) =>
+                          setRequireStrongPasswords(e.target.checked)
+                        }
                         disabled={!backendAvailable}
                       />
                     }
@@ -1893,10 +2018,10 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
 
         {/* API Key Authentication Card */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ height: '100%' }}>
+          <Card sx={{ height: "100%" }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <ApiKeyIcon sx={{ mr: 1, color: 'primary.main' }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <ApiKeyIcon sx={{ mr: 1, color: "primary.main" }} />
                 <Typography variant="h6" color="primary">
                   API Key Authentication
                 </Typography>
@@ -1909,7 +2034,8 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
               </Box>
 
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                API key-based authentication for automated access and integrations.
+                API key-based authentication for automated access and
+                integrations.
               </Typography>
 
               {apiKeyEnabled && (
@@ -1930,10 +2056,10 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
 
         {/* GitHub OAuth Card */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ height: '100%' }}>
+          <Card sx={{ height: "100%" }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <GitHubIcon sx={{ mr: 1, color: 'primary.main' }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <GitHubIcon sx={{ mr: 1, color: "primary.main" }} />
                 <Typography variant="h6" color="primary">
                   GitHub OAuth
                 </Typography>
@@ -1950,7 +2076,14 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
               </Typography>
 
               {githubEnabled && (
-                <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box
+                  sx={{
+                    mt: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                  }}
+                >
                   <TextField
                     fullWidth
                     label="Client ID"
@@ -1962,7 +2095,7 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
                   <TextField
                     fullWidth
                     label="Client Secret"
-                    type={showGithubSecret ? 'text' : 'password'}
+                    type={showGithubSecret ? "text" : "password"}
                     value={githubClientSecret}
                     onChange={(e) => setGithubClientSecret(e.target.value)}
                     disabled={!backendAvailable}
@@ -2024,10 +2157,10 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
 
         {/* Generic OAuth Card */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ height: '100%' }}>
+          <Card sx={{ height: "100%" }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <OAuthIcon sx={{ mr: 1, color: 'primary.main' }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <OAuthIcon sx={{ mr: 1, color: "primary.main" }} />
                 <Typography variant="h6" color="primary">
                   Generic OAuth2
                 </Typography>
@@ -2044,7 +2177,14 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
               </Typography>
 
               {genericOAuthEnabled && (
-                <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box
+                  sx={{
+                    mt: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                  }}
+                >
                   <TextField
                     fullWidth
                     label="Provider Name"
@@ -2065,7 +2205,7 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
                   <TextField
                     fullWidth
                     label="Client Secret"
-                    type={showOAuthSecret ? 'text' : 'password'}
+                    type={showOAuthSecret ? "text" : "password"}
                     value={oauthClientSecret}
                     onChange={(e) => setOauthClientSecret(e.target.value)}
                     disabled={!backendAvailable}
@@ -2129,7 +2269,7 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
       </Grid>
 
       {/* Save Button */}
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+      <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="contained"
           onClick={handleSave}
@@ -2141,11 +2281,15 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
       </Box>
 
       {/* Reset Dialogs */}
-      <Dialog open={resetGithubDialog} onClose={() => setResetGithubDialog(false)}>
+      <Dialog
+        open={resetGithubDialog}
+        onClose={() => setResetGithubDialog(false)}
+      >
         <DialogTitle>Reset GitHub OAuth Configuration</DialogTitle>
         <DialogContent>
           <Typography>
-            This will reset all GitHub OAuth settings to their default values. This action cannot be undone.
+            This will reset all GitHub OAuth settings to their default values.
+            This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -2156,11 +2300,15 @@ export default function AuthSettings({ config, onSave, backendAvailable = true }
         </DialogActions>
       </Dialog>
 
-      <Dialog open={resetOAuthDialog} onClose={() => setResetOAuthDialog(false)}>
+      <Dialog
+        open={resetOAuthDialog}
+        onClose={() => setResetOAuthDialog(false)}
+      >
         <DialogTitle>Reset Generic OAuth Configuration</DialogTitle>
         <DialogContent>
           <Typography>
-            This will reset all generic OAuth settings to their default values. This action cannot be undone.
+            This will reset all generic OAuth settings to their default values.
+            This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -2207,7 +2355,7 @@ import {
   DialogTitle,
   CircularProgress,
   Chip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Email as EmailIcon,
   Chat as DiscordIcon,
@@ -2216,82 +2364,90 @@ import {
   Webhook as WebhookIcon,
   Delete as DeleteIcon,
   Send as TestIcon,
-} from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+} from "@mui/icons-material";
+import { useEffect, useState } from "react";
 
 /**
  * Enhanced NotificationSettings with card-based UI for each notification method
  */
-export default function NotificationSettings({ config, onSave, backendAvailable = true }) {
+export default function NotificationSettings({
+  config,
+  onSave,
+  backendAvailable = true,
+}) {
   // Email notifications
   const [emailEnabled, setEmailEnabled] = useState(false);
-  const [smtpHost, setSmtpHost] = useState('');
+  const [smtpHost, setSmtpHost] = useState("");
   const [smtpPort, setSmtpPort] = useState(587);
-  const [smtpUsername, setSmtpUsername] = useState('');
-  const [smtpPassword, setSmtpPassword] = useState('');
-  const [smtpFrom, setSmtpFrom] = useState('');
-  const [smtpTo, setSmtpTo] = useState('');
+  const [smtpUsername, setSmtpUsername] = useState("");
+  const [smtpPassword, setSmtpPassword] = useState("");
+  const [smtpFrom, setSmtpFrom] = useState("");
+  const [smtpTo, setSmtpTo] = useState("");
   const [smtpTLS, setSmtpTLS] = useState(true);
 
   // Discord notifications
   const [discordEnabled, setDiscordEnabled] = useState(false);
-  const [discordWebhook, setDiscordWebhook] = useState('');
-  const [discordUsername, setDiscordUsername] = useState('Subtitle Manager');
-  const [discordAvatar, setDiscordAvatar] = useState('');
+  const [discordWebhook, setDiscordWebhook] = useState("");
+  const [discordUsername, setDiscordUsername] = useState("Subtitle Manager");
+  const [discordAvatar, setDiscordAvatar] = useState("");
 
   // Telegram notifications
   const [telegramEnabled, setTelegramEnabled] = useState(false);
-  const [telegramToken, setTelegramToken] = useState('');
-  const [telegramChatId, setTelegramChatId] = useState('');
+  const [telegramToken, setTelegramToken] = useState("");
+  const [telegramChatId, setTelegramChatId] = useState("");
 
   // Push notifications
   const [pushEnabled, setPushEnabled] = useState(false);
-  const [pushoverToken, setPushoverToken] = useState('');
-  const [pushoverUser, setPushoverUser] = useState('');
+  const [pushoverToken, setPushoverToken] = useState("");
+  const [pushoverUser, setPushoverUser] = useState("");
 
   // Webhook notifications
   const [webhookEnabled, setWebhookEnabled] = useState(false);
-  const [webhookUrl, setWebhookUrl] = useState('');
-  const [webhookMethod, setWebhookMethod] = useState('POST');
-  const [webhookHeaders, setWebhookHeaders] = useState('');
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookMethod, setWebhookMethod] = useState("POST");
+  const [webhookHeaders, setWebhookHeaders] = useState("");
 
   // Dialog states
-  const [testDialog, setTestDialog] = useState({ open: false, type: '', loading: false });
+  const [testDialog, setTestDialog] = useState({
+    open: false,
+    type: "",
+    loading: false,
+  });
   const [resetDialog, setResetDialog] = useState(false);
 
   useEffect(() => {
     if (config) {
       // Email settings
       setEmailEnabled(config.email_enabled || false);
-      setSmtpHost(config.smtp_host || '');
+      setSmtpHost(config.smtp_host || "");
       setSmtpPort(config.smtp_port || 587);
-      setSmtpUsername(config.smtp_username || '');
-      setSmtpPassword(config.smtp_password || '');
-      setSmtpFrom(config.smtp_from || '');
-      setSmtpTo(config.smtp_to || '');
+      setSmtpUsername(config.smtp_username || "");
+      setSmtpPassword(config.smtp_password || "");
+      setSmtpFrom(config.smtp_from || "");
+      setSmtpTo(config.smtp_to || "");
       setSmtpTLS(config.smtp_tls !== false);
 
       // Discord settings
       setDiscordEnabled(config.discord_enabled || false);
-      setDiscordWebhook(config.discord_webhook || '');
-      setDiscordUsername(config.discord_username || 'Subtitle Manager');
-      setDiscordAvatar(config.discord_avatar || '');
+      setDiscordWebhook(config.discord_webhook || "");
+      setDiscordUsername(config.discord_username || "Subtitle Manager");
+      setDiscordAvatar(config.discord_avatar || "");
 
       // Telegram settings
       setTelegramEnabled(config.telegram_enabled || false);
-      setTelegramToken(config.telegram_token || '');
-      setTelegramChatId(config.telegram_chat_id || '');
+      setTelegramToken(config.telegram_token || "");
+      setTelegramChatId(config.telegram_chat_id || "");
 
       // Push settings
       setPushEnabled(config.push_enabled || false);
-      setPushoverToken(config.pushover_token || '');
-      setPushoverUser(config.pushover_user || '');
+      setPushoverToken(config.pushover_token || "");
+      setPushoverUser(config.pushover_user || "");
 
       // Webhook settings
       setWebhookEnabled(config.webhook_enabled || false);
-      setWebhookUrl(config.webhook_url || '');
-      setWebhookMethod(config.webhook_method || 'POST');
-      setWebhookHeaders(config.webhook_headers || '');
+      setWebhookUrl(config.webhook_url || "");
+      setWebhookMethod(config.webhook_method || "POST");
+      setWebhookHeaders(config.webhook_headers || "");
     }
   }, [config]);
 
@@ -2338,9 +2494,11 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
 
     try {
       const response = await fetch(`/api/notifications/test/${type}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'Test notification from Subtitle Manager' }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: "Test notification from Subtitle Manager",
+        }),
       });
 
       if (response.ok) {
@@ -2352,48 +2510,53 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
     } catch (error) {
       alert(`Failed to send ${type} notification: ${error.message}`);
     } finally {
-      setTestDialog({ open: false, type: '', loading: false });
+      setTestDialog({ open: false, type: "", loading: false });
     }
   };
 
   const resetAllNotifications = () => {
     setEmailEnabled(false);
-    setSmtpHost('');
+    setSmtpHost("");
     setSmtpPort(587);
-    setSmtpUsername('');
-    setSmtpPassword('');
-    setSmtpFrom('');
-    setSmtpTo('');
+    setSmtpUsername("");
+    setSmtpPassword("");
+    setSmtpFrom("");
+    setSmtpTo("");
     setSmtpTLS(true);
 
     setDiscordEnabled(false);
-    setDiscordWebhook('');
-    setDiscordUsername('Subtitle Manager');
-    setDiscordAvatar('');
+    setDiscordWebhook("");
+    setDiscordUsername("Subtitle Manager");
+    setDiscordAvatar("");
 
     setTelegramEnabled(false);
-    setTelegramToken('');
-    setTelegramChatId('');
+    setTelegramToken("");
+    setTelegramChatId("");
 
     setPushEnabled(false);
-    setPushoverToken('');
-    setPushoverUser('');
+    setPushoverToken("");
+    setPushoverUser("");
 
     setWebhookEnabled(false);
-    setWebhookUrl('');
-    setWebhookMethod('POST');
-    setWebhookHeaders('');
+    setWebhookUrl("");
+    setWebhookMethod("POST");
+    setWebhookHeaders("");
 
     setResetDialog(false);
-    alert('All notification settings reset to defaults');
+    alert("All notification settings reset to defaults");
   };
 
   return (
     <Box sx={{ maxWidth: 1200 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h6">
-          Notification Settings
-        </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography variant="h6">Notification Settings</Typography>
         <Button
           variant="outlined"
           color="error"
@@ -2407,17 +2570,18 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
 
       {!backendAvailable && (
         <Alert severity="warning" sx={{ mb: 3 }}>
-          Backend service is not available. Notification settings cannot be modified.
+          Backend service is not available. Notification settings cannot be
+          modified.
         </Alert>
       )}
 
       <Grid container spacing={3}>
         {/* Email Notifications Card */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ height: '100%' }}>
+          <Card sx={{ height: "100%" }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <EmailIcon sx={{ mr: 1, color: 'primary.main' }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <EmailIcon sx={{ mr: 1, color: "primary.main" }} />
                 <Typography variant="h6" color="primary">
                   Email (SMTP)
                 </Typography>
@@ -2434,7 +2598,7 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
               </Typography>
 
               {emailEnabled && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={8}>
                       <TextField
@@ -2518,15 +2682,19 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
                 <Button
                   size="small"
                   startIcon={<TestIcon />}
-                  onClick={() => testNotification('email')}
-                  disabled={!backendAvailable || !smtpHost || !smtpFrom || !smtpTo}
+                  onClick={() => testNotification("email")}
+                  disabled={
+                    !backendAvailable || !smtpHost || !smtpFrom || !smtpTo
+                  }
                 >
                   Test Email
                 </Button>
                 <Chip
-                  label={smtpHost && smtpFrom && smtpTo ? 'Configured' : 'Incomplete'}
+                  label={
+                    smtpHost && smtpFrom && smtpTo ? "Configured" : "Incomplete"
+                  }
                   size="small"
-                  color={smtpHost && smtpFrom && smtpTo ? 'success' : 'warning'}
+                  color={smtpHost && smtpFrom && smtpTo ? "success" : "warning"}
                 />
               </CardActions>
             )}
@@ -2535,10 +2703,10 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
 
         {/* Discord Notifications Card */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ height: '100%' }}>
+          <Card sx={{ height: "100%" }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <DiscordIcon sx={{ mr: 1, color: 'primary.main' }} />
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <DiscordIcon sx={{ mr: 1, color: "primary.main" }} />
                 <Typography variant="h6" color="primary">
                   Discord
                 </Typography>
@@ -2555,7 +2723,7 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
               </Typography>
 
               {discordEnabled && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <TextField
                     fullWidth
                     label="Webhook URL"
@@ -2593,15 +2761,15 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
                 <Button
                   size="small"
                   startIcon={<TestIcon />}
-                  onClick={() => testNotification('discord')}
+                  onClick={() => testNotification("discord")}
                   disabled={!backendAvailable || !discordWebhook}
                 >
                   Test Discord
                 </Button>
                 <Chip
-                  label={discordWebhook ? 'Configured' : 'Incomplete'}
+                  label={discordWebhook ? "Configured" : "Incomplete"}
                   size="small"
-                  color={discordWebhook ? 'success' : 'warning'}
+                  color={discordWebhook ? "success" : "warning"}
                 />
               </CardActions>
             )}
@@ -2610,11 +2778,10 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
 
         {/* Continue with Telegram, Push, and Webhook cards... */}
         {/* Due to length limits, showing structure for remaining cards */}
-
       </Grid>
 
       {/* Save Button */}
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+      <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="contained"
           onClick={handleSave}
@@ -2626,11 +2793,17 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
       </Box>
 
       {/* Test Dialog */}
-      <Dialog open={testDialog.open} onClose={() => !testDialog.loading && setTestDialog({ open: false, type: '', loading: false })}>
+      <Dialog
+        open={testDialog.open}
+        onClose={() =>
+          !testDialog.loading &&
+          setTestDialog({ open: false, type: "", loading: false })
+        }
+      >
         <DialogTitle>Testing {testDialog.type} Notification</DialogTitle>
         <DialogContent>
           {testDialog.loading ? (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, py: 2 }}>
               <CircularProgress size={24} />
               <Typography>Sending test notification...</Typography>
             </Box>
@@ -2640,7 +2813,11 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
         </DialogContent>
         {!testDialog.loading && (
           <DialogActions>
-            <Button onClick={() => setTestDialog({ open: false, type: '', loading: false })}>
+            <Button
+              onClick={() =>
+                setTestDialog({ open: false, type: "", loading: false })
+              }
+            >
               Close
             </Button>
           </DialogActions>
@@ -2652,12 +2829,17 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
         <DialogTitle>Reset All Notification Settings</DialogTitle>
         <DialogContent>
           <Typography>
-            This will reset all notification settings to their default values. This action cannot be undone.
+            This will reset all notification settings to their default values.
+            This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setResetDialog(false)}>Cancel</Button>
-          <Button onClick={resetAllNotifications} color="error" variant="contained">
+          <Button
+            onClick={resetAllNotifications}
+            color="error"
+            variant="contained"
+          >
             Reset All
           </Button>
         </DialogActions>
@@ -2677,6 +2859,7 @@ export default function NotificationSettings({ config, onSave, backendAvailable 
 ## Next Preview
 
 The remaining issues (9-11, 13-16) will cover:
+
 - OAuth2 credential management API endpoints
 - Languages page creation (Issue 15)
 - Provider configuration fixes (Issues 17-18)
@@ -2685,7 +2868,6 @@ The remaining issues (9-11, 13-16) will cover:
 ---
 
 # Section 5: Final Components and Provider Fixes
-
 
 This section covers the remaining issues 9-11, 13-16, and 17-18: OAuth2 API endpoints, Languages page, Scheduler settings, and provider configuration fixes.
 
@@ -2934,74 +3116,88 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Autocomplete,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Language as LanguageIcon,
   Add as AddIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
   DragIndicator as DragIcon,
-} from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+} from "@mui/icons-material";
+import { useEffect, useState } from "react";
 
 /**
  * LanguagesSettings component for managing global language preferences
  * and language profiles similar to Bazarr
  */
-export default function LanguagesSettings({ config, onSave, backendAvailable = true }) {
+export default function LanguagesSettings({
+  config,
+  onSave,
+  backendAvailable = true,
+}) {
   // Global language settings
   const [defaultLanguages, setDefaultLanguages] = useState([]);
-  const [fallbackLanguage, setFallbackLanguage] = useState('en');
-  const [enableSubtitleLanguageDetection, setEnableSubtitleLanguageDetection] = useState(true);
-  const [enableAlternativeLanguages, setEnableAlternativeLanguages] = useState(false);
+  const [fallbackLanguage, setFallbackLanguage] = useState("en");
+  const [enableSubtitleLanguageDetection, setEnableSubtitleLanguageDetection] =
+    useState(true);
+  const [enableAlternativeLanguages, setEnableAlternativeLanguages] =
+    useState(false);
 
   // Language profiles
   const [languageProfiles, setLanguageProfiles] = useState([]);
-  const [profileDialog, setProfileDialog] = useState({ open: false, profile: null, isEditing: false });
+  const [profileDialog, setProfileDialog] = useState({
+    open: false,
+    profile: null,
+    isEditing: false,
+  });
 
   // Available languages (ISO 639-1 codes with names)
   const availableLanguages = [
-    { code: 'en', name: 'English' },
-    { code: 'es', name: 'Spanish' },
-    { code: 'fr', name: 'French' },
-    { code: 'de', name: 'German' },
-    { code: 'it', name: 'Italian' },
-    { code: 'pt', name: 'Portuguese' },
-    { code: 'ru', name: 'Russian' },
-    { code: 'ja', name: 'Japanese' },
-    { code: 'ko', name: 'Korean' },
-    { code: 'zh', name: 'Chinese' },
-    { code: 'ar', name: 'Arabic' },
-    { code: 'hi', name: 'Hindi' },
-    { code: 'th', name: 'Thai' },
-    { code: 'vi', name: 'Vietnamese' },
-    { code: 'tr', name: 'Turkish' },
-    { code: 'pl', name: 'Polish' },
-    { code: 'nl', name: 'Dutch' },
-    { code: 'sv', name: 'Swedish' },
-    { code: 'da', name: 'Danish' },
-    { code: 'no', name: 'Norwegian' },
-    { code: 'fi', name: 'Finnish' },
-    { code: 'el', name: 'Greek' },
-    { code: 'he', name: 'Hebrew' },
-    { code: 'cs', name: 'Czech' },
-    { code: 'hu', name: 'Hungarian' },
-    { code: 'ro', name: 'Romanian' },
-    { code: 'bg', name: 'Bulgarian' },
-    { code: 'hr', name: 'Croatian' },
-    { code: 'sk', name: 'Slovak' },
-    { code: 'sl', name: 'Slovenian' },
-    { code: 'et', name: 'Estonian' },
-    { code: 'lv', name: 'Latvian' },
-    { code: 'lt', name: 'Lithuanian' },
+    { code: "en", name: "English" },
+    { code: "es", name: "Spanish" },
+    { code: "fr", name: "French" },
+    { code: "de", name: "German" },
+    { code: "it", name: "Italian" },
+    { code: "pt", name: "Portuguese" },
+    { code: "ru", name: "Russian" },
+    { code: "ja", name: "Japanese" },
+    { code: "ko", name: "Korean" },
+    { code: "zh", name: "Chinese" },
+    { code: "ar", name: "Arabic" },
+    { code: "hi", name: "Hindi" },
+    { code: "th", name: "Thai" },
+    { code: "vi", name: "Vietnamese" },
+    { code: "tr", name: "Turkish" },
+    { code: "pl", name: "Polish" },
+    { code: "nl", name: "Dutch" },
+    { code: "sv", name: "Swedish" },
+    { code: "da", name: "Danish" },
+    { code: "no", name: "Norwegian" },
+    { code: "fi", name: "Finnish" },
+    { code: "el", name: "Greek" },
+    { code: "he", name: "Hebrew" },
+    { code: "cs", name: "Czech" },
+    { code: "hu", name: "Hungarian" },
+    { code: "ro", name: "Romanian" },
+    { code: "bg", name: "Bulgarian" },
+    { code: "hr", name: "Croatian" },
+    { code: "sk", name: "Slovak" },
+    { code: "sl", name: "Slovenian" },
+    { code: "et", name: "Estonian" },
+    { code: "lv", name: "Latvian" },
+    { code: "lt", name: "Lithuanian" },
   ];
 
   useEffect(() => {
     if (config) {
-      setDefaultLanguages(config.default_languages || ['en']);
-      setFallbackLanguage(config.fallback_language || 'en');
-      setEnableSubtitleLanguageDetection(config.enable_language_detection !== false);
-      setEnableAlternativeLanguages(config.enable_alternative_languages || false);
+      setDefaultLanguages(config.default_languages || ["en"]);
+      setFallbackLanguage(config.fallback_language || "en");
+      setEnableSubtitleLanguageDetection(
+        config.enable_language_detection !== false,
+      );
+      setEnableAlternativeLanguages(
+        config.enable_alternative_languages || false,
+      );
       setLanguageProfiles(config.language_profiles || []);
     }
   }, [config]);
@@ -3023,9 +3219,9 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
       open: true,
       profile: {
         id: Date.now(),
-        name: '',
+        name: "",
         languages: [],
-        description: '',
+        description: "",
         enabled: true,
       },
       isEditing: false,
@@ -3044,24 +3240,26 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
     const { profile, isEditing } = profileDialog;
 
     if (isEditing) {
-      setLanguageProfiles(prev =>
-        prev.map(p => p.id === profile.id ? profile : p)
+      setLanguageProfiles((prev) =>
+        prev.map((p) => (p.id === profile.id ? profile : p)),
       );
     } else {
-      setLanguageProfiles(prev => [...prev, profile]);
+      setLanguageProfiles((prev) => [...prev, profile]);
     }
 
     setProfileDialog({ open: false, profile: null, isEditing: false });
   };
 
   const handleDeleteProfile = (profileId) => {
-    if (window.confirm('Are you sure you want to delete this language profile?')) {
-      setLanguageProfiles(prev => prev.filter(p => p.id !== profileId));
+    if (
+      window.confirm("Are you sure you want to delete this language profile?")
+    ) {
+      setLanguageProfiles((prev) => prev.filter((p) => p.id !== profileId));
     }
   };
 
   const getLanguageName = (code) => {
-    const lang = availableLanguages.find(l => l.code === code);
+    const lang = availableLanguages.find((l) => l.code === code);
     return lang ? lang.name : code;
   };
 
@@ -3073,7 +3271,8 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
 
       {!backendAvailable && (
         <Alert severity="warning" sx={{ mb: 3 }}>
-          Backend service is not available. Language settings cannot be modified.
+          Backend service is not available. Language settings cannot be
+          modified.
         </Alert>
       )}
 
@@ -3082,19 +3281,26 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom color="primary" sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                color="primary"
+                sx={{ display: "flex", alignItems: "center" }}
+              >
                 <LanguageIcon sx={{ mr: 1 }} />
                 Global Settings
               </Typography>
 
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 <Autocomplete
                   multiple
                   options={availableLanguages}
                   getOptionLabel={(option) => `${option.name} (${option.code})`}
-                  value={availableLanguages.filter(lang => defaultLanguages.includes(lang.code))}
+                  value={availableLanguages.filter((lang) =>
+                    defaultLanguages.includes(lang.code),
+                  )}
                   onChange={(event, newValue) => {
-                    setDefaultLanguages(newValue.map(v => v.code));
+                    setDefaultLanguages(newValue.map((v) => v.code));
                   }}
                   renderTags={(value, getTagProps) =>
                     value.map((option, index) => (
@@ -3138,13 +3344,19 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
                     control={
                       <Switch
                         checked={enableSubtitleLanguageDetection}
-                        onChange={(e) => setEnableSubtitleLanguageDetection(e.target.checked)}
+                        onChange={(e) =>
+                          setEnableSubtitleLanguageDetection(e.target.checked)
+                        }
                         disabled={!backendAvailable}
                       />
                     }
                     label="Enable Subtitle Language Detection"
                   />
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Automatically detect the language of downloaded subtitles
                   </Typography>
                 </Box>
@@ -3154,14 +3366,21 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
                     control={
                       <Switch
                         checked={enableAlternativeLanguages}
-                        onChange={(e) => setEnableAlternativeLanguages(e.target.checked)}
+                        onChange={(e) =>
+                          setEnableAlternativeLanguages(e.target.checked)
+                        }
                         disabled={!backendAvailable}
                       />
                     }
                     label="Enable Alternative Languages"
                   />
-                  <Typography variant="caption" color="text.secondary" display="block">
-                    Allow downloading subtitles in alternative languages when preferred ones are unavailable
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
+                    Allow downloading subtitles in alternative languages when
+                    preferred ones are unavailable
                   </Typography>
                 </Box>
               </Box>
@@ -3173,7 +3392,14 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
                 <Typography variant="h6" color="primary">
                   Language Profiles
                 </Typography>
@@ -3188,12 +3414,14 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
               </Box>
 
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Create custom language combinations for different content types or preferences.
+                Create custom language combinations for different content types
+                or preferences.
               </Typography>
 
               {languageProfiles.length === 0 ? (
                 <Alert severity="info">
-                  No language profiles configured. Create a profile to customize language settings for specific content.
+                  No language profiles configured. Create a profile to customize
+                  language settings for specific content.
                 </Alert>
               ) : (
                 <List dense>
@@ -3202,33 +3430,46 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
                       key={profile.id}
                       divider
                       sx={{
-                        border: '1px solid',
-                        borderColor: 'divider',
+                        border: "1px solid",
+                        borderColor: "divider",
                         borderRadius: 1,
                         mb: 1,
-                        bgcolor: profile.enabled ? 'background.paper' : 'action.disabled',
+                        bgcolor: profile.enabled
+                          ? "background.paper"
+                          : "action.disabled",
                       }}
                     >
-                      <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
-                        <DragIcon sx={{ color: 'text.secondary' }} />
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", mr: 1 }}
+                      >
+                        <DragIcon sx={{ color: "text.secondary" }} />
                       </Box>
 
                       <ListItemText
                         primary={
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
                             <Typography variant="subtitle2">
                               {profile.name}
                             </Typography>
                             <Chip
-                              label={profile.enabled ? 'Enabled' : 'Disabled'}
+                              label={profile.enabled ? "Enabled" : "Disabled"}
                               size="small"
-                              color={profile.enabled ? 'success' : 'default'}
+                              color={profile.enabled ? "success" : "default"}
                             />
                           </Box>
                         }
                         secondary={
                           <Box>
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
                               {profile.description}
                             </Typography>
                             <Box sx={{ mt: 0.5 }}>
@@ -3275,7 +3516,7 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
       </Grid>
 
       {/* Save Button */}
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+      <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="contained"
           onClick={handleSave}
@@ -3289,34 +3530,42 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
       {/* Profile Dialog */}
       <Dialog
         open={profileDialog.open}
-        onClose={() => setProfileDialog({ open: false, profile: null, isEditing: false })}
+        onClose={() =>
+          setProfileDialog({ open: false, profile: null, isEditing: false })
+        }
         maxWidth="sm"
         fullWidth
       >
         <DialogTitle>
-          {profileDialog.isEditing ? 'Edit Language Profile' : 'Create Language Profile'}
+          {profileDialog.isEditing
+            ? "Edit Language Profile"
+            : "Create Language Profile"}
         </DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
             <TextField
               fullWidth
               label="Profile Name"
-              value={profileDialog.profile?.name || ''}
-              onChange={(e) => setProfileDialog(prev => ({
-                ...prev,
-                profile: { ...prev.profile, name: e.target.value }
-              }))}
+              value={profileDialog.profile?.name || ""}
+              onChange={(e) =>
+                setProfileDialog((prev) => ({
+                  ...prev,
+                  profile: { ...prev.profile, name: e.target.value },
+                }))
+              }
               placeholder="e.g., Movies, TV Shows, Anime"
             />
 
             <TextField
               fullWidth
               label="Description"
-              value={profileDialog.profile?.description || ''}
-              onChange={(e) => setProfileDialog(prev => ({
-                ...prev,
-                profile: { ...prev.profile, description: e.target.value }
-              }))}
+              value={profileDialog.profile?.description || ""}
+              onChange={(e) =>
+                setProfileDialog((prev) => ({
+                  ...prev,
+                  profile: { ...prev.profile, description: e.target.value },
+                }))
+              }
               placeholder="Brief description of this profile"
               multiline
               rows={2}
@@ -3326,16 +3575,16 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
               multiple
               options={availableLanguages}
               getOptionLabel={(option) => `${option.name} (${option.code})`}
-              value={availableLanguages.filter(lang =>
-                (profileDialog.profile?.languages || []).includes(lang.code)
+              value={availableLanguages.filter((lang) =>
+                (profileDialog.profile?.languages || []).includes(lang.code),
               )}
               onChange={(event, newValue) => {
-                setProfileDialog(prev => ({
+                setProfileDialog((prev) => ({
                   ...prev,
                   profile: {
                     ...prev.profile,
-                    languages: newValue.map(v => v.code)
-                  }
+                    languages: newValue.map((v) => v.code),
+                  },
                 }));
               }}
               renderTags={(value, getTagProps) =>
@@ -3361,10 +3610,12 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
               control={
                 <Switch
                   checked={profileDialog.profile?.enabled !== false}
-                  onChange={(e) => setProfileDialog(prev => ({
-                    ...prev,
-                    profile: { ...prev.profile, enabled: e.target.checked }
-                  }))}
+                  onChange={(e) =>
+                    setProfileDialog((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, enabled: e.target.checked },
+                    }))
+                  }
                 />
               }
               label="Enable Profile"
@@ -3372,15 +3623,22 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setProfileDialog({ open: false, profile: null, isEditing: false })}>
+          <Button
+            onClick={() =>
+              setProfileDialog({ open: false, profile: null, isEditing: false })
+            }
+          >
             Cancel
           </Button>
           <Button
             onClick={handleSaveProfile}
             variant="contained"
-            disabled={!profileDialog.profile?.name || !profileDialog.profile?.languages?.length}
+            disabled={
+              !profileDialog.profile?.name ||
+              !profileDialog.profile?.languages?.length
+            }
           >
-            {profileDialog.isEditing ? 'Update' : 'Create'} Profile
+            {profileDialog.isEditing ? "Update" : "Create"} Profile
           </Button>
         </DialogActions>
       </Dialog>
@@ -3395,14 +3653,14 @@ export default function LanguagesSettings({ config, onSave, backendAvailable = t
 // file: webui/src/Settings.jsx
 
 // Add import
-import LanguagesSettings from './components/LanguagesSettings.jsx';
-import { Translate as LanguagesIcon } from '@mui/icons-material';
+import LanguagesSettings from "./components/LanguagesSettings.jsx";
+import { Translate as LanguagesIcon } from "@mui/icons-material";
 
 // Add to tabs array
 const tabs = [
   // ... existing tabs ...
   {
-    label: 'Languages',
+    label: "Languages",
     icon: <LanguagesIcon />,
     component: () => (
       <LanguagesSettings
@@ -3433,7 +3691,9 @@ const tabs = [
 
 // Add to existing GeneralSettings component after the Backup section:
 
-{/* Scheduler Configuration */}
+{
+  /* Scheduler Configuration */
+}
 <Card sx={{ mb: 3 }}>
   <CardContent>
     <Typography variant="h6" gutterBottom color="primary">
@@ -3495,15 +3755,17 @@ const tabs = [
             </FormControl>
           </Grid>
 
-          {(libraryScanFreq === 'custom' || wantedSearchFreq === 'custom') && (
+          {(libraryScanFreq === "custom" || wantedSearchFreq === "custom") && (
             <Grid item xs={12}>
               <Alert severity="info" sx={{ mb: 2 }}>
-                Cron expressions follow standard format: minute hour day month weekday
+                Cron expressions follow standard format: minute hour day month
+                weekday
                 <br />
-                Examples: "0 2 * * *" (daily at 2 AM), "*/15 * * * *" (every 15 minutes)
+                Examples: "0 2 * * *" (daily at 2 AM), "*/15 * * * *" (every 15
+                minutes)
               </Alert>
 
-              {libraryScanFreq === 'custom' && (
+              {libraryScanFreq === "custom" && (
                 <TextField
                   fullWidth
                   label="Library Scan Cron Expression"
@@ -3515,7 +3777,7 @@ const tabs = [
                 />
               )}
 
-              {wantedSearchFreq === 'custom' && (
+              {wantedSearchFreq === "custom" && (
                 <TextField
                   fullWidth
                   label="Wanted Search Cron Expression"
@@ -3557,7 +3819,7 @@ const tabs = [
       )}
     </Grid>
   </CardContent>
-</Card>
+</Card>;
 ```
 
 ---
@@ -3593,14 +3855,19 @@ import {
   Switch,
   Autocomplete,
   Chip,
-} from '@mui/material';
-import { useEffect, useState } from 'react';
+} from "@mui/material";
+import { useEffect, useState } from "react";
 
 /**
  * Fixed ProviderConfigDialog with proper provider selection and configuration options
  */
-export default function ProviderConfigDialog({ open, provider, onClose, onSave }) {
-  const [selectedProvider, setSelectedProvider] = useState('');
+export default function ProviderConfigDialog({
+  open,
+  provider,
+  onClose,
+  onSave,
+}) {
+  const [selectedProvider, setSelectedProvider] = useState("");
   const [config, setConfig] = useState({});
   const [availableProviders, setAvailableProviders] = useState([]);
 
@@ -3616,25 +3883,25 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
 
   const loadAvailableProviders = async () => {
     try {
-      const response = await fetch('/api/providers/available');
+      const response = await fetch("/api/providers/available");
       if (response.ok) {
         const providers = await response.json();
         setAvailableProviders(providers);
       }
     } catch (error) {
-      console.error('Failed to load available providers:', error);
+      console.error("Failed to load available providers:", error);
     }
   };
 
   const getProviderDisplayName = (name) => {
     const displayNames = {
-      'opensubtitles': 'OpenSubtitles.org',
-      'opensubtitlescom': 'OpenSubtitles.com',
-      'addic7ed': 'Addic7ed',
-      'subscene': 'Subscene',
-      'podnapisi': 'Podnapisi.NET',
-      'yifysubtitles': 'YIFY Subtitles',
-      'embedded': 'Embedded Subtitles',
+      opensubtitles: "OpenSubtitles.org",
+      opensubtitlescom: "OpenSubtitles.com",
+      addic7ed: "Addic7ed",
+      subscene: "Subscene",
+      podnapisi: "Podnapisi.NET",
+      yifysubtitles: "YIFY Subtitles",
+      embedded: "Embedded Subtitles",
       // Add more as needed
     };
     return displayNames[name] || name.charAt(0).toUpperCase() + name.slice(1);
@@ -3643,35 +3910,67 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
   const getProviderConfigFields = (providerName) => {
     const configs = {
       opensubtitles: [
-        { key: 'api_key', label: 'API Key', type: 'password', required: true },
-        { key: 'user_agent', label: 'User Agent', type: 'text', required: true },
-        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
+        { key: "api_key", label: "API Key", type: "password", required: true },
+        {
+          key: "user_agent",
+          label: "User Agent",
+          type: "text",
+          required: true,
+        },
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
       ],
       opensubtitlescom: [
-        { key: 'api_key', label: 'API Key', type: 'password', required: true },
-        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
+        { key: "api_key", label: "API Key", type: "password", required: true },
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
       ],
       addic7ed: [
-        { key: 'username', label: 'Username', type: 'text', required: true },
-        { key: 'password', label: 'Password', type: 'password', required: true },
-        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
+        { key: "username", label: "Username", type: "text", required: true },
+        {
+          key: "password",
+          label: "Password",
+          type: "password",
+          required: true,
+        },
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
       ],
       subscene: [
-        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
-        { key: 'timeout', label: 'Timeout (seconds)', type: 'number', default: 30 },
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+        {
+          key: "timeout",
+          label: "Timeout (seconds)",
+          type: "number",
+          default: 30,
+        },
       ],
       embedded: [
-        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
-        { key: 'extract_mkv', label: 'Extract from MKV', type: 'boolean', default: true },
-        { key: 'extract_mp4', label: 'Extract from MP4', type: 'boolean', default: true },
-        { key: 'ffmpeg_path', label: 'FFmpeg Path', type: 'text', placeholder: '/usr/bin/ffmpeg' },
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+        {
+          key: "extract_mkv",
+          label: "Extract from MKV",
+          type: "boolean",
+          default: true,
+        },
+        {
+          key: "extract_mp4",
+          label: "Extract from MP4",
+          type: "boolean",
+          default: true,
+        },
+        {
+          key: "ffmpeg_path",
+          label: "FFmpeg Path",
+          type: "text",
+          placeholder: "/usr/bin/ffmpeg",
+        },
       ],
       // Add configurations for other providers
     };
 
-    return configs[providerName] || [
-      { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
-    ];
+    return (
+      configs[providerName] || [
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+      ]
+    );
   };
 
   const handleProviderChange = (newProvider) => {
@@ -3679,7 +3978,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
     // Reset config when provider changes
     const fields = getProviderConfigFields(newProvider);
     const newConfig = {};
-    fields.forEach(field => {
+    fields.forEach((field) => {
       if (field.default !== undefined) {
         newConfig[field.key] = field.default;
       }
@@ -3688,15 +3987,15 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
   };
 
   const handleConfigChange = (key, value) => {
-    setConfig(prev => ({
+    setConfig((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
   const handleSave = () => {
     if (!selectedProvider) {
-      alert('Please select a provider');
+      alert("Please select a provider");
       return;
     }
 
@@ -3712,24 +4011,26 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
   };
 
   const renderConfigField = (field) => {
-    const value = config[field.key] ?? field.default ?? '';
+    const value = config[field.key] ?? field.default ?? "";
 
     switch (field.type) {
-      case 'boolean':
+      case "boolean":
         return (
           <FormControlLabel
             key={field.key}
             control={
               <Switch
                 checked={!!value}
-                onChange={(e) => handleConfigChange(field.key, e.target.checked)}
+                onChange={(e) =>
+                  handleConfigChange(field.key, e.target.checked)
+                }
               />
             }
             label={field.label}
           />
         );
 
-      case 'number':
+      case "number":
         return (
           <TextField
             key={field.key}
@@ -3737,14 +4038,16 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
             label={field.label}
             type="number"
             value={value}
-            onChange={(e) => handleConfigChange(field.key, parseInt(e.target.value) || 0)}
+            onChange={(e) =>
+              handleConfigChange(field.key, parseInt(e.target.value) || 0)
+            }
             required={field.required}
             placeholder={field.placeholder}
             sx={{ mb: 2 }}
           />
         );
 
-      case 'password':
+      case "password":
         return (
           <TextField
             key={field.key}
@@ -3779,10 +4082,10 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
     if (!selectedProvider) return false;
 
     const fields = getProviderConfigFields(selectedProvider);
-    return fields.every(field => {
+    return fields.every((field) => {
       if (field.required) {
         const value = config[field.key];
-        return value !== undefined && value !== null && value !== '';
+        return value !== undefined && value !== null && value !== "";
       }
       return true;
     });
@@ -3791,7 +4094,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {provider ? 'Configure Provider' : 'Configure Custom Provider'}
+        {provider ? "Configure Provider" : "Configure Custom Provider"}
       </DialogTitle>
 
       <DialogContent>
@@ -3799,7 +4102,8 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
           {!provider && (
             <>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Configure this provider to enable subtitle downloads. Required fields are marked with an asterisk (*).
+                Configure this provider to enable subtitle downloads. Required
+                fields are marked with an asterisk (*).
               </Typography>
 
               <FormControl fullWidth sx={{ mb: 3 }}>
@@ -3822,15 +4126,21 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
           {(provider || selectedProvider) && (
             <>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Configure this provider to enable subtitle downloads. Required fields are marked with an asterisk (*).
+                Configure this provider to enable subtitle downloads. Required
+                fields are marked with an asterisk (*).
               </Typography>
 
               <Alert severity="info" sx={{ mb: 2 }}>
-                Provider: <strong>{getProviderDisplayName(provider?.name || selectedProvider)}</strong>
+                Provider:{" "}
+                <strong>
+                  {getProviderDisplayName(provider?.name || selectedProvider)}
+                </strong>
               </Alert>
 
               <Box>
-                {getProviderConfigFields(provider?.name || selectedProvider).map(renderConfigField)}
+                {getProviderConfigFields(
+                  provider?.name || selectedProvider,
+                ).map(renderConfigField)}
               </Box>
             </>
           )}
@@ -3839,11 +4149,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
 
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={handleSave}
-          variant="contained"
-          disabled={!isValid()}
-        >
+        <Button onClick={handleSave} variant="contained" disabled={!isValid()}>
           Save Configuration
         </Button>
       </DialogActions>
@@ -3866,6 +4172,7 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
 ### Total Project Time Estimate: 73-101 hours
 
 **Section Breakdown:**
+
 - Section 1 (User Management & Navigation): 9-13 hours
 - Section 2 (Navigation Improvements): 9-13 hours
 - Section 3 (Settings Enhancement): 14-20 hours
@@ -3873,12 +4180,12 @@ export default function ProviderConfigDialog({ open, provider, onClose, onSave }
 - Section 5 (Final Components): 28-38 hours
 
 ### Priority Implementation Order:
+
 1. **High Priority**: Issues 1-5 (Navigation & User Management)
 2. **Medium Priority**: Issues 6-12 (Settings & Authentication)
 3. **Lower Priority**: Issues 13-18 (Languages, Scheduler, Providers)
 
 The implementation plan provides comprehensive solutions for all identified UI/UX issues with detailed code examples, testing procedures, and realistic time estimates for junior developers.
-
 
 ---
 
@@ -3886,14 +4193,14 @@ The implementation plan provides comprehensive solutions for all identified UI/U
 
 **Generated:** Mon Jun 16 18:42:53 EDT 2025
 **Source Files:** 6 implementation plan sections
-**Total Length:**     3907 lines
+**Total Length:** 3907 lines
 **Repository:** subtitle-manager
 **Purpose:** Complete UI/UX implementation reference guide
 
 ### Quick Navigation
 
 - [Section 0: Project Summary](#section-0-project-summary-and-overview)
-- [Section 1: User Management & Navigation](#section-1-user-management-and-navigation-basics)  
+- [Section 1: User Management & Navigation](#section-1-user-management-and-navigation-basics)
 - [Section 2: Navigation Improvements](#section-2-navigation-improvements)
 - [Section 3: Settings Enhancement](#section-3-settings-page-enhancement)
 - [Section 4: Authentication & Notifications](#section-4-authentication-and-notifications)
@@ -3904,4 +4211,3 @@ The implementation plan provides comprehensive solutions for all identified UI/U
 This combined document provides all necessary code samples, implementation steps, and testing procedures to complete the UI/UX overhaul of the Subtitle Manager frontend. Each section can be implemented independently while maintaining system functionality.
 
 **For questions or clarifications, refer to the individual section files or the project documentation.**
-

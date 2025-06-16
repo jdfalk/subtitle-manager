@@ -1,27 +1,27 @@
 import {
-    Delete as DeleteIcon,
-    FilePresent as FileIcon,
-    Language as LanguageIcon,
-    Translate as TranslateIcon,
-    CloudUpload as UploadIcon,
+  Delete as DeleteIcon,
+  FilePresent as FileIcon,
+  Language as LanguageIcon,
+  Translate as TranslateIcon,
+  CloudUpload as UploadIcon,
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    FormControl,
-    Grid,
-    IconButton,
-    InputLabel,
-    LinearProgress,
-    MenuItem,
-    Paper,
-    Select,
-    Snackbar,
-    Typography,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  LinearProgress,
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
+  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -124,7 +124,8 @@ export default function Translate({ backendAvailable = true }) {
 
       {!backendAvailable && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          Backend service is not available. Translation features are currently disabled.
+          Backend service is not available. Translation features are currently
+          disabled.
         </Alert>
       )}
 

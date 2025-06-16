@@ -48,7 +48,9 @@ describe('App component', () => {
     await waitFor(() => screen.getByLabelText('open drawer'));
 
     fireEvent.click(screen.getByLabelText('open drawer'));
-    const pinButton = await screen.findByRole('button', { name: 'Pin Sidebar' });
+    const pinButton = await screen.findByRole('button', {
+      name: 'Pin Sidebar',
+    });
     fireEvent.click(pinButton);
     expect(localStorage.getItem('sidebarPinned')).toBe('true');
     fireEvent.click(screen.getByRole('button', { name: 'Unpin Sidebar' }));

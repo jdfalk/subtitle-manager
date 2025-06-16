@@ -1,28 +1,28 @@
 // file: webui/src/Dashboard.jsx
 import {
-    Folder as FolderIcon,
-    PlayArrow as PlayIcon,
+  Folder as FolderIcon,
+  PlayArrow as PlayIcon,
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    CircularProgress,
-    FormControl,
-    Grid,
-    InputLabel,
-    LinearProgress,
-    List,
-    ListItem,
-    ListItemText,
-    MenuItem,
-    Paper,
-    Select,
-    TextField,
-    Typography,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  FormControl,
+  Grid,
+  InputLabel,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemText,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { apiService } from './services/api.js';
@@ -283,17 +283,19 @@ export default function Dashboard({ backendAvailable = true }) {
                     )
                   }
                   onClick={start}
-                  disabled={status.running || !dir || !backendAvailable || loading}
+                  disabled={
+                    status.running || !dir || !backendAvailable || loading
+                  }
                   fullWidth
                   size="large"
                 >
                   {status.running
                     ? 'Scanning...'
                     : loading
-                    ? 'Starting...'
-                    : !backendAvailable
-                    ? 'Backend Unavailable'
-                    : 'Start Scan'}
+                      ? 'Starting...'
+                      : !backendAvailable
+                        ? 'Backend Unavailable'
+                        : 'Start Scan'}
                 </Button>
               </Box>
             </CardContent>

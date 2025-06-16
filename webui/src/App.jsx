@@ -397,7 +397,9 @@ function App() {
           }
         } else {
           // Backend not available
-          setApiError('Backend service is not available. Some features may be limited.');
+          setApiError(
+            'Backend service is not available. Some features may be limited.'
+          );
           setAuthed(false);
           setSetupNeeded(false);
         }
@@ -496,7 +498,14 @@ function App() {
                 </Alert>
               )}
 
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 2,
+                  justifyContent: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
                 <Button
                   variant="contained"
                   onClick={() => window.location.reload()}

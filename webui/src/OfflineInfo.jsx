@@ -1,23 +1,23 @@
 // file: webui/src/OfflineInfo.jsx
 import {
-    Build as BuildIcon,
-    Cancel as CancelIcon,
-    CheckCircle as CheckCircleIcon,
-    CloudOff as CloudOffIcon,
-    Info as InfoIcon,
-    Storage as StorageIcon,
+  Build as BuildIcon,
+  Cancel as CancelIcon,
+  CheckCircle as CheckCircleIcon,
+  CloudOff as CloudOffIcon,
+  Info as InfoIcon,
+  Storage as StorageIcon,
 } from '@mui/icons-material';
 import {
-    Box,
-    Card,
-    CardContent,
-    Chip,
-    Divider,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Typography,
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
 } from '@mui/material';
 
 /**

@@ -452,7 +452,6 @@ export default function System({ backendAvailable = true }) {
           </Box>
         </Box>
       )}
-
     </Box>
   );
 }

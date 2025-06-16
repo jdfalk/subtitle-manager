@@ -1,30 +1,30 @@
 // file: webui/src/Settings.jsx
 
 import {
-    Security as AuthIcon,
-    Storage as DatabaseIcon,
-    Settings as GeneralIcon,
-    Download as ImportIcon,
-    Notifications as NotificationIcon,
-    CloudDownload as ProvidersIcon,
-    Refresh as RefreshIcon,
-    People as UsersIcon,
+  Security as AuthIcon,
+  Storage as DatabaseIcon,
+  Settings as GeneralIcon,
+  Download as ImportIcon,
+  Notifications as NotificationIcon,
+  CloudDownload as ProvidersIcon,
+  Refresh as RefreshIcon,
+  People as UsersIcon,
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    Paper,
-    Snackbar,
-    Tab,
-    Tabs,
-    Typography,
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Paper,
+  Snackbar,
+  Tab,
+  Tabs,
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import AuthSettings from './components/AuthSettings.jsx';
@@ -438,9 +438,7 @@ export default function Settings({ backendAvailable = true }) {
     {
       label: 'Users',
       icon: <UsersIcon />,
-      component: () => (
-        <UserManagement backendAvailable={backendAvailable} />
-      ),
+      component: () => <UserManagement backendAvailable={backendAvailable} />,
     },
   ];
 
