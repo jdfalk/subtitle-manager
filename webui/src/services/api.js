@@ -102,21 +102,9 @@ export const apiService = {
    */
   async checkBackendHealth() {
     try {
-      // Try multiple common health endpoints
-      const healthEndpoints = ['/api/health', '/api/status', '/api/version'];
-
-      for (const endpoint of healthEndpoints) {
-        try {
-          const response = await this.get(endpoint);
-          if (response.ok) {
-            return true;
-          }
-        } catch {
-          // Continue to next endpoint
-        }
-      }
-
-      return false;
+      // Use setup/status endpoint for health check as it's unauthenticated
+      const response = await this.get('/api/setup/status');
+      return response.ok;
     } catch (error) {
       console.warn('Backend health check failed:', error);
       return false;
