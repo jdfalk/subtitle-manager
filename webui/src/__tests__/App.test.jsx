@@ -35,4 +35,23 @@ describe('App component', () => {
       expect(fetch).toHaveBeenLastCalledWith('/api/login', expect.any(Object))
     );
   });
+
+  test('pins sidebar and persists state', async () => {
+    fetch.mockResolvedValueOnce({ ok: false });
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ needed: false }),
+    });
+    render(<App />);
+    fetch.mockResolvedValueOnce({ ok: true });
+    fireEvent.click(screen.getByText('Sign In'));
+    await waitFor(() => screen.getByLabelText('open drawer'));
+
+    fireEvent.click(screen.getByLabelText('open drawer'));
+    const pinButton = await screen.findByRole('button', { name: 'Pin Sidebar' });
+    fireEvent.click(pinButton);
+    expect(localStorage.getItem('sidebarPinned')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: 'Unpin Sidebar' }));
+    expect(localStorage.getItem('sidebarPinned')).toBe('false');
+  });
 });
