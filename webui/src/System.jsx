@@ -31,7 +31,6 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import UserManagement from './UserManagement.jsx';
 
 /**
  * System component displays system information, logs, and running tasks.
@@ -147,7 +146,6 @@ export default function System({ backendAvailable = true }) {
 
       <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ mb: 3 }}>
         <Tab label="System" />
-        <Tab label="Users" />
       </Tabs>
 
       {tab === 0 && (
@@ -455,7 +453,6 @@ export default function System({ backendAvailable = true }) {
         </Box>
       )}
 
-      {tab === 1 && <UserManagement />}
     </Box>
   );
 }
