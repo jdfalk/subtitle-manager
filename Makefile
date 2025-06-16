@@ -215,7 +215,11 @@ test-e2e-all: test-race webui-test-e2e ## Run all tests including E2E
 .PHONY: docker
 docker: ## Build Docker image
 	@echo "$(COLOR_BLUE)Building Docker image...$(COLOR_RESET)"
-	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
+	docker build \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) .
 	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_IMAGE):latest
 	@echo "$(COLOR_GREEN)✓ Docker image built: $(DOCKER_IMAGE):$(DOCKER_TAG)$(COLOR_RESET)"
 
@@ -236,7 +240,7 @@ docker-run: docker ## Build and run Docker container
 	@docker ps -q --filter "name=$(APP_NAME)" | xargs -r docker stop || true
 	@docker ps -aq --filter "name=$(APP_NAME)" | xargs -r docker rm || true
 	@echo "$(COLOR_BLUE)Running Docker container in detached mode...$(COLOR_RESET)"
-	docker run -d --rm --name $(APP_NAME) -p 8080:8080 -v $(APP_NAME):/app/data $(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker run -d --rm --name $(APP_NAME) -p 8080:8080 -v $(APP_NAME):/config $(DOCKER_IMAGE):$(DOCKER_TAG)
 	@echo "$(COLOR_GREEN)✓ Container started successfully$(COLOR_RESET)"
 	@echo "$(COLOR_CYAN)Application available at: http://localhost:8080$(COLOR_RESET)"
 	@echo "$(COLOR_YELLOW)Container commands:$(COLOR_RESET)"
@@ -266,13 +270,23 @@ docker-run-clean: ## Clean recreate volume and run Docker container
 .PHONY: docker-multiarch
 docker-multiarch: ## Build Docker image for multiple architectures using buildx
 	@echo "$(COLOR_BLUE)Building multi-architecture Docker image...$(COLOR_RESET)"
-	docker buildx build --platform linux/amd64,linux/arm64 -t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest .
+	docker buildx build \
+		--platform linux/amd64,linux/arm64 \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest .
 	@echo "$(COLOR_GREEN)✓ Multi-architecture Docker image built$(COLOR_RESET)"
 
 .PHONY: docker-multiarch-push
 docker-multiarch-push: ## Build and push multi-architecture Docker image
 	@echo "$(COLOR_BLUE)Building and pushing multi-architecture Docker image...$(COLOR_RESET)"
-	docker buildx build --platform linux/amd64,linux/arm64 -t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest --push .
+	docker buildx build \
+		--platform linux/amd64,linux/arm64 \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest --push .
 	@echo "$(COLOR_GREEN)✓ Multi-architecture Docker image built and pushed$(COLOR_RESET)"
 
 .PHONY: docker-setup-buildx
@@ -299,13 +313,23 @@ docker-clean: ## Clean Docker images and containers
 .PHONY: docker-test-amd64
 docker-test-amd64: ## Build and test Docker image for AMD64
 	@echo "$(COLOR_BLUE)Building Docker image for AMD64...$(COLOR_RESET)"
-	docker buildx build --platform linux/amd64 -t $(DOCKER_IMAGE):amd64 --load .
+	docker buildx build \
+		--platform linux/amd64 \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		-t $(DOCKER_IMAGE):amd64 --load .
 	@echo "$(COLOR_GREEN)✓ AMD64 Docker image built$(COLOR_RESET)"
 
 .PHONY: docker-test-arm64
 docker-test-arm64: ## Build and test Docker image for ARM64
 	@echo "$(COLOR_BLUE)Building Docker image for ARM64...$(COLOR_RESET)"
-	docker buildx build --platform linux/arm64 -t $(DOCKER_IMAGE):arm64 --load .
+	docker buildx build \
+		--platform linux/arm64 \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		-t $(DOCKER_IMAGE):arm64 --load .
 	@echo "$(COLOR_GREEN)✓ ARM64 Docker image built$(COLOR_RESET)"
 
 #
@@ -341,6 +365,9 @@ docker-optimized:
 		-f Dockerfile.optimized \
 		-t $(DOCKER_IMAGE):$(VERSION) \
 		-t $(DOCKER_IMAGE):latest \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		--cache-from $(DOCKER_IMAGE):latest \
 		.
