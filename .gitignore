@@ -177,3 +177,5 @@ webui/dist/
 test
 test/*
 subtitle-manager.yaml
+tmp/*
+temp/*
