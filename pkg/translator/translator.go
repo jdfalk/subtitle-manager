@@ -56,6 +56,23 @@ var defaultGoogleClient = func(ctx context.Context, apiKey string) (GoogleClient
 // It can be replaced in tests via SetGoogleClientFactory.
 var newGoogleClient = defaultGoogleClient
 
+// OpenAIClient wraps the methods used from the OpenAI SDK.
+// It allows tests to mock the ChatGPT API without real credentials.
+//
+//go:generate go run github.com/vektra/mockery/v2 --name=OpenAIClient --output=mocks --outpkg=mocks --filename=openai_client.go
+type OpenAIClient interface {
+	CreateChatCompletion(ctx context.Context, req openai.ChatCompletionRequest) (openai.ChatCompletionResponse, error)
+}
+
+// defaultOpenAIClient instantiates the real OpenAI client.
+var defaultOpenAIClient = func(apiKey string) OpenAIClient {
+	return openai.NewClient(apiKey)
+}
+
+// newOpenAIClient is the factory used by GPTTranslate to create clients.
+// It can be replaced in tests via SetOpenAIClientFactory.
+var newOpenAIClient = defaultOpenAIClient
+
 // SetGoogleClientFactory replaces the Google client constructor.
 // Tests can use this to inject a mock implementation.
 func SetGoogleClientFactory(fn func(ctx context.Context, apiKey string) (GoogleClient, error)) {
@@ -65,6 +82,17 @@ func SetGoogleClientFactory(fn func(ctx context.Context, apiKey string) (GoogleC
 // ResetGoogleClientFactory restores the default Google client constructor.
 func ResetGoogleClientFactory() {
 	newGoogleClient = defaultGoogleClient
+}
+
+// SetOpenAIClientFactory replaces the OpenAI client constructor.
+// Tests can use this to inject a mock implementation.
+func SetOpenAIClientFactory(fn func(apiKey string) OpenAIClient) {
+	newOpenAIClient = fn
+}
+
+// ResetOpenAIClientFactory restores the default OpenAI client constructor.
+func ResetOpenAIClientFactory() {
+	newOpenAIClient = defaultOpenAIClient
 }
 
 // GoogleTranslate translates text using Google Translate API.
@@ -88,7 +116,7 @@ func GoogleTranslate(text, targetLang, apiKey string) (string, error) {
 
 // GPTTranslate translates text using the ChatGPT API.
 func GPTTranslate(text, targetLang, apiKey string) (string, error) {
-	client := openai.NewClient(apiKey)
+	client := newOpenAIClient(apiKey)
 	req := openai.ChatCompletionRequest{
 		Model: openAIModel,
 		Messages: []openai.ChatCompletionMessage{

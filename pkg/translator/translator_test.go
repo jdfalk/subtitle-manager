@@ -7,6 +7,7 @@ import (
 
 	translate "cloud.google.com/go/translate"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
+	openai "github.com/sashabaranov/go-openai"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
@@ -94,6 +95,42 @@ func TestTranslateGRPCProvider(t *testing.T) {
 	got, err := Translate("grpc", "hello", "es", "", "", lis.Addr().String())
 	if err != nil {
 		t.Fatalf("translate grpc: %v", err)
+	}
+	if got != "hola" {
+		t.Fatalf("expected hola, got %s", got)
+	}
+}
+
+func TestGPTTranslate(t *testing.T) {
+	m := mocks.NewOpenAIClient(t)
+	SetOpenAIClientFactory(func(apiKey string) OpenAIClient { return m })
+	defer ResetOpenAIClientFactory()
+
+	m.On("CreateChatCompletion", mock.Anything, mock.Anything).Return(openai.ChatCompletionResponse{
+		Choices: []openai.ChatCompletionChoice{{Message: openai.ChatCompletionMessage{Content: "hola"}}},
+	}, nil)
+
+	got, err := GPTTranslate("hello", "es", "test")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != "hola" {
+		t.Fatalf("expected hola, got %s", got)
+	}
+}
+
+func TestTranslateGPTProvider(t *testing.T) {
+	m := mocks.NewOpenAIClient(t)
+	SetOpenAIClientFactory(func(apiKey string) OpenAIClient { return m })
+	defer ResetOpenAIClientFactory()
+
+	m.On("CreateChatCompletion", mock.Anything, mock.Anything).Return(openai.ChatCompletionResponse{
+		Choices: []openai.ChatCompletionChoice{{Message: openai.ChatCompletionMessage{Content: "hola"}}},
+	}, nil)
+
+	got, err := Translate("gpt", "hello", "es", "", "test", "")
+	if err != nil {
+		t.Fatalf("translate gpt: %v", err)
 	}
 	if got != "hola" {
 		t.Fatalf("expected hola, got %s", got)
