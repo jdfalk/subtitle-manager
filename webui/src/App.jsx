@@ -21,6 +21,7 @@ import {
   Button,
   CircularProgress,
   Container,
+  Divider,
   createTheme,
   CssBaseline,
   Drawer,
@@ -31,6 +32,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
   Paper,
   TextField,
   ThemeProvider,
@@ -320,13 +322,16 @@ function App() {
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
     { id: 'library', label: 'Media Library', icon: <LibraryIcon /> },
-    { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
-    { id: 'extract', label: 'Extract', icon: <ExtractIcon /> },
+    { id: 'wanted', label: 'Wanted', icon: <WantedIcon /> },
     { id: 'history', label: 'History', icon: <HistoryIcon /> },
+    { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
+    { id: 'system', label: 'System', icon: <SystemIcon /> },
+  ];
+
+  const toolsItems = [
+    { id: 'extract', label: 'Extract', icon: <ExtractIcon /> },
     { id: 'convert', label: 'Convert', icon: <ConvertIcon /> },
     { id: 'translate', label: 'Translate', icon: <TranslateIcon /> },
-    { id: 'system', label: 'System', icon: <SystemIcon /> },
-    { id: 'wanted', label: 'Wanted', icon: <WantedIcon /> },
   ];
 
   useEffect(() => {
@@ -732,6 +737,29 @@ function App() {
                     }}
                   >
                     <ListItemIcon sx={{ color: 'inherit' }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.label} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+
+              <Divider sx={{ my: 1 }} />
+              <ListSubheader component="div" sx={{ px: 2, py: 1 }}>
+                Tools
+              </ListSubheader>
+
+              {toolsItems.map(item => (
+                <ListItem key={item.id} disablePadding>
+                  <ListItemButton
+                    selected={page === item.id}
+                    onClick={() => {
+                      setPage(item.id);
+                      setDrawerOpen(false);
+                    }}
+                    sx={{ pl: 4 }}
+                  >
+                    <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
                       {item.icon}
                     </ListItemIcon>
                     <ListItemText primary={item.label} />
