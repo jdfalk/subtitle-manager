@@ -1,59 +1,134 @@
 // file: webui/src/__tests__/App.test.jsx
 import '@testing-library/jest-dom/vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import App from '../App.jsx';
+import { apiService } from '../services/api.js';
+
+// Mock the API service
+vi.mock('../services/api.js', () => ({
+  apiService: {
+    checkBackendHealth: vi.fn(),
+    get: vi.fn(),
+  },
+}));
 
 describe('App component', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
+
+    // Clear localStorage
+    localStorage.clear();
+
+    // Setup default mocks
     global.fetch = vi.fn(() =>
       Promise.resolve({ ok: false, json: () => Promise.resolve({}) })
     );
   });
 
   test('shows login form when unauthenticated', async () => {
-    fetch.mockResolvedValueOnce({ ok: false });
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ needed: false }),
+    // Mock backend available but not authenticated
+    apiService.checkBackendHealth.mockResolvedValue(true);
+    apiService.get.mockImplementation((url) => {
+      if (url === '/api/config') {
+        return Promise.resolve({ ok: false });
+      }
+      if (url === '/api/setup/status') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ needed: false })
+        });
+      }
+      return Promise.resolve({ ok: false });
     });
-    render(<App />);
-    expect(screen.getByText('Subtitle Manager')).toBeInTheDocument();
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Subtitle Manager')).toBeInTheDocument();
+    });
   });
 
   test('successful login renders dashboard', async () => {
-    fetch.mockResolvedValueOnce({ ok: false }); // config check
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ needed: false }),
+    // Mock backend available but not authenticated initially
+    apiService.checkBackendHealth.mockResolvedValue(true);
+    apiService.get.mockImplementation((url) => {
+      if (url === '/api/config') {
+        return Promise.resolve({ ok: false });
+      }
+      if (url === '/api/setup/status') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ needed: false })
+        });
+      }
+      return Promise.resolve({ ok: false });
     });
-    render(<App />);
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    // Wait for login form
+    await waitFor(() => {
+      expect(screen.getByText('Sign In')).toBeInTheDocument();
+    });
+
+    // Mock successful login
     fetch.mockResolvedValueOnce({ ok: true });
-    fireEvent.click(screen.getByText('Sign In'));
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Sign In'));
+    });
+
     await waitFor(() =>
       expect(fetch).toHaveBeenLastCalledWith('/api/login', expect.any(Object))
     );
   });
 
   test('pins sidebar and persists state', async () => {
-    fetch.mockResolvedValueOnce({ ok: false });
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ needed: false }),
+    // Mock backend available and authenticated
+    apiService.checkBackendHealth.mockResolvedValue(true);
+    apiService.get.mockImplementation((url) => {
+      if (url === '/api/config') {
+        return Promise.resolve({ ok: true });
+      }
+      if (url === '/api/setup/status') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ needed: false })
+        });
+      }
+      return Promise.resolve({ ok: true });
     });
-    render(<App />);
-    fetch.mockResolvedValueOnce({ ok: true });
-    fireEvent.click(screen.getByText('Sign In'));
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    // Wait for dashboard to load
     await waitFor(() => screen.getByLabelText('open drawer'));
 
-    fireEvent.click(screen.getByLabelText('open drawer'));
+    await act(async () => {
+      fireEvent.click(screen.getByLabelText('open drawer'));
+    });
+
     const pinButton = await screen.findByRole('button', {
       name: 'Pin Sidebar',
     });
-    fireEvent.click(pinButton);
+
+    await act(async () => {
+      fireEvent.click(pinButton);
+    });
+
     expect(localStorage.getItem('sidebarPinned')).toBe('true');
-    fireEvent.click(screen.getByRole('button', { name: 'Unpin Sidebar' }));
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Unpin Sidebar' }));
+    });
+
     expect(localStorage.getItem('sidebarPinned')).toBe('false');
   });
 });
