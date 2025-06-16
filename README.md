@@ -355,6 +355,7 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 **Basic Configuration:**
 
 - `SM_LOG_LEVEL` - Log level (debug, info, warn, error) - Default: `info`
+- `SM_LOG_FILE` - Path to log file - Default: `/config/logs/subtitle-manager.log`
 - `SM_CONFIG_FILE` - Path to configuration file - Default: `/config/subtitle-manager.yaml`
 - `SM_DB_PATH` - Database file path - Default: `/config/subtitle-manager.db`
 - `SM_DB_BACKEND` - Database backend (sqlite, pebble, postgres) - Default: `sqlite`
@@ -411,6 +412,7 @@ docker-compose up -d
 
 # View logs
 docker-compose logs -f
+# Log file stored in ./config/logs/subtitle-manager.log
 
 # Stop the service
 docker-compose down
