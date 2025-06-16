@@ -1,43 +1,48 @@
 import {
-  Download as DownloadIcon,
-  FilterList as FilterIcon,
-  Language as LanguageIcon,
-  Translate as TranslateIcon,
+    Download as DownloadIcon,
+    FilterList as FilterIcon,
+    Language as LanguageIcon,
+    Translate as TranslateIcon,
 } from '@mui/icons-material';
 import {
-  Avatar,
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  Paper,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Tabs,
-  TextField,
-  Typography,
+    Alert,
+    Avatar,
+    Box,
+    Card,
+    CardContent,
+    Chip,
+    Paper,
+    Tab,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Tabs,
+    TextField,
+    Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 /**
  * History displays translation and download history with optional language filtering.
  * Records are loaded from `/api/history` and filtered client side.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
-export default function History() {
+export default function History({ backendAvailable = true }) {
   const [data, setData] = useState({ translations: [], downloads: [] });
   const [lang, setLang] = useState('');
   const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
-    fetch('/api/history')
-      .then(r => r.json())
-      .then(setData);
-  }, []);
+    if (backendAvailable) {
+      fetch('/api/history')
+        .then(r => r.json())
+        .then(setData);
+    }
+  }, [backendAvailable]);
 
   const translations = data.translations.filter(
     r => !lang || r.Language === lang
@@ -51,6 +56,12 @@ export default function History() {
 
   return (
     <Box>
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. History data cannot be loaded.
+        </Alert>
+      )}
+
       <Box
         display="flex"
         justifyContent="space-between"
@@ -65,6 +76,7 @@ export default function History() {
           placeholder="Filter by language (e.g., en, es, fr)"
           value={lang}
           onChange={e => setLang(e.target.value)}
+          disabled={!backendAvailable}
           InputProps={{
             startAdornment: (
               <FilterIcon sx={{ mr: 1, color: 'action.active' }} />

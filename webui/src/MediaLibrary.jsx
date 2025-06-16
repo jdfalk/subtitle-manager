@@ -1,39 +1,40 @@
 // file: webui/src/MediaLibrary.jsx
 
 import {
-  Download as DownloadIcon,
-  Archive as ExtractIcon,
-  Folder as FolderIcon,
-  Info as InfoIcon,
-  MoreVert as MoreIcon,
-  Movie as MovieIcon,
-  Refresh as RefreshIcon,
-  CloudDownload as SearchIcon,
-  Subtitles as SubtitleIcon,
-  Translate as TranslateIcon,
-  Tv as TvIcon,
+    Download as DownloadIcon,
+    Archive as ExtractIcon,
+    Folder as FolderIcon,
+    Info as InfoIcon,
+    MoreVert as MoreIcon,
+    Movie as MovieIcon,
+    Refresh as RefreshIcon,
+    CloudDownload as SearchIcon,
+    Subtitles as SubtitleIcon,
+    Translate as TranslateIcon,
+    Tv as TvIcon,
 } from '@mui/icons-material';
 import {
-  Box,
-  Breadcrumbs,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  Grid,
-  IconButton,
-  LinearProgress,
-  Link,
-  Menu,
-  MenuItem,
-  Paper,
-  Typography,
+    Alert,
+    Box,
+    Breadcrumbs,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Grid,
+    IconButton,
+    LinearProgress,
+    Link,
+    Menu,
+    MenuItem,
+    Paper,
+    Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
@@ -41,13 +42,16 @@ import { useEffect, useState } from 'react';
  * MediaLibrary provides integrated media file and subtitle management.
  * Shows media files with their available subtitles, allows searching,
  * downloading, extracting, and translating subtitles directly from the file view.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
-export default function MediaLibrary() {
+export default function MediaLibrary({ backendAvailable = true }) {
   const [currentPath, setCurrentPath] = useState('/');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [actionMenu, setActionMenu] = useState({ anchor: null, file: null });
   const [bulkMode, setBulkMode] = useState(false);
+  const [error, setError] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState(new Set());
   const [operationDialog, setOperationDialog] = useState({
     open: false,
@@ -233,6 +237,21 @@ export default function MediaLibrary() {
 
   return (
     <Box>
+      {/* Backend availability warning */}
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. Media library browsing and subtitle
+          management features are currently disabled.
+        </Alert>
+      )}
+
+      {/* Error display */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
       {/* Header */}
       <Box
         display="flex"
@@ -251,10 +270,14 @@ export default function MediaLibrary() {
               setSelectedFiles(new Set());
             }}
             sx={{ mr: 1 }}
+            disabled={!backendAvailable}
           >
             {bulkMode ? 'Exit Bulk Mode' : 'Bulk Operations'}
           </Button>
-          <IconButton onClick={loadCurrentDirectory}>
+          <IconButton
+            onClick={loadCurrentDirectory}
+            disabled={!backendAvailable}
+          >
             <RefreshIcon />
           </IconButton>
         </Box>

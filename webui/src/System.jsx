@@ -1,34 +1,34 @@
 import {
-  Code as CodeIcon,
-  ExpandMore as ExpandMoreIcon,
-  Assessment as LogIcon,
-  Memory as MemoryIcon,
-  Refresh as RefreshIcon,
-  Storage as StorageIcon,
-  BugReport as SystemIcon,
-  Schedule as TaskIcon,
+    Code as CodeIcon,
+    ExpandMore as ExpandMoreIcon,
+    Assessment as LogIcon,
+    Memory as MemoryIcon,
+    Refresh as RefreshIcon,
+    Storage as StorageIcon,
+    BugReport as SystemIcon,
+    Schedule as TaskIcon,
 } from '@mui/icons-material';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
-  alpha,
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  Tab,
-  Tabs,
-  Tooltip,
-  Typography,
-  useTheme,
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Alert,
+    alpha,
+    Box,
+    Card,
+    CardContent,
+    Chip,
+    CircularProgress,
+    IconButton,
+    List,
+    ListItem,
+    ListItemText,
+    Paper,
+    Tab,
+    Tabs,
+    Tooltip,
+    Typography,
+    useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import UserManagement from './UserManagement.jsx';
@@ -37,14 +37,17 @@ import UserManagement from './UserManagement.jsx';
  * System component displays system information, logs, and running tasks.
  * Provides monitoring and debugging information for the subtitle manager.
  * Features Material Design 3 compliant UI with proper dark mode support.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
-export default function System() {
+export default function System({ backendAvailable = true }) {
   const [logs, setLogs] = useState([]);
   const [info, setInfo] = useState({});
   const [tasks, setTasks] = useState({});
   const [loading, setLoading] = useState(true);
   const [expandedRawData, setExpandedRawData] = useState(false);
   const [tab, setTab] = useState(0);
+  const [error, setError] = useState(null);
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
@@ -102,6 +105,21 @@ export default function System() {
 
   return (
     <Box>
+      {/* Backend availability warning */}
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. System monitoring and debugging
+          features are currently disabled.
+        </Alert>
+      )}
+
+      {/* Error display */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
       <Box
         display="flex"
         justifyContent="space-between"
@@ -114,6 +132,7 @@ export default function System() {
         <Tooltip title="Refresh system data">
           <IconButton
             onClick={loadSystemData}
+            disabled={!backendAvailable}
             sx={{
               backgroundColor: alpha(theme.palette.primary.main, 0.1),
               '&:hover': {

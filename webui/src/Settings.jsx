@@ -1,29 +1,29 @@
 // file: webui/src/Settings.jsx
 
 import {
-  Security as AuthIcon,
-  Storage as DatabaseIcon,
-  Settings as GeneralIcon,
-  Download as ImportIcon,
-  Notifications as NotificationIcon,
-  CloudDownload as ProvidersIcon,
-  Refresh as RefreshIcon,
+    Security as AuthIcon,
+    Storage as DatabaseIcon,
+    Settings as GeneralIcon,
+    Download as ImportIcon,
+    Notifications as NotificationIcon,
+    CloudDownload as ProvidersIcon,
+    Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Paper,
-  Snackbar,
-  Tab,
-  Tabs,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    Paper,
+    Snackbar,
+    Tab,
+    Tabs,
+    Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import AuthSettings from './components/AuthSettings.jsx';
@@ -32,12 +32,15 @@ import GeneralSettings from './components/GeneralSettings.jsx';
 import NotificationSettings from './components/NotificationSettings.jsx';
 import ProviderCard from './components/ProviderCard.jsx';
 import ProviderConfigDialog from './components/ProviderConfigDialog.jsx';
+import { apiService } from './services/api.js';
 
 /**
  * Settings component with modern tabbed interface for managing all aspects
  * of subtitle manager configuration. Includes provider management similar to Bazarr.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
-export default function Settings() {
+export default function Settings({ backendAvailable = true }) {
   const [activeTab, setActiveTab] = useState(0);
   const [_config, setConfig] = useState(null);
   const [providers, setProviders] = useState([]);
@@ -51,24 +54,33 @@ export default function Settings() {
   const [bazarrConfig, setBazarrConfig] = useState(null);
   const [importing, setImporting] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadConfig();
-    loadProviders();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (backendAvailable) {
+      loadConfig();
+      loadProviders();
+    }
+  }, [backendAvailable]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Load current configuration from the server
    */
   const loadConfig = async () => {
+    if (!backendAvailable) return;
+
     setLoading(true);
     try {
-      const response = await fetch('/api/config');
-      const data = await response.json();
-      setConfig(data);
+      setError(null);
+      const response = await apiService.get('/api/config');
+      if (response.ok) {
+        const data = await response.json();
+        setConfig(data);
+      }
     } catch (error) {
       console.error('Failed to load configuration:', error);
       setStatus('Failed to load configuration');
+      setError('Failed to load configuration');
     } finally {
       setLoading(false);
     }
@@ -78,8 +90,11 @@ export default function Settings() {
    * Load available providers and their current configuration
    */
   const loadProviders = async () => {
+    if (!backendAvailable) return;
+
     try {
-      const response = await fetch('/api/providers');
+      setError(null);
+      const response = await apiService.get('/api/providers');
       if (response.ok) {
         const data = await response.json();
         // Transform provider data to include display information
@@ -94,6 +109,7 @@ export default function Settings() {
       }
     } catch (error) {
       console.error('Failed to load providers:', error);
+      setError('Failed to load providers');
     }
   };
 
@@ -377,26 +393,44 @@ export default function Settings() {
       label: 'General',
       icon: <GeneralIcon />,
       component: () => (
-        <GeneralSettings config={_config} onSave={saveSettings} />
+        <GeneralSettings
+          config={_config}
+          onSave={saveSettings}
+          backendAvailable={backendAvailable}
+        />
       ),
     },
     {
       label: 'Database',
       icon: <DatabaseIcon />,
       component: () => (
-        <DatabaseSettings config={_config} onSave={saveSettings} />
+        <DatabaseSettings
+          config={_config}
+          onSave={saveSettings}
+          backendAvailable={backendAvailable}
+        />
       ),
     },
     {
       label: 'Authentication',
       icon: <AuthIcon />,
-      component: () => <AuthSettings config={_config} onSave={saveSettings} />,
+      component: () => (
+        <AuthSettings
+          config={_config}
+          onSave={saveSettings}
+          backendAvailable={backendAvailable}
+        />
+      ),
     },
     {
       label: 'Notifications',
       icon: <NotificationIcon />,
       component: () => (
-        <NotificationSettings config={_config} onSave={saveSettings} />
+        <NotificationSettings
+          config={_config}
+          onSave={saveSettings}
+          backendAvailable={backendAvailable}
+        />
       ),
     },
   ];
@@ -420,6 +454,21 @@ export default function Settings() {
         Settings
       </Typography>
 
+      {/* Backend availability warning */}
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. Settings cannot be loaded or
+          modified at this time.
+        </Alert>
+      )}
+
+      {/* Error display */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
       <Paper sx={{ mb: 3 }}>
         <Tabs
           value={activeTab}
@@ -433,6 +482,7 @@ export default function Settings() {
               label={tab.label}
               icon={tab.icon}
               iconPosition="start"
+              disabled={!backendAvailable}
             />
           ))}
         </Tabs>

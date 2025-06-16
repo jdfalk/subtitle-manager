@@ -14,10 +14,12 @@ import {
   Download as WantedIcon,
 } from '@mui/icons-material';
 import {
+  Alert,
   alpha,
   AppBar,
   Box,
   Button,
+  CircularProgress,
   Container,
   createTheme,
   CssBaseline,
@@ -42,6 +44,8 @@ import Dashboard from './Dashboard.jsx';
 import Extract from './Extract.jsx';
 import History from './History.jsx';
 import MediaLibrary from './MediaLibrary.jsx';
+import OfflineInfo from './OfflineInfo.jsx';
+import { apiService } from './services/api.js';
 import Settings from './Settings.jsx';
 import Setup from './Setup.jsx';
 import System from './System.jsx';
@@ -272,6 +276,9 @@ function App() {
   const [setupNeeded, setSetupNeeded] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [backendAvailable, setBackendAvailable] = useState(false);
+  const [apiError, setApiError] = useState(null);
   const [darkMode, setDarkMode] = useState(() => {
     // Check localStorage or system preference for initial theme
     const saved = localStorage.getItem('darkMode');
@@ -323,12 +330,50 @@ function App() {
   ];
 
   useEffect(() => {
-    fetch('/api/config').then(res => {
-      if (res.ok) setAuthed(true);
-    });
-    fetch('/api/setup/status')
-      .then(r => r.json())
-      .then(d => setSetupNeeded(d.needed));
+    const checkBackend = async () => {
+      try {
+        // Check if backend is available
+        const isBackendAvailable = await apiService.checkBackendHealth();
+        setBackendAvailable(isBackendAvailable);
+
+        if (isBackendAvailable) {
+          // Backend is available, check auth and setup status
+          setApiError(null);
+
+          try {
+            const configResponse = await apiService.get('/api/config');
+            if (configResponse.ok) {
+              setAuthed(true);
+            }
+          } catch (error) {
+            console.warn('Config check failed:', error);
+          }
+
+          try {
+            const setupResponse = await apiService.get('/api/setup/status');
+            if (setupResponse.ok) {
+              const setupData = await setupResponse.json();
+              setSetupNeeded(setupData.needed);
+            }
+          } catch (error) {
+            console.warn('Setup status check failed:', error);
+          }
+        } else {
+          // Backend not available
+          setApiError('Backend service is not available. Some features may be limited.');
+          setAuthed(false);
+          setSetupNeeded(false);
+        }
+      } catch (error) {
+        console.error('Backend check failed:', error);
+        setBackendAvailable(false);
+        setApiError('Failed to connect to backend service.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkBackend();
   }, []);
 
   const login = async () => {
@@ -342,12 +387,134 @@ function App() {
     }
   };
 
+  // Show loading spinner during initial backend check
+  if (loading) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            backgroundColor: 'background.default',
+          }}
+        >
+          <CircularProgress size={60} sx={{ mb: 2 }} />
+          <Typography variant="h6" color="text.secondary">
+            Connecting to Subtitle Manager...
+          </Typography>
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
+  // Show offline UI if backend is unavailable
+  if (!backendAvailable) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Container component="main" maxWidth="md">
+          <Box
+            sx={{
+              marginTop: 8,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              minHeight: '100vh',
+              justifyContent: 'center',
+            }}
+          >
+            <Paper
+              elevation={0}
+              sx={{
+                p: 6,
+                width: '100%',
+                borderRadius: 3,
+                border: '1px solid',
+                borderColor: 'divider',
+                backgroundColor: 'background.paper',
+                textAlign: 'center',
+              }}
+            >
+              <SystemIcon sx={{ fontSize: 64, color: 'error.main', mb: 2 }} />
+              <Typography
+                component="h1"
+                variant="h4"
+                gutterBottom
+                color="error"
+              >
+                Backend Unavailable
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                The Subtitle Manager backend service is currently not available.
+                Please check that the server is running and try again.
+              </Typography>
+
+              {apiError && (
+                <Alert severity="error" sx={{ mb: 3, textAlign: 'left' }}>
+                  {apiError}
+                </Alert>
+              )}
+
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Button
+                  variant="contained"
+                  onClick={() => window.location.reload()}
+                  size="large"
+                >
+                  Retry Connection
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() => setPage('offline-info')}
+                  size="large"
+                >
+                  Offline Information
+                </Button>
+              </Box>
+            </Paper>
+
+            {/* Theme toggle for offline page */}
+            <Box sx={{ mt: 2 }}>
+              <IconButton
+                onClick={toggleDarkMode}
+                aria-label="toggle dark mode"
+                sx={{
+                  backgroundColor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                }}
+              >
+                {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+              <IconButton
+                onClick={toggleKidMode}
+                aria-label="toggle kid mode"
+                sx={{
+                  backgroundColor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  ml: 1,
+                }}
+              >
+                <KidModeIcon />
+              </IconButton>
+            </Box>
+          </Box>
+        </Container>
+      </ThemeProvider>
+    );
+  }
+
   if (!authed) {
     if (setupNeeded) {
       return (
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Setup />
+          <Setup backendAvailable={backendAvailable} />
         </ThemeProvider>
       );
     }
@@ -390,6 +557,12 @@ function App() {
                 </Typography>
               </Box>
 
+              {apiError && (
+                <Alert severity="warning" sx={{ mb: 3 }}>
+                  {apiError}
+                </Alert>
+              )}
+
               <Box component="form" sx={{ mt: 1 }}>
                 <TextField
                   margin="normal"
@@ -403,6 +576,7 @@ function App() {
                   value={username}
                   onChange={e => setUsername(e.target.value)}
                   variant="outlined"
+                  disabled={!backendAvailable}
                 />
                 <TextField
                   margin="normal"
@@ -416,6 +590,7 @@ function App() {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   variant="outlined"
+                  disabled={!backendAvailable}
                 />
                 <Button
                   type="button"
@@ -424,6 +599,7 @@ function App() {
                   size="large"
                   sx={{ mt: 3, mb: 2, py: 1.5 }}
                   onClick={login}
+                  disabled={!backendAvailable}
                 >
                   Sign In
                 </Button>
@@ -581,24 +757,34 @@ function App() {
           }}
         >
           <Toolbar />
+
+          {/* Show backend availability warning if there are issues */}
+          {apiError && (
+            <Alert severity="warning" sx={{ mb: 3 }}>
+              {apiError}
+            </Alert>
+          )}
+
           {page === 'library' ? (
-            <MediaLibrary />
+            <MediaLibrary backendAvailable={backendAvailable} />
           ) : page === 'settings' ? (
-            <Settings />
+            <Settings backendAvailable={backendAvailable} />
           ) : page === 'extract' ? (
-            <Extract />
+            <Extract backendAvailable={backendAvailable} />
           ) : page === 'history' ? (
-            <History />
+            <History backendAvailable={backendAvailable} />
           ) : page === 'convert' ? (
-            <Convert />
+            <Convert backendAvailable={backendAvailable} />
           ) : page === 'translate' ? (
-            <Translate />
+            <Translate backendAvailable={backendAvailable} />
           ) : page === 'system' ? (
-            <System />
+            <System backendAvailable={backendAvailable} />
           ) : page === 'wanted' ? (
-            <Wanted />
+            <Wanted backendAvailable={backendAvailable} />
+          ) : page === 'offline-info' ? (
+            <OfflineInfo />
           ) : (
-            <Dashboard />
+            <Dashboard backendAvailable={backendAvailable} />
           )}
         </Box>
 

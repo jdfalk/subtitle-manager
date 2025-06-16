@@ -1,27 +1,27 @@
 import {
-  Delete as DeleteIcon,
-  FilePresent as FileIcon,
-  Language as LanguageIcon,
-  Translate as TranslateIcon,
-  CloudUpload as UploadIcon,
+    Delete as DeleteIcon,
+    FilePresent as FileIcon,
+    Language as LanguageIcon,
+    Translate as TranslateIcon,
+    CloudUpload as UploadIcon,
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  LinearProgress,
-  MenuItem,
-  Paper,
-  Select,
-  Snackbar,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    FormControl,
+    Grid,
+    IconButton,
+    InputLabel,
+    LinearProgress,
+    MenuItem,
+    Paper,
+    Select,
+    Snackbar,
+    Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -29,8 +29,10 @@ import { useState } from 'react';
  * Translate provides a form to upload a subtitle file and request
  * translation to a target language via the /api/translate endpoint.
  * The translated file is downloaded by the browser.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
-export default function Translate() {
+export default function Translate({ backendAvailable = true }) {
   const [file, setFile] = useState(null);
   const [lang, setLang] = useState('es');
   const [status, setStatus] = useState('');
@@ -114,6 +116,12 @@ export default function Translate() {
       <Typography variant="h4" component="h1" gutterBottom>
         Translate Subtitle
       </Typography>
+
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. Translation features are currently disabled.
+        </Alert>
+      )}
 
       <Typography variant="body1" color="text.secondary" paragraph>
         Upload a subtitle file and translate it to your target language using AI

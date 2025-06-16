@@ -1,37 +1,40 @@
 // file: webui/src/Dashboard.jsx
 import {
-  Folder as FolderIcon,
-  PlayArrow as PlayIcon,
+    Folder as FolderIcon,
+    PlayArrow as PlayIcon,
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  FormControl,
-  Grid,
-  InputLabel,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemText,
-  MenuItem,
-  Paper,
-  Select,
-  TextField,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    CircularProgress,
+    FormControl,
+    Grid,
+    InputLabel,
+    LinearProgress,
+    List,
+    ListItem,
+    ListItemText,
+    MenuItem,
+    Paper,
+    Select,
+    TextField,
+    Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { apiService } from './services/api.js';
 
 /**
  * Dashboard component for managing subtitle scanning operations.
  * Provides controls for starting scans and monitoring progress.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
 
-export default function Dashboard() {
+export default function Dashboard({ backendAvailable = true }) {
   const [status, setStatus] = useState({
     running: false,
     completed: 0,
@@ -42,15 +45,23 @@ export default function Dashboard() {
   // Default to embedded provider until others are added
   const [provider, setProvider] = useState('embedded');
   const [availableProviders, setAvailableProviders] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    poll();
-    loadProviders();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (backendAvailable) {
+      poll();
+      loadProviders();
+    }
+  }, [backendAvailable]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadProviders = async () => {
+    if (!backendAvailable) return;
+
     try {
-      const response = await fetch('/api/providers');
+      setLoading(true);
+      setError(null);
+      const response = await apiService.get('/api/providers');
       if (response.ok) {
         const data = await response.json();
         // Only show enabled providers
@@ -64,6 +75,7 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error('Failed to load providers:', error);
+      setError('Failed to load providers');
       // Fallback to hardcoded providers if API fails
       setAvailableProviders([
         { name: 'opensubtitles', displayName: 'OpenSubtitles', enabled: true },
@@ -71,6 +83,8 @@ export default function Dashboard() {
         { name: 'subscene', displayName: 'Subscene', enabled: true },
         { name: 'podnapisi', displayName: 'Podnapisi', enabled: true },
       ]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,29 +114,50 @@ export default function Dashboard() {
   };
 
   const poll = async () => {
-    const res = await fetch('/api/scan/status');
-    if (res.ok) {
-      const data = await res.json();
-      // Ensure files is always an array to prevent null reference errors
-      setStatus({
-        running: data.running || false,
-        completed: data.completed || 0,
-        files: data.files || [],
-      });
-      if (data.running) {
-        setTimeout(poll, 1000);
+    if (!backendAvailable) return;
+
+    try {
+      const response = await apiService.get('/api/scan/status');
+      if (response.ok) {
+        const data = await response.json();
+        // Ensure files is always an array to prevent null reference errors
+        setStatus({
+          running: data.running || false,
+          completed: data.completed || 0,
+          files: data.files || [],
+        });
+        if (data.running) {
+          setTimeout(poll, 1000);
+        }
       }
+    } catch (error) {
+      console.error('Failed to poll scan status:', error);
+      setError('Failed to get scan status');
     }
   };
 
   const start = async () => {
-    const body = { provider, directory: dir, lang };
-    const res = await fetch('/api/scan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (res.ok) poll();
+    if (!backendAvailable) {
+      setError('Backend service is not available');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const body = { provider, directory: dir, lang };
+      const response = await apiService.post('/api/scan', body);
+      if (response.ok) {
+        poll();
+      } else {
+        setError('Failed to start scan');
+      }
+    } catch (error) {
+      console.error('Failed to start scan:', error);
+      setError('Failed to start scan');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -134,6 +169,21 @@ export default function Dashboard() {
       <Typography variant="h4" component="h1" gutterBottom>
         Dashboard
       </Typography>
+
+      {/* Backend availability warning */}
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. Subtitle scanning and management
+          features are currently disabled.
+        </Alert>
+      )}
+
+      {/* Error display */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
 
       <Grid container spacing={3}>
         {/* Scan Controls */}
@@ -150,7 +200,7 @@ export default function Dashboard() {
                   placeholder="Enter directory to scan"
                   value={dir}
                   onChange={e => setDir(e.target.value)}
-                  disabled={status.running}
+                  disabled={status.running || !backendAvailable}
                   InputProps={{
                     startAdornment: (
                       <FolderIcon sx={{ mr: 1, color: 'action.active' }} />
@@ -163,7 +213,7 @@ export default function Dashboard() {
                     value={lang}
                     label="Language"
                     onChange={e => setLang(e.target.value)}
-                    disabled={status.running}
+                    disabled={status.running || !backendAvailable}
                   >
                     <MenuItem value="en">English</MenuItem>
                     <MenuItem value="es">Spanish</MenuItem>
@@ -179,7 +229,7 @@ export default function Dashboard() {
                     value={provider}
                     label="Provider"
                     onChange={e => setProvider(e.target.value)}
-                    disabled={status.running}
+                    disabled={status.running || !backendAvailable}
                   >
                     {availableProviders.length > 0
                       ? availableProviders.map(p => (
@@ -226,16 +276,24 @@ export default function Dashboard() {
                   startIcon={
                     status.running ? (
                       <CircularProgress size={20} />
+                    ) : loading ? (
+                      <CircularProgress size={20} />
                     ) : (
                       <PlayIcon />
                     )
                   }
                   onClick={start}
-                  disabled={status.running || !dir}
+                  disabled={status.running || !dir || !backendAvailable || loading}
                   fullWidth
                   size="large"
                 >
-                  {status.running ? 'Scanning...' : 'Start Scan'}
+                  {status.running
+                    ? 'Scanning...'
+                    : loading
+                    ? 'Starting...'
+                    : !backendAvailable
+                    ? 'Backend Unavailable'
+                    : 'Start Scan'}
                 </Button>
               </Box>
             </CardContent>

@@ -1,33 +1,33 @@
 import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Language as LanguageIcon,
-  Movie as MediaIcon,
-  CloudDownload as ProviderIcon,
-  Search as SearchIcon,
-  Download as WantedIcon,
+    Add as AddIcon,
+    Delete as DeleteIcon,
+    Language as LanguageIcon,
+    Movie as MediaIcon,
+    CloudDownload as ProviderIcon,
+    Search as SearchIcon,
+    Download as WantedIcon,
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  MenuItem,
-  Paper,
-  Select,
-  TextField,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    CircularProgress,
+    FormControl,
+    Grid,
+    IconButton,
+    InputLabel,
+    List,
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText,
+    MenuItem,
+    Paper,
+    Select,
+    TextField,
+    Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
@@ -35,8 +35,10 @@ import { useEffect, useState } from 'react';
  * Wanted provides an interface for searching subtitles and maintaining
  * a list of wanted items. Results are fetched from `/api/search` and
  * selections are POSTed to `/api/wanted`.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
-export default function Wanted() {
+export default function Wanted({ backendAvailable = true }) {
   // Start with embedded provider available out of the box
   const [provider, setProvider] = useState('embedded');
   const [path, setPath] = useState('');
@@ -148,6 +150,12 @@ export default function Wanted() {
       <Typography variant="h4" component="h1" gutterBottom>
         Subtitle Search & Wanted List
       </Typography>
+
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. Search and wanted list features are currently disabled.
+        </Alert>
+      )}
 
       <Typography variant="body1" color="text.secondary" paragraph>
         Search for subtitles across multiple providers and maintain a wanted

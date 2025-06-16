@@ -1,24 +1,24 @@
 import {
-  Archive as ExtractIcon,
-  Folder as FolderIcon,
-  Movie as MediaIcon,
-  Subtitles as SubtitleIcon,
+    Archive as ExtractIcon,
+    Folder as FolderIcon,
+    Movie as MediaIcon,
+    Subtitles as SubtitleIcon,
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-  TextField,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    LinearProgress,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Paper,
+    TextField,
+    Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -26,8 +26,10 @@ import { useState } from 'react';
  * Extract provides a simple form to request subtitle extraction for a media file.
  * The path to the media file is POSTed to `/api/extract` and the number of
  * extracted items is displayed.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
-export default function Extract() {
+export default function Extract({ backendAvailable = true }) {
   const [path, setPath] = useState('');
   const [status, setStatus] = useState('');
   const [extracting, setExtracting] = useState(false);
@@ -81,6 +83,12 @@ export default function Extract() {
         Extract Subtitles
       </Typography>
 
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. Subtitle extraction is currently disabled.
+        </Alert>
+      )}
+
       <Typography variant="body1" color="text.secondary" paragraph>
         Extract embedded subtitle streams from media files (MKV, MP4, etc.) into
         separate subtitle files.
@@ -96,7 +104,7 @@ export default function Extract() {
               value={path}
               onChange={e => setPath(e.target.value)}
               onKeyPress={handleKeyPress}
-              disabled={extracting}
+              disabled={!backendAvailable || extracting}
               InputProps={{
                 startAdornment: (
                   <FolderIcon sx={{ mr: 1, color: 'action.active' }} />
@@ -110,11 +118,15 @@ export default function Extract() {
             variant="contained"
             startIcon={extracting ? <LinearProgress /> : <ExtractIcon />}
             onClick={doExtract}
-            disabled={extracting || !path.trim()}
+            disabled={extracting || !path.trim() || !backendAvailable}
             size="large"
             fullWidth
           >
-            {extracting ? 'Extracting...' : 'Extract Subtitles'}
+            {!backendAvailable
+              ? 'Backend Unavailable'
+              : extracting
+              ? 'Extracting...'
+              : 'Extract Subtitles'}
           </Button>
 
           {extracting && (

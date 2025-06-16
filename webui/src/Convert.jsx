@@ -1,21 +1,21 @@
 import {
-  Transform as ConvertIcon,
-  Delete as DeleteIcon,
-  FilePresent as FileIcon,
-  CloudUpload as UploadIcon,
+    Transform as ConvertIcon,
+    Delete as DeleteIcon,
+    FilePresent as FileIcon,
+    CloudUpload as UploadIcon,
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  IconButton,
-  LinearProgress,
-  Paper,
-  Snackbar,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    IconButton,
+    LinearProgress,
+    Paper,
+    Snackbar,
+    Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -23,8 +23,10 @@ import { useState } from 'react';
  * Convert provides a form to upload a subtitle file which is
  * converted to SRT format via the /api/convert endpoint.
  * The resulting file is downloaded by the browser.
+ * @param {Object} props - Component props
+ * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
-export default function Convert() {
+export default function Convert({ backendAvailable = true }) {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('');
   const [converting, setConverting] = useState(false);
@@ -90,6 +92,12 @@ export default function Convert() {
         Convert Subtitle
       </Typography>
 
+      {!backendAvailable && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Backend service is not available. Subtitle conversion is currently disabled.
+        </Alert>
+      )}
+
       <Typography variant="body1" color="text.secondary" paragraph>
         Upload a subtitle file to convert it to SRT format. Supported formats
         include VTT, ASS, SSA, SUB, SBV, TTML, and DFXP.
@@ -106,6 +114,7 @@ export default function Convert() {
                   id="subtitle-file-input"
                   type="file"
                   onChange={handleFileChange}
+                  disabled={!backendAvailable}
                   data-testid="file"
                 />
                 <label htmlFor="subtitle-file-input">
@@ -113,11 +122,12 @@ export default function Convert() {
                     variant="outlined"
                     sx={{
                       p: 4,
-                      cursor: 'pointer',
+                      cursor: backendAvailable ? 'pointer' : 'not-allowed',
                       border: '2px dashed',
-                      borderColor: 'primary.main',
+                      borderColor: backendAvailable ? 'primary.main' : 'action.disabled',
+                      opacity: backendAvailable ? 1 : 0.5,
                       '&:hover': {
-                        backgroundColor: 'action.hover',
+                        backgroundColor: backendAvailable ? 'action.hover' : 'transparent',
                       },
                     }}
                   >
@@ -162,11 +172,15 @@ export default function Convert() {
                   variant="contained"
                   startIcon={converting ? <LinearProgress /> : <ConvertIcon />}
                   onClick={doConvert}
-                  disabled={converting}
+                  disabled={converting || !backendAvailable}
                   size="large"
                   fullWidth
                 >
-                  {converting ? 'Converting...' : 'Convert to SRT'}
+                  {!backendAvailable
+                    ? 'Backend Unavailable'
+                    : converting
+                    ? 'Converting...'
+                    : 'Convert to SRT'}
                 </Button>
               </Box>
             )}
