@@ -424,10 +424,12 @@ dev-race: build-race ## Build with race detection and run
 	$(BINARY_PATH)-race web
 
 .PHONY: dev-air
-dev-air: install-air ## Start development server with live reloading using Air
+dev-air: install-air webui-build go-generate ## Start development server with live reloading using Air
 	@echo "$(COLOR_BLUE)Starting Air for live reloading...$(COLOR_RESET)"
 	@echo "$(COLOR_YELLOW)Air will automatically rebuild and restart on Go file changes$(COLOR_RESET)"
 	@echo "$(COLOR_CYAN)Version will be set to: dev-air$(COLOR_RESET)"
+	@echo "$(COLOR_CYAN)Server will be available at: http://localhost:8080$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Press Ctrl+C to stop$(COLOR_RESET)"
 	air
 
 .PHONY: dev-air-verbose
