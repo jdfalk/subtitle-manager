@@ -19,10 +19,10 @@ type LoginResponse struct {
 	User struct {
 		AllowedTranslations int    `json:"allowed_translations"`
 		AllowedDownloads    int    `json:"allowed_downloads"`
-		Level              string `json:"level"`
-		UserID             int    `json:"user_id"`
-		ExtInstalled       bool   `json:"ext_installed"`
-		VIP                bool   `json:"vip"`
+		Level               string `json:"level"`
+		UserID              int    `json:"user_id"`
+		ExtInstalled        bool   `json:"ext_installed"`
+		VIP                 bool   `json:"vip"`
 	} `json:"user"`
 	BaseURL string `json:"base_url"`
 	Token   string `json:"token"`
@@ -34,42 +34,42 @@ type SearchResult struct {
 	ID         string `json:"id"`
 	Type       string `json:"type"`
 	Attributes struct {
-		SubtitleID       string `json:"subtitle_id"`
-		Language         string `json:"language"`
-		DownloadCount    int    `json:"download_count"`
-		NewDownloadCount int    `json:"new_download_count"`
-		HearingImpaired  bool   `json:"hearing_impaired"`
-		HD               bool   `json:"hd"`
-		FPS              float64 `json:"fps"`
-		Votes            int    `json:"votes"`
-		Ratings          float64 `json:"ratings"`
-		FromTrusted      bool   `json:"from_trusted"`
-		ForeignPartsOnly bool   `json:"foreign_parts_only"`
-		AutoTranslated   bool   `json:"auto_translated"`
-		MachineTranslated bool  `json:"machine_translated"`
-		UploadDate       string `json:"upload_date"`
-		Release          string `json:"release"`
-		Comments         string `json:"comments"`
-		LegacySubtitleID int    `json:"legacy_subtitle_id"`
-		Uploader         struct {
+		SubtitleID        string  `json:"subtitle_id"`
+		Language          string  `json:"language"`
+		DownloadCount     int     `json:"download_count"`
+		NewDownloadCount  int     `json:"new_download_count"`
+		HearingImpaired   bool    `json:"hearing_impaired"`
+		HD                bool    `json:"hd"`
+		FPS               float64 `json:"fps"`
+		Votes             int     `json:"votes"`
+		Ratings           float64 `json:"ratings"`
+		FromTrusted       bool    `json:"from_trusted"`
+		ForeignPartsOnly  bool    `json:"foreign_parts_only"`
+		AutoTranslated    bool    `json:"auto_translated"`
+		MachineTranslated bool    `json:"machine_translated"`
+		UploadDate        string  `json:"upload_date"`
+		Release           string  `json:"release"`
+		Comments          string  `json:"comments"`
+		LegacySubtitleID  int     `json:"legacy_subtitle_id"`
+		Uploader          struct {
 			UploaderID int    `json:"uploader_id"`
 			Name       string `json:"name"`
 			Rank       string `json:"rank"`
 		} `json:"uploader"`
 		FeatureDetails struct {
-			FeatureID    int    `json:"feature_id"`
-			FeatureType  string `json:"feature_type"`
-			Year         int    `json:"year"`
-			Title        string `json:"title"`
-			MovieName    string `json:"movie_name"`
-			ImdbID       int    `json:"imdb_id"`
-			TmdbID       int    `json:"tmdb_id"`
+			FeatureID   int    `json:"feature_id"`
+			FeatureType string `json:"feature_type"`
+			Year        int    `json:"year"`
+			Title       string `json:"title"`
+			MovieName   string `json:"movie_name"`
+			ImdbID      int    `json:"imdb_id"`
+			TmdbID      int    `json:"tmdb_id"`
 		} `json:"feature_details"`
-		URL      string `json:"url"`
+		URL          string `json:"url"`
 		RelatedLinks struct {
-			Label       string `json:"label"`
-			URL         string `json:"url"`
-			ImgURL      string `json:"img_url"`
+			Label  string `json:"label"`
+			URL    string `json:"url"`
+			ImgURL string `json:"img_url"`
 		} `json:"related_links"`
 		Files []struct {
 			FileID   int    `json:"file_id"`
@@ -90,12 +90,12 @@ type SearchResponse struct {
 
 // DownloadResponse represents the download link response
 type DownloadResponse struct {
-	Link       string `json:"link"`
-	FileName   string `json:"file_name"`
-	Requests   int    `json:"requests"`
-	Remaining  int    `json:"remaining"`
-	Message    string `json:"message"`
-	ResetTime  string `json:"reset_time"`
+	Link      string `json:"link"`
+	FileName  string `json:"file_name"`
+	Requests  int    `json:"requests"`
+	Remaining int    `json:"remaining"`
+	Message   string `json:"message"`
+	ResetTime string `json:"reset_time"`
 }
 
 // Client implements the providers.Provider interface for OpenSubtitles.
