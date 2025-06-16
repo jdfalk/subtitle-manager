@@ -111,10 +111,10 @@ var factories = map[string]func() Provider{
 	"zimuku":           func() Provider { return zimuku.New() },
 }
 
-// Get returns a provider by name. OpenSubtitles requires an API key.
-func Get(name, openSubtitlesKey string) (Provider, error) {
+// Get returns a provider by name.
+func Get(name, _ string) (Provider, error) {
 	if name == "opensubtitles" {
-		return opensubtitles.New(openSubtitlesKey), nil
+		return opensubtitles.New(""), nil
 	}
 	if f, ok := factories[name]; ok {
 		return f(), nil
