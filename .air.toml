@@ -3,7 +3,7 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = []
+  args_bin = ["web", "--addr=:8080", "--config=/Users/jdfalk/repos/github.com/jdfalk/subtitle-manager/test/config/subtitle-manager.yaml", "--db-path=/Users/jdfalk/repos/github.com/jdfalk/subtitle-manager/test/config/db", "--db-backend=pebble", "--sqlite3-filename=subtitle-manager.db", "--log-level=info"]
   bin = "./tmp/main"
   cmd = "go build -ldflags=\"-X 'main.Version=dev-air' -X 'main.BuildTime=$(date -u '+%Y-%m-%d_%I:%M:%S%p')' -X 'main.GitCommit=$(git rev-parse HEAD 2>/dev/null || echo unknown)'\" -o ./tmp/main ."
   delay = 1000
@@ -21,7 +21,7 @@ tmp_dir = "tmp"
   poll = false
   poll_interval = 0
   post_cmd = []
-  pre_cmd = []
+  pre_cmd = ["make webui-build", "go generate ./webui"]
   rerun = false
   rerun_delay = 500
   send_interrupt = false
