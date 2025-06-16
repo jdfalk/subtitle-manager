@@ -1,6 +1,6 @@
 # Subtitle Manager
 
-Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project has achieved ~99% completion with full Bazarr feature parity** including 40+ subtitle providers, complete authentication system, PostgreSQL support, webhook system, anti-captcha integration, and a modern React-based web interface.
+Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project has achieved ~99% backend completion with full Bazarr feature parity** including 40+ subtitle providers, complete authentication system, PostgreSQL support, webhook system, anti-captcha integration, and a React-based web interface that requires UI/UX enhancements.
 
 ## ✨ Key Highlights
 
@@ -109,9 +109,9 @@ services are available:
 
 ## Current Status
 
-**Subtitle Manager is ~100% complete** with full production readiness. The project now includes all planned core features including automatic subtitle synchronization.
+**Subtitle Manager backend is ~100% complete** with full production readiness, but the frontend requires significant UI/UX improvements for optimal user experience.
 
-### ✅ Completed (Production Ready)
+### ✅ Completed (Production Ready Backend)
 
 - **Core Functionality**: All CLI commands fully implemented
 - **Web Interface**: Complete React UI with all major pages (Dashboard, Settings, Extract, History, System, Wanted)
@@ -122,12 +122,19 @@ services are available:
 - **Database**: SQLite, PebbleDB and PostgreSQL backends
 - **Enterprise Features**: Webhooks, notifications, anti-captcha, advanced scheduling
 
-### 🔄 Optional Remaining Features
+### 🔄 High Priority UI/UX Improvements Needed
+
+- **Navigation Issues**: Fix user management display, implement back button, add sidebar pinning
+- **Settings Enhancements**: Bazarr-compatible general settings, improved database management, card-based authentication
+- **Provider System**: Fix configuration modals, implement global language settings
+- **User Experience**: Reorganize navigation, create Tools section, add Languages page
+
+### 🎯 Optional Remaining Features
 
 - Advanced reverse proxy base URL support
 - ~~Automatic subtitle synchronization using audio and embedded tracks~~ ✅ **COMPLETED**
 
-The project is fully functional for production use and provides feature parity with Bazarr for all core subtitle management operations, plus additional enterprise features not available in Bazarr.
+The backend provides full production functionality with feature parity to Bazarr for all core subtitle management operations, plus additional enterprise features. The frontend requires UI/UX improvements to match the backend's quality and completeness.
 
 ## Installation
 
