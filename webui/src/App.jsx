@@ -12,6 +12,7 @@ import {
   BugReport as SystemIcon,
   Translate as TranslateIcon,
   Download as WantedIcon,
+  PushPin as PinIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -278,6 +279,10 @@ function App() {
   const [setupNeeded, setSetupNeeded] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerPinned, setDrawerPinned] = useState(() => {
+    const saved = localStorage.getItem('sidebarPinned');
+    return saved ? JSON.parse(saved) : false;
+  });
   const [loading, setLoading] = useState(true);
   const [backendAvailable, setBackendAvailable] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -318,6 +323,33 @@ function App() {
     setKidMode(newMode);
     localStorage.setItem('kidMode', JSON.stringify(newMode));
   };
+
+  /**
+   * Toggle the drawer open/close behavior.
+   * If the sidebar is pinned, unpin it instead of toggling.
+   */
+  const handleDrawerToggle = () => {
+    if (drawerPinned) {
+      setDrawerPinned(false);
+      localStorage.setItem('sidebarPinned', 'false');
+    } else {
+      setDrawerOpen(!drawerOpen);
+    }
+  };
+
+  /**
+   * Pin or unpin the sidebar and persist state in localStorage.
+   */
+  const handleDrawerPin = () => {
+    const newPinned = !drawerPinned;
+    setDrawerPinned(newPinned);
+    localStorage.setItem('sidebarPinned', JSON.stringify(newPinned));
+    if (newPinned) {
+      setDrawerOpen(true);
+    }
+  };
+
+  const isDrawerOpen = drawerPinned || drawerOpen;
 
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
@@ -681,7 +713,7 @@ function App() {
               color="inherit"
               aria-label="open drawer"
               edge="start"
-              onClick={() => setDrawerOpen(!drawerOpen)}
+              onClick={handleDrawerToggle}
               sx={{ mr: 2 }}
             >
               <MenuIcon />
@@ -712,9 +744,10 @@ function App() {
         </AppBar>
 
         <Drawer
-          variant="persistent"
+          variant={drawerPinned ? 'permanent' : 'temporary'}
           anchor="left"
-          open={drawerOpen}
+          open={isDrawerOpen}
+          onClose={() => !drawerPinned && setDrawerOpen(false)}
           sx={{
             width: 280,
             flexShrink: 0,
@@ -726,6 +759,17 @@ function App() {
         >
           <Toolbar />
           <Box sx={{ overflow: 'auto', py: 1 }}>
+            <Box sx={{ px: 2, pb: 1 }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                size="small"
+                onClick={handleDrawerPin}
+                startIcon={<PinIcon />}
+              >
+                {drawerPinned ? 'Unpin Sidebar' : 'Pin Sidebar'}
+              </Button>
+            </Box>
             <List>
               {navigationItems.map(item => (
                 <ListItem key={item.id} disablePadding>
@@ -779,7 +823,7 @@ function App() {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
             }),
-            marginLeft: drawerOpen ? '280px' : 0,
+            marginLeft: drawerPinned ? '280px' : 0,
             backgroundColor: 'background.default',
             minHeight: '100vh',
           }}
@@ -817,7 +861,7 @@ function App() {
         </Box>
 
         {/* Floating action button for quick navigation on mobile */}
-        {!drawerOpen && (
+        {!isDrawerOpen && (
           <Fab
             color="primary"
             aria-label="menu"
