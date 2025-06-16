@@ -948,34 +948,73 @@ func isSubtitleFile(ext string) bool {
 }
 
 // extractLanguageFromFilename tries to extract language code from filename
+
+// defaultLanguagePatterns contains the built-in language codes used for filename
+// detection. Additional languages can be configured via SetLanguagePatterns.
+var defaultLanguagePatterns = map[string]string{
+	"en":      "English",
+	"es":      "Spanish",
+	"fr":      "French",
+	"de":      "German",
+	"it":      "Italian",
+	"pt":      "Portuguese",
+	"ru":      "Russian",
+	"ja":      "Japanese",
+	"ko":      "Korean",
+	"zh":      "Chinese",
+	"zh-cn":   "Chinese (Simplified)",
+	"zh-hans": "Chinese (Simplified)",
+	"zh-tw":   "Chinese (Taiwan)",
+	"zh-hk":   "Chinese (Hong Kong)",
+	"zh-hant": "Chinese (Traditional)",
+	"ar":      "Arabic",
+	"hi":      "Hindi",
+	"tr":      "Turkish",
+	"pl":      "Polish",
+	"nl":      "Dutch",
+	"sv":      "Swedish",
+	"no":      "Norwegian",
+	"da":      "Danish",
+	"fi":      "Finnish",
+	"he":      "Hebrew",
+	"el":      "Greek",
+	"cs":      "Czech",
+	"sk":      "Slovak",
+	"hu":      "Hungarian",
+	"vi":      "Vietnamese",
+	"id":      "Indonesian",
+	"th":      "Thai",
+	"uk":      "Ukrainian",
+	"ro":      "Romanian",
+	"bg":      "Bulgarian",
+	"hr":      "Croatian",
+	"sr":      "Serbian",
+	"ms":      "Malay",
+	"fa":      "Persian",
+	"bn":      "Bengali",
+}
+
+// languagePatterns holds the active language map used by
+// extractLanguageFromFilename. It can be overridden for tests or advanced
+// configuration via SetLanguagePatterns.
+var languagePatterns = defaultLanguagePatterns
+
+// SetLanguagePatterns overrides the default language patterns used for filename
+// detection. This allows configuring additional languages or custom codes.
+func SetLanguagePatterns(m map[string]string) {
+	languagePatterns = m
+}
+
+// ResetLanguagePatterns restores the built-in language patterns.
+func ResetLanguagePatterns() {
+	languagePatterns = defaultLanguagePatterns
+}
+
 func extractLanguageFromFilename(filename string) string {
 	// Look for common language patterns
 	lower := strings.ToLower(filename)
 
-	// Common language codes
-	langPatterns := map[string]string{
-		"en": "English",
-		"es": "Spanish",
-		"fr": "French",
-		"de": "German",
-		"it": "Italian",
-		"pt": "Portuguese",
-		"ru": "Russian",
-		"ja": "Japanese",
-		"ko": "Korean",
-		"zh": "Chinese",
-		"ar": "Arabic",
-		"hi": "Hindi",
-		"tr": "Turkish",
-		"pl": "Polish",
-		"nl": "Dutch",
-		"sv": "Swedish",
-		"no": "Norwegian",
-		"da": "Danish",
-		"fi": "Finnish",
-	}
-
-	for code, lang := range langPatterns {
+	for code, lang := range languagePatterns {
 		if strings.Contains(lower, "."+code+".") ||
 			strings.Contains(lower, "_"+code+"_") ||
 			strings.Contains(lower, "-"+code+"-") ||
