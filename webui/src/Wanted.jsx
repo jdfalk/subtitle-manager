@@ -67,6 +67,11 @@ export default function Wanted({ backendAvailable = true }) {
     { code: 'ja', name: 'Japanese' },
     { code: 'ko', name: 'Korean' },
     { code: 'zh', name: 'Chinese' },
+    { code: 'zh-cn', name: 'Chinese (Simplified)' },
+    { code: 'zh-hans', name: 'Chinese (Simplified)' },
+    { code: 'zh-tw', name: 'Chinese (Taiwan)' },
+    { code: 'zh-hk', name: 'Chinese (Hong Kong)' },
+    { code: 'zh-hant', name: 'Chinese (Traditional)' },
   ];
 
   useEffect(() => {

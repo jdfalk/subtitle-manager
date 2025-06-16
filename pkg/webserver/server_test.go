@@ -761,6 +761,30 @@ func TestProvidersDefault(t *testing.T) {
 	}
 }
 
+// TestExtractLanguageFromFilename verifies default detection and pattern overrides.
+func TestExtractLanguageFromFilename(t *testing.T) {
+	ResetLanguagePatterns()
+
+	cases := map[string]string{
+		"movie.es.srt":      "Spanish",
+		"movie.zh-cn.srt":   "Chinese (Simplified)",
+		"movie.zh-hk.srt":   "Chinese (Hong Kong)",
+		"movie.zh-hant.srt": "Chinese (Traditional)",
+		"movie.zh-tw.srt":   "Chinese (Taiwan)",
+	}
+	for name, want := range cases {
+		if lang := extractLanguageFromFilename(name); lang != want {
+			t.Fatalf("%s expected %s, got %s", name, want, lang)
+		}
+	}
+
+	SetLanguagePatterns(map[string]string{"xx": "TestLang"})
+	defer ResetLanguagePatterns()
+	if lang := extractLanguageFromFilename("movie.xx.srt"); lang != "TestLang" {
+		t.Fatalf("override failed: %s", lang)
+	}
+}
+
 // setupTestUser creates a test user with an API key and returns the key.
 func setupTestUser(t *testing.T, db *sql.DB) string {
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
