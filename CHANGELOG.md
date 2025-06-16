@@ -48,6 +48,8 @@ All notable changes to this project will be documented in this file.
 - Automated workflow closes duplicate issues by title
 - Embedded provider now enabled by default. Other providers remain hidden
   until explicitly added or imported.
+- Enhanced General Settings page with Bazarr-compatible host, proxy, update,
+  logging, backup and analytics options.
 
 ## [0.4.0] - 2025-06-12
 
