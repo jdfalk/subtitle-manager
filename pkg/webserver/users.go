@@ -59,12 +59,16 @@ func userResetHandler(db *sql.DB) http.Handler {
 		row := db.QueryRow(`SELECT email, username FROM users WHERE id = ?`, id)
 		_ = row.Scan(&email, &username)
 		if email != "" {
-			svc := notifications.New(
+			svc, err := notifications.New(
 				viper.GetString("notifications.discord_webhook"),
 				viper.GetString("notifications.telegram_token"),
 				viper.GetString("notifications.telegram_chat_id"),
 				viper.GetString("notifications.email_url"),
 			)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Invalid notification configuration: %v", err), http.StatusInternalServerError)
+				return
+			}
 			msg := fmt.Sprintf("Credentials for %s\nPassword: %s\nAPI Key: %s", username, pass, key)
 			_ = svc.Send(context.Background(), msg)
 		}

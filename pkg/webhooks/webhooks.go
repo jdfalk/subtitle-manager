@@ -5,7 +5,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
@@ -19,9 +22,16 @@ type Dispatcher struct {
 	client *http.Client
 }
 
-// New returns a new Dispatcher with the given URLs.
-func New(urls []string) *Dispatcher {
-	return &Dispatcher{URLs: urls, client: &http.Client{Timeout: 10 * time.Second}}
+// New returns a new Dispatcher with the given URLs after validating them.
+func New(urls []string) (*Dispatcher, error) {
+	// Validate all webhook URLs to prevent SSRF attacks
+	for _, url := range urls {
+		if err := validateWebhookURL(url); err != nil {
+			return nil, fmt.Errorf("invalid webhook URL %s: %v", url, err)
+		}
+	}
+
+	return &Dispatcher{URLs: urls, client: &http.Client{Timeout: 10 * time.Second}}, nil
 }
 
 // Send delivers an event with optional payload to all configured URLs.
@@ -115,4 +125,55 @@ func CustomHandler() http.Handler {
 		}
 		handle(w, r, ev)
 	})
+}
+
+// validateWebhookURL validates that a webhook URL is safe to use and prevents SSRF attacks
+func validateWebhookURL(rawURL string) error {
+	if rawURL == "" {
+		return nil // Empty URLs are allowed (feature disabled)
+	}
+
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return fmt.Errorf("invalid URL format: %v", err)
+	}
+
+	// Only allow HTTPS for webhooks (security best practice)
+	if parsedURL.Scheme != "https" {
+		return fmt.Errorf("only HTTPS URLs are allowed for webhooks")
+	}
+
+	// Block private/internal IP ranges and localhost
+	host := parsedURL.Hostname()
+	if isPrivateOrLocalhost(host) {
+		return fmt.Errorf("webhooks to private/internal addresses are not allowed")
+	}
+
+	return nil
+}
+
+// isPrivateOrLocalhost checks if a hostname is a private IP or localhost
+func isPrivateOrLocalhost(host string) bool {
+	// Check for localhost variations
+	if host == "localhost" || host == "127.0.0.1" || host == "::1" {
+		return true
+	}
+
+	// Check for private IP ranges (simplified check)
+	privatePatterns := []string{
+		"10.",
+		"192.168.",
+		"172.16.", "172.17.", "172.18.", "172.19.", "172.20.",
+		"172.21.", "172.22.", "172.23.", "172.24.", "172.25.",
+		"172.26.", "172.27.", "172.28.", "172.29.", "172.30.", "172.31.",
+		"169.254.", // Link-local
+	}
+
+	for _, pattern := range privatePatterns {
+		if strings.HasPrefix(host, pattern) {
+			return true
+		}
+	}
+
+	return false
 }

@@ -667,7 +667,14 @@ func libraryBrowseHandler() http.Handler {
 			path = "/"
 		}
 
-		items, err := browseDirectory(path)
+		// Validate and sanitize the path to prevent path traversal attacks
+		sanitizedPath, err := validateAndSanitizePath(path)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid path: %v", err), http.StatusBadRequest)
+			return
+		}
+
+		items, err := browseDirectory(sanitizedPath)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Failed to browse directory: %v", err), http.StatusInternalServerError)
 			return
@@ -1040,4 +1047,53 @@ func startSessionCleanup(db *sql.DB) {
 			fmt.Printf("Failed to cleanup expired sessions: %v\n", err)
 		}
 	}
+}
+
+// validateAndSanitizePath validates and sanitizes a user-provided path to prevent
+// path traversal attacks. It ensures the path is within allowed directories.
+func validateAndSanitizePath(userPath string) (string, error) {
+	// Clean the path to resolve .. and . elements
+	cleanPath := filepath.Clean(userPath)
+
+	// Convert to absolute path for consistent checking
+	absPath, err := filepath.Abs(cleanPath)
+	if err != nil {
+		return "", fmt.Errorf("invalid path: %v", err)
+	}
+
+	// Define allowed base directories
+	allowedBaseDirs := []string{
+		"/movies",
+		"/tv",
+		"/downloads",
+		"/media",
+		"/mnt",
+		"/home",
+		"/var/lib/subtitle-manager",
+	}
+
+	// Special case for root directory
+	if cleanPath == "/" || cleanPath == "." {
+		return "/", nil
+	}
+
+	// Check if the path starts with any allowed base directory
+	pathAllowed := false
+	for _, baseDir := range allowedBaseDirs {
+		if strings.HasPrefix(absPath, baseDir) {
+			pathAllowed = true
+			break
+		}
+	}
+
+	if !pathAllowed {
+		return "", fmt.Errorf("path not in allowed directories: %s", cleanPath)
+	}
+
+	// Additional security check: ensure no path traversal components remain
+	if strings.Contains(cleanPath, "..") {
+		return "", fmt.Errorf("path traversal detected: %s", cleanPath)
+	}
+
+	return cleanPath, nil
 }

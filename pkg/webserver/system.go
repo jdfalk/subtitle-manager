@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"syscall"
 	"time"
@@ -16,6 +17,19 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/tasks"
 )
+
+// isValidTaskName validates that a task name contains only safe characters
+// to prevent injection attacks or invalid task names.
+func isValidTaskName(name string) bool {
+	// Allow only alphanumeric characters, hyphens, underscores, and dots
+	// Maximum length of 50 characters
+	if len(name) == 0 || len(name) > 50 {
+		return false
+	}
+
+	validNamePattern := regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
+	return validNamePattern.MatchString(name)
+}
 
 // logsHandler returns recent log lines captured in memory.
 func logsHandler() http.Handler {
@@ -70,6 +84,12 @@ func startTaskHandler() http.Handler {
 		name := r.URL.Query().Get("name")
 		if name == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		// Validate task name to prevent potential injection
+		if !isValidTaskName(name) {
+			http.Error(w, "Invalid task name", http.StatusBadRequest)
 			return
 		}
 		t := tasks.Start(r.Context(), name, func(ctx context.Context) error {
