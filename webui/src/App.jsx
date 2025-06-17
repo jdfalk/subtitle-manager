@@ -66,6 +66,7 @@ const Extract = lazy(() => import('./Extract.jsx'));
 const Convert = lazy(() => import('./Convert.jsx'));
 const Translate = lazy(() => import('./Translate.jsx'));
 const Setup = lazy(() => import('./Setup.jsx'));
+const MediaDetails = lazy(() => import('./MediaDetails.jsx'));
 
 /**
  * Creates a Material Design 3 compliant theme with enhanced dark mode support
@@ -928,6 +929,7 @@ function App() {
                 path="/library"
                 element={<MediaLibrary backendAvailable={backendAvailable} />}
               />
+              <Route path="/details" element={<MediaDetails />} />
               <Route
                 path="/wanted"
                 element={<Wanted backendAvailable={backendAvailable} />}
