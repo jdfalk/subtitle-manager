@@ -169,7 +169,9 @@ export default function DatabaseSettings({
                           <Chip
                             label={dbInfo.type || 'Unknown'}
                             color={
-                              dbInfo.type === 'postgresql' ? 'primary' : 'default'
+                              dbInfo.type === 'postgresql'
+                                ? 'primary'
+                                : 'default'
                             }
                             size="small"
                           />
@@ -199,7 +201,9 @@ export default function DatabaseSettings({
                         </TableCell>
                         <TableCell>
                           <Chip
-                            label={dbInfo.connected ? 'Connected' : 'Disconnected'}
+                            label={
+                              dbInfo.connected ? 'Connected' : 'Disconnected'
+                            }
                             color={dbInfo.connected ? 'success' : 'error'}
                             size="small"
                           />
@@ -209,7 +213,9 @@ export default function DatabaseSettings({
                   </Table>
                 </TableContainer>
               ) : (
-                <Alert severity="info">Database information not available</Alert>
+                <Alert severity="info">
+                  Database information not available
+                </Alert>
               )}
             </CardContent>
           </Card>
@@ -354,4 +360,3 @@ export default function DatabaseSettings({
     </Box>
   );
 }
-
