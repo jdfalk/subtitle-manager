@@ -93,8 +93,9 @@ func checkForUpdate(ctx context.Context, repo, current string) (*Release, bool, 
 
 // findAsset returns the download URL for the release asset matching the current
 // OS and architecture.
+const projectName = "subtitle-manager"
 func findAsset(rel *Release) (string, error) {
-	name := fmt.Sprintf("subtitle-manager-%s-%s", runtime.GOOS, runtime.GOARCH)
+	name := fmt.Sprintf("%s-%s-%s", projectName, runtime.GOOS, runtime.GOARCH)
 	if runtime.GOOS == "windows" {
 		name += ".exe"
 	}
