@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -17,6 +18,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/bazarr"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
+	"github.com/jdfalk/subtitle-manager/pkg/updater"
 	"github.com/jdfalk/subtitle-manager/pkg/webhooks"
 	"github.com/jdfalk/subtitle-manager/webui"
 )
@@ -217,6 +219,14 @@ func StartServer(addr string) error {
 
 	// Start periodic cleanup of expired sessions
 	go startSessionCleanup(db)
+
+	// Start automatic update checker if enabled
+	if viper.GetBool("auto_update") {
+		freq := viper.GetString("update_frequency")
+		repo := "subtitle-manager/subtitle-manager"
+		ctx := context.Background()
+		updater.StartPeriodic(ctx, repo, AppVersion, freq)
+	}
 
 	return http.ListenAndServe(addr, h)
 }
