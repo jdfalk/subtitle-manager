@@ -15,6 +15,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:a11y": "npx lhci autorun --config=./lighthouserc.json",
+    "test:a11y:ci": "npx lhci autorun --config=./lighthouserc.ci.json",
+    "test:a11y:strict": "npm run build && npx lhci autorun --config=./lighthouserc.ci.json",
     "test:lighthouse": "npm run build && npx lhci autorun --config=./lighthouserc.json",
     "analyze": "echo 'Bundle analysis not yet configured'"
   },

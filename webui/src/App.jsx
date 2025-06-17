@@ -430,7 +430,9 @@ function App() {
               setAuthed(true);
             }
           } catch (error) {
-            console.warn('Config check failed:', error);
+            if (import.meta.env.DEV) {
+              console.warn('Config check failed:', error);
+            }
           }
 
           try {
@@ -440,7 +442,9 @@ function App() {
               setSetupNeeded(setupData.needed);
             }
           } catch (error) {
-            console.warn('Setup status check failed:', error);
+            if (import.meta.env.DEV) {
+              console.warn('Setup status check failed:', error);
+            }
           }
         } else {
           // Backend not available
@@ -451,7 +455,9 @@ function App() {
           setSetupNeeded(false);
         }
       } catch (error) {
-        console.error('Backend check failed:', error);
+        if (import.meta.env.DEV) {
+          console.error('Backend check failed:', error);
+        }
         setBackendAvailable(false);
         setApiError('Failed to connect to backend service.');
       } finally {

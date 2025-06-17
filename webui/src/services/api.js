@@ -17,7 +17,10 @@ const API_BASE_URL = import.meta?.env?.VITE_API_URL || window.location.origin;
 async function apiClient(url, options = {}) {
   const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
 
-  console.log(`API Request: ${options.method || 'GET'} ${fullUrl}`);
+  // Only log in development mode
+  if (import.meta.env.DEV) {
+    console.log(`API Request: ${options.method || 'GET'} ${fullUrl}`);
+  }
 
   const config = {
     headers: {
@@ -29,13 +32,18 @@ async function apiClient(url, options = {}) {
 
   try {
     const response = await fetch(fullUrl, config);
-    console.log(`API Response: ${response.status} ${fullUrl}`);
+    if (import.meta.env.DEV) {
+      console.log(`API Response: ${response.status} ${fullUrl}`);
+    }
     return response;
   } catch (error) {
-    console.error('API Request Error:', error);
+    // Only log errors in development mode to avoid console errors in production/testing
+    if (import.meta.env.DEV) {
+      console.error('API Request Error:', error);
 
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      console.warn('Backend service appears to be offline');
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        console.warn('Backend service appears to be offline');
+      }
     }
 
     throw error;
@@ -106,7 +114,9 @@ export const apiService = {
       const response = await this.get('/api/setup/status');
       return response.ok;
     } catch (error) {
-      console.warn('Backend health check failed:', error);
+      if (import.meta.env.DEV) {
+        console.warn('Backend health check failed:', error);
+      }
       return false;
     }
   },
