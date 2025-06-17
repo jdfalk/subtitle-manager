@@ -82,7 +82,11 @@ export default function NotificationSettings({
   const [webhookHeaders, setWebhookHeaders] = useState('');
 
   // Dialog states
-  const [testDialog, setTestDialog] = useState({ open: false, type: '', loading: false });
+  const [testDialog, setTestDialog] = useState({
+    open: false,
+    type: '',
+    loading: false,
+  });
   const [resetDialog, setResetDialog] = useState(false);
 
   // Load configuration values when provided
@@ -163,7 +167,9 @@ export default function NotificationSettings({
       const response = await fetch(`/api/notifications/test/${type}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'Test notification from Subtitle Manager' }),
+        body: JSON.stringify({
+          message: 'Test notification from Subtitle Manager',
+        }),
       });
 
       if (response.ok) {
@@ -214,7 +220,14 @@ export default function NotificationSettings({
 
   return (
     <Box sx={{ maxWidth: 1200 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
         <Typography variant="h6">Notification Settings</Typography>
         <Button
           variant="outlined"
@@ -229,7 +242,8 @@ export default function NotificationSettings({
 
       {!backendAvailable && (
         <Alert severity="warning" sx={{ mb: 3 }}>
-          Backend service is not available. Notification settings cannot be modified.
+          Backend service is not available. Notification settings cannot be
+          modified.
         </Alert>
       )}
 
@@ -341,12 +355,16 @@ export default function NotificationSettings({
                   size="small"
                   startIcon={<TestIcon />}
                   onClick={() => testNotification('email')}
-                  disabled={!backendAvailable || !smtpHost || !smtpFrom || !smtpTo}
+                  disabled={
+                    !backendAvailable || !smtpHost || !smtpFrom || !smtpTo
+                  }
                 >
                   Test Email
                 </Button>
                 <Chip
-                  label={smtpHost && smtpFrom && smtpTo ? 'Configured' : 'Incomplete'}
+                  label={
+                    smtpHost && smtpFrom && smtpTo ? 'Configured' : 'Incomplete'
+                  }
                   size="small"
                   color={smtpHost && smtpFrom && smtpTo ? 'success' : 'warning'}
                 />
@@ -482,14 +500,22 @@ export default function NotificationSettings({
                   size="small"
                   startIcon={<TestIcon />}
                   onClick={() => testNotification('telegram')}
-                  disabled={!backendAvailable || !telegramToken || !telegramChatId}
+                  disabled={
+                    !backendAvailable || !telegramToken || !telegramChatId
+                  }
                 >
                   Test Telegram
                 </Button>
                 <Chip
-                  label={telegramToken && telegramChatId ? 'Configured' : 'Incomplete'}
+                  label={
+                    telegramToken && telegramChatId
+                      ? 'Configured'
+                      : 'Incomplete'
+                  }
                   size="small"
-                  color={telegramToken && telegramChatId ? 'success' : 'warning'}
+                  color={
+                    telegramToken && telegramChatId ? 'success' : 'warning'
+                  }
                 />
               </CardActions>
             )}
@@ -546,12 +572,16 @@ export default function NotificationSettings({
                   size="small"
                   startIcon={<TestIcon />}
                   onClick={() => testNotification('push')}
-                  disabled={!backendAvailable || !pushoverToken || !pushoverUser}
+                  disabled={
+                    !backendAvailable || !pushoverToken || !pushoverUser
+                  }
                 >
                   Test Push
                 </Button>
                 <Chip
-                  label={pushoverToken && pushoverUser ? 'Configured' : 'Incomplete'}
+                  label={
+                    pushoverToken && pushoverUser ? 'Configured' : 'Incomplete'
+                  }
                   size="small"
                   color={pushoverToken && pushoverUser ? 'success' : 'warning'}
                 />
@@ -593,7 +623,11 @@ export default function NotificationSettings({
                     disabled={!backendAvailable}
                   />
 
-                  <FormControl fullWidth size="small" disabled={!backendAvailable}>
+                  <FormControl
+                    fullWidth
+                    size="small"
+                    disabled={!backendAvailable}
+                  >
                     <InputLabel>Method</InputLabel>
                     <Select
                       label="Method"
@@ -643,7 +677,12 @@ export default function NotificationSettings({
       </Grid>
 
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-        <Button variant="contained" onClick={handleSave} disabled={!backendAvailable} size="large">
+        <Button
+          variant="contained"
+          onClick={handleSave}
+          disabled={!backendAvailable}
+          size="large"
+        >
           Save Notification Settings
         </Button>
       </Box>
@@ -651,7 +690,10 @@ export default function NotificationSettings({
       {/* Test dialog */}
       <Dialog
         open={testDialog.open}
-        onClose={() => !testDialog.loading && setTestDialog({ open: false, type: '', loading: false })}
+        onClose={() =>
+          !testDialog.loading &&
+          setTestDialog({ open: false, type: '', loading: false })
+        }
       >
         <DialogTitle>Testing {testDialog.type} Notification</DialogTitle>
         <DialogContent>
@@ -666,7 +708,13 @@ export default function NotificationSettings({
         </DialogContent>
         {!testDialog.loading && (
           <DialogActions>
-            <Button onClick={() => setTestDialog({ open: false, type: '', loading: false })}>Close</Button>
+            <Button
+              onClick={() =>
+                setTestDialog({ open: false, type: '', loading: false })
+              }
+            >
+              Close
+            </Button>
           </DialogActions>
         )}
       </Dialog>
@@ -676,12 +724,17 @@ export default function NotificationSettings({
         <DialogTitle>Reset All Notification Settings</DialogTitle>
         <DialogContent>
           <Typography>
-            This will reset all notification settings to their default values. This action cannot be undone.
+            This will reset all notification settings to their default values.
+            This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setResetDialog(false)}>Cancel</Button>
-          <Button onClick={resetAllNotifications} color="error" variant="contained">
+          <Button
+            onClick={resetAllNotifications}
+            color="error"
+            variant="contained"
+          >
             Reset All
           </Button>
         </DialogActions>
