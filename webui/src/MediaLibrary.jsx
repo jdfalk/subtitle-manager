@@ -479,8 +479,8 @@ export default function MediaLibrary({ backendAvailable = true }) {
 
       {viewMode === 'poster' && (
         <Grid container spacing={3}>
-          {items.map(item => {
-            const info = usePoster(item.name);
+          {items.map((item, index) => {
+            const info = postersInfo[index];
             const poster =
               info?.Poster && info.Poster !== 'N/A'
                 ? info.Poster
