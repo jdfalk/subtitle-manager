@@ -15,8 +15,8 @@ import {
   Alert,
   FormControlLabel,
   Switch,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
 /**
  * Fixed ProviderConfigDialog with proper provider selection and configuration options
@@ -32,7 +32,7 @@ export default function ProviderConfigDialog({
   onClose,
   onSave,
 }) {
-  const [selectedProvider, setSelectedProvider] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState('');
   const [config, setConfig] = useState({});
   const [availableProviders, setAvailableProviders] = useState([]);
 
@@ -48,84 +48,84 @@ export default function ProviderConfigDialog({
 
   const loadAvailableProviders = async () => {
     try {
-      const response = await fetch("/api/providers/available");
+      const response = await fetch('/api/providers/available');
       if (response.ok) {
         const providers = await response.json();
         setAvailableProviders(providers);
       }
     } catch (error) {
-      console.error("Failed to load available providers:", error);
+      console.error('Failed to load available providers:', error);
     }
   };
 
-  const getProviderDisplayName = (name) => {
+  const getProviderDisplayName = name => {
     const displayNames = {
-      opensubtitles: "OpenSubtitles.org",
-      opensubtitlescom: "OpenSubtitles.com",
-      addic7ed: "Addic7ed",
-      subscene: "Subscene",
-      podnapisi: "Podnapisi.NET",
-      yifysubtitles: "YIFY Subtitles",
-      embedded: "Embedded Subtitles",
+      opensubtitles: 'OpenSubtitles.org',
+      opensubtitlescom: 'OpenSubtitles.com',
+      addic7ed: 'Addic7ed',
+      subscene: 'Subscene',
+      podnapisi: 'Podnapisi.NET',
+      yifysubtitles: 'YIFY Subtitles',
+      embedded: 'Embedded Subtitles',
       // Add more as needed
     };
     return displayNames[name] || name.charAt(0).toUpperCase() + name.slice(1);
   };
 
-  const getProviderConfigFields = (providerName) => {
+  const getProviderConfigFields = providerName => {
     const configs = {
       opensubtitles: [
-        { key: "api_key", label: "API Key", type: "password", required: true },
+        { key: 'api_key', label: 'API Key', type: 'password', required: true },
         {
-          key: "user_agent",
-          label: "User Agent",
-          type: "text",
+          key: 'user_agent',
+          label: 'User Agent',
+          type: 'text',
           required: true,
         },
-        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
       ],
       opensubtitlescom: [
-        { key: "api_key", label: "API Key", type: "password", required: true },
-        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+        { key: 'api_key', label: 'API Key', type: 'password', required: true },
+        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
       ],
       addic7ed: [
-        { key: "username", label: "Username", type: "text", required: true },
+        { key: 'username', label: 'Username', type: 'text', required: true },
         {
-          key: "password",
-          label: "Password",
-          type: "password",
+          key: 'password',
+          label: 'Password',
+          type: 'password',
           required: true,
         },
-        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
       ],
       subscene: [
-        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
         {
-          key: "timeout",
-          label: "Timeout (seconds)",
-          type: "number",
+          key: 'timeout',
+          label: 'Timeout (seconds)',
+          type: 'number',
           default: 30,
         },
       ],
       embedded: [
-        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
         {
-          key: "extract_mkv",
-          label: "Extract from MKV",
-          type: "boolean",
+          key: 'extract_mkv',
+          label: 'Extract from MKV',
+          type: 'boolean',
           default: true,
         },
         {
-          key: "extract_mp4",
-          label: "Extract from MP4",
-          type: "boolean",
+          key: 'extract_mp4',
+          label: 'Extract from MP4',
+          type: 'boolean',
           default: true,
         },
         {
-          key: "ffmpeg_path",
-          label: "FFmpeg Path",
-          type: "text",
-          placeholder: "/usr/bin/ffmpeg",
+          key: 'ffmpeg_path',
+          label: 'FFmpeg Path',
+          type: 'text',
+          placeholder: '/usr/bin/ffmpeg',
         },
       ],
       // Add configurations for other providers
@@ -133,17 +133,17 @@ export default function ProviderConfigDialog({
 
     return (
       configs[providerName] || [
-        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+        { key: 'enabled', label: 'Enabled', type: 'boolean', default: true },
       ]
     );
   };
 
-  const handleProviderChange = (newProvider) => {
+  const handleProviderChange = newProvider => {
     setSelectedProvider(newProvider);
     // Reset config when provider changes
     const fields = getProviderConfigFields(newProvider);
     const newConfig = {};
-    fields.forEach((field) => {
+    fields.forEach(field => {
       if (field.default !== undefined) {
         newConfig[field.key] = field.default;
       }
@@ -152,7 +152,7 @@ export default function ProviderConfigDialog({
   };
 
   const handleConfigChange = (key, value) => {
-    setConfig((prev) => ({
+    setConfig(prev => ({
       ...prev,
       [key]: value,
     }));
@@ -160,7 +160,7 @@ export default function ProviderConfigDialog({
 
   const handleSave = () => {
     if (!selectedProvider) {
-      alert("Please select a provider");
+      alert('Please select a provider');
       return;
     }
 
@@ -175,27 +175,25 @@ export default function ProviderConfigDialog({
     onClose();
   };
 
-  const renderConfigField = (field) => {
-    const value = config[field.key] ?? field.default ?? "";
+  const renderConfigField = field => {
+    const value = config[field.key] ?? field.default ?? '';
 
     switch (field.type) {
-      case "boolean":
+      case 'boolean':
         return (
           <FormControlLabel
             key={field.key}
             control={
               <Switch
                 checked={!!value}
-                onChange={(e) =>
-                  handleConfigChange(field.key, e.target.checked)
-                }
+                onChange={e => handleConfigChange(field.key, e.target.checked)}
               />
             }
             label={field.label}
           />
         );
 
-      case "number":
+      case 'number':
         return (
           <TextField
             key={field.key}
@@ -203,7 +201,7 @@ export default function ProviderConfigDialog({
             label={field.label}
             type="number"
             value={value}
-            onChange={(e) =>
+            onChange={e =>
               handleConfigChange(field.key, parseInt(e.target.value) || 0)
             }
             required={field.required}
@@ -212,7 +210,7 @@ export default function ProviderConfigDialog({
           />
         );
 
-      case "password":
+      case 'password':
         return (
           <TextField
             key={field.key}
@@ -220,7 +218,7 @@ export default function ProviderConfigDialog({
             label={field.label}
             type="password"
             value={value}
-            onChange={(e) => handleConfigChange(field.key, e.target.value)}
+            onChange={e => handleConfigChange(field.key, e.target.value)}
             required={field.required}
             placeholder={field.placeholder}
             sx={{ mb: 2 }}
@@ -234,7 +232,7 @@ export default function ProviderConfigDialog({
             fullWidth
             label={field.label}
             value={value}
-            onChange={(e) => handleConfigChange(field.key, e.target.value)}
+            onChange={e => handleConfigChange(field.key, e.target.value)}
             required={field.required}
             placeholder={field.placeholder}
             sx={{ mb: 2 }}
@@ -247,10 +245,10 @@ export default function ProviderConfigDialog({
     if (!selectedProvider) return false;
 
     const fields = getProviderConfigFields(selectedProvider);
-    return fields.every((field) => {
+    return fields.every(field => {
       if (field.required) {
         const value = config[field.key];
-        return value !== undefined && value !== null && value !== "";
+        return value !== undefined && value !== null && value !== '';
       }
       return true;
     });
@@ -259,7 +257,7 @@ export default function ProviderConfigDialog({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {provider ? "Configure Provider" : "Configure Custom Provider"}
+        {provider ? 'Configure Provider' : 'Configure Custom Provider'}
       </DialogTitle>
 
       <DialogContent>
@@ -276,9 +274,9 @@ export default function ProviderConfigDialog({
                 <Select
                   value={selectedProvider}
                   label="Provider"
-                  onChange={(e) => handleProviderChange(e.target.value)}
+                  onChange={e => handleProviderChange(e.target.value)}
                 >
-                  {availableProviders.map((p) => (
+                  {availableProviders.map(p => (
                     <MenuItem key={p.name} value={p.name}>
                       {getProviderDisplayName(p.name)}
                     </MenuItem>
@@ -296,7 +294,7 @@ export default function ProviderConfigDialog({
               </Typography>
 
               <Alert severity="info" sx={{ mb: 2 }}>
-                Provider:{" "}
+                Provider:{' '}
                 <strong>
                   {getProviderDisplayName(provider?.name || selectedProvider)}
                 </strong>
@@ -304,7 +302,7 @@ export default function ProviderConfigDialog({
 
               <Box>
                 {getProviderConfigFields(
-                  provider?.name || selectedProvider,
+                  provider?.name || selectedProvider
                 ).map(renderConfigField)}
               </Box>
             </>
