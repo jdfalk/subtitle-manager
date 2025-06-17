@@ -187,17 +187,17 @@ go-lint: ## Run golangci-lint
 .PHONY: test
 test: ## Run Go tests
 	@echo "$(COLOR_BLUE)Running Go tests...$(COLOR_RESET)"
-	go test -v ./...
+	GOTOOLCHAIN=local go test -v ./...
 
 .PHONY: test-race
 test-race: ## Run Go tests with race detection
 	@echo "$(COLOR_BLUE)Running Go tests with race detection...$(COLOR_RESET)"
-	go test -race -v ./...
+	GOTOOLCHAIN=local go test -race -v ./...
 
 .PHONY: test-coverage
 test-coverage: ## Run tests with coverage
 	@echo "$(COLOR_BLUE)Running tests with coverage...$(COLOR_RESET)"
-	go test -coverprofile=coverage.out -v ./...
+	GOTOOLCHAIN=local go test -coverprofile=coverage.out -v ./...
 	go tool cover -html=coverage.out -o coverage.html
 	@echo "$(COLOR_GREEN)✓ Coverage report generated: coverage.html$(COLOR_RESET)"
 
