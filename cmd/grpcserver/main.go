@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"log"
 	"net"
 	"os"
 
 	"google.golang.org/grpc"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 )
@@ -47,10 +47,10 @@ func main() {
 	})
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Fatal(err)
+		logging.GetLogger("grpc-server").Fatalf("Failed to listen: %v", err)
 	}
-	log.Printf("listening on %s", addr)
+	logging.GetLogger("grpc-server").Infof("listening on %s", addr)
 	if err := s.Serve(lis); err != nil {
-		log.Fatal(err)
+		logging.GetLogger("grpc-server").Fatalf("Failed to serve: %v", err)
 	}
 }

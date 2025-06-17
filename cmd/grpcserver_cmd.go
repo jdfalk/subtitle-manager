@@ -3,9 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 	"github.com/spf13/cobra"
@@ -30,7 +30,7 @@ var grpcServerCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		log.Printf("listening on %s", grpcAddr)
+		logging.GetLogger("grpc-server").Infof("listening on %s", grpcAddr)
 		return s.Serve(lis)
 	},
 }

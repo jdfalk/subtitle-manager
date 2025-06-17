@@ -40,6 +40,11 @@ format_go() {
     # Find all staged Go files
     GO_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$' || true)
 
+    # If no staged Go files found, scan all Go files
+    if [ -z "$GO_FILES" ]; then
+        GO_FILES=$(find . -name "*.go" -not -path "./vendor/*" -not -path "./.git/*" | tr '\n' ' ')
+    fi
+
     if [ -n "$GO_FILES" ]; then
         # Format with gofmt
         gofmt -s -w $GO_FILES
