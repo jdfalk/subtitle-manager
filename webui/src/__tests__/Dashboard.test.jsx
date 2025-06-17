@@ -4,22 +4,30 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import Dashboard from '../Dashboard.jsx';
 
-describe('Dashboard component', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
-    global.fetch = vi.fn();
-  });
+// Mock the API service
+vi.mock('../services/api.js', () => ({
+  apiService: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
 
-  test('starts scan with provided options', async () => {
-    // Mock scan status calls
-    fetch.mockImplementation((url) => {
-      if (url.includes('/api/scan/status')) {
+describe('Dashboard component', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+
+    // Get the mocked apiService
+    const { apiService } = await import('../services/api.js');
+
+    // Setup default mocks for API calls that happen on component mount
+    apiService.get.mockImplementation((url) => {
+      if (url === '/api/scan/status') {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ running: false, completed: 0, files: [] }),
         });
       }
-      if (url.includes('/api/providers')) {
+      if (url === '/api/providers') {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve([
@@ -28,18 +36,19 @@ describe('Dashboard component', () => {
           ]),
         });
       }
-      if (url.includes('/api/scan') && !url.includes('/status')) {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ message: 'Scan started' }),
-        });
-      }
       return Promise.resolve({
         ok: true,
         json: () => Promise.resolve({}),
       });
     });
 
+    apiService.post.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ message: 'Scan started' }),
+    });
+  });
+
+  test('starts scan with provided options', async () => {
     await act(async () => {
       render(<Dashboard />);
     });
@@ -72,11 +81,11 @@ describe('Dashboard component', () => {
       fireEvent.click(screen.getByText('Start Scan'));
     });
 
+    // Get the mocked apiService to check calls
+    const { apiService } = await import('../services/api.js');
+
     await waitFor(() => {
-      const scanCalls = fetch.mock.calls.filter(call =>
-        call[0].includes('/api/scan') && !call[0].includes('/status')
-      );
-      expect(scanCalls.length).toBeGreaterThan(0);
+      expect(apiService.post).toHaveBeenCalledWith('/api/scan', expect.any(Object));
     });
   });
 });

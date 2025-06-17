@@ -10,6 +10,9 @@ vi.mock('../services/api.js', () => ({
   apiService: {
     checkBackendHealth: vi.fn(),
     get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
