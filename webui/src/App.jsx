@@ -361,18 +361,53 @@ function App() {
   const isDrawerOpen = drawerPinned || drawerOpen;
 
   const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { id: 'library', label: 'Media Library', icon: <LibraryIcon />, path: '/library' },
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      icon: <DashboardIcon />,
+      path: '/dashboard',
+    },
+    {
+      id: 'library',
+      label: 'Media Library',
+      icon: <LibraryIcon />,
+      path: '/library',
+    },
     { id: 'wanted', label: 'Wanted', icon: <WantedIcon />, path: '/wanted' },
-    { id: 'history', label: 'History', icon: <HistoryIcon />, path: '/history' },
-    { id: 'settings', label: 'Settings', icon: <SettingsIcon />, path: '/settings' },
+    {
+      id: 'history',
+      label: 'History',
+      icon: <HistoryIcon />,
+      path: '/history',
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: <SettingsIcon />,
+      path: '/settings',
+    },
     { id: 'system', label: 'System', icon: <SystemIcon />, path: '/system' },
   ];
 
   const toolsItems = [
-    { id: 'extract', label: 'Extract', icon: <ExtractIcon />, path: '/tools/extract' },
-    { id: 'convert', label: 'Convert', icon: <ConvertIcon />, path: '/tools/convert' },
-    { id: 'translate', label: 'Translate', icon: <TranslateIcon />, path: '/tools/translate' },
+    {
+      id: 'extract',
+      label: 'Extract',
+      icon: <ExtractIcon />,
+      path: '/tools/extract',
+    },
+    {
+      id: 'convert',
+      label: 'Convert',
+      icon: <ConvertIcon />,
+      path: '/tools/convert',
+    },
+    {
+      id: 'translate',
+      label: 'Translate',
+      icon: <TranslateIcon />,
+      path: '/tools/translate',
+    },
   ];
 
   useEffect(() => {

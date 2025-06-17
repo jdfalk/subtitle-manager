@@ -1,8 +1,9 @@
 package subtitles
 
 import (
-	"github.com/asticode/go-astisub"
 	"testing"
+
+	"github.com/asticode/go-astisub"
 )
 
 func TestMergeTracks(t *testing.T) {
