@@ -1,0 +1,143 @@
+name: Auto Format Code
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  format:
+    name: Auto Format Code
+    runs-on: ubuntu-latest
+    # Ensure this runs before other checks
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Use the GitHub token to allow pushing changes
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Checkout the head of the PR
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Check if last commit was auto-format
+        id: check_commit
+        run: |
+          # Get the last commit message
+          LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ "$LAST_COMMIT_MSG" =~ "style: auto-format code" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Last commit was auto-format, skipping"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "Proceeding with format check"
+          fi
+
+      - name: Set up Go
+        if: steps.check_commit.outputs.skip == 'false'
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Set up Node.js
+        if: steps.check_commit.outputs.skip == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: webui/package-lock.json
+
+      - name: Install frontend dependencies
+        if: steps.check_commit.outputs.skip == 'false'
+        run: |
+          cd webui
+          npm ci
+
+      - name: Format Go code
+        if: steps.check_commit.outputs.skip == 'false'
+        run: |
+          # Format Go code with gofmt
+          gofmt -s -w .
+
+          # Also run goimports if available
+          if command -v goimports &> /dev/null; then
+            goimports -w .
+          else
+            go install golang.org/x/tools/cmd/goimports@latest
+            goimports -w .
+          fi
+
+      - name: Format frontend code
+        if: steps.check_commit.outputs.skip == 'false'
+        run: |
+          cd webui
+          # Format with prettier
+          npm run format
+
+      - name: Check for changes
+        if: steps.check_commit.outputs.skip == 'false'
+        id: changes
+        run: |
+          # Check if there are any changes
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Found formatting changes:"
+            git status --porcelain
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No formatting changes needed"
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_commit.outputs.skip == 'false' && steps.changes.outputs.changes == 'true' && !contains(github.event.pull_request.head.ref, 'auto-format')
+        run: |
+          # Configure git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # Add all changes
+          git add .
+
+          # Commit changes
+          git commit -m "style: auto-format code with gofmt and prettier
+
+          - Applied gofmt -s -w . for Go files
+          - Applied prettier --write for frontend files
+          - This is an automated formatting commit"
+
+          # Push changes
+          git push
+
+      - name: Comment on PR
+        if: steps.check_commit.outputs.skip == 'false' && steps.changes.outputs.changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🤖 **Auto-formatting applied!**\n\nI found some formatting issues and fixed them automatically:\n- Applied `gofmt -s -w .` for Go files\n- Applied `prettier --write` for frontend files\n\nThe changes have been committed to this PR. No further action needed! ✨'
+            })
+
+      - name: Add success comment
+        if: steps.check_commit.outputs.skip == 'false' && steps.changes.outputs.changes == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ **Code formatting looks good!**\n\nNo formatting changes were needed. All Go and frontend code follows the project standards.'
+            })
+
+      - name: Skip message
+        if: steps.check_commit.outputs.skip == 'true'
+        run: echo "Skipping auto-format as the last commit was already an auto-format commit"

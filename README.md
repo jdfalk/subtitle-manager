@@ -497,21 +497,49 @@ Web UI unit tests live in `webui/src/__tests__` and are executed with `npm test`
 End-to-end tests use Playwright and run with `npm run test:e2e` once browsers are installed via `npx playwright install`.
 Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
 
-### Git Hooks
+### Git Hooks and Code Formatting
 
-To ensure code quality, install the pre-commit hook that automatically runs `gofmt` and `go vet`:
+#### Automatic Formatting on GitHub
+
+The repository includes an **automatic code formatting system** that runs on all pull requests:
+
+- **Go code**: Automatically formatted with `gofmt -s -w .` and `goimports`
+- **Frontend code**: Automatically formatted with `prettier --write`
+
+When you open or update a pull request, GitHub Actions will:
+
+1. Check if any code needs formatting
+2. Apply formatting automatically if needed
+3. Commit the changes back to your PR branch
+4. Add a comment explaining what was formatted
+
+This means **you don't need to worry about code formatting** - just focus on your code logic and let the automation handle the style!
+
+#### Optional Local Pre-commit Hooks
+
+For developers who prefer to format code locally before pushing, you can install pre-commit hooks:
 
 ```bash
+# Install the auto-formatting pre-commit hook
+./scripts/install-pre-commit-hooks.sh
+
+# Or install the legacy quality-check pre-commit hook
 ./scripts/install-hooks.sh
 ```
 
-The pre-commit hook will:
+The **auto-formatting hook** (`install-pre-commit-hooks.sh`) will:
+
+- Format Go files with `gofmt -s` and `goimports`
+- Format frontend files with `prettier`
+- Automatically stage the formatted files
+
+The **legacy quality-check hook** (`install-hooks.sh`) will:
 
 - Check Go file formatting with `gofmt -s`
 - Run `go vet` for static analysis
 - Prevent commits that don't pass these checks
 
-To bypass the hook temporarily, use `git commit --no-verify`.
+To bypass any hook temporarily, use `git commit --no-verify`.
 
 ### Issue updates
 
