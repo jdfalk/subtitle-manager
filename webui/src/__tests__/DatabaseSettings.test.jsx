@@ -39,9 +39,7 @@ describe('DatabaseSettings component', () => {
   });
 
   test('displays database info from API', async () => {
-    render(
-      <DatabaseSettings config={{}} onSave={() => {}} backendAvailable />
-    );
+    render(<DatabaseSettings config={{}} onSave={() => {}} backendAvailable />);
 
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/database/info')
@@ -53,7 +51,11 @@ describe('DatabaseSettings component', () => {
 
   test('shows warning when backend unavailable', () => {
     render(
-      <DatabaseSettings config={{}} onSave={() => {}} backendAvailable={false} />
+      <DatabaseSettings
+        config={{}}
+        onSave={() => {}}
+        backendAvailable={false}
+      />
     );
 
     expect(
