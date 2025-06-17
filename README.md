@@ -307,6 +307,9 @@ github_redirect_url: http://localhost:8080/api/oauth/github/callback
 ### Docker
 
 Subtitle Manager provides official Docker images with the web interface enabled by default.
+These images include `ffmpeg` so subtitle extraction works without additional
+dependencies. The binary is located at `/usr/bin/ffmpeg` and the container sets
+`SM_FFMPEG_PATH` accordingly.
 
 #### Quick Start
 

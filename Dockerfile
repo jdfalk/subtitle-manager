@@ -62,6 +62,9 @@ RUN apk add --no-cache \
     ca-certificates \
     tzdata
 
+# Explicitly set the ffmpeg path for the application
+ENV SM_FFMPEG_PATH=/usr/bin/ffmpeg
+
 # Create non-root user
 RUN addgroup -S subtitle && adduser -S subtitle -G subtitle
 
