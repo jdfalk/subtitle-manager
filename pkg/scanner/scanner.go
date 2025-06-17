@@ -48,6 +48,13 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 // file is left untouched.
 func ProcessFile(ctx context.Context, path, lang string, providerName string, p providers.Provider, upgrade bool, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
+	
+	// Validate the lang parameter to ensure it contains only alphanumeric characters
+	if !isValidLang(lang) {
+		logger.Warnf("invalid language code: %s", lang)
+		return fmt.Errorf("invalid language code: %s", lang)
+	}
+	
 	out := strings.TrimSuffix(path, filepath.Ext(path)) + "." + lang + ".srt"
 	if !upgrade {
 		if _, err := os.Stat(out); err == nil {
@@ -74,6 +81,16 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
 	}
 	return nil
+}
+
+// isValidLang checks if the language code contains only alphanumeric characters
+func isValidLang(lang string) bool {
+	for _, r := range lang {
+		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9')) {
+			return false
+		}
+	}
+	return true
 }
 
 var videoExtensions = []string{".mkv", ".mp4", ".avi", ".mov"}
