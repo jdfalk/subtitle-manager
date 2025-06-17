@@ -77,4 +77,17 @@ func TestDatabaseHandlers(t *testing.T) {
 		t.Fatalf("empty backup")
 	}
 	r3.Body.Close()
+
+	// simulate missing database file to trigger error path
+	viper.Set("sqlite3_filename", "missing.db")
+	req4, _ := http.NewRequest("POST", srv.URL+"/api/database/backup", nil)
+	req4.Header.Set("X-API-Key", key)
+	r4, err := srv.Client().Do(req4)
+	if err != nil {
+		t.Fatalf("backup err: %v", err)
+	}
+	if r4.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("expected 500 got %d", r4.StatusCode)
+	}
+	r4.Body.Close()
 }

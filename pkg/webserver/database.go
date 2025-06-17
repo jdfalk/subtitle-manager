@@ -152,16 +152,27 @@ func databaseBackupHandler() http.Handler {
 			return err
 		}
 		if backend == "sqlite" {
-			_ = add(path, filepath.Base(path))
+			if err := add(path, filepath.Base(path)); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 			return
 		}
-		filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
-			if err == nil && !info.IsDir() {
+		if err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() {
 				rel, _ := filepath.Rel(filepath.Dir(path), p)
-				_ = add(p, rel)
+				if err := add(p, rel); err != nil {
+					return err
+				}
 			}
 			return nil
-		})
+		}); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	})
 }
 
