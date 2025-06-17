@@ -13,20 +13,15 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 )
 
-// fetchCmd downloads subtitles for a media file using a provider.
 var fetchCmd = &cobra.Command{
-	Use:   "fetch [provider] [media] [lang] [output]",
-	Short: "Download subtitles using a provider",
-	Args:  cobra.ExactArgs(4),
+	Use:   "fetch [media] [lang] [output]",
+	Short: "Download subtitles using all providers",
+	Args:  cobra.ExactArgs(3),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("fetch")
-		name, media, lang, out := args[0], args[1], args[2], args[3]
+		media, lang, out := args[0], args[1], args[2]
 		key := viper.GetString("opensubtitles.api_key")
-		p, err := providers.Get(name, key)
-		if err != nil {
-			return err
-		}
-		data, err := p.Fetch(context.Background(), media, lang)
+		data, name, err := providers.FetchFromAll(context.Background(), media, lang, key)
 		if err != nil {
 			return err
 		}

@@ -33,22 +33,28 @@ func downloadHandler(db *sql.DB) http.Handler {
 			return
 		}
 		var q req
-		if err := json.NewDecoder(r.Body).Decode(&q); err != nil || q.Provider == "" || q.Path == "" || q.Lang == "" {
+		if err := json.NewDecoder(r.Body).Decode(&q); err != nil || q.Path == "" || q.Lang == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		p, err := providers.Get(q.Provider, "")
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
+		var p providers.Provider
+		var name string
+		var err error
+		if q.Provider != "" {
+			p, err = providers.Get(q.Provider, "")
+			name = q.Provider
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
 		}
-		if err := scanner.ProcessFile(r.Context(), q.Path, q.Lang, q.Provider, p, false, nil); err != nil {
+		if err := scanner.ProcessFile(r.Context(), q.Path, q.Lang, name, p, false, nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		out := strings.TrimSuffix(q.Path, filepath.Ext(q.Path)) + "." + q.Lang + ".srt"
 		if db != nil {
-			_ = database.InsertDownload(db, out, q.Path, q.Provider, q.Lang)
+			_ = database.InsertDownload(db, out, q.Path, name, q.Lang)
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(resp{File: out})

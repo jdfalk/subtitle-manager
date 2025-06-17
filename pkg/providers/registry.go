@@ -2,6 +2,7 @@ package providers
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/jdfalk/subtitle-manager/pkg/providers/addic7ed"
 	"github.com/jdfalk/subtitle-manager/pkg/providers/animekalesi"
@@ -120,4 +121,15 @@ func Get(name, _ string) (Provider, error) {
 		return f(), nil
 	}
 	return nil, fmt.Errorf("unknown provider %s", name)
+}
+
+// All returns the list of known provider names in alphabetical order.
+func All() []string {
+	names := make([]string, 0, len(factories)+1)
+	names = append(names, "opensubtitles")
+	for n := range factories {
+		names = append(names, n)
+	}
+	sort.Strings(names)
+	return names
 }

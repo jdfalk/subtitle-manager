@@ -48,12 +48,16 @@ func scanHandler() http.Handler {
 		status = scanStatus{Running: true, Files: []string{}}
 		scanMu.Unlock()
 		go func() {
-			p, err := providers.Get(q.Provider, "")
-			if err != nil {
-				scanMu.Lock()
-				status.Running = false
-				scanMu.Unlock()
-				return
+			var p providers.Provider
+			var err error
+			if q.Provider != "" {
+				p, err = providers.Get(q.Provider, "")
+				if err != nil {
+					scanMu.Lock()
+					status.Running = false
+					scanMu.Unlock()
+					return
+				}
 			}
 			cb := func(f string) {
 				scanMu.Lock()
