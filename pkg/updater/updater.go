@@ -191,7 +191,7 @@ func StartPeriodic(ctx context.Context, repo, current, frequency string) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				_ = SelfUpdate(context.Background(), repo, current)
+				_ = SelfUpdate(ctx, repo, current)
 			}
 		}
 	}()
