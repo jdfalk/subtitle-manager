@@ -67,6 +67,15 @@ export default function GeneralSettings({
   // Analytics settings
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 
+  // Scheduler settings
+  const [schedulerEnabled, setSchedulerEnabled] = useState(false);
+  const [libraryScanFreq, setLibraryScanFreq] = useState('daily');
+  const [wantedSearchFreq, setWantedSearchFreq] = useState('daily');
+  const [libraryScanCron, setLibraryScanCron] = useState('');
+  const [wantedSearchCron, setWantedSearchCron] = useState('');
+  const [maxConcurrentDownloads, setMaxConcurrentDownloads] = useState(3);
+  const [downloadTimeout, setDownloadTimeout] = useState(60);
+
   useEffect(() => {
     if (config) {
       // Host
@@ -101,6 +110,15 @@ export default function GeneralSettings({
 
       // Analytics
       setAnalyticsEnabled(config.analytics_enabled || false);
+
+      // Scheduler
+      setSchedulerEnabled(config.scheduler_enabled || false);
+      setLibraryScanFreq(config.library_scan_frequency || 'daily');
+      setWantedSearchFreq(config.wanted_search_frequency || 'daily');
+      setLibraryScanCron(config.library_scan_cron || '');
+      setWantedSearchCron(config.wanted_search_cron || '');
+      setMaxConcurrentDownloads(config.max_concurrent_downloads || 3);
+      setDownloadTimeout(config.download_timeout || 60);
     }
   }, [config]);
 
@@ -132,6 +150,14 @@ export default function GeneralSettings({
       backup_location: backupLocation,
 
       analytics_enabled: analyticsEnabled,
+
+      scheduler_enabled: schedulerEnabled,
+      library_scan_frequency: libraryScanFreq,
+      wanted_search_frequency: wantedSearchFreq,
+      library_scan_cron: libraryScanCron,
+      wanted_search_cron: wantedSearchCron,
+      max_concurrent_downloads: parseInt(maxConcurrentDownloads, 10),
+      download_timeout: parseInt(downloadTimeout, 10),
     };
 
     onSave(newConfig);
@@ -455,6 +481,135 @@ export default function GeneralSettings({
               </Grid>
             </Grid>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Scheduler */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom color="primary">
+            Scheduler
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={schedulerEnabled}
+                      onChange={e => setSchedulerEnabled(e.target.checked)}
+                      disabled={!backendAvailable}
+                    />
+                  }
+                  label="Enable Automatic Scheduling"
+                />
+              </FormGroup>
+            </Grid>
+
+            {schedulerEnabled && (
+              <>
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Library Scan Frequency</InputLabel>
+                    <Select
+                      value={libraryScanFreq}
+                      label="Library Scan Frequency"
+                      onChange={e => setLibraryScanFreq(e.target.value)}
+                      disabled={!backendAvailable}
+                    >
+                      <MenuItem value="never">Never</MenuItem>
+                      <MenuItem value="hourly">Every Hour</MenuItem>
+                      <MenuItem value="daily">Daily</MenuItem>
+                      <MenuItem value="weekly">Weekly</MenuItem>
+                      <MenuItem value="monthly">Monthly</MenuItem>
+                      <MenuItem value="custom">Custom Cron</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Wanted Search Frequency</InputLabel>
+                    <Select
+                      value={wantedSearchFreq}
+                      label="Wanted Search Frequency"
+                      onChange={e => setWantedSearchFreq(e.target.value)}
+                      disabled={!backendAvailable}
+                    >
+                      <MenuItem value="never">Never</MenuItem>
+                      <MenuItem value="15min">Every 15 Minutes</MenuItem>
+                      <MenuItem value="30min">Every 30 Minutes</MenuItem>
+                      <MenuItem value="hourly">Every Hour</MenuItem>
+                      <MenuItem value="daily">Daily</MenuItem>
+                      <MenuItem value="custom">Custom Cron</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                {(libraryScanFreq === 'custom' ||
+                  wantedSearchFreq === 'custom') && (
+                  <Grid item xs={12}>
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      Cron expressions follow standard format: minute hour day
+                      month weekday
+                      <br />
+                      Examples: "0 2 * * *" (daily at 2 AM), "*/15 * * * *"
+                      (every 15 minutes)
+                    </Alert>
+
+                    {libraryScanFreq === 'custom' && (
+                      <TextField
+                        fullWidth
+                        label="Library Scan Cron Expression"
+                        value={libraryScanCron}
+                        onChange={e => setLibraryScanCron(e.target.value)}
+                        placeholder="0 2 * * *"
+                        sx={{ mb: 2 }}
+                        disabled={!backendAvailable}
+                      />
+                    )}
+
+                    {wantedSearchFreq === 'custom' && (
+                      <TextField
+                        fullWidth
+                        label="Wanted Search Cron Expression"
+                        value={wantedSearchCron}
+                        onChange={e => setWantedSearchCron(e.target.value)}
+                        placeholder="*/30 * * * *"
+                        disabled={!backendAvailable}
+                      />
+                    )}
+                  </Grid>
+                )}
+
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Max Concurrent Downloads"
+                    type="number"
+                    value={maxConcurrentDownloads}
+                    onChange={e => setMaxConcurrentDownloads(e.target.value)}
+                    inputProps={{ min: 1, max: 10 }}
+                    helperText="Maximum number of simultaneous subtitle downloads"
+                    disabled={!backendAvailable}
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Download Timeout (seconds)"
+                    type="number"
+                    value={downloadTimeout}
+                    onChange={e => setDownloadTimeout(e.target.value)}
+                    inputProps={{ min: 10, max: 300 }}
+                    helperText="Timeout for individual subtitle downloads"
+                    disabled={!backendAvailable}
+                  />
+                </Grid>
+              </>
+            )}
+          </Grid>
         </CardContent>
       </Card>
 
