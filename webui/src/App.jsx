@@ -41,7 +41,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import {
   Link,
   Route,
@@ -51,18 +51,21 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
-import Convert from './Convert.jsx';
-import Dashboard from './Dashboard.jsx';
-import Extract from './Extract.jsx';
-import History from './History.jsx';
-import MediaLibrary from './MediaLibrary.jsx';
 import OfflineInfo from './OfflineInfo.jsx';
+import LoadingComponent from './components/LoadingComponent.jsx';
 import { apiService } from './services/api.js';
-import Settings from './Settings.jsx';
-import Setup from './Setup.jsx';
-import System from './System.jsx';
-import Translate from './Translate.jsx';
-import Wanted from './Wanted.jsx';
+
+// Lazy load components for better performance
+const Dashboard = lazy(() => import('./Dashboard.jsx'));
+const MediaLibrary = lazy(() => import('./MediaLibrary.jsx'));
+const Wanted = lazy(() => import('./Wanted.jsx'));
+const History = lazy(() => import('./History.jsx'));
+const Settings = lazy(() => import('./Settings.jsx'));
+const System = lazy(() => import('./System.jsx'));
+const Extract = lazy(() => import('./Extract.jsx'));
+const Convert = lazy(() => import('./Convert.jsx'));
+const Translate = lazy(() => import('./Translate.jsx'));
+const Setup = lazy(() => import('./Setup.jsx'));
 
 /**
  * Creates a Material Design 3 compliant theme with enhanced dark mode support
@@ -905,49 +908,51 @@ function App() {
             </Alert>
           )}
 
-          <Routes>
-            <Route
-              path="/"
-              element={<Dashboard backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/dashboard"
-              element={<Dashboard backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/library"
-              element={<MediaLibrary backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/wanted"
-              element={<Wanted backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/history"
-              element={<History backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/settings"
-              element={<Settings backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/system"
-              element={<System backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/tools/extract"
-              element={<Extract backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/tools/convert"
-              element={<Convert backendAvailable={backendAvailable} />}
-            />
-            <Route
-              path="/tools/translate"
-              element={<Translate backendAvailable={backendAvailable} />}
-            />
-            <Route path="/offline-info" element={<OfflineInfo />} />
-          </Routes>
+          <Suspense fallback={<LoadingComponent message="Loading page..." />}>
+            <Routes>
+              <Route
+                path="/"
+                element={<Dashboard backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/dashboard"
+                element={<Dashboard backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/library"
+                element={<MediaLibrary backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/wanted"
+                element={<Wanted backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/history"
+                element={<History backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/settings"
+                element={<Settings backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/system"
+                element={<System backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/tools/extract"
+                element={<Extract backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/tools/convert"
+                element={<Convert backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/tools/translate"
+                element={<Translate backendAvailable={backendAvailable} />}
+              />
+              <Route path="/offline-info" element={<OfflineInfo />} />
+            </Routes>
+          </Suspense>
         </Box>
 
         {/* Floating action button for quick navigation on mobile */}

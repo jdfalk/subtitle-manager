@@ -1072,6 +1072,15 @@ export default function GeneralSettings({
   // Analytics Settings
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 
+  // Scheduler Settings
+  const [schedulerEnabled, setSchedulerEnabled] = useState(false);
+  const [libraryScanFreq, setLibraryScanFreq] = useState("daily");
+  const [wantedSearchFreq, setWantedSearchFreq] = useState("daily");
+  const [libraryScanCron, setLibraryScanCron] = useState("");
+  const [wantedSearchCron, setWantedSearchCron] = useState("");
+  const [maxConcurrentDownloads, setMaxConcurrentDownloads] = useState(3);
+  const [downloadTimeout, setDownloadTimeout] = useState(60);
+
   useEffect(() => {
     if (config) {
       // Host Settings
@@ -1106,6 +1115,15 @@ export default function GeneralSettings({
 
       // Analytics Settings
       setAnalyticsEnabled(config.analytics_enabled || false);
+
+      // Scheduler Settings
+      setSchedulerEnabled(config.scheduler_enabled || false);
+      setLibraryScanFreq(config.library_scan_frequency || "daily");
+      setWantedSearchFreq(config.wanted_search_frequency || "daily");
+      setLibraryScanCron(config.library_scan_cron || "");
+      setWantedSearchCron(config.wanted_search_cron || "");
+      setMaxConcurrentDownloads(config.max_concurrent_downloads || 3);
+      setDownloadTimeout(config.download_timeout || 60);
     }
   }, [config]);
 
@@ -1143,6 +1161,15 @@ export default function GeneralSettings({
 
       // Analytics Settings
       analytics_enabled: analyticsEnabled,
+
+      // Scheduler Settings
+      scheduler_enabled: schedulerEnabled,
+      library_scan_frequency: libraryScanFreq,
+      wanted_search_frequency: wantedSearchFreq,
+      library_scan_cron: libraryScanCron,
+      wanted_search_cron: wantedSearchCron,
+      max_concurrent_downloads: parseInt(maxConcurrentDownloads),
+      download_timeout: parseInt(downloadTimeout),
     };
 
     onSave(newConfig);
@@ -1339,6 +1366,256 @@ export default function GeneralSettings({
                       <MenuItem value="monthly">Monthly</MenuItem>
                     </Select>
                   </FormControl>
+                </Grid>
+              </>
+            )}
+          </Grid>
+        </CardContent>
+      </Card>
+
+      {/* Logging Configuration */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom color="primary">
+            Logging
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <InputLabel>Log Level</InputLabel>
+                <Select
+                  value={logLevel}
+                  label="Log Level"
+                  onChange={(e) => setLogLevel(e.target.value)}
+                  disabled={!backendAvailable}
+                >
+                  <MenuItem value="error">Error</MenuItem>
+                  <MenuItem value="warn">Warning</MenuItem>
+                  <MenuItem value="info">Info</MenuItem>
+                  <MenuItem value="debug">Debug</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Log Filter"
+                value={logFilter}
+                onChange={(e) => setLogFilter(e.target.value)}
+                placeholder="Optional regex for filtering logs"
+                disabled={!backendAvailable}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormGroup row>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={logFilterRegex}
+                      onChange={(e) => setLogFilterRegex(e.target.checked)}
+                      disabled={!backendAvailable}
+                    />
+                  }
+                  label="Use Regex for Filter"
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={logFilterIgnoreCase}
+                      onChange={(e) => setLogFilterIgnoreCase(e.target.checked)}
+                      disabled={!backendAvailable}
+                    />
+                  }
+                  label="Ignore Case"
+                />
+              </FormGroup>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
+      {/* Backup Configuration */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom color="primary">
+            Backups
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={backupEnabled}
+                      onChange={(e) => setBackupEnabled(e.target.checked)}
+                      disabled={!backendAvailable}
+                    />
+                  }
+                  label="Enable Backups"
+                />
+              </FormGroup>
+            </Grid>
+            {backupEnabled && (
+              <>
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Frequency</InputLabel>
+                    <Select
+                      value={backupFrequency}
+                      label="Frequency"
+                      onChange={(e) => setBackupFrequency(e.target.value)}
+                      disabled={!backendAvailable}
+                    >
+                      <MenuItem value="daily">Daily</MenuItem>
+                      <MenuItem value="weekly">Weekly</MenuItem>
+                      <MenuItem value="monthly">Monthly</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Retention (number of backups)"
+                    type="number"
+                    value={backupRetention}
+                    onChange={(e) => setBackupRetention(e.target.value)}
+                    disabled={!backendAvailable}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Backup Location"
+                    value={backupLocation}
+                    onChange={(e) => setBackupLocation(e.target.value)}
+                    placeholder="/path/to/backup"
+                    disabled={!backendAvailable}
+                  />
+                </Grid>
+              </>
+            )}
+          </Grid>
+        </CardContent>
+      </Card>
+
+      {/* Scheduler Configuration */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom color="primary">
+            Scheduler
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={schedulerEnabled}
+                      onChange={(e) => setSchedulerEnabled(e.target.checked)}
+                      disabled={!backendAvailable}
+                    />
+                  }
+                  label="Enable Automatic Scheduling"
+                />
+              </FormGroup>
+            </Grid>
+            {schedulerEnabled && (
+              <>
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Library Scan Frequency</InputLabel>
+                    <Select
+                      value={libraryScanFreq}
+                      label="Library Scan Frequency"
+                      onChange={(e) => setLibraryScanFreq(e.target.value)}
+                      disabled={!backendAvailable}
+                    >
+                      <MenuItem value="never">Never</MenuItem>
+                      <MenuItem value="hourly">Every Hour</MenuItem>
+                      <MenuItem value="daily">Daily</MenuItem>
+                      <MenuItem value="weekly">Weekly</MenuItem>
+                      <MenuItem value="monthly">Monthly</MenuItem>
+                      <MenuItem value="custom">Custom Cron</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Wanted Search Frequency</InputLabel>
+                    <Select
+                      value={wantedSearchFreq}
+                      label="Wanted Search Frequency"
+                      onChange={(e) => setWantedSearchFreq(e.target.value)}
+                      disabled={!backendAvailable}
+                    >
+                      <MenuItem value="never">Never</MenuItem>
+                      <MenuItem value="15min">Every 15 Minutes</MenuItem>
+                      <MenuItem value="30min">Every 30 Minutes</MenuItem>
+                      <MenuItem value="hourly">Every Hour</MenuItem>
+                      <MenuItem value="daily">Daily</MenuItem>
+                      <MenuItem value="custom">Custom Cron</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                {(libraryScanFreq === "custom" || wantedSearchFreq === "custom") && (
+                  <Grid item xs={12}>
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      Cron expressions follow standard format: minute hour day month
+                      weekday
+                      <br />
+                      Examples: "0 2 * * *" (daily at 2 AM), "*/15 * * * *" (every 15
+                      minutes)
+                    </Alert>
+
+                    {libraryScanFreq === "custom" && (
+                      <TextField
+                        fullWidth
+                        label="Library Scan Cron Expression"
+                        value={libraryScanCron}
+                        onChange={(e) => setLibraryScanCron(e.target.value)}
+                        placeholder="0 2 * * *"
+                        sx={{ mb: 2 }}
+                        disabled={!backendAvailable}
+                      />
+                    )}
+
+                    {wantedSearchFreq === "custom" && (
+                      <TextField
+                        fullWidth
+                        label="Wanted Search Cron Expression"
+                        value={wantedSearchCron}
+                        onChange={(e) => setWantedSearchCron(e.target.value)}
+                        placeholder="*/30 * * * *"
+                        disabled={!backendAvailable}
+                      />
+                    )}
+                  </Grid>
+                )}
+
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Max Concurrent Downloads"
+                    type="number"
+                    value={maxConcurrentDownloads}
+                    onChange={(e) => setMaxConcurrentDownloads(e.target.value)}
+                    inputProps={{ min: 1, max: 10 }}
+                    helperText="Maximum number of simultaneous subtitle downloads"
+                    disabled={!backendAvailable}
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Download Timeout (seconds)"
+                    type="number"
+                    value={downloadTimeout}
+                    onChange={(e) => setDownloadTimeout(e.target.value)}
+                    inputProps={{ min: 10, max: 300 }}
+                    helperText="Timeout for individual subtitle downloads"
+                    disabled={!backendAvailable}
+                  />
                 </Grid>
               </>
             )}
@@ -2006,9 +2283,9 @@ export default function AuthSettings({
                     type="number"
                     value={passwordExpiry}
                     onChange={(e) => setPasswordExpiry(e.target.value)}
-                    helperText="Set to 0 for no expiry"
+                    placeholder="Set to 0 for no expiry"
                     disabled={!backendAvailable}
-                    sx={{ mt: 1 }}
+                    sx={{ mb: 2 }}
                   />
                 </Box>
               )}
@@ -2047,7 +2324,7 @@ export default function AuthSettings({
                   onChange={(e) => setApiKeyExpiry(e.target.value)}
                   helperText="Set to 0 for no expiry"
                   disabled={!backendAvailable}
-                  sx={{ mt: 2 }}
+                  sx={{ mb: 2 }}
                 />
               )}
             </CardContent>
@@ -2776,8 +3053,226 @@ export default function NotificationSettings({
           </Card>
         </Grid>
 
-        {/* Continue with Telegram, Push, and Webhook cards... */}
-        {/* Due to length limits, showing structure for remaining cards */}
+        {/* Telegram Notifications Card */}
+        <Grid item xs={12} md={6}>
+          <Card sx={{ height: "100%" }}>
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <TelegramIcon sx={{ mr: 1, color: "primary.main" }} />
+                <Typography variant="h6" color="primary">
+                  Telegram
+                </Typography>
+                <Box sx={{ flexGrow: 1 }} />
+                <Switch
+                  checked={telegramEnabled}
+                  onChange={(e) => setTelegramEnabled(e.target.checked)}
+                  disabled={!backendAvailable}
+                />
+              </Box>
+
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Send notifications to Telegram users or groups.
+              </Typography>
+
+              {telegramEnabled && (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <TextField
+                    fullWidth
+                    label="Bot Token"
+                    value={telegramToken}
+                    onChange={(e) => setTelegramToken(e.target.value)}
+                    placeholder="123456789:ABCdefGhIJKlmNoPQRstuVWXyz"
+                    size="small"
+                    disabled={!backendAvailable}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Chat ID"
+                    value={telegramChatId}
+                    onChange={(e) => setTelegramChatId(e.target.value)}
+                    placeholder="-1234567890"
+                    size="small"
+                    disabled={!backendAvailable}
+                  />
+                </Box>
+              )}
+            </CardContent>
+
+            {telegramEnabled && (
+              <CardActions>
+                <Button
+                  size="small"
+                  startIcon={<TestIcon />}
+                  onClick={() => testNotification("telegram")}
+                  disabled={!backendAvailable || !telegramToken || !telegramChatId}
+                >
+                  Test Telegram
+                </Button>
+                <Chip
+                  label={
+                    telegramToken && telegramChatId
+                      ? "Configured"
+                      : "Incomplete"
+                  }
+                  size="small"
+                  color={
+                    telegramToken && telegramChatId ? "success" : "warning"
+                  }
+                />
+              </CardActions>
+            )}
+          </Card>
+        </Grid>
+
+        {/* Push Notifications Card */}
+        <Grid item xs={12} md={6}>
+          <Card sx={{ height: "100%" }}>
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <PushIcon sx={{ mr: 1, color: "primary.main" }} />
+                <Typography variant="h6" color="primary">
+                  Push Notifications
+                </Typography>
+                <Box sx={{ flexGrow: 1 }} />
+                <Switch
+                  checked={pushEnabled}
+                  onChange={(e) => setPushEnabled(e.target.checked)}
+                  disabled={!backendAvailable}
+                />
+              </Box>
+
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Send notifications via Pushover service.
+              </Typography>
+
+              {pushEnabled && (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <TextField
+                    fullWidth
+                    label="User Key"
+                    value={pushoverUser}
+                    onChange={(e) => setPushoverUser(e.target.value)}
+                    placeholder="Your Pushover user key"
+                    size="small"
+                    disabled={!backendAvailable}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="API Token"
+                    value={pushoverToken}
+                    onChange={(e) => setPushoverToken(e.target.value)}
+                    placeholder="Your Pushover API token"
+                    size="small"
+                    disabled={!backendAvailable}
+                  />
+                </Box>
+              )}
+            </CardContent>
+
+            {pushEnabled && (
+              <CardActions>
+                <Button
+                  size="small"
+                  startIcon={<TestIcon />}
+                  onClick={() => testNotification("push")}
+                  disabled={!backendAvailable || !pushoverUser || !pushoverToken}
+                >
+                  Test Push
+                </Button>
+                <Chip
+                  label={
+                    pushoverUser && pushoverToken ? "Configured" : "Incomplete"
+                  }
+                  size="small"
+                  color={
+                    pushoverUser && pushoverToken ? "success" : "warning"
+                  }
+                />
+              </CardActions>
+            )}
+          </Card>
+        </Grid>
+
+        {/* Webhook Notifications Card */}
+        <Grid item xs={12} md={6}>
+          <Card sx={{ height: "100%" }}>
+            <CardContent>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <WebhookIcon sx={{ mr: 1, color: "primary.main" }} />
+                <Typography variant="h6" color="primary">
+                  Webhook
+                </Typography>
+                <Box sx={{ flexGrow: 1 }} />
+                <Switch
+                  checked={webhookEnabled}
+                  onChange={(e) => setWebhookEnabled(e.target.checked)}
+                  disabled={!backendAvailable}
+                />
+              </Box>
+
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Send notifications to a custom URL via HTTP requests.
+              </Typography>
+
+              {webhookEnabled && (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <TextField
+                    fullWidth
+                    label="Webhook URL"
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    placeholder="https://example.com/webhook"
+                    size="small"
+                    disabled={!backendAvailable}
+                  />
+
+                  <FormControl fullWidth>
+                    <InputLabel>Method</InputLabel>
+                    <Select
+                      value={webhookMethod}
+                      label="Method"
+                      onChange={(e) => setWebhookMethod(e.target.value)}
+                      disabled={!backendAvailable}
+                    >
+                      <MenuItem value="POST">POST</MenuItem>
+                      <MenuItem value="GET">GET</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <TextField
+                    fullWidth
+                    label="Headers (JSON)"
+                    value={webhookHeaders}
+                    onChange={(e) => setWebhookHeaders(e.target.value)}
+                    placeholder='{"Authorization": "Bearer token"}'
+                    size="small"
+                    disabled={!backendAvailable}
+                  />
+                </Box>
+              )}
+            </CardContent>
+
+            {webhookEnabled && (
+              <CardActions>
+                <Button
+                  size="small"
+                  startIcon={<TestIcon />}
+                  onClick={() => testNotification("webhook")}
+                  disabled={!backendAvailable || !webhookUrl}
+                >
+                  Test Webhook
+                </Button>
+                <Chip
+                  label={webhookUrl ? "Configured" : "Incomplete"}
+                  size="small"
+                  color={webhookUrl ? "success" : "warning"}
+                />
+              </CardActions>
+            )}
+          </Card>
+        </Grid>
       </Grid>
 
       {/* Save Button */}
@@ -2849,49 +3344,24 @@ export default function NotificationSettings({
 }
 ```
 
-## Time Estimates
-
-- Issue 8 (Authentication Cards): 12-16 hours
-- Issue 12 (Notification Cards): 10-14 hours
-
-**Total for Issues 8 & 12**: 22-30 hours
-
-## Next Preview
-
-The remaining issues (9-11, 13-16) will cover:
-
-- OAuth2 credential management API endpoints
-- Languages page creation (Issue 15)
-- Provider configuration fixes (Issues 17-18)
-- Scheduler settings integration (Issue 16)
-
 ---
 
-# Section 5: Final Components and Provider Fixes
+## Issues 13-18: Final Components and Provider Fixes
 
-This section covers the remaining issues 9-11, 13-16, and 17-18: OAuth2 API endpoints, Languages page, Scheduler settings, and provider configuration fixes.
+This section covers the remaining issues 13-18: OAuth2 API endpoints, Languages page, Scheduler settings, and provider configuration fixes.
 
-## Issues 9-11: OAuth2 Management API Endpoints
+## Issue 13: Create OAuth2 API Endpoints
 
-**Problem**: Frontend authentication cards need backend API endpoints for credential management.
+**Problem**: Frontend requires backend support for managing OAuth2 credentials (client ID and secret).
 
-**Solution**: Implement Go API endpoints for OAuth2 credential generation, regeneration, and reset functionality.
+**Solution**: Implement backend API endpoints for creating, regenerating, and resetting OAuth2 credentials.
 
 ### Implementation Steps
 
-1. **Create OAuth2 management endpoints in Go**:
+1. **Create OAuth2 API endpoints in web server**:
 
 ```go
 // file: pkg/webserver/oauth_management.go
-package webserver
-
-import (
-    "crypto/rand"
-    "encoding/hex"
-    "encoding/json"
-    "net/http"
-    "github.com/gorilla/mux"
-)
 
 // OAuthCredentials represents OAuth2 credentials
 type OAuthCredentials struct {
@@ -2935,7 +3405,7 @@ func (s *Server) HandleGitHubOAuthGenerate(w http.ResponseWriter, r *http.Reques
         ClientID:     "gh_" + clientID,
         ClientSecret: "ghs_" + clientSecret,
         RedirectURL:  r.Header.Get("Origin") + "/api/oauth/github/callback",
-    }
+    };
 
     // Store in configuration
     s.config.GitHubClientID = credentials.ClientID
@@ -2964,6 +3434,12 @@ func (s *Server) HandleGitHubOAuthRegenerate(w http.ResponseWriter, r *http.Requ
         return
     }
 
+    // Validate that client ID exists
+    if s.config.GitHubClientID == "" {
+        http.Error(w, "No existing GitHub OAuth configuration found", http.StatusBadRequest)
+        return
+    }
+
     // Generate new client secret only
     clientSecret, err := generateSecureToken(32)
     if err != nil {
@@ -2974,9 +3450,10 @@ func (s *Server) HandleGitHubOAuthRegenerate(w http.ResponseWriter, r *http.Requ
     credentials := OAuthCredentials{
         ClientID:     s.config.GitHubClientID, // Keep existing client ID
         ClientSecret: "ghs_" + clientSecret,
-    }
+        RedirectURL:  s.config.GitHubRedirectURL,
+    };
 
-    // Update configuration
+    // Update configuration with new secret only
     s.config.GitHubClientSecret = credentials.ClientSecret
 
     // Save configuration
@@ -3022,412 +3499,6 @@ func (s *Server) HandleGitHubOAuthReset(w http.ResponseWriter, r *http.Request) 
 
 // Helper method to check user permissions
 func (s *Server) hasPermission(r *http.Request, requiredRole string) bool {
-    user := s.getUserFromRequest(r)
-    if user == nil {
-        return false
-    }
-
-    // Check if user has required role
-    switch requiredRole {
-    case "admin":
-        return user.Role == "admin"
-    case "basic":
-        return user.Role == "admin" || user.Role == "basic"
-    default:
-        return true
-    }
-}
-
-// Helper method to get user from request context
-func (s *Server) getUserFromRequest(r *http.Request) *User {
-    // Implementation depends on your authentication middleware
-    // This is a placeholder - replace with actual user extraction logic
-    if userInterface := r.Context().Value("user"); userInterface != nil {
-        if user, ok := userInterface.(*User); ok {
-            return user
-        }
-    }
-    return nil
-}
-
-// Helper method to save configuration
-func (s *Server) saveConfig() error {
-    // Implementation depends on your configuration storage
-    // This is a placeholder - replace with actual config saving logic
-    return s.configManager.Save(s.config)
-}
-```
-
-2. **Add routes to router setup**:
-
-```go
-// file: pkg/webserver/routes.go
-
-func (s *Server) setupRoutes() {
-    // ... existing routes ...
-
-    // OAuth management routes
-    s.router.HandleFunc("/api/oauth/github/generate", s.requireAuth(s.HandleGitHubOAuthGenerate)).Methods("POST")
-    s.router.HandleFunc("/api/oauth/github/regenerate", s.requireAuth(s.HandleGitHubOAuthRegenerate)).Methods("POST")
-    s.router.HandleFunc("/api/oauth/github/reset", s.requireAuth(s.HandleGitHubOAuthReset)).Methods("POST")
-
-    // ... rest of routes ...
-}
-```
-
----
-
-## Issue 15: Create Languages Page
-
-**Problem**: Missing global language settings page like Bazarr has for subtitle downloads.
-
-**Solution**: Create a dedicated Languages page for global language preferences and profiles.
-
-### Implementation Steps
-
-1. **Create LanguagesSettings.jsx component**:
-
-```jsx
-// file: webui/src/components/LanguagesSettings.jsx
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardActions,
-  Chip,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Switch,
-  TextField,
-  Typography,
-  Alert,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-  Autocomplete,
-} from "@mui/material";
-import {
-  Language as LanguageIcon,
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  DragIndicator as DragIcon,
-} from "@mui/icons-material";
-import { useEffect, useState } from "react";
-
-/**
- * LanguagesSettings component for managing global language preferences
- * and language profiles similar to Bazarr
- */
-export default function LanguagesSettings({
-  config,
-  onSave,
-  backendAvailable = true,
-}) {
-  // Global language settings
-  const [defaultLanguages, setDefaultLanguages] = useState([]);
-  const [fallbackLanguage, setFallbackLanguage] = useState("en");
-  const [enableSubtitleLanguageDetection, setEnableSubtitleLanguageDetection] =
-    useState(true);
-  const [enableAlternativeLanguages, setEnableAlternativeLanguages] =
-    useState(false);
-
-  // Language profiles
-  const [languageProfiles, setLanguageProfiles] = useState([]);
-  const [profileDialog, setProfileDialog] = useState({
-    open: false,
-    profile: null,
-    isEditing: false,
-  });
-
-  // Available languages (ISO 639-1 codes with names)
-  const availableLanguages = [
-    { code: "en", name: "English" },
-    { code: "es", name: "Spanish" },
-    { code: "fr", name: "French" },
-    { code: "de", name: "German" },
-    { code: "it", name: "Italian" },
-    { code: "pt", name: "Portuguese" },
-    { code: "ru", name: "Russian" },
-    { code: "ja", name: "Japanese" },
-    { code: "ko", name: "Korean" },
-    { code: "zh", name: "Chinese" },
-    { code: "ar", name: "Arabic" },
-    { code: "hi", name: "Hindi" },
-    { code: "th", name: "Thai" },
-    { code: "vi", name: "Vietnamese" },
-    { code: "tr", name: "Turkish" },
-    { code: "pl", name: "Polish" },
-    { code: "nl", name: "Dutch" },
-    { code: "sv", name: "Swedish" },
-    { code: "da", name: "Danish" },
-    { code: "no", name: "Norwegian" },
-    { code: "fi", name: "Finnish" },
-    { code: "el", name: "Greek" },
-    { code: "he", name: "Hebrew" },
-    { code: "cs", name: "Czech" },
-    { code: "hu", name: "Hungarian" },
-    { code: "ro", name: "Romanian" },
-    { code: "bg", name: "Bulgarian" },
-    { code: "hr", name: "Croatian" },
-    { code: "sk", name: "Slovak" },
-    { code: "sl", name: "Slovenian" },
-    { code: "et", name: "Estonian" },
-    { code: "lv", name: "Latvian" },
-    { code: "lt", name: "Lithuanian" },
-  ];
-
-  useEffect(() => {
-    if (config) {
-      setDefaultLanguages(config.default_languages || ["en"]);
-      setFallbackLanguage(config.fallback_language || "en");
-      setEnableSubtitleLanguageDetection(
-        config.enable_language_detection !== false,
-      );
-      setEnableAlternativeLanguages(
-        config.enable_alternative_languages || false,
-      );
-      setLanguageProfiles(config.language_profiles || []);
-    }
-  }, [config]);
-
-  const handleSave = () => {
-    const newConfig = {
-      default_languages: defaultLanguages,
-      fallback_language: fallbackLanguage,
-      enable_language_detection: enableSubtitleLanguageDetection,
-      enable_alternative_languages: enableAlternativeLanguages,
-      language_profiles: languageProfiles,
-    };
-
-    onSave(newConfig);
-  };
-
-  const handleAddProfile = () => {
-    setProfileDialog({
-      open: true,
-      profile: {
-        id: Date.now(),
-        name: "",
-        languages: [],
-        description: "",
-        enabled: true,
-      },
-      isEditing: false,
-    });
-  };
-
-  const handleEditProfile = (profile) => {
-    setProfileDialog({
-      open: true,
-      profile: { ...profile },
-      isEditing: true,
-    });
-  };
-
-  const handleSaveProfile = () => {
-    const { profile, isEditing } = profileDialog;
-
-    if (isEditing) {
-      setLanguageProfiles((prev) =>
-        prev.map((p) => (p.id === profile.id ? profile : p)),
-      );
-    } else {
-      setLanguageProfiles((prev) => [...prev, profile]);
-    }
-
-    setProfileDialog({ open: false, profile: null, isEditing: false });
-  };
-
-  const handleDeleteProfile = (profileId) => {
-    if (
-      window.confirm("Are you sure you want to delete this language profile?")
-    ) {
-      setLanguageProfiles((prev) => prev.filter((p) => p.id !== profileId));
-    }
-  };
-
-  const getLanguageName = (code) => {
-    const lang = availableLanguages.find((l) => l.code === code);
-    return lang ? lang.name : code;
-  };
-
-  return (
-    <Box sx={{ maxWidth: 1000 }}>
-      <Typography variant="h6" gutterBottom>
-        Languages Settings
-      </Typography>
-
-      {!backendAvailable && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          Backend service is not available. Language settings cannot be
-          modified.
-        </Alert>
-      )}
-
-      <Grid container spacing={3}>
-        {/* Global Language Settings */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography
-                variant="h6"
-                gutterBottom
-                color="primary"
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <LanguageIcon sx={{ mr: 1 }} />
-                Global Settings
-              </Typography>
-
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <Autocomplete
-                  multiple
-                  options={availableLanguages}
-                  getOptionLabel={(option) => `${option.name} (${option.code})`}
-                  value={availableLanguages.filter((lang) =>
-                    defaultLanguages.includes(lang.code),
-                  )}
-                  onChange={(event, newValue) => {
-                    setDefaultLanguages(newValue.map((v) => v.code));
-                  }}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => (
-                      <Chip
-                        variant="outlined"
-                        label={`${option.name} (${option.code})`}
-                        {...getTagProps({ index })}
-                        key={option.code}
-                      />
-                    ))
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Default Languages"
-                      placeholder="Select languages"
-                      helperText="Languages to search for subtitles in order of preference"
-                    />
-                  )}
-                  disabled={!backendAvailable}
-                />
-
-                <FormControl fullWidth>
-                  <InputLabel>Fallback Language</InputLabel>
-                  <Select
-                    value={fallbackLanguage}
-                    label="Fallback Language"
-                    onChange={(e) => setFallbackLanguage(e.target.value)}
-                    disabled={!backendAvailable}
-                  >
-                    {availableLanguages.map((lang) => (
-                      <MenuItem key={lang.code} value={lang.code}>
-                        {lang.name} ({lang.code})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <Box>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={enableSubtitleLanguageDetection}
-                        onChange={(e) =>
-                          setEnableSubtitleLanguageDetection(e.target.checked)
-                        }
-                        disabled={!backendAvailable}
-                      />
-                    }
-                    label="Enable Subtitle Language Detection"
-                  />
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                  >
-                    Automatically detect the language of downloaded subtitles
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={enableAlternativeLanguages}
-                        onChange={(e) =>
-                          setEnableAlternativeLanguages(e.target.checked)
-                        }
-                        disabled={!backendAvailable}
-                      />
-                    }
-                    label="Enable Alternative Languages"
-                  />
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                  >
-                    Allow downloading subtitles in alternative languages when
-                    preferred ones are unavailable
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Language Profiles */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 2,
-                }}
-              >
-                <Typography variant="h6" color="primary">
-                  Language Profiles
-                </Typography>
-                <Button
-                  startIcon={<AddIcon />}
-                  onClick={handleAddProfile}
-                  disabled={!backendAvailable}
-                  size="small"
-                >
-                  Add Profile
-                </Button>
-              </Box>
-
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Create custom language combinations for different content types
-                or preferences.
-              </Typography>
-
-              {languageProfiles.length === 0 ? (
-                <Alert severity="info">
-                  No language profiles configured. Create a profile to customize
-                  language settings for specific content.
-                </Alert>
-              ) : (
-                <List dense>
-                  {languageProfiles.map((profile) => (
-                    <ListItem
-                      key={profile.id}
                       divider
                       sx={{
                         border: "1px solid",

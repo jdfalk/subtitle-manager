@@ -33,6 +33,13 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           // Split router separately
           'react-router': ['react-router-dom'],
+          // Create settings chunk for settings-related components
+          settings: [
+            './src/components/AuthSettings.jsx',
+            './src/components/DatabaseSettings.jsx',
+            './src/components/GeneralSettings.jsx',
+            './src/components/NotificationSettings.jsx',
+          ],
         },
       },
     },
@@ -43,8 +50,10 @@ export default defineConfig({
     // Configure esbuild to drop console statements in production
     esbuild: {
       drop: ['console', 'debugger'],
+      // Enable tree shaking
+      treeShaking: true,
     },
-    // Enable source maps for better debugging
+    // Enable source maps for better debugging (disabled for production)
     sourcemap: false,
     // Optimize CSS
     cssMinify: true,

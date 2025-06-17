@@ -26,15 +26,22 @@ import {
   Tabs,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
-import AuthSettings from './components/AuthSettings.jsx';
-import DatabaseSettings from './components/DatabaseSettings.jsx';
-import GeneralSettings from './components/GeneralSettings.jsx';
-import NotificationSettings from './components/NotificationSettings.jsx';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import LoadingComponent from './components/LoadingComponent.jsx';
 import ProviderCard from './components/ProviderCard.jsx';
 import ProviderConfigDialog from './components/ProviderConfigDialog.jsx';
-import UserManagement from './UserManagement.jsx';
 import { apiService } from './services/api.js';
+
+// Lazy load settings components for better performance
+const AuthSettings = lazy(() => import('./components/AuthSettings.jsx'));
+const DatabaseSettings = lazy(
+  () => import('./components/DatabaseSettings.jsx')
+);
+const GeneralSettings = lazy(() => import('./components/GeneralSettings.jsx'));
+const NotificationSettings = lazy(
+  () => import('./components/NotificationSettings.jsx')
+);
+const UserManagement = lazy(() => import('./UserManagement.jsx'));
 
 /**
  * Settings component with modern tabbed interface for managing all aspects
@@ -395,50 +402,76 @@ export default function Settings({ backendAvailable = true }) {
       label: 'General',
       icon: <GeneralIcon />,
       component: () => (
-        <GeneralSettings
-          config={_config}
-          onSave={saveSettings}
-          backendAvailable={backendAvailable}
-        />
+        <Suspense
+          fallback={<LoadingComponent message="Loading General Settings..." />}
+        >
+          <GeneralSettings
+            config={_config}
+            onSave={saveSettings}
+            backendAvailable={backendAvailable}
+          />
+        </Suspense>
       ),
     },
     {
       label: 'Database',
       icon: <DatabaseIcon />,
       component: () => (
-        <DatabaseSettings
-          config={_config}
-          onSave={saveSettings}
-          backendAvailable={backendAvailable}
-        />
+        <Suspense
+          fallback={<LoadingComponent message="Loading Database Settings..." />}
+        >
+          <DatabaseSettings
+            config={_config}
+            onSave={saveSettings}
+            backendAvailable={backendAvailable}
+          />
+        </Suspense>
       ),
     },
     {
       label: 'Authentication',
       icon: <AuthIcon />,
       component: () => (
-        <AuthSettings
-          config={_config}
-          onSave={saveSettings}
-          backendAvailable={backendAvailable}
-        />
+        <Suspense
+          fallback={
+            <LoadingComponent message="Loading Authentication Settings..." />
+          }
+        >
+          <AuthSettings
+            config={_config}
+            onSave={saveSettings}
+            backendAvailable={backendAvailable}
+          />
+        </Suspense>
       ),
     },
     {
       label: 'Notifications',
       icon: <NotificationIcon />,
       component: () => (
-        <NotificationSettings
-          config={_config}
-          onSave={saveSettings}
-          backendAvailable={backendAvailable}
-        />
+        <Suspense
+          fallback={
+            <LoadingComponent message="Loading Notification Settings..." />
+          }
+        >
+          <NotificationSettings
+            config={_config}
+            onSave={saveSettings}
+            backendAvailable={backendAvailable}
+          />
+        </Suspense>
       ),
     },
     {
       label: 'Users',
       icon: <UsersIcon />,
-      component: () => <UserManagement backendAvailable={backendAvailable} />,
+      component: () => (
+        <Suspense
+          fallback={<LoadingComponent message="Loading User Management..." />}
+        >
+          <UserManagement backendAvailable={backendAvailable} />
+        </Suspense>
+      ),
     },
   ];
 
