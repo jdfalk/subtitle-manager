@@ -85,7 +85,15 @@ export default function DatabaseSettings({
     try {
       const response = await fetch('/api/database/backup', { method: 'POST' });
       if (response.ok) {
-        alert('Database backup completed successfully');
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'backup.tar.gz';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
         setBackupDialog(false);
         loadDatabaseInfo();
       }
