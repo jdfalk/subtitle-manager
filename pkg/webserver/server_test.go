@@ -52,6 +52,33 @@ func TestHandler(t *testing.T) {
 	}
 }
 
+// TestSPAIndexFallback verifies that unknown paths return index.html so client
+// side routing works on refresh.
+func TestSPAIndexFallback(t *testing.T) {
+	db, err := database.Open(":memory:")
+	testutil.MustNoError(t, "open db", err)
+	defer db.Close()
+
+	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
+	key, err := auth.GenerateAPIKey(db, 1)
+	testutil.MustNoError(t, "generate key", err)
+
+	h, err := Handler(db)
+	testutil.MustNoError(t, "create handler", err)
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest("GET", srv.URL+"/settings", nil)
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("http get: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("unexpected status: %d", resp.StatusCode)
+	}
+}
+
 // TestBaseURL verifies that the handler respects the configured base URL.
 func TestBaseURL(t *testing.T) {
 	db, err := database.Open(":memory:")
