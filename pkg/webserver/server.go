@@ -138,6 +138,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/oauth/github/login", githubLoginHandler(db))
 	mux.Handle(prefix+"/api/oauth/github/callback", githubCallbackHandler(db))
 	mux.Handle(prefix+"/api/oauth/github/generate", authMiddleware(db, "admin", githubOAuthGenerateHandler()))
+	mux.Handle(prefix+"/api/oauth/github/reset", authMiddleware(db, "admin", githubOAuthResetHandler()))
 	mux.Handle(prefix+"/api/config", authMiddleware(db, "basic", configHandler()))
 	// Add Bazarr endpoints for Settings UI
 	mux.Handle(prefix+"/api/bazarr/config", authMiddleware(db, "basic", bazarrConfigHandler()))

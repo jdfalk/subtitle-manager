@@ -65,3 +65,30 @@ func githubOAuthGenerateHandler() http.Handler {
 		_ = json.NewEncoder(w).Encode(creds)
 	})
 }
+
+// githubOAuthResetHandler resets GitHub OAuth configuration values.
+//
+// POST /api/oauth/github/reset
+func githubOAuthResetHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Reset configuration fields
+		viper.Set("github_client_id", "")
+		viper.Set("github_client_secret", "")
+		viper.Set("github_redirect_url", "")
+		viper.Set("github_oauth_enabled", false)
+
+		if cfg := viper.ConfigFileUsed(); cfg != "" {
+			if err := viper.WriteConfig(); err != nil {
+				http.Error(w, "Failed to save configuration", http.StatusInternalServerError)
+				return
+			}
+		}
+
+		w.WriteHeader(http.StatusOK)
+	})
+}
