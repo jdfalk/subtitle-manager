@@ -588,7 +588,7 @@ export default function GeneralSettings({
                     label="Max Concurrent Downloads"
                     type="number"
                     value={maxConcurrentDownloads}
-                    onChange={e => setMaxConcurrentDownloads(e.target.value)}
+                    onChange={e => setMaxConcurrentDownloads(Number(e.target.value))}
                     inputProps={{ min: 1, max: 10 }}
                     helperText="Maximum number of simultaneous subtitle downloads"
                     disabled={!backendAvailable}
