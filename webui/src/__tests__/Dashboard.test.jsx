@@ -1,6 +1,12 @@
 // file: webui/src/__tests__/Dashboard.test.jsx
 import '@testing-library/jest-dom/vitest';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import Dashboard from '../Dashboard.jsx';
 
@@ -20,20 +26,22 @@ describe('Dashboard component', () => {
     const { apiService } = await import('../services/api.js');
 
     // Setup default mocks for API calls that happen on component mount
-    apiService.get.mockImplementation((url) => {
+    apiService.get.mockImplementation(url => {
       if (url === '/api/scan/status') {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ running: false, completed: 0, files: [] }),
+          json: () =>
+            Promise.resolve({ running: false, completed: 0, files: [] }),
         });
       }
       if (url === '/api/providers') {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve([
-            { id: 'opensubtitles', name: 'OpenSubtitles', enabled: true },
-            { id: 'embedded', name: 'Embedded', enabled: true },
-          ]),
+          json: () =>
+            Promise.resolve([
+              { id: 'opensubtitles', name: 'OpenSubtitles', enabled: true },
+              { id: 'embedded', name: 'Embedded', enabled: true },
+            ]),
         });
       }
       return Promise.resolve({
@@ -55,7 +63,9 @@ describe('Dashboard component', () => {
 
     // Wait for component to load
     await waitFor(() => {
-      expect(screen.getByPlaceholderText('Enter directory to scan')).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Enter directory to scan')
+      ).toBeInTheDocument();
     });
 
     await act(async () => {
@@ -85,7 +95,10 @@ describe('Dashboard component', () => {
     const { apiService } = await import('../services/api.js');
 
     await waitFor(() => {
-      expect(apiService.post).toHaveBeenCalledWith('/api/scan', expect.any(Object));
+      expect(apiService.post).toHaveBeenCalledWith(
+        '/api/scan',
+        expect.any(Object)
+      );
     });
   });
 });

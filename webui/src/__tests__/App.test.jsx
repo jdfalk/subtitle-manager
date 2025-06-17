@@ -1,6 +1,12 @@
 // file: webui/src/__tests__/App.test.jsx
 import '@testing-library/jest-dom/vitest';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import App from '../App.jsx';
 import { apiService } from '../services/api.js';
@@ -32,14 +38,14 @@ describe('App component', () => {
   test('shows login form when unauthenticated', async () => {
     // Mock backend available but not authenticated
     apiService.checkBackendHealth.mockResolvedValue(true);
-    apiService.get.mockImplementation((url) => {
+    apiService.get.mockImplementation(url => {
       if (url === '/api/config') {
         return Promise.resolve({ ok: false });
       }
       if (url === '/api/setup/status') {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ needed: false })
+          json: () => Promise.resolve({ needed: false }),
         });
       }
       return Promise.resolve({ ok: false });
@@ -57,14 +63,14 @@ describe('App component', () => {
   test('successful login renders dashboard', async () => {
     // Mock backend available but not authenticated initially
     apiService.checkBackendHealth.mockResolvedValue(true);
-    apiService.get.mockImplementation((url) => {
+    apiService.get.mockImplementation(url => {
       if (url === '/api/config') {
         return Promise.resolve({ ok: false });
       }
       if (url === '/api/setup/status') {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ needed: false })
+          json: () => Promise.resolve({ needed: false }),
         });
       }
       return Promise.resolve({ ok: false });
@@ -94,14 +100,14 @@ describe('App component', () => {
   test('pins sidebar and persists state', async () => {
     // Mock backend available and authenticated
     apiService.checkBackendHealth.mockResolvedValue(true);
-    apiService.get.mockImplementation((url) => {
+    apiService.get.mockImplementation(url => {
       if (url === '/api/config') {
         return Promise.resolve({ ok: true });
       }
       if (url === '/api/setup/status') {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ needed: false })
+          json: () => Promise.resolve({ needed: false }),
         });
       }
       return Promise.resolve({ ok: true });

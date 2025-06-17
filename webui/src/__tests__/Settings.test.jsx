@@ -1,6 +1,12 @@
 // file: webui/src/__tests__/Settings.test.jsx
 import '@testing-library/jest-dom/vitest';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import Settings from '../Settings.jsx';
 
@@ -20,7 +26,7 @@ describe('Settings component', () => {
     const { apiService } = await import('../services/api.js');
 
     // Setup default mocks
-    apiService.get.mockImplementation((url) => {
+    apiService.get.mockImplementation(url => {
       if (url === '/api/config') {
         return Promise.resolve({
           ok: true,
@@ -43,7 +49,8 @@ describe('Settings component', () => {
       ok: true,
       json: () => Promise.resolve({}),
     });
-  });  test('loads settings and renders tabs', async () => {
+  });
+  test('loads settings and renders tabs', async () => {
     await act(async () => {
       render(<Settings />);
     });
