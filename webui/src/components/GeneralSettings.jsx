@@ -601,7 +601,7 @@ export default function GeneralSettings({
                     label="Download Timeout (seconds)"
                     type="number"
                     value={downloadTimeout}
-                    onChange={e => setDownloadTimeout(e.target.value)}
+                    onChange={e => setDownloadTimeout(Number(e.target.value))}
                     inputProps={{ min: 10, max: 300 }}
                     helperText="Timeout for individual subtitle downloads"
                     disabled={!backendAvailable}
