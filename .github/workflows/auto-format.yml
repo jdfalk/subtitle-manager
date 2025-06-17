@@ -57,7 +57,7 @@ jobs:
         if: steps.check_commit.outputs.skip == 'false'
         run: |
           cd webui
-          npm ci
+          npm ci --legacy-peer-deps
 
       - name: Format Go code
         if: steps.check_commit.outputs.skip == 'false'
