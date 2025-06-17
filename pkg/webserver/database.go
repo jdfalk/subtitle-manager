@@ -13,6 +13,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/backups"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
 // dirSize returns the total size of files under path.
@@ -153,7 +154,7 @@ func databaseBackupHandler() http.Handler {
 		}
 		if backend == "sqlite" {
 			if err := add(path, filepath.Base(path)); err != nil {
-				log.Printf("Failed to add file to backup: %v, error: %v", path, err)
+				logging.GetLogger("webserver").Errorf("Failed to add file to backup: %v, error: %v", path, err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}

@@ -1557,14 +1557,15 @@ export default function GeneralSettings({
                     </Select>
                   </FormControl>
                 </Grid>
-                {(libraryScanFreq === "custom" || wantedSearchFreq === "custom") && (
+                {(libraryScanFreq === "custom" ||
+                  wantedSearchFreq === "custom") && (
                   <Grid item xs={12}>
                     <Alert severity="info" sx={{ mb: 2 }}>
-                      Cron expressions follow standard format: minute hour day month
-                      weekday
+                      Cron expressions follow standard format: minute hour day
+                      month weekday
                       <br />
-                      Examples: "0 2 * * *" (daily at 2 AM), "*/15 * * * *" (every 15
-                      minutes)
+                      Examples: "0 2 * * *" (daily at 2 AM), "*/15 * * * *"
+                      (every 15 minutes)
                     </Alert>
 
                     {libraryScanFreq === "custom" && (
@@ -3105,7 +3106,9 @@ export default function NotificationSettings({
                   size="small"
                   startIcon={<TestIcon />}
                   onClick={() => testNotification("telegram")}
-                  disabled={!backendAvailable || !telegramToken || !telegramChatId}
+                  disabled={
+                    !backendAvailable || !telegramToken || !telegramChatId
+                  }
                 >
                   Test Telegram
                 </Button>
@@ -3177,7 +3180,9 @@ export default function NotificationSettings({
                   size="small"
                   startIcon={<TestIcon />}
                   onClick={() => testNotification("push")}
-                  disabled={!backendAvailable || !pushoverUser || !pushoverToken}
+                  disabled={
+                    !backendAvailable || !pushoverUser || !pushoverToken
+                  }
                 >
                   Test Push
                 </Button>
@@ -3186,9 +3191,7 @@ export default function NotificationSettings({
                     pushoverUser && pushoverToken ? "Configured" : "Incomplete"
                   }
                   size="small"
-                  color={
-                    pushoverUser && pushoverToken ? "success" : "warning"
-                  }
+                  color={pushoverUser && pushoverToken ? "success" : "warning"}
                 />
               </CardActions>
             )}

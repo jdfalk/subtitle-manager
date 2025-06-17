@@ -11,6 +11,7 @@ Fixed multiple Server-Side Request Forgery (SSRF) and path traversal vulnerabili
 **Problem**: User-provided `path` parameter was passed directly to `os.Stat()` and `os.ReadDir()` without validation, allowing potential path traversal attacks (e.g., `../../../etc/passwd`).
 
 **Fix**:
+
 - Added `validateAndSanitizePath()` function that:
   - Cleans paths using `filepath.Clean()`
   - Validates against allowed base directories
@@ -24,6 +25,7 @@ Fixed multiple Server-Side Request Forgery (SSRF) and path traversal vulnerabili
 **Problem**: User-provided task names were not validated before being used in the task system.
 
 **Fix**:
+
 - Added `isValidTaskName()` function that:
   - Validates alphanumeric characters, hyphens, underscores, and dots only
   - Limits length to 50 characters
@@ -36,6 +38,7 @@ Fixed multiple Server-Side Request Forgery (SSRF) and path traversal vulnerabili
 **Problem**: User-provided webhook URLs (Discord, Email, etc.) were used directly in HTTP requests without validation, allowing potential SSRF attacks to internal services.
 
 **Fix**:
+
 - Added `validateWebhookURL()` function that:
   - Requires HTTPS for all webhooks
   - Blocks private IP ranges and localhost
@@ -49,6 +52,7 @@ Fixed multiple Server-Side Request Forgery (SSRF) and path traversal vulnerabili
 **Problem**: Similar to notifications, webhook dispatcher accepted arbitrary URLs without validation.
 
 **Fix**:
+
 - Applied same `validateWebhookURL()` validation
 - Updated `New()` function to return error for invalid URLs
 - Ensures all webhook endpoints are validated before use
@@ -60,6 +64,7 @@ Fixed multiple Server-Side Request Forgery (SSRF) and path traversal vulnerabili
 **Problem**: Telegram bot tokens weren't validated for proper format.
 
 **Fix**:
+
 - Added `isValidTelegramToken()` function that:
   - Validates token format (bot_id:auth_token)
   - Checks for dangerous characters
@@ -68,24 +73,29 @@ Fixed multiple Server-Side Request Forgery (SSRF) and path traversal vulnerabili
 ## Security Improvements Implemented
 
 ### URL Validation Strategy
+
 - **HTTPS Only**: All webhook URLs must use HTTPS
 - **Domain Allowlist**: Only known webhook domains are permitted
 - **Private IP Blocking**: Prevents requests to internal networks
 - **Format Validation**: Proper URL parsing and validation
 
 ### Path Security Strategy
+
 - **Directory Allowlist**: Only specific directories are accessible
 - **Path Cleaning**: Uses `filepath.Clean()` to normalize paths
 - **Traversal Prevention**: Multiple layers of `..` detection and blocking
 - **Absolute Path Validation**: Converts to absolute paths for consistent checking
 
 ### Input Validation Strategy
+
 - **Regex Patterns**: Strict patterns for allowed characters
 - **Length Limits**: Prevents excessively long inputs
 - **Character Filtering**: Blocks dangerous characters and patterns
 
 ## Allowed Directories
+
 The following directories are allowed for browsing:
+
 - `/movies`
 - `/tv`
 - `/downloads`
@@ -95,7 +105,9 @@ The following directories are allowed for browsing:
 - `/var/lib/subtitle-manager`
 
 ## Allowed Webhook Domains
+
 The following domains are permitted for webhooks:
+
 - `discord.com`
 - `discordapp.com`
 - `api.telegram.org`
@@ -105,6 +117,7 @@ The following domains are permitted for webhooks:
 ## Testing
 
 All security fixes have been tested:
+
 - ✅ All existing tests pass
 - ✅ Code compiles without errors
 - ✅ Backward compatibility maintained
@@ -122,6 +135,7 @@ All security fixes have been tested:
 ## Impact Assessment
 
 These fixes prevent:
+
 - **Path Traversal Attacks**: Can't access files outside intended directories
 - **SSRF Attacks**: Can't make requests to internal services or unintended hosts
 - **Code Injection**: Task names and other inputs are properly validated
