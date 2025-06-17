@@ -62,16 +62,22 @@ type event struct {
 
 // handle processes a webhook event by fetching a subtitle for the provided file.
 func handle(w http.ResponseWriter, r *http.Request, ev event) {
-	if ev.Path == "" || ev.Lang == "" || ev.Provider == "" {
+	if ev.Path == "" || ev.Lang == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	p, err := providers.Get(ev.Provider, "")
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
+	var p providers.Provider
+	var name string
+	var err error
+	if ev.Provider != "" {
+		p, err = providers.Get(ev.Provider, "")
+		name = ev.Provider
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 	}
-	if err := scanner.ProcessFile(r.Context(), ev.Path, ev.Lang, ev.Provider, p, true, nil); err != nil {
+	if err := scanner.ProcessFile(r.Context(), ev.Path, ev.Lang, name, p, true, nil); err != nil {
 		logging.GetLogger("webhook").Warnf("process %s: %v", ev.Path, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

@@ -54,7 +54,13 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 			return nil
 		}
 	}
-	data, err := p.Fetch(ctx, path, lang)
+	var data []byte
+	var err error
+	if p != nil {
+		data, err = p.Fetch(ctx, path, lang)
+	} else {
+		data, providerName, err = providers.FetchFromAll(ctx, path, lang, "")
+	}
 	if err != nil {
 		logger.Warnf("fetch %s: %v", path, err)
 		return err

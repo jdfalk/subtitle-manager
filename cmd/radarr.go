@@ -9,28 +9,22 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
-	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 )
 
 var radarrCmd = &cobra.Command{
-	Use:   "radarr [provider] [lang]",
+	Use:   "radarr [lang]",
 	Short: "Handle Radarr download event",
-	Args:  cobra.MinimumNArgs(2),
+	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("radarr")
-		providerName, lang := args[0], args[1]
+		lang := args[0]
 		path := os.Getenv("RADARR_MOVIEFILE_PATH")
 		if p := viper.GetString("path"); p != "" {
 			path = p
 		}
 		if path == "" {
 			return cmd.Usage()
-		}
-		key := viper.GetString("opensubtitles.api_key")
-		p, err := providers.Get(providerName, key)
-		if err != nil {
-			return err
 		}
 		ctx := context.Background()
 		logger.Infof("processing %s", path)
@@ -44,7 +38,7 @@ var radarrCmd = &cobra.Command{
 				logger.Warnf("db open: %v", err)
 			}
 		}
-		return scanner.ProcessFile(ctx, path, lang, providerName, p, true, store)
+		return scanner.ProcessFile(ctx, path, lang, "", nil, true, store)
 	},
 }
 

@@ -8,7 +8,6 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
-	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 )
 
@@ -16,17 +15,12 @@ var upgrade bool
 
 // scanCmd scans a directory for video files and downloads subtitles.
 var scanCmd = &cobra.Command{
-	Use:   "scan [provider] [directory] [lang]",
+	Use:   "scan [directory] [lang]",
 	Short: "Scan directory and download subtitles",
-	Args:  cobra.ExactArgs(3),
+	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("scan")
-		name, dir, lang := args[0], args[1], args[2]
-		key := viper.GetString("opensubtitles.api_key")
-		p, err := providers.Get(name, key)
-		if err != nil {
-			return err
-		}
+		dir, lang := args[0], args[1]
 		logger.Infof("scanning %s", dir)
 		ctx := context.Background()
 		var store database.SubtitleStore
@@ -40,7 +34,7 @@ var scanCmd = &cobra.Command{
 			}
 		}
 		workers := viper.GetInt("scan_workers")
-		return scanner.ScanDirectory(ctx, dir, lang, name, p, upgrade, workers, store)
+		return scanner.ScanDirectory(ctx, dir, lang, "", nil, upgrade, workers, store)
 	},
 }
 

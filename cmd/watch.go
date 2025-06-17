@@ -4,28 +4,21 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
-	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/watcher"
 )
 
 var recursive bool
 
 var watchCmd = &cobra.Command{
-	Use:   "watch [provider] [directory] [lang]",
+	Use:   "watch [directory] [lang]",
 	Short: "Watch directory and auto-download subtitles",
-	Args:  cobra.ExactArgs(3),
+	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("watch")
-		name, dir, lang := args[0], args[1], args[2]
-		key := viper.GetString("opensubtitles.api_key")
-		p, err := providers.Get(name, key)
-		if err != nil {
-			return err
-		}
+		dir, lang := args[0], args[1]
 		logger.Infof("watching %s", dir)
 		ctx := context.Background()
 		var store database.SubtitleStore
@@ -40,9 +33,9 @@ var watchCmd = &cobra.Command{
 			}
 		}
 		if recursive {
-			return watcher.WatchDirectoryRecursive(ctx, dir, lang, name, p, store)
+			return watcher.WatchDirectoryRecursive(ctx, dir, lang, "", nil, store)
 		}
-		return watcher.WatchDirectory(ctx, dir, lang, name, p, store)
+		return watcher.WatchDirectory(ctx, dir, lang, "", nil, store)
 	},
 }
 

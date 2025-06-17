@@ -9,26 +9,20 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
-	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scheduler"
 )
 
 var interval time.Duration
 var scheduleSpec string
 
-// autoscanCmd periodically scans a directory for subtitles using a provider.
+// autoscanCmd periodically scans a directory for subtitles using all providers.
 var autoscanCmd = &cobra.Command{
-	Use:   "autoscan [provider] [directory] [lang]",
+	Use:   "autoscan [directory] [lang]",
 	Short: "Periodically scan directory and download subtitles",
-	Args:  cobra.ExactArgs(3),
+	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("autoscan")
-		name, dir, lang := args[0], args[1], args[2]
-		key := viper.GetString("opensubtitles.api_key")
-		p, err := providers.Get(name, key)
-		if err != nil {
-			return err
-		}
+		dir, lang := args[0], args[1]
 		ctx := context.Background()
 		var store database.SubtitleStore
 		if dbPath := viper.GetString("db_path"); dbPath != "" {
@@ -42,9 +36,9 @@ var autoscanCmd = &cobra.Command{
 		}
 		workers := viper.GetInt("scan_workers")
 		if scheduleSpec != "" {
-			return scheduler.ScheduleScanDirectoryCron(ctx, scheduleSpec, dir, lang, name, p, upgrade, workers, store)
+			return scheduler.ScheduleScanDirectoryCron(ctx, scheduleSpec, dir, lang, "", nil, upgrade, workers, store)
 		}
-		return scheduler.ScheduleScanDirectory(ctx, interval, dir, lang, name, p, upgrade, workers, store)
+		return scheduler.ScheduleScanDirectory(ctx, interval, dir, lang, "", nil, upgrade, workers, store)
 	},
 }
 
