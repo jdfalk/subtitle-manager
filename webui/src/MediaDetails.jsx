@@ -60,7 +60,12 @@ export default function MediaDetails() {
         {info.Title}
       </Typography>
       {info.Poster && info.Poster !== 'N/A' && (
-        <Box component="img" src={info.Poster} alt={info.Title} sx={{ maxWidth: 300, mb: 2 }} />
+        <Box
+          component="img"
+          src={info.Poster}
+          alt={info.Title}
+          sx={{ maxWidth: 300, mb: 2 }}
+        />
       )}
       <Typography variant="body1" paragraph>
         {info.Plot}

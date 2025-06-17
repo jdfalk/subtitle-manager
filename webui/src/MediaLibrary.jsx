@@ -481,14 +481,23 @@ export default function MediaLibrary({ backendAvailable = true }) {
         <Grid container spacing={3}>
           {items.map(item => {
             const info = usePoster(item.name);
-            const poster = info?.Poster && info.Poster !== 'N/A'
-              ? info.Poster
-              : 'https://via.placeholder.com/150x225?text=Poster';
+            const poster =
+              info?.Poster && info.Poster !== 'N/A'
+                ? info.Poster
+                : 'https://via.placeholder.com/150x225?text=Poster';
             return (
               <Grid item xs={12} md={6} key={item.path}>
-                <CardActionArea onClick={() => navigate(`/details?title=${encodeURIComponent(item.name)}`)}>
+                <CardActionArea
+                  onClick={() =>
+                    navigate(`/details?title=${encodeURIComponent(item.name)}`)
+                  }
+                >
                   <Card sx={{ display: 'flex' }}>
-                    <CardMedia component="img" image={poster} sx={{ width: 150 }} />
+                    <CardMedia
+                      component="img"
+                      image={poster}
+                      sx={{ width: 150 }}
+                    />
                     <CardContent>
                       <Typography variant="h6" gutterBottom>
                         {info?.Title || item.name}
@@ -499,7 +508,11 @@ export default function MediaLibrary({ backendAvailable = true }) {
                         </Typography>
                       )}
                       {info?.imdbRating && (
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mt: 1 }}
+                        >
                           IMDB: {info.imdbRating}
                         </Typography>
                       )}
@@ -516,14 +529,23 @@ export default function MediaLibrary({ backendAvailable = true }) {
         <Grid container spacing={3}>
           {items.map(item => {
             const info = usePoster(item.name);
-            const poster = info?.Poster && info.Poster !== 'N/A'
-              ? info.Poster
-              : 'https://via.placeholder.com/300x450?text=Poster';
+            const poster =
+              info?.Poster && info.Poster !== 'N/A'
+                ? info.Poster
+                : 'https://via.placeholder.com/300x450?text=Poster';
             return (
               <Grid item xs={6} md={3} key={item.path}>
-                <CardActionArea onClick={() => navigate(`/details?title=${encodeURIComponent(item.name)}`)}>
+                <CardActionArea
+                  onClick={() =>
+                    navigate(`/details?title=${encodeURIComponent(item.name)}`)
+                  }
+                >
                   <Card>
-                    <CardMedia component="img" image={poster} sx={{ height: 240 }} />
+                    <CardMedia
+                      component="img"
+                      image={poster}
+                      sx={{ height: 240 }}
+                    />
                     <CardContent>
                       <Typography variant="subtitle1" align="center" noWrap>
                         {info?.Title || item.name}
