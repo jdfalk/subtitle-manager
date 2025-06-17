@@ -18,4 +18,6 @@ var webCmd = &cobra.Command{
 func init() {
 	webCmd.Flags().StringVar(&addr, "addr", ":8080", "listen address")
 	rootCmd.AddCommand(webCmd)
+	v, _, _ := GetVersionInfo()
+	webserver.SetVersion(v)
 }

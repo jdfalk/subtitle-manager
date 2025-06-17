@@ -171,6 +171,9 @@ func initConfig() {
 	viper.SetDefault("integrations.bazarr.import", false)
 	viper.SetDefault("integrations.plex.enabled", false)
 	viper.SetDefault("integrations.notifications.enabled", false)
+	viper.SetDefault("auto_update", false)
+	viper.SetDefault("update_branch", "master")
+	viper.SetDefault("update_frequency", "daily")
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
