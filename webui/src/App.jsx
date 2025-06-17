@@ -892,7 +892,7 @@ function App() {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
             }),
-            marginLeft: drawerPinned ? '280px' : 0,
+            marginLeft: 0,
             backgroundColor: 'background.default',
             minHeight: '100vh',
           }}
