@@ -15,6 +15,8 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/translator/mocks"
 )
 
+// TestGoogleTranslate verifies that GoogleTranslate returns the translated text
+// provided by the injected Google client.
 func TestGoogleTranslate(t *testing.T) {
 	m := mocks.NewGoogleClient(t)
 	SetGoogleClientFactory(func(ctx context.Context, apiKey string) (GoogleClient, error) { return m, nil })
@@ -32,12 +34,16 @@ func TestGoogleTranslate(t *testing.T) {
 	}
 }
 
+// TestUnsupportedServiceError ensures the unsupported service error is not
+// empty.
 func TestUnsupportedServiceError(t *testing.T) {
 	if ErrUnsupportedService.Error() == "" {
 		t.Fatal("error string empty")
 	}
 }
 
+// TestTranslate validates that Translate delegates to the correct provider and
+// returns the expected translation.
 func TestTranslate(t *testing.T) {
 	m := mocks.NewGoogleClient(t)
 	SetGoogleClientFactory(func(ctx context.Context, apiKey string) (GoogleClient, error) { return m, nil })
@@ -55,6 +61,8 @@ func TestTranslate(t *testing.T) {
 	}
 }
 
+// TestGRPCTranslate confirms that GRPCTranslate communicates with the gRPC
+// server and returns the translated text.
 func TestGRPCTranslate(t *testing.T) {
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -78,6 +86,8 @@ func TestGRPCTranslate(t *testing.T) {
 	}
 }
 
+// TestTranslateGRPCProvider checks that the gRPC provider works when selected
+// via Translate.
 func TestTranslateGRPCProvider(t *testing.T) {
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -101,6 +111,8 @@ func TestTranslateGRPCProvider(t *testing.T) {
 	}
 }
 
+// TestGPTTranslate verifies that GPTTranslate uses the injected OpenAI client
+// to obtain a translation.
 func TestGPTTranslate(t *testing.T) {
 	m := mocks.NewOpenAIClient(t)
 	SetOpenAIClientFactory(func(apiKey string) OpenAIClient { return m })
@@ -119,6 +131,8 @@ func TestGPTTranslate(t *testing.T) {
 	}
 }
 
+// TestTranslateGPTProvider ensures the GPT provider works when selected via
+// Translate.
 func TestTranslateGPTProvider(t *testing.T) {
 	m := mocks.NewOpenAIClient(t)
 	SetOpenAIClientFactory(func(apiKey string) OpenAIClient { return m })

@@ -27,7 +27,8 @@ func SetGoogleAPIURL(u string) {
 	googleAPIURL = u
 }
 
-// SetOpenAIModel overrides the default ChatGPT model.
+// SetOpenAIModel overrides the default ChatGPT model. The parameter m is the
+// model identifier to use for future requests.
 func SetOpenAIModel(m string) {
 	openAIModel = m
 }
@@ -84,13 +85,15 @@ func ResetGoogleClientFactory() {
 	newGoogleClient = defaultGoogleClient
 }
 
-// SetOpenAIClientFactory replaces the OpenAI client constructor.
-// Tests can use this to inject a mock implementation.
+// SetOpenAIClientFactory replaces the OpenAI client constructor. The fn
+// parameter should return an implementation that satisfies OpenAIClient and will
+// be used by GPTTranslate. Tests can use this to inject a mock client.
 func SetOpenAIClientFactory(fn func(apiKey string) OpenAIClient) {
 	newOpenAIClient = fn
 }
 
-// ResetOpenAIClientFactory restores the default OpenAI client constructor.
+// ResetOpenAIClientFactory restores the default OpenAI client constructor so the
+// real OpenAI client is used again.
 func ResetOpenAIClientFactory() {
 	newOpenAIClient = defaultOpenAIClient
 }
