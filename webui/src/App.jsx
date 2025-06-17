@@ -1,4 +1,5 @@
 import {
+  ArrowBack as BackIcon,
   Transform as ConvertIcon,
   Brightness4 as DarkModeIcon,
   Dashboard as DashboardIcon,
@@ -8,11 +9,11 @@ import {
   VideoLibrary as LibraryIcon,
   Brightness7 as LightModeIcon,
   Menu as MenuIcon,
+  PushPin as PinIcon,
   Settings as SettingsIcon,
   BugReport as SystemIcon,
   Translate as TranslateIcon,
   Download as WantedIcon,
-  PushPin as PinIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -22,9 +23,9 @@ import {
   Button,
   CircularProgress,
   Container,
-  Divider,
   createTheme,
   CssBaseline,
+  Divider,
   Drawer,
   Fab,
   IconButton,
@@ -41,6 +42,14 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import {
+  Link,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import './App.css';
 import Convert from './Convert.jsx';
 import Dashboard from './Dashboard.jsx';
@@ -352,18 +361,18 @@ function App() {
   const isDrawerOpen = drawerPinned || drawerOpen;
 
   const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
-    { id: 'library', label: 'Media Library', icon: <LibraryIcon /> },
-    { id: 'wanted', label: 'Wanted', icon: <WantedIcon /> },
-    { id: 'history', label: 'History', icon: <HistoryIcon /> },
-    { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
-    { id: 'system', label: 'System', icon: <SystemIcon /> },
+    { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { id: 'library', label: 'Media Library', icon: <LibraryIcon />, path: '/library' },
+    { id: 'wanted', label: 'Wanted', icon: <WantedIcon />, path: '/wanted' },
+    { id: 'history', label: 'History', icon: <HistoryIcon />, path: '/history' },
+    { id: 'settings', label: 'Settings', icon: <SettingsIcon />, path: '/settings' },
+    { id: 'system', label: 'System', icon: <SystemIcon />, path: '/system' },
   ];
 
   const toolsItems = [
-    { id: 'extract', label: 'Extract', icon: <ExtractIcon /> },
-    { id: 'convert', label: 'Convert', icon: <ConvertIcon /> },
-    { id: 'translate', label: 'Translate', icon: <TranslateIcon /> },
+    { id: 'extract', label: 'Extract', icon: <ExtractIcon />, path: '/tools/extract' },
+    { id: 'convert', label: 'Convert', icon: <ConvertIcon />, path: '/tools/convert' },
+    { id: 'translate', label: 'Translate', icon: <TranslateIcon />, path: '/tools/translate' },
   ];
 
   useEffect(() => {
@@ -703,9 +712,18 @@ function App() {
     );
   }
 
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+  function AppContent() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const handleBack = () => {
+      navigate(-1);
+    };
+
+    const showBackButton =
+      location.pathname !== '/' && location.pathname !== '/dashboard';
+
+    return (
       <Box sx={{ display: 'flex' }}>
         <AppBar
           position="fixed"
@@ -727,6 +745,11 @@ function App() {
             >
               <MenuIcon />
             </IconButton>
+            {showBackButton && (
+              <IconButton color="inherit" onClick={handleBack} sx={{ mr: 2 }}>
+                <BackIcon />
+              </IconButton>
+            )}
             <Typography
               variant="h6"
               noWrap
@@ -783,11 +806,13 @@ function App() {
               {navigationItems.map(item => (
                 <ListItem key={item.id} disablePadding>
                   <ListItemButton
-                    selected={page === item.id}
-                    onClick={() => {
-                      setPage(item.id);
-                      setDrawerOpen(false);
-                    }}
+                    component={Link}
+                    to={item.path}
+                    selected={
+                      location.pathname === item.path ||
+                      (item.path === '/dashboard' && location.pathname === '/')
+                    }
+                    onClick={() => setDrawerOpen(false)}
                   >
                     <ListItemIcon sx={{ color: 'inherit' }}>
                       {item.icon}
@@ -839,34 +864,55 @@ function App() {
         >
           <Toolbar />
 
-          {/* Show backend availability warning if there are issues */}
           {apiError && (
             <Alert severity="warning" sx={{ mb: 3 }}>
               {apiError}
             </Alert>
           )}
 
-          {page === 'library' ? (
-            <MediaLibrary backendAvailable={backendAvailable} />
-          ) : page === 'settings' ? (
-            <Settings backendAvailable={backendAvailable} />
-          ) : page === 'extract' ? (
-            <Extract backendAvailable={backendAvailable} />
-          ) : page === 'history' ? (
-            <History backendAvailable={backendAvailable} />
-          ) : page === 'convert' ? (
-            <Convert backendAvailable={backendAvailable} />
-          ) : page === 'translate' ? (
-            <Translate backendAvailable={backendAvailable} />
-          ) : page === 'system' ? (
-            <System backendAvailable={backendAvailable} />
-          ) : page === 'wanted' ? (
-            <Wanted backendAvailable={backendAvailable} />
-          ) : page === 'offline-info' ? (
-            <OfflineInfo />
-          ) : (
-            <Dashboard backendAvailable={backendAvailable} />
-          )}
+          <Routes>
+            <Route
+              path="/"
+              element={<Dashboard backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/dashboard"
+              element={<Dashboard backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/library"
+              element={<MediaLibrary backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/wanted"
+              element={<Wanted backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/history"
+              element={<History backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/settings"
+              element={<Settings backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/system"
+              element={<System backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/tools/extract"
+              element={<Extract backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/tools/convert"
+              element={<Convert backendAvailable={backendAvailable} />}
+            />
+            <Route
+              path="/tools/translate"
+              element={<Translate backendAvailable={backendAvailable} />}
+            />
+            <Route path="/offline-info" element={<OfflineInfo />} />
+          </Routes>
         </Box>
 
         {/* Floating action button for quick navigation on mobile */}
@@ -886,6 +932,15 @@ function App() {
           </Fab>
         )}
       </Box>
+    );
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <AppContent />
+      </Router>
     </ThemeProvider>
   );
 }

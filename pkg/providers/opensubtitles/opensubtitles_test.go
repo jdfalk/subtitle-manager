@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -14,11 +15,27 @@ import (
 type mockHandler struct{}
 
 func (mockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Handle both old and new API endpoints for compatibility
 	if strings.HasPrefix(r.URL.Path, "/search") || strings.HasPrefix(r.URL.Path, "/subtitles") {
-		fmt.Fprintf(w, `[{"SubDownloadLink":"http://%s/download"}]`, r.Host)
+		// Support both old format and new OpenSubtitles API format
+		if strings.HasPrefix(r.URL.Path, "/subtitles") {
+			fmt.Fprint(w, `{"data":[{"attributes":{"subtitle_id":"1","files":[{"file_id":1}]}}]}`)
+		} else {
+			fmt.Fprintf(w, `[{"SubDownloadLink":"http://%s/download"}]`, r.Host)
+		}
 		return
 	}
 	if r.URL.Path == "/download" {
+		if r.Method == http.MethodPost {
+			// New API: POST to /download returns a link
+			fmt.Fprintf(w, `{"link":"http://%s/file.srt"}`, r.Host)
+		} else {
+			// Old API: GET /download returns file directly
+			fmt.Fprint(w, "sub data")
+		}
+		return
+	}
+	if r.URL.Path == "/file.srt" {
 		fmt.Fprint(w, "sub data")
 		return
 	}
@@ -28,7 +45,12 @@ func (mockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func TestFetch(t *testing.T) {
 	srv := httptest.NewServer(mockHandler{})
 	defer srv.Close()
+	viper.Set("opensubtitles.username", "u")
+	viper.Set("opensubtitles.password", "p")
+	defer viper.Reset()
 	c := New("")
+	c.token = "t"
+	c.tokenExp = time.Now().Add(time.Hour)
 	c.APIURL = srv.URL
 	c.HTTPClient = srv.Client()
 	// override fileHash to avoid reading a real file
@@ -49,7 +71,12 @@ func TestFetch(t *testing.T) {
 func TestSearch(t *testing.T) {
 	srv := httptest.NewServer(mockHandler{})
 	defer srv.Close()
+	viper.Set("opensubtitles.username", "u")
+	viper.Set("opensubtitles.password", "p")
+	defer viper.Reset()
 	c := New("")
+	c.token = "t"
+	c.tokenExp = time.Now().Add(time.Hour)
 	c.APIURL = srv.URL
 	c.HTTPClient = srv.Client()
 	orig := fileHashFunc
