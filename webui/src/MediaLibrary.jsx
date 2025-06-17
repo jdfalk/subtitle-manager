@@ -12,6 +12,9 @@ import {
   Subtitles as SubtitleIcon,
   Translate as TranslateIcon,
   Tv as TvIcon,
+  FormatListBulleted as ListIcon,
+  ViewAgenda as PosterIcon,
+  GridView as GridIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -20,6 +23,8 @@ import {
   Button,
   Card,
   CardContent,
+  CardMedia,
+  CardActionArea,
   Chip,
   CircularProgress,
   Dialog,
@@ -37,6 +42,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * MediaLibrary provides integrated media file and subtitle management.
@@ -59,6 +65,37 @@ export default function MediaLibrary({ backendAvailable = true }) {
     file: null,
   });
   const [progress, setProgress] = useState(null);
+  // View mode: list, poster, or grid
+  const [viewMode, setViewMode] = useState('list');
+  const navigate = useNavigate();
+
+  // Fetch poster and basic details from OMDb
+  const usePoster = title => {
+    const [info, setInfo] = useState(null);
+    useEffect(() => {
+      let ignore = false;
+      const load = async () => {
+        try {
+          const res = await fetch(
+            `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=thewdb`
+          );
+          if (res.ok) {
+            const data = await res.json();
+            if (!ignore && data.Response === 'True') {
+              setInfo(data);
+            }
+          }
+        } catch {
+          // Ignore errors
+        }
+      };
+      load();
+      return () => {
+        ignore = true;
+      };
+    }, [title]);
+    return info;
+  };
 
   const loadCurrentDirectory = async () => {
     setLoading(true);
@@ -274,6 +311,15 @@ export default function MediaLibrary({ backendAvailable = true }) {
           >
             {bulkMode ? 'Exit Bulk Mode' : 'Bulk Operations'}
           </Button>
+          <IconButton onClick={() => setViewMode('list')} sx={{ mr: 1 }}>
+            <ListIcon color={viewMode === 'list' ? 'primary' : 'inherit'} />
+          </IconButton>
+          <IconButton onClick={() => setViewMode('poster')} sx={{ mr: 1 }}>
+            <PosterIcon color={viewMode === 'poster' ? 'primary' : 'inherit'} />
+          </IconButton>
+          <IconButton onClick={() => setViewMode('grid')} sx={{ mr: 1 }}>
+            <GridIcon color={viewMode === 'grid' ? 'primary' : 'inherit'} />
+          </IconButton>
           <IconButton
             onClick={loadCurrentDirectory}
             disabled={!backendAvailable}
@@ -344,89 +390,152 @@ export default function MediaLibrary({ backendAvailable = true }) {
       )}
 
       {/* File List */}
-      <Grid container spacing={3}>
-        {items.map(item => (
-          <Grid item xs={12} key={item.path}>
-            <Card
-              sx={{
-                cursor: item.type === 'directory' ? 'pointer' : 'default',
-                border: selectedFiles.has(item.path)
-                  ? '2px solid'
-                  : '1px solid',
-                borderColor: selectedFiles.has(item.path)
-                  ? 'primary.main'
-                  : 'divider',
-              }}
-              onClick={() => {
-                if (bulkMode && item.type !== 'directory') {
-                  toggleFileSelection(item.path);
-                } else if (item.type === 'directory') {
-                  navigateToPath(item.path);
-                }
-                // Individual file selection removed - use bulk mode for operations
-              }}
-            >
-              <CardContent>
-                <Box display="flex" alignItems="center">
-                  <Box sx={{ mr: 2 }}>{getFileIcon(item)}</Box>
+      {viewMode === 'list' && (
+        <Grid container spacing={3}>
+          {items.map(item => (
+            <Grid item xs={12} key={item.path}>
+              <Card
+                sx={{
+                  cursor: item.type === 'directory' ? 'pointer' : 'default',
+                  border: selectedFiles.has(item.path)
+                    ? '2px solid'
+                    : '1px solid',
+                  borderColor: selectedFiles.has(item.path)
+                    ? 'primary.main'
+                    : 'divider',
+                }}
+                onClick={() => {
+                  if (bulkMode && item.type !== 'directory') {
+                    toggleFileSelection(item.path);
+                  } else if (item.type === 'directory') {
+                    navigateToPath(item.path);
+                  } else {
+                    navigate(`/details?title=${encodeURIComponent(item.name)}`);
+                  }
+                }}
+              >
+                <CardContent>
+                  <Box display="flex" alignItems="center">
+                    <Box sx={{ mr: 2 }}>{getFileIcon(item)}</Box>
 
-                  <Box flex={1}>
-                    <Typography variant="h6" noWrap>
-                      {item.name}
-                    </Typography>
-
-                    {item.isVideo && (
-                      <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
-                        {item.subtitles?.map(sub => (
-                          <Chip
-                            key={sub.language}
-                            label={`${sub.language.toUpperCase()} ${sub.format || 'SRT'}`}
-                            size="small"
-                            color={sub.embedded ? 'warning' : 'success'}
-                            icon={<SubtitleIcon />}
-                          />
-                        ))}
-                        {(!item.subtitles || item.subtitles.length === 0) && (
-                          <Chip
-                            label="No Subtitles"
-                            size="small"
-                            color="error"
-                            variant="outlined"
-                          />
-                        )}
-                      </Box>
-                    )}
-
-                    {item.metadata && (
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ mt: 1 }}
-                      >
-                        {item.metadata.resolution &&
-                          `${item.metadata.resolution} • `}
-                        {item.metadata.duration &&
-                          `${item.metadata.duration} • `}
-                        {item.size &&
-                          `${(item.size / 1024 / 1024 / 1024).toFixed(1)} GB`}
+                    <Box flex={1}>
+                      <Typography variant="h6" noWrap>
+                        {item.name}
                       </Typography>
+
+                      {item.isVideo && (
+                        <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
+                          {item.subtitles?.map(sub => (
+                            <Chip
+                              key={sub.language}
+                              label={`${sub.language.toUpperCase()} ${sub.format || 'SRT'}`}
+                              size="small"
+                              color={sub.embedded ? 'warning' : 'success'}
+                              icon={<SubtitleIcon />}
+                            />
+                          ))}
+                          {(!item.subtitles || item.subtitles.length === 0) && (
+                            <Chip
+                              label="No Subtitles"
+                              size="small"
+                              color="error"
+                              variant="outlined"
+                            />
+                          )}
+                        </Box>
+                      )}
+
+                      {item.metadata && (
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mt: 1 }}
+                        >
+                          {item.metadata.resolution &&
+                            `${item.metadata.resolution} • `}
+                          {item.metadata.duration &&
+                            `${item.metadata.duration} • `}
+                          {item.size &&
+                            `${(item.size / 1024 / 1024 / 1024).toFixed(1)} GB`}
+                        </Typography>
+                      )}
+                    </Box>
+
+                    {item.type !== 'directory' && (
+                      <IconButton
+                        onClick={e => handleActionMenu(e, item)}
+                        size="small"
+                      >
+                        <MoreIcon />
+                      </IconButton>
                     )}
                   </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
-                  {item.type !== 'directory' && (
-                    <IconButton
-                      onClick={e => handleActionMenu(e, item)}
-                      size="small"
-                    >
-                      <MoreIcon />
-                    </IconButton>
-                  )}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      {viewMode === 'poster' && (
+        <Grid container spacing={3}>
+          {items.map(item => {
+            const info = usePoster(item.name);
+            const poster = info?.Poster && info.Poster !== 'N/A'
+              ? info.Poster
+              : 'https://via.placeholder.com/150x225?text=Poster';
+            return (
+              <Grid item xs={12} md={6} key={item.path}>
+                <CardActionArea onClick={() => navigate(`/details?title=${encodeURIComponent(item.name)}`)}>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia component="img" image={poster} sx={{ width: 150 }} />
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        {info?.Title || item.name}
+                      </Typography>
+                      {info?.Plot && (
+                        <Typography variant="body2" color="text.secondary">
+                          {info.Plot}
+                        </Typography>
+                      )}
+                      {info?.imdbRating && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                          IMDB: {info.imdbRating}
+                        </Typography>
+                      )}
+                    </CardContent>
+                  </Card>
+                </CardActionArea>
+              </Grid>
+            );
+          })}
+        </Grid>
+      )}
+
+      {viewMode === 'grid' && (
+        <Grid container spacing={3}>
+          {items.map(item => {
+            const info = usePoster(item.name);
+            const poster = info?.Poster && info.Poster !== 'N/A'
+              ? info.Poster
+              : 'https://via.placeholder.com/300x450?text=Poster';
+            return (
+              <Grid item xs={6} md={3} key={item.path}>
+                <CardActionArea onClick={() => navigate(`/details?title=${encodeURIComponent(item.name)}`)}>
+                  <Card>
+                    <CardMedia component="img" image={poster} sx={{ height: 240 }} />
+                    <CardContent>
+                      <Typography variant="subtitle1" align="center" noWrap>
+                        {info?.Title || item.name}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </CardActionArea>
+              </Grid>
+            );
+          })}
+        </Grid>
+      )}
 
       {items.length === 0 && !loading && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
