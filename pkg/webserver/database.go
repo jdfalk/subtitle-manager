@@ -153,6 +153,7 @@ func databaseBackupHandler() http.Handler {
 		}
 		if backend == "sqlite" {
 			if err := add(path, filepath.Base(path)); err != nil {
+				log.Printf("Failed to add file to backup: %v, error: %v", path, err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
