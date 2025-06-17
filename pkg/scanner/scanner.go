@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -48,13 +49,13 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 // file is left untouched.
 func ProcessFile(ctx context.Context, path, lang string, providerName string, p providers.Provider, upgrade bool, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
-	
+
 	// Validate the lang parameter to ensure it contains only alphanumeric characters
 	if !isValidLang(lang) {
 		logger.Warnf("invalid language code: %s", lang)
 		return fmt.Errorf("invalid language code: %s", lang)
 	}
-	
+
 	out := strings.TrimSuffix(path, filepath.Ext(path)) + "." + lang + ".srt"
 	if !upgrade {
 		if _, err := os.Stat(out); err == nil {
