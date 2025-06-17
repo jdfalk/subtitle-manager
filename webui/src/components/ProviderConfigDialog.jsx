@@ -1,44 +1,30 @@
 // file: webui/src/components/ProviderConfigDialog.jsx
-
 import {
-  Close as CloseIcon,
-  Save as SaveIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
-} from '@mui/icons-material';
-import {
-  Alert,
-  Box,
-  Button,
-  Chip,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  Switch,
+  DialogContent,
+  DialogActions,
+  Button,
   TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
   Typography,
-} from '@mui/material';
-import { useState } from 'react';
+  Alert,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 
 /**
- * ProviderConfigDialog provides a comprehensive configuration interface
- * for subtitle providers. Handles different provider types and their
- * specific configuration requirements.
+ * Fixed ProviderConfigDialog with proper provider selection and configuration options
  *
  * @param {boolean} open - Whether dialog is open
- * @param {Object} provider - Provider to configure
- * @param {Function} onClose - Close callback
- * @param {Function} onSave - Save callback with configuration
+ * @param {Object} provider - Provider object if editing existing provider
+ * @param {Function} onClose - Callback when dialog closes
+ * @param {Function} onSave - Callback when configuration is saved
  */
 export default function ProviderConfigDialog({
   open,
@@ -46,362 +32,289 @@ export default function ProviderConfigDialog({
   onClose,
   onSave,
 }) {
-  const [config, setConfig] = useState(provider?.config || {});
-  const [showPasswords, setShowPasswords] = useState({});
-  const [errors, setErrors] = useState({});
+  const [selectedProvider, setSelectedProvider] = useState("");
+  const [config, setConfig] = useState({});
+  const [availableProviders, setAvailableProviders] = useState([]);
 
-  const getProviderFields = providerName => {
-    // Define configuration fields for different providers
-    const fieldConfigs = {
+  // Load available providers when dialog opens
+  useEffect(() => {
+    if (open && !provider) {
+      loadAvailableProviders();
+    } else if (provider) {
+      setSelectedProvider(provider.name);
+      setConfig(provider.config || {});
+    }
+  }, [open, provider]);
+
+  const loadAvailableProviders = async () => {
+    try {
+      const response = await fetch("/api/providers/available");
+      if (response.ok) {
+        const providers = await response.json();
+        setAvailableProviders(providers);
+      }
+    } catch (error) {
+      console.error("Failed to load available providers:", error);
+    }
+  };
+
+  const getProviderDisplayName = (name) => {
+    const displayNames = {
+      opensubtitles: "OpenSubtitles.org",
+      opensubtitlescom: "OpenSubtitles.com",
+      addic7ed: "Addic7ed",
+      subscene: "Subscene",
+      podnapisi: "Podnapisi.NET",
+      yifysubtitles: "YIFY Subtitles",
+      embedded: "Embedded Subtitles",
+      // Add more as needed
+    };
+    return displayNames[name] || name.charAt(0).toUpperCase() + name.slice(1);
+  };
+
+  const getProviderConfigFields = (providerName) => {
+    const configs = {
       opensubtitles: [
+        { key: "api_key", label: "API Key", type: "password", required: true },
         {
-          name: 'apiKey',
-          label: 'API Key',
-          type: 'password',
+          key: "user_agent",
+          label: "User Agent",
+          type: "text",
           required: true,
-          description: 'Get your API key from opensubtitles.com',
         },
-        { name: 'username', label: 'Username', type: 'text', required: false },
-        {
-          name: 'rateLimit',
-          label: 'Rate Limit (requests/minute)',
-          type: 'number',
-          defaultValue: 20,
-          min: 1,
-          max: 200,
-        },
-        {
-          name: 'languages',
-          label: 'Preferred Languages',
-          type: 'multiselect',
-          options: ['en', 'es', 'fr', 'de', 'it', 'pt', 'nl', 'ru', 'ja', 'ko'],
-        },
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
+      ],
+      opensubtitlescom: [
+        { key: "api_key", label: "API Key", type: "password", required: true },
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
       ],
       addic7ed: [
-        { name: 'username', label: 'Username', type: 'text', required: true },
+        { key: "username", label: "Username", type: "text", required: true },
         {
-          name: 'password',
-          label: 'Password',
-          type: 'password',
+          key: "password",
+          label: "Password",
+          type: "password",
           required: true,
         },
-        {
-          name: 'userAgent',
-          label: 'User Agent',
-          type: 'text',
-          defaultValue: 'Mozilla/5.0 (compatible; SubtitleManager)',
-        },
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
       ],
       subscene: [
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
         {
-          name: 'userAgent',
-          label: 'User Agent',
-          type: 'text',
-          defaultValue: 'Mozilla/5.0 (compatible; SubtitleManager)',
-        },
-        {
-          name: 'timeout',
-          label: 'Timeout (seconds)',
-          type: 'number',
-          defaultValue: 30,
-          min: 5,
-          max: 300,
+          key: "timeout",
+          label: "Timeout (seconds)",
+          type: "number",
+          default: 30,
         },
       ],
-      whisper: [
+      embedded: [
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
         {
-          name: 'model',
-          label: 'Whisper Model',
-          type: 'select',
-          options: ['tiny', 'base', 'small', 'medium', 'large'],
-          defaultValue: 'base',
+          key: "extract_mkv",
+          label: "Extract from MKV",
+          type: "boolean",
+          default: true,
         },
         {
-          name: 'language',
-          label: 'Force Language',
-          type: 'select',
-          options: ['auto', 'en', 'es', 'fr', 'de', 'it', 'pt'],
-          defaultValue: 'auto',
+          key: "extract_mp4",
+          label: "Extract from MP4",
+          type: "boolean",
+          default: true,
         },
         {
-          name: 'device',
-          label: 'Device',
-          type: 'select',
-          options: ['auto', 'cpu', 'cuda'],
-          defaultValue: 'auto',
+          key: "ffmpeg_path",
+          label: "FFmpeg Path",
+          type: "text",
+          placeholder: "/usr/bin/ffmpeg",
         },
       ],
-      generic: [
-        { name: 'baseUrl', label: 'Base URL', type: 'url', required: true },
-        { name: 'apiKey', label: 'API Key', type: 'password' },
-        {
-          name: 'timeout',
-          label: 'Timeout (seconds)',
-          type: 'number',
-          defaultValue: 30,
-        },
-      ],
+      // Add configurations for other providers
     };
 
     return (
-      fieldConfigs[providerName] || [
-        {
-          name: 'enabled',
-          label: 'Enable Provider',
-          type: 'boolean',
-          defaultValue: true,
-        },
-        {
-          name: 'timeout',
-          label: 'Timeout (seconds)',
-          type: 'number',
-          defaultValue: 30,
-        },
+      configs[providerName] || [
+        { key: "enabled", label: "Enabled", type: "boolean", default: true },
       ]
     );
   };
 
-  const handleFieldChange = (fieldName, value) => {
-    setConfig(prev => ({ ...prev, [fieldName]: value }));
-    if (errors[fieldName]) {
-      setErrors(prev => ({ ...prev, [fieldName]: null }));
-    }
-  };
-
-  const togglePasswordVisibility = fieldName => {
-    setShowPasswords(prev => ({ ...prev, [fieldName]: !prev[fieldName] }));
-  };
-
-  const validateConfig = () => {
-    const fields = getProviderFields(provider?.name);
-    const newErrors = {};
-
-    fields.forEach(field => {
-      if (field.required && !config[field.name]) {
-        newErrors[field.name] = `${field.label} is required`;
-      }
-      if (
-        field.type === 'url' &&
-        config[field.name] &&
-        !isValidUrl(config[field.name])
-      ) {
-        newErrors[field.name] = 'Please enter a valid URL';
-      }
-      if (field.type === 'number' && config[field.name]) {
-        const value = Number(config[field.name]);
-        if (field.min && value < field.min) {
-          newErrors[field.name] = `Minimum value is ${field.min}`;
-        }
-        if (field.max && value > field.max) {
-          newErrors[field.name] = `Maximum value is ${field.max}`;
-        }
+  const handleProviderChange = (newProvider) => {
+    setSelectedProvider(newProvider);
+    // Reset config when provider changes
+    const fields = getProviderConfigFields(newProvider);
+    const newConfig = {};
+    fields.forEach((field) => {
+      if (field.default !== undefined) {
+        newConfig[field.key] = field.default;
       }
     });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setConfig(newConfig);
   };
 
-  const isValidUrl = string => {
-    try {
-      new URL(string);
-      return true;
-    } catch {
-      return false;
-    }
+  const handleConfigChange = (key, value) => {
+    setConfig((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   const handleSave = () => {
-    if (validateConfig()) {
-      onSave({ ...provider, config });
+    if (!selectedProvider) {
+      alert("Please select a provider");
+      return;
     }
+
+    const providerData = {
+      name: selectedProvider,
+      displayName: getProviderDisplayName(selectedProvider),
+      config: config,
+      enabled: config.enabled !== false,
+    };
+
+    onSave(providerData);
+    onClose();
   };
 
-  const renderField = field => {
-    const value = config[field.name] ?? field.defaultValue ?? '';
+  const renderConfigField = (field) => {
+    const value = config[field.key] ?? field.default ?? "";
 
     switch (field.type) {
-      case 'boolean':
+      case "boolean":
         return (
           <FormControlLabel
+            key={field.key}
             control={
               <Switch
-                checked={Boolean(value)}
-                onChange={e => handleFieldChange(field.name, e.target.checked)}
+                checked={!!value}
+                onChange={(e) =>
+                  handleConfigChange(field.key, e.target.checked)
+                }
               />
             }
             label={field.label}
           />
         );
 
-      case 'select':
-        return (
-          <FormControl fullWidth error={Boolean(errors[field.name])}>
-            <InputLabel>{field.label}</InputLabel>
-            <Select
-              value={value}
-              label={field.label}
-              onChange={e => handleFieldChange(field.name, e.target.value)}
-            >
-              {field.options?.map(option => (
-                <MenuItem key={option} value={option}>
-                  {option.charAt(0).toUpperCase() + option.slice(1)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        );
-
-      case 'multiselect':
-        return (
-          <FormControl fullWidth>
-            <InputLabel>{field.label}</InputLabel>
-            <Select
-              multiple
-              value={Array.isArray(value) ? value : []}
-              label={field.label}
-              onChange={e => handleFieldChange(field.name, e.target.value)}
-              renderValue={selected => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map(value => (
-                    <Chip
-                      key={value}
-                      label={value.toUpperCase()}
-                      size="small"
-                    />
-                  ))}
-                </Box>
-              )}
-            >
-              {field.options?.map(option => (
-                <MenuItem key={option} value={option}>
-                  {option.toUpperCase()}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        );
-
-      case 'password':
+      case "number":
         return (
           <TextField
+            key={field.key}
             fullWidth
             label={field.label}
-            type={showPasswords[field.name] ? 'text' : 'password'}
+            type="number"
             value={value}
-            onChange={e => handleFieldChange(field.name, e.target.value)}
-            error={Boolean(errors[field.name])}
-            helperText={errors[field.name] || field.description}
+            onChange={(e) =>
+              handleConfigChange(field.key, parseInt(e.target.value) || 0)
+            }
             required={field.required}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => togglePasswordVisibility(field.name)}
-                    edge="end"
-                  >
-                    {showPasswords[field.name] ? (
-                      <VisibilityOffIcon />
-                    ) : (
-                      <VisibilityIcon />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            placeholder={field.placeholder}
+            sx={{ mb: 2 }}
+          />
+        );
+
+      case "password":
+        return (
+          <TextField
+            key={field.key}
+            fullWidth
+            label={field.label}
+            type="password"
+            value={value}
+            onChange={(e) => handleConfigChange(field.key, e.target.value)}
+            required={field.required}
+            placeholder={field.placeholder}
+            sx={{ mb: 2 }}
           />
         );
 
       default:
         return (
           <TextField
+            key={field.key}
             fullWidth
             label={field.label}
-            type={field.type}
             value={value}
-            onChange={e => handleFieldChange(field.name, e.target.value)}
-            error={Boolean(errors[field.name])}
-            helperText={errors[field.name] || field.description}
+            onChange={(e) => handleConfigChange(field.key, e.target.value)}
             required={field.required}
-            inputProps={{
-              min: field.min,
-              max: field.max,
-            }}
+            placeholder={field.placeholder}
+            sx={{ mb: 2 }}
           />
         );
     }
   };
 
-  if (!provider) return null;
+  const isValid = () => {
+    if (!selectedProvider) return false;
 
-  const fields = getProviderFields(provider.name);
+    const fields = getProviderConfigFields(selectedProvider);
+    return fields.every((field) => {
+      if (field.required) {
+        const value = config[field.key];
+        return value !== undefined && value !== null && value !== "";
+      }
+      return true;
+    });
+  };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Typography variant="h6">
-            Configure {provider.displayName || provider.name}
-          </Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
+        {provider ? "Configure Provider" : "Configure Custom Provider"}
       </DialogTitle>
 
       <DialogContent>
-        <Box sx={{ mb: 2 }}>
-          <Alert severity="info" sx={{ mb: 2 }}>
-            Configure this provider to enable subtitle downloads. Required
-            fields are marked with *.
-          </Alert>
-        </Box>
-
-        <Grid container spacing={3}>
-          {fields.map(field => (
-            <Grid
-              item
-              xs={12}
-              sm={field.type === 'boolean' ? 12 : 6}
-              key={field.name}
-            >
-              {renderField(field)}
-            </Grid>
-          ))}
-        </Grid>
-
-        {provider.name === 'opensubtitles' && (
-          <Box sx={{ mt: 3 }}>
-            <Divider sx={{ mb: 2 }} />
-            <Alert severity="warning">
-              <Typography variant="body2">
-                <strong>OpenSubtitles API Key Required:</strong>
-                <br />
-                1. Visit{' '}
-                <a
-                  href="https://www.opensubtitles.com/api"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  opensubtitles.com/api
-                </a>
-                <br />
-                2. Create an account and generate an API key
-                <br />
-                3. Enter your API key above to enable this provider
+        <Box sx={{ pt: 1 }}>
+          {!provider && (
+            <>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Configure this provider to enable subtitle downloads. Required
+                fields are marked with an asterisk (*).
               </Typography>
-            </Alert>
-          </Box>
-        )}
+
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <InputLabel>Provider</InputLabel>
+                <Select
+                  value={selectedProvider}
+                  label="Provider"
+                  onChange={(e) => handleProviderChange(e.target.value)}
+                >
+                  {availableProviders.map((p) => (
+                    <MenuItem key={p.name} value={p.name}>
+                      {getProviderDisplayName(p.name)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
+
+          {(provider || selectedProvider) && (
+            <>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Configure this provider to enable subtitle downloads. Required
+                fields are marked with an asterisk (*).
+              </Typography>
+
+              <Alert severity="info" sx={{ mb: 2 }}>
+                Provider:{" "}
+                <strong>
+                  {getProviderDisplayName(provider?.name || selectedProvider)}
+                </strong>
+              </Alert>
+
+              <Box>
+                {getProviderConfigFields(
+                  provider?.name || selectedProvider,
+                ).map(renderConfigField)}
+              </Box>
+            </>
+          )}
+        </Box>
       </DialogContent>
 
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={handleSave}
-          variant="contained"
-          startIcon={<SaveIcon />}
-        >
+        <Button onClick={handleSave} variant="contained" disabled={!isValid()}>
           Save Configuration
         </Button>
       </DialogActions>
