@@ -10,8 +10,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-// oauthCredentials represents OAuth2 credentials returned to clients.
-type oauthCredentials struct {
+// OAuthCredentials represents OAuth2 client credentials.
+type OAuthCredentials struct {
 	ClientID     string `json:"client_id"`
 	ClientSecret string `json:"client_secret"`
 	RedirectURL  string `json:"redirect_url,omitempty"`
@@ -45,7 +45,7 @@ func githubOAuthGenerateHandler() http.Handler {
 			return
 		}
 
-		creds := oauthCredentials{
+		creds := OAuthCredentials{
 			ClientID:     "gh_" + id,
 			ClientSecret: "ghs_" + secret,
 			RedirectURL:  r.Header.Get("Origin") + "/api/oauth/github/callback",
@@ -54,6 +54,45 @@ func githubOAuthGenerateHandler() http.Handler {
 		viper.Set("github_client_id", creds.ClientID)
 		viper.Set("github_client_secret", creds.ClientSecret)
 		viper.Set("github_redirect_url", creds.RedirectURL)
+		if cfg := viper.ConfigFileUsed(); cfg != "" {
+			if err := viper.WriteConfig(); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(creds)
+	})
+}
+
+// githubOAuthRegenerateHandler regenerates the GitHub OAuth client secret.
+func githubOAuthRegenerateHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		id := viper.GetString("github_client_id")
+		if id == "" {
+			http.Error(w, "no existing GitHub OAuth configuration found", http.StatusBadRequest)
+			return
+		}
+
+		token, err := generateSecureToken(32)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		creds := OAuthCredentials{
+			ClientID:     id,
+			ClientSecret: "ghs_" + token,
+			RedirectURL:  viper.GetString("github_redirect_url"),
+		}
+
+		viper.Set("github_client_secret", creds.ClientSecret)
 		if cfg := viper.ConfigFileUsed(); cfg != "" {
 			if err := viper.WriteConfig(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
