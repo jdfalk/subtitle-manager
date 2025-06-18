@@ -26,8 +26,7 @@ describe('System component', () => {
       if (url === '/api/config')
         return Promise.resolve({
           ok: true,
-          json: () =>
-            Promise.resolve({ openai_api_key: 'sk-abcdef123456' }),
+          json: () => Promise.resolve({ openai_api_key: 'sk-abcdef123456' }),
         });
       return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
