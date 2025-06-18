@@ -240,7 +240,7 @@ func StartServer(addr string) error {
 	}
 
 	// Start automated maintenance tasks
-	go maintenance.StartDatabaseCleanup(ctx, db,
+	go maintenance.StartDatabaseCleanup(context.Background(), db,
 		viper.GetString("db_cleanup_frequency"))
 
 	// Start Sonarr/Radarr sync tasks when configured
@@ -290,7 +290,7 @@ func StartServer(addr string) error {
 	// Start additional maintenance tasks for metadata and disk scanning
 	storePath = database.GetDatabasePath()
 	backend = database.GetDatabaseBackend()
-	go func(ctx context.Context) {
+	go func() {
 		var store database.SubtitleStore
 		var err error
 		switch backend {
@@ -304,11 +304,11 @@ func StartServer(addr string) error {
 		if err != nil {
 			return
 		}
-		maintenance.StartMetadataRefresh(ctx, store,
+		maintenance.StartMetadataRefresh(context.Background(), store,
 			viper.GetString("tmdb_api_key"), viper.GetString("metadata_refresh_frequency"))
 	}()
 
-	go maintenance.StartDiskScan(ctx, viper.GetString("db_path"),
+	go maintenance.StartDiskScan(context.Background(), viper.GetString("db_path"),
 		viper.GetString("disk_scan_frequency"))
 
 	return http.ListenAndServe(addr, h)
