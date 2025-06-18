@@ -893,7 +893,9 @@ function App() {
               {toolsItems.map(item => (
                 <ListItem key={item.id} disablePadding>
                   <ListItemButton
-                    selected={page === item.id}
+                    component={Link}
+                    to={item.path}
+                    selected={location.pathname === item.path}
                     onClick={() => {
                       setPage(item.id);
                       setDrawerOpen(false);
