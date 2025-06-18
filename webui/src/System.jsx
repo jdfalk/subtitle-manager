@@ -117,7 +117,8 @@ export default function System({ backendAvailable = true }) {
       if (Array.isArray(input)) return input.map(walk);
       const result = {};
       for (const [k, v] of Object.entries(input)) {
-        result[k] = typeof v === 'object' && v !== null ? walk(v) : sanitizeValue(k, v);
+        result[k] =
+          typeof v === 'object' && v !== null ? walk(v) : sanitizeValue(k, v);
       }
       return result;
     };
