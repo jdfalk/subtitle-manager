@@ -154,12 +154,10 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Lighthouse CI
-        working-directory: webui
         run: npm install --save-dev @lhci/cli --legacy-peer-deps
 
       - name: Lighthouse CI
         run: |
-          cd webui
           npx lhci autorun --config=./lighthouserc.ci.json --upload.target=temporary-public-storage
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
