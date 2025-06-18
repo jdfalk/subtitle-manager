@@ -258,7 +258,7 @@ func StartServer(addr string) error {
 			}
 			url := fmt.Sprintf("%s://%s:%v/%s", scheme, host, port, base)
 			c := radarr.NewClient(url, key)
-			ctx := context.Background()
+			ctx := parentCtx
 			radarr.StartSync(ctx, time.Duration(interval)*time.Minute, c, store)
 		}
 		if viper.GetBool("integrations.sonarr.enabled") {
