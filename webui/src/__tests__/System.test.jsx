@@ -23,6 +23,12 @@ describe('System component', () => {
           ok: true,
           json: () => Promise.resolve({ scan: {} }),
         });
+      if (url === '/api/config')
+        return Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({ openai_api_key: 'sk-abcdef123456' }),
+        });
       return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
   });
@@ -31,5 +37,20 @@ describe('System component', () => {
     render(<System />);
     await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/logs'));
     expect(screen.getByTestId('logs').textContent).toBe('log');
+  });
+
+  test('masks sensitive config by default and reveals when toggled', async () => {
+    render(<System />);
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/config'));
+    await waitFor(() =>
+      expect(screen.getByTestId('config').textContent).toContain('****3456')
+    );
+    const toggle = screen.getByLabelText('Show Sensitive');
+    toggle.click();
+    await waitFor(() =>
+      expect(screen.getByTestId('config').textContent).toContain(
+        'sk-abcdef123456'
+      )
+    );
   });
 });

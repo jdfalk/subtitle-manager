@@ -5,6 +5,7 @@ import {
   Memory as MemoryIcon,
   Refresh as RefreshIcon,
   Storage as StorageIcon,
+  Settings as SettingsIcon,
   BugReport as SystemIcon,
   Schedule as TaskIcon,
 } from '@mui/icons-material';
@@ -24,6 +25,8 @@ import {
   ListItem,
   ListItemText,
   Paper,
+  FormControlLabel,
+  Switch,
   Tab,
   Tabs,
   Tooltip,
@@ -47,6 +50,8 @@ export default function System({ backendAvailable = true }) {
   const [expandedRawData, setExpandedRawData] = useState(false);
   const [tab, setTab] = useState(0);
   const [error, setError] = useState(null);
+  const [config, setConfig] = useState({});
+  const [showSensitive, setShowSensitive] = useState(false);
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
@@ -54,15 +59,17 @@ export default function System({ backendAvailable = true }) {
   const loadSystemData = async () => {
     setLoading(true);
     try {
-      const [logsRes, infoRes, tasksRes] = await Promise.all([
+      const [logsRes, infoRes, tasksRes, configRes] = await Promise.all([
         fetch('/api/logs'),
         fetch('/api/system'),
         fetch('/api/tasks'),
+        fetch('/api/config'),
       ]);
 
       if (logsRes.ok) setLogs(await logsRes.json());
       if (infoRes.ok) setInfo(await infoRes.json());
       if (tasksRes.ok) setTasks(await tasksRes.json());
+      if (configRes.ok) setConfig(await configRes.json());
     } catch (error) {
       console.error('Failed to load system data:', error);
     } finally {
@@ -87,6 +94,35 @@ export default function System({ backendAvailable = true }) {
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     return `${days}d ${hours}h ${minutes}m`;
+  };
+
+  const sanitizeConfig = obj => {
+    const sensitive = ['password', 'apikey', 'api_key', 'token', 'secret'];
+
+    const sanitizeValue = (key, val) => {
+      if (showSensitive) return val;
+      const lower = key.toLowerCase();
+      if (sensitive.some(s => lower.includes(s))) {
+        if (typeof val === 'string') {
+          const last = val.slice(-4);
+          return `****${last}`;
+        }
+        return '****';
+      }
+      return val;
+    };
+
+    const walk = input => {
+      if (typeof input !== 'object' || input === null) return input;
+      if (Array.isArray(input)) return input.map(walk);
+      const result = {};
+      for (const [k, v] of Object.entries(input)) {
+        result[k] = typeof v === 'object' && v !== null ? walk(v) : sanitizeValue(k, v);
+      }
+      return result;
+    };
+
+    return walk(obj);
   };
 
   if (loading) {
@@ -277,6 +313,58 @@ export default function System({ backendAvailable = true }) {
                     })}
                   </List>
                 )}
+              </CardContent>
+            </Card>
+          </Box>
+
+          {/* Configuration */}
+          <Box gridColumn={{ xs: '1', md: '1 / -1' }}>
+            <Card elevation={0}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <SettingsIcon sx={{ mr: 1, color: 'primary.main' }} />
+                  <Typography variant="h6" color="primary">
+                    Configuration
+                  </Typography>
+                  <Box sx={{ flexGrow: 1 }} />
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={showSensitive}
+                        onChange={e => setShowSensitive(e.target.checked)}
+                      />
+                    }
+                    label="Show Sensitive"
+                  />
+                </Box>
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    maxHeight: 300,
+                    overflow: 'auto',
+                    backgroundColor: isDarkMode ? '#0d1117' : '#f6f8fa',
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Box p={2}>
+                    <pre
+                      data-testid="config"
+                      style={{
+                        margin: 0,
+                        fontSize: '0.75rem',
+                        whiteSpace: 'pre-wrap',
+                        color: isDarkMode ? '#e6edf3' : '#24292f',
+                        fontFamily:
+                          '"Roboto Mono", "Consolas", "Monaco", monospace',
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {JSON.stringify(sanitizeConfig(config), null, 2)}
+                    </pre>
+                  </Box>
+                </Paper>
               </CardContent>
             </Card>
           </Box>
