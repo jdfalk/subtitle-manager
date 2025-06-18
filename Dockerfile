@@ -2,7 +2,7 @@
 # Optimized multi-stage Dockerfile to reduce build times from ~20min to ~3-5min
 
 # Stage 1: Node.js build stage (can be cached separately)
-FROM node:22-alpine AS node-builder
+FROM node:24-alpine AS node-builder
 WORKDIR /src/webui
 
 # Copy package files first for better caching
