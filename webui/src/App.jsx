@@ -43,7 +43,7 @@ import {
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import {
-  Link,
+  NavLink,
   Route,
   BrowserRouter as Router,
   Routes,
@@ -850,20 +850,38 @@ function App() {
             <List>
               {navigationItems.map(item => (
                 <ListItem key={item.id} disablePadding>
-                  <ListItemButton
-                    component={Link}
+                  <NavLink
                     to={item.path}
-                    selected={
-                      location.pathname === item.path ||
-                      (item.path === '/dashboard' && location.pathname === '/')
-                    }
-                    onClick={() => setDrawerOpen(false)}
+                    style={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      width: '100%',
+                    }}
+                    end={item.path !== '/dashboard'}
                   >
-                    <ListItemIcon sx={{ color: 'inherit' }}>
-                      {item.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={item.label} />
-                  </ListItemButton>
+                    {({ isActive }) => (
+                      <ListItemButton
+                        onClick={() => setDrawerOpen(false)}
+                        sx={{
+                          ...(isActive && {
+                            backgroundColor: theme =>
+                              theme.palette.mode === 'dark'
+                                ? alpha(theme.palette.primary.main, 0.12)
+                                : alpha(theme.palette.primary.main, 0.08),
+                            color: 'primary.main',
+                            '& .MuiListItemIcon-root': {
+                              color: 'primary.main',
+                            },
+                          }),
+                        }}
+                      >
+                        <ListItemIcon sx={{ color: 'inherit' }}>
+                          {item.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={item.label} />
+                      </ListItemButton>
+                    )}
+                  </NavLink>
                 </ListItem>
               ))}
 
