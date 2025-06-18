@@ -1,8 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { vi, expect, describe, test, beforeEach } from 'vitest';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import System from '../System.jsx';
 global.expect = expect;
 global.beforeEach = beforeEach;
-import System from '../System.jsx';
 
 describe('System component', () => {
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('System component', () => {
       expect(screen.getByTestId('config').textContent).toContain('****3456')
     );
     const toggle = screen.getByLabelText('Show Sensitive');
-    toggle.click();
+    fireEvent.click(toggle);
     await waitFor(() =>
       expect(screen.getByTestId('config').textContent).toContain(
         'sk-abcdef123456'

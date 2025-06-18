@@ -4,8 +4,8 @@ import {
   Assessment as LogIcon,
   Memory as MemoryIcon,
   Refresh as RefreshIcon,
-  Storage as StorageIcon,
   Settings as SettingsIcon,
+  Storage as StorageIcon,
   BugReport as SystemIcon,
   Schedule as TaskIcon,
 } from '@mui/icons-material';
@@ -20,12 +20,12 @@ import {
   CardContent,
   Chip,
   CircularProgress,
+  FormControlLabel,
   IconButton,
   List,
   ListItem,
   ListItemText,
   Paper,
-  FormControlLabel,
   Switch,
   Tab,
   Tabs,
@@ -34,6 +34,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { sanitizeConfig } from './utils/configSanitizer.js';
 
 /**
  * System component displays system information, logs, and running tasks.
@@ -94,36 +95,6 @@ export default function System({ backendAvailable = true }) {
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     return `${days}d ${hours}h ${minutes}m`;
-  };
-
-  const sanitizeConfig = obj => {
-    const sensitive = ['password', 'apikey', 'api_key', 'token', 'secret'];
-
-    const sanitizeValue = (key, val) => {
-      if (showSensitive) return val;
-      const lower = key.toLowerCase();
-      if (sensitive.some(s => lower.includes(s))) {
-        if (typeof val === 'string') {
-          const last = val.slice(-4);
-          return `****${last}`;
-        }
-        return '****';
-      }
-      return val;
-    };
-
-    const walk = input => {
-      if (typeof input !== 'object' || input === null) return input;
-      if (Array.isArray(input)) return input.map(walk);
-      const result = {};
-      for (const [k, v] of Object.entries(input)) {
-        result[k] =
-          typeof v === 'object' && v !== null ? walk(v) : sanitizeValue(k, v);
-      }
-      return result;
-    };
-
-    return walk(obj);
   };
 
   if (loading) {
@@ -362,7 +333,11 @@ export default function System({ backendAvailable = true }) {
                         lineHeight: 1.4,
                       }}
                     >
-                      {JSON.stringify(sanitizeConfig(config), null, 2)}
+                      {JSON.stringify(
+                        sanitizeConfig(config, showSensitive),
+                        null,
+                        2
+                      )}
                     </pre>
                   </Box>
                 </Paper>
