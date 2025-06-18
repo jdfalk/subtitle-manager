@@ -277,7 +277,6 @@ func StartServer(addr string) error {
 			}
 			url := fmt.Sprintf("%s://%s:%v/%s", scheme, host, port, base)
 			c := sonarr.NewClient(url, key)
-			ctx := context.Background()
 			sonarr.StartSync(ctx, time.Duration(interval)*time.Minute, c, store)
 		}
 	}
