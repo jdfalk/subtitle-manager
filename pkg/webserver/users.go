@@ -76,3 +76,24 @@ func userResetHandler(db *sql.DB) http.Handler {
 		_ = json.NewEncoder(w).Encode(response{Password: pass, APIKey: key})
 	})
 }
+
+// userRouter dispatches user-related sub paths like password resets or tag management.
+func userRouter(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		base := strings.Trim(viper.GetString("base_url"), "/")
+		if base != "" {
+			base = "/" + base
+		}
+		p := strings.TrimPrefix(r.URL.Path, base+"/api/users/")
+		switch {
+		case strings.HasSuffix(p, "/reset"):
+			userResetHandler(db).ServeHTTP(w, r)
+		case strings.Contains(p, "/tags"):
+			userTagsHandler(db).ServeHTTP(w, r)
+		case p == "" || p == "/":
+			usersHandler(db).ServeHTTP(w, r)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+}

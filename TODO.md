@@ -6,9 +6,9 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 
 ## 🚧 Remaining Work
 
-- [ ] **Tagging System**: Implement tagging for language options and preferences.
-  - [ ] Add tags table to the database and expose tag management in settings.
-  - [ ] Apply tags to media and users to drive language selection and provider behavior.
+- [x] **Tagging System**: Implement tagging for language options and preferences.
+  - [x] Add tags table to the database and expose tag management in settings.
+  - [x] Apply tags to media and users to drive language selection and provider behavior.
 - [ ] **Whisper Container Integration**: Optional embedded Whisper service.
   - [ ] Launch [ahmetoner/whisper-asr-webservice](https://github.com/ahmetoner/whisper-asr-webservice) when `ENABLE_WHISPER=1` is set.
   - [ ] Document requirement for NVIDIA Container Toolkit and add Docker init to manage the service lifecycle.
