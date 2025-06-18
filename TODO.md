@@ -18,6 +18,19 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 
 These tasks must be completed to achieve full Bazarr parity.
 
+## 🧪 Testing & Quality Assurance
+
+### E2E Test Infrastructure
+
+- [x] **Fixed E2E test timeout issues**: Created proper `workflow.spec.js` test file with comprehensive workflows
+  - Added proper API mocking for database operations
+  - Fixed navigation to settings → database tab structure
+  - Improved test reliability with appropriate waits and assertions
+  - Enhanced login test robustness in `app.spec.js`
+- [ ] **Add media library E2E tests**: Test file upload, scanning, and subtitle operations
+- [ ] **Add provider configuration tests**: Test subtitle provider setup and validation
+- [ ] **Add bulk operations tests**: Test batch subtitle download and processing
+
 ## 🚨 High Priority UI/UX Improvements
 
 > **📋 Complete Implementation Plan Available**: All UI/UX improvements have been consolidated into `UI_UX_IMPLEMENTATION_PLAN_COMPLETE.md` with detailed code samples, time estimates, and step-by-step implementation guidance.
