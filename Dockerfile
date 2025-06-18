@@ -54,7 +54,7 @@ COPY --from=node-builder /src/webui/dist ./webui/dist
 RUN CGO_ENABLED=1 go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./
 
 # Stage 4: Final runtime image
-FROM alpine:3.19
+FROM alpine:3.22
 
 # Install runtime dependencies
 RUN apk add --no-cache \
