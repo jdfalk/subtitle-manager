@@ -96,7 +96,10 @@ export default function Scheduling({ backendAvailable = true }) {
                   value={config.db_cleanup_frequency || 'daily'}
                   label="Frequency"
                   onChange={e =>
-                    setConfig({ ...config, db_cleanup_frequency: e.target.value })
+                    setConfig({
+                      ...config,
+                      db_cleanup_frequency: e.target.value,
+                    })
                   }
                 >
                   {frequencies.map(f => (
@@ -151,7 +154,10 @@ export default function Scheduling({ backendAvailable = true }) {
                   value={config.disk_scan_frequency || 'weekly'}
                   label="Frequency"
                   onChange={e =>
-                    setConfig({ ...config, disk_scan_frequency: e.target.value })
+                    setConfig({
+                      ...config,
+                      disk_scan_frequency: e.target.value,
+                    })
                   }
                 >
                   {frequencies.map(f => (
@@ -166,7 +172,11 @@ export default function Scheduling({ backendAvailable = true }) {
         </Grid>
       </Grid>
       <Box sx={{ mt: 3 }}>
-        <Button variant="contained" onClick={saveConfig} disabled={!backendAvailable}>
+        <Button
+          variant="contained"
+          onClick={saveConfig}
+          disabled={!backendAvailable}
+        >
           Save
         </Button>
       </Box>
