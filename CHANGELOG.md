@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Automated maintenance tasks with configurable scheduling.
 
+### Added
+- Fetch languages, ratings, and episode data from OMDb via new metadata functions.
+
 ## [0.9.0] - 2025-06-30
 
 ### Status Update

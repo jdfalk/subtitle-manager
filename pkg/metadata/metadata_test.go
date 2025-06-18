@@ -67,3 +67,58 @@ func TestQueryEpisode(t *testing.T) {
 		t.Fatalf("unexpected episode: %+v", m)
 	}
 }
+
+func TestFetchMovieMetadata(t *testing.T) {
+	tmdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/search/movie" {
+			fmt.Fprint(w, `{"results":[{"id":1,"title":"Test","release_date":"2020-01-01"}]}`)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer tmdbSrv.Close()
+	omdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, `{"Response":"True","Language":"English,Spanish","imdbRating":"7.5"}`)
+	}))
+	defer omdbSrv.Close()
+
+	SetTMDBAPIBase(tmdbSrv.URL)
+	SetOMDBAPIBase(omdbSrv.URL)
+
+	m, err := FetchMovieMetadata(context.Background(), "Test", 2020, "key", "ok")
+	if err != nil {
+		t.Fatalf("fetch: %v", err)
+	}
+	if m.Rating != 7.5 || len(m.Languages) != 2 || m.Languages[0] != "English" {
+		t.Fatalf("unexpected movie info: %+v", m)
+	}
+}
+
+func TestFetchEpisodeMetadata(t *testing.T) {
+	tmdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/search/tv":
+			fmt.Fprint(w, `{"results":[{"id":2,"name":"Show"}]}`)
+		case "/tv/2/season/1/episode/3":
+			fmt.Fprint(w, `{"id":5,"name":"Episode"}`)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer tmdbSrv.Close()
+	omdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, `{"Response":"True","Language":"English","imdbRating":"8.0"}`)
+	}))
+	defer omdbSrv.Close()
+
+	SetTMDBAPIBase(tmdbSrv.URL)
+	SetOMDBAPIBase(omdbSrv.URL)
+
+	m, err := FetchEpisodeMetadata(context.Background(), "Show", 1, 3, "k", "o")
+	if err != nil {
+		t.Fatalf("fetch: %v", err)
+	}
+	if m.Rating != 8.0 || len(m.Languages) != 1 || m.EpisodeTitle != "Episode" {
+		t.Fatalf("unexpected episode info: %+v", m)
+	}
+}
