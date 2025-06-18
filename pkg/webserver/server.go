@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/bazarr"
@@ -892,10 +894,11 @@ func formatProviderName(name string) string {
 	var result []string
 	var currentWord strings.Builder
 
+	titleCaser := cases.Title(language.English)
 	for i, char := range words {
 		if i > 0 && strings.ToUpper(char) == char && strings.ToLower(char) != char {
 			if currentWord.Len() > 0 {
-				result = append(result, strings.Title(currentWord.String()))
+				result = append(result, titleCaser.String(currentWord.String()))
 				currentWord.Reset()
 			}
 		}
@@ -903,11 +906,11 @@ func formatProviderName(name string) string {
 	}
 
 	if currentWord.Len() > 0 {
-		result = append(result, strings.Title(currentWord.String()))
+		result = append(result, titleCaser.String(currentWord.String()))
 	}
 
 	if len(result) == 0 {
-		return strings.Title(name)
+		return titleCaser.String(name)
 	}
 
 	return strings.Join(result, " ")

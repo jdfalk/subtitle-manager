@@ -147,7 +147,7 @@ func GPTTranslate(text, targetLang, apiKey string) (string, error) {
 // The addr parameter specifies the server address (host:port).
 // It returns the translated text provided by the service.
 func GRPCTranslate(text, targetLang, addr string) (string, error) {
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return "", err
 	}

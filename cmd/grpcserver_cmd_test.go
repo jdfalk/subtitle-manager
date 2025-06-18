@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // TestServerTranslate verifies the gRPC Translate method.
@@ -32,7 +33,7 @@ func TestServerTranslate(t *testing.T) {
 	go s.Serve(lis)
 	defer s.Stop()
 
-	conn, err := grpc.Dial(lis.Addr().String(), grpc.WithInsecure())
+	conn, err := grpc.NewClient(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("dial: %v", err)
 	}
