@@ -20,7 +20,7 @@
    - Binary build verification
 
 3. **Frontend Workflow** (`frontend.yml`)
-   - Multi-version Node.js testing (18, 20, 21)
+   - Multi-version Node.js testing (22, 24)
    - ESLint code quality
    - Prettier formatting
    - Build verification

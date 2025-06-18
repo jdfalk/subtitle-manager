@@ -31,7 +31,7 @@ This project uses a modern CI/CD setup with separate workflows for frontend and 
 - **Purpose**: Tests Node.js frontend code
 - **Triggers**: Changes to `webui/**`
 - **Features**:
-  - Multi-version Node.js testing (18, 20, 21)
+  - Multi-version Node.js testing (22, 24)
   - ESLint code quality checks
   - Prettier formatting verification
   - TypeScript type checking

@@ -211,7 +211,7 @@ The Subtitle Manager web UI requires significant improvements to match Bazarr's 
 
 Before starting implementation, ensure you have:
 
-- Node.js 18+ installed
+- Node.js 22+ installed
 - React development environment set up
 - Access to the existing codebase
 - Basic understanding of React, Material-UI, and JavaScript/TypeScript
