@@ -12,3 +12,5 @@ func main() {
 	cmd.SetVersionInfo(Version, BuildTime, GitCommit)
 	cmd.Execute()
 }
+
+// test comment

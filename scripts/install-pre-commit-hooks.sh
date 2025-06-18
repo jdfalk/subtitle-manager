@@ -42,24 +42,42 @@ format_go() {
 
     # If no staged Go files found, scan all Go files
     if [ -z "$GO_FILES" ]; then
-        GO_FILES=$(find . -name "*.go" -not -path "./vendor/*" -not -path "./.git/*" | tr '\n' ' ')
+        GO_FILES=$(find . -name "*.go" -not -path "./vendor/*" -not -path "./.git/*")
     fi
 
     if [ -n "$GO_FILES" ]; then
-        # Format with gofmt
-        gofmt -s -w $GO_FILES
+        # Format with gofmt - process files one by one to avoid segfaults
+        echo "$GO_FILES" | while IFS= read -r file; do
+            if [ -f "$file" ]; then
+                gofmt -s -w "$file"
+            fi
+        done
 
-        # Format with goimports if available
+        # Format with goimports if available - process files one by one
         if command_exists goimports; then
-            goimports -w $GO_FILES
+            echo "$GO_FILES" | while IFS= read -r file; do
+                if [ -f "$file" ]; then
+                    goimports -w "$file" 2>/dev/null || echo "Warning: goimports failed for $file"
+                fi
+            done
         else
             echo "goimports not found, installing..."
             go install golang.org/x/tools/cmd/goimports@latest
-            goimports -w $GO_FILES
+            if command_exists goimports; then
+                echo "$GO_FILES" | while IFS= read -r file; do
+                    if [ -f "$file" ]; then
+                        goimports -w "$file" 2>/dev/null || echo "Warning: goimports failed for $file"
+                    fi
+                done
+            fi
         fi
 
         # Re-stage the formatted files
-        git add $GO_FILES
+        echo "$GO_FILES" | while IFS= read -r file; do
+            if [ -f "$file" ]; then
+                git add "$file"
+            fi
+        done
         echo "Go files formatted and re-staged"
     fi
 }
