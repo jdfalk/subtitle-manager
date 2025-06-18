@@ -290,7 +290,7 @@ func StartServer(addr string) error {
 	// Start additional maintenance tasks for metadata and disk scanning
 	storePath = database.GetDatabasePath()
 	backend = database.GetDatabaseBackend()
-	go func() {
+	go func(ctx context.Context) {
 		var store database.SubtitleStore
 		var err error
 		switch backend {
