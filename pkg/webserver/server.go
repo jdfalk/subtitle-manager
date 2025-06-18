@@ -304,11 +304,11 @@ func StartServer(addr string) error {
 		if err != nil {
 			return
 		}
-		maintenance.StartMetadataRefresh(context.Background(), store,
+		maintenance.StartMetadataRefresh(ctx, store,
 			viper.GetString("tmdb_api_key"), viper.GetString("metadata_refresh_frequency"))
 	}()
 
-	go maintenance.StartDiskScan(context.Background(), viper.GetString("db_path"),
+	go maintenance.StartDiskScan(ctx, viper.GetString("db_path"),
 		viper.GetString("disk_scan_frequency"))
 
 	return http.ListenAndServe(addr, h)
