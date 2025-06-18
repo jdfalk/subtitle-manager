@@ -2,15 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - Current
+## [Unreleased]
+
+## [0.9.0] - 2025-06-30
 
 ### Status Update
 
-- **Core Functionality ~99% Complete**: All backend features implemented with full Bazarr parity
+- **Project Nearing Completion**: Backend and frontend largely implemented but tagging, containerized Whisper, and maintenance tooling remain
 - **Production Ready Backend**: Complete authentication, APIs, and provider support
 - **Enterprise Features**: PostgreSQL, webhooks, notifications, anti-captcha, advanced scheduling complete
-- **UI/UX Implementation Plan Complete**: Comprehensive 18-issue improvement plan with detailed code samples created
-- **Remaining Work**: Execute the UI/UX implementation plan (82-114 hours) for production-ready frontend
+- **UI/UX Overhaul Completed**: All enhancements implemented according to the plan
+- Code overview documentation added in docs/CODE_OVERVIEW.md
 
 ### Major Features Completed Since Last Release
 
@@ -31,6 +33,9 @@ All notable changes to this project will be documented in this file.
 ### Planned (Optional Enhancement)
 
 - Advanced reverse proxy base URL support for complex network setups
+- Tagging system for language preferences
+- Optional containerized Whisper ASR service with NVIDIA runtime
+- Automated database cleanup and metadata refresh tasks
 
 ### Added
 

@@ -1,6 +1,6 @@
 # Subtitle Manager
 
-Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project has achieved ~99% backend completion with full Bazarr feature parity** including 40+ subtitle providers, complete authentication system, PostgreSQL support, webhook system, anti-captcha integration, and a React-based web interface that requires UI/UX enhancements.
+Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project is nearing feature completion with full Bazarr parity planned. It already includes 40+ subtitle providers, enterprise authentication, PostgreSQL support, webhook and notification systems, anti-captcha integration, and a polished React web interface.**
 
 ## ✨ Key Highlights
 
@@ -110,7 +110,7 @@ services are available:
 
 ## Current Status
 
-**Subtitle Manager backend is ~100% complete** with full production readiness, but the frontend requires significant UI/UX improvements for optimal user experience.
+**Subtitle Manager backend is mostly complete** with full production readiness achieved, but additional features such as tagging and containerized Whisper support are still in progress.
 
 ### ✅ Completed (Production Ready Backend)
 
@@ -563,12 +563,13 @@ canonical reference and automatically closes the rest with a comment noting the
 duplicate. This keeps the issue tracker focused on a single discussion for each
 problem.
 
-The project has achieved **~99% completion** with full Bazarr feature parity for core operations and nearly all optional enterprise features. See `TODO.md` for the remaining optional advanced features and implementation plan.
+The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work includes a flexible tagging system, Docker-based Whisper integration, and automated maintenance tasks. See `TODO.md` for details.
 Extensive architectural details and design decisions are documented in
 `docs/TECHNICAL_DESIGN.md`. New contributors should review this document to
 understand package responsibilities and completed features.
 For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
 Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).
+A high-level code overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).
 
 ## License
 

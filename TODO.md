@@ -1,8 +1,22 @@
 # TODO
 
-This file tracks remaining work and implementation status for Subtitle Manager. **Note: The project core functionality is ~99% complete with production readiness achieved, but significant UI/UX improvements are needed.**
+This file tracks remaining work and implementation status for Subtitle Manager. **Note: Subtitle Manager is close to feature complete but still requires several enhancements before a stable 1.0 release.**
 
 ---
+
+## 🚧 Remaining Work
+
+- **Tagging System**: Implement tagging for language options and preferences.
+  - Add tags table to the database and expose tag management in settings.
+  - Apply tags to media and users to drive language selection and provider behavior.
+- **Whisper Container Integration**: Optional embedded Whisper service.
+  - Launch [ahmetoner/whisper-asr-webservice](https://github.com/ahmetoner/whisper-asr-webservice) when `ENABLE_WHISPER=1` is set.
+  - Document requirement for NVIDIA Container Toolkit and add Docker init to manage the service lifecycle.
+- **Automated Maintenance Tasks**: Periodic database cleanup, metadata refresh, and disk scans.
+- **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict resolution.
+- **Online Metadata Sources**: Fetch languages, ratings, and episode data from external APIs.
+
+These tasks must be completed to achieve full Bazarr parity.
 
 ## 🚨 High Priority UI/UX Improvements
 
@@ -19,35 +33,35 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 
 ### Navigation and User Experience
 
-- [ ] **Fix user management display**: System/users shows blank usernames - need to properly display user data
-- [ ] **Move user management to settings**: Users interface should be part of settings, not system
-- [ ] **Implement working back button**: Navigation history and proper back button functionality
-- [ ] **Add sidebar pinning**: Allow users to pin/unpin the sidebar for better UX
-- [ ] **Reorganize navigation order**: Dashboard → Media Library → Wanted → History → Settings → System
-- [ ] **Restructure tools**: Move Extract/Translate/Convert to Tools section or integrate into System
+- [x] **Fix user management display**: System/users shows blank usernames - need to properly display user data
+- [x] **Move user management to settings**: Users interface should be part of settings, not system
+- [x] **Implement working back button**: Navigation history and proper back button functionality
+- [x] **Add sidebar pinning**: Allow users to pin/unpin the sidebar for better UX
+- [x] **Reorganize navigation order**: Dashboard → Media Library → Wanted → History → Settings → System
+- [x] **Restructure tools**: Move Extract/Translate/Convert to Tools section or integrate into System
 
 ### Settings Page Enhancements
 
-- [ ] **Enhance General Settings**: Add Bazarr-compatible settings (Host: Address/Port/Base URL, Proxy, Updates, Logging with filters, Backups, Analytics)
-- [ ] **Improve Database Settings**: Add comprehensive database information and management options
-- [ ] **Redesign Authentication Page**: Card-based UI for each auth method with enable/disable toggles
-- [ ] **Add OAuth2 management**: Generate/regenerate client ID/secret, reset to defaults
-- [ ] **Enhance Notifications**: Card-based interface for each notification method with test buttons
-- [ ] **Create Languages Page**: Global language settings for subtitle downloads (like Bazarr)
-- [ ] **Add Scheduler Settings**: Integration into general settings or separate page
+- [x] **Enhance General Settings**: Add Bazarr-compatible settings (Host: Address/Port/Base URL, Proxy, Updates, Logging with filters, Backups, Analytics)
+- [x] **Improve Database Settings**: Add comprehensive database information and management options
+- [x] **Redesign Authentication Page**: Card-based UI for each auth method with enable/disable toggles
+- [x] **Add OAuth2 management**: Generate/regenerate client ID/secret, reset to defaults
+- [x] **Enhance Notifications**: Card-based interface for each notification method with test buttons
+- [x] **Create Languages Page**: Global language settings for subtitle downloads (like Bazarr)
+- [x] **Add Scheduler Settings**: Integration into general settings or separate page
 
 ### Provider System Improvements
 
-- [ ] **Fix provider configuration modals**: Proper provider selection dropdowns and configuration options
-- [ ] **Improve embedded provider config**: Working dropdown and proper configuration display
-- [ ] **Implement global language settings**: Move language settings from provider-level to global
-- [ ] **Add language profiles**: Bazarr-style language profiles for different content types
+- [x] **Fix provider configuration modals**: Proper provider selection dropdowns and configuration options
+- [x] **Improve embedded provider config**: Working dropdown and proper configuration display
+- [x] **Implement global language settings**: Move language settings from provider-level to global
+- [x] **Add language profiles**: Bazarr-style language profiles for different content types
 
 ## 🔄 Low Priority Improvements
 
 ### Testing Enhancements
 
-- [ ] **Mock PostgreSQL tests**: Mock out PostgreSQL logic as much as possible to reduce dependency on local PostgreSQL installation for test coverage
+- [x] **Mock PostgreSQL tests**: Mock out PostgreSQL logic as much as possible to reduce dependency on local PostgreSQL installation for test coverage
   - Current: Tests skip gracefully if PostgreSQL unavailable
   - Goal: Better test coverage without requiring PostgreSQL setup
   - Priority: Low (current approach works well)
@@ -76,7 +90,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 
 ### Detailed Feature Analysis
 
-#### 1. Core Subtitle Operations ✅ 100% Complete
+#### 1. Core Subtitle Operations – Complete
 
 | Bazarr Feature               | Implementation Status | Code Reference                       |
 | ---------------------------- | --------------------- | ------------------------------------ |
@@ -87,7 +101,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | Batch processing             | ✅ Complete           | [cmd/batch.go](cmd/batch.go)         |
 | History tracking             | ✅ Complete           | [cmd/history.go](cmd/history.go)     |
 
-#### 2. Authentication & Authorization ✅ 100% Complete
+#### 2. Authentication & Authorization – Complete
 
 | Bazarr Feature            | Implementation Status | Code Reference                                   |
 | ------------------------- | --------------------- | ------------------------------------------------ |
@@ -98,7 +112,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | OAuth2 (GitHub)           | ✅ Complete           | [pkg/webserver/oauth.go](pkg/webserver/oauth.go) |
 | One-time tokens           | ✅ Complete           | [cmd/user.go](cmd/user.go)                       |
 
-#### 3. Subtitle Providers ✅ 100% Complete - Full Bazarr Parity
+#### 3. Subtitle Providers – Complete - Full Bazarr Parity
 
 | Provider Category      | Bazarr Count | Our Implementation                                           | Status             |
 | ---------------------- | ------------ | ------------------------------------------------------------ | ------------------ |
@@ -109,7 +123,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | Embedded extraction    | 1            | ✅ Complete ([embedded/](pkg/providers/embedded/))           | ✅                 |
 | Whisper transcription  | 1            | ✅ Complete ([transcribe.go](cmd/transcribe.go))             | ✅                 |
 
-#### 4. Web Interface Pages ✅ 100% Complete
+#### 4. Web Interface Pages – Complete
 
 | Bazarr Page         | Implementation Status     | Code Reference                                     |
 | ------------------- | ------------------------- | -------------------------------------------------- |
@@ -133,7 +147,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 | Webhooks           | ✅ Complete           | [pkg/webhooks](pkg/webhooks/)                      |
 | Notifications      | 🔶 Planned            | [TODO] Discord/Telegram/Email                      |
 
-#### 6. Advanced Features ✅ 100% Complete
+#### 6. Advanced Features – Complete
 
 | Bazarr Feature        | Implementation Status | Code Reference                            |
 | --------------------- | --------------------- | ----------------------------------------- |
@@ -292,7 +306,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 
 ---
 
-## 🎯 Remaining Optional Features (1%)
+## 🎯 Completed Optional Features
 
 ### 1. Advanced Database Support
 
@@ -313,7 +327,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
   - Location: `pkg/captcha/` (complete with Anti-Captcha.com and 2captcha.com)
 - [x] **Notification services**: Discord, Telegram, Email alerts
   - Location: `pkg/notifications/` (complete implementation)
-- [ ] **Reverse proxy support**: Base URL configuration for proxy deployments
+- [x] **Reverse proxy support**: Base URL configuration for proxy deployments
   - Location: `pkg/webserver/server.go` (enhance existing)
   - Reference: [Reverse Proxy Help](https://wiki.bazarr.media/Additional-Configuration/Reverse-Proxy-Help/)
 - [x] **Advanced scheduler**: Enhanced periodic scanning with more granular controls
@@ -379,17 +393,17 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 3. **Anti-Captcha**: For challenging subtitle providers
 4. **Advanced Scheduling**: More granular control options
 
-**Conclusion**: Subtitle Manager has achieved **100% completion** with **full production readiness**. All core features including automatic subtitle synchronization are now complete. The project provides **complete feature parity** with Bazarr while offering **superior performance** and **additional capabilities** not available in Bazarr, including advanced audio/embedded subtitle synchronization with translation integration.
+**Conclusion**: Subtitle Manager is nearing completion with the majority of core features implemented and production readiness achieved. Several advanced capabilities are still planned, including flexible tagging for language settings, containerized Whisper support, and automated maintenance tasks. The project aims for complete Bazarr parity while providing superior performance and additional functionality such as advanced audio/embedded subtitle synchronization with translation integration.
 
-## ✅ Completed Major Features (100%)
+## ✅ Completed Major Features
 
-### Core Functionality (100% Complete)
+### Core Functionality (Complete)
 
 - ✅ All CLI commands: `convert`, `merge`, `translate`, `history`, `extract`, `fetch`, `search`, `batch`, `scan`, `watch`, `delete`, `downloads`
 - ✅ Configuration with Cobra & Viper including environment variables
 - ✅ Component-based logging with adjustable levels
 
-### Authentication & Authorization (100% Complete)
+### Authentication & Authorization (Complete)
 
 - ✅ Password authentication with hashed credentials
 - ✅ One time token generation for email logins _(v0.3.5)_
@@ -399,7 +413,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - ✅ Session management with database persistence
 - ✅ User management commands: `user add`, `user list`, `user role`, `user token`, `user apikey`
 
-### Subtitle Processing (100% Complete)
+### Subtitle Processing (Complete)
 
 - ✅ Convert between subtitle formats using go-astisub
 - ✅ Merge two subtitle tracks sorted by time
@@ -407,7 +421,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - ✅ Translate subtitles through Google Translate (Cloud SDK) and ChatGPT
 - ✅ Delete subtitle files and history records
 
-### Provider Integration (100% Complete - Bazarr Parity Achieved)
+### Provider Integration (Bazarr Parity Achieved)
 
 - ✅ **40+ subtitle providers** including all major services:
   Addic7ed, OpenSubtitles, Subscene, Podnapisi, TVSubtitles, Titlovi,
@@ -415,7 +429,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - ✅ Provider registry for unified selection _(v0.1.9)_
 - ✅ Manual subtitle search with `search` command _(v0.3.6)_
 
-### Database & Storage (100% Complete)
+### Database & Storage (Complete)
 
 - ✅ SQLite backend with full schema
 - ✅ PebbleDB backend with migration support _(v0.3.1)_
@@ -424,7 +438,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - ✅ Download history tracking _(v0.3.2)_
 - ✅ Media items table for library metadata _(v0.3.8)_
 
-### Library Management (100% Complete)
+### Library Management (Complete)
 
 - ✅ Monitor directories for new media files (`watch` command)
 - ✅ Scan existing libraries (`scan` and `scanlib` commands)
@@ -434,7 +448,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - ✅ **Advanced webhook system for Sonarr/Radarr/custom events** _(v1.0.0)_
 - ✅ Metadata parsing with TheMovieDB integration
 
-### Infrastructure (100% Complete)
+### Infrastructure (Complete)
 
 - ✅ gRPC server for remote translation _(v0.1.6)_
 - ✅ Docker support with automated builds _(v0.1.10)_
@@ -442,14 +456,14 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 - ✅ Prebuilt container images on GitHub Container Registry
 - ✅ **Advanced cron-based scheduler with full expression support** _(v1.0.0)_
 
-### Enterprise Features (100% Complete)
+### Enterprise Features (Complete)
 
 - ✅ **Anti-captcha integration** with Anti-Captcha.com and 2captcha.com support _(v1.0.0)_
 - ✅ **Notification services** with Discord, Telegram, and SMTP providers _(v1.0.0)_
 - ✅ **Bazarr configuration import** for seamless migration _(v1.0.0)_
 - ✅ **PostgreSQL database backend** for enterprise deployments _(v1.0.0)_
 
-### Web UI (100% Complete) ✅
+### Web UI (Complete) ✅
 
 - ✅ React application with Vite build system
 - ✅ Authentication flow with login page
@@ -464,7 +478,7 @@ This section provides a comprehensive comparison between Bazarr and Subtitle Man
 
 ## Web Front End Status
 
-The React UI is **100% complete** and includes all major functionality:
+The React UI is functionally complete and includes all major functionality:
 
 - **Authentication** – Login page with username/password and OAuth2 support
 - **Dashboard** – Library scanning with progress tracking and provider selection
@@ -519,4 +533,4 @@ subtitle-manager sync movie.mkv subs.srt output.srt --use-audio --translate --tr
 subtitle-manager sync movie.mkv subs.srt output.srt --use-embedded --subtitle-tracks 0,1,2 --audio-track 1 --translate --translate-service gpt
 ```
 
-This completes the final major feature outlined in the project roadmap. Subtitle Manager now provides **100% completion** of all planned core features.
+This demonstration showcases the advanced subtitle synchronization workflow. Additional features such as tagging and maintenance tooling remain under development before the project can be considered feature complete.
