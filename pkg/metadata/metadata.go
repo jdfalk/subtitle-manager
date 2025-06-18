@@ -17,9 +17,13 @@ import (
 )
 
 var tmdbAPIBase = "https://api.themoviedb.org/3"
+var omdbAPIBase = "https://www.omdbapi.com"
 
 // SetTMDBAPIBase overrides the default TMDB API base URL. Primarily used for testing.
 func SetTMDBAPIBase(u string) { tmdbAPIBase = u }
+
+// SetOMDBAPIBase overrides the default OMDb API base URL. Primarily used for testing.
+func SetOMDBAPIBase(u string) { omdbAPIBase = u }
 
 // MediaType differentiates between movie and TV episode metadata.
 type MediaType int
@@ -40,6 +44,8 @@ type MediaInfo struct {
 	EpisodeTitle string    // title of the episode (if any)
 	Season       int       // season number for episodes
 	Episode      int       // episode number for episodes
+	Languages    []string  // spoken languages
+	Rating       float64   // IMDB rating
 }
 
 var (
@@ -174,6 +180,88 @@ func QueryEpisode(ctx context.Context, show string, season, episode int, apiKey 
 		return nil, err
 	}
 	return &MediaInfo{Type: TypeEpisode, Title: showName, Season: season, Episode: episode, EpisodeTitle: er.Name, TMDBID: er.ID}, nil
+}
+
+// FetchMovieMetadata retrieves movie details from TMDB and enriches them with
+// language and rating information from OMDb.
+// tmdbKey is the TMDB API key, omdbKey the OMDb API key.
+func FetchMovieMetadata(ctx context.Context, title string, year int, tmdbKey, omdbKey string) (*MediaInfo, error) {
+	info, err := QueryMovie(ctx, title, year, tmdbKey)
+	if err != nil {
+		return nil, err
+	}
+	langs, rating, err := fetchOMDBInfo(ctx, url.Values{
+		"t":      []string{title},
+		"apikey": []string{omdbKey},
+		"y":      []string{strconv.Itoa(year)},
+	})
+	if err == nil {
+		info.Languages = langs
+		info.Rating = rating
+	}
+	return info, nil
+}
+
+// FetchEpisodeMetadata retrieves episode details from TMDB and enriches them
+// with language and rating information from OMDb.
+func FetchEpisodeMetadata(ctx context.Context, show string, season, episode int, tmdbKey, omdbKey string) (*MediaInfo, error) {
+	info, err := QueryEpisode(ctx, show, season, episode, tmdbKey)
+	if err != nil {
+		return nil, err
+	}
+	langs, rating, err := fetchOMDBInfo(ctx, url.Values{
+		"t":       []string{show},
+		"Season":  []string{strconv.Itoa(season)},
+		"Episode": []string{strconv.Itoa(episode)},
+		"apikey":  []string{omdbKey},
+	})
+	if err == nil {
+		info.Languages = langs
+		info.Rating = rating
+	}
+	return info, nil
+}
+
+// fetchOMDBInfo queries the OMDb API and returns language and rating fields. It
+// returns an error only if the HTTP request fails or the response cannot be
+// decoded. API errors are ignored.
+func fetchOMDBInfo(ctx context.Context, q url.Values) ([]string, float64, error) {
+	if q.Get("apikey") == "" {
+		return nil, 0, fmt.Errorf("missing api key")
+	}
+	u := fmt.Sprintf("%s/?%s", omdbAPIBase, q.Encode())
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, 0, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, 0, fmt.Errorf("status %d", resp.StatusCode)
+	}
+	var r struct {
+		Response   string `json:"Response"`
+		Language   string `json:"Language"`
+		IMDBRating string `json:"imdbRating"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+		return nil, 0, err
+	}
+	if strings.ToLower(r.Response) != "true" {
+		return nil, 0, fmt.Errorf("not found")
+	}
+	var langs []string
+	for _, l := range strings.Split(r.Language, ",") {
+		l = strings.TrimSpace(l)
+		if l != "" {
+			langs = append(langs, l)
+		}
+	}
+	rating, _ := strconv.ParseFloat(r.IMDBRating, 64)
+	return langs, rating, nil
 }
 
 // ScanLibrary walks a directory tree and inserts video files into the media database.

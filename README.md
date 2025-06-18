@@ -33,7 +33,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Scan existing libraries and fetch missing or upgraded subtitles.
 - Download individual subtitles through the web API at `/api/download`.
 - Schedule scans with the `autoscan` command using intervals or cron expressions.
-- Parse file names and retrieve movie or episode details from TheMovieDB.
+- Parse file names and retrieve movie or episode details from TheMovieDB with language and rating data from OMDb.
 - High performance scanning using concurrent workers.
 - Recursive directory watching with -r flag.
 - Integrate with Sonarr, Radarr and Plex using dedicated commands.
