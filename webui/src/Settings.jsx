@@ -9,6 +9,7 @@ import {
   CloudDownload as ProvidersIcon,
   Refresh as RefreshIcon,
   People as UsersIcon,
+  Label as TagsIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -42,6 +43,7 @@ const NotificationSettings = lazy(
   () => import('./components/NotificationSettings.jsx')
 );
 const UserManagement = lazy(() => import('./UserManagement.jsx'));
+const TagManagement = lazy(() => import('./TagManagement.jsx'));
 
 /**
  * Settings component with modern tabbed interface for managing all aspects
@@ -470,6 +472,17 @@ export default function Settings({ backendAvailable = true }) {
           fallback={<LoadingComponent message="Loading User Management..." />}
         >
           <UserManagement backendAvailable={backendAvailable} />
+        </Suspense>
+      ),
+    },
+    {
+      label: 'Tags',
+      icon: <TagsIcon />,
+      component: () => (
+        <Suspense
+          fallback={<LoadingComponent message="Loading Tag Management..." />}
+        >
+          <TagManagement backendAvailable={backendAvailable} />
         </Suspense>
       ),
     },

@@ -20,6 +20,24 @@ type SubtitleStore interface {
 	ListMediaItems() ([]MediaItem, error)
 	// DeleteMediaItem removes a record for the specified media path.
 	DeleteMediaItem(path string) error
+	// InsertTag stores a new tag value.
+	InsertTag(name string) error
+	// ListTags retrieves all tags.
+	ListTags() ([]Tag, error)
+	// DeleteTag removes a tag by ID.
+	DeleteTag(id int64) error
+	// AssignTagToUser associates a tag with a user.
+	AssignTagToUser(userID, tagID int64) error
+	// RemoveTagFromUser disassociates a tag from a user.
+	RemoveTagFromUser(userID, tagID int64) error
+	// ListTagsForUser returns tags associated with a user.
+	ListTagsForUser(userID int64) ([]Tag, error)
+	// AssignTagToMedia associates a tag with a media item.
+	AssignTagToMedia(mediaID, tagID int64) error
+	// RemoveTagFromMedia disassociates a tag from a media item.
+	RemoveTagFromMedia(mediaID, tagID int64) error
+	// ListTagsForMedia returns tags associated with a media item.
+	ListTagsForMedia(mediaID int64) ([]Tag, error)
 	// Close releases any resources held by the store.
 	Close() error
 }

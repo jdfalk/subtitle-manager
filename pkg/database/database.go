@@ -68,6 +68,14 @@ type MediaItem struct {
 	CreatedAt time.Time
 }
 
+// Tag represents a user or media tag used for language and provider preferences.
+// Name is the unique tag identifier and CreatedAt records when the tag was added.
+type Tag struct {
+	ID        string
+	Name      string
+	CreatedAt time.Time
+}
+
 // SQLStore implements SubtitleStore using an SQLite database.
 type SQLStore struct {
 	db *sql.DB
@@ -176,6 +184,30 @@ func initSchema(db *sql.DB) error {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         role TEXT NOT NULL,
         permission TEXT NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS tags (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        created_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS user_tags (
+        user_id INTEGER NOT NULL,
+        tag_id INTEGER NOT NULL,
+        UNIQUE(user_id, tag_id)
+    )`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_tags (
+        media_id INTEGER NOT NULL,
+        tag_id INTEGER NOT NULL,
+        UNIQUE(media_id, tag_id)
     )`); err != nil {
 		return err
 	}
@@ -415,4 +447,196 @@ func boolToInt(b bool) int {
 		return 1
 	}
 	return 0
+}
+
+// InsertTag adds a new tag to the database.
+func (s *SQLStore) InsertTag(name string) error {
+	_, err := s.db.Exec(`INSERT INTO tags (name, created_at) VALUES (?, ?)`, name, time.Now())
+	return err
+}
+
+// ListTags returns all defined tags ordered by ID.
+func (s *SQLStore) ListTags() ([]Tag, error) {
+	rows, err := s.db.Query(`SELECT id, name, created_at FROM tags ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// DeleteTag removes a tag by ID.
+func (s *SQLStore) DeleteTag(id int64) error {
+	_, err := s.db.Exec(`DELETE FROM tags WHERE id = ?`, id)
+	return err
+}
+
+// AssignTagToUser associates a tag with a user.
+func (s *SQLStore) AssignTagToUser(userID, tagID int64) error {
+	_, err := s.db.Exec(`INSERT OR IGNORE INTO user_tags (user_id, tag_id) VALUES (?, ?)`, userID, tagID)
+	return err
+}
+
+// RemoveTagFromUser deletes a tag association for a user.
+func (s *SQLStore) RemoveTagFromUser(userID, tagID int64) error {
+	_, err := s.db.Exec(`DELETE FROM user_tags WHERE user_id = ? AND tag_id = ?`, userID, tagID)
+	return err
+}
+
+// ListTagsForUser returns tags assigned to a user.
+func (s *SQLStore) ListTagsForUser(userID int64) ([]Tag, error) {
+	rows, err := s.db.Query(`SELECT t.id, t.name, t.created_at FROM tags t JOIN user_tags u ON t.id = u.tag_id WHERE u.user_id = ? ORDER BY t.id`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// AssignTagToMedia associates a tag with a media item.
+func (s *SQLStore) AssignTagToMedia(mediaID, tagID int64) error {
+	_, err := s.db.Exec(`INSERT OR IGNORE INTO media_tags (media_id, tag_id) VALUES (?, ?)`, mediaID, tagID)
+	return err
+}
+
+// RemoveTagFromMedia deletes a tag association for a media item.
+func (s *SQLStore) RemoveTagFromMedia(mediaID, tagID int64) error {
+	_, err := s.db.Exec(`DELETE FROM media_tags WHERE media_id = ? AND tag_id = ?`, mediaID, tagID)
+	return err
+}
+
+// ListTagsForMedia returns tags assigned to a media item.
+func (s *SQLStore) ListTagsForMedia(mediaID int64) ([]Tag, error) {
+	rows, err := s.db.Query(`SELECT t.id, t.name, t.created_at FROM tags t JOIN media_tags m ON t.id = m.tag_id WHERE m.media_id = ? ORDER BY t.id`, mediaID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// InsertTag adds a tag using a raw *sql.DB.
+func InsertTag(db *sql.DB, name string) error {
+	_, err := db.Exec(`INSERT INTO tags (name, created_at) VALUES (?, ?)`, name, time.Now())
+	return err
+}
+
+// ListTags retrieves tags using a raw *sql.DB.
+func ListTags(db *sql.DB) ([]Tag, error) {
+	rows, err := db.Query(`SELECT id, name, created_at FROM tags ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// DeleteTag removes a tag by ID using a raw *sql.DB.
+func DeleteTag(db *sql.DB, id int64) error {
+	_, err := db.Exec(`DELETE FROM tags WHERE id = ?`, id)
+	return err
+}
+
+// AssignTagToUser associates a tag with a user using a raw *sql.DB.
+func AssignTagToUser(db *sql.DB, userID, tagID int64) error {
+	_, err := db.Exec(`INSERT OR IGNORE INTO user_tags (user_id, tag_id) VALUES (?, ?)`, userID, tagID)
+	return err
+}
+
+// RemoveTagFromUser removes a tag from a user using a raw *sql.DB.
+func RemoveTagFromUser(db *sql.DB, userID, tagID int64) error {
+	_, err := db.Exec(`DELETE FROM user_tags WHERE user_id = ? AND tag_id = ?`, userID, tagID)
+	return err
+}
+
+// ListTagsForUser retrieves tags for a user using a raw *sql.DB.
+func ListTagsForUser(db *sql.DB, userID int64) ([]Tag, error) {
+	rows, err := db.Query(`SELECT t.id, t.name, t.created_at FROM tags t JOIN user_tags u ON t.id = u.tag_id WHERE u.user_id = ? ORDER BY t.id`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// AssignTagToMedia associates a tag with a media item using a raw *sql.DB.
+func AssignTagToMedia(db *sql.DB, mediaID, tagID int64) error {
+	_, err := db.Exec(`INSERT OR IGNORE INTO media_tags (media_id, tag_id) VALUES (?, ?)`, mediaID, tagID)
+	return err
+}
+
+// RemoveTagFromMedia deletes a tag from a media item using a raw *sql.DB.
+func RemoveTagFromMedia(db *sql.DB, mediaID, tagID int64) error {
+	_, err := db.Exec(`DELETE FROM media_tags WHERE media_id = ? AND tag_id = ?`, mediaID, tagID)
+	return err
+}
+
+// ListTagsForMedia retrieves tags for a media item using a raw *sql.DB.
+func ListTagsForMedia(db *sql.DB, mediaID int64) ([]Tag, error) {
+	rows, err := db.Query(`SELECT t.id, t.name, t.created_at FROM tags t JOIN media_tags m ON t.id = m.tag_id WHERE m.media_id = ? ORDER BY t.id`, mediaID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
 }

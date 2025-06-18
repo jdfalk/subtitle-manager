@@ -231,3 +231,30 @@ func (p *PebbleStore) DeleteMediaItem(path string) error {
 	}
 	return iter.Error()
 }
+
+// InsertTag is unsupported for PebbleStore and returns nil for compatibility.
+func (p *PebbleStore) InsertTag(name string) error { return nil }
+
+// ListTags returns no tags for PebbleStore.
+func (p *PebbleStore) ListTags() ([]Tag, error) { return nil, nil }
+
+// DeleteTag is a no-op for PebbleStore.
+func (p *PebbleStore) DeleteTag(id int64) error { return nil }
+
+// AssignTagToUser is a no-op for PebbleStore.
+func (p *PebbleStore) AssignTagToUser(userID, tagID int64) error { return nil }
+
+// RemoveTagFromUser is a no-op for PebbleStore.
+func (p *PebbleStore) RemoveTagFromUser(userID, tagID int64) error { return nil }
+
+// ListTagsForUser returns no tags for PebbleStore.
+func (p *PebbleStore) ListTagsForUser(userID int64) ([]Tag, error) { return nil, nil }
+
+// AssignTagToMedia is a no-op for PebbleStore.
+func (p *PebbleStore) AssignTagToMedia(mediaID, tagID int64) error { return nil }
+
+// RemoveTagFromMedia is a no-op for PebbleStore.
+func (p *PebbleStore) RemoveTagFromMedia(mediaID, tagID int64) error { return nil }
+
+// ListTagsForMedia returns no tags for PebbleStore.
+func (p *PebbleStore) ListTagsForMedia(mediaID int64) ([]Tag, error) { return nil, nil }

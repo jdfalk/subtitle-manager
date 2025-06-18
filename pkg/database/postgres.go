@@ -165,3 +165,99 @@ func (p *PostgresStore) DeleteMediaItem(path string) error {
 	_, err := p.db.Exec(`DELETE FROM media_items WHERE path = $1`, path)
 	return err
 }
+
+// InsertTag adds a tag to the database.
+func (p *PostgresStore) InsertTag(name string) error {
+	_, err := p.db.Exec(`INSERT INTO tags (name, created_at) VALUES ($1, $2)`, name, time.Now())
+	return err
+}
+
+// ListTags returns all tags.
+func (p *PostgresStore) ListTags() ([]Tag, error) {
+	rows, err := p.db.Query(`SELECT id, name, created_at FROM tags ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// DeleteTag removes a tag.
+func (p *PostgresStore) DeleteTag(id int64) error {
+	_, err := p.db.Exec(`DELETE FROM tags WHERE id = $1`, id)
+	return err
+}
+
+// AssignTagToUser associates a tag with a user.
+func (p *PostgresStore) AssignTagToUser(userID, tagID int64) error {
+	_, err := p.db.Exec(`INSERT INTO user_tags (user_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, userID, tagID)
+	return err
+}
+
+// RemoveTagFromUser removes a tag from a user.
+func (p *PostgresStore) RemoveTagFromUser(userID, tagID int64) error {
+	_, err := p.db.Exec(`DELETE FROM user_tags WHERE user_id = $1 AND tag_id = $2`, userID, tagID)
+	return err
+}
+
+// ListTagsForUser returns tags associated with a user.
+func (p *PostgresStore) ListTagsForUser(userID int64) ([]Tag, error) {
+	rows, err := p.db.Query(`SELECT t.id, t.name, t.created_at FROM tags t JOIN user_tags u ON t.id = u.tag_id WHERE u.user_id = $1 ORDER BY t.id`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// AssignTagToMedia associates a tag with a media item.
+func (p *PostgresStore) AssignTagToMedia(mediaID, tagID int64) error {
+	_, err := p.db.Exec(`INSERT INTO media_tags (media_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, mediaID, tagID)
+	return err
+}
+
+// RemoveTagFromMedia removes a tag from a media item.
+func (p *PostgresStore) RemoveTagFromMedia(mediaID, tagID int64) error {
+	_, err := p.db.Exec(`DELETE FROM media_tags WHERE media_id = $1 AND tag_id = $2`, mediaID, tagID)
+	return err
+}
+
+// ListTagsForMedia returns tags associated with a media item.
+func (p *PostgresStore) ListTagsForMedia(mediaID int64) ([]Tag, error) {
+	rows, err := p.db.Query(`SELECT t.id, t.name, t.created_at FROM tags t JOIN media_tags m ON t.id = m.tag_id WHERE m.media_id = $1 ORDER BY t.id`, mediaID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
