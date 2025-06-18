@@ -17,9 +17,7 @@ describe('TagManagement component', () => {
     });
 
     render(<TagManagement />);
-    await waitFor(() =>
-      expect(fetch).toHaveBeenCalledWith('/api/tags', expect.any(Object))
-    );
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/tags'));
     expect(await screen.findByText('english')).toBeInTheDocument();
   });
 });
