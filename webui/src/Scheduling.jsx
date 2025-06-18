@@ -1,12 +1,13 @@
 // file: webui/src/Scheduling.jsx
 import {
   Alarm as CleanupIcon,
-  Cached as RefreshIcon,
   Storage as DiskIcon,
+  Cached as RefreshIcon,
 } from '@mui/icons-material';
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
   FormControl,
@@ -15,7 +16,6 @@ import {
   MenuItem,
   Select,
   Typography,
-  Button,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { apiService } from './services/api.js';
@@ -42,6 +42,7 @@ export default function Scheduling({ backendAvailable = true }) {
         setError('Failed to load configuration');
       }
     } catch (err) {
+      console.error('Failed to load configuration:', err);
       setError('Failed to load configuration');
     } finally {
       setLoading(false);
@@ -64,6 +65,7 @@ export default function Scheduling({ backendAvailable = true }) {
         setError('Failed to save configuration');
       }
     } catch (err) {
+      console.error('Failed to save configuration:', err);
       setError('Failed to save configuration');
     }
   };
