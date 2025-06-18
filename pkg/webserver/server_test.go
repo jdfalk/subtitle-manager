@@ -817,3 +817,28 @@ func setupTestUser(t *testing.T, db *sql.DB) string {
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
 	return testutil.MustGet(t, "api key", func() (string, error) { return auth.GenerateAPIKey(db, 1) })
 }
+
+// TestSecurityHeaders ensures that the server sets common security headers.
+func TestSecurityHeaders(t *testing.T) {
+	db, err := database.Open(":memory:")
+	testutil.MustNoError(t, "open db", err)
+	defer db.Close()
+
+	key := setupTestUser(t, db)
+
+	h, err := Handler(db)
+	testutil.MustNoError(t, "handler", err)
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest("GET", srv.URL+"/api/history", nil)
+	req.Header.Set("X-API-Key", key)
+	resp := testutil.MustGet(t, "request", func() (*http.Response, error) { return srv.Client().Do(req) })
+
+	headers := resp.Header
+	for _, name := range []string{"X-Frame-Options", "X-Content-Type-Options", "Content-Security-Policy", "Strict-Transport-Security"} {
+		if headers.Get(name) == "" {
+			t.Fatalf("%s header missing", name)
+		}
+	}
+}

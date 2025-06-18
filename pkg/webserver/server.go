@@ -184,7 +184,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/media/", authMiddleware(db, "basic", mediaTagsHandler(db)))
 	fsHandler := spaFileServer(f)
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
-	return mux, nil
+	return securityHeadersMiddleware(mux), nil
 }
 
 // StartServer starts an HTTP server on the given address serving the embedded UI.

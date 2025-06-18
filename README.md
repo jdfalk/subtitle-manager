@@ -571,6 +571,10 @@ For a detailed list of Bazarr features used as the parity target, see [docs/BAZA
 Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).
 A high-level code overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).
 
+## Security
+
+Subtitle Manager applies strict security headers and sanitizes HTML content in the web interface using DOMPurify. When contributing UI or API code, ensure all user-provided data is properly validated and sanitized.
+
 ## License
 
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
