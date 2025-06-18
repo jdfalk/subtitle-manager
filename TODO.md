@@ -76,6 +76,13 @@ These tasks must be completed to achieve full Bazarr parity.
 
 - [ ] **[nitpick] Consider adding a Referrer-Policy header** (e.g., no-referrer or strict-origin-when-cross-origin) to enhance privacy and reduce referrer leakage
 
+### Development Tools
+
+- [x] **Comprehensive Pre-commit Hooks**: Consolidated duplicate hook scripts into a single comprehensive pre-commit hook
+  - Removed redundant `install-hooks.sh` script
+  - Enhanced `install-pre-commit-hooks.sh` to run Go formatting, goimports, go vet, go mod tidy, Prettier, ESLint, and TypeScript checks
+  - Prevents CI failures by catching issues locally before push
+
 ---
 
 ## 📊 Complete Bazarr Feature Parity Analysis
