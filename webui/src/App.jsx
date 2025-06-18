@@ -14,6 +14,7 @@ import {
   BugReport as SystemIcon,
   Translate as TranslateIcon,
   Download as WantedIcon,
+  Schedule as ScheduleIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -65,6 +66,7 @@ const System = lazy(() => import('./System.jsx'));
 const Extract = lazy(() => import('./Extract.jsx'));
 const Convert = lazy(() => import('./Convert.jsx'));
 const Translate = lazy(() => import('./Translate.jsx'));
+const Scheduling = lazy(() => import('./Scheduling.jsx'));
 const Setup = lazy(() => import('./Setup.jsx'));
 const MediaDetails = lazy(() => import('./MediaDetails.jsx'));
 
@@ -410,6 +412,12 @@ function App() {
       label: 'Translate',
       icon: <TranslateIcon />,
       path: '/tools/translate',
+    },
+    {
+      id: 'scheduling',
+      label: 'Scheduling',
+      icon: <ScheduleIcon />,
+      path: '/tools/scheduling',
     },
   ];
 
@@ -983,6 +991,10 @@ function App() {
               <Route
                 path="/tools/translate"
                 element={<Translate backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/tools/scheduling"
+                element={<Scheduling backendAvailable={backendAvailable} />}
               />
               <Route path="/offline-info" element={<OfflineInfo />} />
             </Routes>
