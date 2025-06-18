@@ -240,7 +240,7 @@ func StartServer(addr string) error {
 	}
 
 	// Start automated maintenance tasks
-	go maintenance.StartDatabaseCleanup(context.Background(), db,
+	go maintenance.StartDatabaseCleanup(ctx, db,
 		viper.GetString("db_cleanup_frequency"))
 
 	// Start Sonarr/Radarr sync tasks when configured
