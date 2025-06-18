@@ -35,6 +35,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { sanitizeConfig } from './utils/configSanitizer.js';
+import { sanitizeHTML } from './utils/sanitizeHTML.js';
 
 /**
  * System component displays system information, logs, and running tasks.
@@ -388,9 +389,10 @@ export default function System({ backendAvailable = true }) {
                           fontFamily:
                             '"Roboto Mono", "Consolas", "Monaco", monospace',
                         }}
-                      >
-                        {logs.join('\n')}
-                      </pre>
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHTML(logs.join('\n')),
+                        }}
+                      />
                     )}
                   </Box>
                 </Paper>
