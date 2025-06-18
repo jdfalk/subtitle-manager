@@ -17,6 +17,8 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/bazarr"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/radarr"
+	"github.com/jdfalk/subtitle-manager/pkg/sonarr"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/updater"
 	"github.com/jdfalk/subtitle-manager/pkg/webhooks"
@@ -234,6 +236,50 @@ func StartServer(addr string) error {
 		repo := "subtitle-manager/subtitle-manager"
 		ctx := context.Background()
 		updater.StartPeriodic(ctx, repo, AppVersion, freq)
+	}
+
+	// Start Sonarr/Radarr sync tasks when configured
+	storeBackend := database.GetDatabaseBackend()
+	storePath := viper.GetString("db_path")
+	if store, err := database.OpenStore(storePath, storeBackend); err == nil {
+		if viper.GetBool("integrations.radarr.enabled") {
+			host := viper.GetString("integrations.radarr.host")
+			port := viper.GetString("integrations.radarr.port")
+			key := viper.GetString("integrations.radarr.api_key")
+			ssl := viper.GetBool("integrations.radarr.ssl")
+			base := strings.Trim(viper.GetString("integrations.radarr.base_url"), "/")
+			interval := viper.GetInt("integrations.radarr.sync_interval")
+			if interval == 0 {
+				interval = 60
+			}
+			scheme := "http"
+			if ssl {
+				scheme = "https"
+			}
+			url := fmt.Sprintf("%s://%s:%v/%s", scheme, host, port, base)
+			c := radarr.NewClient(url, key)
+			ctx := context.Background()
+			radarr.StartSync(ctx, time.Duration(interval)*time.Minute, c, store)
+		}
+		if viper.GetBool("integrations.sonarr.enabled") {
+			host := viper.GetString("integrations.sonarr.host")
+			port := viper.GetString("integrations.sonarr.port")
+			key := viper.GetString("integrations.sonarr.api_key")
+			ssl := viper.GetBool("integrations.sonarr.ssl")
+			base := strings.Trim(viper.GetString("integrations.sonarr.base_url"), "/")
+			interval := viper.GetInt("integrations.sonarr.episode_sync_interval")
+			if interval == 0 {
+				interval = 60
+			}
+			scheme := "http"
+			if ssl {
+				scheme = "https"
+			}
+			url := fmt.Sprintf("%s://%s:%v/%s", scheme, host, port, base)
+			c := sonarr.NewClient(url, key)
+			ctx := context.Background()
+			sonarr.StartSync(ctx, time.Duration(interval)*time.Minute, c, store)
+		}
 	}
 
 	return http.ListenAndServe(addr, h)
