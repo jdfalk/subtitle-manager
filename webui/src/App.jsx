@@ -290,7 +290,6 @@ function App() {
   const [status, setStatus] = useState('');
   const [authed, setAuthed] = useState(false);
   const [setupNeeded, setSetupNeeded] = useState(false);
-  const [page, setPage] = useState('dashboard');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerPinned, setDrawerPinned] = useState(() => {
     const saved = localStorage.getItem('sidebarPinned');
@@ -569,7 +568,7 @@ function App() {
                 </Button>
                 <Button
                   variant="outlined"
-                  onClick={() => setPage('offline-info')}
+                  onClick={() => (window.location.href = '/offline-info')}
                   size="large"
                 >
                   Offline Information
@@ -893,14 +892,21 @@ function App() {
               {toolsItems.map(item => (
                 <ListItem key={item.id} disablePadding>
                   <ListItemButton
-                    component={Link}
+                    component={NavLink}
                     to={item.path}
-                    selected={location.pathname === item.path}
                     onClick={() => {
-                      setPage(item.id);
                       setDrawerOpen(false);
                     }}
-                    sx={{ pl: 4 }}
+                    sx={{
+                      pl: 4,
+                      '&.active': {
+                        backgroundColor: 'action.selected',
+                        color: 'primary.main',
+                        '& .MuiListItemIcon-root': {
+                          color: 'primary.main',
+                        },
+                      },
+                    }}
                   >
                     <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
                       {item.icon}
