@@ -17,6 +17,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/bazarr"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/maintenance"
 	"github.com/jdfalk/subtitle-manager/pkg/radarr"
 	"github.com/jdfalk/subtitle-manager/pkg/sonarr"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
@@ -238,6 +239,10 @@ func StartServer(addr string) error {
 		updater.StartPeriodic(ctx, repo, AppVersion, freq)
 	}
 
+	// Start automated maintenance tasks
+	go maintenance.StartDatabaseCleanup(context.Background(), db,
+		viper.GetString("db_cleanup_frequency"))
+
 	// Start Sonarr/Radarr sync tasks when configured
 	storeBackend := database.GetDatabaseBackend()
 	storePath := viper.GetString("db_path")
@@ -258,7 +263,7 @@ func StartServer(addr string) error {
 			}
 			url := fmt.Sprintf("%s://%s:%v/%s", scheme, host, port, base)
 			c := radarr.NewClient(url, key)
-			ctx := parentCtx
+			ctx := context.Background()
 			radarr.StartSync(ctx, time.Duration(interval)*time.Minute, c, store)
 		}
 		if viper.GetBool("integrations.sonarr.enabled") {
@@ -277,9 +282,34 @@ func StartServer(addr string) error {
 			}
 			url := fmt.Sprintf("%s://%s:%v/%s", scheme, host, port, base)
 			c := sonarr.NewClient(url, key)
+			ctx := context.Background()
 			sonarr.StartSync(ctx, time.Duration(interval)*time.Minute, c, store)
 		}
 	}
+
+	// Start additional maintenance tasks for metadata and disk scanning
+	storePath = database.GetDatabasePath()
+	backend = database.GetDatabaseBackend()
+	go func() {
+		var store database.SubtitleStore
+		var err error
+		switch backend {
+		case "pebble":
+			store, err = database.OpenPebble(storePath)
+		case "postgres":
+			store, err = database.OpenPostgresStore(storePath)
+		default:
+			store, err = database.OpenSQLStore(storePath)
+		}
+		if err != nil {
+			return
+		}
+		maintenance.StartMetadataRefresh(context.Background(), store,
+			viper.GetString("tmdb_api_key"), viper.GetString("metadata_refresh_frequency"))
+	}()
+
+	go maintenance.StartDiskScan(context.Background(), viper.GetString("db_path"),
+		viper.GetString("disk_scan_frequency"))
 
 	return http.ListenAndServe(addr, h)
 }

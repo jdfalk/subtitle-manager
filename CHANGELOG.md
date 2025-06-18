@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- Automated maintenance tasks with configurable scheduling.
 
 ## [0.9.0] - 2025-06-30
 

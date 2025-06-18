@@ -174,6 +174,9 @@ func initConfig() {
 	viper.SetDefault("auto_update", false)
 	viper.SetDefault("update_branch", "master")
 	viper.SetDefault("update_frequency", "daily")
+	viper.SetDefault("db_cleanup_frequency", "daily")
+	viper.SetDefault("metadata_refresh_frequency", "weekly")
+	viper.SetDefault("disk_scan_frequency", "weekly")
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
