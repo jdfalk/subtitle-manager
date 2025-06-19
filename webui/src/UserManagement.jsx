@@ -14,6 +14,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import UserEditorDialog from './components/UserEditorDialog.jsx';
 
 /**
  * UserManagement displays all users and allows password resets.
@@ -26,6 +27,7 @@ export default function UserManagement({ backendAvailable = true }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editor, setEditor] = useState({ open: false, user: null });
 
   const loadUsers = useCallback(async () => {
     if (!backendAvailable) {
@@ -84,6 +86,31 @@ export default function UserManagement({ backendAvailable = true }) {
     }
   };
 
+  const openEditor = user => setEditor({ open: true, user });
+  const closeEditor = () => setEditor({ open: false, user: null });
+
+  const saveUser = async data => {
+    try {
+      const res = await fetch(
+        data.id ? `/api/users/${data.id}` : '/api/users',
+        {
+          method: data.id ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(data),
+        }
+      );
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt);
+      }
+      await loadUsers();
+      closeEditor();
+    } catch (error) {
+      alert(`Failed to save user: ${error.message}`);
+    }
+  };
+
   useEffect(() => {
     loadUsers();
   }, [loadUsers]);
@@ -101,6 +128,12 @@ export default function UserManagement({ backendAvailable = true }) {
       <Typography variant="h6" gutterBottom>
         User Management
       </Typography>
+
+      <Box mb={2}>
+        <Button variant="contained" onClick={() => openEditor(null)}>
+          Add User
+        </Button>
+      </Box>
 
       {!backendAvailable && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -163,6 +196,14 @@ export default function UserManagement({ backendAvailable = true }) {
                   <TableCell>
                     <Button
                       size="small"
+                      onClick={() => openEditor(user)}
+                      variant="text"
+                      sx={{ mr: 1 }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="small"
                       onClick={() => reset(user.id)}
                       disabled={!user.id}
                       variant="outlined"
@@ -184,6 +225,13 @@ export default function UserManagement({ backendAvailable = true }) {
           </Typography>
         </Box>
       )}
+
+      <UserEditorDialog
+        open={editor.open}
+        user={editor.user}
+        onClose={closeEditor}
+        onSave={saveUser}
+      />
     </Box>
   );
 }
