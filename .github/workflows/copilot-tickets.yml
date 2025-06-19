@@ -1,11 +1,26 @@
 # file: .github/workflows/copilot-tickets.yml
+#
+# This workflow manages GitHub issues based on Copilot review comments.
+#
+# Triggers:
+# - pull_request_review_comment: Creates/updates/deletes tickets for Copilot comments
+# - pull_request_review: Logs review submissions (minimal action)
+# - pull_request (closed): Closes tickets when PRs are merged
+# - push (main/master): Closes stale tickets after main branch updates
+#
+# Note: This does NOT trigger Copilot reviews - those are automatic.
+# This only manages the ticket tracking for existing Copilot feedback.
 name: Copilot Review Tickets
 
 on:
   pull_request_review_comment:
-    types: [created]
-  pull_request_review_thread:
-    types: [resolved]
+    types: [created, edited, deleted]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  pull_request:
+    types: [closed]
+  push:
+    branches: [main, master]
 
 jobs:
   manage-tickets:
@@ -16,6 +31,23 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Debug event info
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Action: ${{ github.event.action }}"
+          echo "Repository: ${{ github.repository }}"
+
       - name: Manage tickets
         run: |
           python .github/scripts/copilot_tickets.py
