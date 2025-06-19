@@ -24,7 +24,7 @@ export const sanitizeConfig = (obj, showSensitive = false) => {
         const last = val.slice(-4);
         return `****${last}`;
       }
-      if (val === null || typeof val === 'undefined') return '';
+      if (val == null) return '';
       return '****';
     }
     return val;
