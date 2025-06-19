@@ -191,14 +191,15 @@ func CleanupExpiredSessions(db *sql.DB) error {
 	return err
 }
 
-// User represents an account in the system.
-// ID is stored as a string for convenience when printing.
+// User represents an account in the system. ID is stored as a string for
+// convenience when printing. The JSON struct tags ensure the API returns fields
+// in lowercase so the frontend can parse them correctly.
 type User struct {
-	ID        string
-	Username  string
-	Email     string
-	Role      string
-	CreatedAt time.Time
+        ID        string    `json:"id"`
+        Username  string    `json:"username"`
+        Email     string    `json:"email"`
+        Role      string    `json:"role"`
+        CreatedAt time.Time `json:"created_at"`
 }
 
 // ListUsers returns all users ordered by ID.
