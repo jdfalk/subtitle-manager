@@ -3,12 +3,38 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
-### Added
-- Automated maintenance tasks with configurable scheduling.
 
 ### Added
-- Fetch languages, ratings, and episode data from OMDb via new metadata functions.
-- Tag editor interface in settings for renaming tags.
+
+- **Universal Tagging System**: Complete unified tagging interface supporting all entity types
+  - Enhanced Tag model with Type, EntityType, Color, and Description fields
+  - Polymorphic tag associations table for consistent entity relationships
+  - Standardized REST API endpoints for all entity types: `/api/{entityType}/{id}/tags`
+  - Provider instance integration with tag-based selection and priority logic
+  - Bulk tagging operations for efficient multi-entity management
+  - Legacy migration path for existing user and media tag implementations
+- **Provider Instance Management**: Enhanced provider system with priority and tagging support
+  - Instance registration with configurable priority levels
+  - Per-instance backoff logic for improved reliability
+  - Tag-based provider selection and filtering
+  - Factory registration system for tests and extensions
+  - API endpoints supporting provider instance ID references
+- **Enhanced Web UI Testing**: Minimal webui index for comprehensive test coverage
+- Automated maintenance tasks with configurable scheduling
+- Fetch languages, ratings, and episode data from OMDb via new metadata functions
+
+### Changed
+
+- **Tagging Architecture**: Migrated from separate tag systems to unified interface
+  - User tags now use universal system with `entity_type='user'`
+  - Media tags now use universal system with `entity_type='media'`
+  - Provider tags integrated into instance management system
+- **Database Schema**: Enhanced tag tables to support polymorphic relationships
+- **API Structure**: Standardized tagging endpoints across all entity types
+
+### Migration Notes
+
+Existing tag data will be automatically migrated to the new unified system during the next database schema update. No manual intervention required for most installations.
 
 ## [0.9.0] - 2025-06-30
 

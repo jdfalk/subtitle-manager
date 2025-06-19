@@ -51,6 +51,53 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Minimal React web UI with login page and file upload forms for conversion and translation.
 - Role based access control with sensible defaults and session storage in the database.
 - Manage accounts with `user add`, `user role`, `user token` and `user list` commands.
+- **Universal Tagging System**: Unified tagging interface supporting all entity types (media, users, providers, language profiles) with consistent API and advanced filtering capabilities.
+
+### Universal Tagging System
+
+Subtitle Manager features a comprehensive tagging system that provides unified organization and filtering capabilities across all entity types:
+
+#### Supported Entity Types
+
+- **Media Items**: Tag movies, TV series, seasons, and episodes for content organization
+- **Users**: Apply preference tags for personalized subtitle selection
+- **Providers**: Tag provider instances for selection logic and priority management
+- **Language Profiles**: Create tagged language preference groups
+- **Media Profiles**: Content-specific tagging for automated workflows
+
+#### Key Features
+
+- **Polymorphic Design**: Single interface for all entity types with consistent API endpoints
+- **Advanced Filtering**: Search and filter any entity by tags with complex query support
+- **Bulk Operations**: Apply or remove tags from multiple entities simultaneously
+- **Tag Hierarchies**: Support for tag types (system, user, custom) with optional color coding
+- **Provider Integration**: Tag-based provider selection and priority weighting
+- **Migration Support**: Seamless migration from legacy tagging implementations
+
+#### API Endpoints
+
+The tagging system exposes consistent REST endpoints for all entity types:
+
+```
+GET    /api/{entityType}/{id}/tags     - List tags for entity
+POST   /api/{entityType}/{id}/tags     - Add tag to entity
+DELETE /api/{entityType}/{id}/tags/{tagId} - Remove tag from entity
+GET    /api/tags?entity_type={type}    - List tags by entity type
+POST   /api/tags/bulk                  - Bulk tag operations
+```
+
+#### Usage Examples
+
+```bash
+# Tag a movie for family content
+POST /api/media/12345/tags {"tag_id": "family"}
+
+# List all users with premium tags
+GET /api/tags?entity_type=user&name=premium
+
+# Bulk tag multiple providers
+POST /api/tags/bulk {"tag_id": "reliable", "entities": [{"type": "provider", "id": "opensubtitles"}, {"type": "provider", "id": "subscene"}]}
+```
 
 ### Supported Subtitle Providers
 
