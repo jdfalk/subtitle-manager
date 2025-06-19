@@ -11,10 +11,35 @@ import (
 // The provider API key is reused when applicable. The name of the provider that
 // succeeded is returned along with the subtitle bytes.
 func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, string, error) {
-	names := All()
+	insts := Instances()
+	if len(insts) == 0 {
+		names := All()
+		delay := time.Second
+		for i, name := range names {
+			p, err := Get(name, key)
+			if err != nil {
+				continue
+			}
+			c, cancel := context.WithTimeout(ctx, 15*time.Second)
+			data, err := p.Fetch(c, mediaPath, lang)
+			cancel()
+			if err == nil {
+				return data, name, nil
+			}
+			if ctx.Err() != nil {
+				return nil, "", ctx.Err()
+			}
+			time.Sleep(time.Duration(i+1) * delay)
+		}
+		return nil, "", fmt.Errorf("no subtitle found")
+	}
+
 	delay := time.Second
-	for i, name := range names {
-		p, err := Get(name, key)
+	for i, inst := range insts {
+		if inBackoff(inst.ID) {
+			continue
+		}
+		p, err := Get(inst.Name, key)
 		if err != nil {
 			continue
 		}
@@ -22,11 +47,13 @@ func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, str
 		data, err := p.Fetch(c, mediaPath, lang)
 		cancel()
 		if err == nil {
-			return data, name, nil
+			SetBackoff(inst.ID, 0)
+			return data, inst.ID, nil
 		}
 		if ctx.Err() != nil {
 			return nil, "", ctx.Err()
 		}
+		SetBackoff(inst.ID, time.Duration(i+1)*delay)
 		time.Sleep(time.Duration(i+1) * delay)
 	}
 	return nil, "", fmt.Errorf("no subtitle found")
