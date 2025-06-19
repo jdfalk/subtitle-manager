@@ -35,8 +35,8 @@ export default function TagSelector({ path }) {
         const data = await res.json();
         setItemTags(Array.isArray(data) ? data : []);
       }
-    } catch {
-      // ignore
+    } catch (error) {
+      console.error('Failed to load tags for path:', path, error);
     }
   }, [path]);
 
