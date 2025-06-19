@@ -36,4 +36,26 @@ describe('History component', () => {
       expect(screen.queryByText('a.srt')).not.toBeInTheDocument()
     );
   });
+
+  test('handles null history data gracefully', async () => {
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () =>
+          Promise.resolve({ translations: null, downloads: null }),
+      })
+    );
+
+    render(<History />);
+
+    expect(
+      await screen.findByText('No translation history found')
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: /downloads/i }));
+
+    expect(
+      await screen.findByText('No download history found')
+    ).toBeInTheDocument();
+  });
 });
