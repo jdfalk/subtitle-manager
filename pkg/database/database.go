@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -651,4 +652,32 @@ func ListTagsForMedia(db *sql.DB, mediaID int64) ([]Tag, error) {
 		out = append(out, t)
 	}
 	return out, rows.Err()
+}
+
+// GetMediaIDByPath returns the media item ID for the given file path.
+// It returns sql.ErrNoRows if the path has not been indexed.
+func GetMediaIDByPath(db *sql.DB, path string) (int64, error) {
+	var id int64
+	err := db.QueryRow(`SELECT id FROM media_items WHERE path = ?`, path).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+// EnsureMediaItem retrieves the ID for path, creating a new record if needed.
+func EnsureMediaItem(db *sql.DB, path string) (int64, error) {
+	id, err := GetMediaIDByPath(db, path)
+	if err == nil {
+		return id, nil
+	}
+	if !errors.Is(err, sql.ErrNoRows) {
+		return 0, err
+	}
+	res, err := db.Exec(`INSERT INTO media_items (path, title, created_at) VALUES (?, ?, ?)`,
+		path, filepath.Base(path), time.Now())
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
 }

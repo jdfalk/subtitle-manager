@@ -43,6 +43,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import TagSelector from './components/TagSelector.jsx';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -545,6 +546,11 @@ export default function MediaLibrary({ backendAvailable = true }) {
                           {item?.size &&
                             `${(item.size / 1024 / 1024 / 1024).toFixed(1)} GB`}
                         </Typography>
+                      )}
+                      {item?.isVideo && (
+                        <Box mt={1}>
+                          <TagSelector path={item.path} />
+                        </Box>
                       )}
                     </Box>
 
