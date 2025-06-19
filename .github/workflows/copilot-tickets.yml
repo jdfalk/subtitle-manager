@@ -6,7 +6,10 @@
 # - pull_request_review_comment: Creates/updates/deletes tickets for Copilot comments
 # - pull_request_review: Logs review submissions (minimal action)
 # - pull_request (closed): Closes tickets when PRs are merged
-# - push (main/master): Closes stale tickets after main branch updates
+# - push (main/master): Comprehensive analysis:
+#   * Closes stale tickets after main branch updates
+#   * Analyzes if files mentioned in tickets were modified
+#   * Checks open PRs for missed Copilot comments and creates missing tickets
 #
 # Note: This does NOT trigger Copilot reviews - those are automatic.
 # This only manages the ticket tracking for existing Copilot feedback.
@@ -35,7 +38,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
