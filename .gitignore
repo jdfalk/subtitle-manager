@@ -179,3 +179,4 @@ test/*
 subtitle-manager.yaml
 tmp/*
 temp/*
+!webui/index.html
