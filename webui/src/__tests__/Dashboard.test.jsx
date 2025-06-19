@@ -75,7 +75,7 @@ describe('Dashboard component', () => {
     });
 
     // Click on the Language select to open it and select French
-    const languageSelect = screen.getAllByRole('combobox')[0]; // First combobox is language
+    const languageSelect = screen.getAllByRole('combobox')[1];
     await act(async () => {
       fireEvent.mouseDown(languageSelect);
     });

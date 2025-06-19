@@ -11,7 +11,10 @@ import {
   CardContent,
   Chip,
   CircularProgress,
+  IconButton,
   FormControl,
+  InputAdornment,
+  Autocomplete,
   Grid,
   InputLabel,
   LinearProgress,
@@ -25,6 +28,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import DirectoryChooser from './components/DirectoryChooser.jsx';
 import { apiService } from './services/api.js';
 
 /**
@@ -47,6 +51,8 @@ export default function Dashboard({ backendAvailable = true }) {
   const [availableProviders, setAvailableProviders] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [chooserOpen, setChooserOpen] = useState(false);
 
   useEffect(() => {
     if (backendAvailable) {
@@ -111,6 +117,29 @@ export default function Dashboard({ backendAvailable = true }) {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
     );
+  };
+
+  const fetchSuggestions = async prefix => {
+    if (!backendAvailable) return;
+    try {
+      const lastSlash = prefix.lastIndexOf('/');
+      const parent = lastSlash > 0 ? prefix.slice(0, lastSlash) || '/' : '/';
+      const resp = await apiService.get(
+        `/api/library/browse?path=${encodeURIComponent(parent)}`
+      );
+      if (resp.ok) {
+        const data = await resp.json();
+        const dirs = (data.items || [])
+          .filter(item => item.isDirectory)
+          .map(item => item.path)
+          .filter(p => p.startsWith(prefix));
+        setSuggestions(dirs);
+      } else {
+        setSuggestions([]);
+      }
+    } catch {
+      setSuggestions([]);
+    }
   };
 
   const poll = async () => {
@@ -194,18 +223,37 @@ export default function Dashboard({ backendAvailable = true }) {
                 Subtitle Scan
               </Typography>
               <Box component="form" sx={{ '& > :not(style)': { m: 1 } }}>
-                <TextField
-                  fullWidth
-                  label="Directory Path"
-                  placeholder="Enter directory to scan"
-                  value={dir}
-                  onChange={e => setDir(e.target.value)}
-                  disabled={status.running || !backendAvailable}
-                  InputProps={{
-                    startAdornment: (
-                      <FolderIcon sx={{ mr: 1, color: 'action.active' }} />
-                    ),
+                <Autocomplete
+                  freeSolo
+                  options={suggestions}
+                  inputValue={dir}
+                  onInputChange={(e, value) => {
+                    setDir(value);
+                    fetchSuggestions(value);
                   }}
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      label="Directory Path"
+                      placeholder="Enter directory to scan"
+                      disabled={status.running || !backendAvailable}
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconButton
+                              data-testid="open-directory"
+                              onClick={() => setChooserOpen(true)}
+                              size="small"
+                            >
+                              <FolderIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  )}
                 />
                 <FormControl fullWidth>
                   <InputLabel>Language</InputLabel>
@@ -367,6 +415,11 @@ export default function Dashboard({ backendAvailable = true }) {
           </Grid>
         )}
       </Grid>
+      <DirectoryChooser
+        open={chooserOpen}
+        onClose={() => setChooserOpen(false)}
+        onSelect={path => setDir(path)}
+      />
     </Box>
   );
 }
