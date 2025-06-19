@@ -70,7 +70,10 @@ func TestLoginTokenCmd(t *testing.T) {
 		t.Fatalf("create user: %v", err)
 	}
 	var id int64
-	db.QueryRow(`SELECT id FROM users WHERE username = ?`, "u").Scan(&id)
+	err = db.QueryRow(`SELECT id FROM users WHERE username = ?`, "u").Scan(&id)
+	if err != nil {
+		t.Fatalf("scan user ID: %v", err)
+	}
 	token, err := auth.GenerateOneTimeToken(db, id, time.Hour)
 	if err != nil {
 		t.Fatalf("token: %v", err)
