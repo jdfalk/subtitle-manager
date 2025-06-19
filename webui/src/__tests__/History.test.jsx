@@ -41,8 +41,7 @@ describe('History component', () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
-        json: () =>
-          Promise.resolve({ translations: null, downloads: null }),
+        json: () => Promise.resolve({ translations: null, downloads: null }),
       })
     );
 
