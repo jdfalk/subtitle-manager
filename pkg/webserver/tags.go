@@ -181,3 +181,62 @@ func mediaTagsHandler(db *sql.DB) http.Handler {
 		}
 	})
 }
+
+// libraryTagsHandler manages tag assignments for media items identified by path.
+func libraryTagsHandler(db *sql.DB) http.Handler {
+	type req struct {
+		Path  string `json:"path"`
+		TagID int64  `json:"tag_id"`
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var path string
+		var tagID int64
+		if r.Method == http.MethodGet {
+			path = r.URL.Query().Get("path")
+		} else {
+			var in req
+			if err := json.NewDecoder(r.Body).Decode(&in); err != nil || in.Path == "" {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			path = in.Path
+			tagID = in.TagID
+			if tagID == 0 {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+		}
+		if path == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		id, err := database.EnsureMediaItem(db, path)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		switch r.Method {
+		case http.MethodGet:
+			tags, err := database.ListTagsForMedia(db, id)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			_ = json.NewEncoder(w).Encode(tags)
+		case http.MethodPost:
+			if err := database.AssignTagToMedia(db, id, tagID); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			w.WriteHeader(http.StatusCreated)
+		case http.MethodDelete:
+			if err := database.RemoveTagFromMedia(db, id, tagID); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			w.WriteHeader(http.StatusNoContent)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
+}
