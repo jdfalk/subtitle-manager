@@ -1,5 +1,4 @@
 // file: webui/src/TagManagement.jsx
-import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -14,6 +13,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * TagManagement displays existing tags and allows creation/deletion.
@@ -28,6 +28,7 @@ export default function TagManagement({ backendAvailable = true }) {
   const [newTag, setNewTag] = useState('');
   const [editId, setEditId] = useState(null);
   const [editName, setEditName] = useState('');
+  const [originalEditName, setOriginalEditName] = useState('');
 
   const loadTags = useCallback(async () => {
     if (!backendAvailable) {
@@ -59,6 +60,8 @@ export default function TagManagement({ backendAvailable = true }) {
       if (res.ok) {
         setNewTag('');
         loadTags();
+      } else {
+        setError(`Failed to add tag: HTTP ${res.status}`);
       }
     } catch (err) {
       setError(`Failed to add tag: ${err.message}`);
@@ -68,6 +71,7 @@ export default function TagManagement({ backendAvailable = true }) {
   const startEdit = tag => {
     setEditId(tag.id);
     setEditName(tag.name);
+    setOriginalEditName(tag.name);
   };
 
   const saveEdit = async () => {
@@ -80,7 +84,10 @@ export default function TagManagement({ backendAvailable = true }) {
       if (res.ok) {
         setEditId(null);
         setEditName('');
+        setOriginalEditName('');
         loadTags();
+      } else {
+        setError(`Failed to update tag: HTTP ${res.status}`);
       }
     } catch (err) {
       setError(`Failed to update tag: ${err.message}`);
@@ -90,13 +97,18 @@ export default function TagManagement({ backendAvailable = true }) {
   const cancelEdit = () => {
     setEditId(null);
     setEditName('');
+    setOriginalEditName('');
   };
 
   const deleteTag = async id => {
     if (!window.confirm('Delete this tag?')) return;
     try {
       const res = await fetch(`/api/tags/${id}`, { method: 'DELETE' });
-      if (res.ok) loadTags();
+      if (res.ok) {
+        loadTags();
+      } else {
+        setError(`Failed to delete tag: HTTP ${res.status}`);
+      }
     } catch (err) {
       setError(`Failed to delete tag: ${err.message}`);
     }
@@ -165,7 +177,13 @@ export default function TagManagement({ backendAvailable = true }) {
                 <TableCell>
                   {editId === tag.id ? (
                     <>
-                      <Button size="small" onClick={saveEdit}>
+                      <Button
+                        size="small"
+                        onClick={saveEdit}
+                        disabled={
+                          !editName.trim() || editName === originalEditName
+                        }
+                      >
                         Save
                       </Button>
                       <Button size="small" onClick={cancelEdit}>
