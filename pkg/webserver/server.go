@@ -809,7 +809,10 @@ type Subtitle struct {
 	Format   string `json:"format"`
 }
 
-// getAvailableProviders returns a list of all available providers with their current configuration
+// getAvailableProviders returns a slice of every provider known to the system
+// with the configuration loaded from Viper. Providers are returned regardless
+// of whether they are currently enabled or configured so that the UI can
+// present the full list for selection.
 func getAvailableProviders() []ProviderInfo {
 	// List of all available providers (this matches the registry)
 	providerNames := []string{
@@ -845,16 +848,8 @@ func getAvailableProviders() []ProviderInfo {
 			}
 		}
 
-		// Skip providers that have not been explicitly enabled or
-		// configured, except for the embedded provider which should
-		// always be available.
-		if !enabled && len(config) == 0 && name != "embedded" {
-			if _, ok := providerConfig["enabled"]; !ok {
-				if _, ok2 := providerConfig["config"]; !ok2 {
-					continue
-				}
-			}
-		}
+		// Always include providers in the list so the UI can configure
+		// them even when no entry exists in the configuration file.
 
 		providers = append(providers, ProviderInfo{
 			Name:        name,
