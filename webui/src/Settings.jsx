@@ -363,30 +363,25 @@ export default function Settings({ backendAvailable = true }) {
       </Alert>
 
       <Grid container spacing={3}>
-        {providers.map(provider => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={provider.name}>
-            <ProviderCard
-              provider={provider}
-              onToggle={handleProviderToggle}
-              onConfigure={handleProviderConfigure}
-            />
-          </Grid>
-        ))}
+        {providers
+          .filter(p => p.enabled)
+          .map(provider => (
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={provider.name}>
+              <ProviderCard
+                provider={provider}
+                onToggle={handleProviderToggle}
+                onConfigure={handleProviderConfigure}
+              />
+            </Grid>
+          ))}
 
         {/* Add Provider Card */}
         <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
           <ProviderCard
             isAddCard
             onConfigure={() => {
-              // Handle adding custom provider
-              setProviderConfigDialog({
-                open: true,
-                provider: {
-                  name: 'custom',
-                  displayName: 'Custom Provider',
-                  config: {},
-                },
-              });
+              // Open dialog without a provider to show the full list
+              setProviderConfigDialog({ open: true, provider: null });
             }}
           />
         </Grid>
