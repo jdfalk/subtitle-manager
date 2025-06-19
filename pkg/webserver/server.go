@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -928,12 +929,26 @@ func getProviderType(name string) string {
 // browseDirectory lists media files and directories with subtitle information
 func browseDirectory(path string) ([]MediaItem, error) {
 	if path == "" || path == "/" {
-		// Return common media directories
-		return []MediaItem{
-			{Name: "Movies", Path: "/movies", IsDirectory: true, ModTime: time.Now()},
-			{Name: "TV Shows", Path: "/tv", IsDirectory: true, ModTime: time.Now()},
-			{Name: "Downloads", Path: "/downloads", IsDirectory: true, ModTime: time.Now()},
-		}, nil
+		// Show existing directories from allowed bases for the root view
+		dirs := []string{"/movies", "/tv", "/downloads", "/media", "/mnt", "/home", "/var/lib/subtitle-manager"}
+		if runtime.GOOS == "windows" {
+			dirs = append(dirs, "C:\\", "D:\\", "E:\\")
+		}
+
+		var items []MediaItem
+		for _, d := range dirs {
+			info, err := os.Stat(d)
+			if err != nil || !info.IsDir() {
+				continue
+			}
+			items = append(items, MediaItem{
+				Name:        filepath.Base(filepath.Clean(d)),
+				Path:        d,
+				IsDirectory: true,
+				ModTime:     info.ModTime(),
+			})
+		}
+		return items, nil
 	}
 
 	// Check if path exists and is readable
@@ -1163,10 +1178,13 @@ func validateAndSanitizePath(userPath string) (string, error) {
 		"/home",
 		"/var/lib/subtitle-manager",
 	}
+	if runtime.GOOS == "windows" {
+		allowedBaseDirs = append(allowedBaseDirs, "C:\\", "D:\\", "E:\\")
+	}
 
-	// Special case for root directory
-	if cleanPath == "/" || cleanPath == "." {
-		return "/", nil
+	// Special case for root directory or drive letters on Windows
+	if cleanPath == "/" || cleanPath == "." || (runtime.GOOS == "windows" && len(filepath.VolumeName(cleanPath)) == 2 && strings.Trim(filepath.Clean(cleanPath), "\\") == filepath.VolumeName(cleanPath)) {
+		return cleanPath, nil
 	}
 
 	// Check if the path starts with any allowed base directory
