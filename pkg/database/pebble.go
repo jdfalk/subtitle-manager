@@ -241,6 +241,9 @@ func (p *PebbleStore) ListTags() ([]Tag, error) { return nil, nil }
 // DeleteTag is a no-op for PebbleStore.
 func (p *PebbleStore) DeleteTag(id int64) error { return nil }
 
+// UpdateTag is a no-op for PebbleStore.
+func (p *PebbleStore) UpdateTag(id int64, name string) error { return nil }
+
 // AssignTagToUser is a no-op for PebbleStore.
 func (p *PebbleStore) AssignTagToUser(userID, tagID int64) error { return nil }
 

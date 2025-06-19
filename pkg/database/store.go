@@ -26,6 +26,8 @@ type SubtitleStore interface {
 	ListTags() ([]Tag, error)
 	// DeleteTag removes a tag by ID.
 	DeleteTag(id int64) error
+	// UpdateTag renames a tag by ID.
+	UpdateTag(id int64, name string) error
 	// AssignTagToUser associates a tag with a user.
 	AssignTagToUser(userID, tagID int64) error
 	// RemoveTagFromUser disassociates a tag from a user.

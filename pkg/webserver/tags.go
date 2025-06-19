@@ -41,24 +41,38 @@ func tagsHandler(db *sql.DB) http.Handler {
 	})
 }
 
-// tagDeleteHandler removes a tag by ID.
-func tagDeleteHandler(db *sql.DB) http.Handler {
+// tagItemHandler updates or deletes a tag by ID.
+func tagItemHandler(db *sql.DB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodDelete {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
 		idStr := strings.TrimPrefix(r.URL.Path, "/api/tags/")
 		id, err := strconv.ParseInt(idStr, 10, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		if err := database.DeleteTag(db, id); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+		switch r.Method {
+		case http.MethodDelete:
+			if err := database.DeleteTag(db, id); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			w.WriteHeader(http.StatusNoContent)
+		case http.MethodPatch:
+			var in struct {
+				Name string `json:"name"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&in); err != nil || in.Name == "" {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			if err := database.UpdateTag(db, id, in.Name); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			w.WriteHeader(http.StatusNoContent)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
-		w.WriteHeader(http.StatusNoContent)
 	})
 }
 

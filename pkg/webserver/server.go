@@ -180,7 +180,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/library/browse", authMiddleware(db, "basic", libraryBrowseHandler()))
 	mux.Handle(prefix+"/api/users/", authMiddleware(db, "admin", userRouter(db)))
 	mux.Handle(prefix+"/api/tags", authMiddleware(db, "admin", tagsHandler(db)))
-	mux.Handle(prefix+"/api/tags/", authMiddleware(db, "admin", tagDeleteHandler(db)))
+	mux.Handle(prefix+"/api/tags/", authMiddleware(db, "admin", tagItemHandler(db)))
 	mux.Handle(prefix+"/api/media/", authMiddleware(db, "basic", mediaTagsHandler(db)))
 	fsHandler := spaFileServer(f)
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
