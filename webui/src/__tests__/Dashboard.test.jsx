@@ -16,6 +16,7 @@ vi.mock('../services/api.js', () => ({
     get: vi.fn(),
     post: vi.fn(),
   },
+  getBasePath: () => '',
 }));
 
 describe('Dashboard component', () => {
