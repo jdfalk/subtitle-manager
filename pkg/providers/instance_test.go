@@ -52,3 +52,111 @@ func TestFetchFromAllInstances(t *testing.T) {
 	}
 
 }
+
+func TestInstance_TaggedEntity(t *testing.T) {
+	// Test that Instance implements TaggedEntity interface
+	instance := &Instance{
+		ID:       "test-provider-1",
+		Name:     "Test Provider",
+		Priority: 10,
+		Tags:     []string{"reliable", "fast"},
+		Enabled:  true,
+	}
+
+	// Test TaggedEntity interface methods
+	if instance.GetEntityType() != "provider" {
+		t.Errorf("Expected entity type 'provider', got '%s'", instance.GetEntityType())
+	}
+
+	if instance.GetEntityID() != "test-provider-1" {
+		t.Errorf("Expected entity ID 'test-provider-1', got '%s'", instance.GetEntityID())
+	}
+
+	tags := instance.GetTags()
+	expectedTags := []string{"reliable", "fast"}
+	if len(tags) != len(expectedTags) {
+		t.Errorf("Expected %d tags, got %d", len(expectedTags), len(tags))
+	}
+
+	for i, expectedTag := range expectedTags {
+		if i >= len(tags) || tags[i] != expectedTag {
+			t.Errorf("Expected tag '%s' at index %d, got '%s'", expectedTag, i, tags[i])
+		}
+	}
+
+	// Test SetTags
+	newTags := []string{"updated", "tags"}
+	instance.SetTags(newTags)
+
+	updatedTags := instance.GetTags()
+	if len(updatedTags) != len(newTags) {
+		t.Errorf("Expected %d updated tags, got %d", len(newTags), len(updatedTags))
+	}
+
+	for i, expectedTag := range newTags {
+		if i >= len(updatedTags) || updatedTags[i] != expectedTag {
+			t.Errorf("Expected updated tag '%s' at index %d, got '%s'", expectedTag, i, updatedTags[i])
+		}
+	}
+}
+
+func TestInstancePriorities(t *testing.T) {
+	// Clear any existing instances
+	instancesMu.Lock()
+	instances = make(map[string]Instance)
+	instancesMu.Unlock()
+
+	// Register instances with different priorities
+	highPriorityInstance := Instance{
+		ID:       "high-priority",
+		Name:     "High Priority Provider",
+		Priority: 90,
+		Tags:     []string{"premium"},
+		Enabled:  true,
+	}
+
+	mediumPriorityInstance := Instance{
+		ID:       "medium-priority",
+		Name:     "Medium Priority Provider",
+		Priority: 50,
+		Tags:     []string{"standard"},
+		Enabled:  true,
+	}
+
+	lowPriorityInstance := Instance{
+		ID:       "low-priority",
+		Name:     "Low Priority Provider",
+		Priority: 10,
+		Tags:     []string{"free"},
+		Enabled:  true,
+	}
+
+	// Register instances
+	RegisterInstance(highPriorityInstance)
+	RegisterInstance(mediumPriorityInstance)
+	RegisterInstance(lowPriorityInstance)
+
+	// Test GetInstance retrieval
+	retrieved, exists := GetInstance("high-priority")
+	if !exists {
+		t.Fatal("High priority instance not found")
+	}
+
+	if retrieved.Priority != 90 {
+		t.Errorf("Expected priority 90, got %d", retrieved.Priority)
+	}
+
+	// Test ListInstances returns all instances
+	allInstances := ListInstances()
+	if len(allInstances) != 3 {
+		t.Errorf("Expected 3 instances, got %d", len(allInstances))
+	}
+
+	// Test priority ordering (ListInstances should return sorted by priority)
+	expectedOrder := []string{"high-priority", "medium-priority", "low-priority"}
+	for i, expectedID := range expectedOrder {
+		if i >= len(allInstances) || allInstances[i].ID != expectedID {
+			t.Errorf("Expected instance '%s' at index %d, got '%s'", expectedID, i, allInstances[i].ID)
+		}
+	}
+}
