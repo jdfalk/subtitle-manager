@@ -49,7 +49,9 @@ help: ## Show this help message
 	@echo ""
 	@echo "$(COLOR_YELLOW)Examples:$(COLOR_RESET)"
 	@echo "  make build              # Build the application"
-	@echo "  make dev-air            # Start development with live reloading"
+	@echo "  make dev-air            # Start development with live reloading (full build)"
+	@echo "  make dev-air-fast       # Start development quickly (assumes web UI built)"
+	@echo "  make webui-rebuild      # Force rebuild web UI when JS changes don't trigger"
 	@echo "  make docker             # Build Docker image"
 	@echo "  make test-all           # Run all tests"
 	@echo "  make clean-all          # Clean everything"
@@ -113,12 +115,14 @@ webui-deps-clean: ## Clean install web UI dependencies (fixes version conflicts)
 	@echo "$(COLOR_GREEN)✓ Web UI dependencies clean installed$(COLOR_RESET)"
 
 .PHONY: webui-build
-webui-build: webui-deps $(DIST_DIR) ## Build the web UI
-
-$(DIST_DIR): $(shell find $(WEBUI_DIR)/src -name '*.jsx' -o -name '*.js' -o -name '*.css') $(WEBUI_DIR)/package.json
+webui-build: webui-deps ## Build the web UI (always rebuilds to ensure fresh assets)
 	@echo "$(COLOR_BLUE)Building web UI...$(COLOR_RESET)"
 	cd $(WEBUI_DIR) && npm run build
 	@echo "$(COLOR_GREEN)✓ Web UI built$(COLOR_RESET)"
+
+# Create dist directory if it doesn't exist (for initial setup)
+$(DIST_DIR):
+	@mkdir -p $(DIST_DIR)
 
 .PHONY: webui-dev
 webui-dev: webui-deps ## Start web UI development server
@@ -432,6 +436,17 @@ dev-air: install-air webui-build go-generate ## Start development server with li
 	@echo "$(COLOR_YELLOW)Press Ctrl+C to stop$(COLOR_RESET)"
 	air
 
+.PHONY: dev-air-fast
+dev-air-fast: install-air go-generate ## Start Air quickly (assumes web UI already built)
+	@echo "$(COLOR_YELLOW)⚡ Fast development mode - skipping initial web UI build$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Run 'make webui-build' manually if you need to rebuild web assets$(COLOR_RESET)"
+	@echo "$(COLOR_BLUE)Starting Air for live reloading...$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Air will automatically rebuild and restart on Go file changes$(COLOR_RESET)"
+	@echo "$(COLOR_CYAN)Version will be set to: dev-air$(COLOR_RESET)"
+	@echo "$(COLOR_CYAN)Server will be available at: http://localhost:8080$(COLOR_RESET)"
+	@echo "$(COLOR_YELLOW)Press Ctrl+C to stop$(COLOR_RESET)"
+	air
+
 .PHONY: dev-air-verbose
 dev-air-verbose: install-air ## Start Air with verbose logging
 	@echo "$(COLOR_BLUE)Starting Air with verbose logging...$(COLOR_RESET)"
@@ -604,3 +619,11 @@ check-cgo: ## Check if CGO is properly configured
 	@echo "CGO_ENABLED=$(CGO_ENABLED)"
 	@go env CGO_ENABLED
 	@echo "$(COLOR_GREEN)✓ CGO check complete$(COLOR_RESET)"
+
+.PHONY: webui-rebuild
+webui-rebuild: ## Force rebuild web UI and regenerate Go assets
+	@echo "$(COLOR_BLUE)🔄 Force rebuilding web UI...$(COLOR_RESET)"
+	cd $(WEBUI_DIR) && rm -rf dist && npm run build
+	@echo "$(COLOR_BLUE)Running go generate...$(COLOR_RESET)"
+	go generate ./webui
+	@echo "$(COLOR_GREEN)✓ Web UI rebuilt and Go assets regenerated$(COLOR_RESET)"

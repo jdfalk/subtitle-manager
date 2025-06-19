@@ -161,6 +161,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+
+
 # Test results and reports
 test-results/
 playwright-report/
@@ -179,4 +181,4 @@ test/*
 subtitle-manager.yaml
 tmp/*
 temp/*
-!webui/index.html
+
