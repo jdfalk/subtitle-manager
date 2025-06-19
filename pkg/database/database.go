@@ -69,12 +69,36 @@ type MediaItem struct {
 	CreatedAt time.Time
 }
 
-// Tag represents a user or media tag used for language and provider preferences.
-// Name is the unique tag identifier and CreatedAt records when the tag was added.
+// Tag represents a universal tag that can be associated with any entity type.
+// Supports media, users, providers, language profiles, and media profiles.
+// Type indicates the tag classification (system, user, custom).
+// EntityType specifies which types of entities this tag can be applied to.
+// Color and Description provide additional metadata for UI display and organization.
 type Tag struct {
-	ID        string
-	Name      string
-	CreatedAt time.Time
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Type        string    `json:"type"`        // 'system', 'user', 'custom'
+	EntityType  string    `json:"entity_type"` // 'media', 'language', 'movie', 'series', 'provider', 'user', 'all'
+	Color       string    `json:"color"`       // hex color for UI display (optional)
+	Description string    `json:"description"` // optional tag description
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+// TagAssociation represents a relationship between a tag and any entity.
+// Uses polymorphic association pattern with EntityType and EntityID.
+type TagAssociation struct {
+	TagID      string    `json:"tag_id"`
+	EntityType string    `json:"entity_type"` // 'movie', 'series', 'user', 'provider', etc.
+	EntityID   string    `json:"entity_id"`   // polymorphic entity identifier
+	CreatedAt  time.Time `json:"created_at"`
+}
+
+// TaggedEntity interface defines methods that all taggable entities must implement.
+type TaggedEntity interface {
+	GetEntityType() string
+	GetEntityID() string
+	GetTags() []string
+	SetTags([]string)
 }
 
 // SQLStore implements SubtitleStore using an SQLite database.
@@ -189,14 +213,32 @@ func initSchema(db *sql.DB) error {
 		return err
 	}
 
+	// Enhanced tags table with universal support for all entity types
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS tags (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT UNIQUE NOT NULL,
+        type TEXT NOT NULL DEFAULT 'user',
+        entity_type TEXT DEFAULT 'all',
+        color TEXT,
+        description TEXT,
         created_at TIMESTAMP NOT NULL
     )`); err != nil {
 		return err
 	}
 
+	// Universal tag associations table for polymorphic relationships
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS tag_associations (
+        tag_id INTEGER NOT NULL,
+        entity_type TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        PRIMARY KEY (tag_id, entity_type, entity_id),
+        FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+    )`); err != nil {
+		return err
+	}
+
+	// Legacy tables for backward compatibility - these will be migrated
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS user_tags (
         user_id INTEGER NOT NULL,
         tag_id INTEGER NOT NULL,
@@ -336,8 +378,15 @@ func (s *SQLStore) DeleteMediaItem(path string) error {
 	return err
 }
 
-// Close closes the underlying SQLite database.
-func (s *SQLStore) Close() error { return s.db.Close() }
+// DB returns the underlying *sql.DB for compatibility with existing code.
+func (s *SQLStore) DB() *sql.DB {
+	return s.db
+}
+
+// Close closes the underlying database connection.
+func (s *SQLStore) Close() error {
+	return s.db.Close()
+}
 
 // InsertSubtitle stores a new subtitle record with associated metadata.
 func (s *SQLStore) InsertSubtitle(rec *SubtitleRecord) error {
@@ -450,21 +499,35 @@ func boolToInt(b bool) int {
 	return 0
 }
 
-// InsertTag adds a new tag to the database.
+// InsertTag adds a new tag to the database with enhanced metadata support.
 func (s *SQLStore) InsertTag(name string) error {
-	_, err := s.db.Exec(`INSERT INTO tags (name, created_at) VALUES (?, ?)`, name, time.Now())
+	_, err := s.db.Exec(`INSERT INTO tags (name, type, entity_type, created_at) VALUES (?, 'user', 'all', ?)`, name, time.Now())
 	return err
 }
 
-// UpdateTag renames an existing tag.
+// InsertTagWithMetadata adds a new tag with full metadata support.
+func (s *SQLStore) InsertTagWithMetadata(name, tagType, entityType, color, description string) error {
+	_, err := s.db.Exec(`INSERT INTO tags (name, type, entity_type, color, description, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+		name, tagType, entityType, color, description, time.Now())
+	return err
+}
+
+// UpdateTag renames an existing tag and optionally updates metadata.
 func (s *SQLStore) UpdateTag(id int64, name string) error {
 	_, err := s.db.Exec(`UPDATE tags SET name = ? WHERE id = ?`, name, id)
 	return err
 }
 
-// ListTags returns all defined tags ordered by ID.
+// UpdateTagWithMetadata updates a tag with enhanced metadata.
+func (s *SQLStore) UpdateTagWithMetadata(id int64, name, tagType, entityType, color, description string) error {
+	query := `UPDATE tags SET name = ?, type = ?, entity_type = ?, color = ?, description = ? WHERE id = ?`
+	_, err := s.db.Exec(query, name, tagType, entityType, color, description, id)
+	return err
+}
+
+// ListTags returns all defined tags ordered by ID with full metadata.
 func (s *SQLStore) ListTags() ([]Tag, error) {
-	rows, err := s.db.Query(`SELECT id, name, created_at FROM tags ORDER BY id`)
+	rows, err := s.db.Query(`SELECT id, name, type, entity_type, color, description, created_at FROM tags ORDER BY id`)
 	if err != nil {
 		return nil, err
 	}
@@ -473,10 +536,17 @@ func (s *SQLStore) ListTags() ([]Tag, error) {
 	for rows.Next() {
 		var t Tag
 		var id int64
-		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+		var color, description sql.NullString
+		if err := rows.Scan(&id, &t.Name, &t.Type, &t.EntityType, &color, &description, &t.CreatedAt); err != nil {
 			return nil, err
 		}
 		t.ID = strconv.FormatInt(id, 10)
+		if color.Valid {
+			t.Color = color.String
+		}
+		if description.Valid {
+			t.Description = description.String
+		}
 		out = append(out, t)
 	}
 	return out, rows.Err()
@@ -488,21 +558,30 @@ func (s *SQLStore) DeleteTag(id int64) error {
 	return err
 }
 
-// AssignTagToUser associates a tag with a user.
-func (s *SQLStore) AssignTagToUser(userID, tagID int64) error {
-	_, err := s.db.Exec(`INSERT OR IGNORE INTO user_tags (user_id, tag_id) VALUES (?, ?)`, userID, tagID)
+// Universal tag association methods
+
+// AssignTagToEntity creates a universal tag association with any entity type.
+func (s *SQLStore) AssignTagToEntity(tagID int64, entityType, entityID string) error {
+	_, err := s.db.Exec(`INSERT OR IGNORE INTO tag_associations (tag_id, entity_type, entity_id, created_at) VALUES (?, ?, ?, ?)`,
+		tagID, entityType, entityID, time.Now())
 	return err
 }
 
-// RemoveTagFromUser deletes a tag association for a user.
-func (s *SQLStore) RemoveTagFromUser(userID, tagID int64) error {
-	_, err := s.db.Exec(`DELETE FROM user_tags WHERE user_id = ? AND tag_id = ?`, userID, tagID)
+// RemoveTagFromEntity removes a universal tag association.
+func (s *SQLStore) RemoveTagFromEntity(tagID int64, entityType, entityID string) error {
+	_, err := s.db.Exec(`DELETE FROM tag_associations WHERE tag_id = ? AND entity_type = ? AND entity_id = ?`,
+		tagID, entityType, entityID)
 	return err
 }
 
-// ListTagsForUser returns tags assigned to a user.
-func (s *SQLStore) ListTagsForUser(userID int64) ([]Tag, error) {
-	rows, err := s.db.Query(`SELECT t.id, t.name, t.created_at FROM tags t JOIN user_tags u ON t.id = u.tag_id WHERE u.user_id = ? ORDER BY t.id`, userID)
+// ListTagsForEntity returns all tags associated with a specific entity.
+func (s *SQLStore) ListTagsForEntity(entityType, entityID string) ([]Tag, error) {
+	rows, err := s.db.Query(`
+		SELECT t.id, t.name, t.type, t.entity_type, t.color, t.description, t.created_at
+		FROM tags t
+		JOIN tag_associations ta ON t.id = ta.tag_id
+		WHERE ta.entity_type = ? AND ta.entity_id = ?
+		ORDER BY t.id`, entityType, entityID)
 	if err != nil {
 		return nil, err
 	}
@@ -511,10 +590,121 @@ func (s *SQLStore) ListTagsForUser(userID int64) ([]Tag, error) {
 	for rows.Next() {
 		var t Tag
 		var id int64
-		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+		var color, description sql.NullString
+		if err := rows.Scan(&id, &t.Name, &t.Type, &t.EntityType, &color, &description, &t.CreatedAt); err != nil {
 			return nil, err
 		}
 		t.ID = strconv.FormatInt(id, 10)
+		if color.Valid {
+			t.Color = color.String
+		}
+		if description.Valid {
+			t.Description = description.String
+		}
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// ListEntitiesWithTag returns all entity IDs of a specific type that have the given tag.
+func (s *SQLStore) ListEntitiesWithTag(tagID int64, entityType string) ([]string, error) {
+	rows, err := s.db.Query(`SELECT entity_id FROM tag_associations WHERE tag_id = ? AND entity_type = ? ORDER BY entity_id`,
+		tagID, entityType)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var entityID string
+		if err := rows.Scan(&entityID); err != nil {
+			return nil, err
+		}
+		out = append(out, entityID)
+	}
+	return out, rows.Err()
+}
+
+// BulkAssignTags assigns multiple tags to multiple entities in a single transaction.
+func (s *SQLStore) BulkAssignTags(tagIDs []int64, entities []TagAssociation) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(`INSERT OR IGNORE INTO tag_associations (tag_id, entity_type, entity_id, created_at) VALUES (?, ?, ?, ?)`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	now := time.Now()
+	for _, tagID := range tagIDs {
+		for _, entity := range entities {
+			if _, err := stmt.Exec(tagID, entity.EntityType, entity.EntityID, now); err != nil {
+				return err
+			}
+		}
+	}
+
+	return tx.Commit()
+}
+
+// Legacy compatibility methods (will be deprecated)
+
+// AssignTagToUser associates a tag with a user (legacy method).
+func (s *SQLStore) AssignTagToUser(userID, tagID int64) error {
+	// Use both old and new systems for compatibility
+	if err := s.AssignTagToEntity(tagID, "user", strconv.FormatInt(userID, 10)); err != nil {
+		return err
+	}
+	_, err := s.db.Exec(`INSERT OR IGNORE INTO user_tags (user_id, tag_id) VALUES (?, ?)`, userID, tagID)
+	return err
+}
+
+// RemoveTagFromUser deletes a tag association for a user (legacy method).
+func (s *SQLStore) RemoveTagFromUser(userID, tagID int64) error {
+	// Remove from both old and new systems for compatibility
+	_ = s.RemoveTagFromEntity(tagID, "user", strconv.FormatInt(userID, 10))
+	_, err := s.db.Exec(`DELETE FROM user_tags WHERE user_id = ? AND tag_id = ?`, userID, tagID)
+	return err
+}
+
+// ListTagsForUser returns tags assigned to a user (enhanced legacy method).
+func (s *SQLStore) ListTagsForUser(userID int64) ([]Tag, error) {
+	// Prefer new system, fallback to old system for compatibility
+	tags, err := s.ListTagsForEntity("user", strconv.FormatInt(userID, 10))
+	if err == nil && len(tags) > 0 {
+		return tags, nil
+	}
+
+	// Fallback to legacy table
+	rows, err := s.db.Query(`
+		SELECT t.id, t.name, t.type, t.entity_type, t.color, t.description, t.created_at
+		FROM tags t
+		JOIN user_tags u ON t.id = u.tag_id
+		WHERE u.user_id = ?
+		ORDER BY t.id`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		var color, description sql.NullString
+		if err := rows.Scan(&id, &t.Name, &t.Type, &t.EntityType, &color, &description, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		if color.Valid {
+			t.Color = color.String
+		}
+		if description.Valid {
+			t.Description = description.String
+		}
 		out = append(out, t)
 	}
 	return out, rows.Err()
@@ -552,9 +742,9 @@ func (s *SQLStore) ListTagsForMedia(mediaID int64) ([]Tag, error) {
 	return out, rows.Err()
 }
 
-// InsertTag adds a tag using a raw *sql.DB.
+// InsertTag adds a tag using a raw *sql.DB (legacy compatibility).
 func InsertTag(db *sql.DB, name string) error {
-	_, err := db.Exec(`INSERT INTO tags (name, created_at) VALUES (?, ?)`, name, time.Now())
+	_, err := db.Exec(`INSERT INTO tags (name, type, entity_type, created_at) VALUES (?, 'user', 'all', ?)`, name, time.Now())
 	return err
 }
 
@@ -564,9 +754,9 @@ func UpdateTag(db *sql.DB, id int64, name string) error {
 	return err
 }
 
-// ListTags retrieves tags using a raw *sql.DB.
+// ListTags retrieves tags using a raw *sql.DB with enhanced metadata.
 func ListTags(db *sql.DB) ([]Tag, error) {
-	rows, err := db.Query(`SELECT id, name, created_at FROM tags ORDER BY id`)
+	rows, err := db.Query(`SELECT id, name, type, entity_type, color, description, created_at FROM tags ORDER BY id`)
 	if err != nil {
 		return nil, err
 	}
@@ -575,10 +765,17 @@ func ListTags(db *sql.DB) ([]Tag, error) {
 	for rows.Next() {
 		var t Tag
 		var id int64
-		if err := rows.Scan(&id, &t.Name, &t.CreatedAt); err != nil {
+		var color, description sql.NullString
+		if err := rows.Scan(&id, &t.Name, &t.Type, &t.EntityType, &color, &description, &t.CreatedAt); err != nil {
 			return nil, err
 		}
 		t.ID = strconv.FormatInt(id, 10)
+		if color.Valid {
+			t.Color = color.String
+		}
+		if description.Valid {
+			t.Description = description.String
+		}
 		out = append(out, t)
 	}
 	return out, rows.Err()
@@ -649,6 +846,54 @@ func ListTagsForMedia(db *sql.DB, mediaID int64) ([]Tag, error) {
 			return nil, err
 		}
 		t.ID = strconv.FormatInt(id, 10)
+		out = append(out, t)
+	}
+	return out, rows.Err()
+}
+
+// Universal tagging methods for raw *sql.DB access
+
+// AssignTagToEntity creates a universal tag association using raw *sql.DB.
+func AssignTagToEntity(db *sql.DB, tagID int64, entityType, entityID string) error {
+	_, err := db.Exec(`INSERT OR IGNORE INTO tag_associations (tag_id, entity_type, entity_id, created_at) VALUES (?, ?, ?, ?)`,
+		tagID, entityType, entityID, time.Now())
+	return err
+}
+
+// RemoveTagFromEntity removes a universal tag association using raw *sql.DB.
+func RemoveTagFromEntity(db *sql.DB, tagID int64, entityType, entityID string) error {
+	_, err := db.Exec(`DELETE FROM tag_associations WHERE tag_id = ? AND entity_type = ? AND entity_id = ?`,
+		tagID, entityType, entityID)
+	return err
+}
+
+// ListTagsForEntity returns all tags for a specific entity using raw *sql.DB.
+func ListTagsForEntity(db *sql.DB, entityType, entityID string) ([]Tag, error) {
+	rows, err := db.Query(`
+		SELECT t.id, t.name, t.type, t.entity_type, t.color, t.description, t.created_at
+		FROM tags t
+		JOIN tag_associations ta ON t.id = ta.tag_id
+		WHERE ta.entity_type = ? AND ta.entity_id = ?
+		ORDER BY t.id`, entityType, entityID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []Tag
+	for rows.Next() {
+		var t Tag
+		var id int64
+		var color, description sql.NullString
+		if err := rows.Scan(&id, &t.Name, &t.Type, &t.EntityType, &color, &description, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		t.ID = strconv.FormatInt(id, 10)
+		if color.Valid {
+			t.Color = color.String
+		}
+		if description.Valid {
+			t.Description = description.String
+		}
 		out = append(out, t)
 	}
 	return out, rows.Err()
