@@ -54,7 +54,11 @@ func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, str
 			return nil, "", ctx.Err()
 		}
 		SetBackoff(inst.ID, time.Duration(i+1)*delay)
-		time.Sleep(time.Duration(i+1) * delay)
+		select {
+		case <-time.After(time.Duration(i+1) * delay):
+		case <-ctx.Done():
+			return nil, "", ctx.Err()
+		}
 	}
 	return nil, "", fmt.Errorf("no subtitle found")
 }
