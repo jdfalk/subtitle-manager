@@ -112,6 +112,12 @@ var factories = map[string]func() Provider{
 	"zimuku":           func() Provider { return zimuku.New() },
 }
 
+// RegisterFactory adds a provider factory to the registry. Primarily used in tests
+// to register mock providers.
+func RegisterFactory(name string, f func() Provider) {
+	factories[name] = f
+}
+
 // Get returns a provider by name.
 func Get(name, _ string) (Provider, error) {
 	if name == "opensubtitles" {

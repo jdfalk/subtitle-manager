@@ -41,8 +41,13 @@ func downloadHandler(db *sql.DB) http.Handler {
 		var name string
 		var err error
 		if q.Provider != "" {
-			p, err = providers.Get(q.Provider, "")
-			name = q.Provider
+			if inst, ok := providers.GetInstance(q.Provider); ok {
+				p, err = providers.Get(inst.Name, "")
+				name = inst.ID
+			} else {
+				p, err = providers.Get(q.Provider, "")
+				name = q.Provider
+			}
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				return
