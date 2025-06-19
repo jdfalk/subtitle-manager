@@ -29,6 +29,31 @@ import (
 	"github.com/jdfalk/subtitle-manager/webui"
 )
 
+// allowedBaseDirs defines the allowed base directories for media library browsing
+// and path validation to prevent path traversal attacks.
+var allowedBaseDirs = []string{
+	"/movies",
+	"/tv",
+	"/downloads",
+	"/media",
+	"/mnt",
+	"/home",
+	"/var/lib/subtitle-manager",
+}
+
+// getAllowedBaseDirs returns the allowed base directories with platform-specific
+// additions (e.g., Windows drive letters).
+func getAllowedBaseDirs() []string {
+	dirs := make([]string, len(allowedBaseDirs))
+	copy(dirs, allowedBaseDirs)
+
+	if runtime.GOOS == "windows" {
+		dirs = append(dirs, "C:\\", "D:\\", "E:\\")
+	}
+
+	return dirs
+}
+
 // setupNeeded returns true when no user accounts exist.
 func setupNeeded(db *sql.DB) (bool, error) {
 	var c int
@@ -930,10 +955,7 @@ func getProviderType(name string) string {
 func browseDirectory(path string) ([]MediaItem, error) {
 	if path == "" || path == "/" {
 		// Show existing directories from allowed bases for the root view
-		dirs := []string{"/movies", "/tv", "/downloads", "/media", "/mnt", "/home", "/var/lib/subtitle-manager"}
-		if runtime.GOOS == "windows" {
-			dirs = append(dirs, "C:\\", "D:\\", "E:\\")
-		}
+		dirs := getAllowedBaseDirs()
 
 		var items []MediaItem
 		for _, d := range dirs {
@@ -1168,19 +1190,8 @@ func validateAndSanitizePath(userPath string) (string, error) {
 		return "", fmt.Errorf("invalid path: %v", err)
 	}
 
-	// Define allowed base directories
-	allowedBaseDirs := []string{
-		"/movies",
-		"/tv",
-		"/downloads",
-		"/media",
-		"/mnt",
-		"/home",
-		"/var/lib/subtitle-manager",
-	}
-	if runtime.GOOS == "windows" {
-		allowedBaseDirs = append(allowedBaseDirs, "C:\\", "D:\\", "E:\\")
-	}
+	// Get allowed base directories
+	allowedBaseDirs := getAllowedBaseDirs()
 
 	// Special case for root directory or drive letters on Windows
 	if cleanPath == "/" || cleanPath == "." || (runtime.GOOS == "windows" && len(filepath.VolumeName(cleanPath)) == 2 && strings.Trim(filepath.Clean(cleanPath), "\\") == filepath.VolumeName(cleanPath)) {
