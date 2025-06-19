@@ -1,5 +1,16 @@
 name: Update Issues
 
+# This workflow processes issue updates from issue_updates.json
+# Supported actions (processed in order):
+# - create: Create new issues
+# - update: Update existing issue title, body, labels, etc.
+# - comment: Add comments to existing issues (with GUID support to prevent duplicates)
+# - close: Close issues (with optional state_reason)
+# - delete: Delete issues permanently
+#
+# Comments are processed before closing to ensure proper ordering.
+# Comments support GUID tracking to prevent duplicate comments.
+
 on:
   push:
     branches: [main]
@@ -20,48 +31,119 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           processed=0
-          jq -c '.[]' issue_updates.json | while read -r item; do
-            action=$(echo "$item" | jq -r '.action')
-            if [ "$action" = "create" ]; then
-              title=$(echo "$item" | jq -r '.title')
-              encoded_title=$(printf '%s' "$title" | jq -sRr @uri)
-              count=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
-                -H "Accept: application/vnd.github+json" \
-                "https://api.github.com/search/issues?q=repo:${REPO}+is:issue+in:title+${encoded_title}" | jq '.total_count')
-              if [ "$count" -eq 0 ]; then
-                echo "Creating issue '$title'"
+
+          # Function to process actions by type in the correct order
+          process_actions() {
+            local action_type="$1"
+            echo "Processing $action_type actions..."
+
+            jq -c --arg action_type "$action_type" '.[] | select(.action == $action_type)' issue_updates.json | while read -r item; do
+              action=$(echo "$item" | jq -r '.action')
+
+              if [ "$action" = "create" ]; then
+                title=$(echo "$item" | jq -r '.title')
+                encoded_title=$(printf '%s' "$title" | jq -sRr @uri)
+                count=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  "https://api.github.com/search/issues?q=repo:${REPO}+is:issue+in:title+${encoded_title}" | jq '.total_count')
+                if [ "$count" -eq 0 ]; then
+                  echo "Creating issue '$title'"
+                  curl -s -X POST \
+                    -H "Authorization: Bearer $GH_TOKEN" \
+                    -H "Accept: application/vnd.github+json" \
+                    "https://api.github.com/repos/${REPO}/issues" \
+                    -d "$(echo "$item" | jq 'del(.action)')"
+                else
+                  echo "Issue '$title' already exists, skipping"
+                fi
+
+              elif [ "$action" = "update" ]; then
+                num=$(echo "$item" | jq -r '.number')
+                echo "Updating issue $num"
+                curl -s -X PATCH \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  "https://api.github.com/repos/${REPO}/issues/$num" \
+                  -d "$(echo "$item" | jq 'del(.action, .number)')"
+
+              elif [ "$action" = "comment" ]; then
+                num=$(echo "$item" | jq -r '.number')
+                comment_body=$(echo "$item" | jq -r '.body')
+                comment_guid=$(echo "$item" | jq -r '.guid // ""')
+
+                # Check if comment with this GUID already exists (if GUID provided)
+                if [ -n "$comment_guid" ] && [ "$comment_guid" != "null" ] && [ "$comment_guid" != "" ]; then
+                  echo "Checking for existing comment with GUID: $comment_guid on issue $num"
+                  existing_comment=$(curl -s \
+                    -H "Authorization: Bearer $GH_TOKEN" \
+                    -H "Accept: application/vnd.github+json" \
+                    "https://api.github.com/repos/${REPO}/issues/$num/comments" | \
+                    jq -r --arg guid "$comment_guid" '.[] | select(.body | test("<!-- guid:" + $guid + " -->")) | .id' | head -n1)
+
+                  if [ -n "$existing_comment" ] && [ "$existing_comment" != "null" ] && [ "$existing_comment" != "" ]; then
+                    echo "Comment with GUID $comment_guid already exists on issue $num (comment ID: $existing_comment), skipping"
+                    continue
+                  else
+                    echo "No existing comment found with GUID $comment_guid"
+                  fi
+                fi
+
+                echo "Adding comment to issue $num"
+                # Add GUID to comment body if provided
+                if [ -n "$comment_guid" ] && [ "$comment_guid" != "null" ] && [ "$comment_guid" != "" ]; then
+                  final_body="$comment_body"$'\n\n'"<!-- guid:$comment_guid -->"
+                  echo "Adding comment with GUID: $comment_guid"
+                else
+                  final_body="$comment_body"
+                  echo "Adding comment without GUID"
+                fi
+
                 curl -s -X POST \
                   -H "Authorization: Bearer $GH_TOKEN" \
                   -H "Accept: application/vnd.github+json" \
-                  "https://api.github.com/repos/${REPO}/issues" \
-                  -d "$(echo "$item" | jq 'del(.action)')"
-              else
-                echo "Issue '$title' already exists, skipping"
+                  "https://api.github.com/repos/${REPO}/issues/$num/comments" \
+                  -d "$(echo "$item" | jq --arg body "$final_body" 'del(.action, .number, .guid) | .body = $body')"
+
+              elif [ "$action" = "close" ]; then
+                num=$(echo "$item" | jq -r '.number')
+                echo "Closing issue $num"
+                close_reason=$(echo "$item" | jq -r '.state_reason // "completed"')
+                curl -s -X PATCH \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  "https://api.github.com/repos/${REPO}/issues/$num" \
+                  -d "{\"state\": \"closed\", \"state_reason\": \"$close_reason\"}"
+
+              elif [ "$action" = "delete" ]; then
+                num=$(echo "$item" | jq -r '.number')
+                echo "Deleting issue $num"
+                node_id=$(curl -s \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  "https://api.github.com/repos/${REPO}/issues/$num" | jq -r '.node_id')
+                mutation=$(printf '{"query":"mutation{deleteIssue(input:{issueId:\"%s\"}){clientMutationId}}"}' "$node_id")
+                curl -s -X POST \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  https://api.github.com/graphql \
+                  -d "$mutation"
               fi
-            elif [ "$action" = "update" ]; then
-              num=$(echo "$item" | jq -r '.number')
-              echo "Updating issue $num"
-              curl -s -X PATCH \
-                -H "Authorization: Bearer $GH_TOKEN" \
-                -H "Accept: application/vnd.github+json" \
-                "https://api.github.com/repos/${REPO}/issues/$num" \
-                -d "$(echo "$item" | jq 'del(.action, .number)')"
-            elif [ "$action" = "delete" ]; then
-              num=$(echo "$item" | jq -r '.number')
-              echo "Deleting issue $num"
-              node_id=$(curl -s \
-                -H "Authorization: Bearer $GH_TOKEN" \
-                -H "Accept: application/vnd.github+json" \
-                "https://api.github.com/repos/${REPO}/issues/$num" | jq -r '.node_id')
-              mutation=$(printf '{"query":"mutation{deleteIssue(input:{issueId:\"%s\"}){clientMutationId}}"}' "$node_id")
-              curl -s -X POST \
-                -H "Authorization: Bearer $GH_TOKEN" \
-                -H "Accept: application/vnd.github+json" \
-                https://api.github.com/graphql \
-                -d "$mutation"
-            fi
-            processed=1
-          done
+              processed=1
+            done
+          }
+
+          # Process actions in the correct order:
+          # 1. Create new issues first
+          # 2. Update existing issues
+          # 3. Add comments to issues
+          # 4. Close issues (after comments are added)
+          # 5. Delete issues last
+
+          process_actions "create"
+          process_actions "update"
+          process_actions "comment"
+          process_actions "close"
+          process_actions "delete"
           echo "processed=$processed" >> "$GITHUB_OUTPUT"
       - name: Remove issue_updates.json
         if: steps.issues.outputs.processed == '1'

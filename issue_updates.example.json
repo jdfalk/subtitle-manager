@@ -1,0 +1,46 @@
+[
+  {
+    "action": "create",
+    "title": "Example New Issue",
+    "body": "This is a new issue created via the workflow.",
+    "labels": ["bug", "enhancement"]
+  },
+  {
+    "action": "update",
+    "number": 123,
+    "title": "Updated Issue Title",
+    "body": "Updated issue description",
+    "labels": ["bug", "priority-high"]
+  },
+  {
+    "action": "comment",
+    "number": 123,
+    "body": "This comment will be added to issue #123 before it's closed.",
+    "guid": "pre-close-comment-123-2025-06-19"
+  },
+  {
+    "action": "comment",
+    "number": 456,
+    "body": "This comment has a GUID and won't be duplicated if the workflow runs again.",
+    "guid": "status-update-456-unique-id"
+  },
+  {
+    "action": "comment",
+    "number": 789,
+    "body": "This comment does not have a GUID, so it could be added multiple times."
+  },
+  {
+    "action": "close",
+    "number": 123,
+    "state_reason": "completed"
+  },
+  {
+    "action": "close",
+    "number": 789,
+    "state_reason": "not_planned"
+  },
+  {
+    "action": "delete",
+    "number": 999
+  }
+]
