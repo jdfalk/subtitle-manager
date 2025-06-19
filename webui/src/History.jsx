@@ -46,16 +46,16 @@ export default function History({ backendAvailable = true }) {
             downloads: d.downloads || [],
           })
         )
-        .catch(() =>
-          setData({ translations: [], downloads: [] })
-        );
+        .catch(() => setData({ translations: [], downloads: [] }));
     }
   }, [backendAvailable]);
 
   const translations = (data.translations || []).filter(
     r => !lang || r.Language === lang
   );
-  const downloads = (data.downloads || []).filter(r => !lang || r.Language === lang);
+  const downloads = (data.downloads || []).filter(
+    r => !lang || r.Language === lang
+  );
 
   const formatTimestamp = timestamp => {
     if (!timestamp) return 'N/A';
