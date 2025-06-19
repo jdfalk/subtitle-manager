@@ -16,20 +16,87 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict resolution.
 - [ ] **Online Metadata Sources**: Fetch languages, ratings, and episode data from external APIs.
 
-### Tagging System Enhancements
+### Universal Tagging System Implementation
 
-Additional capabilities are required to make tagging truly useful throughout the application. Planned tasks include:
+**🎯 Core Objective**: Implement a unified tagging interface that works across all entity types with consistent API and database schema.
 
- - [x] Tag editing in the UI: rename tags and update metadata
-- [ ] Tag description and color fields stored in the database
-- [ ] Display where each tag is used (users, movies, series, seasons, episodes)
-- [ ] Bulk add/remove tags for multiple library items
-- [ ] Library filtering and search by tag
-- [ ] API endpoints for full CRUD and usage queries
-- [ ] Import/export tags from Sonarr/Radarr categories
-- [ ] Tag-based automation rules for downloads and provider selection
+#### Architecture Overview
 
-These tasks must be completed to achieve full Bazarr parity.
+The unified tagging system will support these entity types:
+
+- **Media Profiles**: Content-specific tagging for movies/TV shows
+- **Language Profiles**: Language preference and priority tagging
+- **Movies**: Individual movie tagging for categorization
+- **TV Series**: Series-level tagging and organization
+- **Providers**: Provider instance tagging for selection logic
+- **Users**: User preference and access control tagging
+
+#### Implementation Plan
+
+- [x] **Universal Tag Interface**: Create `TaggedEntity` interface that all taggable types implement
+- [x] **Enhanced Tag Type**: Add `Type`, `EntityType`, `Color`, and `Description` fields to Tag struct
+- [x] **Unified Database Schema**: Single `tag_associations` table with polymorphic relationships
+- [x] **Consistent API**: Standardized REST endpoints following `/api/{entityType}/{id}/tags` pattern
+- [x] **Provider Instance Integration**: Extend provider instances to use the unified tagging system
+- [x] **Bulk Operations**: Tag multiple entities simultaneously with batch API endpoints
+
+#### Database Schema Changes
+
+```sql
+-- Enhanced tags table with type information
+CREATE TABLE tags (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    type TEXT NOT NULL,           -- 'system', 'user', 'custom'
+    entity_type TEXT,             -- 'media', 'language', 'movie', 'series', 'provider', 'user'
+    color TEXT,                   -- hex color for UI display
+    description TEXT,             -- optional tag description
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Universal tag associations table
+CREATE TABLE tag_associations (
+    tag_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+    entity_type TEXT NOT NULL,    -- 'movie', 'series', 'user', 'provider', etc.
+    entity_id TEXT NOT NULL,      -- polymorphic entity identifier
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (tag_id, entity_type, entity_id)
+);
+```
+
+#### API Standardization
+
+All entity types will support consistent tagging operations:
+
+- `GET /api/{entityType}/{id}/tags` - List tags for entity
+- `POST /api/{entityType}/{id}/tags` - Add tag to entity
+- `DELETE /api/{entityType}/{id}/tags/{tagId}` - Remove tag from entity
+- `GET /api/tags?entity_type={type}` - List tags by entity type
+- `POST /api/tags/bulk` - Bulk tag operations
+
+#### Integration with Provider System
+
+Provider instances will use the unified tagging system for:
+
+- **Selection Logic**: Choose providers based on content tags
+- **Priority Weighting**: Tag-based provider prioritization
+- **Backoff Management**: Per-tag backoff strategies
+- **Configuration**: Tag-driven provider configuration
+
+#### Legacy Migration
+
+Current tag implementations will be migrated to the unified system:
+
+- User tags → Universal system with `entity_type='user'`
+- Media tags → Universal system with `entity_type='media'`
+- Provider tags → Enhanced instance system with proper associations
+
+#### Validation and Testing
+
+- [x] **Unit Tests**: Comprehensive test coverage for all tagging operations
+- [x] **Integration Tests**: End-to-end tag workflow testing
+- [x] **Migration Tests**: Verify legacy data migration integrity
+- [x] **Performance Tests**: Ensure tagging operations scale appropriately
 
 ## 🧪 Testing & Quality Assurance
 
