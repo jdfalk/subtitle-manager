@@ -105,11 +105,13 @@ export default function ProviderCard({
         transition: 'all 0.2s ease-in-out',
         border: provider.enabled ? '2px solid' : '1px solid',
         borderColor: provider.enabled ? 'success.main' : 'divider',
+        cursor: 'pointer',
         '&:hover': {
           transform: 'translateY(-2px)',
           boxShadow: 4,
         },
       }}
+      onClick={() => onConfigure(provider)}
     >
       <CardContent sx={{ pb: 1 }}>
         <Box display="flex" alignItems="center" mb={1}>
@@ -129,9 +131,11 @@ export default function ProviderCard({
               {provider.displayName || provider.name}
             </Typography>
             <FormControlLabel
+              onClick={e => e.stopPropagation()}
               control={
                 <Switch
                   checked={provider.enabled}
+                  onClick={e => e.stopPropagation()}
                   onChange={e => onToggle(provider.name, e.target.checked)}
                   size="small"
                 />
@@ -186,7 +190,10 @@ export default function ProviderCard({
           <Tooltip title="Configure provider">
             <IconButton
               size="small"
-              onClick={() => onConfigure(provider)}
+              onClick={e => {
+                e.stopPropagation();
+                onConfigure(provider);
+              }}
               color="primary"
             >
               <SettingsIcon fontSize="small" />
@@ -204,7 +211,10 @@ export default function ProviderCard({
             <Tooltip title="Remove provider">
               <IconButton
                 size="small"
-                onClick={() => onDelete(provider.name)}
+                onClick={e => {
+                  e.stopPropagation();
+                  onDelete(provider.name);
+                }}
                 color="error"
               >
                 <DeleteIcon fontSize="small" />
