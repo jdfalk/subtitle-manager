@@ -29,25 +29,6 @@ import (
 	"github.com/jdfalk/subtitle-manager/webui"
 )
 
-// allowedBaseDirs defines the root directories that may be browsed. By default
-// the entire filesystem is accessible by including only "/". This slice can be
-// overridden via configuration in the future if tighter restrictions are
-// desired.
-var allowedBaseDirs = []string{"/"}
-
-// getAllowedBaseDirs returns the allowed base directories with platform-specific
-// additions (e.g., Windows drive letters).
-func getAllowedBaseDirs() []string {
-	dirs := make([]string, len(allowedBaseDirs))
-	copy(dirs, allowedBaseDirs)
-
-	if runtime.GOOS == "windows" {
-		dirs = append(dirs, "C:\\", "D:\\", "E:\\")
-	}
-
-	return dirs
-}
-
 // setupNeeded returns true when no user accounts exist.
 func setupNeeded(db *sql.DB) (bool, error) {
 	var c int
