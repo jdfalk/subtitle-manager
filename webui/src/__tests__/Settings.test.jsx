@@ -7,7 +7,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-import { beforeEach, afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import Settings from '../Settings.jsx';
 
 // Mock the API service
@@ -20,6 +20,8 @@ vi.mock('../services/api.js', () => ({
 }));
 
 describe('Settings component', () => {
+  const originalFetch = global.fetch;
+
   beforeEach(async () => {
     vi.clearAllMocks();
 

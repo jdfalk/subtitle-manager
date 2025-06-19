@@ -41,6 +41,15 @@ export default function ProviderCard({
   onDelete,
   isAddCard = false,
 }) {
+  /**
+   * Helper function to wrap event handlers with stopPropagation
+   * @param {Function} handler - The event handler to wrap
+   * @returns {Function} - Wrapped event handler
+   */
+  const withStopPropagation = handler => e => {
+    e.stopPropagation();
+    handler(e);
+  };
   if (isAddCard) {
     return (
       <Card
@@ -131,12 +140,14 @@ export default function ProviderCard({
               {provider.displayName || provider.name}
             </Typography>
             <FormControlLabel
-              onClick={e => e.stopPropagation()}
+              onClick={withStopPropagation(() => {})}
               control={
                 <Switch
                   checked={provider.enabled}
-                  onClick={e => e.stopPropagation()}
-                  onChange={e => onToggle(provider.name, e.target.checked)}
+                  onClick={withStopPropagation(() => {})}
+                  onChange={withStopPropagation(e =>
+                    onToggle(provider.name, e.target.checked)
+                  )}
                   size="small"
                 />
               }
@@ -190,10 +201,7 @@ export default function ProviderCard({
           <Tooltip title="Configure provider">
             <IconButton
               size="small"
-              onClick={e => {
-                e.stopPropagation();
-                onConfigure(provider);
-              }}
+              onClick={withStopPropagation(() => onConfigure(provider))}
               color="primary"
             >
               <SettingsIcon fontSize="small" />
@@ -211,10 +219,7 @@ export default function ProviderCard({
             <Tooltip title="Remove provider">
               <IconButton
                 size="small"
-                onClick={e => {
-                  e.stopPropagation();
-                  onDelete(provider.name);
-                }}
+                onClick={withStopPropagation(() => onDelete(provider.name))}
                 color="error"
               >
                 <DeleteIcon fontSize="small" />
