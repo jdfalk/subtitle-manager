@@ -36,7 +36,7 @@ func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, str
 
 	delay := time.Second
 	for i, inst := range insts {
-		if inBackoff(inst.ID) {
+		if IsInBackoff(inst.ID) {
 			continue
 		}
 		p, err := Get(inst.Name, key)
