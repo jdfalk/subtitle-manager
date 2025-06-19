@@ -20,9 +20,11 @@ export const sanitizeConfig = (obj, showSensitive = false) => {
     const lower = key.toLowerCase();
     if (sensitive.some(s => lower.includes(s))) {
       if (typeof val === 'string') {
+        if (!val) return '';
         const last = val.slice(-4);
         return `****${last}`;
       }
+      if (val === null || typeof val === 'undefined') return '';
       return '****';
     }
     return val;

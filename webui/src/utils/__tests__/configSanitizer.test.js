@@ -76,8 +76,8 @@ describe('configSanitizer utility', () => {
       const sanitized = sanitizeConfig(config);
 
       expect(sanitized.password).toBe('****');
-      expect(sanitized.api_key).toBe('****');
-      expect(sanitized.token).toBe('****');
+      expect(sanitized.api_key).toBe('');
+      expect(sanitized.token).toBe('');
     });
 
     test('handles null and undefined inputs', () => {
