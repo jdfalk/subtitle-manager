@@ -16,6 +16,19 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict resolution.
 - [ ] **Online Metadata Sources**: Fetch languages, ratings, and episode data from external APIs.
 
+### Tagging System Enhancements
+
+Additional capabilities are required to make tagging truly useful throughout the application. Planned tasks include:
+
+- [ ] Tag editing in the UI: rename tags and update metadata
+- [ ] Tag description and color fields stored in the database
+- [ ] Display where each tag is used (users, movies, series, seasons, episodes)
+- [ ] Bulk add/remove tags for multiple library items
+- [ ] Library filtering and search by tag
+- [ ] API endpoints for full CRUD and usage queries
+- [ ] Import/export tags from Sonarr/Radarr categories
+- [ ] Tag-based automation rules for downloads and provider selection
+
 These tasks must be completed to achieve full Bazarr parity.
 
 ## 🧪 Testing & Quality Assurance
