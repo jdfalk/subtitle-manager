@@ -32,6 +32,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
   BSplayer, GreekSubs, Podnapisi, Subscene, TVSubtitles, Titlovi, LegendasDivx
   and many more.
 - Batch translate multiple files concurrently.
+- Mass synchronize subtitles across entire libraries.
 - Monitor directories and automatically download subtitles.
 - Scan existing libraries and fetch missing or upgraded subtitles.
 - Download individual subtitles through the web API at `/api/download`.
@@ -245,6 +246,8 @@ subtitle-manager transcribe [media] [output] [lang]
 subtitle-manager fetch [media] [lang] [output]
 subtitle-manager search [media] [lang]
 subtitle-manager batch [lang] [files...]
+subtitle-manager syncbatch -config file.json
+  # syncbatch expects a JSON file describing media and subtitle pairs
 subtitle-manager scan [directory] [lang] [-u]
 subtitle-manager autoscan [directory] [lang] [-i duration] [-s cron] [-u]
 subtitle-manager scanlib [directory]
@@ -301,6 +304,7 @@ The web server exposes a comprehensive REST API for all subtitle operations:
 
 - `POST /api/convert` - Convert uploaded subtitle files to SRT format
 - `POST /api/translate` - Translate uploaded subtitle files
+- `POST /api/sync/batch` - Synchronize multiple subtitle files in one request
 - `POST /api/extract` - Extract subtitles from media files using ffmpeg
 - `POST /api/download` - Download subtitles for specific media files
 

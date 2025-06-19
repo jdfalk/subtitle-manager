@@ -404,3 +404,35 @@ func TestSyncWeighted(t *testing.T) {
 		t.Fatalf("unexpected start %v", items[0].StartAt)
 	}
 }
+
+// TestSyncBatch verifies that multiple subtitle files are processed.
+func TestSyncBatch(t *testing.T) {
+	dir := t.TempDir()
+	data, err := os.ReadFile("../../testdata/simple.srt")
+	if err != nil {
+		t.Fatalf("read testdata: %v", err)
+	}
+	// prepare two input files
+	in1 := filepath.Join(dir, "a.srt")
+	os.WriteFile(in1, data, 0644)
+	in2 := filepath.Join(dir, "b.srt")
+	os.WriteFile(in2, data, 0644)
+	out1 := filepath.Join(dir, "out1.srt")
+	out2 := filepath.Join(dir, "out2.srt")
+	items := []BatchItem{
+		{Media: "dummy1.mkv", Subtitle: in1, Output: out1},
+		{Media: "dummy2.mkv", Subtitle: in2, Output: out2},
+	}
+	errs := SyncBatch(items, Options{})
+	if len(errs) != 2 {
+		t.Fatalf("expected 2 results, got %d", len(errs))
+	}
+	for i, p := range []string{out1, out2} {
+		if errs[i] != nil {
+			t.Fatalf("item %d error: %v", i, errs[i])
+		}
+		if fi, err := os.Stat(p); err != nil || fi.Size() == 0 {
+			t.Fatalf("item %d not written", i)
+		}
+	}
+}
