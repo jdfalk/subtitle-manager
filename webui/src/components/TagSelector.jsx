@@ -47,8 +47,8 @@ export default function TagSelector({ path }) {
         const data = await res.json();
         setAllTags(Array.isArray(data) ? data : []);
       }
-    } catch {
-      // ignore
+    } catch (error) {
+      console.error('Failed to fetch all tags:', error);
     }
   }, []);
 
