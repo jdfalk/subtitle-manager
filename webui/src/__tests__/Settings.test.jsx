@@ -7,7 +7,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, afterEach, describe, expect, test, vi } from 'vitest';
 import Settings from '../Settings.jsx';
 
 // Mock the API service
@@ -23,6 +23,17 @@ describe('Settings component', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
 
+    global.fetch = vi.fn(url => {
+      if (url === '/api/providers/available') {
+        return Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve([{ name: 'opensubtitles' }, { name: 'subscene' }]),
+        });
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+    });
+
     // Get the mocked apiService
     const { apiService } = await import('../services/api.js');
 
@@ -37,7 +48,11 @@ describe('Settings component', () => {
       if (url === '/api/providers') {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve([]),
+          json: () =>
+            Promise.resolve([
+              { name: 'opensubtitles', enabled: true, config: {} },
+              { name: 'subscene', enabled: false, config: {} },
+            ]),
         });
       }
       return Promise.resolve({
@@ -50,6 +65,10 @@ describe('Settings component', () => {
       ok: true,
       json: () => Promise.resolve({}),
     });
+  });
+
+  afterEach(() => {
+    delete global.fetch;
   });
   test('loads settings and renders tabs', async () => {
     await act(async () => {
@@ -81,5 +100,40 @@ describe('Settings component', () => {
       const generalTab = screen.getByRole('tab', { name: /General/i });
       expect(generalTab).toHaveAttribute('aria-selected', 'true');
     });
+  });
+
+  test('shows only enabled providers', async () => {
+    await act(async () => {
+      render(<Settings />);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('OpenSubtitles')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Subscene')).toBeNull();
+  });
+
+  test('add provider dialog lists all providers', async () => {
+    await act(async () => {
+      render(<Settings />);
+    });
+
+    const addButton = screen.getByText('Add Provider');
+    await act(async () => {
+      fireEvent.click(addButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    const select = screen.getByRole('combobox');
+    await act(async () => {
+      fireEvent.mouseDown(select);
+    });
+
+    // All available providers should be listed
+    expect(await screen.findByText('Subscene')).toBeInTheDocument();
   });
 });
