@@ -68,7 +68,7 @@ describe('Settings component', () => {
   });
 
   afterEach(() => {
-    delete global.fetch;
+    global.fetch = originalFetch;
   });
   test('loads settings and renders tabs', async () => {
     await act(async () => {
