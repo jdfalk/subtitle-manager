@@ -21,6 +21,7 @@ export const sanitizeConfig = (obj, showSensitive = false) => {
     if (sensitive.some(s => lower.includes(s))) {
       if (typeof val === 'string') {
         if (!val) return '';
+        if (val.length <= 4) return '****';
         const last = val.slice(-4);
         return `****${last}`;
       }
