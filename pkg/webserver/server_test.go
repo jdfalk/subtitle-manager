@@ -745,8 +745,8 @@ func TestTranslateUpload(t *testing.T) {
 	}
 }
 
-// TestProvidersDefault verifies that the providers endpoint only returns
-// the embedded provider when no other providers are configured.
+// TestProvidersDefault verifies that the providers endpoint returns
+// all available providers for UI configuration, with only embedded enabled by default.
 func TestProvidersDefault(t *testing.T) {
 	db, err := database.Open(":memory:")
 	if err != nil {
@@ -780,11 +780,23 @@ func TestProvidersDefault(t *testing.T) {
 		t.Fatalf("decode: %v", err)
 	}
 	resp.Body.Close()
-	if len(out) != 1 {
-		t.Fatalf("expected 1 provider, got %d", len(out))
+	if len(out) != 52 {
+		t.Fatalf("expected 52 providers, got %d", len(out))
 	}
-	if out[0].Name != "embedded" || !out[0].Enabled {
-		t.Fatalf("unexpected provider %+v", out[0])
+
+	// Verify that embedded provider is included and enabled by default
+	var embeddedProvider *ProviderInfo
+	for i := range out {
+		if out[i].Name == "embedded" {
+			embeddedProvider = &out[i]
+			break
+		}
+	}
+	if embeddedProvider == nil {
+		t.Fatalf("embedded provider not found in provider list")
+	}
+	if !embeddedProvider.Enabled {
+		t.Fatalf("embedded provider should be enabled by default, got %+v", embeddedProvider)
 	}
 }
 
