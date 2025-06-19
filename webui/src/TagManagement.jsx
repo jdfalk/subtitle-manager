@@ -26,6 +26,8 @@ export default function TagManagement({ backendAvailable = true }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newTag, setNewTag] = useState('');
+  const [editId, setEditId] = useState(null);
+  const [editName, setEditName] = useState('');
 
   const loadTags = useCallback(async () => {
     if (!backendAvailable) {
@@ -61,6 +63,33 @@ export default function TagManagement({ backendAvailable = true }) {
     } catch (err) {
       setError(`Failed to add tag: ${err.message}`);
     }
+  };
+
+  const startEdit = tag => {
+    setEditId(tag.id);
+    setEditName(tag.name);
+  };
+
+  const saveEdit = async () => {
+    try {
+      const res = await fetch(`/api/tags/${editId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editName }),
+      });
+      if (res.ok) {
+        setEditId(null);
+        setEditName('');
+        loadTags();
+      }
+    } catch (err) {
+      setError(`Failed to update tag: ${err.message}`);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditId(null);
+    setEditName('');
   };
 
   const deleteTag = async id => {
@@ -122,11 +151,37 @@ export default function TagManagement({ backendAvailable = true }) {
           <TableBody>
             {tags.map(tag => (
               <TableRow key={tag.id}>
-                <TableCell>{tag.name}</TableCell>
                 <TableCell>
-                  <Button size="small" onClick={() => deleteTag(tag.id)}>
-                    Delete
-                  </Button>
+                  {editId === tag.id ? (
+                    <TextField
+                      value={editName}
+                      onChange={e => setEditName(e.target.value)}
+                      size="small"
+                    />
+                  ) : (
+                    tag.name
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editId === tag.id ? (
+                    <>
+                      <Button size="small" onClick={saveEdit}>
+                        Save
+                      </Button>
+                      <Button size="small" onClick={cancelEdit}>
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button size="small" onClick={() => startEdit(tag)}>
+                        Edit
+                      </Button>
+                      <Button size="small" onClick={() => deleteTag(tag.id)}>
+                        Delete
+                      </Button>
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

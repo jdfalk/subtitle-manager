@@ -20,7 +20,7 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 
 Additional capabilities are required to make tagging truly useful throughout the application. Planned tasks include:
 
-- [ ] Tag editing in the UI: rename tags and update metadata
+ - [x] Tag editing in the UI: rename tags and update metadata
 - [ ] Tag description and color fields stored in the database
 - [ ] Display where each tag is used (users, movies, series, seasons, episodes)
 - [ ] Bulk add/remove tags for multiple library items

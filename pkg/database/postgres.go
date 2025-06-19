@@ -172,6 +172,12 @@ func (p *PostgresStore) InsertTag(name string) error {
 	return err
 }
 
+// UpdateTag renames a tag.
+func (p *PostgresStore) UpdateTag(id int64, name string) error {
+	_, err := p.db.Exec(`UPDATE tags SET name = $1 WHERE id = $2`, name, id)
+	return err
+}
+
 // ListTags returns all tags.
 func (p *PostgresStore) ListTags() ([]Tag, error) {
 	rows, err := p.db.Query(`SELECT id, name, created_at FROM tags ORDER BY id`)

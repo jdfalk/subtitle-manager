@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Fetch languages, ratings, and episode data from OMDb via new metadata functions.
+- Tag editor interface in settings for renaming tags.
 
 ## [0.9.0] - 2025-06-30
 

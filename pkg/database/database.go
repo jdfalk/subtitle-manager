@@ -455,6 +455,12 @@ func (s *SQLStore) InsertTag(name string) error {
 	return err
 }
 
+// UpdateTag renames an existing tag.
+func (s *SQLStore) UpdateTag(id int64, name string) error {
+	_, err := s.db.Exec(`UPDATE tags SET name = ? WHERE id = ?`, name, id)
+	return err
+}
+
 // ListTags returns all defined tags ordered by ID.
 func (s *SQLStore) ListTags() ([]Tag, error) {
 	rows, err := s.db.Query(`SELECT id, name, created_at FROM tags ORDER BY id`)
@@ -548,6 +554,12 @@ func (s *SQLStore) ListTagsForMedia(mediaID int64) ([]Tag, error) {
 // InsertTag adds a tag using a raw *sql.DB.
 func InsertTag(db *sql.DB, name string) error {
 	_, err := db.Exec(`INSERT INTO tags (name, created_at) VALUES (?, ?)`, name, time.Now())
+	return err
+}
+
+// UpdateTag updates the name for an existing tag using a raw *sql.DB.
+func UpdateTag(db *sql.DB, id int64, name string) error {
+	_, err := db.Exec(`UPDATE tags SET name = ? WHERE id = ?`, name, id)
 	return err
 }
 
