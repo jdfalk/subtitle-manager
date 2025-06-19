@@ -1,0 +1,26 @@
+# file: .github/workflows/copilot-tickets.yml
+name: Copilot Review Tickets
+
+on:
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review_thread:
+    types: [resolved]
+
+jobs:
+  manage-tickets:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Manage tickets
+        run: |
+          python .github/scripts/copilot_tickets.py
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
