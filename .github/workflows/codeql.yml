@@ -1,5 +1,11 @@
 name: "CodeQL Security Analysis"
 
+# Auto-cancel previous runs when new commits are pushed
+# Note: Scheduled runs are not cancelled to ensure regular security scans
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
+
 on:
   push:
     branches: ["main"]

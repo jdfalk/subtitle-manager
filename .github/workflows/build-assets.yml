@@ -1,6 +1,11 @@
 # file: .github/workflows/build-assets.yml
 name: Build and Publish Web Assets
 
+# Auto-cancel previous runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     paths:

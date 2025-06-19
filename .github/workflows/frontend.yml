@@ -1,5 +1,10 @@
 name: Frontend (Node.js) Tests
 
+# Auto-cancel previous runs when new commits are pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_call:
   push:
