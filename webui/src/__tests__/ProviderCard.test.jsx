@@ -13,7 +13,11 @@ describe('ProviderCard component', () => {
       enabled: true,
     };
     render(
-      <ProviderCard provider={provider} onToggle={vi.fn()} onConfigure={onConfigure} />
+      <ProviderCard
+        provider={provider}
+        onToggle={vi.fn()}
+        onConfigure={onConfigure}
+      />
     );
 
     fireEvent.click(screen.getByText('OpenSubtitles'));
@@ -29,7 +33,11 @@ describe('ProviderCard component', () => {
       enabled: false,
     };
     render(
-      <ProviderCard provider={provider} onToggle={onToggle} onConfigure={onConfigure} />
+      <ProviderCard
+        provider={provider}
+        onToggle={onToggle}
+        onConfigure={onConfigure}
+      />
     );
 
     fireEvent.click(screen.getByRole('checkbox'));
