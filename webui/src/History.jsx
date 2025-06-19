@@ -39,7 +39,10 @@ export default function History({ backendAvailable = true }) {
   useEffect(() => {
     if (backendAvailable) {
       fetch('/api/history')
-        .then(r => r.json())
+        .then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
         .then(d =>
           setData({
             translations: d.translations || [],
