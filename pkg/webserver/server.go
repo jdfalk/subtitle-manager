@@ -29,17 +29,11 @@ import (
 	"github.com/jdfalk/subtitle-manager/webui"
 )
 
-// allowedBaseDirs defines the allowed base directories for media library browsing
-// and path validation to prevent path traversal attacks.
-var allowedBaseDirs = []string{
-	"/movies",
-	"/tv",
-	"/downloads",
-	"/media",
-	"/mnt",
-	"/home",
-	"/var/lib/subtitle-manager",
-}
+// allowedBaseDirs defines the root directories that may be browsed. By default
+// the entire filesystem is accessible by including only "/". This slice can be
+// overridden via configuration in the future if tighter restrictions are
+// desired.
+var allowedBaseDirs = []string{"/"}
 
 // getAllowedBaseDirs returns the allowed base directories with platform-specific
 // additions (e.g., Windows drive letters).
@@ -965,24 +959,8 @@ func getProviderType(name string) string {
 
 // browseDirectory lists media files and directories with subtitle information
 func browseDirectory(path string) ([]MediaItem, error) {
-	if path == "" || path == "/" {
-		// Show existing directories from allowed bases for the root view
-		dirs := getAllowedBaseDirs()
-
-		var items []MediaItem
-		for _, d := range dirs {
-			info, err := os.Stat(d)
-			if err != nil || !info.IsDir() {
-				continue
-			}
-			items = append(items, MediaItem{
-				Name:        filepath.Base(filepath.Clean(d)),
-				Path:        d,
-				IsDirectory: true,
-				ModTime:     info.ModTime(),
-			})
-		}
-		return items, nil
+	if path == "" {
+		path = "/"
 	}
 
 	// Check if path exists and is readable
@@ -1190,37 +1168,23 @@ func startSessionCleanup(db *sql.DB) {
 	}
 }
 
-// validateAndSanitizePath validates and sanitizes a user-provided path to prevent
-// path traversal attacks. It ensures the path is within allowed directories.
+// validateAndSanitizePath cleans a user-supplied path and checks for basic path
+// traversal attempts. It returns an absolute version of the path when valid.
 func validateAndSanitizePath(userPath string) (string, error) {
 	// Clean the path to resolve .. and . elements
 	cleanPath := filepath.Clean(userPath)
 
 	// Convert to absolute path for consistent checking
-	absPath, err := filepath.Abs(cleanPath)
-	if err != nil {
-		return "", fmt.Errorf("invalid path: %v", err)
+	if !filepath.IsAbs(cleanPath) {
+		return "", fmt.Errorf("path must be absolute")
 	}
+	absPath := filepath.Clean(cleanPath)
 
-	// Get allowed base directories
-	allowedBaseDirs := getAllowedBaseDirs()
-
-	// Special case for root directory or drive letters on Windows
-	if cleanPath == "/" || cleanPath == "." || (runtime.GOOS == "windows" && len(filepath.VolumeName(cleanPath)) == 2 && strings.Trim(filepath.Clean(cleanPath), "\\") == filepath.VolumeName(cleanPath)) {
-		return cleanPath, nil
-	}
-
-	// Check if the path starts with any allowed base directory
-	pathAllowed := false
-	for _, baseDir := range allowedBaseDirs {
-		if strings.HasPrefix(absPath, baseDir) {
-			pathAllowed = true
-			break
-		}
-	}
-
-	if !pathAllowed {
-		return "", fmt.Errorf("path not in allowed directories: %s", cleanPath)
+	// Allow root directory and Windows drive letters
+	if cleanPath == "/" || cleanPath == "." ||
+		(runtime.GOOS == "windows" && len(filepath.VolumeName(cleanPath)) == 2 &&
+			strings.Trim(filepath.Clean(cleanPath), "\\") == filepath.VolumeName(cleanPath)) {
+		return absPath, nil
 	}
 
 	// Additional security check: ensure no path traversal components remain
@@ -1228,5 +1192,5 @@ func validateAndSanitizePath(userPath string) (string, error) {
 		return "", fmt.Errorf("path traversal detected: %s", cleanPath)
 	}
 
-	return cleanPath, nil
+	return absPath, nil
 }
