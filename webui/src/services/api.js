@@ -6,7 +6,35 @@
 /**
  * API service configuration
  */
-const API_BASE_URL = import.meta?.env?.VITE_API_URL || window.location.origin;
+/**
+ * Determine the base path for API requests by inspecting the current URL.
+ * If the first path segment isn't one of the known application routes, it is
+ * treated as an installation prefix specified via `base_url` on the server.
+ *
+ * @returns {string} Base path beginning with a slash or an empty string.
+ */
+export function getBasePath() {
+  const known = new Set([
+    '',
+    'dashboard',
+    'library',
+    'wanted',
+    'history',
+    'settings',
+    'system',
+    'tools',
+    'offline-info',
+    'setup',
+  ]);
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  if (parts.length > 0 && !known.has(parts[0])) {
+    return `/${parts[0]}`;
+  }
+  return '';
+}
+
+const API_BASE_URL =
+  import.meta?.env?.VITE_API_URL || `${window.location.origin}${getBasePath()}`;
 
 /**
  * Enhanced fetch wrapper with error handling and logging

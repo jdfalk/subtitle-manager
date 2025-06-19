@@ -54,7 +54,7 @@ import {
 import './App.css';
 import OfflineInfo from './OfflineInfo.jsx';
 import LoadingComponent from './components/LoadingComponent.jsx';
-import { apiService } from './services/api.js';
+import { apiService, getBasePath } from './services/api.js';
 
 // Lazy load components for better performance
 const Dashboard = lazy(() => import('./Dashboard.jsx'));
@@ -287,6 +287,7 @@ const createAppTheme = (isDarkMode = true, kidMode = false) =>
   });
 
 function App() {
+  const basePath = getBasePath();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
@@ -1024,7 +1025,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
+      <Router basename={basePath}>
         <AppContent />
       </Router>
     </ThemeProvider>

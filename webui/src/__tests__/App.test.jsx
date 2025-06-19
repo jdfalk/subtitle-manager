@@ -20,6 +20,7 @@ vi.mock('../services/api.js', () => ({
     put: vi.fn(),
     delete: vi.fn(),
   },
+  getBasePath: () => '',
 }));
 
 describe('App component', () => {
