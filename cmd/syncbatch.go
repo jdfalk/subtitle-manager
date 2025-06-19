@@ -47,12 +47,17 @@ var syncBatchCmd = &cobra.Command{
 			req.Options.GRPCAddr = viper.GetString("grpc_addr")
 		}
 		errs := syncer.SyncBatch(req.Items, req.Options)
+		var hasErrors bool
 		for i, it := range req.Items {
 			if err := errs[i]; err != nil {
 				logger.Warnf("sync %s: %v", it.Subtitle, err)
+				hasErrors = true
 			} else {
 				logger.Infof("synchronized %s -> %s", it.Subtitle, it.Output)
 			}
+		}
+		if hasErrors {
+			return fmt.Errorf("some items failed during synchronization")
 		}
 		return nil
 	},
