@@ -206,9 +206,19 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/library/browse", authMiddleware(db, "basic", libraryBrowseHandler()))
 	mux.Handle(prefix+"/api/library/tags", authMiddleware(db, "basic", libraryTagsHandler(db)))
 	mux.Handle(prefix+"/api/users/", authMiddleware(db, "admin", userRouter(db)))
+
+	// Universal tagging system
 	mux.Handle(prefix+"/api/tags", authMiddleware(db, "admin", tagsHandler(db)))
 	mux.Handle(prefix+"/api/tags/", authMiddleware(db, "admin", tagItemHandler(db)))
+	mux.Handle(prefix+"/api/tags/bulk", authMiddleware(db, "admin", bulkTagsHandler(db)))
+
+	// Universal entity tagging endpoints
+	mux.Handle(prefix+"/api/providers/", authMiddleware(db, "admin", universalTagsHandler(db)))
 	mux.Handle(prefix+"/api/media/", authMiddleware(db, "basic", mediaTagsHandler(db)))
+	mux.Handle(prefix+"/api/movies/", authMiddleware(db, "basic", universalTagsHandler(db)))
+	mux.Handle(prefix+"/api/series/", authMiddleware(db, "basic", universalTagsHandler(db)))
+	mux.Handle(prefix+"/api/languages/", authMiddleware(db, "admin", universalTagsHandler(db)))
+
 	fsHandler := spaFileServer(f)
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
 	return securityHeadersMiddleware(mux), nil

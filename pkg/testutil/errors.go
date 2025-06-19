@@ -1,7 +1,13 @@
 // file: pkg/testutil/errors.go
 package testutil
 
-import "testing"
+import (
+	"database/sql"
+	"testing"
+
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	_ "github.com/mattn/go-sqlite3"
+)
 
 // Must is a generic helper that checks for errors and calls t.Fatalf if one occurs.
 // It returns the successful result, allowing for cleaner test code.
@@ -117,4 +123,19 @@ func indexByte(s, substr string) int {
 		}
 	}
 	return -1
+}
+
+// GetTestDB creates an in-memory SQLite database for testing.
+// The returned database is fully initialized with the schema and ready for use.
+func GetTestDB(t *testing.T) *sql.DB {
+	t.Helper()
+
+	// Use the existing OpenSQLStore function to get a properly initialized database
+	store, err := database.OpenSQLStore(":memory:")
+	if err != nil {
+		t.Fatalf("Failed to create test database: %v", err)
+	}
+
+	// Return the underlying *sql.DB
+	return store.DB()
 }
