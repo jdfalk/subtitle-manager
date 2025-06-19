@@ -23,6 +23,7 @@ export function getBasePath() {
     'settings',
     'system',
     'tools',
+    'details',
     'offline-info',
     'setup',
   ]);
