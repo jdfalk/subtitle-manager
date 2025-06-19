@@ -522,7 +522,9 @@ docs-serve: ## Serve documentation locally
 clean: ## Clean build artifacts
 	@echo "$(COLOR_BLUE)Cleaning build artifacts...$(COLOR_RESET)"
 	rm -rf $(BIN_DIR)
+	rm -rf $(DIST_DIR)
 	rm -f coverage.out coverage.html
+	rm -f subtitle-manager
 	@echo "$(COLOR_GREEN)✓ Build artifacts cleaned$(COLOR_RESET)"
 
 .PHONY: clean-air
