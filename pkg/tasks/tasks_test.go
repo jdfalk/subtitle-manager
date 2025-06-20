@@ -18,7 +18,7 @@ func reset() {
 // waitUntilFinished polls task status until it is not running or timeout occurs.
 func waitUntilFinished(t *Task) {
 	for i := 0; i < 10; i++ {
-		if t.Status != "running" {
+		if t.GetStatus() != "running" {
 			return
 		}
 		time.Sleep(10 * time.Millisecond)
@@ -30,13 +30,13 @@ func TestStartSuccess(t *testing.T) {
 	reset()
 	task := Start(context.Background(), "id", func(context.Context) error { return nil })
 	waitUntilFinished(task)
-	if task.Status != "completed" {
-		t.Fatalf("expected status completed, got %s", task.Status)
+	if task.GetStatus() != "completed" {
+		t.Fatalf("expected status completed, got %s", task.GetStatus())
 	}
-	if task.Progress != 100 {
-		t.Fatalf("expected progress 100, got %d", task.Progress)
+	if task.GetProgress() != 100 {
+		t.Fatalf("expected progress 100, got %d", task.GetProgress())
 	}
-	if task.CompletedAt.IsZero() {
+	if task.GetCompletedAt().IsZero() {
 		t.Fatalf("completed time not set")
 	}
 }
@@ -46,11 +46,11 @@ func TestStartFailure(t *testing.T) {
 	reset()
 	task := Start(context.Background(), "id", func(context.Context) error { return errors.New("boom") })
 	waitUntilFinished(task)
-	if task.Status != "failed" {
-		t.Fatalf("expected status failed, got %s", task.Status)
+	if task.GetStatus() != "failed" {
+		t.Fatalf("expected status failed, got %s", task.GetStatus())
 	}
-	if task.Error != "boom" {
-		t.Fatalf("unexpected error %s", task.Error)
+	if task.GetError() != "boom" {
+		t.Fatalf("unexpected error %s", task.GetError())
 	}
 }
 
@@ -58,14 +58,12 @@ func TestStartFailure(t *testing.T) {
 func TestUpdateProgress(t *testing.T) {
 	reset()
 	mu.Lock()
-	tasks["a"] = &Task{ID: "a"}
+	task := &Task{ID: "a"}
+	tasks["a"] = task
 	mu.Unlock()
 	Update("a", 42)
-	mu.Lock()
-	p := tasks["a"].Progress
-	mu.Unlock()
-	if p != 42 {
-		t.Fatalf("expected progress 42, got %d", p)
+	if task.GetProgress() != 42 {
+		t.Fatalf("expected progress 42, got %d", task.GetProgress())
 	}
 }
 
@@ -73,14 +71,12 @@ func TestUpdateProgress(t *testing.T) {
 func TestListReturnsCopy(t *testing.T) {
 	reset()
 	mu.Lock()
-	tasks["x"] = &Task{ID: "x", Status: "running"}
+	originalTask := &Task{ID: "x", Status: "running"}
+	tasks["x"] = originalTask
 	mu.Unlock()
 	copyMap := List()
 	copyMap["x"].Status = "changed"
-	mu.Lock()
-	status := tasks["x"].Status
-	mu.Unlock()
-	if status == "changed" {
+	if originalTask.GetStatus() == "changed" {
 		t.Fatalf("modifying list result affected original map")
 	}
 }
