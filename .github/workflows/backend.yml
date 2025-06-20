@@ -1,8 +1,9 @@
 name: Backend (Go) Tests
 
 # Auto-cancel previous runs when new commits are pushed
+# Use different concurrency groups for direct triggers vs workflow_call to avoid deadlocks
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.event_name == 'workflow_call' && format('ci-backend-{0}', github.ref) || format('{0}-{1}', github.workflow, github.ref) }}
   cancel-in-progress: true
 
 on:
