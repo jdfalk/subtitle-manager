@@ -55,6 +55,9 @@ func TestHandler(t *testing.T) {
 // TestSPAIndexFallback verifies that unknown paths return index.html so client
 // side routing works on refresh.
 func TestSPAIndexFallback(t *testing.T) {
+	if _, err := os.Stat("../../webui/dist/index.html"); err != nil {
+		t.Skip("webui not built: index.html missing")
+	}
 	db, err := database.Open(":memory:")
 	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
