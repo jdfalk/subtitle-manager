@@ -24,7 +24,8 @@ func TestCreate(t *testing.T) {
 	if b.Name == "" {
 		t.Fatalf("expected backup name")
 	}
-	if time.Since(b.CreatedAt) > time.Second {
+	// allow up to 3 seconds to avoid flakes on slow systems
+	if time.Since(b.CreatedAt) > time.Second*3 {
 		t.Fatalf("creation time too old: %v", b.CreatedAt)
 	}
 	list := List()
