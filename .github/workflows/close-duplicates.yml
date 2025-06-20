@@ -1,19 +1,49 @@
 # file: .github/workflows/close-duplicates.yml
-name: Close Duplicate Issues
+#
+# DEPRECATED: This workflow has been superseded by unified-issue-management.yml
+#
+# This file is kept for reference but the functionality has been moved to
+# the unified workflow which provides better error handling, logging, and
+# integration with other issue management operations.
+
+name: Close Duplicate Issues (DEPRECATED)
 
 on:
-  schedule:
-    - cron: "0 1 * * *"
+  # Disabled - functionality moved to unified-issue-management.yml
   workflow_dispatch:
+    inputs:
+      force_run:
+        description: "Force run deprecated workflow (use unified-issue-management.yml instead)"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
-  deduplicate:
+  deprecation-notice:
     runs-on: ubuntu-latest
+    steps:
+      - name: Deprecation Notice
+        run: |
+          echo "⚠️  DEPRECATION NOTICE"
+          echo ""
+          echo "This workflow has been superseded by unified-issue-management.yml"
+          echo ""
+          echo "Please use the unified workflow instead:"
+          echo "- Manual trigger: Actions -> Unified Issue Management"
+          echo "- Automatic: Runs daily at 1 AM UTC"
+          echo ""
+          echo "The unified workflow provides:"
+          echo "- Better error handling and logging"
+          echo "- Matrix-based parallel execution"
+          echo "- Integration with other issue operations"
+          echo "- Comprehensive summary generation"
+
+  legacy-close-duplicates:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.force_run == 'true' }}
     permissions:
       issues: write
       contents: read
-      pull-requests: write
-      repository-projects: read
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -22,8 +52,11 @@ jobs:
           python-version: "3.x"
       - name: Install dependencies
         run: pip install requests
-      - name: Close duplicates
+      - name: Close duplicates (legacy)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-        run: python .github/scripts/close-duplicates.py
+          DRY_RUN: "true"
+        run: |
+          echo "🔄 Running legacy close-duplicates script"
+          python .github/scripts/issue_manager.py close-duplicates --dry-run

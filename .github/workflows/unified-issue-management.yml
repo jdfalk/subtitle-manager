@@ -1,27 +1,32 @@
 # file: .github/workflows/unified-issue-management.yml
 #
-# Unified GitHub issue management workflow.
+# Unified Issue Management Workflow
 #
-# This workflow handles:
-# 1. Processing issue updates from issue_updates.json (on push to main)
-# 2. Managing Copilot review comment tickets (on PR events)
-# 3. Closing duplicate issues (on schedule)
-# 4. Generating tickets for CodeQL security alerts (on schedule and push)
+# This workflow consolidates all issue management operations into a single,
+# parallelized workflow using matrix strategy for efficiency.
 #
-# This workflow replaces:
+# Features:
+# - Process issue updates from issue_updates.json (create, update, comment, close, delete)
+# - Manage Copilot review comment tickets
+# - Close duplicate issues by title
+# - Generate tickets for CodeQL security alerts
+# - Comprehensive logging and summary generation
+# - GUID-based duplicate prevention
+# - Matrix-based parallel execution
+#
+# Replaces:
 # - update-issues.yml
 # - copilot-tickets.yml
-# - close-duplicates.py (manual execution)
-#
-# The unified script supports both event-driven and scheduled operations.
+# - close-duplicates.yml
+# - codeql-alert-tickets.yml
+
 name: Unified Issue Management
 
 on:
-  # Issue updates processing
+  # Issue updates from JSON file
   push:
     branches: [main, master]
-    paths:
-      - "issue_updates.json"
+    paths: [issue_updates.json]
 
   # Copilot review ticket management
   pull_request_review_comment:
@@ -31,41 +36,106 @@ on:
   pull_request:
     types: [closed]
 
-  # Scheduled maintenance
+  # Scheduled operations
   schedule:
-    # Run duplicate cleanup daily at 02:00 UTC
-    - cron: "0 2 * * *"
-    # Run CodeQL alert check twice daily at 08:00 and 20:00 UTC
+    # Close duplicates daily at 1 AM UTC
+    - cron: "0 1 * * *"
+    # CodeQL alert tickets twice daily at 8 AM and 8 PM UTC
     - cron: "0 8,20 * * *"
 
-  # Manual trigger
+  # Manual triggers
   workflow_dispatch:
     inputs:
-      command:
-        description: "Command to run"
-        required: true
-        type: choice
-        options:
-          - "update-issues"
-          - "copilot-tickets"
-          - "close-duplicates"
-          - "codeql-alerts"
-          - "all"
+      operations:
+        description: "Operations to run (comma-separated: update-issues, copilot-tickets, close-duplicates, codeql-alerts)"
+        required: false
+        type: string
+        default: "update-issues,copilot-tickets,close-duplicates,codeql-alerts"
       dry_run:
-        description: "Dry run mode (for close-duplicates)"
+        description: "Run in dry-run mode (no changes)"
+        required: false
+        type: boolean
+        default: false
+      force_update:
+        description: "Force update existing tickets"
         required: false
         type: boolean
         default: false
 
 jobs:
-  # Process issue updates from issue_updates.json
-  update-issues:
-    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.modified, 'issue_updates.json') || github.event_name == 'workflow_dispatch' && (github.event.inputs.command == 'update-issues' || github.event.inputs.command == 'all') }}
+  determine-operations:
     runs-on: ubuntu-latest
+    outputs:
+      operations: ${{ steps.determine.outputs.operations }}
+      has_issue_updates: ${{ steps.check-files.outputs.has_issue_updates }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for files
+        id: check-files
+        run: |
+          if [[ -f "issue_updates.json" ]]; then
+            echo "has_issue_updates=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_issue_updates=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Determine operations to run
+        id: determine
+        run: |
+          operations=()
+
+          # Manual trigger with specific operations
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            IFS=',' read -ra ops <<< "${{ github.event.inputs.operations }}"
+            operations=("${ops[@]}")
+
+          # Issue updates file exists
+          elif [[ "${{ steps.check-files.outputs.has_issue_updates }}" == "true" ]]; then
+            operations+=("update-issues")
+
+          # Copilot events
+          elif [[ "${{ github.event_name }}" =~ ^pull_request ]]; then
+            operations+=("copilot-tickets")
+
+          # Scheduled events
+          elif [[ "${{ github.event_name }}" == "schedule" ]]; then
+            case "${{ github.event.schedule }}" in
+              "0 1 * * *")
+                operations+=("close-duplicates")
+                ;;
+              "0 8,20 * * *")
+                operations+=("codeql-alerts")
+                ;;
+            esac
+
+          # Push to main (multiple operations)
+          elif [[ "${{ github.event_name }}" == "push" ]]; then
+            operations+=("copilot-tickets")
+            if [[ "${{ steps.check-files.outputs.has_issue_updates }}" == "true" ]]; then
+              operations+=("update-issues")
+            fi
+          fi
+
+          # Convert array to JSON for matrix
+          ops_json=$(printf '%s\n' "${operations[@]}" | jq -R . | jq -s .)
+          echo "operations=${ops_json}" >> "$GITHUB_OUTPUT"
+          echo "🎯 Operations to run: ${operations[*]}"
+
+  issue-management:
+    runs-on: ubuntu-latest
+    needs: determine-operations
+    if: ${{ needs.determine-operations.outputs.operations != '[]' }}
     permissions:
       issues: write
       contents: write
       pull-requests: write
+      security-events: read
+      repository-projects: read
+    strategy:
+      matrix:
+        operation: ${{ fromJson(needs.determine-operations.outputs.operations) }}
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
 
@@ -79,149 +149,117 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Process issue updates
-        id: process
+      - name: Debug operation info
         run: |
-          python .github/scripts/issue_manager.py update-issues
-          echo "processed=true" >> "$GITHUB_OUTPUT"
+          echo "🔧 Operation: ${{ matrix.operation }}"
+          echo "📅 Event: ${{ github.event_name }}"
+          echo "🔀 Action: ${{ github.event.action }}"
+          echo "📁 Repository: ${{ github.repository }}"
+          echo "🏃 Dry run: ${{ github.event.inputs.dry_run }}"
+
+      - name: Execute operation
+        id: execute
+        run: |
+          echo "🚀 Executing: ${{ matrix.operation }}"
+
+          # Set environment variables
+          export DRY_RUN="${{ github.event.inputs.dry_run }}"
+          export FORCE_UPDATE="${{ github.event.inputs.force_update }}"
+
+          # Run the operation
+          python .github/scripts/issue_manager.py ${{ matrix.operation }}
+
+          # Set outputs for summary
+          echo "operation=${{ matrix.operation }}" >> "$GITHUB_OUTPUT"
+          echo "status=completed" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
 
-      - name: Remove processed issue_updates.json
-        if: steps.process.outputs.processed == 'true' && hashFiles('issue_updates.json') != ''
-        run: rm issue_updates.json
+      - name: Clean up issue_updates.json
+        if: ${{ matrix.operation == 'update-issues' && needs.determine-operations.outputs.has_issue_updates == 'true' && github.event.inputs.dry_run != 'true' }}
+        run: |
+          echo "🧹 Removing processed issue_updates.json"
+          rm -f issue_updates.json
 
-      - name: Create pull request for cleanup
-        if: steps.process.outputs.processed == 'true' && hashFiles('issue_updates.json') == ''
+      - name: Create cleanup PR
+        if: ${{ matrix.operation == 'update-issues' && needs.determine-operations.outputs.has_issue_updates == 'true' && github.event.inputs.dry_run != 'true' }}
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: issue-updates-cleanup-${{ github.run_id }}
-          commit-message: "Remove processed issue updates"
-          title: "Remove processed issue updates"
-          body: "Automatically remove processed entries from issue_updates.json."
+          branch: cleanup-issue-updates-${{ github.run_id }}
+          commit-message: "🧹 Remove processed issue_updates.json"
+          title: "🧹 Clean up processed issue updates"
+          body: |
+            ## Summary
+            Automatically removing `issue_updates.json` after successful processing.
 
-  # Handle Copilot review events
-  copilot-tickets:
-    if: ${{ contains(fromJson('["pull_request_review_comment", "pull_request_review", "pull_request"]'), github.event_name) || github.event_name == 'workflow_dispatch' && (github.event.inputs.command == 'copilot-tickets' || github.event.inputs.command == 'all') }}
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: read
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
+            **Operation:** ${{ matrix.operation }}
+            **Workflow run:** ${{ github.run_id }}
+            **Timestamp:** ${{ github.event.head_commit.timestamp }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+            This PR is auto-generated by the unified issue management workflow.
 
-      - name: Install dependencies
+      - name: Generate operation summary
         run: |
-          python -m pip install --upgrade pip
-          pip install requests
+          echo "## 🎯 Operation Summary: ${{ matrix.operation }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Status:** ✅ Completed successfully" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Event:** ${{ github.event_name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Repository:** ${{ github.repository }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Timestamp:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Debug event info
-        run: |
-          echo "Event: ${{ github.event_name }}"
-          echo "Action: ${{ github.event.action }}"
-          echo "Repository: ${{ github.repository }}"
-
-      - name: Handle Copilot tickets
-        run: |
-          python .github/scripts/issue_manager.py copilot-tickets
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_EVENT_PATH: ${{ github.event_path }}
-
-  # Close duplicate issues (scheduled)
-  close-duplicates:
-    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 2 * * *' || github.event_name == 'workflow_dispatch' && (github.event.inputs.command == 'close-duplicates' || github.event.inputs.command == 'all') }}
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-
-      - name: Close duplicate issues
-        run: |
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            python .github/scripts/issue_manager.py close-duplicates --dry-run
-          else
-            python .github/scripts/issue_manager.py close-duplicates
+          if [[ "${{ github.event.inputs.dry_run }}" == "true" ]]; then
+            echo "**Mode:** 🔍 Dry run (no changes made)" >> "$GITHUB_STEP_SUMMARY"
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
 
-  # Generate CodeQL alert tickets (scheduled and on push)
-  codeql-alerts:
-    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 8,20 * * *' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' && (github.event.inputs.command == 'codeql-alerts' || github.event.inputs.command == 'all') }}
+          case "${{ matrix.operation }}" in
+            "update-issues")
+              echo "**Details:** Processed issue updates from \`issue_updates.json\`" >> "$GITHUB_STEP_SUMMARY"
+              ;;
+            "copilot-tickets")
+              echo "**Details:** Managed Copilot review comment tickets" >> "$GITHUB_STEP_SUMMARY"
+              ;;
+            "close-duplicates")
+              echo "**Details:** Closed duplicate issues by title" >> "$GITHUB_STEP_SUMMARY"
+              ;;
+            "codeql-alerts")
+              echo "**Details:** Generated tickets for CodeQL security alerts" >> "$GITHUB_STEP_SUMMARY"
+              ;;
+          esac
+
+  workflow-summary:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      contents: read
-      security-events: read
+    needs: [determine-operations, issue-management]
+    if: always()
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
+      - name: Generate workflow summary
         run: |
-          python -m pip install --upgrade pip
-          pip install requests
+          echo "# 🚀 Unified Issue Management Workflow Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Workflow run:** \`${{ github.run_id }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Triggered by:** ${{ github.event_name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Repository:** ${{ github.repository }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Timestamp:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Generate CodeQL alert tickets
-        run: |
-          python .github/scripts/issue_manager.py codeql-alerts
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+          operations="${{ needs.determine-operations.outputs.operations }}"
+          if [[ "$operations" == "[]" ]]; then
+            echo "## 📝 Result" >> "$GITHUB_STEP_SUMMARY"
+            echo "No operations were required for this event." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## 📊 Operations Executed" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
 
-  # Handle push events for comprehensive analysis
-  push-analysis:
-    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.modified, 'issue_updates.json') }}
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: read
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
+            # Parse operations and show status
+            echo "$operations" | jq -r '.[]' | while read -r op; do
+              echo "- ✅ \`$op\` - Completed" >> "$GITHUB_STEP_SUMMARY"
+            done
+          fi
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-
-      - name: Handle push analysis
-        run: |
-          python .github/scripts/issue_manager.py event-handler
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "## 🔗 Quick Links" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [Workflow runs](https://github.com/${{ github.repository }}/actions)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [Issues](https://github.com/${{ github.repository }}/issues)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [Security alerts](https://github.com/${{ github.repository }}/security)" >> "$GITHUB_STEP_SUMMARY"

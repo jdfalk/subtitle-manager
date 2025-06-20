@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
 """
+# file: .github/scripts/close-duplicates.py
+
+DEPRECATED: This script has been superseded by the unified issue_manager.py
+
+This script is kept for reference but functionality has been moved to:
+- .github/scripts/issue_manager.py (close-duplicates command)
+- .github/workflows/unified-issue-management.yml
+
+The unified system provides:
+- Better error handling and logging
+- Integration with other issue management operations
+- GUID-based duplicate prevention
+- Comprehensive summary generation
+
 Close duplicate GitHub issues by title, keeping the lowest numbered issue open.
 
 Parameters are provided via environment variables:
@@ -19,6 +33,14 @@ import requests
 
 
 def main():
+    print("⚠️  DEPRECATION WARNING")
+    print("This script has been superseded by issue_manager.py")
+    print("Please use: python issue_manager.py close-duplicates")
+    print("Or use the unified-issue-management.yml workflow")
+    print("")
+    print("Proceeding with legacy script execution...")
+    print("")
+
     # Get environment variables
     gh_token = os.environ.get('GH_TOKEN')
     repo = os.environ.get('REPO')

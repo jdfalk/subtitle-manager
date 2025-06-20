@@ -1,71 +1,71 @@
 # file: .github/workflows/copilot-tickets.yml
 #
-# This workflow manages GitHub issues based on Copilot review comments.
+# DEPRECATED: This workflow has been superseded by unified-issue-management.yml
 #
-# MIGRATION NOTICE: This workflow is being migrated to use the unified
-# issue management script at .github/scripts/issue_manager.py
-#
-# The new unified workflow (unified-issue-management.yml) provides:
+# This file is kept for reference but the functionality has been moved to
+# the unified workflow which provides:
 # - Enhanced error handling and logging
 # - Unified codebase for all issue management operations
-# - Support for CodeQL alert ticket generation
 # - Better duplicate handling and event processing
-# - Consistent API usage patterns
+# - Matrix-based parallel execution
+# - Comprehensive summary generation
+# - GUID-based tracking
 #
-# Both workflows will run in parallel during the migration period.
-#
-# Triggers:
-# - pull_request_review_comment: Creates/updates/deletes tickets for Copilot comments
-# - pull_request_review: Logs review submissions (minimal action)
-# - pull_request (closed): Closes tickets when PRs are merged
-# - push (main/master): Comprehensive analysis:
-#   * Closes stale tickets after main branch updates
-#   * Analyzes if files mentioned in tickets were modified
-#   * Checks open PRs for missed Copilot comments and creates missing tickets
-#
-# Note: This does NOT trigger Copilot reviews - those are automatic.
-# This only manages the ticket tracking for existing Copilot feedback.
-name: Copilot Review Tickets
+# The unified workflow handles all Copilot review comment ticket management
+# and integrates with other issue operations for better coordination.
+
+name: Copilot Review Tickets (DEPRECATED)
 
 on:
-  pull_request_review_comment:
-    types: [created, edited, deleted]
-  pull_request_review:
-    types: [submitted, edited, dismissed]
-  pull_request:
-    types: [closed]
-  push:
-    branches: [main, master]
+  # Disabled - functionality moved to unified-issue-management.yml
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: "Force run deprecated workflow (use unified-issue-management.yml instead)"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
-  manage-tickets:
+  deprecation-notice:
     runs-on: ubuntu-latest
+    steps:
+      - name: Deprecation Notice
+        run: |
+          echo "⚠️  DEPRECATION NOTICE"
+          echo ""
+          echo "This workflow has been superseded by unified-issue-management.yml"
+          echo ""
+          echo "Copilot review tickets are now handled automatically by:"
+          echo "- unified-issue-management.yml (triggers on PR events)"
+          echo ""
+          echo "The unified workflow provides:"
+          echo "- Better error handling and logging"
+          echo "- Matrix-based parallel execution"
+          echo "- Integration with other issue operations"
+          echo "- GUID-based duplicate prevention"
+          echo "- Comprehensive summary generation"
+
+  legacy-copilot-tickets:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.force_run == 'true' }}
     permissions:
       issues: write
       pull-requests: read
       contents: read
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
-
-      - name: Debug event info
+      - name: Manage tickets (legacy)
         run: |
-          echo "Event: ${{ github.event_name }}"
-          echo "Action: ${{ github.event.action }}"
-          echo "Repository: ${{ github.repository }}"
-
-      - name: Manage tickets (using unified script)
-        run: |
-          echo "Using new unified issue management script..."
+          echo "🔄 Running legacy copilot-tickets script"
           python .github/scripts/issue_manager.py copilot-tickets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

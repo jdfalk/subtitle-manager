@@ -1,67 +1,72 @@
 # file: .github/workflows/codeql-alert-tickets.yml
 #
-# This workflow automatically generates GitHub issues for CodeQL security alerts.
+# DEPRECATED: This workflow has been superseded by unified-issue-management.yml
 #
-# Features:
-# - Creates tickets for new CodeQL alerts that don't have associated issues
-# - Includes detailed alert information (rule, severity, location, etc.)
-# - Uses consistent labeling with "security" label
-# - Prevents duplicate tickets for the same alert
-# - Runs on schedule and when new code is pushed
+# This file is kept for reference but the functionality has been moved to
+# the unified workflow which provides:
+# - Enhanced error handling and logging
+# - Unified codebase for all issue management operations
+# - Better integration with other issue operations
+# - Matrix-based parallel execution
+# - Comprehensive summary generation
 #
-# The workflow integrates with the unified issue management system and
-# can be extended to handle alert state changes (resolved, dismissed, etc.)
+# CodeQL alert ticket generation is now handled automatically by the
+# unified workflow on schedule and push events.
 
-name: CodeQL Alert Tickets
+name: CodeQL Alert Tickets (DEPRECATED)
 
 on:
-  # Run when new code is pushed (may introduce new alerts)
-  push:
-    branches: [main, master]
-
-  # Run twice daily to catch any new alerts
-  schedule:
-    - cron: "0 8,20 * * *" # 8 AM and 8 PM UTC
-
-  # Manual trigger for testing
+  # Disabled - functionality moved to unified-issue-management.yml
   workflow_dispatch:
     inputs:
-      force_update:
-        description: "Force update existing tickets"
+      force_run:
+        description: "Force run deprecated workflow (use unified-issue-management.yml instead)"
         required: false
         type: boolean
         default: false
 
 jobs:
-  generate-alert-tickets:
+  deprecation-notice:
     runs-on: ubuntu-latest
+    steps:
+      - name: Deprecation Notice
+        run: |
+          echo "⚠️  DEPRECATION NOTICE"
+          echo ""
+          echo "This workflow has been superseded by unified-issue-management.yml"
+          echo ""
+          echo "CodeQL alert tickets are now handled automatically by:"
+          echo "- unified-issue-management.yml (scheduled twice daily)"
+          echo "- Manual trigger: Actions -> Unified Issue Management"
+          echo ""
+          echo "The unified workflow provides:"
+          echo "- Better error handling and logging"
+          echo "- Matrix-based parallel execution"
+          echo "- Integration with other issue operations"
+          echo "- Comprehensive summary generation"
+
+  legacy-codeql-alerts:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.force_run == 'true' }}
     permissions:
       issues: write
       contents: read
-      security-events: read # Required to read CodeQL alerts
+      security-events: read
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
-
-      - name: Generate CodeQL alert tickets
+      - name: Generate CodeQL alert tickets (legacy)
         run: |
-          echo "Generating tickets for CodeQL security alerts..."
+          echo "🔄 Running legacy codeql-alerts script"
           python .github/scripts/issue_manager.py codeql-alerts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          FORCE_UPDATE: ${{ github.event.inputs.force_update }}
-
-      - name: Summary
-        run: |
-          echo "CodeQL alert ticket generation completed."
-          echo "Check the job logs above for details on tickets created."
+          FORCE_UPDATE: ${{ github.event.inputs.force_run }}

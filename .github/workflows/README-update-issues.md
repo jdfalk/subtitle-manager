@@ -2,30 +2,92 @@
 
 ## Issue Updates Workflow
 
-The `update-issues.yml` workflow processes bulk issue operations from `issue_updates.json`.
+The unified issue management workflow processes bulk issue operations from `issue_updates.json` using a new grouped format for better organization and GUID-based duplicate prevention.
+
+## New Grouped Format
+
+The `issue_updates.json` file now uses a grouped structure for better organization:
+
+```json
+{
+  "create": [
+    {
+      "title": "Issue Title",
+      "body": "Issue description",
+      "labels": ["bug", "enhancement"],
+      "guid": "create-unique-id-2025-06-20"
+    }
+  ],
+  "update": [
+    {
+      "number": 123,
+      "title": "New Title",
+      "labels": ["updated-label"],
+      "guid": "update-issue-123-2025-06-20"
+    }
+  ],
+  "comment": [
+    {
+      "number": 123,
+      "body": "Comment text",
+      "guid": "comment-123-specific-purpose"
+    }
+  ],
+  "close": [
+    {
+      "number": 456,
+      "state_reason": "completed",
+      "guid": "close-issue-456-2025-06-20"
+    }
+  ],
+  "delete": [
+    {
+      "number": 999,
+      "guid": "delete-issue-999-2025-06-20"
+    }
+  ]
+}
+```
+
+## GUID-Based Duplicate Prevention
+
+All actions now support optional `guid` fields that prevent duplicate operations:
+
+- **Comments**: GUIDs are stored as HTML comments in issue comments
+- **Creates**: GUIDs are embedded in issue body to prevent duplicate creation
+- **Updates/Close/Delete**: GUIDs provide operation tracking
+
+### GUID Format Recommendations
+
+Use descriptive, unique identifiers:
+- `"create-feature-request-2025-06-20"`
+- `"update-issue-123-labels-2025-06-20"`
+- `"comment-456-status-update"`
+- `"close-issue-789-completed-2025-06-20"`
+- `"delete-spam-issue-999-2025-06-20"`
+
+## Processing Order
+
+Operations are processed in a specific order to maintain logical sequencing:
+
+1. **Create** - Establish new issues first
+2. **Update** - Modify existing issues
+3. **Comment** - Add comments before any state changes
+4. **Close** - Close issues after comments are added
+5. **Delete** - Process deletions last
 
 ## Supported Actions
-
-The workflow processes actions in this specific order to ensure proper sequencing:
-
-1. **create** - Create new issues
-2. **update** - Update existing issues
-3. **comment** - Add comments to issues
-4. **close** - Close issues (after comments are added)
-5. **delete** - Delete issues permanently
-
-## Action Formats
 
 ### Create Issue
 
 ```json
 {
-  "action": "create",
   "title": "Issue Title",
   "body": "Issue description",
   "labels": ["bug", "enhancement"],
   "assignees": ["username"],
-  "milestone": 1
+  "milestone": 1,
+  "guid": "create-unique-id-2025-06-20"
 }
 ```
 
@@ -33,12 +95,12 @@ The workflow processes actions in this specific order to ensure proper sequencin
 
 ```json
 {
-  "action": "update",
   "number": 123,
   "title": "New Title",
   "body": "Updated description",
   "labels": ["updated-label"],
-  "state": "open"
+  "state": "open",
+  "guid": "update-issue-123-2025-06-20"
 }
 ```
 
@@ -46,27 +108,23 @@ The workflow processes actions in this specific order to ensure proper sequencin
 
 ```json
 {
-  "action": "comment",
   "number": 123,
   "body": "Comment text to add to the issue",
-  "guid": "unique-identifier-12345"
+  "guid": "comment-123-unique-identifier"
 }
 ```
-
-**GUID Support**: The optional `guid` field prevents duplicate comments. If a comment with the same GUID already exists on the issue, it will be skipped. The GUID is stored as a hidden HTML comment in the issue comment.
 
 ### Close Issue
 
 ```json
 {
-  "action": "close",
   "number": 123,
-  "state_reason": "completed"
+  "state_reason": "completed",
+  "guid": "close-issue-123-2025-06-20"
 }
 ```
 
 Valid `state_reason` values:
-
 - `completed` - Issue was completed
 - `not_planned` - Issue will not be worked on
 
@@ -74,76 +132,80 @@ Valid `state_reason` values:
 
 ```json
 {
-  "action": "delete",
-  "number": 123
+  "number": 123,
+  "guid": "delete-issue-123-2025-06-20"
 }
 ```
 
-## Processing Order
+**Note**: GitHub API doesn't support issue deletion. Issues are closed with "not_planned" reason and marked for deletion instead.
 
-Actions are processed in a specific order to maintain logical sequencing:
+## Legacy Format Support
 
-1. **Create** operations run first to establish new issues
-2. **Update** operations modify existing issues
-3. **Comment** operations add comments before any closing
-4. **Close** operations happen after comments are added
-5. **Delete** operations run last
+The workflow continues to support the old flat array format for backward compatibility:
 
-This ensures that if you want to add a final comment before closing an issue, the comment will be applied before the issue is closed.
+```json
+[
+  {
+    "action": "create",
+    "title": "Issue Title",
+    "body": "Description",
+    "labels": ["bug"]
+  }
+]
+```
+
+## Migration from Legacy Format
+
+To migrate from the old format to the new grouped format:
+
+1. Group actions by type (`create`, `update`, `comment`, `close`, `delete`)
+2. Remove the `action` field from individual items
+3. Add `guid` fields for duplicate prevention
+4. Place items in appropriate sections
 
 ## Example Usage
 
 Create an `issue_updates.json` file in the repository root:
 
 ```json
-[
-  {
-    "action": "create",
-    "title": "New Feature Request",
-    "body": "Description of the new feature",
-    "labels": ["enhancement"]
-  },
-  {
-    "action": "comment",
-    "number": 456,
-    "body": "Adding final update before closing",
-    "guid": "closing-comment-456-2025-06-19"
-  },
-  {
-    "action": "close",
-    "number": 456,
-    "state_reason": "completed"
-  }
-]
+{
+  "create": [
+    {
+      "title": "New Feature Request",
+      "body": "Description of the new feature",
+      "labels": ["enhancement"],
+      "guid": "create-feature-xyz-2025-06-20"
+    }
+  ],
+  "comment": [
+    {
+      "number": 456,
+      "body": "Adding final update before closing",
+      "guid": "closing-comment-456-2025-06-20"
+    }
+  ],
+  "close": [
+    {
+      "number": 456,
+      "state_reason": "completed",
+      "guid": "close-completed-456-2025-06-20"
+    }
+  ]
+}
 ```
 
-Commit and push to the `main` branch. The workflow will:
-
+The unified workflow will:
 1. Create the new issue
 2. Add the comment to issue #456 (only if no comment with that GUID exists)
 3. Close issue #456 with reason "completed"
 4. Remove the processed `issue_updates.json` file
 5. Create a PR with the cleanup
 
-## GUID Best Practices
+## Workflow Integration
 
-When using GUIDs for comments:
+The issue updates are processed by the unified issue management workflow (`unified-issue-management.yml`) which handles:
 
-- Use descriptive, unique identifiers like `"status-update-issue-123-2025-06-19"`
-- Include the issue number and date for uniqueness
-- Use consistent naming patterns for easier tracking
-- GUIDs are case-sensitive and stored as HTML comments in the issue
-
-Example GUID patterns:
-
-- `"copilot-review-123-abc123def"` - For Copilot review comments
-- `"automated-status-456-2025-06-19"` - For automated status updates
-- `"merge-notification-789-pr-234"` - For PR merge notifications
-
-## Notes
-
-- The workflow only runs if `issue_updates.json` exists
-- Issues are checked for existence before creation (no duplicates)
-- After processing, `issue_updates.json` is removed and a cleanup PR is created
-- All GitHub API operations include proper error handling
-- The workflow requires `issues: write` permissions
+- **Matrix parallelization** for efficient processing
+- **Comprehensive logging** with operation summaries
+- **Error handling** with detailed error messages
+- **Cleanup automation** with PR generation for file removal

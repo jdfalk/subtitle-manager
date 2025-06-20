@@ -216,40 +216,65 @@ class IssueUpdateProcessor:
 
     def process_updates(self, updates_file: str = "issue_updates.json") -> bool:
         """
-        Process issue updates from JSON file.
+        Process issue updates from JSON file supporting both legacy flat format
+        and new grouped format with GUID tracking.
 
         Returns:
             True if any updates were processed, False otherwise
         """
         if not os.path.exists(updates_file):
-            print(f"No {updates_file} found")
+            print(f"❌ No {updates_file} found")
             return False
 
         try:
             with open(updates_file, 'r', encoding='utf-8') as f:
-                updates = json.load(f)
+                updates_data = json.load(f)
         except (json.JSONDecodeError, IOError) as e:
-            print(f"Error reading {updates_file}: {e}", file=sys.stderr)
+            print(f"❌ Error reading {updates_file}: {e}", file=sys.stderr)
             return False
+
+        # Handle both old flat format and new grouped format
+        if isinstance(updates_data, list):
+            # Old flat format - convert to new format
+            print("⚠️  Using legacy flat format. Consider upgrading to grouped format.")
+            updates = updates_data
+        else:
+            # New grouped format - process in order: create, update, comment, close, delete
+            updates = []
+            for action_type in ["create", "update", "comment", "close", "delete"]:
+                if action_type in updates_data and updates_data[action_type]:
+                    for item in updates_data[action_type]:
+                        item["action"] = action_type
+                        updates.append(item)
 
         if not updates:
-            print(f"{updates_file} is empty")
-            return False
+            print("📝 No updates to process")
+            return True
 
-        processed = False
+        print(f"🚀 Processing {len(updates)} updates...")
+        success_count = 0
 
-        # Process actions in the correct order
-        for action_type in ["create", "update", "comment", "close", "delete"]:
-            for update in updates:
-                if update.get("action") == action_type:
-                    if self._process_single_update(update):
-                        processed = True
+        for i, update in enumerate(updates, 1):
+            action = update.get('action', 'unknown')
+            print(f"\n📋 Update {i}/{len(updates)}: {action}")
 
-        return processed
+            if self._process_single_update(update):
+                success_count += 1
+            else:
+                print(f"❌ Failed to process update {i}")
+
+        print(f"\n✅ Successfully processed {success_count}/{len(updates)} updates")
+        return success_count > 0
 
     def _process_single_update(self, update: Dict[str, Any]) -> bool:
-        """Process a single update action."""
+        """Process a single update action with GUID tracking."""
         action = update.get("action")
+        guid = update.get("guid")
+
+        # Check for duplicate operations using GUID
+        if guid and self._is_duplicate_operation(action, guid, update):
+            print(f"⏭️  Skipping duplicate operation with GUID: {guid}")
+            return True
 
         try:
             if action == "create":
@@ -263,69 +288,197 @@ class IssueUpdateProcessor:
             elif action == "delete":
                 return self._delete_issue(update)
             else:
-                print(f"Unknown action: {action}", file=sys.stderr)
+                print(f"❌ Unknown action: {action}", file=sys.stderr)
                 return False
         except Exception as e:
-            print(f"Error processing {action} action: {e}", file=sys.stderr)
+            print(f"❌ Error processing {action} action: {e}", file=sys.stderr)
+            return False
+
+    def _is_duplicate_operation(self, action: str, guid: str, update: Dict[str, Any]) -> bool:
+        """Check if an operation with the same GUID was already performed."""
+        if action == "comment":
+            # For comments, check if GUID exists in issue comments
+            issue_number = update.get("number")
+            if issue_number:
+                return self._comment_guid_exists(issue_number, guid)
+        elif action == "create":
+            # For creates, check if issue with GUID already exists
+            return self._create_guid_exists(guid, update)
+
+        # For update, close, delete - assume no duplicates for now
+        return False
+
+    def _comment_guid_exists(self, issue_number: int, guid: str) -> bool:
+        """Check if a comment with the given GUID already exists on the issue."""
+        try:
+            url = f"https://api.github.com/repos/{self.api.repo}/issues/{issue_number}/comments"
+            response = requests.get(url, headers=self.api.headers, timeout=10)
+
+            if response.status_code != 200:
+                return False
+
+            comments = response.json()
+
+            # Check for GUID in HTML comments
+            guid_marker = f"<!-- guid:{guid} -->"
+            for comment in comments:
+                if guid_marker in comment.get("body", ""):
+                    return True
+
+            return False
+
+        except Exception as e:
+            print(f"⚠️  Error checking for duplicate comment GUID: {e}")
+            return False
+
+    def _create_guid_exists(self, guid: str, update: Dict[str, Any]) -> bool:
+        """Check if an issue with the given GUID was already created."""
+        title = update.get("title", "")
+        try:
+            # Search for existing issues with similar title
+            existing = self.api.search_issues(f'is:issue in:title "{title}"')
+
+            guid_marker = f"<!-- guid:{guid} -->"
+            for issue in existing:
+                if guid_marker in issue.get("body", ""):
+                    return True
+
+            return False
+
+        except Exception:
             return False
 
     def _create_issue(self, update: Dict[str, Any]) -> bool:
-        """Create a new issue if it doesn't already exist."""
+        """Create a new issue with GUID tracking."""
         title = update.get("title", "")
-
-        # Check if issue with this title already exists
-        existing = self.api.search_issues(f'is:issue in:title "{title}"')
-        if existing:
-            print(f"Issue '{title}' already exists, skipping")
-            return False
-
         body = update.get("body", "")
         labels = update.get("labels", [])
+        assignees = update.get("assignees", [])
+        milestone = update.get("milestone")
+        guid = update.get("guid")
 
-        result = self.api.create_issue(title, body, labels)
-        return result is not None
-
-    def _update_issue(self, update: Dict[str, Any]) -> bool:
-        """Update an existing issue."""
-        issue_number = update.get("number")
-        if not issue_number:
-            print("Update action missing issue number", file=sys.stderr)
+        if not title:
+            print("❌ Missing title for create operation")
             return False
 
-        # Remove action and number from update data
-        update_data = {k: v for k, v in update.items() if k not in ["action", "number"]}
+        # Check if issue with this title already exists (without GUID check)
+        existing = self.api.search_issues(f'is:issue in:title "{title}"')
+        if existing and not guid:
+            print(f"⚠️  Issue '{title}' already exists, skipping")
+            return False
 
-        return self.api.update_issue(issue_number, **update_data)
+        # Add GUID to body for tracking
+        if guid:
+            body += f"\n\n<!-- guid:{guid} -->"
+
+        try:
+            result = self.api.create_issue(title, body, labels)
+            if result:
+                print(f"✅ Created issue #{result['number']}: {title}")
+
+                # Add assignees and milestone if specified
+                if assignees or milestone:
+                    update_data = {}
+                    if assignees:
+                        update_data["assignees"] = assignees
+                    if milestone:
+                        update_data["milestone"] = milestone
+                    self.api.update_issue(result['number'], **update_data)
+
+                return True
+            else:
+                print(f"❌ Failed to create issue: {title}")
+                return False
+
+        except Exception as e:
+            print(f"❌ Error creating issue: {e}")
+            return False
+
+    def _update_issue(self, update: Dict[str, Any]) -> bool:
+        """Update an existing issue with GUID tracking."""
+        issue_number = update.get("number")
+        guid = update.get("guid")
+
+        if not issue_number:
+            print("❌ Update action missing issue number", file=sys.stderr)
+            return False
+
+        # Build update payload, excluding action, number, and guid
+        update_data = {k: v for k, v in update.items() if k not in ["action", "number", "guid"]}
+
+        # Add GUID to body if provided
+        if guid and "body" in update_data:
+            update_data["body"] += f"\n\n<!-- guid:{guid} -->"
+
+        try:
+            success = self.api.update_issue(issue_number, **update_data)
+            if success:
+                print(f"✅ Updated issue #{issue_number}")
+                return True
+            else:
+                print(f"❌ Failed to update issue #{issue_number}")
+                return False
+        except Exception as e:
+            print(f"❌ Error updating issue #{issue_number}: {e}")
+            return False
 
     def _add_comment(self, update: Dict[str, Any]) -> bool:
-        """Add a comment to an issue."""
+        """Add a comment to an issue with GUID tracking."""
         issue_number = update.get("number")
         body = update.get("body", "")
         guid = update.get("guid")
 
         if not issue_number:
-            print("Comment action missing issue number", file=sys.stderr)
+            print("❌ Comment action missing issue number", file=sys.stderr)
             return False
 
-        # Check for existing comment with GUID to prevent duplicates
-        if guid:
-            # This is a simplified check - in a full implementation, you'd fetch comments
-            # and check for the GUID in comment bodies
-            print(f"Adding comment with GUID: {guid}")
-            body += f"\n\n<!-- guid:{guid} -->"
+        if not body:
+            print("❌ Comment action missing body", file=sys.stderr)
+            return False
 
-        return self.api.add_comment(issue_number, body)
+        # Add GUID to comment for duplicate detection
+        if guid:
+            body = f"<!-- guid:{guid} -->\n{body}"
+
+        try:
+            success = self.api.add_comment(issue_number, body)
+            if success:
+                print(f"✅ Added comment to issue #{issue_number}")
+                return True
+            else:
+                print(f"❌ Failed to add comment to issue #{issue_number}")
+                return False
+        except Exception as e:
+            print(f"❌ Error adding comment to issue #{issue_number}: {e}")
+            return False
 
     def _close_issue(self, update: Dict[str, Any]) -> bool:
-        """Close an issue."""
+        """Close an issue with GUID tracking."""
         issue_number = update.get("number")
         state_reason = update.get("state_reason", "completed")
+        guid = update.get("guid")
 
         if not issue_number:
-            print("Close action missing issue number", file=sys.stderr)
+            print("❌ Close action missing issue number", file=sys.stderr)
             return False
 
-        return self.api.close_issue(issue_number, state_reason)
+        try:
+            success = self.api.close_issue(issue_number, state_reason)
+            if success:
+                print(f"✅ Closed issue #{issue_number} (reason: {state_reason})")
+
+                # Add a tracking comment with GUID if provided
+                if guid:
+                    tracking_comment = f"<!-- guid:{guid} -->\nIssue closed via automated workflow."
+                    self.api.add_comment(issue_number, tracking_comment)
+
+                return True
+            else:
+                print(f"❌ Failed to close issue #{issue_number}")
+                return False
+        except Exception as e:
+            print(f"❌ Error closing issue #{issue_number}: {e}")
+            return False
 
     def _delete_issue(self, update: Dict[str, Any]) -> bool:
         """Delete an issue (requires GraphQL API)."""
