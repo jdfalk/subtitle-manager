@@ -23,6 +23,9 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Convert uploaded subtitle files to SRT via `/api/convert`.
 - Transcribe audio tracks to subtitles via Whisper.
 - Automatic subtitle synchronization using audio transcription and embedded tracks with advanced options for track selection, weighted averaging, and translation integration.
+- World-class synchronization algorithm with adjustable CPU vs accuracy slider and optional longer processing for improved precision.
+- Advanced dual-subtitle alignment for languages with different grammar structures.
+- Experimental minimum display time mode that delays subsequent subtitles and catches up during silent gaps.
 - Synchronize and translate subtitles to any language during the sync process.
 - Download subtitles from a comprehensive list of providers based on Bazarr,
   including Addic7ed, AnimeKalesi, Animetosho, Assrt, Avistaz, BetaSeries,
@@ -612,9 +615,7 @@ duplicate. This keeps the issue tracker focused on a single discussion for each
 problem.
 
 The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work includes a flexible tagging system, Docker-based Whisper integration, and automated maintenance tasks. See `TODO.md` for details.
-Extensive architectural details and design decisions are documented in
-`docs/TECHNICAL_DESIGN.md`. New contributors should review this document to
-understand package responsibilities and completed features.
+Extensive architectural details and design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New contributors should review these documents to understand package responsibilities and completed features.
 For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
 Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).
 A high-level code overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).

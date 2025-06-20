@@ -631,3 +631,12 @@ subtitle-manager sync movie.mkv subs.srt output.srt --use-embedded --subtitle-tr
 ```
 
 This demonstration showcases the advanced subtitle synchronization workflow. Additional features such as tagging and maintenance tooling remain under development before the project can be considered feature complete.
+
+### Planned Advanced Sync Improvements
+
+- CPU vs accuracy slider controlling algorithm complexity.
+- Option to trade runtime for improved accuracy.
+- Dual-subtitle mode for languages with different grammar.
+- Experimental minimum display time mode with catch-up logic for HI subtitles.
+
+**Note**: `pkg/audio.GetAudioTracks` uses simplified CSV parsing and the `splitLines` helper is a placeholder. Proper ffprobe output parsing is still needed.
