@@ -33,12 +33,13 @@ func convertHandler() http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		defer func() { _ = tmp.Close() }()
 		defer os.Remove(tmp.Name())
 		if _, err := io.Copy(tmp, f); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		tmp.Close()
+		_ = tmp.Close()
 		data, err := subtitles.ConvertToSRT(tmp.Name())
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

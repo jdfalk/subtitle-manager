@@ -141,11 +141,11 @@ func TestSyncWithAudioTrack(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create temp: %v", err)
 	}
+	defer f.Close()
 	subs := astisub.Subtitles{Items: base.Items}
 	if err := subs.WriteToSRT(f); err != nil {
 		t.Fatalf("write SRT: %v", err)
 	}
-	f.Close()
 
 	// Create mock transcriber
 	mockTranscriber := mocks.NewTranscriber(t)
@@ -192,11 +192,11 @@ func TestSyncWithMultipleSubtitleTracks(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create temp: %v", err)
 	}
+	defer f.Close()
 	subs := astisub.Subtitles{Items: base.Items}
 	if err := subs.WriteToSRT(f); err != nil {
 		t.Fatalf("write SRT: %v", err)
 	}
-	f.Close()
 
 	// Create mock extractor
 	mockExtractor := mocks.NewSubtitleExtractor(t)
@@ -256,11 +256,11 @@ func TestSyncWithTranslation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create temp: %v", err)
 	}
+	defer f.Close()
 	subs := astisub.Subtitles{Items: items}
 	if err := subs.WriteToSRT(f); err != nil {
 		t.Fatalf("write SRT: %v", err)
 	}
-	f.Close()
 
 	// Mock successful sync without actual translation service
 	// In a real test, you'd mock the translator.Translate function
@@ -364,11 +364,11 @@ func TestSyncWeighted(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create temp: %v", err)
 	}
+	defer f.Close()
 	subs := astisub.Subtitles{Items: shifted}
 	if err := subs.WriteToSRT(f); err != nil {
 		t.Fatalf("write SRT: %v", err)
 	}
-	f.Close()
 
 	// Create mocks
 	mockTranscriber := mocks.NewTranscriber(t)

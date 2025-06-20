@@ -58,21 +58,26 @@ func translateHandler() http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		defer func() { _ = in.Close() }()
 		defer os.Remove(in.Name())
 		if _, err := io.Copy(in, file); err != nil {
-			in.Close()
+			_ = in.Close()
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		in.Close()
+		_ = in.Close()
 
 		out, err := os.CreateTemp("", "out-*.srt")
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		out.Close()
+		defer func() { _ = out.Close() }()
 		defer os.Remove(out.Name())
+		if err := out.Close(); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
 		if err := subtitles.TranslateFileToSRT(in.Name(), out.Name(), lang, service, gKey, gptKey, grpcAddr); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
