@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -64,9 +65,12 @@ func TestIsPrivateOrLocalhost(t *testing.T) {
 		{"example.com", false},
 	}
 	for _, c := range cases {
-		if isPrivateOrLocalhost(c.host) != c.want {
-			t.Fatalf("%s expected %v", c.host, c.want)
-		}
+		c := c // capture range variable
+		t.Run(c.host, func(t *testing.T) {
+			if isPrivateOrLocalhost(c.host) != c.want {
+				t.Fatalf("%s expected %v", c.host, c.want)
+			}
+		})
 	}
 }
 
@@ -81,23 +85,29 @@ func TestHandlersMethod(t *testing.T) {
 		{"custom", CustomHandler()},
 	}
 	for _, tc := range handlers {
-		w := httptest.NewRecorder()
-		tc.h.ServeHTTP(w, httptest.NewRequest(http.MethodGet, "/", nil))
-		if w.Code != http.StatusMethodNotAllowed {
-			t.Fatalf("%s: expected 405, got %d", tc.name, w.Code)
-		}
+		tc := tc // capture range variable
+		t.Run(tc.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			tc.h.ServeHTTP(w, httptest.NewRequest(http.MethodGet, "/", nil))
+			if w.Code != http.StatusMethodNotAllowed {
+				t.Fatalf("%s: expected 405, got %d", tc.name, w.Code)
+			}
+		})
 	}
 }
 
 // TestHandlersBadBody ensures invalid JSON payloads return 400.
 func TestHandlersBadBody(t *testing.T) {
 	handlers := []http.Handler{SonarrHandler(), RadarrHandler(), CustomHandler()}
-	for _, h := range handlers {
-		w := httptest.NewRecorder()
-		h.ServeHTTP(w, httptest.NewRequest(http.MethodPost, "/", bytes.NewBufferString("{")))
-		if w.Code != http.StatusBadRequest {
-			t.Fatalf("expected 400, got %d", w.Code)
-		}
+	for i, h := range handlers {
+		h := h // capture range variable
+		t.Run(fmt.Sprintf("handler_%d", i), func(t *testing.T) {
+			w := httptest.NewRecorder()
+			h.ServeHTTP(w, httptest.NewRequest(http.MethodPost, "/", bytes.NewBufferString("{")))
+			if w.Code != http.StatusBadRequest {
+				t.Fatalf("expected 400, got %d", w.Code)
+			}
+		})
 	}
 }
 

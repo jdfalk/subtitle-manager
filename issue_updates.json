@@ -124,5 +124,16 @@
     "title": "Display progress updates in CLI and web UI",
     "body": "Show task progress for long running operations.",
     "labels": ["enhancement"]
+  },
+  {
+    "action": "update",
+    "number": 921,
+    "labels": ["codex"],
+    "state": "closed"
+  },
+  {
+    "action": "comment",
+    "number": 921,
+    "body": "Implemented t.Run subtests in pkg/webhooks to ensure each case runs in isolation before closing."
   }
 ]
