@@ -118,7 +118,11 @@ jobs:
           fi
 
           # Convert array to JSON for matrix
-          ops_json=$(printf '%s\n' "${operations[@]}" | jq -R . | jq -s .)
+          if [[ ${#operations[@]} -eq 0 ]]; then
+            ops_json="[]"
+          else
+            ops_json=$(printf '%s\n' "${operations[@]}" | jq -R . | jq -s . | tr -d '\n')
+          fi
           echo "operations=${ops_json}" >> "$GITHUB_OUTPUT"
           echo "🎯 Operations to run: ${operations[*]}"
 
