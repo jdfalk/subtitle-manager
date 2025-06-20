@@ -20,7 +20,9 @@ func TestDispatcherSend(t *testing.T) {
 	}
 	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
-		json.NewDecoder(r.Body).Decode(&got)
+		if err := json.NewDecoder(r.Body).Decode(&got); err != nil {
+			t.Fatalf("failed to decode request body: %v", err)
+		}
 	}))
 	defer srv.Close()
 

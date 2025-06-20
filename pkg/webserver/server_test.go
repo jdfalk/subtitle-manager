@@ -244,7 +244,9 @@ func TestScanHandlers(t *testing.T) {
 			Running   bool `json:"running"`
 			Completed int  `json:"completed"`
 		}
-		json.NewDecoder(r2.Body).Decode(&s)
+		if err := json.NewDecoder(r2.Body).Decode(&s); err != nil {
+			t.Fatalf("failed to decode request body: %v", err)
+		}
 		r2.Body.Close()
 		if !s.Running {
 			if s.Completed != 1 {
@@ -301,7 +303,7 @@ func TestExtract(t *testing.T) {
 	defer resp.Body.Close()
 	var items []any
 	if err := json.NewDecoder(resp.Body).Decode(&items); err != nil {
-		t.Fatalf("decode: %v", err)
+		t.Fatalf("failed to decode request body: %v", err)
 	}
 	if len(items) == 0 {
 		t.Fatalf("no items returned")
@@ -446,7 +448,9 @@ func TestSetup(t *testing.T) {
 	var st struct {
 		Needed bool `json:"needed"`
 	}
-	json.NewDecoder(resp.Body).Decode(&st)
+	if err := json.NewDecoder(resp.Body).Decode(&st); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	resp.Body.Close()
 	if !st.Needed {
 		t.Fatalf("expected setup needed")
@@ -466,7 +470,9 @@ func TestSetup(t *testing.T) {
 	if err != nil {
 		t.Fatalf("status2: %v", err)
 	}
-	json.NewDecoder(resp3.Body).Decode(&st)
+	if err := json.NewDecoder(resp3.Body).Decode(&st); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	resp3.Body.Close()
 	if st.Needed {
 		t.Fatalf("setup still needed")
@@ -508,7 +514,9 @@ func TestHistory(t *testing.T) {
 		Translations []database.SubtitleRecord `json:"translations"`
 		Downloads    []database.DownloadRecord `json:"downloads"`
 	}
-	json.NewDecoder(resp.Body).Decode(&out)
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	resp.Body.Close()
 	if len(out.Translations) != 1 || len(out.Downloads) != 1 {
 		t.Fatalf("unexpected counts %d %d", len(out.Translations), len(out.Downloads))
@@ -520,7 +528,9 @@ func TestHistory(t *testing.T) {
 		Translations []database.SubtitleRecord `json:"translations"`
 		Downloads    []database.DownloadRecord `json:"downloads"`
 	}
-	json.NewDecoder(resp2.Body).Decode(&out2)
+	if err := json.NewDecoder(resp2.Body).Decode(&out2); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	resp2.Body.Close()
 	if len(out2.Translations) != 0 || len(out2.Downloads) != 0 {
 		t.Fatalf("filter failed")
@@ -576,7 +586,9 @@ func TestDownload(t *testing.T) {
 	var res struct {
 		File string `json:"file"`
 	}
-	json.NewDecoder(resp.Body).Decode(&res)
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	resp.Body.Close()
 
 	out := strings.TrimSuffix(vid, filepath.Ext(vid)) + ".en.srt"
@@ -777,7 +789,7 @@ func TestProvidersDefault(t *testing.T) {
 	}
 	var out []ProviderInfo
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
-		t.Fatalf("decode: %v", err)
+		t.Fatalf("failed to decode request body: %v", err)
 	}
 	resp.Body.Close()
 	if len(out) != 52 {

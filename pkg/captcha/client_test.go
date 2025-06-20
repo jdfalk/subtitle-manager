@@ -14,7 +14,9 @@ func TestSolveImage(t *testing.T) {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/createTask", func(w http.ResponseWriter, r *http.Request) {
 		var req map[string]any
-		json.NewDecoder(r.Body).Decode(&req)
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			t.Fatalf("failed to decode request body: %v", err)
+		}
 		json.NewEncoder(w).Encode(map[string]any{"errorId": 0, "taskId": 1})
 	})
 	handler.HandleFunc("/getTaskResult", func(w http.ResponseWriter, r *http.Request) {
