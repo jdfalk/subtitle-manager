@@ -1,0 +1,227 @@
+# file: .github/workflows/unified-issue-management.yml
+#
+# Unified GitHub issue management workflow.
+#
+# This workflow handles:
+# 1. Processing issue updates from issue_updates.json (on push to main)
+# 2. Managing Copilot review comment tickets (on PR events)
+# 3. Closing duplicate issues (on schedule)
+# 4. Generating tickets for CodeQL security alerts (on schedule and push)
+#
+# This workflow replaces:
+# - update-issues.yml
+# - copilot-tickets.yml
+# - close-duplicates.py (manual execution)
+#
+# The unified script supports both event-driven and scheduled operations.
+name: Unified Issue Management
+
+on:
+  # Issue updates processing
+  push:
+    branches: [main, master]
+    paths:
+      - "issue_updates.json"
+
+  # Copilot review ticket management
+  pull_request_review_comment:
+    types: [created, edited, deleted]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  pull_request:
+    types: [closed]
+
+  # Scheduled maintenance
+  schedule:
+    # Run duplicate cleanup daily at 02:00 UTC
+    - cron: "0 2 * * *"
+    # Run CodeQL alert check twice daily at 08:00 and 20:00 UTC
+    - cron: "0 8,20 * * *"
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "Command to run"
+        required: true
+        type: choice
+        options:
+          - "update-issues"
+          - "copilot-tickets"
+          - "close-duplicates"
+          - "codeql-alerts"
+          - "all"
+      dry_run:
+        description: "Dry run mode (for close-duplicates)"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  # Process issue updates from issue_updates.json
+  update-issues:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.modified, 'issue_updates.json') || github.event_name == 'workflow_dispatch' && (github.event.inputs.command == 'update-issues' || github.event.inputs.command == 'all') }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Process issue updates
+        id: process
+        run: |
+          python .github/scripts/issue_manager.py update-issues
+          echo "processed=true" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+
+      - name: Remove processed issue_updates.json
+        if: steps.process.outputs.processed == 'true' && hashFiles('issue_updates.json') != ''
+        run: rm issue_updates.json
+
+      - name: Create pull request for cleanup
+        if: steps.process.outputs.processed == 'true' && hashFiles('issue_updates.json') == ''
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: issue-updates-cleanup-${{ github.run_id }}
+          commit-message: "Remove processed issue updates"
+          title: "Remove processed issue updates"
+          body: "Automatically remove processed entries from issue_updates.json."
+
+  # Handle Copilot review events
+  copilot-tickets:
+    if: ${{ contains(fromJson('["pull_request_review_comment", "pull_request_review", "pull_request"]'), github.event_name) || github.event_name == 'workflow_dispatch' && (github.event.inputs.command == 'copilot-tickets' || github.event.inputs.command == 'all') }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Debug event info
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Action: ${{ github.event.action }}"
+          echo "Repository: ${{ github.repository }}"
+
+      - name: Handle Copilot tickets
+        run: |
+          python .github/scripts/issue_manager.py copilot-tickets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+
+  # Close duplicate issues (scheduled)
+  close-duplicates:
+    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 2 * * *' || github.event_name == 'workflow_dispatch' && (github.event.inputs.command == 'close-duplicates' || github.event.inputs.command == 'all') }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Close duplicate issues
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python .github/scripts/issue_manager.py close-duplicates --dry-run
+          else
+            python .github/scripts/issue_manager.py close-duplicates
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+
+  # Generate CodeQL alert tickets (scheduled and on push)
+  codeql-alerts:
+    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 8,20 * * *' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' && (github.event.inputs.command == 'codeql-alerts' || github.event.inputs.command == 'all') }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+      security-events: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Generate CodeQL alert tickets
+        run: |
+          python .github/scripts/issue_manager.py codeql-alerts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+
+  # Handle push events for comprehensive analysis
+  push-analysis:
+    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.modified, 'issue_updates.json') }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Handle push analysis
+        run: |
+          python .github/scripts/issue_manager.py event-handler
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}

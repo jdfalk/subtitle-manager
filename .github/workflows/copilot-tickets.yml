@@ -2,6 +2,18 @@
 #
 # This workflow manages GitHub issues based on Copilot review comments.
 #
+# MIGRATION NOTICE: This workflow is being migrated to use the unified
+# issue management script at .github/scripts/issue_manager.py
+#
+# The new unified workflow (unified-issue-management.yml) provides:
+# - Enhanced error handling and logging
+# - Unified codebase for all issue management operations
+# - Support for CodeQL alert ticket generation
+# - Better duplicate handling and event processing
+# - Consistent API usage patterns
+#
+# Both workflows will run in parallel during the migration period.
+#
 # Triggers:
 # - pull_request_review_comment: Creates/updates/deletes tickets for Copilot comments
 # - pull_request_review: Logs review submissions (minimal action)
@@ -51,9 +63,10 @@ jobs:
           echo "Action: ${{ github.event.action }}"
           echo "Repository: ${{ github.repository }}"
 
-      - name: Manage tickets
+      - name: Manage tickets (using unified script)
         run: |
-          python .github/scripts/copilot_tickets.py
+          echo "Using new unified issue management script..."
+          python .github/scripts/issue_manager.py copilot-tickets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}

@@ -1,0 +1,67 @@
+# file: .github/workflows/codeql-alert-tickets.yml
+#
+# This workflow automatically generates GitHub issues for CodeQL security alerts.
+#
+# Features:
+# - Creates tickets for new CodeQL alerts that don't have associated issues
+# - Includes detailed alert information (rule, severity, location, etc.)
+# - Uses consistent labeling with "security" label
+# - Prevents duplicate tickets for the same alert
+# - Runs on schedule and when new code is pushed
+#
+# The workflow integrates with the unified issue management system and
+# can be extended to handle alert state changes (resolved, dismissed, etc.)
+
+name: CodeQL Alert Tickets
+
+on:
+  # Run when new code is pushed (may introduce new alerts)
+  push:
+    branches: [main, master]
+
+  # Run twice daily to catch any new alerts
+  schedule:
+    - cron: "0 8,20 * * *" # 8 AM and 8 PM UTC
+
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: "Force update existing tickets"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  generate-alert-tickets:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+      security-events: read # Required to read CodeQL alerts
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Generate CodeQL alert tickets
+        run: |
+          echo "Generating tickets for CodeQL security alerts..."
+          python .github/scripts/issue_manager.py codeql-alerts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          FORCE_UPDATE: ${{ github.event.inputs.force_update }}
+
+      - name: Summary
+        run: |
+          echo "CodeQL alert ticket generation completed."
+          echo "Check the job logs above for details on tickets created."
