@@ -43,7 +43,9 @@ func TestSystemHandlers(t *testing.T) {
 		t.Fatalf("logs: %v %d", err, r.StatusCode)
 	}
 	var lines []string
-	json.NewDecoder(r.Body).Decode(&lines)
+	if err := json.NewDecoder(r.Body).Decode(&lines); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	r.Body.Close()
 	if len(lines) == 0 {
 		t.Fatalf("no logs returned")
@@ -58,7 +60,9 @@ func TestSystemHandlers(t *testing.T) {
 	var info struct {
 		GoVersion string `json:"go_version"`
 	}
-	json.NewDecoder(r2.Body).Decode(&info)
+	if err := json.NewDecoder(r2.Body).Decode(&info); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	r2.Body.Close()
 	if info.GoVersion == "" {
 		t.Fatalf("no info")
@@ -71,7 +75,9 @@ func TestSystemHandlers(t *testing.T) {
 		t.Fatalf("announcements: %v %d", err, r3.StatusCode)
 	}
 	var ann []map[string]any
-	json.NewDecoder(r3.Body).Decode(&ann)
+	if err := json.NewDecoder(r3.Body).Decode(&ann); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	r3.Body.Close()
 	if len(ann) == 0 {
 		t.Fatalf("no announcements")

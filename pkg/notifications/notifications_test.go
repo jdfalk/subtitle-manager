@@ -14,7 +14,9 @@ func TestDiscordNotifier(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		var m map[string]string
-		json.NewDecoder(r.Body).Decode(&m)
+		if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
+			t.Fatalf("failed to decode request body: %v", err)
+		}
 		got = m["content"]
 	}))
 	defer srv.Close()
@@ -33,7 +35,9 @@ func TestTelegramNotifier(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		var m map[string]string
-		json.NewDecoder(r.Body).Decode(&m)
+		if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
+			t.Fatalf("failed to decode request body: %v", err)
+		}
 		got = m["text"]
 	}))
 	defer srv.Close()

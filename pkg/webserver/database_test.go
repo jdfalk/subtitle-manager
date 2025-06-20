@@ -49,7 +49,9 @@ func TestDatabaseHandlers(t *testing.T) {
 		t.Fatalf("info: %v %d", err, r1.StatusCode)
 	}
 	var info struct{ Type string }
-	json.NewDecoder(r1.Body).Decode(&info)
+	if err := json.NewDecoder(r1.Body).Decode(&info); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	r1.Body.Close()
 	if info.Type != "sqlite" {
 		t.Fatalf("unexpected type %s", info.Type)

@@ -46,7 +46,9 @@ func TestGitHubOAuthGenerate(t *testing.T) {
 		t.Fatalf("status %d", resp.StatusCode)
 	}
 	var creds OAuthCredentials
-	json.NewDecoder(resp.Body).Decode(&creds)
+	if err := json.NewDecoder(resp.Body).Decode(&creds); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	resp.Body.Close()
 
 	if !strings.HasPrefix(creds.ClientID, "gh_") || !strings.HasPrefix(creds.ClientSecret, "ghs_") {
@@ -89,7 +91,9 @@ func TestGitHubOAuthRegenerate(t *testing.T) {
 	testutil.MustEqual(t, "status", http.StatusOK, resp.StatusCode)
 
 	var creds OAuthCredentials
-	_ = json.NewDecoder(resp.Body).Decode(&creds)
+	if err := json.NewDecoder(resp.Body).Decode(&creds); err != nil {
+		t.Fatalf("failed to decode request body: %v", err)
+	}
 	testutil.MustEqual(t, "client id", "gh_id", creds.ClientID)
 	testutil.MustEqual(t, "redirect", "http://cb", creds.RedirectURL)
 	if !strings.HasPrefix(creds.ClientSecret, "ghs_") {
