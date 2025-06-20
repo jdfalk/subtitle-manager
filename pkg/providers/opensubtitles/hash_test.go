@@ -10,6 +10,7 @@ func TestFileHash(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer f.Close()
 	data := make([]byte, 200000)
 	for i := range data {
 		data[i] = byte(i % 255)
@@ -17,7 +18,6 @@ func TestFileHash(t *testing.T) {
 	if _, err := f.Write(data); err != nil {
 		t.Fatal(err)
 	}
-	f.Close()
 	defer os.Remove(f.Name())
 
 	h, size, err := realFileHash(f.Name())

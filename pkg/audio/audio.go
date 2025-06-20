@@ -28,6 +28,7 @@ func ExtractTrack(mediaPath string, track int) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer func() { _ = tmp.Close() }()
 	tmp.Close() // Close immediately so ffmpeg can write to it
 
 	mapArg := fmt.Sprintf("0:a:%d", track)
@@ -58,6 +59,7 @@ func ExtractTrackWithDuration(mediaPath string, track int, offset, duration time
 	if err != nil {
 		return "", err
 	}
+	defer func() { _ = tmp.Close() }()
 	tmp.Close()
 
 	mapArg := fmt.Sprintf("0:a:%d", track)

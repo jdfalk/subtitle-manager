@@ -32,6 +32,7 @@ func ExtractTrack(mediaPath string, track int) ([]*astisub.Item, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer func() { _ = tmp.Close() }()
 	tmp.Close()
 	defer os.Remove(tmp.Name())
 
