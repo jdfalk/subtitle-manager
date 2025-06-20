@@ -39,7 +39,6 @@ func convertHandler() http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		_ = tmp.Close()
 		data, err := subtitles.ConvertToSRT(tmp.Name())
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
