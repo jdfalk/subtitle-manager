@@ -65,7 +65,6 @@ func translateHandler() http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		_ = in.Close()
 
 		out, err := os.CreateTemp("", "out-*.srt")
 		if err != nil {
