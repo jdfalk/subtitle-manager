@@ -67,6 +67,7 @@ func TestIsPrivateOrLocalhost(t *testing.T) {
 	for _, c := range cases {
 		c := c // capture range variable
 		t.Run(c.host, func(t *testing.T) {
+			t.Parallel()
 			if isPrivateOrLocalhost(c.host) != c.want {
 				t.Fatalf("%s expected %v", c.host, c.want)
 			}
