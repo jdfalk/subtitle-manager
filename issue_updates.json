@@ -135,5 +135,11 @@
     "action": "comment",
     "number": 921,
     "body": "Implemented t.Run subtests in pkg/webhooks to ensure each case runs in isolation before closing."
+  },
+  {
+    "action": "close",
+    "number": 531,
+    "state": "closed",
+    "state_reason": "completed"
   }
 ]
