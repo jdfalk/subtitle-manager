@@ -1,0 +1,6 @@
+{
+  "number": 531,
+  "body": "## Plan of Action\n\n1. Replace manual HTTP calls with osdb SDK.\n2. Update tests for new implementation.\n3. Document change in CHANGELOG.",
+  "guid": "comment-issue-531-plan-2025-06-21",
+  "action": "comment"
+}
