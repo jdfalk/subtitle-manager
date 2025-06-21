@@ -149,6 +149,26 @@
       "number": 914,
       "labels": ["codex"],
       "guid": "update-issue-914-2025-06-20"
+    },
+    {
+      "number": 949,
+      "labels": ["codex"],
+      "guid": "update-issue-949-2025-06-21"
+    },
+    {
+      "number": 951,
+      "labels": ["codex"],
+      "guid": "update-issue-951-2025-06-21"
+    },
+    {
+      "number": 952,
+      "labels": ["codex"],
+      "guid": "update-issue-952-2025-06-21"
+    },
+    {
+      "number": 954,
+      "labels": ["codex"],
+      "guid": "update-issue-954-2025-06-21"
     }
   ],
   "comment": [
@@ -171,8 +191,49 @@
       "number": 914,
       "body": "Working on ensuring temp files are closed with defer across all handlers.",
       "guid": "comment-914-temp-files-defer-2025-06-20"
+    },
+    {
+      "number": 949,
+      "body": "## Plan of Action\n\n1. Add explicit permissions block to `.github/workflows/unified-issue-management.yml`\n2. Run pre-commit checks\n3. Close after merge",
+      "guid": "plan-comment-949-2025-06-21"
+    },
+    {
+      "number": 951,
+      "body": "## Plan of Action\n\n1. Add permissions block to `.github/workflows/unified-issue-management.yml`\n2. Run pre-commit checks\n3. Close after merge",
+      "guid": "plan-comment-951-2025-06-21"
+    },
+    {
+      "number": 952,
+      "body": "## Plan of Action\n\n1. Confirm `update-issues.yml` was removed in favor of the unified workflow\n2. Close this alert as resolved",
+      "guid": "plan-comment-952-2025-06-21"
+    },
+    {
+      "number": 954,
+      "body": "## Plan of Action\n\n1. Confirm `copilot-tickets.yml` was removed in favor of the unified workflow\n2. Close this alert as resolved",
+      "guid": "plan-comment-954-2025-06-21"
     }
   ],
-  "close": [],
+  "close": [
+    {
+      "number": 949,
+      "state_reason": "completed",
+      "guid": "close-issue-949-2025-06-21"
+    },
+    {
+      "number": 951,
+      "state_reason": "completed",
+      "guid": "close-issue-951-2025-06-21"
+    },
+    {
+      "number": 952,
+      "state_reason": "completed",
+      "guid": "close-issue-952-2025-06-21"
+    },
+    {
+      "number": 954,
+      "state_reason": "completed",
+      "guid": "close-issue-954-2025-06-21"
+    }
+  ],
   "delete": []
 }
