@@ -965,7 +965,8 @@ func getProviderType(name string) string {
 
 // browseDirectory lists media files and directories with subtitle information
 func browseDirectory(path string) ([]MediaItem, error) {
-	if path == "" || path == "/" {
+	safePath := filepath.Clean(path)
+	if safePath == "" || safePath == "/" {
 		// Show existing directories from allowed bases for the root view
 		dirs := getAllowedBaseDirs()
 
@@ -986,7 +987,7 @@ func browseDirectory(path string) ([]MediaItem, error) {
 	}
 
 	// Check if path exists and is readable
-	info, err := os.Stat(path)
+	info, err := os.Stat(safePath)
 	if err != nil {
 		return nil, fmt.Errorf("path not accessible: %v", err)
 	}
@@ -995,7 +996,7 @@ func browseDirectory(path string) ([]MediaItem, error) {
 		return nil, fmt.Errorf("path is not a directory")
 	}
 
-	entries, err := os.ReadDir(path)
+	entries, err := os.ReadDir(safePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read directory: %v", err)
 	}
@@ -1007,7 +1008,7 @@ func browseDirectory(path string) ([]MediaItem, error) {
 			continue
 		}
 
-		fullPath := filepath.Join(path, entry.Name())
+		fullPath := filepath.Join(safePath, entry.Name())
 		item := MediaItem{
 			Name:        entry.Name(),
 			Path:        fullPath,
@@ -1046,7 +1047,7 @@ func isMediaFile(filename string) bool {
 
 // findSubtitles looks for subtitle files associated with a media file
 func findSubtitles(mediaPath string) []Subtitle {
-	dir := filepath.Dir(mediaPath)
+	dir := filepath.Clean(filepath.Dir(mediaPath))
 	baseName := strings.TrimSuffix(filepath.Base(mediaPath), filepath.Ext(mediaPath))
 
 	var subtitles []Subtitle
