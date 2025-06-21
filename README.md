@@ -599,16 +599,27 @@ To bypass any hook temporarily, use `git commit --no-verify`.
 
 ### Issue updates
 
-Pushing an `issue_updates.json` file to the repository root allows the `update-issues` workflow to create, update or delete GitHub issues using the repository `GITHUB_TOKEN`. The file contains a JSON array where each object specifies an `action` and any supported issue fields. Duplicate issues are avoided by checking for an existing issue with the same title before creation. Example:
+🚀 **New Distributed System**: We now use individual UUID-named files in `.github/issue-updates/` to eliminate merge conflicts! Use the helper script: `./scripts/create-issue-update.sh create "Title" "Body" "labels"`. See [Quick Start Guide](.github/ISSUE_UPDATES_QUICK_START.md) for details.
 
+**Legacy Support**: Pushing an `issue_updates.json` file to the repository root still works for backward compatibility. The unified issue management workflow processes both formats.
+
+The new format uses individual files with this structure:
 ```json
-[
-  { "action": "create", "title": "New issue", "body": "Details" },
-  { "action": "update", "number": 2, "state": "closed" }
-]
+{
+  "action": "create",
+  "title": "Issue title",
+  "body": "Issue description",
+  "labels": ["enhancement"]
+}
 ```
 
-The workflow runs on every push to `main` and processes the listed operations. After all entries are handled the file is removed on a new branch and a pull request is opened so that the cleanup can be merged back to `main`.
+Benefits of the new system:
+- ✅ No merge conflicts - each update is in its own file
+- ✅ Parallel development - multiple people can create updates simultaneously
+- ✅ Atomic operations - each file represents a single issue action
+- ✅ Better git history - changes are tracked individually
+
+The workflow runs on every push to `main` and processes all updates from both the legacy file and the new directory structure.
 
 ### Duplicate ticket cleanup
 
