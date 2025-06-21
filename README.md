@@ -629,11 +629,29 @@ canonical reference and automatically closes the rest with a comment noting the
 duplicate. This keeps the issue tracker focused on a single discussion for each
 problem.
 
+### Regenerating Protobuf files
+
+The gRPC service definitions are located in `proto/translator.proto`. If you
+modify this file, regenerate the Go bindings before committing:
+
+```bash
+# Install protobuf tools if missing
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+# Generate updated gRPC code
+make proto-gen
+```
+
+The generated files live in `pkg/translatorpb` and should be committed with your
+changes.
+
 The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work includes a flexible tagging system, Docker-based Whisper integration, and automated maintenance tasks. See `TODO.md` for details.
 Extensive architectural details and design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New contributors should review these documents to understand package responsibilities and completed features.
 For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
 Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).
 A high-level code overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).
+Protobuf regeneration steps are documented in [docs/PROTOBUF_REGEN.md](docs/PROTOBUF_REGEN.md).
 
 ## Security
 
