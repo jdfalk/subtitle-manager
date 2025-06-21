@@ -53,6 +53,11 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   # Use the centralized reusable workflow from ghcommon
   issue-management:
