@@ -3,9 +3,11 @@ package opensubtitles
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // fileHash calculates the OpenSubtitles file hash.
