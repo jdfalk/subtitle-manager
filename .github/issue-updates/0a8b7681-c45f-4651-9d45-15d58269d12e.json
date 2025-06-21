@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Automatic subtitle upgrades",
+  "body": "Detect and fetch better quality subtitles when available.",
+  "labels": [
+    "feature"
+  ],
+  "guid": "create-subtitle-upgrades-2025-06-20"
+}

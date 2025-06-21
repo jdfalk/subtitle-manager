@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Use unified API for React front end",
+  "body": "React application should interact via the same gRPC API or REST fallback.",
+  "labels": [
+    "frontend"
+  ],
+  "guid": "create-unified-api-2025-06-20"
+}

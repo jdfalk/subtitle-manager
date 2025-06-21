@@ -1,0 +1,16 @@
+[
+  {
+    "action": "update",
+    "number": 920,
+    "labels": [
+      "codex"
+    ],
+    "guid": "update-issue-920-2025-06-20"
+  },
+  {
+    "action": "comment",
+    "number": 920,
+    "body": "I'll update tests to fail fast when JSON decoding fails, covering webhooks, notifications, captcha, and web server handlers.",
+    "guid": "comment-920-json-decode-tests-2025-06-20"
+  }
+]

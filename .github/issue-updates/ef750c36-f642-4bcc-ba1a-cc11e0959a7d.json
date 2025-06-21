@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Use provider SDKs instead of manual HTTP calls",
+  "body": "Refactor provider integrations to use official or community SDKs.",
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "create-provider-sdks-2025-06-20"
+}

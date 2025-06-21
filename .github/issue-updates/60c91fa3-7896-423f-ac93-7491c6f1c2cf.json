@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Add JSON-based issue workflow",
+  "body": "Implement create, update and delete operations using a JSON file.",
+  "labels": [
+    "automation"
+  ],
+  "guid": "create-json-workflow-2025-06-20"
+}

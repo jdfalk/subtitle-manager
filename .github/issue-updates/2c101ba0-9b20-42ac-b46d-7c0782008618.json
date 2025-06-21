@@ -1,0 +1,22 @@
+[
+  {
+    "action": "update",
+    "number": 949,
+    "labels": [
+      "codex"
+    ],
+    "guid": "update-issue-949-2025-06-21"
+  },
+  {
+    "action": "comment",
+    "number": 949,
+    "body": "## Plan of Action\n\n1. Add explicit permissions block to `.github/workflows/unified-issue-management.yml`\n2. Run pre-commit checks\n3. Close after merge",
+    "guid": "plan-comment-949-2025-06-21"
+  },
+  {
+    "action": "close",
+    "number": 949,
+    "state_reason": "completed",
+    "guid": "close-issue-949-2025-06-21"
+  }
+]

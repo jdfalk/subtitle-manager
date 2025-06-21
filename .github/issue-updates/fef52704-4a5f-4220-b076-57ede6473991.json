@@ -1,0 +1,16 @@
+[
+  {
+    "action": "update",
+    "number": 914,
+    "labels": [
+      "codex"
+    ],
+    "guid": "update-issue-914-2025-06-20"
+  },
+  {
+    "action": "comment",
+    "number": 914,
+    "body": "Working on ensuring temp files are closed with defer across all handlers.",
+    "guid": "comment-914-temp-files-defer-2025-06-20"
+  }
+]

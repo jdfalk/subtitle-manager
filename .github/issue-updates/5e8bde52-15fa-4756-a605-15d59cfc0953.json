@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Implement asynchronous translation queue",
+  "body": "Process heavy translation tasks using a worker queue.",
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "create-async-translation-2025-06-20"
+}

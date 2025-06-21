@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Add optional cloud storage for subtitles",
+  "body": "Allow storing subtitles and history in cloud providers such as S3.",
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "create-cloud-storage-2025-06-20"
+}

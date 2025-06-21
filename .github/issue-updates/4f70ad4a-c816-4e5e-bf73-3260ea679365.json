@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Support per-title language preferences",
+  "body": "Configure desired subtitle languages per show or movie.",
+  "labels": [
+    "feature"
+  ],
+  "guid": "create-language-preferences-2025-06-20"
+}

@@ -1,0 +1,10 @@
+{
+  "action": "create",
+  "title": "Complete gRPC configuration API",
+  "body": "Expose configuration management over authenticated gRPC.",
+  "labels": [
+    "feature",
+    "grpc"
+  ],
+  "guid": "create-grpc-config-api-2025-06-20"
+}

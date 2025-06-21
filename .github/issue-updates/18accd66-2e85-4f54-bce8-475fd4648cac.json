@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Cache translations to avoid duplicates",
+  "body": "Reuse existing results instead of re-translating identical subtitles.",
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "create-translation-cache-2025-06-20"
+}

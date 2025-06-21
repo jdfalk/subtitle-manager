@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Implement manual subtitle search",
+  "body": "Allow searching and downloading subtitles on demand.",
+  "labels": [
+    "feature"
+  ],
+  "guid": "create-manual-search-2025-06-20"
+}

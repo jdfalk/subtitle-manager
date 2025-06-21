@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Display progress updates in CLI and web UI",
+  "body": "Show task progress for long running operations.",
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "create-progress-updates-2025-06-20"
+}

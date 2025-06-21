@@ -1,0 +1,10 @@
+{
+  "action": "create",
+  "title": "Implement OAuth2 login support",
+  "body": "Allow users to authenticate via providers such as Google or GitHub.",
+  "labels": [
+    "enhancement",
+    "auth"
+  ],
+  "guid": "create-oauth2-support-2025-06-20"
+}

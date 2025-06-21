@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Optimise database queries",
+  "body": "Review indexes and query patterns for better performance.",
+  "labels": [
+    "performance"
+  ],
+  "guid": "create-db-optimization-2025-06-20"
+}

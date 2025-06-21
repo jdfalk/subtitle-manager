@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Track subtitle download history",
+  "body": "Record where and when subtitles were obtained.",
+  "labels": [
+    "feature"
+  ],
+  "guid": "create-download-history-2025-06-20"
+}

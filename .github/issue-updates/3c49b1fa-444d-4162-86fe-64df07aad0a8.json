@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Add configuration page to web interface",
+  "body": "Allow editing of configuration files through the React UI.",
+  "labels": [
+    "frontend"
+  ],
+  "guid": "create-config-page-2025-06-20"
+}

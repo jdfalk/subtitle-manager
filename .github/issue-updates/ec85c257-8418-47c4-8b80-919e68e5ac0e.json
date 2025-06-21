@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Document protobuf regeneration steps",
+  "body": "Add instructions for generating gRPC code from proto files.",
+  "labels": [
+    "documentation"
+  ],
+  "guid": "create-protobuf-docs-2025-06-20"
+}

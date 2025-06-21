@@ -1,0 +1,9 @@
+{
+  "action": "create",
+  "title": "Evaluate performance of merging and translation",
+  "body": "Benchmark and optimise the merging and translation functions.",
+  "labels": [
+    "performance"
+  ],
+  "guid": "create-performance-eval-2025-06-20"
+}
