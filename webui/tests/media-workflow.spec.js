@@ -412,7 +412,8 @@ test('media file details and subtitle operations', async ({ page }) => {
   await page.addInitScript(() => {
     const originalFetch = window.fetch;
     window.fetch = async (url, options) => {
-      if (url.includes('omdbapi.com')) {
+      const hostname = new URL(url, window.location.origin).hostname;
+      if (hostname === 'omdbapi.com' || hostname === 'www.omdbapi.com') {
         console.log('Mocked OMDb fetch for:', url);
         return {
           ok: true,
