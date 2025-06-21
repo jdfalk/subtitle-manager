@@ -49,14 +49,14 @@ jobs:
   backend:
     needs: changes
     if: ${{ needs.changes.outputs.backend == 'true' || github.event_name == 'push' }}
-    uses: ./.github/workflows/backend.yml
+    uses: jdfalk/subtitle-manager/.github/workflows/backend.yml@main
     secrets: inherit
 
   # Trigger frontend workflow
   frontend:
     needs: changes
     if: ${{ needs.changes.outputs.frontend == 'true' || github.event_name == 'push' }}
-    uses: ./.github/workflows/frontend.yml
+    uses: jdfalk/subtitle-manager/.github/workflows/frontend.yml@main
     secrets: inherit
 
   # Summary job that depends on both workflows
