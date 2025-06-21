@@ -40,7 +40,7 @@ on:
   workflow_dispatch:
     inputs:
       operations:
-        description: "Operations to run (comma-separated: update-issues, copilot-tickets, close-duplicates, codeql-alerts)"
+        description: "Operations to run (comma-separated: update-issues, copilot-tickets, close-duplicates, codeql-alerts, update-permalinks)"
         required: false
         type: string
         default: "auto"
