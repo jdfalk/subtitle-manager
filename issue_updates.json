@@ -1,7 +1,7 @@
 {
   "migration_note": "This file has been migrated to the distributed format in .github/issue-updates/ directory",
   "migration_date": "2025-06-21",
-  "migration_tool": "smart-issue-migration.py", 
+  "migration_tool": "smart-issue-migration.py",
   "instructions": "Use individual JSON files in .github/issue-updates/ for new issue operations",
   "processed_files_location": ".github/issue-updates/processed/",
   "create": [],
