@@ -170,6 +170,12 @@
         "enhancement"
       ],
       "guid": "create-progress-updates-2025-06-20"
+    },
+    {
+      "title": "CI fails due to Codecov upload errors",
+      "body": "Backend tests succeeded but CI marked the job failed when the Codecov upload step returned an error. Ignore these failures to avoid false negatives.",
+      "labels": ["bug", "ci"],
+      "guid": "create-codecov-failure-2025-06-21"
     }
   ],
   "update": [
@@ -223,6 +229,11 @@
         "in-progress"
       ],
       "guid": "update-issue-531-2025-06-21"
+    },
+    {
+      "number": 923,
+      "labels": ["codex"],
+      "guid": "update-issue-923-2025-06-21"
     }
   ],
   "comment": [
@@ -260,6 +271,11 @@
       "number": 531,
       "body": "## Plan of Action\n\n1. Replace manual HTTP calls with osdb SDK.\n2. Update tests for new implementation.\n3. Document change in CHANGELOG.",
       "guid": "comment-issue-531-plan-2025-06-21"
+    },
+    {
+      "number": 923,
+      "body": "CI updated to ignore Codecov failures using `fail_ci_if_error: false`. This prevents false negatives during backend testing.",
+      "guid": "comment-923-codecov-fix-2025-06-21"
     }
   ],
   "close": [
@@ -272,6 +288,11 @@
       "number": 531,
       "state_reason": "completed",
       "guid": "close-issue-531-2025-06-21"
+    },
+    {
+      "number": 923,
+      "state_reason": "completed",
+      "guid": "close-issue-923-2025-06-21"
     }
   ],
   "delete": []

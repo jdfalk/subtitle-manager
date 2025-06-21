@@ -105,6 +105,8 @@ jobs:
           files: ./coverage.out
           flags: backend
           name: backend-coverage
+          # Allow Codecov errors without failing tests
+          fail_ci_if_error: false
 
   build:
     name: Build Binary
