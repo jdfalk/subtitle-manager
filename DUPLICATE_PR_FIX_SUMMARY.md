@@ -127,6 +127,28 @@ Enhanced workflow summaries to show:
 📦 Archive Files PR: #1093 (Updated existing - latest run 126)
 ```
 
+## Additional Fix Applied
+
+### **Timestamp Issue Resolution**
+Fixed an issue where the `$(date -u '+%Y-%m-%d %H:%M:%S UTC')` command in PR body templates was not being properly executed:
+
+- **Problem**: The date command was being treated as literal text instead of being executed
+- **Solution**: Added a dedicated `timestamp` step that generates the current UTC timestamp
+- **Implementation**: Uses `${{ steps.timestamp.outputs.current }}` in PR body templates
+- **Result**: PR bodies now show accurate "Updated" timestamps
+
+### **Example PR Body Output**
+```
+## Summary
+Automatically archiving processed distributed issue update files to the processed/ directory.
+
+Latest Operation: update-issues
+Latest Workflow run: 15799193636
+Event: schedule
+Triggered by: jdfalk
+Updated: 2025-06-21 14:30:15 UTC
+```
+
 ## Configuration Changes Made
 
 1. **Branch names**: Static instead of run-specific
