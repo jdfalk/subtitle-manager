@@ -940,50 +940,105 @@ func getProviderType(name string) string {
 
 // browseDirectory lists media files and directories with subtitle information
 func browseDirectory(path string) ([]MediaItem, error) {
-	if path == "" {
-		path = "/"
+	safePath := filepath.Clean(path)
+	if safePath == "" || safePath == "/" {
+		// Show existing directories from allowed bases for the root view
+		dirs := getAllowedBaseDirs()
+		var items []MediaItem
+		for _, dir := range dirs {
+			if info, err := os.Stat(dir); err == nil && info.IsDir() {
+				items = append(items, MediaItem{
+					Name:        filepath.Base(dir),
+					Path:        dir,
+					IsDirectory: true,
+					ModTime:     info.ModTime(),
+				})
+			}
+		}
+		return items, nil
 	}
 
 	// Check if path exists and is readable
-	info, err := os.Stat(path)
+	info, err := os.Stat(safePath)
 	if err != nil {
-		return nil, fmt.Errorf("path not accessible: %v", err)
+		return nil, fmt.Errorf("cannot access path: %w", err)
 	}
 
 	if !info.IsDir() {
 		return nil, fmt.Errorf("path is not a directory")
 	}
 
-	entries, err := os.ReadDir(path)
+	entries, err := os.ReadDir(safePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read directory: %v", err)
+		return nil, fmt.Errorf("cannot read directory: %w", err)
 	}
 
 	var items []MediaItem
 	for _, entry := range entries {
+		fullPath := filepath.Join(safePath, entry.Name())
 		info, err := entry.Info()
 		if err != nil {
-			continue
+			continue // Skip entries we can't stat
 		}
 
-		fullPath := filepath.Join(path, entry.Name())
 		item := MediaItem{
 			Name:        entry.Name(),
 			Path:        fullPath,
 			IsDirectory: entry.IsDir(),
-			Size:        info.Size(),
 			ModTime:     info.ModTime(),
 		}
 
-		// If it's a media file, look for subtitles
-		if !entry.IsDir() && isMediaFile(entry.Name()) {
-			item.Subtitles = findSubtitles(fullPath)
+		if !entry.IsDir() {
+			item.Size = info.Size()
+			if isMediaFile(entry.Name()) {
+				item.Subtitles = findSubtitles(fullPath)
+			}
 		}
 
 		items = append(items, item)
 	}
 
 	return items, nil
+}
+
+// getAllowedBaseDirs returns a list of base directories that are safe to browse
+func getAllowedBaseDirs() []string {
+	var dirs []string
+
+	// Add configured media directories
+	if mediaDir := viper.GetString("media_directory"); mediaDir != "" {
+		dirs = append(dirs, mediaDir)
+	}
+
+	// Add subtitle directory
+	if subDir := viper.GetString("subtitle_directory"); subDir != "" {
+		dirs = append(dirs, subDir)
+	}
+
+	// Add some common media directories if they exist
+	commonDirs := []string{
+		"/media", "/mnt/media", "/home/media", "/var/media",
+		"/Movies", "/TV", "/Videos",
+	}
+
+	if runtime.GOOS == "windows" {
+		commonDirs = []string{
+			"C:\\Media", "C:\\Movies", "C:\\TV", "D:\\Media", "D:\\Movies", "D:\\TV",
+		}
+	}
+
+	for _, dir := range commonDirs {
+		if info, err := os.Stat(dir); err == nil && info.IsDir() {
+			dirs = append(dirs, dir)
+		}
+	}
+
+	// Always include user home directory as fallback
+	if home, err := os.UserHomeDir(); err == nil {
+		dirs = append(dirs, home)
+	}
+
+	return dirs
 }
 
 // isMediaFile checks if the file is a supported media file
@@ -1005,7 +1060,7 @@ func isMediaFile(filename string) bool {
 
 // findSubtitles looks for subtitle files associated with a media file
 func findSubtitles(mediaPath string) []Subtitle {
-	dir := filepath.Dir(mediaPath)
+	dir := filepath.Clean(filepath.Dir(mediaPath))
 	baseName := strings.TrimSuffix(filepath.Base(mediaPath), filepath.Ext(mediaPath))
 
 	var subtitles []Subtitle
