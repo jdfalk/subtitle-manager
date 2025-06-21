@@ -1,5 +1,7 @@
 #!/bin/bash
 # file: scripts/create-issue-update.sh
+# version: 1.0.0
+# last-updated: 2025-06-21
 #
 # Helper script to create new issue update files with proper UUIDs
 #
