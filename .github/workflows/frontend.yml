@@ -8,16 +8,6 @@ concurrency:
 
 on:
   workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - "webui/**"
-      - ".github/workflows/frontend.yml"
-  pull_request:
-    branches: [main]
-    paths:
-      - "webui/**"
-      - ".github/workflows/frontend.yml"
 
 permissions:
   contents: read

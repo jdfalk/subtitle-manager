@@ -8,28 +8,6 @@ concurrency:
 
 on:
   workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - "**/*.go"
-      - "go.mod"
-      - "go.sum"
-      - "pkg/**"
-      - "cmd/**"
-      - "proto/**"
-      - "scripts/**"
-      - ".github/workflows/backend.yml"
-  pull_request:
-    branches: [main]
-    paths:
-      - "**/*.go"
-      - "go.mod"
-      - "go.sum"
-      - "pkg/**"
-      - "cmd/**"
-      - "proto/**"
-      - "scripts/**"
-      - ".github/workflows/backend.yml"
 
 permissions:
   contents: read
