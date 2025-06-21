@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-# file: .github/scripts/issue_manager.py
+# file: scripts/issue_manager.py
 Unified GitHub issue management script.
 
 This script provides comprehensive issue management functionality:
@@ -29,7 +29,7 @@ import json
 import os
 import sys
 from collections import defaultdict
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 
@@ -151,15 +151,44 @@ class GitHubAPI:
             return False
 
     def search_issues(self, query: str) -> List[Dict[str, Any]]:
-        """Search for issues using GitHub's search API."""
+        """Search for issues using GitHub's search API with fallback to list API."""
         url = "https://api.github.com/search/issues"
         params = {"q": f"repo:{self.repo} {query}"}
         try:
             response = requests.get(url, headers=self.headers, params=params, timeout=10)
+            if response.status_code == 403:
+                # Search API forbidden, fall back to listing all issues and filtering
+                print("⚠️  Search API access denied, falling back to issue listing", file=sys.stderr)
+                return self._search_issues_fallback(query)
             response.raise_for_status()
             return response.json().get("items", [])
         except requests.RequestException as e:
             print(f"Network error searching for issues: {e}", file=sys.stderr)
+            # Try fallback method
+            return self._search_issues_fallback(query)
+
+    def _search_issues_fallback(self, query: str) -> List[Dict[str, Any]]:
+        """Fallback method to search issues by listing all and filtering."""
+        try:
+            # Extract title from query if it contains 'in:title'
+            if 'in:title' in query and '"' in query:
+                title_start = query.find('"')
+                title_end = query.rfind('"')
+                if title_start != -1 and title_end != -1 and title_start < title_end:
+                    target_title = query[title_start + 1:title_end]
+
+                    # Get all issues and filter by title
+                    all_issues = self.get_all_issues(state="all")
+                    matching_issues = []
+                    for issue in all_issues:
+                        if target_title.lower() in issue.get('title', '').lower():
+                            matching_issues.append(issue)
+                    return matching_issues
+
+            # For other queries, return empty list
+            return []
+        except Exception as e:
+            print(f"Error in fallback search: {e}", file=sys.stderr)
             return []
 
     def get_all_issues(self, state: str = "open") -> List[Dict[str, Any]]:
@@ -214,57 +243,260 @@ class IssueUpdateProcessor:
     def __init__(self, github_api: GitHubAPI):
         self.api = github_api
 
-    def process_updates(self, updates_file: str = "issue_updates.json") -> bool:
+    def process_updates(self, updates_file: str = "issue_updates.json", updates_directory: str = ".github/issue-updates") -> bool:
         """
-        Process issue updates from JSON file supporting both legacy flat format
-        and new grouped format with GUID tracking.
+        Process issue updates from both legacy JSON file and new distributed directory format
+        with GUID tracking and proper file state management.
+
+        Args:
+            updates_file: Path to legacy issue updates file
+            updates_directory: Path to directory containing individual update files
 
         Returns:
             True if any updates were processed, False otherwise
         """
+        all_updates = []
+        processed_files = []
+
+        # Check if legacy file has been processed before
+        legacy_already_processed = self._is_legacy_file_processed(updates_file)
+
+        # Load legacy file if it exists and hasn't been processed
+        if not legacy_already_processed:
+            legacy_updates = self._load_legacy_file(updates_file)
+            if legacy_updates:
+                all_updates.extend(legacy_updates)
+                print(f"📄 Loaded {len(legacy_updates)} NEW updates from legacy file: {updates_file}")
+        else:
+            print(f"📄 Legacy file {updates_file} already processed, skipping")
+
+        # Load distributed files from directory (only unprocessed files)
+        distributed_updates, update_files = self._load_distributed_files(updates_directory)
+        if distributed_updates:
+            all_updates.extend(distributed_updates)
+            processed_files.extend(update_files)
+            print(f"📁 Loaded {len(distributed_updates)} updates from {len(update_files)} files in: {updates_directory}")
+
+        if not all_updates:
+            print("📝 No new updates to process")
+            return True
+
+        print(f"🚀 Processing {len(all_updates)} total updates...")
+        success_count = 0
+
+        for i, update in enumerate(all_updates, 1):
+            action = update.get('action', 'unknown')
+            source = update.get('_source_file', 'unknown')
+            guid = update.get('guid', 'no-guid')
+            print(f"\n📋 Update {i}/{len(all_updates)}: {action} (from {source}, guid: {guid})")
+
+            result = self._process_single_update(update)
+            if result:
+                success_count += 1
+            else:
+                print(f"❌ Failed to process update {i}")
+
+        print(f"\n✅ Successfully processed {success_count}/{len(all_updates)} updates")
+
+        # Move processed distributed files to processed subdirectory
+        if processed_files and success_count > 0:
+            self._archive_processed_files(processed_files, updates_directory)
+
+        # Mark legacy file as processed if we processed it successfully
+        if not legacy_already_processed and success_count > 0:
+            # Check if we had legacy updates to process
+            legacy_updates = self._load_legacy_file(updates_file)
+            if legacy_updates:
+                self._mark_legacy_file_processed(updates_file)
+
+        return success_count > 0
+
+    def _update_file_with_permalinks(self, updates_file: str, original_data: Dict[str, Any],
+                                   permalinks: List[Dict[str, Any]], format_type: str) -> None:
+        """Update the issue updates file with permalinks to processed issues."""
+        try:
+            # Add processing metadata
+            if format_type == "grouped":
+                # Add a processed section to track what was done
+                if "processed" not in original_data:
+                    original_data["processed"] = []
+
+                # Add new processed items
+                for permalink_info in permalinks:
+                    original_data["processed"].append({
+                        "timestamp": permalink_info.get("timestamp"),
+                        "action": permalink_info.get("action"),
+                        "guid": permalink_info.get("guid"),
+                        "issue_number": permalink_info.get("issue_number"),
+                        "permalink": permalink_info.get("permalink"),
+                        "workflow_run": os.environ.get("GITHUB_RUN_ID", "unknown")
+                    })
+            else:
+                # For flat format, add a simple processed list
+                if not isinstance(original_data, dict):
+                    original_data = {"updates": original_data, "processed": []}
+
+                if "processed" not in original_data:
+                    original_data["processed"] = []
+
+                for permalink_info in permalinks:
+                    original_data["processed"].append(permalink_info)
+
+            # Write updated file
+            with open(updates_file, 'w', encoding='utf-8') as f:
+                json.dump(original_data, f, indent=2)
+
+            print(f"🔗 Updated {updates_file} with {len(permalinks)} permalinks")
+
+        except Exception as e:
+            print(f"⚠️  Failed to update {updates_file} with permalinks: {e}", file=sys.stderr)
+
+    def _load_legacy_file(self, updates_file: str) -> List[Dict[str, Any]]:
+        """Load updates from the legacy issue_updates.json file."""
         if not os.path.exists(updates_file):
-            print(f"❌ No {updates_file} found")
-            return False
+            return []
 
         try:
             with open(updates_file, 'r', encoding='utf-8') as f:
                 updates_data = json.load(f)
         except (json.JSONDecodeError, IOError) as e:
             print(f"❌ Error reading {updates_file}: {e}", file=sys.stderr)
-            return False
+            return []
+
+        updates = []
 
         # Handle both old flat format and new grouped format
         if isinstance(updates_data, list):
-            # Old flat format - convert to new format
+            # Old flat format - items already have action property
             print("⚠️  Using legacy flat format. Consider upgrading to grouped format.")
             updates = updates_data
         else:
             # New grouped format - process in order: create, update, comment, close, delete
-            updates = []
             for action_type in ["create", "update", "comment", "close", "delete"]:
                 if action_type in updates_data and updates_data[action_type]:
                     for item in updates_data[action_type]:
                         item["action"] = action_type
                         updates.append(item)
 
-        if not updates:
-            print("📝 No updates to process")
-            return True
+        # Add source file information for tracking
+        for update in updates:
+            update["_source_file"] = updates_file
 
-        print(f"🚀 Processing {len(updates)} updates...")
-        success_count = 0
+        return updates
 
-        for i, update in enumerate(updates, 1):
-            action = update.get('action', 'unknown')
-            print(f"\n📋 Update {i}/{len(updates)}: {action}")
+    def _load_distributed_files(self, updates_directory: str) -> Tuple[List[Dict[str, Any]], List[str]]:
+        """
+        Load updates from individual JSON files in the updates directory.
 
-            if self._process_single_update(update):
-                success_count += 1
-            else:
-                print(f"❌ Failed to process update {i}")
+        Returns:
+            Tuple of (updates_list, processed_files_list)
+        """
+        if not os.path.exists(updates_directory):
+            return [], []
 
-        print(f"\n✅ Successfully processed {success_count}/{len(updates)} updates")
-        return success_count > 0
+        updates = []
+        processed_files = []
+
+        try:
+            # Find all JSON files except README.json
+            json_files = []
+            for filename in os.listdir(updates_directory):
+                if filename.endswith('.json') and filename != 'README.json':
+                    file_path = os.path.join(updates_directory, filename)
+                    if os.path.isfile(file_path):
+                        json_files.append(file_path)
+
+            json_files.sort()  # Process in consistent order
+
+            for file_path in json_files:
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        update_data = json.load(f)
+
+                    # Validate that it has an action field
+                    if not isinstance(update_data, dict) or 'action' not in update_data:
+                        print(f"⚠️  Skipping {file_path}: missing 'action' field")
+                        continue
+
+                    # Add source file information for tracking
+                    update_data["_source_file"] = os.path.basename(file_path)
+                    updates.append(update_data)
+                    processed_files.append(file_path)
+
+                except (json.JSONDecodeError, IOError) as e:
+                    print(f"⚠️  Error reading {file_path}: {e}", file=sys.stderr)
+                    continue
+
+        except OSError as e:
+            print(f"⚠️  Error accessing directory {updates_directory}: {e}", file=sys.stderr)
+            return [], []
+
+        return updates, processed_files
+
+    def _archive_processed_files(self, processed_files: List[str], updates_directory: str) -> None:
+        """Move processed files to a 'processed' subdirectory."""
+        if not processed_files:
+            return
+
+        processed_dir = os.path.join(updates_directory, "processed")
+
+        try:
+            # Create processed directory if it doesn't exist
+            os.makedirs(processed_dir, exist_ok=True)
+
+            # Move each processed file
+            for file_path in processed_files:
+                if os.path.exists(file_path):
+                    filename = os.path.basename(file_path)
+                    destination = os.path.join(processed_dir, filename)
+
+                    # If destination exists, add timestamp to avoid conflicts
+                    if os.path.exists(destination):
+                        import time
+                        timestamp = int(time.time())
+                        name, ext = os.path.splitext(filename)
+                        destination = os.path.join(processed_dir, f"{name}_{timestamp}{ext}")
+
+                    os.rename(file_path, destination)
+                    print(f"📦 Moved {filename} to processed/")
+
+        except OSError as e:
+            print(f"⚠️  Error archiving processed files: {e}", file=sys.stderr)
+
+    def _is_legacy_file_processed(self, updates_file: str) -> bool:
+        """Check if legacy file has been processed before."""
+        processed_marker = f"{updates_file}.processed"
+        return os.path.exists(processed_marker)
+
+    def _mark_legacy_file_processed(self, updates_file: str) -> None:
+        """Mark legacy file as processed."""
+        processed_marker = f"{updates_file}.processed"
+        try:
+            with open(processed_marker, 'w', encoding='utf-8') as f:
+                f.write(f"Processed on {os.environ.get('GITHUB_RUN_ID', 'unknown')}\n")
+            print(f"🏷️  Marked {updates_file} as processed")
+        except Exception as e:
+            print(f"⚠️  Failed to mark {updates_file} as processed: {e}")
+
+    def _check_guid_in_existing_issues(self, guid: str) -> Optional[Dict[str, Any]]:
+        """Check if an issue with the given GUID already exists."""
+        if not guid:
+            return None
+
+        try:
+            # Search in all issues (open and closed) for the GUID
+            all_issues = self.api.get_all_issues(state="all")
+            guid_marker = f"<!-- guid:{guid} -->"
+
+            for issue in all_issues:
+                if guid_marker in issue.get("body", ""):
+                    print(f"🔍 Found existing issue #{issue['number']} with GUID: {guid}")
+                    return issue
+
+            return None
+        except Exception as e:
+            print(f"⚠️  Error checking for GUID {guid}: {e}")
+            return None
 
     def _process_single_update(self, update: Dict[str, Any]) -> bool:
         """Process a single update action with GUID tracking."""
@@ -349,7 +581,7 @@ class IssueUpdateProcessor:
             return False
 
     def _create_issue(self, update: Dict[str, Any]) -> bool:
-        """Create a new issue with GUID tracking."""
+        """Create a new issue with GUID tracking and duplicate prevention."""
         title = update.get("title", "")
         body = update.get("body", "")
         labels = update.get("labels", [])
@@ -361,11 +593,25 @@ class IssueUpdateProcessor:
             print("❌ Missing title for create operation")
             return False
 
-        # Check if issue with this title already exists (without GUID check)
+        # First check for GUID duplicates if GUID is provided
+        if guid:
+            existing_by_guid = self._check_guid_in_existing_issues(guid)
+            if existing_by_guid:
+                print(f"⏭️  Issue with GUID '{guid}' already exists (#{existing_by_guid['number']}), skipping")
+                return True  # Return True since this isn't an error, just already processed
+
+        # Check if issue with this title already exists
         existing = self.api.search_issues(f'is:issue in:title "{title}"')
-        if existing and not guid:
-            print(f"⚠️  Issue '{title}' already exists, skipping")
-            return False
+        if existing:
+            # If we have a GUID, check if any existing issue has this GUID
+            if guid:
+                for issue in existing:
+                    if f"<!-- guid:{guid} -->" in issue.get("body", ""):
+                        print(f"⏭️  Issue '{title}' with GUID '{guid}' already exists (#{issue['number']}), skipping")
+                        return True
+            else:
+                print(f"⚠️  Issue '{title}' already exists, skipping (no GUID to verify)")
+                return False
 
         # Add GUID to body for tracking
         if guid:
@@ -909,7 +1155,12 @@ Examples:
     try:
         if args.command == "update-issues":
             processor = IssueUpdateProcessor(github_api)
-            processed = processor.process_updates()
+
+            # Get file and directory paths from environment or use defaults
+            updates_file = os.environ.get("ISSUE_UPDATES_FILE", "issue_updates.json")
+            updates_directory = os.environ.get("ISSUE_UPDATES_DIRECTORY", ".github/issue-updates")
+
+            processed = processor.process_updates(updates_file, updates_directory)
             if processed:
                 print("Issue updates processed successfully")
             else:
