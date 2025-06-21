@@ -54,9 +54,11 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write
   issues: write
   pull-requests: write
+  repository-projects: read
+  security-events: read
 
 jobs:
   # Use the centralized reusable workflow from ghcommon
