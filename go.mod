@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.28
+	github.com/oz/osdb v0.0.0-20221214175751-f169057712ec
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sashabaranov/go-openai v1.40.2
 	github.com/sirupsen/logrus v1.9.3
@@ -63,6 +64,7 @@ require (
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
+	github.com/kolo/xmlrpc v0.0.0-20220921171641-a4b6fa1dd06b // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect

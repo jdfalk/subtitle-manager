@@ -5,44 +5,59 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
-	"path/filepath"
-	"time"
+
+	"github.com/oz/osdb"
 )
 
 // Client implements the providers.Provider interface for Opensubtitlesvip.
-// It performs a simple HTTP GET to download subtitles.
+// It uses the osdb SDK to search and download subtitles.
 type Client struct {
-	// APIURL is the base URL of the Opensubtitlesvip API.
-	APIURL string
-	// HTTPClient is used to make requests.
-	HTTPClient *http.Client
+	api api
+}
+
+type api interface {
+	LogIn(string, string, string) error
+	FileSearch(string, []string) (osdb.Subtitles, error)
+	DownloadSubtitles(osdb.Subtitles) ([]osdb.SubtitleFile, error)
 }
 
 // New returns a Client configured with reasonable defaults.
 func New() *Client {
-	return &Client{
-		APIURL:     "https://api.opensubtitlesvip.com",
-		HTTPClient: &http.Client{Timeout: 15 * time.Second},
+	c, err := osdb.NewClient()
+	if err != nil {
+		// Fallback to nil API which will cause errors on use
+		return &Client{}
 	}
+	return &Client{api: c}
 }
 
 // Fetch downloads the subtitle for mediaPath in lang.
 // It returns the subtitle bytes or an error.
 func (c *Client) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error) {
-	name := filepath.Base(mediaPath)
-	url := fmt.Sprintf("%s/subtitles/%s/%s", c.APIURL, name, lang)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if c.api == nil {
+		return nil, fmt.Errorf("client not initialized")
+	}
+	if err := c.api.LogIn("", "", lang); err != nil {
+		return nil, err
+	}
+	subs, err := c.api.FileSearch(mediaPath, []string{lang})
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.HTTPClient.Do(req)
+	if len(subs) == 0 {
+		return nil, fmt.Errorf("no subtitles found")
+	}
+	files, err := c.api.DownloadSubtitles(subs[:1])
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status %d", resp.StatusCode)
+	if len(files) == 0 {
+		return nil, fmt.Errorf("no subtitle file returned")
 	}
-	return io.ReadAll(resp.Body)
+	r, err := files[0].Reader()
+	if err != nil {
+		return nil, err
+	}
+	defer r.Close()
+	return io.ReadAll(r)
 }
