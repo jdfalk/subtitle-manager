@@ -1,0 +1,6 @@
+{
+  "number": 930,
+  "body": "## Plan of Action\n\n1. Parse URL with the JavaScript URL constructor to extract the hostname.\n2. Check that the hostname ends with 'omdbapi.com' before mocking the response.\n3. Update related tests for strict host validation.\n4. Document the security fix.",
+  "guid": "comment-930-plan-2025-06-21",
+  "action": "comment"
+}
