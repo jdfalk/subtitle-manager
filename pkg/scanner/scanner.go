@@ -19,6 +19,7 @@ import (
 // history. If upgrade is false existing subtitle files are skipped.
 func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p providers.Provider, upgrade bool, workers int, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
+	dir = filepath.Clean(dir)
 	work := pool.New().WithErrors().WithMaxGoroutines(workers)
 	err := filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
@@ -30,7 +31,7 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 		if !isVideoFile(path) {
 			return nil
 		}
-		f := path
+		f := filepath.Clean(path)
 		work.Go(func() error {
 			logger.Debugf("process %s", f)
 			return ProcessFile(ctx, f, lang, providerName, p, upgrade, store)
@@ -49,6 +50,7 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 // file is left untouched.
 func ProcessFile(ctx context.Context, path, lang string, providerName string, p providers.Provider, upgrade bool, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
+	path = filepath.Clean(path)
 
 	// Validate the lang parameter to ensure it contains only alphanumeric characters
 	if !isValidLang(lang) {
@@ -56,7 +58,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		return fmt.Errorf("invalid language code: %s", lang)
 	}
 
-	out := strings.TrimSuffix(path, filepath.Ext(path)) + "." + lang + ".srt"
+	out := filepath.Clean(strings.TrimSuffix(path, filepath.Ext(path)) + "." + lang + ".srt")
 	if !upgrade {
 		if _, err := os.Stat(out); err == nil {
 			return nil

@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 // fileHash calculates the OpenSubtitles file hash.
@@ -13,8 +14,10 @@ import (
 var fileHashFunc = realFileHash
 
 // realFileHash calculates the OpenSubtitles file hash.
+// The provided path is sanitized with filepath.Clean before opening.
 func realFileHash(path string) (uint64, int64, error) {
-	f, err := os.Open(path)
+	safePath := filepath.Clean(path)
+	f, err := os.Open(safePath)
 	if err != nil {
 		return 0, 0, err
 	}
