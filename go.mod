@@ -10,7 +10,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.28
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/sashabaranov/go-openai v1.40.1
+	github.com/sashabaranov/go-openai v1.40.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/sourcegraph/conc v0.3.0
 	github.com/spf13/afero v1.14.0
