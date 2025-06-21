@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Test PR creation workflow",
+  "body": "This is a test issue to verify the workflow creates PRs properly for processed files",
+  "labels": ["test", "workflow"],
+  "guid": "create-test-pr-creation-workflow-2025-06-21"
+}
