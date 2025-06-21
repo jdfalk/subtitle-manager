@@ -14,10 +14,12 @@
 name: Unified Issue Management
 
 on:
-  # Issue updates from JSON file
+  # Issue updates from JSON files
   push:
     branches: [main, master]
-    paths: [issue_updates.json]
+    paths:
+      - 'issue_updates.json'
+      - '.github/issue-updates/*.json'
 
   # Copilot review ticket management
   pull_request_review_comment:
@@ -69,6 +71,7 @@ jobs:
       dry_run: ${{ github.event.inputs.dry_run == 'true' }}
       force_update: ${{ github.event.inputs.force_update == 'true' }}
       issue_updates_file: "issue_updates.json"
+      issue_updates_directory: ".github/issue-updates"
       cleanup_issue_updates: true
       python_version: "3.11"
     secrets: inherit

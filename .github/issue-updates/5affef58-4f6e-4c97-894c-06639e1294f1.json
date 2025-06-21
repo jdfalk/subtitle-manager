@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Test Distributed Updates System",
+  "body": "This tests the new distributed issue updates system that reads from multiple JSON files.",
+  "labels": ["testing", "automation"],
+  "guid": "create-test-distributed-updates-system-2025-06-21"
+}
