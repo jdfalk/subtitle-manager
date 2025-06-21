@@ -6,12 +6,14 @@
       "codex"
     ],
     "body": "[nitpick] Consider expanding the time threshold used to validate the backup's creation time, as the current 1-second tolerance may lead to flaky tests on slower systems.\n```suggestion\n        if time.Since(b.CreatedAt) > time.Second*3 {\n```\n\n_Originally posted by @Copilot in https://github.com/jdfalk/subtitle-manager/pull/916#discussion_r2157570601_\n\n---\n**Codex update**: Increased allowed backup creation time to 3 seconds in tests. This gives slower systems enough time and prevents flakiness.",
-    "guid": "update-issue-922-2025-06-20"
+    "guid": "update-issue-922-2025-06-20",
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/922"
   },
   {
     "action": "comment",
     "number": 922,
     "body": "Applying fix to backup creation tests by allowing a 3-second threshold. This reduces flakiness on slower machines.",
-    "guid": "comment-922-backup-timeout-2025-06-20"
+    "guid": "comment-922-backup-timeout-2025-06-20",
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/922"
   }
 ]

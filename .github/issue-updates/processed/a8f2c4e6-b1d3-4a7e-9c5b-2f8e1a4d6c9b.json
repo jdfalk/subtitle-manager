@@ -1,6 +1,7 @@
 {
   "action": "comment",
   "number": 922,
-  "body": "✅ Successfully implemented the backup timeout fix. All tests are now passing consistently across different environments.\n\n**Changes made:**\n- Increased timeout from 1s to 3s\n- Added environment detection\n- Improved error messages\n\nReady for merge!",
-  "guid": "comment-922-backup-fix-complete-2025-06-21"
+  "body": "\u2705 Successfully implemented the backup timeout fix. All tests are now passing consistently across different environments.\n\n**Changes made:**\n- Increased timeout from 1s to 3s\n- Added environment detection\n- Improved error messages\n\nReady for merge!",
+  "guid": "comment-922-backup-fix-complete-2025-06-21",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/922"
 }

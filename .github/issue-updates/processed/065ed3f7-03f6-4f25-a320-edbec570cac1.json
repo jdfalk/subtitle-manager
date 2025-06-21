@@ -5,18 +5,21 @@
     "labels": [
       "codex"
     ],
-    "guid": "update-issue-954-2025-06-21"
+    "guid": "update-issue-954-2025-06-21",
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954"
   },
   {
     "action": "comment",
     "number": 954,
     "body": "## Plan of Action\n\n1. Confirm `copilot-tickets.yml` was removed in favor of the unified workflow\n2. Close this alert as resolved",
-    "guid": "plan-comment-954-2025-06-21"
+    "guid": "plan-comment-954-2025-06-21",
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954"
   },
   {
     "action": "close",
     "number": 954,
     "state_reason": "completed",
-    "guid": "close-issue-954-2025-06-21"
+    "guid": "close-issue-954-2025-06-21",
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954"
   }
 ]

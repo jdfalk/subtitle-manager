@@ -6,12 +6,14 @@
       "codex"
     ],
     "state": "closed",
-    "guid": "update-issue-921-2025-06-20"
+    "guid": "update-issue-921-2025-06-20",
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/921"
   },
   {
     "action": "comment",
     "number": 921,
     "body": "Implemented t.Run subtests in pkg/webhooks to ensure each case runs in isolation before closing.",
-    "guid": "comment-921-webhook-subtests-2025-06-20"
+    "guid": "comment-921-webhook-subtests-2025-06-20",
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/921"
   }
 ]

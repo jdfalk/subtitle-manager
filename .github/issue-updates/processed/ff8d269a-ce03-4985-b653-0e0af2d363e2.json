@@ -1,7 +1,11 @@
 {
   "action": "update",
   "number": 920,
-  "labels": ["codex", "testing"],
+  "labels": [
+    "codex",
+    "testing"
+  ],
   "body": "Updated test coverage and added new integration tests for webhook handlers.",
-  "guid": "update-issue-920-testing-2025-06-21"
+  "guid": "update-issue-920-testing-2025-06-21",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/920"
 }
