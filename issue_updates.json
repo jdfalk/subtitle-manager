@@ -215,6 +215,14 @@
         "in-progress"
       ],
       "guid": "update-issue-532-2025-06-20"
+    },
+    {
+      "number": 531,
+      "labels": [
+        "codex",
+        "in-progress"
+      ],
+      "guid": "update-issue-531-2025-06-21"
     }
   ],
   "comment": [
@@ -247,6 +255,11 @@
       "number": 532,
       "body": "## Plan of Action\n\n1. Add benchmark tests for merging and translation functions\n2. Update issue_updates.json to close the issue after merging",
       "guid": "plan-comment-532-2025-06-21"
+    },
+    {
+      "number": 531,
+      "body": "## Plan of Action\n\n1. Replace manual HTTP calls with osdb SDK.\n2. Update tests for new implementation.\n3. Document change in CHANGELOG.",
+      "guid": "comment-issue-531-plan-2025-06-21"
     }
   ],
   "close": [
@@ -254,6 +267,11 @@
       "number": 532,
       "state_reason": "completed",
       "guid": "close-issue-532-2025-06-21"
+    },
+    {
+      "number": 531,
+      "state_reason": "completed",
+      "guid": "close-issue-531-2025-06-21"
     }
   ],
   "delete": []
