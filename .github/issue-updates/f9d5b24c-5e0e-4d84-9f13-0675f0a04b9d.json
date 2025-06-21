@@ -1,0 +1,6 @@
+{
+  "action": "close",
+  "number": 528,
+  "state_reason": "completed",
+  "body": "OAuth2 login implemented in commit 27ad00f"
+}
