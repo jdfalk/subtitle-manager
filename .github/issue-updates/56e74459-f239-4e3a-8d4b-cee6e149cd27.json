@@ -1,0 +1,6 @@
+{
+  "number": 530,
+  "body": "## Plan of Action\n\n1. Add documentation describing how to regenerate gRPC code from `translator.proto`.\n2. Reference the Makefile target `proto-gen` and required tools.\n3. Close this issue once documentation is merged.",
+  "guid": "comment-530-plan-2025-06-20",
+  "action": "comment"
+}
