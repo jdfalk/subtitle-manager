@@ -1216,17 +1216,33 @@ func validateAndSanitizePath(userPath string) (string, error) {
 	}
 	absPath := filepath.Clean(cleanPath)
 
-	// Allow root directory and Windows drive letters
+	// Get allowed base directories for enhanced security
+	allowedBaseDirs := getAllowedBaseDirs()
+
+	// Special case: Allow root directory and Windows drive letters if they're in allowed dirs
 	if cleanPath == "/" || cleanPath == "." ||
 		(runtime.GOOS == "windows" && len(filepath.VolumeName(cleanPath)) == 2 &&
 			strings.Trim(filepath.Clean(cleanPath), "\\") == filepath.VolumeName(cleanPath)) {
-		return absPath, nil
+		// Check if root/drive is in allowed base directories
+		for _, baseDir := range allowedBaseDirs {
+			if absPath == baseDir || strings.HasPrefix(baseDir, absPath) {
+				return absPath, nil
+			}
+		}
 	}
 
-	// Additional security check: ensure no path traversal components remain
-	if strings.Contains(cleanPath, "..") {
-		return "", fmt.Errorf("path traversal detected: %s", cleanPath)
+	// Check if the path is within any allowed base directory
+	for _, baseDir := range allowedBaseDirs {
+		// Resolve the relative path
+		relPath, err := filepath.Rel(baseDir, absPath)
+		if err == nil && !strings.HasPrefix(relPath, "..") {
+			// Ensure no traversal components remain
+			if strings.Contains(relPath, "..") {
+				return "", fmt.Errorf("path traversal detected: %s", cleanPath)
+			}
+			return absPath, nil
+		}
 	}
 
-	return absPath, nil
+	return "", fmt.Errorf("path not in allowed directories: %s", cleanPath)
 }
