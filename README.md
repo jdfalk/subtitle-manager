@@ -254,6 +254,8 @@ subtitle-manager autoscan [directory] [lang] [-i duration] [-s cron] [-u]
 subtitle-manager scanlib [directory]
 subtitle-manager watch [directory] [lang] [-r]
 subtitle-manager grpc-server --addr :50051
+subtitle-manager metadata search [query]
+subtitle-manager metadata update [file] [--title T] [--release-group G] [--alt "A,B"] [--lock fields]
 subtitle-manager delete [file]
 subtitle-manager rename [video] [lang]
 subtitle-manager downloads

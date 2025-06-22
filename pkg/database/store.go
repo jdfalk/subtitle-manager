@@ -46,6 +46,14 @@ type SubtitleStore interface {
 	RemoveTagFromMedia(mediaID, tagID int64) error
 	// ListTagsForMedia returns tags associated with a media item.
 	ListTagsForMedia(mediaID int64) ([]Tag, error)
+	// SetMediaReleaseGroup sets the release group for a media item.
+	SetMediaReleaseGroup(path, group string) error
+	// SetMediaAltTitles stores alternate titles for a media item.
+	SetMediaAltTitles(path string, titles []string) error
+	// SetMediaFieldLocks updates locked fields for a media item.
+	SetMediaFieldLocks(path, locks string) error
+	// SetMediaTitle updates the title for a media item.
+	SetMediaTitle(path, title string) error
 	// Close releases any resources held by the store.
 	Close() error
 }

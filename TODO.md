@@ -15,6 +15,11 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [x] **Automated Maintenance Tasks**: Periodic database cleanup, metadata refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md).
 - [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict resolution.
 - [ ] **Online Metadata Sources**: Fetch languages, ratings, and episode data from external APIs.
+- [ ] **Media Metadata Editor**: Provide manual editing interface.
+  - [ ] Allow manual metadata search and selection during import.
+  - [ ] Store alternate titles for improved subtitle matching.
+  - [ ] Track release group and subtitle history per file.
+  - [ ] Support field-level locks to prevent unwanted updates.
 
 ### Universal Tagging System Implementation
 

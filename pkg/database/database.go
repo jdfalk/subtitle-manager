@@ -2,9 +2,12 @@ package database
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -61,12 +64,15 @@ type DownloadRecord struct {
 // Path is the absolute location on disk. Title is the parsed show or movie name.
 // Season and Episode provide optional numbering for TV episodes.
 type MediaItem struct {
-	ID        string
-	Path      string
-	Title     string
-	Season    int
-	Episode   int
-	CreatedAt time.Time
+	ID           string
+	Path         string
+	Title        string
+	Season       int
+	Episode      int
+	ReleaseGroup string
+	AltTitles    string
+	FieldLocks   string
+	CreatedAt    time.Time
 }
 
 // Tag represents a universal tag that can be associated with any entity type.
@@ -159,10 +165,16 @@ func initSchema(db *sql.DB) error {
         title TEXT NOT NULL,
         season INTEGER,
         episode INTEGER,
+        release_group TEXT,
+        alt_titles TEXT,
+        field_locks TEXT,
         created_at TIMESTAMP NOT NULL
     )`); err != nil {
 		return err
 	}
+	_ = addColumnIfNotExists(db, "media_items", "release_group", "TEXT")
+	_ = addColumnIfNotExists(db, "media_items", "alt_titles", "TEXT")
+	_ = addColumnIfNotExists(db, "media_items", "field_locks", "TEXT")
 
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -347,14 +359,14 @@ func DeleteDownload(db *sql.DB, file string) error {
 
 // InsertMediaItem stores a media library record.
 func (s *SQLStore) InsertMediaItem(rec *MediaItem) error {
-	_, err := s.db.Exec(`INSERT INTO media_items (path, title, season, episode, created_at) VALUES (?, ?, ?, ?, ?)`,
-		rec.Path, rec.Title, rec.Season, rec.Episode, time.Now())
+	_, err := s.db.Exec(`INSERT INTO media_items (path, title, season, episode, release_group, alt_titles, field_locks, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		rec.Path, rec.Title, rec.Season, rec.Episode, rec.ReleaseGroup, rec.AltTitles, rec.FieldLocks, time.Now())
 	return err
 }
 
 // ListMediaItems retrieves all media items sorted by creation time.
 func (s *SQLStore) ListMediaItems() ([]MediaItem, error) {
-	rows, err := s.db.Query(`SELECT id, path, title, season, episode, created_at FROM media_items ORDER BY id DESC`)
+	rows, err := s.db.Query(`SELECT id, path, title, season, episode, release_group, alt_titles, field_locks, created_at FROM media_items ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +375,7 @@ func (s *SQLStore) ListMediaItems() ([]MediaItem, error) {
 	for rows.Next() {
 		var r MediaItem
 		var id int64
-		if err := rows.Scan(&id, &r.Path, &r.Title, &r.Season, &r.Episode, &r.CreatedAt); err != nil {
+		if err := rows.Scan(&id, &r.Path, &r.Title, &r.Season, &r.Episode, &r.ReleaseGroup, &r.AltTitles, &r.FieldLocks, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
@@ -400,6 +412,34 @@ func (s *SQLStore) CountMediaItems() (int, error) {
 	var n int
 	err := row.Scan(&n)
 	return n, err
+}
+
+// SetMediaReleaseGroup updates the release group for a media item.
+func (s *SQLStore) SetMediaReleaseGroup(path, group string) error {
+	_, err := s.db.Exec(`UPDATE media_items SET release_group = ? WHERE path = ?`, group, path)
+	return err
+}
+
+// SetMediaAltTitles updates alternate titles for a media item.
+func (s *SQLStore) SetMediaAltTitles(path string, titles []string) error {
+	data, err := json.Marshal(titles)
+	if err != nil {
+		return err
+	}
+	_, err = s.db.Exec(`UPDATE media_items SET alt_titles = ? WHERE path = ?`, string(data), path)
+	return err
+}
+
+// SetMediaFieldLocks updates field locks for a media item.
+func (s *SQLStore) SetMediaFieldLocks(path string, locks string) error {
+	_, err := s.db.Exec(`UPDATE media_items SET field_locks = ? WHERE path = ?`, locks, path)
+	return err
+}
+
+// SetMediaTitle updates the title for a media item.
+func (s *SQLStore) SetMediaTitle(path, title string) error {
+	_, err := s.db.Exec(`UPDATE media_items SET title = ? WHERE path = ?`, title, path)
+	return err
 }
 
 // DB returns the underlying *sql.DB for compatibility with existing code.
@@ -485,14 +525,14 @@ func DeleteSubtitle(db *sql.DB, file string) error {
 
 // InsertMediaItem stores a media item using a raw *sql.DB.
 func InsertMediaItem(db *sql.DB, path, title string, season, episode int) error {
-	_, err := db.Exec(`INSERT INTO media_items (path, title, season, episode, created_at) VALUES (?, ?, ?, ?, ?)`,
+	_, err := db.Exec(`INSERT INTO media_items (path, title, season, episode, release_group, alt_titles, field_locks, created_at) VALUES (?, ?, ?, ?, '', '', '', ?)`,
 		path, title, season, episode, time.Now())
 	return err
 }
 
 // ListMediaItems retrieves media items using a raw *sql.DB.
 func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
-	rows, err := db.Query(`SELECT id, path, title, season, episode, created_at FROM media_items ORDER BY id DESC`)
+	rows, err := db.Query(`SELECT id, path, title, season, episode, release_group, alt_titles, field_locks, created_at FROM media_items ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -501,7 +541,7 @@ func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
 	for rows.Next() {
 		var it MediaItem
 		var id int64
-		if err := rows.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode, &it.CreatedAt); err != nil {
+		if err := rows.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode, &it.ReleaseGroup, &it.AltTitles, &it.FieldLocks, &it.CreatedAt); err != nil {
 			return nil, err
 		}
 		it.ID = strconv.FormatInt(id, 10)
@@ -514,6 +554,47 @@ func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
 func DeleteMediaItem(db *sql.DB, path string) error {
 	_, err := db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
 	return err
+}
+
+// SetMediaReleaseGroup updates the release group for a media item using a raw database handle.
+func SetMediaReleaseGroup(db *sql.DB, path, group string) error {
+	_, err := db.Exec(`UPDATE media_items SET release_group = ? WHERE path = ?`, group, path)
+	return err
+}
+
+// SetMediaAltTitles updates alternate titles for a media item using a raw database handle.
+func SetMediaAltTitles(db *sql.DB, path string, titles []string) error {
+	data, err := json.Marshal(titles)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`UPDATE media_items SET alt_titles = ? WHERE path = ?`, string(data), path)
+	return err
+}
+
+// SetMediaFieldLocks updates field locks for a media item using a raw database handle.
+func SetMediaFieldLocks(db *sql.DB, path, locks string) error {
+	_, err := db.Exec(`UPDATE media_items SET field_locks = ? WHERE path = ?`, locks, path)
+	return err
+}
+
+// SetMediaTitle updates the title for a media item using a raw database handle.
+func SetMediaTitle(db *sql.DB, path, title string) error {
+	_, err := db.Exec(`UPDATE media_items SET title = ? WHERE path = ?`, title, path)
+	return err
+}
+
+// addColumnIfNotExists attempts to add a column to a table.
+// It ignores the error if the column already exists.
+func addColumnIfNotExists(db *sql.DB, table, column, typ string) error {
+	stmt := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s", table, column, typ)
+	if _, err := db.Exec(stmt); err != nil {
+		if strings.Contains(err.Error(), "duplicate column name") {
+			return nil
+		}
+		return err
+	}
+	return nil
 }
 
 func boolToInt(b bool) int {
@@ -943,7 +1024,7 @@ func EnsureMediaItem(db *sql.DB, path string) (int64, error) {
 	if !errors.Is(err, sql.ErrNoRows) {
 		return 0, err
 	}
-	res, err := db.Exec(`INSERT INTO media_items (path, title, created_at) VALUES (?, ?, ?)`,
+	res, err := db.Exec(`INSERT INTO media_items (path, title, season, episode, release_group, alt_titles, field_locks, created_at) VALUES (?, ?, 0, 0, '', '', '', ?)`,
 		path, filepath.Base(path), time.Now())
 	if err != nil {
 		return 0, err
