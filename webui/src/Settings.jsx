@@ -7,6 +7,7 @@ import {
   Download as ImportIcon,
   Notifications as NotificationIcon,
   CloudDownload as ProvidersIcon,
+  CloudDownloadOutlined,
   Refresh as RefreshIcon,
   People as UsersIcon,
   Label as TagsIcon,
@@ -20,6 +21,14 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Checkbox,
+  Divider,
   Grid,
   Paper,
   Snackbar,
@@ -63,6 +72,13 @@ export default function Settings({ backendAvailable = true }) {
     provider: null,
   });
   const [bazarrConfig, setBazarrConfig] = useState(null);
+  const [bazarrURL, setBazarrURL] = useState('');
+  const [bazarrAPIKey, setBazarrAPIKey] = useState('');
+  const [bazarrMappings, setBazarrMappings] = useState([]);
+  const [selectedSettings, setSelectedSettings] = useState({});
+  const [previewConfig, setPreviewConfig] = useState(null);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importError, setImportError] = useState('');
   const [importing, setImporting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -291,30 +307,64 @@ export default function Settings({ backendAvailable = true }) {
   /**
    * Import settings from Bazarr
    */
-  const openImportDialog = async () => {
-    setImporting(true);
+  const openImportDialog = () => {
+    setBazarrURL('');
+    setBazarrAPIKey('');
+    setBazarrMappings([]);
+    setSelectedSettings({});
+    setPreviewConfig(null);
+    setBazarrConfig(null);
+    setImportError('');
+    setImportDialogOpen(true);
+  };
+
+  const previewBazarr = async () => {
+    if (!bazarrURL || !bazarrAPIKey) {
+      setImportError('Please provide URL and API key');
+      return;
+    }
+    setImportLoading(true);
+    setImportError('');
     try {
-      const response = await fetch('/api/bazarr/config');
-      if (response.ok) {
-        const data = await response.json();
-        setBazarrConfig(data);
-        setImportDialogOpen(true);
+      const res = await fetch('/api/bazarr/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: bazarrURL, api_key: bazarrAPIKey }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPreviewConfig(data.preview);
+        setBazarrMappings(data.mappings || []);
+        const selected = {};
+        (data.mappings || []).forEach(m => {
+          selected[m.key] = true;
+        });
+        setSelectedSettings(selected);
       } else {
-        setStatus('Failed to fetch Bazarr configuration');
+        const text = await res.text();
+        setImportError(text || 'Failed to connect');
       }
-    } catch {
-      setStatus('Error connecting to Bazarr');
+    } catch (err) {
+      setImportError('Network error: ' + err.message);
     } finally {
-      setImporting(false);
+      setImportLoading(false);
     }
   };
 
   const importFromBazarr = async () => {
     setImporting(true);
     try {
+      const keys = Object.keys(selectedSettings).filter(
+        k => selectedSettings[k]
+      );
       const response = await fetch('/api/bazarr/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: bazarrURL,
+          api_key: bazarrAPIKey,
+          keys,
+        }),
       });
       if (response.ok) {
         setStatus('Settings imported from Bazarr successfully');
@@ -555,28 +605,155 @@ export default function Settings({ backendAvailable = true }) {
       >
         <DialogTitle>Import Settings from Bazarr</DialogTitle>
         <DialogContent>
-          <Alert severity="info" sx={{ mb: 2 }}>
-            This will import provider configurations, API keys, and other
-            settings from your Bazarr installation. Existing settings will be
-            merged or overwritten.
-          </Alert>
-          {bazarrConfig && (
-            <Paper sx={{ p: 2, maxHeight: 300, overflow: 'auto' }}>
-              <pre>{JSON.stringify(bazarrConfig, null, 2)}</pre>
-            </Paper>
-          )}
+          <Stack spacing={3} sx={{ mt: 1 }}>
+            <TextField
+              label="Bazarr URL"
+              fullWidth
+              value={bazarrURL}
+              onChange={e => setBazarrURL(e.target.value)}
+            />
+            <TextField
+              label="API Key"
+              type="password"
+              fullWidth
+              value={bazarrAPIKey}
+              onChange={e => setBazarrAPIKey(e.target.value)}
+            />
+            {importError && <Alert severity="error">{importError}</Alert>}
+            <Button
+              variant="outlined"
+              onClick={previewBazarr}
+              disabled={importLoading}
+              startIcon={
+                importLoading ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <CloudDownloadOutlined />
+                )
+              }
+            >
+              {importLoading ? 'Connecting...' : 'Connect'}
+            </Button>
+
+            {previewConfig && bazarrMappings.length > 0 && (
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Found Settings ({bazarrMappings.length} items)
+                </Typography>
+                <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => {
+                      const selected = {};
+                      bazarrMappings.forEach(m => (selected[m.key] = true));
+                      setSelectedSettings(selected);
+                    }}
+                  >
+                    Select All
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => setSelectedSettings({})}
+                  >
+                    Deselect All
+                  </Button>
+                </Stack>
+
+                {Object.entries(
+                  bazarrMappings.reduce((g, m) => {
+                    const sec = m.section || 'Other';
+                    if (!g[sec]) g[sec] = [];
+                    g[sec].push(m);
+                    return g;
+                  }, {})
+                ).map(([section, mappings]) => (
+                  <Card key={section} variant="outlined" sx={{ mb: 2 }}>
+                    <CardContent>
+                      <Typography variant="h6" color="primary" sx={{ mb: 1 }}>
+                        {section}
+                      </Typography>
+                      <List dense>
+                        {mappings.map((mapping, idx) => (
+                          <div key={mapping.key}>
+                            <ListItem sx={{ pl: 0 }}>
+                              <ListItemIcon>
+                                <Checkbox
+                                  checked={
+                                    selectedSettings[mapping.key] || false
+                                  }
+                                  onChange={e =>
+                                    setSelectedSettings({
+                                      ...selectedSettings,
+                                      [mapping.key]: e.target.checked,
+                                    })
+                                  }
+                                />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
+                                  <Typography
+                                    variant="body2"
+                                    fontWeight="medium"
+                                  >
+                                    {mapping.description}
+                                  </Typography>
+                                }
+                                secondary={
+                                  <Box>
+                                    <Typography
+                                      variant="caption"
+                                      color="primary"
+                                      sx={{
+                                        fontFamily: 'monospace',
+                                        display: 'block',
+                                      }}
+                                    >
+                                      {mapping.key}
+                                    </Typography>
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        fontFamily: 'monospace',
+                                        display: 'block',
+                                      }}
+                                    >
+                                      Value: {String(mapping.value)}
+                                    </Typography>
+                                  </Box>
+                                }
+                              />
+                            </ListItem>
+                            {idx < mappings.length - 1 && <Divider />}
+                          </div>
+                        ))}
+                      </List>
+                    </CardContent>
+                  </Card>
+                ))}
+
+                <Alert severity="info">
+                  <Typography variant="body2">
+                    {Object.values(selectedSettings).filter(Boolean).length} of{' '}
+                    {bazarrMappings.length} settings selected for import
+                  </Typography>
+                </Alert>
+              </Box>
+            )}
+          </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setImportDialogOpen(false)}>Cancel</Button>
           <Button
             onClick={importFromBazarr}
             variant="contained"
-            disabled={importing}
+            disabled={importing || !previewConfig}
             startIcon={
               importing ? <RefreshIcon className="spin" /> : <ImportIcon />
             }
           >
-            {importing ? 'Importing...' : 'Import Settings'}
+            {importing ? 'Importing...' : 'Import Selected'}
           </Button>
         </DialogActions>
       </Dialog>
