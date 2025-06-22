@@ -318,3 +318,64 @@ func (p *PebbleStore) RemoveTagFromMedia(mediaID, tagID int64) error { return ni
 
 // ListTagsForMedia returns no tags for PebbleStore.
 func (p *PebbleStore) ListTagsForMedia(mediaID int64) ([]Tag, error) { return nil, nil }
+
+// SetMediaReleaseGroup stores the release group in the media item record.
+func (p *PebbleStore) SetMediaReleaseGroup(path, group string) error {
+	items, err := p.ListMediaItems()
+	if err != nil {
+		return err
+	}
+	for _, it := range items {
+		if it.Path == path {
+			it.ReleaseGroup = group
+			return p.InsertMediaItem(&it)
+		}
+	}
+	return nil
+}
+
+// SetMediaAltTitles stores alternate titles in the media item record.
+func (p *PebbleStore) SetMediaAltTitles(path string, titles []string) error {
+	items, err := p.ListMediaItems()
+	if err != nil {
+		return err
+	}
+	for _, it := range items {
+		if it.Path == path {
+			data, _ := json.Marshal(titles)
+			it.AltTitles = string(data)
+			return p.InsertMediaItem(&it)
+		}
+	}
+	return nil
+}
+
+// SetMediaFieldLocks stores locked fields in the media item record.
+func (p *PebbleStore) SetMediaFieldLocks(path, locks string) error {
+	items, err := p.ListMediaItems()
+	if err != nil {
+		return err
+	}
+	for _, it := range items {
+		if it.Path == path {
+			it.FieldLocks = locks
+			return p.InsertMediaItem(&it)
+		}
+	}
+	return nil
+}
+
+// SetMediaTitle updates the title in the media item record.
+func (p *PebbleStore) SetMediaTitle(path, title string) error {
+	items, err := p.ListMediaItems()
+	if err != nil {
+		return err
+	}
+	for _, it := range items {
+		if it.Path == path {
+			it.Title = title
+			return p.InsertMediaItem(&it)
+		}
+	}
+	return nil
+}

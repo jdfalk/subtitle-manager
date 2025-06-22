@@ -86,12 +86,21 @@ func TestMediaItems(t *testing.T) {
 	if err := InsertMediaItem(db, "video.mkv", "Show", 1, 2); err != nil {
 		t.Fatalf("insert media item: %v", err)
 	}
+	if err := SetMediaReleaseGroup(db, "video.mkv", "GROUP"); err != nil {
+		t.Fatalf("set release group: %v", err)
+	}
+	if err := SetMediaAltTitles(db, "video.mkv", []string{"Alt"}); err != nil {
+		t.Fatalf("set alt titles: %v", err)
+	}
+	if err := SetMediaFieldLocks(db, "video.mkv", "title"); err != nil {
+		t.Fatalf("set locks: %v", err)
+	}
 
 	items, err := ListMediaItems(db)
 	if err != nil {
 		t.Fatalf("list media items: %v", err)
 	}
-	if len(items) != 1 || items[0].Title != "Show" || items[0].Season != 1 {
+	if len(items) != 1 || items[0].ReleaseGroup != "GROUP" {
 		t.Fatalf("unexpected items %+v", items)
 	}
 

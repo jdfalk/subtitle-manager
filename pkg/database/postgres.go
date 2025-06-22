@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"encoding/json"
 	"strconv"
 	"time"
 
@@ -53,6 +54,9 @@ func initPostgresSchema(db *sql.DB) error {
             title TEXT NOT NULL,
             season INTEGER,
             episode INTEGER,
+            release_group TEXT,
+            alt_titles TEXT,
+            field_locks TEXT,
             created_at TIMESTAMP NOT NULL
         )`,
 	}
@@ -135,14 +139,14 @@ func (p *PostgresStore) DeleteDownload(file string) error {
 
 // InsertMediaItem stores a media library record.
 func (p *PostgresStore) InsertMediaItem(rec *MediaItem) error {
-	_, err := p.db.Exec(`INSERT INTO media_items (path, title, season, episode, created_at) VALUES ($1,$2,$3,$4,$5)`,
-		rec.Path, rec.Title, rec.Season, rec.Episode, time.Now())
+	_, err := p.db.Exec(`INSERT INTO media_items (path, title, season, episode, release_group, alt_titles, field_locks, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+		rec.Path, rec.Title, rec.Season, rec.Episode, rec.ReleaseGroup, rec.AltTitles, rec.FieldLocks, time.Now())
 	return err
 }
 
 // ListMediaItems retrieves media items ordered by most recent.
 func (p *PostgresStore) ListMediaItems() ([]MediaItem, error) {
-	rows, err := p.db.Query(`SELECT id, path, title, season, episode, created_at FROM media_items ORDER BY id DESC`)
+	rows, err := p.db.Query(`SELECT id, path, title, season, episode, release_group, alt_titles, field_locks, created_at FROM media_items ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +155,7 @@ func (p *PostgresStore) ListMediaItems() ([]MediaItem, error) {
 	for rows.Next() {
 		var r MediaItem
 		var id int64
-		if err := rows.Scan(&id, &r.Path, &r.Title, &r.Season, &r.Episode, &r.CreatedAt); err != nil {
+		if err := rows.Scan(&id, &r.Path, &r.Title, &r.Season, &r.Episode, &r.ReleaseGroup, &r.AltTitles, &r.FieldLocks, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
@@ -188,6 +192,34 @@ func (p *PostgresStore) CountMediaItems() (int, error) {
 	var n int
 	err := row.Scan(&n)
 	return n, err
+}
+
+// SetMediaReleaseGroup updates the release group for a media item.
+func (p *PostgresStore) SetMediaReleaseGroup(path, group string) error {
+	_, err := p.db.Exec(`UPDATE media_items SET release_group = $1 WHERE path = $2`, group, path)
+	return err
+}
+
+// SetMediaAltTitles updates alternate titles for a media item.
+func (p *PostgresStore) SetMediaAltTitles(path string, titles []string) error {
+	data, err := json.Marshal(titles)
+	if err != nil {
+		return err
+	}
+	_, err = p.db.Exec(`UPDATE media_items SET alt_titles = $1 WHERE path = $2`, string(data), path)
+	return err
+}
+
+// SetMediaFieldLocks updates field locks for a media item.
+func (p *PostgresStore) SetMediaFieldLocks(path, locks string) error {
+	_, err := p.db.Exec(`UPDATE media_items SET field_locks = $1 WHERE path = $2`, locks, path)
+	return err
+}
+
+// SetMediaTitle updates the title for a media item.
+func (p *PostgresStore) SetMediaTitle(path, title string) error {
+	_, err := p.db.Exec(`UPDATE media_items SET title = $1 WHERE path = $2`, title, path)
+	return err
 }
 
 // InsertTag adds a tag to the database.
