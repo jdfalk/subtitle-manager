@@ -82,7 +82,10 @@ func FetchSettings(baseURL, apiKey string) (Settings, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid baseURL: %v", err)
 	}
-	endpoint, _ := url.Parse("/api/system/settings")
+	endpoint, err := url.Parse("/api/system/settings")
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse endpoint URL: %v", err)
+	}
 	fullURL := base.ResolveReference(endpoint)
 
 	req, err := http.NewRequest(http.MethodGet, fullURL.String(), nil)
