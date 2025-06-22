@@ -414,10 +414,7 @@ export default function Dashboard({ backendAvailable = true }) {
                 <List dense>
                   {Object.entries(systemInfo).map(([key, value]) => (
                     <ListItem key={key} divider>
-                      <ListItemText
-                        primary={key}
-                        secondary={String(value)}
-                      />
+                      <ListItemText primary={key} secondary={String(value)} />
                     </ListItem>
                   ))}
                 </List>
