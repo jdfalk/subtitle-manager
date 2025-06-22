@@ -14,8 +14,16 @@ type MappingInfo struct {
 	Original    any    `json:"original"`
 }
 
-// MapSettingsWithInfo converts Bazarr settings to Subtitle Manager configuration keys
-// and returns detailed mapping information for the UI.
+// MapSettingsWithInfo converts a Bazarr `Settings` map into Subtitle Manager
+// configuration keys and returns both the resulting map and a slice of
+// `MappingInfo` describing each mapping.
+//
+// Parameters:
+//   - s: Bazarr settings as returned by `FetchSettings`.
+//
+// Returns:
+//   - map[string]any: configuration keys compatible with viper.
+//   - []MappingInfo: list of details about how each setting was mapped.
 func MapSettingsWithInfo(s Settings) (map[string]any, []MappingInfo) {
 	out := make(map[string]any)
 	var mappings []MappingInfo
