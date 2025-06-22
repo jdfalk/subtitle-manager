@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Enhance Bazarr import",
+  "body": "Allow specifying server and API key and choose settings to import",
+  "labels": ["codex", "enhancement"],
+  "guid": "create-enhance-bazarr-import-2025-06-22"
+}
