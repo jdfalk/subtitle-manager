@@ -3,10 +3,14 @@ package providers
 import (
 	"context"
 	"errors"
+	"strconv"
 	"testing"
 	"time"
 
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/providers/mocks"
+	"github.com/jdfalk/subtitle-manager/pkg/tagging"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -158,5 +162,69 @@ func TestInstancePriorities(t *testing.T) {
 		if i >= len(allInstances) || allInstances[i].ID != expectedID {
 			t.Errorf("Expected instance '%s' at index %d, got '%s'", expectedID, i, allInstances[i].ID)
 		}
+	}
+}
+
+func TestInstancesByTags(t *testing.T) {
+	db := testutil.GetTestDB(t)
+	defer db.Close()
+	tm := tagging.NewTagManager(db)
+
+	tag, err := tm.CreateTag("fast", "user", "provider", "", "")
+	if err != nil {
+		t.Fatalf("create tag: %v", err)
+	}
+	tagID, _ := strconv.ParseInt(tag.ID, 10, 64)
+
+	instancesMu.Lock()
+	instances = map[string]Instance{}
+	instancesMu.Unlock()
+	RegisterInstance(Instance{ID: "p1", Name: "mock", Priority: 5, Enabled: true})
+	RegisterInstance(Instance{ID: "p2", Name: "mock", Priority: 1, Enabled: true})
+
+	testutil.MustNoError(t, "tag p2", database.AssignTagToEntity(db, tagID, "provider", "p2"))
+
+	insts, err := InstancesByTags(tm, []string{"fast"})
+	if err != nil {
+		t.Fatalf("InstancesByTags error: %v", err)
+	}
+	if len(insts) != 1 || insts[0].ID != "p2" {
+		t.Fatalf("expected only p2, got %v", insts)
+	}
+}
+
+func TestFetchFromTagged(t *testing.T) {
+	db := testutil.GetTestDB(t)
+	defer db.Close()
+	tm := tagging.NewTagManager(db)
+
+	tag, _ := tm.CreateTag("fast", "user", "provider", "", "")
+	tagID, _ := strconv.ParseInt(tag.ID, 10, 64)
+
+	m2 := &mocks.Provider{}
+	RegisterFactory("mock", func() Provider { return m2 })
+	t.Cleanup(func() {
+		delete(factories, "mock")
+		instancesMu.Lock()
+		instances = map[string]Instance{}
+		instancesMu.Unlock()
+		backoffMu.Lock()
+		backoffMap = map[string]time.Time{}
+		backoffMu.Unlock()
+	})
+
+	RegisterInstance(Instance{ID: "p1", Name: "mock", Priority: 1, Enabled: true})
+	RegisterInstance(Instance{ID: "p2", Name: "mock", Priority: 0, Enabled: true})
+
+	testutil.MustNoError(t, "tag p2", database.AssignTagToEntity(db, tagID, "provider", "p2"))
+
+	m2.On("Fetch", mock.Anything, "file.mkv", "en").Return([]byte("ok"), nil)
+
+	data, id, err := FetchFromTagged(context.Background(), "file.mkv", "en", "", []string{"fast"}, tm)
+	if err != nil {
+		t.Fatalf("FetchFromTagged err: %v", err)
+	}
+	if id != "p2" || string(data) != "ok" {
+		t.Fatalf("unexpected result %s %s", data, id)
 	}
 }

@@ -1,0 +1,6 @@
+{
+  "action": "comment",
+  "number": 1116,
+  "body": "Plan: integrate tag parsing across CLI commands and ensure fetch supports tags everywhere",
+  "guid": "comment-1116-2025-06-22-160834"
+}
