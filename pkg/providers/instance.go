@@ -111,3 +111,28 @@ func ClearBackoff(instanceID string) {
 	defer backoffMu.Unlock()
 	delete(backoffMap, instanceID)
 }
+
+// InstancesByTags returns provider instances matching all given tags.
+// If no tags are provided or TagManager is nil, it returns Instances().
+func InstancesByTags(tm interface {
+	FilterByTags(string, []string) ([]string, error)
+}, tags []string) ([]Instance, error) {
+	if tm == nil || len(tags) == 0 {
+		return Instances(), nil
+	}
+	ids, err := tm.FilterByTags("provider", tags)
+	if err != nil {
+		return nil, err
+	}
+
+	instancesMu.RLock()
+	defer instancesMu.RUnlock()
+	out := make([]Instance, 0, len(ids))
+	for _, id := range ids {
+		if inst, ok := instances[id]; ok && inst.Enabled {
+			out = append(out, inst)
+		}
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].Priority > out[j].Priority })
+	return out, nil
+}

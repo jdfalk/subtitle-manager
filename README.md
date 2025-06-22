@@ -244,6 +244,7 @@ subtitle-manager history
 subtitle-manager extract [media] [output]
 subtitle-manager transcribe [media] [output] [lang]
 subtitle-manager fetch [media] [lang] [output]
+subtitle-manager fetch --tags tag1,tag2 [media] [lang] [output]
 subtitle-manager search [media] [lang]
 subtitle-manager batch [lang] [files...]
 subtitle-manager syncbatch -config file.json
