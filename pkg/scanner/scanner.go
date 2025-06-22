@@ -51,6 +51,10 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 func ProcessFile(ctx context.Context, path, lang string, providerName string, p providers.Provider, upgrade bool, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
 	path = filepath.Clean(path)
+	if !validateAndSanitizePath(path) {
+		logger.Warnf("invalid path: %s", path)
+		return fmt.Errorf("invalid path: %s", path)
+	}
 
 	// Validate the lang parameter to ensure it contains only alphanumeric characters
 	if !isValidLang(lang) {
