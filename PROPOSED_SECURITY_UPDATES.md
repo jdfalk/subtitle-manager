@@ -197,7 +197,7 @@ A user submits a filename like `../../../../etc/passwd` via a web interface. If 
 
 ### Mitigation Strategy
 
-- Continue using the `validateAndSanitizePath` function (already implemented in `pkg/webserver/server.go`).
+- Continue using the `validateAndSanitizePath` function (now in `pkg/security/security.go`).
 - Normalize paths using `filepath.Clean` and restrict them to allowed directories.
 
 ### Example Validation Function

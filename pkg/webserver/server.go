@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 
@@ -22,6 +21,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/maintenance"
 	"github.com/jdfalk/subtitle-manager/pkg/radarr"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/sonarr"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/updater"
@@ -842,7 +842,7 @@ func libraryBrowseHandler() http.Handler {
 		}
 
 		// Validate and sanitize the path to prevent path traversal attacks
-		sanitizedPath, err := validateAndSanitizePath(path)
+		sanitizedPath, err := security.ValidateAndSanitizePath(path)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Invalid path: %v", err), http.StatusBadRequest)
 			return
@@ -1008,7 +1008,7 @@ func browseDirectory(path string) ([]MediaItem, error) {
 	safePath := filepath.Clean(path)
 	if safePath == "" || safePath == "/" {
 		// Show existing directories from allowed bases for the root view
-		dirs := getAllowedBaseDirs()
+		dirs := security.GetAllowedBaseDirs()
 		var items []MediaItem
 		for _, dir := range dirs {
 			if info, err := os.Stat(dir); err == nil && info.IsDir() {
@@ -1064,46 +1064,6 @@ func browseDirectory(path string) ([]MediaItem, error) {
 	}
 
 	return items, nil
-}
-
-// getAllowedBaseDirs returns a list of base directories that are safe to browse
-func getAllowedBaseDirs() []string {
-	var dirs []string
-
-	// Add configured media directories
-	if mediaDir := viper.GetString("media_directory"); mediaDir != "" {
-		dirs = append(dirs, mediaDir)
-	}
-
-	// Add subtitle directory
-	if subDir := viper.GetString("subtitle_directory"); subDir != "" {
-		dirs = append(dirs, subDir)
-	}
-
-	// Add some common media directories if they exist
-	commonDirs := []string{
-		"/media", "/mnt/media", "/home/media", "/var/media",
-		"/Movies", "/TV", "/Videos",
-	}
-
-	if runtime.GOOS == "windows" {
-		commonDirs = []string{
-			"C:\\Media", "C:\\Movies", "C:\\TV", "D:\\Media", "D:\\Movies", "D:\\TV",
-		}
-	}
-
-	for _, dir := range commonDirs {
-		if info, err := os.Stat(dir); err == nil && info.IsDir() {
-			dirs = append(dirs, dir)
-		}
-	}
-
-	// Always include user home directory as fallback
-	if home, err := os.UserHomeDir(); err == nil {
-		dirs = append(dirs, home)
-	}
-
-	return dirs
 }
 
 // isMediaFile checks if the file is a supported media file
@@ -1267,47 +1227,4 @@ func startSessionCleanup(db *sql.DB) {
 			fmt.Printf("Failed to cleanup expired sessions: %v\n", err)
 		}
 	}
-}
-
-// validateAndSanitizePath cleans a user-supplied path and checks for basic path
-// traversal attempts. It returns an absolute version of the path when valid.
-func validateAndSanitizePath(userPath string) (string, error) {
-	// Clean the path to resolve .. and . elements
-	cleanPath := filepath.Clean(userPath)
-
-	// Convert to absolute path for consistent checking
-	if !filepath.IsAbs(cleanPath) {
-		return "", fmt.Errorf("path must be absolute")
-	}
-	absPath := filepath.Clean(cleanPath)
-
-	// Get allowed base directories for enhanced security
-	allowedBaseDirs := getAllowedBaseDirs()
-
-	// Special case: Allow root directory and Windows drive letters if they're in allowed dirs
-	if cleanPath == "/" || cleanPath == "." ||
-		(runtime.GOOS == "windows" && len(filepath.VolumeName(cleanPath)) == 2 &&
-			strings.Trim(filepath.Clean(cleanPath), "\\") == filepath.VolumeName(cleanPath)) {
-		// Check if root/drive is in allowed base directories
-		for _, baseDir := range allowedBaseDirs {
-			if absPath == baseDir || strings.HasPrefix(baseDir, absPath) {
-				return absPath, nil
-			}
-		}
-	}
-
-	// Check if the path is within any allowed base directory
-	for _, baseDir := range allowedBaseDirs {
-		// Resolve the relative path
-		relPath, err := filepath.Rel(baseDir, absPath)
-		if err == nil && !strings.HasPrefix(relPath, "..") {
-			// Ensure no traversal components remain
-			if strings.Contains(relPath, "..") {
-				return "", fmt.Errorf("path traversal detected: %s", cleanPath)
-			}
-			return absPath, nil
-		}
-	}
-
-	return "", fmt.Errorf("path not in allowed directories: %s", cleanPath)
 }
