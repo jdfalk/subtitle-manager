@@ -7,9 +7,9 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import Dashboard from '../Dashboard.jsx';
-import { MemoryRouter } from 'react-router-dom';
 
 // Mock the API service
 vi.mock('../services/api.js', () => ({
@@ -71,7 +71,12 @@ describe('Dashboard component', () => {
   test('starts scan with provided options', async () => {
     await act(async () => {
       render(
-        <MemoryRouter>
+        <MemoryRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <Dashboard />
         </MemoryRouter>
       );
@@ -118,10 +123,15 @@ describe('Dashboard component', () => {
     });
   });
 
-  test('shows configuration popover for unconfigured provider', async () => {
+  test('shows configuration snackbar for unconfigured provider', async () => {
     await act(async () => {
       render(
-        <MemoryRouter>
+        <MemoryRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <Dashboard />
         </MemoryRouter>
       );
