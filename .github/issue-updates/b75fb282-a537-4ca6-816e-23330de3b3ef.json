@@ -1,0 +1,6 @@
+{
+  "number": 931,
+  "body": "Patched all directory operations using filepath.Clean to avoid path traversal in scanner and web server.",
+  "guid": "comment-931-path-sanitize-2025-06-21",
+  "action": "comment"
+}

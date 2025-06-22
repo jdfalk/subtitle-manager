@@ -51,7 +51,7 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 func ProcessFile(ctx context.Context, path, lang string, providerName string, p providers.Provider, upgrade bool, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
 	path = filepath.Clean(path)
-	if !validateAndSanitizePath(path) {
+	if !isValidPath(path) {
 		logger.Warnf("invalid path: %s", path)
 		return fmt.Errorf("invalid path: %s", path)
 	}
@@ -98,6 +98,28 @@ func isValidLang(lang string) bool {
 		}
 	}
 	return true
+}
+
+// isValidPath performs basic validation on file paths to ensure they are safe to process
+func isValidPath(path string) bool {
+	// Check if path is empty
+	if path == "" {
+		return false
+	}
+
+	// Check for path traversal attempts
+	if strings.Contains(path, "..") {
+		return false
+	}
+
+	// Check if path contains null bytes (security check)
+	if strings.Contains(path, "\x00") {
+		return false
+	}
+
+	// Ensure path is absolute after cleaning
+	cleanPath := filepath.Clean(path)
+	return filepath.IsAbs(cleanPath)
 }
 
 var videoExtensions = []string{".mkv", ".mp4", ".avi", ".mov"}
