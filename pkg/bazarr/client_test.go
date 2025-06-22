@@ -3,10 +3,12 @@ package bazarr
 
 import (
 	"testing"
+
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
-// TestValidateBaseURL tests the URL validation function for security
-func TestValidateBaseURL(t *testing.T) {
+// TestValidateURL tests the URL validation function for security
+func TestValidateURL(t *testing.T) {
 	tests := []struct {
 		name        string
 		url         string
@@ -88,7 +90,7 @@ func TestValidateBaseURL(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validateBaseURL(tt.url)
+			_, err := security.ValidateURL(tt.url)
 
 			if tt.shouldError {
 				if err == nil {
