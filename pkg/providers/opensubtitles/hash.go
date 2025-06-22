@@ -18,9 +18,16 @@ var fileHashFunc = realFileHash
 // realFileHash calculates the OpenSubtitles file hash.
 // The provided path is validated to ensure it is within the safe directory.
 func realFileHash(path string) (uint64, int64, error) {
-	const safeDir = "/safe/directory"
+	safeDirs := getAllowedBaseDirs()
 	absPath, err := filepath.Abs(filepath.Clean(path))
-	if err != nil || !strings.HasPrefix(absPath, safeDir) {
+	isValid := false
+	for _, dir := range safeDirs {
+		if strings.HasPrefix(absPath, dir) {
+			isValid = true
+			break
+		}
+	}
+	if err != nil || !isValid {
 		return 0, 0, fmt.Errorf("invalid file path: %s", path)
 	}
 	f, err := os.Open(absPath)
