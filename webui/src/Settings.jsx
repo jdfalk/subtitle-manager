@@ -71,7 +71,7 @@ export default function Settings({ backendAvailable = true }) {
     open: false,
     provider: null,
   });
-  const [bazarrConfig, setBazarrConfig] = useState(null);
+  // Removed unused bazarrConfig state initialization
   const [bazarrURL, setBazarrURL] = useState('');
   const [bazarrAPIKey, setBazarrAPIKey] = useState('');
   const [bazarrMappings, setBazarrMappings] = useState([]);
