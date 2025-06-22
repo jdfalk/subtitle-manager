@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Dashboard provider dropdown lacks configuration link",
+  "body": "When selecting an unconfigured provider in the dashboard, the dropdown closes without guidance. We should show a message linking directly to configuration.",
+  "labels": ["bug", "codex"],
+  "guid": "create-dashboard-provider-dropdown-lacks-configuration-link-2025-06-22"
+}

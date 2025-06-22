@@ -9,6 +9,7 @@ import {
 } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import Dashboard from '../Dashboard.jsx';
+import { MemoryRouter } from 'react-router-dom';
 
 // Mock the API service
 vi.mock('../services/api.js', () => ({
@@ -40,8 +41,18 @@ describe('Dashboard component', () => {
           ok: true,
           json: () =>
             Promise.resolve([
-              { id: 'opensubtitles', name: 'OpenSubtitles', enabled: true },
-              { id: 'embedded', name: 'Embedded', enabled: true },
+              {
+                id: 'opensubtitles',
+                name: 'OpenSubtitles',
+                enabled: true,
+                configured: true,
+              },
+              {
+                id: 'embedded',
+                name: 'Embedded',
+                enabled: true,
+                configured: false,
+              },
             ]),
         });
       }
@@ -59,7 +70,11 @@ describe('Dashboard component', () => {
 
   test('starts scan with provided options', async () => {
     await act(async () => {
-      render(<Dashboard />);
+      render(
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      );
     });
 
     // Wait for component to load
@@ -101,5 +116,33 @@ describe('Dashboard component', () => {
         expect.any(Object)
       );
     });
+  });
+
+  test('shows configuration popover for unconfigured provider', async () => {
+    await act(async () => {
+      render(
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('combobox')[2]).toBeInTheDocument();
+    });
+
+    const providerSelect = screen.getAllByRole('combobox')[2];
+    await act(async () => {
+      fireEvent.mouseDown(providerSelect);
+    });
+
+    const embeddedOption = await screen.findByText('Embedded');
+    await act(async () => {
+      fireEvent.click(embeddedOption);
+    });
+
+    expect(
+      screen.getByText(/provider requires configuration/i)
+    ).toBeInTheDocument();
   });
 });
