@@ -1,10 +1,10 @@
 // file: webui/src/components/QuickLinks.jsx
 import {
-  CloudDownload as WantedIcon,
-  VideoLibrary as LibraryIcon,
-  History as HistoryIcon,
-  Settings as SettingsIcon,
-  BugReport as SystemIcon,
+    History as HistoryIcon,
+    VideoLibrary as LibraryIcon,
+    Settings as SettingsIcon,
+    BugReport as SystemIcon,
+    CloudDownload as WantedIcon,
 } from '@mui/icons-material';
 import { Button, Card, CardContent, Grid, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
@@ -31,7 +31,7 @@ export default function QuickLinks() {
         </Typography>
         <Grid container spacing={2}>
           {links.map(link => (
-            <Grid item xs={6} sm={4} md={2} key={link.path}>
+            <Grid size={{ xs: 6, sm: 4, md: 2 }} key={link.path}>
               <Button
                 component={NavLink}
                 to={link.path}

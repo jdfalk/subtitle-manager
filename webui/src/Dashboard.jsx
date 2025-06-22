@@ -23,12 +23,12 @@ import {
   ListItemText,
   MenuItem,
   Paper,
-  Popover,
   Select,
+  Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DirectoryChooser from './components/DirectoryChooser.jsx';
 import QuickLinks from './components/QuickLinks.jsx';
@@ -57,8 +57,7 @@ export default function Dashboard({ backendAvailable = true }) {
   const [suggestions, setSuggestions] = useState([]);
   const [chooserOpen, setChooserOpen] = useState(false);
   const [systemInfo, setSystemInfo] = useState(null);
-  const [configPopoverOpen, setConfigPopoverOpen] = useState(false);
-  const providerRef = useRef(null);
+  const [configSnackOpen, setConfigSnackOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -305,10 +304,9 @@ export default function Dashboard({ backendAvailable = true }) {
                         pr => pr.name === e.target.value
                       );
                       if (p && !p.configured) {
-                        setConfigPopoverOpen(true);
+                        setConfigSnackOpen(true);
                       }
                     }}
-                    inputProps={{ ref: providerRef }}
                     disabled={status.running || !backendAvailable}
                   >
                     {availableProviders.length > 0
@@ -472,15 +470,14 @@ export default function Dashboard({ backendAvailable = true }) {
         onClose={() => setChooserOpen(false)}
         onSelect={path => setDir(path)}
       />
-      <Popover
-        open={configPopoverOpen}
-        anchorEl={providerRef.current}
-        onClose={() => setConfigPopoverOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      <Snackbar
+        open={configSnackOpen}
+        autoHideDuration={6000}
+        onClose={() => setConfigSnackOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
-          onClose={() => setConfigPopoverOpen(false)}
+          onClose={() => setConfigSnackOpen(false)}
           severity="info"
           action={
             <Button
@@ -491,11 +488,10 @@ export default function Dashboard({ backendAvailable = true }) {
               Configure
             </Button>
           }
-          sx={{ mr: 2 }}
         >
           Provider requires configuration. Click Configure to edit settings.
         </Alert>
-      </Popover>
+      </Snackbar>
     </Box>
   );
 }
