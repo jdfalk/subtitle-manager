@@ -6,18 +6,24 @@ type SubtitleStore interface {
 	InsertSubtitle(rec *SubtitleRecord) error
 	// ListSubtitles retrieves all subtitle records sorted by creation time.
 	ListSubtitles() ([]SubtitleRecord, error)
+	// CountSubtitles returns the total number of subtitle records.
+	CountSubtitles() (int, error)
 	// DeleteSubtitle removes all records for the specified file.
 	DeleteSubtitle(file string) error
 	// InsertDownload stores a download record.
 	InsertDownload(rec *DownloadRecord) error
 	// ListDownloads retrieves all download records sorted by creation time.
 	ListDownloads() ([]DownloadRecord, error)
+	// CountDownloads returns the total number of download records.
+	CountDownloads() (int, error)
 	// DeleteDownload removes download records for the specified subtitle file.
 	DeleteDownload(file string) error
 	// InsertMediaItem stores a media library record.
 	InsertMediaItem(rec *MediaItem) error
 	// ListMediaItems retrieves all media items sorted by creation time.
 	ListMediaItems() ([]MediaItem, error)
+	// CountMediaItems returns the total number of media items.
+	CountMediaItems() (int, error)
 	// DeleteMediaItem removes a record for the specified media path.
 	DeleteMediaItem(path string) error
 	// InsertTag stores a new tag value.

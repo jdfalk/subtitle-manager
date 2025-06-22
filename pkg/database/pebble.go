@@ -232,6 +232,63 @@ func (p *PebbleStore) DeleteMediaItem(path string) error {
 	return iter.Error()
 }
 
+// CountSubtitles returns the number of subtitle records.
+func (p *PebbleStore) CountSubtitles() (int, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return 0, err
+	}
+	defer iter.Close()
+	count := 0
+	for iter.First(); iter.Valid(); iter.Next() {
+		if strings.HasPrefix(string(iter.Key()), "subtitle:") {
+			count++
+		}
+	}
+	if err := iter.Error(); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// CountDownloads returns the number of download records.
+func (p *PebbleStore) CountDownloads() (int, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return 0, err
+	}
+	defer iter.Close()
+	count := 0
+	for iter.First(); iter.Valid(); iter.Next() {
+		if strings.HasPrefix(string(iter.Key()), "download:") {
+			count++
+		}
+	}
+	if err := iter.Error(); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// CountMediaItems returns the number of media item records.
+func (p *PebbleStore) CountMediaItems() (int, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return 0, err
+	}
+	defer iter.Close()
+	count := 0
+	for iter.First(); iter.Valid(); iter.Next() {
+		if strings.HasPrefix(string(iter.Key()), "media:") {
+			count++
+		}
+	}
+	if err := iter.Error(); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // InsertTag is unsupported for PebbleStore and returns nil for compatibility.
 func (p *PebbleStore) InsertTag(name string) error { return nil }
 

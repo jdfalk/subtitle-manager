@@ -95,17 +95,17 @@ func databaseStatsHandler(db *sql.DB) http.Handler {
 			return
 		}
 		defer store.Close()
-		subs, _ := store.ListSubtitles()
-		downloads, _ := store.ListDownloads()
-		media, _ := store.ListMediaItems()
+		subCount, _ := store.CountSubtitles()
+		downCount, _ := store.CountDownloads()
+		mediaCount, _ := store.CountMediaItems()
 		var users int
 		row := db.QueryRow(`SELECT COUNT(1) FROM users`)
 		_ = row.Scan(&users)
 		st := stats{
-			TotalRecords: len(subs),
+			TotalRecords: subCount,
 			Users:        users,
-			Downloads:    len(downloads),
-			MediaItems:   len(media),
+			Downloads:    downCount,
+			MediaItems:   mediaCount,
 		}
 		if hist := backups.List(); len(hist) > 0 {
 			st.LastBackup = hist[len(hist)-1].CreatedAt
