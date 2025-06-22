@@ -3,20 +3,19 @@ import {
   Folder as FolderIcon,
   PlayArrow as PlayIcon,
 } from '@mui/icons-material';
-import QuickLinks from './components/QuickLinks.jsx';
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   Card,
   CardContent,
   Chip,
   CircularProgress,
-  IconButton,
   FormControl,
-  InputAdornment,
-  Autocomplete,
   Grid,
+  IconButton,
+  InputAdornment,
   InputLabel,
   LinearProgress,
   List,
@@ -24,12 +23,15 @@ import {
   ListItemText,
   MenuItem,
   Paper,
+  Popover,
   Select,
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DirectoryChooser from './components/DirectoryChooser.jsx';
+import QuickLinks from './components/QuickLinks.jsx';
 import { apiService } from './services/api.js';
 
 /**
@@ -47,14 +49,17 @@ export default function Dashboard({ backendAvailable = true }) {
   });
   const [dir, setDir] = useState('');
   const [lang, setLang] = useState('en');
-  // Default to embedded provider until others are added
-  const [provider, setProvider] = useState('embedded');
+  // Provider is selected from available options
+  const [provider, setProvider] = useState('');
   const [availableProviders, setAvailableProviders] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [chooserOpen, setChooserOpen] = useState(false);
   const [systemInfo, setSystemInfo] = useState(null);
+  const [configPopoverOpen, setConfigPopoverOpen] = useState(false);
+  const providerRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (backendAvailable) {
@@ -294,7 +299,16 @@ export default function Dashboard({ backendAvailable = true }) {
                   <Select
                     value={provider}
                     label="Provider"
-                    onChange={e => setProvider(e.target.value)}
+                    onChange={e => {
+                      setProvider(e.target.value);
+                      const p = availableProviders.find(
+                        pr => pr.name === e.target.value
+                      );
+                      if (p && !p.configured) {
+                        setConfigPopoverOpen(true);
+                      }
+                    }}
+                    inputProps={{ ref: providerRef }}
                     disabled={status.running || !backendAvailable}
                   >
                     {availableProviders.length > 0
@@ -458,6 +472,30 @@ export default function Dashboard({ backendAvailable = true }) {
         onClose={() => setChooserOpen(false)}
         onSelect={path => setDir(path)}
       />
+      <Popover
+        open={configPopoverOpen}
+        anchorEl={providerRef.current}
+        onClose={() => setConfigPopoverOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      >
+        <Alert
+          onClose={() => setConfigPopoverOpen(false)}
+          severity="info"
+          action={
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() => navigate('/settings')}
+            >
+              Configure
+            </Button>
+          }
+          sx={{ mr: 2 }}
+        >
+          Provider requires configuration. Click Configure to edit settings.
+        </Alert>
+      </Popover>
     </Box>
   );
 }
