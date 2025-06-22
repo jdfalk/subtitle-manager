@@ -166,6 +166,30 @@ func (p *PostgresStore) DeleteMediaItem(path string) error {
 	return err
 }
 
+// CountSubtitles returns the number of subtitle records.
+func (p *PostgresStore) CountSubtitles() (int, error) {
+	row := p.db.QueryRow(`SELECT COUNT(*) FROM subtitles`)
+	var n int
+	err := row.Scan(&n)
+	return n, err
+}
+
+// CountDownloads returns the number of download records.
+func (p *PostgresStore) CountDownloads() (int, error) {
+	row := p.db.QueryRow(`SELECT COUNT(*) FROM downloads`)
+	var n int
+	err := row.Scan(&n)
+	return n, err
+}
+
+// CountMediaItems returns the number of media items.
+func (p *PostgresStore) CountMediaItems() (int, error) {
+	row := p.db.QueryRow(`SELECT COUNT(*) FROM media_items`)
+	var n int
+	err := row.Scan(&n)
+	return n, err
+}
+
 // InsertTag adds a tag to the database.
 func (p *PostgresStore) InsertTag(name string) error {
 	_, err := p.db.Exec(`INSERT INTO tags (name, created_at) VALUES ($1, $2)`, name, time.Now())

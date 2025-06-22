@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Database stats endpoint returns empty results",
+  "body": "The /api/database/stats endpoint always returns zeros, so the UI shows no statistics.",
+  "labels": ["bug", "codex"],
+  "guid": "create-database-stats-endpoint-returns-empty-results-2025-06-22"
+}

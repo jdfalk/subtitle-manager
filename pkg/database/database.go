@@ -378,6 +378,30 @@ func (s *SQLStore) DeleteMediaItem(path string) error {
 	return err
 }
 
+// CountSubtitles returns the number of subtitle records.
+func (s *SQLStore) CountSubtitles() (int, error) {
+	row := s.db.QueryRow(`SELECT COUNT(*) FROM subtitles`)
+	var n int
+	err := row.Scan(&n)
+	return n, err
+}
+
+// CountDownloads returns the number of download records.
+func (s *SQLStore) CountDownloads() (int, error) {
+	row := s.db.QueryRow(`SELECT COUNT(*) FROM downloads`)
+	var n int
+	err := row.Scan(&n)
+	return n, err
+}
+
+// CountMediaItems returns the number of media items.
+func (s *SQLStore) CountMediaItems() (int, error) {
+	row := s.db.QueryRow(`SELECT COUNT(*) FROM media_items`)
+	var n int
+	err := row.Scan(&n)
+	return n, err
+}
+
 // DB returns the underlying *sql.DB for compatibility with existing code.
 func (s *SQLStore) DB() *sql.DB {
 	return s.db
