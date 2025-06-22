@@ -3,6 +3,7 @@ import {
   Folder as FolderIcon,
   PlayArrow as PlayIcon,
 } from '@mui/icons-material';
+import QuickLinks from './components/QuickLinks.jsx';
 import {
   Alert,
   Box,
@@ -53,11 +54,13 @@ export default function Dashboard({ backendAvailable = true }) {
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [chooserOpen, setChooserOpen] = useState(false);
+  const [systemInfo, setSystemInfo] = useState(null);
 
   useEffect(() => {
     if (backendAvailable) {
       poll();
       loadProviders();
+      loadSystemInfo();
     }
   }, [backendAvailable]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -91,6 +94,18 @@ export default function Dashboard({ backendAvailable = true }) {
       ]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadSystemInfo = async () => {
+    if (!backendAvailable) return;
+    try {
+      const resp = await apiService.get('/api/system');
+      if (resp.ok) {
+        setSystemInfo(await resp.json());
+      }
+    } catch (err) {
+      console.error('Failed to load system info:', err);
     }
   };
 
@@ -191,6 +206,7 @@ export default function Dashboard({ backendAvailable = true }) {
 
   useEffect(() => {
     poll();
+    loadSystemInfo();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -213,6 +229,8 @@ export default function Dashboard({ backendAvailable = true }) {
           {error}
         </Alert>
       )}
+
+      <QuickLinks />
 
       <Grid container spacing={3}>
         {/* Scan Controls */}
@@ -384,6 +402,29 @@ export default function Dashboard({ backendAvailable = true }) {
             </CardContent>
           </Card>
         </Grid>
+
+        {/* System Info */}
+        {systemInfo && (
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  System Info
+                </Typography>
+                <List dense>
+                  {Object.entries(systemInfo).map(([key, value]) => (
+                    <ListItem key={key} divider>
+                      <ListItemText
+                        primary={key}
+                        secondary={String(value)}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
 
         {/* File List */}
         {status.files.length > 0 && (

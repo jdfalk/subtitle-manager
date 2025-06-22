@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Dashboard quick links missing",
+  "body": "UI quick links component isn't displayed correctly. Need to adjust dashboard layout and add system info card.",
+  "labels": ["codex"],
+  "guid": "create-dashboard-quick-links-missing-2025-06-22"
+}
