@@ -138,4 +138,22 @@ describe('Settings component', () => {
     // All available providers should be listed
     expect(await screen.findByText('Subscene')).toBeInTheDocument();
   });
+
+  test('import dialog allows entering Bazarr details', async () => {
+    await act(async () => {
+      render(<Settings />);
+    });
+
+    const importButton = screen.getByText('Import from Bazarr');
+    await act(async () => {
+      fireEvent.click(importButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    expect(screen.getByLabelText('Bazarr URL')).toBeInTheDocument();
+    expect(screen.getByLabelText('API Key')).toBeInTheDocument();
+  });
 });

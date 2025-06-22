@@ -148,6 +148,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/oauth/github/reset", authMiddleware(db, "admin", githubOAuthResetHandler()))
 	mux.Handle(prefix+"/api/config", authMiddleware(db, "basic", configHandler()))
 	// Add Bazarr endpoints for Settings UI
+	mux.Handle(prefix+"/api/bazarr/preview", authMiddleware(db, "basic", bazarrPreviewHandler()))
 	mux.Handle(prefix+"/api/bazarr/config", authMiddleware(db, "basic", bazarrConfigHandler()))
 	mux.Handle(prefix+"/api/bazarr/import", authMiddleware(db, "basic", bazarrImportConfigHandler()))
 	mux.Handle(prefix+"/api/scan", authMiddleware(db, "basic", scanHandler()))
@@ -654,6 +655,53 @@ func parseINIConfig(content string) map[string]any {
 	return result
 }
 
+// bazarrPreviewHandler fetches settings from a Bazarr instance for preview.
+// It accepts a JSON body with `url` and `api_key` and returns the mapped settings
+// along with detailed mapping information.
+func bazarrPreviewHandler() http.Handler {
+	type req struct {
+		URL    string `json:"url"`
+		APIKey string `json:"api_key"`
+	}
+	type resp struct {
+		RawSettings map[string]any       `json:"raw_settings"`
+		Preview     map[string]any       `json:"preview"`
+		Mappings    []bazarr.MappingInfo `json:"mappings"`
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var q req
+		if err := json.NewDecoder(r.Body).Decode(&q); err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
+		}
+
+		if q.URL == "" || q.APIKey == "" {
+			http.Error(w, "url and api_key required", http.StatusBadRequest)
+			return
+		}
+
+		settings, err := bazarr.FetchSettings(q.URL, q.APIKey)
+		if err != nil {
+			http.Error(w, "Failed to connect to Bazarr: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		mapped, mappings := bazarr.MapSettingsWithInfo(settings)
+
+		result := resp{RawSettings: settings, Preview: mapped, Mappings: mappings}
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(result); err != nil {
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
 // bazarrConfigHandler returns the current Bazarr configuration for preview
 func bazarrConfigHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -683,36 +731,53 @@ func bazarrConfigHandler() http.Handler {
 
 // bazarrImportConfigHandler imports settings from Bazarr into the current configuration
 func bazarrImportConfigHandler() http.Handler {
+	type req struct {
+		URL    string   `json:"url"`
+		APIKey string   `json:"api_key"`
+		Keys   []string `json:"keys"`
+	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
 
-		// Mock implementation - in practice this would:
-		// 1. Fetch current Bazarr configuration
-		// 2. Map Bazarr settings to subtitle-manager configuration
-		// 3. Update the current configuration with the mapped settings
-		// 4. Save the updated configuration
-
-		// For now, we'll simulate a successful import
-		result := map[string]interface{}{
-			"status":  "success",
-			"message": "Successfully imported settings from Bazarr",
-			"imported_keys": []string{
-				"opensubtitles_username",
-				"opensubtitles_password",
-				"addic7ed_username",
-				"provider_pool_enabled",
-				"subtitle_directory",
-			},
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(result); err != nil {
-			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		var q req
+		if err := json.NewDecoder(r.Body).Decode(&q); err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
 			return
 		}
+
+		if q.URL == "" || q.APIKey == "" {
+			http.Error(w, "url and api_key required", http.StatusBadRequest)
+			return
+		}
+
+		settings, err := bazarr.FetchSettings(q.URL, q.APIKey)
+		if err != nil {
+			http.Error(w, "Failed to connect to Bazarr: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		mapped, _ := bazarr.MapSettingsWithInfo(settings)
+
+		allowed := map[string]bool{}
+		for _, k := range q.Keys {
+			allowed[k] = true
+		}
+		for k, v := range mapped {
+			if len(q.Keys) == 0 || allowed[k] {
+				viper.Set(k, v)
+			}
+		}
+		if cfg := viper.ConfigFileUsed(); cfg != "" {
+			if err := viper.WriteConfig(); err != nil {
+				http.Error(w, "Failed to save configuration", http.StatusInternalServerError)
+				return
+			}
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 	})
 }
 
