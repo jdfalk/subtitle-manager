@@ -59,7 +59,7 @@ export default function Settings({ backendAvailable = true }) {
     open: false,
     provider: null,
   });
-  const [_bazarrConfig, setBazarrConfig] = useState(null);
+  const [_bazarrConfig] = useState(null);
   const [bazarrURL, setBazarrURL] = useState('');
   const [bazarrAPIKey, setBazarrAPIKey] = useState('');
   const [bazarrMappings, setBazarrMappings] = useState([]);
@@ -301,7 +301,6 @@ export default function Settings({ backendAvailable = true }) {
     setBazarrMappings([]);
     setSelectedSettings({});
     setPreviewConfig(null);
-    setBazarrConfig(null);
     setImportError('');
     setImportDialogOpen(true);
   };
