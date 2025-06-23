@@ -74,6 +74,9 @@ func TestProcessFileInvalidPath(t *testing.T) {
 // new version is larger, implying better quality.
 func TestProcessFile_UpgradeQuality(t *testing.T) {
 	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
+
 	vid := filepath.Join(dir, "movie.mkv")
 	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
 		t.Fatalf("create video: %v", err)
@@ -94,5 +97,57 @@ func TestProcessFile_UpgradeQuality(t *testing.T) {
 	}
 	if string(data) != "existing subtitle" {
 		t.Fatalf("subtitle replaced with lower quality: %q", data)
+	}
+}
+
+func TestProcessFileInvalidLanguage(t *testing.T) {
+	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
+
+	vid := filepath.Join(dir, "movie.mkv")
+	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
+		t.Fatalf("create video: %v", err)
+	}
+
+	// Test with invalid language containing special characters
+	err := ProcessFile(context.Background(), vid, "../en", "test", nil, false, nil)
+	if err == nil {
+		t.Fatalf("expected error for invalid language code")
+	}
+
+	// Test with empty language
+	err = ProcessFile(context.Background(), vid, "", "test", nil, false, nil)
+	if err == nil {
+		t.Fatalf("expected error for empty language code")
+	}
+
+	// Test with language containing path traversal
+	err = ProcessFile(context.Background(), vid, "en/../../evil", "test", nil, false, nil)
+	if err == nil {
+		t.Fatalf("expected error for language code with path traversal")
+	}
+}
+
+func TestProcessFileInvalidProvider(t *testing.T) {
+	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
+
+	vid := filepath.Join(dir, "movie.mkv")
+	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
+		t.Fatalf("create video: %v", err)
+	}
+
+	// Test with invalid provider containing special characters
+	err := ProcessFile(context.Background(), vid, "en", "../provider", nil, false, nil)
+	if err == nil {
+		t.Fatalf("expected error for invalid provider name")
+	}
+
+	// Test with provider containing path traversal
+	err = ProcessFile(context.Background(), vid, "en", "provider/../../evil", nil, false, nil)
+	if err == nil {
+		t.Fatalf("expected error for provider name with path traversal")
 	}
 }

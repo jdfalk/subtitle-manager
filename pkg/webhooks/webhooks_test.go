@@ -9,7 +9,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/spf13/viper"
 )
 
 // TestDispatcherSend verifies that Send posts the event and payload to all URLs.
@@ -124,17 +127,52 @@ func TestHandleInvalidProvider(t *testing.T) {
 	}
 }
 
-// TestHandleInvalidLang verifies that scanner errors result in a 500 response.
+// TestHandleInvalidLang verifies that invalid language codes result in a 400 response.
 func TestHandleInvalidLang(t *testing.T) {
 	dir := t.TempDir()
-	file := dir + "/video.mkv"
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
+
+	file := filepath.Join(dir, "video.mkv")
 	if err := os.WriteFile(file, []byte("x"), 0644); err != nil {
 		t.Fatalf("write video: %v", err)
 	}
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(http.MethodPost, "/", nil)
-	handle(w, r, event{Path: file, Lang: "??"})
-	if w.Code != http.StatusInternalServerError {
-		t.Fatalf("expected 500, got %d", w.Code)
+	// Use an invalid language code with special characters
+	handle(w, r, event{Path: file, Lang: "../invalid"})
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", w.Code)
+	}
+}
+
+// TestHandleInvalidPath verifies that invalid file paths result in a 400 response.
+func TestHandleInvalidPath(t *testing.T) {
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(http.MethodPost, "/", nil)
+	// Use a path with traversal attempt
+	handle(w, r, event{Path: "../../../etc/passwd", Lang: "en"})
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", w.Code)
+	}
+}
+
+// TestHandleInvalidProviderName verifies that invalid provider names result in a 400 response.
+func TestHandleInvalidProviderName(t *testing.T) {
+	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
+
+	file := filepath.Join(dir, "video.mkv")
+	if err := os.WriteFile(file, []byte("x"), 0644); err != nil {
+		t.Fatalf("write video: %v", err)
+	}
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(http.MethodPost, "/", nil)
+	// Use an invalid provider name with special characters
+	handle(w, r, event{Path: file, Lang: "en", Provider: "../badprovider"})
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", w.Code)
 	}
 }
