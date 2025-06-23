@@ -494,3 +494,12 @@ The file [BAZARR_FEATURES.md](BAZARR_FEATURES.md) lists the important functions,
 Package `pkg/syncer` provides the foundation for aligning external subtitle files with media. The initial version simply loads subtitles and supports shifting by a constant offset. Future iterations will analyze audio tracks and embedded subtitles to calculate precise timing adjustments.
 The package can also translate subtitles to a target language during the sync
 process using the existing translation providers.
+
+## 29. Related Documentation
+
+For additional context, see the following documents:
+- [API Design](API_DESIGN.md)
+- [Test Design](TEST_DESIGN.md)
+- [Process Workflows](PROCESS_WORKFLOWS.md)
+- [Developer Guide](DEVELOPER_GUIDE.md)
+

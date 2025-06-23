@@ -653,6 +653,7 @@ For a detailed list of Bazarr features used as the parity target, see [docs/BAZA
 Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).
 A high-level code overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).
 Protobuf regeneration steps are documented in [docs/PROTOBUF_REGEN.md](docs/PROTOBUF_REGEN.md).
+Additional references include [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) for environment setup and [docs/API_DESIGN.md](docs/API_DESIGN.md) for REST and gRPC design notes.
 
 ## Security
 
