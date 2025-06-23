@@ -10,7 +10,7 @@ import (
 // whisperModel is the OpenAI model used for transcriptions.
 var whisperModel = openai.Whisper1
 
-// baseURL points to the OpenAI API. Tests may override it.
+// baseURL points to the OpenAI-compatible API. Tests and configuration may override it.
 var baseURL = "https://api.openai.com/v1"
 
 // SetWhisperModel overrides the default Whisper model for testing purposes.
@@ -18,7 +18,7 @@ func SetWhisperModel(m string) {
 	whisperModel = m
 }
 
-// SetBaseURL overrides the OpenAI API base URL.
+// SetBaseURL overrides the OpenAI API base URL used for transcription requests.
 func SetBaseURL(u string) {
 	baseURL = u
 }

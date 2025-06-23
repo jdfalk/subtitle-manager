@@ -18,14 +18,18 @@ if [ "$ENABLE_WHISPER" = "1" ]; then
   if command -v docker >/dev/null 2>&1; then
     if ! docker ps --format '{{.Names}}' | grep -q "^$WHISPER_CONTAINER_NAME$"; then
       echo "Starting Whisper ASR container..."
-      docker run -d --name "$WHISPER_CONTAINER_NAME" \
-        --gpus all \
+      gpu_flag=""
+      if [ "${WHISPER_DEVICE:-cuda}" != "cpu" ]; then
+        gpu_flag="--gpus all"
+      fi
+      docker run -d --name "$WHISPER_CONTAINER_NAME" $gpu_flag \
         -p ${WHISPER_PORT}:9000 \
         -e ASR_MODEL=${WHISPER_MODEL:-base} \
         -e ASR_DEVICE=${WHISPER_DEVICE:-cuda} \
         "$WHISPER_IMAGE" >/dev/null
     fi
     export SM_PROVIDERS_WHISPER_API_URL=${SM_PROVIDERS_WHISPER_API_URL:-http://localhost:${WHISPER_PORT}}
+    export SM_OPENAI_API_URL=${SM_OPENAI_API_URL:-http://localhost:${WHISPER_PORT}/v1}
   else
     echo "Docker not available; cannot launch Whisper ASR service" >&2
   fi

@@ -13,6 +13,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/captcha"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 )
 
@@ -77,6 +78,8 @@ func init() {
 	viper.BindPFlag("google_api_key", rootCmd.PersistentFlags().Lookup("google-key"))
 	rootCmd.PersistentFlags().String("openai-key", "", "OpenAI API key")
 	viper.BindPFlag("openai_api_key", rootCmd.PersistentFlags().Lookup("openai-key"))
+	rootCmd.PersistentFlags().String("openai-api-url", "", "OpenAI API base URL")
+	viper.BindPFlag("openai_api_url", rootCmd.PersistentFlags().Lookup("openai-api-url"))
 	rootCmd.PersistentFlags().String("opensubtitles-key", "", "OpenSubtitles API key")
 	viper.BindPFlag("opensubtitles.api_key", rootCmd.PersistentFlags().Lookup("opensubtitles-key"))
 	rootCmd.PersistentFlags().String("ffmpeg-path", "", "path to ffmpeg binary")
@@ -153,6 +156,7 @@ func initConfig() {
 	viper.SetDefault("scan_workers", 4)
 	viper.SetDefault("google_api_url", "https://translation.googleapis.com/language/translate/v2")
 	viper.SetDefault("openai_model", "gpt-3.5-turbo")
+	viper.SetDefault("openai_api_url", "https://api.openai.com/v1")
 	viper.SetDefault("opensubtitles.api_url", "https://rest.opensubtitles.org")
 	viper.SetDefault("opensubtitles.user_agent", "github.com/jdfalk/subtitle-manager/0.1")
 	viper.SetDefault("anticaptcha.api_key", "")
@@ -198,6 +202,9 @@ func initConfig() {
 	}
 	if m := viper.GetString("openai_model"); m != "" {
 		translator.SetOpenAIModel(m)
+	}
+	if u := viper.GetString("openai_api_url"); u != "" {
+		transcriber.SetBaseURL(u)
 	}
 	if u := viper.GetString("anticaptcha.api_url"); u != "" {
 		captcha.SetAPIURL(u)
