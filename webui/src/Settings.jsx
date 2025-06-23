@@ -2,13 +2,10 @@
 
 import {
   Security as AuthIcon,
-  CloudDownloadOutlined,
   Storage as DatabaseIcon,
   Settings as GeneralIcon,
-  Download as ImportIcon,
   Notifications as NotificationIcon,
   CloudDownload as ProvidersIcon,
-  Refresh as RefreshIcon,
   Label as TagsIcon,
   People as UsersIcon,
 } from '@mui/icons-material';
@@ -16,29 +13,15 @@ import {
   Alert,
   Box,
   Button,
-  Card,
-  CardContent,
-  Checkbox,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
   Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Paper,
   Snackbar,
-  Stack,
   Tab,
   Tabs,
-  TextField,
   Typography,
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
+import ImportDialog from './components/ImportDialog.jsx';
 import LoadingComponent from './components/LoadingComponent.jsx';
 import ProviderCard from './components/ProviderCard.jsx';
 import ProviderConfigDialog from './components/ProviderConfigDialog.jsx';
@@ -597,166 +580,23 @@ export default function Settings({ backendAvailable = true }) {
       />
 
       {/* Bazarr Import Dialog */}
-      <Dialog
+      <ImportDialog
         open={importDialogOpen}
         onClose={() => setImportDialogOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Import Settings from Bazarr</DialogTitle>
-        <DialogContent>
-          <Stack spacing={3} sx={{ mt: 1 }}>
-            <TextField
-              label="Bazarr URL"
-              fullWidth
-              value={bazarrURL}
-              onChange={e => setBazarrURL(e.target.value)}
-            />
-            <TextField
-              label="API Key"
-              type="password"
-              fullWidth
-              value={bazarrAPIKey}
-              onChange={e => setBazarrAPIKey(e.target.value)}
-            />
-            {importError && <Alert severity="error">{importError}</Alert>}
-            <Button
-              variant="outlined"
-              onClick={previewBazarr}
-              disabled={importLoading}
-              startIcon={
-                importLoading ? (
-                  <CircularProgress size={20} />
-                ) : (
-                  <CloudDownloadOutlined />
-                )
-              }
-            >
-              {importLoading ? 'Connecting...' : 'Connect'}
-            </Button>
-
-            {previewConfig && bazarrMappings.length > 0 && (
-              <Box>
-                <Typography variant="h6" gutterBottom>
-                  Found Settings ({bazarrMappings.length} items)
-                </Typography>
-                <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => {
-                      const selected = {};
-                      bazarrMappings.forEach(m => (selected[m.key] = true));
-                      setSelectedSettings(selected);
-                    }}
-                  >
-                    Select All
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => setSelectedSettings({})}
-                  >
-                    Deselect All
-                  </Button>
-                </Stack>
-
-                {Object.entries(
-                  bazarrMappings.reduce((g, m) => {
-                    const sec = m.section || 'Other';
-                    if (!g[sec]) g[sec] = [];
-                    g[sec].push(m);
-                    return g;
-                  }, {})
-                ).map(([section, mappings]) => (
-                  <Card key={section} variant="outlined" sx={{ mb: 2 }}>
-                    <CardContent>
-                      <Typography variant="h6" color="primary" sx={{ mb: 1 }}>
-                        {section}
-                      </Typography>
-                      <List dense>
-                        {mappings.map((mapping, idx) => (
-                          <div key={mapping.key}>
-                            <ListItem sx={{ pl: 0 }}>
-                              <ListItemIcon>
-                                <Checkbox
-                                  checked={
-                                    selectedSettings[mapping.key] || false
-                                  }
-                                  onChange={e =>
-                                    setSelectedSettings({
-                                      ...selectedSettings,
-                                      [mapping.key]: e.target.checked,
-                                    })
-                                  }
-                                />
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={
-                                  <Typography
-                                    variant="body2"
-                                    fontWeight="medium"
-                                  >
-                                    {mapping.description}
-                                  </Typography>
-                                }
-                                secondary={
-                                  <Box>
-                                    <Typography
-                                      variant="caption"
-                                      color="primary"
-                                      sx={{
-                                        fontFamily: 'monospace',
-                                        display: 'block',
-                                      }}
-                                    >
-                                      {mapping.key}
-                                    </Typography>
-                                    <Typography
-                                      variant="caption"
-                                      sx={{
-                                        fontFamily: 'monospace',
-                                        display: 'block',
-                                      }}
-                                    >
-                                      Value: {String(mapping.value)}
-                                    </Typography>
-                                  </Box>
-                                }
-                              />
-                            </ListItem>
-                            {idx < mappings.length - 1 && <Divider />}
-                          </div>
-                        ))}
-                      </List>
-                    </CardContent>
-                  </Card>
-                ))}
-
-                <Alert severity="info">
-                  <Typography variant="body2">
-                    {Object.values(selectedSettings).filter(Boolean).length} of{' '}
-                    {bazarrMappings.length} settings selected for import
-                  </Typography>
-                </Alert>
-              </Box>
-            )}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setImportDialogOpen(false)}>Cancel</Button>
-          <Button
-            onClick={importFromBazarr}
-            variant="contained"
-            disabled={importing || !previewConfig}
-            startIcon={
-              importing ? <RefreshIcon className="spin" /> : <ImportIcon />
-            }
-          >
-            {importing ? 'Importing...' : 'Import Selected'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        bazarrURL={bazarrURL}
+        setBazarrURL={setBazarrURL}
+        bazarrAPIKey={bazarrAPIKey}
+        setBazarrAPIKey={setBazarrAPIKey}
+        bazarrMappings={bazarrMappings}
+        selectedSettings={selectedSettings}
+        setSelectedSettings={setSelectedSettings}
+        previewConfig={previewConfig}
+        importLoading={importLoading}
+        importError={importError}
+        importing={importing}
+        onPreview={previewBazarr}
+        onImport={importFromBazarr}
+      />
 
       {/* Status Snackbar */}
       <Snackbar
