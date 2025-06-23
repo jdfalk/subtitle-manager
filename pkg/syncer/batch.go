@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/asticode/go-astisub"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 // BatchItem specifies a single subtitle synchronization request.
@@ -25,6 +26,12 @@ func SyncBatch(items []BatchItem, opts Options) []error {
 		outPath := it.Output
 		if outPath == "" {
 			outPath = it.Subtitle
+		}
+		var err error
+		outPath, err = security.ValidateAndSanitizePath(outPath)
+		if err != nil {
+			errs[i] = err
+			continue
 		}
 		result, err := Sync(it.Media, it.Subtitle, opts)
 		if err != nil {
