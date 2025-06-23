@@ -219,3 +219,20 @@ For additional detailed guidelines, refer to these comprehensive style and proce
 - [Pull Request Descriptions](pull-request-descriptions.md)
 - [Code Review Guidelines](review-selection.md)
 - [Test Generation Guidelines](test-generation.md)
+
+## Code Documentation Guidelines
+
+### Development Workflow Instructions
+
+1. **Write the code first** - Focus on implementing the core functionality and logic
+2. **Complete the implementation** - Ensure all features and requirements are fully implemented
+3. **Run formatting tools** - Apply code formatters (e.g., Prettier, Black, gofmt) to standardize code style
+4. **Run linting tools** - Execute linters (e.g., ESLint, pylint, golint) to catch potential issues
+5. **Fix linting issues** - Address any warnings or errors identified by the linter
+
+### Important Notes
+
+- Prioritize getting functional code written before worrying about style and linting rules
+- Only address linting issues during development if they represent major errors that prevent further development
+- Minor style and linting issues should be resolved at the end of the development process
+- This approach allows for faster development iteration and reduces interruptions during the coding phase
