@@ -10,11 +10,11 @@ import {
   Brightness7 as LightModeIcon,
   Menu as MenuIcon,
   PushPin as PinIcon,
+  Schedule as ScheduleIcon,
   Settings as SettingsIcon,
   BugReport as SystemIcon,
   Translate as TranslateIcon,
   Download as WantedIcon,
-  Schedule as ScheduleIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -1025,7 +1025,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router basename={basePath}>
+      <Router
+        basename={basePath}
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <AppContent />
       </Router>
     </ThemeProvider>
