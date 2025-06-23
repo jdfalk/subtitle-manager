@@ -11,6 +11,7 @@ import {
   Menu as MenuIcon,
   PushPin as PinIcon,
   Schedule as ScheduleIcon,
+  Edit as EditIcon,
   Settings as SettingsIcon,
   BugReport as SystemIcon,
   Translate as TranslateIcon,
@@ -68,6 +69,7 @@ const Convert = lazy(() => import('./Convert.jsx'));
 const Translate = lazy(() => import('./Translate.jsx'));
 const Scheduling = lazy(() => import('./Scheduling.jsx'));
 const Setup = lazy(() => import('./Setup.jsx'));
+const ConfigEditor = lazy(() => import('./ConfigEditor.jsx'));
 const MediaDetails = lazy(() => import('./MediaDetails.jsx'));
 
 /**
@@ -419,6 +421,12 @@ function App() {
       label: 'Scheduling',
       icon: <ScheduleIcon />,
       path: '/tools/scheduling',
+    },
+    {
+      id: 'config',
+      label: 'Config File',
+      icon: <EditIcon />,
+      path: '/tools/config',
     },
   ];
 
@@ -996,6 +1004,10 @@ function App() {
               <Route
                 path="/tools/scheduling"
                 element={<Scheduling backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/tools/config"
+                element={<ConfigEditor backendAvailable={backendAvailable} />}
               />
               <Route path="/offline-info" element={<OfflineInfo />} />
             </Routes>
