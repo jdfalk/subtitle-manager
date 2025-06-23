@@ -26,7 +26,8 @@ describe('ConfigEditor component', () => {
       target: { value: 'test_key: new' },
     });
     fireEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(fetch).toHaveBeenLastCalledWith('/api/config', expect.any(Object)));
+    await waitFor(() =>
+      expect(fetch).toHaveBeenLastCalledWith('/api/config', expect.any(Object))
+    );
   });
 });
-
