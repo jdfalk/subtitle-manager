@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 
@@ -168,4 +169,78 @@ func ValidateWebSocketOrigin(origin, host string) bool {
 	}
 
 	return false
+}
+
+// ValidateLanguageCode validates that a language code contains only safe characters
+// to prevent path traversal attacks. Only alphanumeric characters are allowed.
+func ValidateLanguageCode(lang string) error {
+	if lang == "" {
+		return fmt.Errorf("language code cannot be empty")
+	}
+
+	// Maximum reasonable length for language codes (ISO 639 codes are typically 2-3 chars)
+	if len(lang) > 10 {
+		return fmt.Errorf("language code too long: %s", lang)
+	}
+
+	// Only allow alphanumeric characters
+	for _, r := range lang {
+		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9')) {
+			return fmt.Errorf("invalid character in language code: %c", r)
+		}
+	}
+
+	return nil
+}
+
+// ValidateProviderName validates that a provider name contains only safe characters
+func ValidateProviderName(provider string) error {
+	if provider == "" {
+		return nil // Empty provider is allowed
+	}
+
+	if len(provider) > 50 {
+		return fmt.Errorf("provider name too long: %s", provider)
+	}
+
+	// Allow alphanumeric characters, underscores, and hyphens
+	validName := regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
+	if !validName.MatchString(provider) {
+		return fmt.Errorf("invalid provider name: %s", provider)
+	}
+
+	return nil
+}
+
+// ValidateSubtitleOutputPath validates and constructs a safe subtitle output path
+func ValidateSubtitleOutputPath(videoPath, lang string) (string, error) {
+	// Validate inputs
+	sanitizedVideoPath, err := ValidateAndSanitizePath(videoPath)
+	if err != nil {
+		return "", fmt.Errorf("invalid video path: %w", err)
+	}
+
+	if err := ValidateLanguageCode(lang); err != nil {
+		return "", fmt.Errorf("invalid language code: %w", err)
+	}
+
+	// Construct subtitle path
+	base := strings.TrimSuffix(filepath.Base(sanitizedVideoPath), filepath.Ext(sanitizedVideoPath))
+	dir := filepath.Dir(sanitizedVideoPath)
+
+	// Clean the base filename to prevent injection
+	base = filepath.Clean(base)
+	if strings.Contains(base, "..") {
+		return "", fmt.Errorf("invalid characters in video filename")
+	}
+
+	subtitlePath := filepath.Join(dir, base+"."+lang+".srt")
+	subtitlePath = filepath.Clean(subtitlePath)
+
+	// Ensure the output path is still within allowed directories
+	if _, err := ValidateAndSanitizePath(subtitlePath); err != nil {
+		return "", fmt.Errorf("invalid subtitle output path: %w", err)
+	}
+
+	return subtitlePath, nil
 }

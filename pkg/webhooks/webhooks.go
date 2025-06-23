@@ -14,6 +14,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 // Dispatcher sends webhook events to a list of URLs.
@@ -62,10 +63,36 @@ type event struct {
 
 // handle processes a webhook event by fetching a subtitle for the provided file.
 func handle(w http.ResponseWriter, r *http.Request, ev event) {
+	logger := logging.GetLogger("webhook")
+
+	// Validate required fields
 	if ev.Path == "" || ev.Lang == "" {
+		logger.Warn("missing required fields in webhook event")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	// Validate and sanitize the file path
+	if _, err := security.ValidateAndSanitizePath(ev.Path); err != nil {
+		logger.Warnf("invalid file path in webhook: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Validate language code
+	if err := security.ValidateLanguageCode(ev.Lang); err != nil {
+		logger.Warnf("invalid language code in webhook: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Validate provider name if specified
+	if err := security.ValidateProviderName(ev.Provider); err != nil {
+		logger.Warnf("invalid provider name in webhook: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	var p providers.Provider
 	var name string
 	var err error
@@ -73,12 +100,13 @@ func handle(w http.ResponseWriter, r *http.Request, ev event) {
 		p, err = providers.Get(ev.Provider, "")
 		name = ev.Provider
 		if err != nil {
+			logger.Warnf("failed to get provider %s: %v", ev.Provider, err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 	}
 	if err := scanner.ProcessFile(r.Context(), ev.Path, ev.Lang, name, p, true, nil); err != nil {
-		logging.GetLogger("webhook").Warnf("process %s: %v", ev.Path, err)
+		logger.Warnf("process %s: %v", ev.Path, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

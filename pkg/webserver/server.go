@@ -475,7 +475,15 @@ func extractHandler() http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		items, err := subtitles.ExtractFromMedia(q.Path)
+
+		// Validate and sanitize the path to prevent path traversal attacks
+		sanitizedPath, err := security.ValidateAndSanitizePath(q.Path)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid path: %v", err), http.StatusBadRequest)
+			return
+		}
+
+		items, err := subtitles.ExtractFromMedia(sanitizedPath)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -525,8 +533,15 @@ func bazarrImportHandler(db *sql.DB) http.Handler {
 			return
 		}
 
-		// Fetch settings from Bazarr
-		settings, err := bazarr.FetchSettings(q.URL, q.APIKey)
+		// Validate the URL to prevent SSRF attacks
+		sanitizedURL, err := security.ValidateURL(q.URL)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid URL: %v", err), http.StatusBadRequest)
+			return
+		}
+
+		// Fetch settings from Bazarr using the sanitized URL
+		settings, err := bazarr.FetchSettings(sanitizedURL, q.APIKey)
 		if err != nil {
 			http.Error(w, "Failed to connect to Bazarr: "+err.Error(), http.StatusBadRequest)
 			return
