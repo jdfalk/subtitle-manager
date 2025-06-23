@@ -369,7 +369,10 @@ func (p *PebbleStore) SetMediaAltTitles(path string, titles []string) error {
 	if err != nil || item == nil {
 		return err
 	}
-	data, _ := json.Marshal(titles)
+	data, err := json.Marshal(titles)
+	if err != nil {
+		return err
+	}
 	item.AltTitles = string(data)
 	return p.InsertMediaItem(item)
 }
