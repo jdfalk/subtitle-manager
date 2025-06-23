@@ -1,0 +1,6 @@
+{
+  "action": "comment",
+  "number": 1102,
+  "body": "Plan: update CI workflow to ignore Codecov errors using continue-on-error.",
+  "guid": "comment-1102-2025-06-23-125302"
+}
