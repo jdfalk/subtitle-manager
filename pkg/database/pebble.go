@@ -1,7 +1,9 @@
+// file: pkg/database/pebble.go
 package database
 
 import (
 	"encoding/json"
+	"errors"
 	"sort"
 	"strings"
 	"time"
@@ -16,6 +18,36 @@ import (
 // Values are stored as JSON encoded SubtitleRecord structures.
 type PebbleStore struct {
 	db *pebble.DB
+}
+
+func mediaPathKey(path string) []byte {
+	return []byte("media_path:" + path)
+}
+
+func mediaKey(id string) []byte {
+	return []byte("media:" + id)
+}
+
+func (p *PebbleStore) getMediaByPath(path string) (*MediaItem, string, error) {
+	val, closer, err := p.db.Get(mediaPathKey(path))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil, "", nil
+		}
+		return nil, "", err
+	}
+	closer.Close()
+	id := string(val)
+	data, closer, err := p.db.Get(mediaKey(id))
+	if err != nil {
+		return nil, "", err
+	}
+	defer closer.Close()
+	var it MediaItem
+	if err := json.Unmarshal(data, &it); err != nil {
+		return nil, "", err
+	}
+	return &it, id, nil
 }
 
 // OpenPebble opens a Pebble database at path and returns a PebbleStore.
@@ -179,8 +211,16 @@ func (p *PebbleStore) InsertMediaItem(rec *MediaItem) error {
 	if err != nil {
 		return err
 	}
-	key := []byte("media:" + rec.ID)
-	return p.db.Set(key, b, pebble.Sync)
+	batch := p.db.NewBatch()
+	if err := batch.Set(mediaKey(rec.ID), b, nil); err != nil {
+		batch.Close()
+		return err
+	}
+	if err := batch.Set(mediaPathKey(rec.Path), []byte(rec.ID), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	return batch.Commit(pebble.Sync)
 }
 
 // ListMediaItems returns stored media items sorted by creation time.
@@ -210,26 +250,20 @@ func (p *PebbleStore) ListMediaItems() ([]MediaItem, error) {
 
 // DeleteMediaItem removes records with matching path.
 func (p *PebbleStore) DeleteMediaItem(path string) error {
-	iter, err := p.db.NewIter(nil)
-	if err != nil {
+	item, id, err := p.getMediaByPath(path)
+	if err != nil || item == nil {
 		return err
 	}
-	defer iter.Close()
-	for iter.First(); iter.Valid(); iter.Next() {
-		if !strings.HasPrefix(string(iter.Key()), "media:") {
-			continue
-		}
-		var r MediaItem
-		if err := json.Unmarshal(iter.Value(), &r); err != nil {
-			return err
-		}
-		if r.Path == path {
-			if err := p.db.Delete(iter.Key(), pebble.Sync); err != nil {
-				return err
-			}
-		}
+	batch := p.db.NewBatch()
+	if err := batch.Delete(mediaKey(id), nil); err != nil {
+		batch.Close()
+		return err
 	}
-	return iter.Error()
+	if err := batch.Delete(mediaPathKey(path), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	return batch.Commit(pebble.Sync)
 }
 
 // CountSubtitles returns the number of subtitle records.
@@ -321,61 +355,41 @@ func (p *PebbleStore) ListTagsForMedia(mediaID int64) ([]Tag, error) { return ni
 
 // SetMediaReleaseGroup stores the release group in the media item record.
 func (p *PebbleStore) SetMediaReleaseGroup(path, group string) error {
-	items, err := p.ListMediaItems()
-	if err != nil {
+	item, _, err := p.getMediaByPath(path)
+	if err != nil || item == nil {
 		return err
 	}
-	for _, it := range items {
-		if it.Path == path {
-			it.ReleaseGroup = group
-			return p.InsertMediaItem(&it)
-		}
-	}
-	return nil
+	item.ReleaseGroup = group
+	return p.InsertMediaItem(item)
 }
 
 // SetMediaAltTitles stores alternate titles in the media item record.
 func (p *PebbleStore) SetMediaAltTitles(path string, titles []string) error {
-	items, err := p.ListMediaItems()
-	if err != nil {
+	item, _, err := p.getMediaByPath(path)
+	if err != nil || item == nil {
 		return err
 	}
-	for _, it := range items {
-		if it.Path == path {
-			data, _ := json.Marshal(titles)
-			it.AltTitles = string(data)
-			return p.InsertMediaItem(&it)
-		}
-	}
-	return nil
+	data, _ := json.Marshal(titles)
+	item.AltTitles = string(data)
+	return p.InsertMediaItem(item)
 }
 
 // SetMediaFieldLocks stores locked fields in the media item record.
 func (p *PebbleStore) SetMediaFieldLocks(path, locks string) error {
-	items, err := p.ListMediaItems()
-	if err != nil {
+	item, _, err := p.getMediaByPath(path)
+	if err != nil || item == nil {
 		return err
 	}
-	for _, it := range items {
-		if it.Path == path {
-			it.FieldLocks = locks
-			return p.InsertMediaItem(&it)
-		}
-	}
-	return nil
+	item.FieldLocks = locks
+	return p.InsertMediaItem(item)
 }
 
 // SetMediaTitle updates the title in the media item record.
 func (p *PebbleStore) SetMediaTitle(path, title string) error {
-	items, err := p.ListMediaItems()
-	if err != nil {
+	item, _, err := p.getMediaByPath(path)
+	if err != nil || item == nil {
 		return err
 	}
-	for _, it := range items {
-		if it.Path == path {
-			it.Title = title
-			return p.InsertMediaItem(&it)
-		}
-	}
-	return nil
+	item.Title = title
+	return p.InsertMediaItem(item)
 }
