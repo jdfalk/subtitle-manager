@@ -41,6 +41,23 @@ type server struct {
 	gptKey    string
 }
 
+// SetConfig updates configuration values using Viper. The provided settings map
+// keys to string values. Updated values are persisted to the config file if
+// one is in use.
+func (s *server) SetConfig(ctx context.Context, req *pb.ConfigRequest) (*emptypb.Empty, error) {
+	for k, v := range req.Settings {
+		viper.Set(k, v)
+	}
+	if cfg := viper.ConfigFileUsed(); cfg != "" {
+		if err := viper.WriteConfig(); err != nil {
+			return nil, err
+		}
+	}
+	s.googleKey = viper.GetString("google_api_key")
+	s.gptKey = viper.GetString("openai_api_key")
+	return &emptypb.Empty{}, nil
+}
+
 func (s *server) GetConfig(ctx context.Context, _ *emptypb.Empty) (*pb.ConfigResponse, error) {
 	out := make(map[string]string)
 	for k, v := range viper.AllSettings() {

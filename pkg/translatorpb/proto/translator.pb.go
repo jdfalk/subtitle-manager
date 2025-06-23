@@ -7,13 +7,12 @@
 package translatorpb
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -163,6 +162,50 @@ func (x *ConfigResponse) GetSettings() map[string]string {
 	return nil
 }
 
+type ConfigRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Settings      map[string]string      `protobuf:"bytes,1,rep,name=settings,proto3" json:"settings,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfigRequest) Reset() {
+	*x = ConfigRequest{}
+	mi := &file_translator_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfigRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfigRequest) ProtoMessage() {}
+
+func (x *ConfigRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_translator_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfigRequest.ProtoReflect.Descriptor instead.
+func (*ConfigRequest) Descriptor() ([]byte, []int) {
+	return file_translator_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ConfigRequest) GetSettings() map[string]string {
+	if x != nil {
+		return x.Settings
+	}
+	return nil
+}
+
 var File_translator_proto protoreflect.FileDescriptor
 
 const file_translator_proto_rawDesc = "" +
@@ -178,11 +221,17 @@ const file_translator_proto_rawDesc = "" +
 	"\bsettings\x18\x01 \x03(\v2(.translator.ConfigResponse.SettingsEntryR\bsettings\x1a;\n" +
 	"\rSettingsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012\x97\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x91\x01\n" +
+	"\rConfigRequest\x12C\n" +
+	"\bsettings\x18\x01 \x03(\v2'.translator.ConfigRequest.SettingsEntryR\bsettings\x1a;\n" +
+	"\rSettingsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012\xd7\x01\n" +
 	"\n" +
 	"Translator\x12H\n" +
 	"\tTranslate\x12\x1c.translator.TranslateRequest\x1a\x1d.translator.TranslateResponse\x12?\n" +
-	"\tGetConfig\x12\x16.google.protobuf.Empty\x1a\x1a.translator.ConfigResponseB#Z!subtitle-manager/pkg/translatorpbb\x06proto3"
+	"\tGetConfig\x12\x16.google.protobuf.Empty\x1a\x1a.translator.ConfigResponse\x12>\n" +
+	"\tSetConfig\x12\x19.translator.ConfigRequest\x1a\x16.google.protobuf.EmptyB5Z3github.com/jdfalk/subtitle-manager/pkg/translatorpbb\x06proto3"
 
 var (
 	file_translator_proto_rawDescOnce sync.Once
@@ -196,25 +245,30 @@ func file_translator_proto_rawDescGZIP() []byte {
 	return file_translator_proto_rawDescData
 }
 
-var file_translator_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_translator_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_translator_proto_goTypes = []any{
 	(*TranslateRequest)(nil),  // 0: translator.TranslateRequest
 	(*TranslateResponse)(nil), // 1: translator.TranslateResponse
 	(*ConfigResponse)(nil),    // 2: translator.ConfigResponse
-	nil,                       // 3: translator.ConfigResponse.SettingsEntry
-	(*emptypb.Empty)(nil),     // 4: google.protobuf.Empty
+	(*ConfigRequest)(nil),     // 3: translator.ConfigRequest
+	nil,                       // 4: translator.ConfigResponse.SettingsEntry
+	nil,                       // 5: translator.ConfigRequest.SettingsEntry
+	(*emptypb.Empty)(nil),     // 6: google.protobuf.Empty
 }
 var file_translator_proto_depIdxs = []int32{
-	3, // 0: translator.ConfigResponse.settings:type_name -> translator.ConfigResponse.SettingsEntry
-	0, // 1: translator.Translator.Translate:input_type -> translator.TranslateRequest
-	4, // 2: translator.Translator.GetConfig:input_type -> google.protobuf.Empty
-	1, // 3: translator.Translator.Translate:output_type -> translator.TranslateResponse
-	2, // 4: translator.Translator.GetConfig:output_type -> translator.ConfigResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: translator.ConfigResponse.settings:type_name -> translator.ConfigResponse.SettingsEntry
+	5, // 1: translator.ConfigRequest.settings:type_name -> translator.ConfigRequest.SettingsEntry
+	0, // 2: translator.Translator.Translate:input_type -> translator.TranslateRequest
+	6, // 3: translator.Translator.GetConfig:input_type -> google.protobuf.Empty
+	3, // 4: translator.Translator.SetConfig:input_type -> translator.ConfigRequest
+	1, // 5: translator.Translator.Translate:output_type -> translator.TranslateResponse
+	2, // 6: translator.Translator.GetConfig:output_type -> translator.ConfigResponse
+	6, // 7: translator.Translator.SetConfig:output_type -> google.protobuf.Empty
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_translator_proto_init() }
@@ -228,7 +282,7 @@ func file_translator_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_translator_proto_rawDesc), len(file_translator_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
