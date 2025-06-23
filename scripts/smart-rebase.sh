@@ -147,6 +147,17 @@ check_prerequisites() {
     log_success "Prerequisites check passed"
 }
 
+# Set up remote if it doesn't exist (for CI environments)
+setup_remote() {
+    if ! git remote get-url origin >/dev/null 2>&1; then
+        log_info "No 'origin' remote found, configuring for jdfalk/subtitle-manager"
+        git remote add origin https://github.com/jdfalk/subtitle-manager.git
+        log_info "Added origin remote: https://github.com/jdfalk/subtitle-manager.git"
+    else
+        log_info "Origin remote already configured: $(git remote get-url origin)"
+    fi
+}
+
 # Create backup
 create_backup() {
     log_info "Creating backup..."
@@ -410,7 +421,11 @@ push_changes() {
         if git push --force-with-lease origin "$CURRENT_BRANCH"; then
             log_success "Force push completed successfully"
         else
-            log_error "Force push failed"
+            log_error "Force push failed. This might be due to:"
+            log_error "1. Authentication issues (no push access)"
+            log_error "2. Network connectivity problems"
+            log_error "3. Branch protection rules"
+            log_error "Remote URL: $(git remote get-url origin 2>/dev/null || echo 'Not configured')"
             return 1
         fi
     else
@@ -450,6 +465,7 @@ main() {
     log_info "Verbose: $VERBOSE"
 
     check_prerequisites
+    setup_remote
     create_backup
     perform_rebase
     push_changes

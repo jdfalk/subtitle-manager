@@ -35,9 +35,23 @@ success() {
 TARGET_BRANCH="${1:-main}"
 CURRENT_BRANCH=$(git branch --show-current)
 
+# Set up remote if it doesn't exist (for CI environments)
+setup_remote() {
+    if ! git remote get-url origin >/dev/null 2>&1; then
+        log "No 'origin' remote found, configuring for jdfalk/subtitle-manager"
+        git remote add origin https://github.com/jdfalk/subtitle-manager.git
+        log "Added origin remote: https://github.com/jdfalk/subtitle-manager.git"
+    else
+        log "Origin remote already configured: $(git remote get-url origin)"
+    fi
+}
+
 log "Starting Codex rebase automation"
 log "Current branch: $CURRENT_BRANCH"
 log "Target branch: $TARGET_BRANCH"
+
+# Setup remote if needed
+setup_remote()
 
 # Pre-flight checks
 if [[ "$CURRENT_BRANCH" == "$TARGET_BRANCH" ]]; then
@@ -58,7 +72,11 @@ log "Created backup branch: $BACKUP_BRANCH"
 
 # Fetch latest changes
 log "Fetching latest changes"
-git fetch origin
+if ! git fetch origin; then
+    error "Failed to fetch from origin. Check network connectivity and authentication."
+    error "Remote URL: $(git remote get-url origin 2>/dev/null || echo 'Not configured')"
+    exit 1
+fi
 
 # Function to auto-resolve conflicts with Codex-friendly strategies
 auto_resolve_conflicts() {
@@ -126,7 +144,11 @@ log "Force pushing rebased branch"
 if git push --force-with-lease origin "$CURRENT_BRANCH"; then
     success "Force push completed"
 else
-    error "Force push failed"
+    error "Force push failed. This might be due to:"
+    error "1. Authentication issues (no push access)"
+    error "2. Network connectivity problems"
+    error "3. Branch protection rules"
+    error "Remote URL: $(git remote get-url origin 2>/dev/null || echo 'Not configured')"
     exit 1
 fi
 
@@ -176,7 +198,8 @@ success "Codex rebase automation completed successfully!"
 
 # Optionally clean up .main.incoming files if they're identical to resolved files
 log "Checking for redundant .main.incoming files..."
-for incoming_file in *.main.incoming 2>/dev/null; do
+shopt -s nullglob
+for incoming_file in *.main.incoming; do
     if [[ -f "$incoming_file" ]]; then
         original_file="${incoming_file%.main.incoming}"
         if [[ -f "$original_file" ]] && cmp -s "$incoming_file" "$original_file"; then
@@ -185,5 +208,6 @@ for incoming_file in *.main.incoming 2>/dev/null; do
         fi
     fi
 done
+shopt -u nullglob
 
 log "Rebase automation complete. Check $SUMMARY_FILE for details."
