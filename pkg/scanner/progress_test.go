@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	providersmocks "github.com/jdfalk/subtitle-manager/pkg/providers/mocks"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -18,6 +19,8 @@ func TestScanDirectoryProgress(t *testing.T) {
 	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
 		t.Fatalf("create video: %v", err)
 	}
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
 	var called int
 	cb := func(string) { called++ }
 	m := providersmocks.NewProvider(t)

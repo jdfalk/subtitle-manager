@@ -8,11 +8,14 @@ import (
 	"time"
 
 	providersmocks "github.com/jdfalk/subtitle-manager/pkg/providers/mocks"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/mock"
 )
 
 func TestWatchDirectory(t *testing.T) {
 	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
 	ctx, cancel := context.WithCancel(context.Background())
 	m := providersmocks.NewProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("sub"), nil)
@@ -49,6 +52,8 @@ func TestWatchDirectoryRecursive(t *testing.T) {
 	if err := os.MkdirAll(subdir, 0755); err != nil {
 		t.Fatalf("mkdir: %v", err)
 	}
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
 	ctx, cancel := context.WithCancel(context.Background())
 	m := providersmocks.NewProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("sub"), nil)

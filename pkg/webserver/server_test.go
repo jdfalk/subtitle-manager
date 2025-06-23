@@ -224,6 +224,8 @@ func TestScanHandlers(t *testing.T) {
 	defer srv.Close()
 	// create video file
 	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
 	vid := filepath.Join(dir, "file.mkv")
 	_ = os.WriteFile(vid, []byte("x"), 0644) // nolint:errcheck
 	// trigger scan
@@ -278,6 +280,8 @@ func TestExtract(t *testing.T) {
 	}
 
 	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
 	script := filepath.Join(dir, "ffmpeg")
 	data := "#!/bin/sh\ncp ../../testdata/simple.srt \"$6\"\n"
 	if err := os.WriteFile(script, []byte(data), 0755); err != nil {
@@ -572,6 +576,8 @@ func TestDownload(t *testing.T) {
 	defer srv.Close()
 
 	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
 	vid := filepath.Join(dir, "video.mkv")
 	os.WriteFile(vid, []byte("x"), 0644)
 
@@ -631,6 +637,8 @@ func TestWebhookSonarr(t *testing.T) {
 	defer viper.Reset()
 
 	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
 	vid := filepath.Join(dir, "file.mkv")
 	os.WriteFile(vid, []byte("x"), 0644)
 
