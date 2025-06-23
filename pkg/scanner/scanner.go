@@ -1,3 +1,4 @@
+// file: pkg/scanner/scanner.go
 package scanner
 
 import (
@@ -12,6 +13,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 // ScanDirectory walks through the directory and downloads subtitles for video files
@@ -19,9 +21,13 @@ import (
 // history. If upgrade is false existing subtitle files are skipped.
 func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p providers.Provider, upgrade bool, workers int, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
-	dir = filepath.Clean(dir)
+	sanitizedDir, err := security.ValidateAndSanitizePath(dir)
+	if err != nil {
+		logger.Warnf("invalid path: %v", err)
+		return err
+	}
 	work := pool.New().WithErrors().WithMaxGoroutines(workers)
-	err := filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
+	err = filepath.WalkDir(sanitizedDir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -50,11 +56,12 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 // file is left untouched.
 func ProcessFile(ctx context.Context, path, lang string, providerName string, p providers.Provider, upgrade bool, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
-	path = filepath.Clean(path)
-	if !isValidPath(path) {
-		logger.Warnf("invalid path: %s", path)
-		return fmt.Errorf("invalid path: %s", path)
+	sanitizedPath, err := security.ValidateAndSanitizePath(path)
+	if err != nil {
+		logger.Warnf("invalid path: %v", err)
+		return err
 	}
+	path = sanitizedPath
 
 	// Validate the lang parameter to ensure it contains only alphanumeric characters
 	if !isValidLang(lang) {
@@ -62,14 +69,15 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		return fmt.Errorf("invalid language code: %s", lang)
 	}
 
-	out := filepath.Clean(strings.TrimSuffix(path, filepath.Ext(path)) + "." + lang + ".srt")
+	base := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	out := filepath.Join(filepath.Dir(path), base+"."+lang+".srt")
+	out = filepath.Clean(out)
 	if !upgrade {
 		if _, err := os.Stat(out); err == nil {
 			return nil
 		}
 	}
 	var data []byte
-	var err error
 	if p != nil {
 		data, err = p.Fetch(ctx, path, lang)
 	} else {
@@ -98,28 +106,6 @@ func isValidLang(lang string) bool {
 		}
 	}
 	return true
-}
-
-// isValidPath performs basic validation on file paths to ensure they are safe to process
-func isValidPath(path string) bool {
-	// Check if path is empty
-	if path == "" {
-		return false
-	}
-
-	// Check for path traversal attempts
-	if strings.Contains(path, "..") {
-		return false
-	}
-
-	// Check if path contains null bytes (security check)
-	if strings.Contains(path, "\x00") {
-		return false
-	}
-
-	// Ensure path is absolute after cleaning
-	cleanPath := filepath.Clean(path)
-	return filepath.IsAbs(cleanPath)
 }
 
 var videoExtensions = []string{".mkv", ".mp4", ".avi", ".mov"}

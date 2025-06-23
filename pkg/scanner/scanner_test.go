@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	providersmocks "github.com/jdfalk/subtitle-manager/pkg/providers/mocks"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -16,6 +17,8 @@ func TestScanDirectory(t *testing.T) {
 	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
 		t.Fatalf("create video: %v", err)
 	}
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
 	// first scan creates subtitle
 	m := providersmocks.NewProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("a"), nil)
@@ -50,5 +53,19 @@ func TestScanDirectory(t *testing.T) {
 	data, _ = os.ReadFile(sub)
 	if string(data) != "c" {
 		t.Fatalf("subtitle not upgraded: %q", data)
+	}
+}
+
+func TestScanDirectoryInvalidPath(t *testing.T) {
+	err := ScanDirectory(context.Background(), "../invalid", "en", "test", nil, false, 1, nil)
+	if err == nil {
+		t.Fatalf("expected error for invalid path")
+	}
+}
+
+func TestProcessFileInvalidPath(t *testing.T) {
+	err := ProcessFile(context.Background(), "../bad/movie.mkv", "en", "test", nil, false, nil)
+	if err == nil {
+		t.Fatalf("expected error for invalid path")
 	}
 }

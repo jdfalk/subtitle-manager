@@ -1,0 +1,6 @@
+{
+  "action": "comment",
+  "number": 1106,
+  "body": "Plan: validate dir path to prevent path injection and use filepath.Join for output",
+  "guid": "comment-1106-2025-06-23-125105"
+}

@@ -11,6 +11,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 // ProgressFunc is called with each processed video file path.
@@ -21,8 +22,13 @@ type ProgressFunc func(file string)
 func ScanDirectoryProgress(ctx context.Context, dir, lang, providerName string,
 	p providers.Provider, upgrade bool, workers int, store database.SubtitleStore, cb ProgressFunc) error {
 	logger := logging.GetLogger("scanner")
+	sanitizedDir, err := security.ValidateAndSanitizePath(dir)
+	if err != nil {
+		logger.Warnf("invalid path: %v", err)
+		return err
+	}
 	work := pool.New().WithErrors().WithMaxGoroutines(workers)
-	err := filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
+	err = filepath.WalkDir(sanitizedDir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
