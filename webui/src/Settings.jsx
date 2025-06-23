@@ -4,21 +4,24 @@ import {
   Security as AuthIcon,
   Storage as DatabaseIcon,
   Settings as GeneralIcon,
+  CloudUpload as ImportIcon,
   Notifications as NotificationIcon,
   CloudDownload as ProvidersIcon,
+  Refresh as RefreshIcon,
   Label as TagsIcon,
-  People as UsersIcon,
+  People as UsersIcon
 } from '@mui/icons-material';
 import {
   Alert,
   Box,
   Button,
+  CircularProgress,
   Grid,
   Paper,
   Snackbar,
   Tab,
   Tabs,
-  Typography,
+  Typography
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import ImportDialog from './components/ImportDialog.jsx';
@@ -56,6 +59,7 @@ export default function Settings({ backendAvailable = true }) {
     open: false,
     provider: null,
   });
+  const [_bazarrConfig, setBazarrConfig] = useState(null);
   const [bazarrURL, setBazarrURL] = useState('');
   const [bazarrAPIKey, setBazarrAPIKey] = useState('');
   const [bazarrMappings, setBazarrMappings] = useState([]);
@@ -297,6 +301,7 @@ export default function Settings({ backendAvailable = true }) {
     setBazarrMappings([]);
     setSelectedSettings({});
     setPreviewConfig(null);
+    setBazarrConfig(null);
     setImportError('');
     setImportDialogOpen(true);
   };
