@@ -294,3 +294,10 @@ This release marks ~95% project completion with full production readiness achiev
 ### Changed
 
 - `GoogleTranslate` now uses the official Google Cloud SDK instead of manual HTTP requests.
+
+## [0.3.10] - 2025-06-27
+
+### Added
+
+- Documentation update verifying PR workflow.
+

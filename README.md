@@ -11,6 +11,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - 📦 **Container Ready**: Docker images published to GitHub Container Registry
 - ✅ **Bazarr Parity**: Full feature compatibility with all major subtitle providers
 - 🔄 **Enterprise Features**: PostgreSQL, webhooks, notifications, anti-captcha, and advanced scheduling
+- 🗄️ **Automated Issue Management**: Workflow archives processed files and opens pull requests.
 
 ## Features
 
