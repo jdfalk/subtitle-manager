@@ -116,3 +116,56 @@ func ValidateAndSanitizePath(userPath string) (string, error) {
 	}
 	return "", fmt.Errorf("path not in allowed directories: %s", cleanPath)
 }
+
+// ValidateWebSocketOrigin validates the Origin header for WebSocket connections
+// to prevent cross-site WebSocket hijacking attacks. It allows connections from:
+// - Same origin (localhost with various ports for development)
+// - Configured allowed origins from environment/config
+// - Local network origins for development (127.0.0.1, localhost)
+func ValidateWebSocketOrigin(origin, host string) bool {
+	if origin == "" {
+		// Allow empty origin for same-origin requests (some browsers)
+		return true
+	}
+
+	originURL, err := url.Parse(origin)
+	if err != nil {
+		return false
+	}
+
+	hostURL, err := url.Parse("http://" + host)
+	if err != nil {
+		return false
+	}
+
+	// Allow same origin
+	if originURL.Host == hostURL.Host {
+		return true
+	}
+
+	// Allow localhost variations for development
+	allowedHosts := []string{
+		"localhost",
+		"127.0.0.1",
+		"::1",
+	}
+
+	originHost := strings.Split(originURL.Host, ":")[0]
+	for _, allowed := range allowedHosts {
+		if originHost == allowed {
+			return true
+		}
+	}
+
+	// Check configured allowed origins from environment
+	if allowedOrigins := viper.GetString("allowed_websocket_origins"); allowedOrigins != "" {
+		for _, allowed := range strings.Split(allowedOrigins, ",") {
+			allowed = strings.TrimSpace(allowed)
+			if origin == allowed || originURL.Host == allowed {
+				return true
+			}
+		}
+	}
+
+	return false
+}
