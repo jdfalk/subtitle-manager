@@ -1,0 +1,6 @@
+{
+  "action": "comment",
+  "number": 541,
+  "body": "Implement ConfigEditor page to edit YAML config via /api/config endpoint",
+  "guid": "comment-541-2025-06-23-125628"
+}
