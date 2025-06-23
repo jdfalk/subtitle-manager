@@ -15,16 +15,23 @@ import (
 // TranslateFileToSRT translates the subtitle file at inPath using the
 // specified translation service and writes an SRT file to outPath.
 // googleKey, gptKey and grpcAddr are passed to the underlying provider
-// depending on the service selected.
+// depending on the service selected. Results are cached in-memory so
+// identical lines are only translated once per invocation.
 func TranslateFileToSRT(inPath, outPath, lang, service, googleKey, gptKey, grpcAddr string) error {
 	sub, err := astisub.OpenFile(inPath)
 	if err != nil {
 		return err
 	}
+	cache := make(map[string]string)
 	for _, item := range sub.Items {
-		t, err := translator.Translate(service, item.String(), lang, googleKey, gptKey, grpcAddr)
-		if err != nil {
-			return err
+		text := item.String()
+		t, ok := cache[text]
+		if !ok {
+			t, err = translator.Translate(service, text, lang, googleKey, gptKey, grpcAddr)
+			if err != nil {
+				return err
+			}
+			cache[text] = t
 		}
 		item.Lines = []astisub.Line{{Items: []astisub.LineItem{{Text: t}}}}
 	}

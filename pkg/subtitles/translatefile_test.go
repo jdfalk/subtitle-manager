@@ -64,3 +64,28 @@ func TestTranslateFilesToSRT(t *testing.T) {
 		}
 	}
 }
+
+func TestTranslateFileToSRTCache(t *testing.T) {
+	count := 0
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		count++
+		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
+	}))
+	defer srv.Close()
+	translator.SetGoogleAPIURL(srv.URL)
+	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
+
+	dir := t.TempDir()
+	in := filepath.Join(dir, "in.srt")
+	data := "1\n00:00:01,000 --> 00:00:02,000\nHello\n\n2\n00:00:02,500 --> 00:00:03,500\nHello\n"
+	if err := os.WriteFile(in, []byte(data), 0644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	out := filepath.Join(dir, "out.srt")
+	if err := TranslateFileToSRT(in, out, "es", "google", "k", "", ""); err != nil {
+		t.Fatalf("translate: %v", err)
+	}
+	if count != 1 {
+		t.Fatalf("expected 1 request, got %d", count)
+	}
+}
