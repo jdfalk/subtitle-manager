@@ -156,4 +156,23 @@ describe('Settings component', () => {
     expect(screen.getByLabelText('Bazarr URL')).toBeInTheDocument();
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
   });
+
+  test('shows permission error when config fetch forbidden', async () => {
+    const { apiService } = await import('../services/api.js');
+    apiService.get.mockImplementationOnce(url => {
+      if (url === '/api/config') {
+        return Promise.resolve({ ok: false, status: 403 });
+      }
+      if (url === '/api/providers') {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve([]) });
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+    });
+
+    await act(async () => {
+      render(<Settings />);
+    });
+
+    expect(await screen.findByText('Permission denied')).toBeInTheDocument();
+  });
 });

@@ -91,6 +91,10 @@ export default function Settings({ backendAvailable = true }) {
       if (response.ok) {
         const data = await response.json();
         setConfig(data);
+      } else if (response.status === 403) {
+        setError('Permission denied');
+      } else {
+        setError('Failed to load configuration');
       }
     } catch (error) {
       console.error('Failed to load configuration:', error);
