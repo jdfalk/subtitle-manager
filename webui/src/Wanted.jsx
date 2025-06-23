@@ -49,6 +49,7 @@ export default function Wanted({ backendAvailable = true }) {
   const [loading, setLoading] = useState(true);
 
   const providers = [
+    { value: 'embedded', label: 'Embedded' },
     { value: 'generic', label: 'Generic' },
     { value: 'opensubtitles', label: 'OpenSubtitles' },
     { value: 'addic7ed', label: 'Addic7ed' },
@@ -304,12 +305,14 @@ export default function Wanted({ backendAvailable = true }) {
                             </Typography>
                           }
                           secondary={
-                            <Chip
-                              label={provider}
-                              size="small"
-                              variant="outlined"
-                              sx={{ mt: 1 }}
-                            />
+                            <Box component="span">
+                              <Chip
+                                label={provider}
+                                size="small"
+                                variant="outlined"
+                                sx={{ mt: 1 }}
+                              />
+                            </Box>
                           }
                         />
                         <ListItemSecondaryAction>
