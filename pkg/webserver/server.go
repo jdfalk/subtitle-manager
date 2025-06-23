@@ -682,7 +682,7 @@ func bazarrPreviewHandler() http.Handler {
 		}
 
 		if q.URL == "" || q.APIKey == "" {
-			http.Error(w, "url and api_key required", http.StatusBadRequest)
+			http.Error(w, "URL and API key are required", http.StatusBadRequest)
 			return
 		}
 
