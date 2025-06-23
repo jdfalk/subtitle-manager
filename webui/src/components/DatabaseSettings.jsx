@@ -1,34 +1,31 @@
 // file: webui/src/components/DatabaseSettings.jsx
 import {
+  Backup as BackupIcon,
+  Storage as DatabaseIcon,
+  CleaningServices as OptimizeIcon,
+  Assessment as StatsIcon,
+} from '@mui/icons-material';
+import {
+  Alert,
   Box,
   Button,
   Card,
   CardContent,
-  Typography,
-  Grid,
   Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Alert,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  CircularProgress,
-  LinearProgress,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
 } from '@mui/material';
-import {
-  Storage as DatabaseIcon,
-  Backup as BackupIcon,
-  CleaningServices as OptimizeIcon,
-  Assessment as StatsIcon,
-} from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 
 /**
@@ -152,7 +149,7 @@ export default function DatabaseSettings({
 
       <Grid container spacing={3}>
         {/* Database Information */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Typography
@@ -230,7 +227,7 @@ export default function DatabaseSettings({
         </Grid>
 
         {/* Database Statistics */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Typography
@@ -298,7 +295,7 @@ export default function DatabaseSettings({
         </Grid>
 
         {/* Database Management Actions */}
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom color="primary">
@@ -306,7 +303,7 @@ export default function DatabaseSettings({
               </Typography>
 
               <Grid container spacing={2}>
-                <Grid item>
+                <Grid size="auto">
                   <Button
                     variant="outlined"
                     startIcon={<BackupIcon />}
@@ -316,7 +313,7 @@ export default function DatabaseSettings({
                     Create Backup
                   </Button>
                 </Grid>
-                <Grid item>
+                <Grid size="auto">
                   <Button
                     variant="outlined"
                     startIcon={<OptimizeIcon />}

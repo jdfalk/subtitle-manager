@@ -115,7 +115,6 @@ We're migrating from a single `issue_updates.json` file to a distributed approac
 The unified issue management workflow now:
 
 1. **Scans both locations**:
-
    - Legacy: `issue_updates.json`
    - New: `.github/issue-updates/*.json`
 
