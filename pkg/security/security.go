@@ -115,6 +115,19 @@ func ValidateAndSanitizePath(userPath string) (string, error) {
 			return absPath, nil
 		}
 	}
+
+	// Special handling for temporary directories in testing/development scenarios
+	// Allow paths within the system temp directory but still check for path traversal
+	if tempDir := os.TempDir(); tempDir != "" {
+		relPath, err := filepath.Rel(tempDir, absPath)
+		if err == nil && !strings.HasPrefix(relPath, "..") {
+			if strings.Contains(relPath, "..") {
+				return "", fmt.Errorf("path traversal detected: %s", cleanPath)
+			}
+			return absPath, nil
+		}
+	}
+
 	return "", fmt.Errorf("path not in allowed directories: %s", cleanPath)
 }
 

@@ -6,12 +6,12 @@ import "sync"
 // subscribers stores active channels for task updates.
 var (
 	subMu       sync.Mutex
-	subscribers = map[chan Task]struct{}{}
+	subscribers = map[chan TaskSnapshot]struct{}{}
 )
 
 // Subscribe returns a channel that receives task updates.
-func Subscribe() chan Task {
-	ch := make(chan Task, 1)
+func Subscribe() chan TaskSnapshot {
+	ch := make(chan TaskSnapshot, 1)
 	subMu.Lock()
 	subscribers[ch] = struct{}{}
 	subMu.Unlock()
@@ -19,7 +19,7 @@ func Subscribe() chan Task {
 }
 
 // Unsubscribe removes the channel from receiving updates and closes it.
-func Unsubscribe(ch chan Task) {
+func Unsubscribe(ch chan TaskSnapshot) {
 	subMu.Lock()
 	delete(subscribers, ch)
 	subMu.Unlock()
@@ -27,11 +27,11 @@ func Unsubscribe(ch chan Task) {
 }
 
 // broadcast sends the task snapshot to all subscribers.
-func broadcast(t Task) {
+func broadcast(snapshot TaskSnapshot) {
 	subMu.Lock()
 	for ch := range subscribers {
 		select {
-		case ch <- t:
+		case ch <- snapshot:
 		default:
 		}
 	}
