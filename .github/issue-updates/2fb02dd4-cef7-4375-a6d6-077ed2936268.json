@@ -1,0 +1,6 @@
+{
+  "action": "comment",
+  "number": 1105,
+  "body": "Sanitize batch output path with filepath.Clean to prevent path injection",
+  "guid": "comment-1105-2025-06-23-125446"
+}
