@@ -12,21 +12,21 @@ This guide helps new contributors get started with Subtitle Manager.
 ## Setup
 
 1. Clone the repository and install dependencies:
-   ```bash
+   \```bash
    git clone https://github.com/jdfalk/subtitle-manager.git
    cd subtitle-manager
    go mod download
    npm --prefix webui install
-   ```
+   \```
 2. Build the web assets and compile the binary:
-   ```bash
+   \```bash
    go generate ./webui
    go build
-   ```
+   \```
 3. Run tests to verify your environment:
-   ```bash
+   \```bash
    make test-all
-   ```
+   \```
 
 ## Contributing
 
@@ -39,8 +39,8 @@ This guide helps new contributors get started with Subtitle Manager.
 
 - Branch from `main` and keep your branch up to date using the rebase command in `AGENTS.md`.
 - Run `go fmt` and `goimports` before committing, or use the provided pre-commit hook:
-  ```bash
+  \```bash
   ./scripts/install-pre-commit-hooks.sh
-  ```
+  \```
 - Submit pull requests with concise descriptions and link related issues.
 

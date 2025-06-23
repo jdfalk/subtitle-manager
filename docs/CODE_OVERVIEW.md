@@ -21,7 +21,7 @@ This document provides a high level summary of the main source files and how the
 
 ## Interaction Flow
 
-```
+\```
 +-------------+       +---------------+       +-------------+
 |  CLI (cmd)  +------>+  Core Packages +------>+   Storage   |
 +-------------+       +---------------+       +-------------+
@@ -31,7 +31,7 @@ This document provides a high level summary of the main source files and how the
 +------------+               |                 |  Web UI   |
 | Webserver  +---------------+---------------->+  (React)  |
 +------------+                                 +-----------+
-```
+\```
 
 CLI commands and HTTP handlers both rely on the packages in `pkg/` for all business logic. The `webserver` package exposes the same functionality over REST which is consumed by the React application.
 

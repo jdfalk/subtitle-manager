@@ -82,17 +82,17 @@ Subtitle Manager features a comprehensive tagging system that provides unified o
 
 The tagging system exposes consistent REST endpoints for all entity types:
 
-```
+\```
 GET    /api/{entityType}/{id}/tags     - List tags for entity
 POST   /api/{entityType}/{id}/tags     - Add tag to entity
 DELETE /api/{entityType}/{id}/tags/{tagId} - Remove tag from entity
 GET    /api/tags?entity_type={type}    - List tags by entity type
 POST   /api/tags/bulk                  - Bulk tag operations
-```
+\```
 
 #### Usage Examples
 
-```bash
+\```bash
 # Tag a movie for family content
 POST /api/media/12345/tags {"tag_id": "family"}
 
@@ -101,7 +101,7 @@ GET /api/tags?entity_type=user&name=premium
 
 # Bulk tag multiple providers
 POST /api/tags/bulk {"tag_id": "reliable", "entities": [{"type": "provider", "id": "opensubtitles"}, {"type": "provider", "id": "subscene"}]}
-```
+\```
 
 ### Supported Subtitle Providers
 
@@ -192,7 +192,7 @@ The backend provides full production functionality with feature parity to Bazarr
 
 ### Using Make (Recommended)
 
-```bash
+\```bash
 # Clone repository
 git clone <this repository>
 cd subtitle-manager
@@ -205,11 +205,11 @@ make quick-build
 
 # See all available targets
 make help
-```
+\```
 
 ### Manual Installation
 
-```bash
+\```bash
 # Clone repository
 git clone <this repository>
 cd subtitle-manager
@@ -217,7 +217,7 @@ cd subtitle-manager
 # Install dependencies, build web UI and compile
 go generate ./webui
 go build
-```
+\```
 
 ### Build Automation
 
@@ -235,7 +235,7 @@ The Makefile handles dependency resolution, web UI building, Go compilation, tes
 
 ## Usage
 
-```
+\```
 subtitle-manager convert [input] [output]
 subtitle-manager merge [sub1] [sub2] [output]
 subtitle-manager translate [input] [output] [lang]
@@ -263,7 +263,7 @@ subtitle-manager user apikey [username]
 subtitle-manager user token [email]
 subtitle-manager user role [username] [role]
 subtitle-manager user list
-```
+\```
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
@@ -330,7 +330,7 @@ All endpoints require authentication via session cookies or API keys using the `
 
 Example configuration:
 
-```
+\```
 log-level: info
 log_levels:
   translate: debug
@@ -355,7 +355,7 @@ providers:
 github_client_id: yourClientID
 github_client_secret: yourClientSecret
 github_redirect_url: http://localhost:8080/api/oauth/github/callback
-```
+\```
 
 ### Docker
 
@@ -366,7 +366,7 @@ dependencies. The binary is located at `/usr/bin/ffmpeg` and the container sets
 
 #### Quick Start
 
-```bash
+\```bash
 # Simple start - web interface only
 docker run -p 8080:8080 ghcr.io/jdfalk/subtitle-manager:latest
 
@@ -401,7 +401,7 @@ docker run -d \
   -v /media/tv:/media/tv:ro \
   -v /home/user/subtitle-manager/subtitles:/subtitles \
   ghcr.io/jdfalk/subtitle-manager:latest
-```
+\```
 
 Access the web interface at `http://localhost:8080`
 
@@ -457,7 +457,7 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 
 For easier management, use the provided Docker Compose configuration:
 
-```bash
+\```bash
 # Download the compose file
 curl -O https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-compose.yml
 
@@ -473,11 +473,11 @@ docker-compose logs -f
 
 # Stop the service
 docker-compose down
-```
+\```
 
 **Sample docker-compose.yml:**
 
-```yaml
+\```yaml
 version: "3.8"
 services:
   subtitle-manager:
@@ -493,13 +493,13 @@ services:
     environment:
       - SM_LOG_LEVEL=info
       - SM_GOOGLE_API_KEY=your_api_key_here
-```
+\```
 
 #### Production Deployment (Docker Swarm)
 
 For production deployments with Docker Swarm:
 
-```bash
+\```bash
 # Download the stack file
 curl -O https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-stack.yml
 
@@ -517,13 +517,13 @@ docker service update --image ghcr.io/jdfalk/subtitle-manager:latest subtitle-ma
 
 # Remove the stack
 docker stack rm subtitle-manager
-```
+\```
 
 #### Building Custom Images
 
 Build a container image with your customizations:
 
-```bash
+\```bash
 # Clone the repository
 git clone https://github.com/jdfalk/subtitle-manager.git
 cd subtitle-manager
@@ -533,7 +533,7 @@ docker build -t subtitle-manager-custom .
 
 # Run your custom image
 docker run -d -p 8080:8080 subtitle-manager-custom
-```
+\```
 
 #### Initial Setup
 
@@ -576,13 +576,13 @@ This means **you don't need to worry about code formatting** - just focus on you
 
 For developers who prefer to format code locally before pushing, you can install pre-commit hooks:
 
-```bash
+\```bash
 # Install the auto-formatting pre-commit hook
 ./scripts/install-pre-commit-hooks.sh
 
 # Or install the legacy quality-check pre-commit hook
 ./scripts/install-hooks.sh
-```
+\```
 
 The **auto-formatting hook** (`install-pre-commit-hooks.sh`) will:
 
@@ -605,14 +605,14 @@ To bypass any hook temporarily, use `git commit --no-verify`.
 **Legacy Support**: Pushing an `issue_updates.json` file to the repository root still works for backward compatibility. The unified issue management workflow processes both formats.
 
 The new format uses individual files with this structure:
-```json
+\```json
 {
   "action": "create",
   "title": "Issue title",
   "body": "Issue description",
   "labels": ["enhancement"]
 }
-```
+\```
 
 Benefits of the new system:
 - ✅ No merge conflicts - each update is in its own file
@@ -635,14 +635,14 @@ problem.
 The gRPC service definitions are located in `proto/translator.proto`. If you
 modify this file, regenerate the Go bindings before committing:
 
-```bash
+\```bash
 # Install protobuf tools if missing
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 # Generate updated gRPC code
 make proto-gen
-```
+\```
 
 The generated files live in `pkg/translatorpb` and should be committed with your
 changes.
