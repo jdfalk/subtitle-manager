@@ -1,17 +1,14 @@
 package cmd
 
 import (
-	"context"
-	"fmt"
 	"net"
 
+	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
-	"github.com/jdfalk/subtitle-manager/pkg/translator"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 var grpcAddr string
@@ -22,10 +19,16 @@ var grpcServerCmd = &cobra.Command{
 	Short: "Run translation gRPC server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		s := grpc.NewServer()
-		pb.RegisterTranslatorServer(s, &server{
-			googleKey: viper.GetString("google_api_key"),
-			gptKey:    viper.GetString("openai_api_key"),
-		})
+
+		// Create server with persistent config enabled (uses Viper)
+		server := grpcserver.NewServer(
+			viper.GetString("google_api_key"),
+			viper.GetString("openai_api_key"),
+			true, // persistConfig = true
+			"",   // no prefix for Viper keys
+		)
+
+		pb.RegisterTranslatorServer(s, server)
 		lis, err := net.Listen("tcp", grpcAddr)
 		if err != nil {
 			return err
@@ -33,45 +36,6 @@ var grpcServerCmd = &cobra.Command{
 		logging.GetLogger("grpc-server").Infof("listening on %s", grpcAddr)
 		return s.Serve(lis)
 	},
-}
-
-type server struct {
-	pb.UnimplementedTranslatorServer
-	googleKey string
-	gptKey    string
-}
-
-// SetConfig updates configuration values using Viper. The provided settings map
-// keys to string values. Updated values are persisted to the config file if
-// one is in use.
-func (s *server) SetConfig(ctx context.Context, req *pb.ConfigRequest) (*emptypb.Empty, error) {
-	for k, v := range req.Settings {
-		viper.Set(k, v)
-	}
-	if cfg := viper.ConfigFileUsed(); cfg != "" {
-		if err := viper.WriteConfig(); err != nil {
-			return nil, err
-		}
-	}
-	s.googleKey = viper.GetString("google_api_key")
-	s.gptKey = viper.GetString("openai_api_key")
-	return &emptypb.Empty{}, nil
-}
-
-func (s *server) GetConfig(ctx context.Context, _ *emptypb.Empty) (*pb.ConfigResponse, error) {
-	out := make(map[string]string)
-	for k, v := range viper.AllSettings() {
-		out[k] = fmt.Sprintf("%v", v)
-	}
-	return &pb.ConfigResponse{Settings: out}, nil
-}
-
-func (s *server) Translate(ctx context.Context, req *pb.TranslateRequest) (*pb.TranslateResponse, error) {
-	text, err := translator.Translate("google", req.Text, req.Language, s.googleKey, s.gptKey, "")
-	if err != nil {
-		return nil, err
-	}
-	return &pb.TranslateResponse{TranslatedText: text}, nil
 }
 
 func init() {
