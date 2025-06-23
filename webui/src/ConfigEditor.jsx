@@ -1,6 +1,13 @@
 // file: webui/src/ConfigEditor.jsx
 import { Edit as EditIcon, Save as SaveIcon } from '@mui/icons-material';
-import { Alert, Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { apiService } from './services/api.js';
 import yaml from 'js-yaml';
@@ -73,7 +80,12 @@ export default function ConfigEditor({ backendAvailable = true }) {
       )}
 
       {loading ? (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="200px"
+        >
           <CircularProgress />
         </Box>
       ) : (
@@ -84,7 +96,11 @@ export default function ConfigEditor({ backendAvailable = true }) {
             </Alert>
           )}
           {status && (
-            <Alert severity="success" sx={{ mb: 2 }} onClose={() => setStatus('')}>
+            <Alert
+              severity="success"
+              sx={{ mb: 2 }}
+              onClose={() => setStatus('')}
+            >
               {status}
             </Alert>
           )}
@@ -97,7 +113,9 @@ export default function ConfigEditor({ backendAvailable = true }) {
             fullWidth
             variant="outlined"
             disabled={!backendAvailable}
-            sx={{ fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace' }}
+            sx={{
+              fontFamily: '"Roboto Mono", "Consolas", "Monaco", monospace',
+            }}
             data-testid="config-editor"
           />
           <Box mt={2}>
