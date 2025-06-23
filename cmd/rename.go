@@ -16,7 +16,7 @@ var renameCmd = &cobra.Command{
 		logger := logging.GetLogger("rename")
 		video, lang := args[0], args[1]
 		if err := renamer.Rename(video, lang); err != nil {
-			logger.Warnf("rename %s: %v", video, err)
+			logger.Errorf("rename %s: %v", video, err)
 			return err
 		}
 		logger.Infof("renamed subtitles for %s", video)

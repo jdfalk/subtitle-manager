@@ -1,6 +1,7 @@
 package renamer
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,14 +19,15 @@ func Rename(videoPath, lang string) error {
 	if err != nil {
 		return err
 	}
-	newName := base + "." + lang + ".srt"
-	for _, f := range files {
-		if f == newName {
-			continue
-		}
-		if err := os.Rename(f, newName); err != nil {
-			return err
-		}
+	if len(files) > 1 {
+		return fmt.Errorf("multiple subtitle files for %s", videoPath)
 	}
-	return nil
+	if len(files) == 0 {
+		return nil
+	}
+	newName := base + "." + lang + ".srt"
+	if files[0] == newName {
+		return nil
+	}
+	return os.Rename(files[0], newName)
 }
