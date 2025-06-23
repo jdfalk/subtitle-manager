@@ -2,34 +2,34 @@
 
 import {
   Security as AuthIcon,
+  CloudDownloadOutlined,
   Storage as DatabaseIcon,
   Settings as GeneralIcon,
   Download as ImportIcon,
   Notifications as NotificationIcon,
   CloudDownload as ProvidersIcon,
-  CloudDownloadOutlined,
   Refresh as RefreshIcon,
-  People as UsersIcon,
   Label as TagsIcon,
+  People as UsersIcon,
 } from '@mui/icons-material';
 import {
   Alert,
   Box,
   Button,
+  Card,
+  CardContent,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Card,
-  CardContent,
+  Divider,
+  Grid,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Checkbox,
-  Divider,
-  Grid,
   Paper,
   Snackbar,
   Tab,
@@ -313,7 +313,6 @@ export default function Settings({ backendAvailable = true }) {
     setBazarrMappings([]);
     setSelectedSettings({});
     setPreviewConfig(null);
-    setBazarrConfig(null);
     setImportError('');
     setImportDialogOpen(true);
   };
