@@ -54,20 +54,28 @@ var metadataUpdateCmd = &cobra.Command{
 		}
 		defer store.Close()
 		if setGroup != "" {
-			_ = store.SetMediaReleaseGroup(path, setGroup)
+			if err := store.SetMediaReleaseGroup(path, setGroup); err != nil {
+				return fmt.Errorf("failed to set release group: %w", err)
+			}
 		}
 		if setAlt != "" {
 			titles := strings.Split(setAlt, ",")
 			for i := range titles {
 				titles[i] = strings.TrimSpace(titles[i])
 			}
-			_ = store.SetMediaAltTitles(path, titles)
+			if err := store.SetMediaAltTitles(path, titles); err != nil {
+				return fmt.Errorf("failed to set alternate titles: %w", err)
+			}
 		}
 		if setLocks != "" {
-			_ = store.SetMediaFieldLocks(path, setLocks)
+			if err := store.SetMediaFieldLocks(path, setLocks); err != nil {
+				return fmt.Errorf("failed to set field locks: %w", err)
+			}
 		}
 		if setTitle != "" {
-			_ = store.SetMediaTitle(path, setTitle)
+			if err := store.SetMediaTitle(path, setTitle); err != nil {
+				return fmt.Errorf("failed to set title: %w", err)
+			}
 		}
 		return nil
 	},
