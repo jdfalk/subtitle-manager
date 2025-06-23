@@ -1,1 +1,1 @@
-smart-issue-migration.py
+./smart-issue-migration.py
