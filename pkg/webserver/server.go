@@ -161,6 +161,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/system", authMiddleware(db, "basic", systemHandler()))
 	mux.Handle(prefix+"/api/tasks", authMiddleware(db, "basic", tasksHandler()))
 	mux.Handle(prefix+"/api/tasks/start", authMiddleware(db, "basic", startTaskHandler()))
+	mux.Handle(prefix+"/ws/tasks", authMiddleware(db, "basic", tasksWebSocketHandler()))
 	mux.Handle(prefix+"/api/providers/status", authMiddleware(db, "basic", providerStatusHandler()))
 	mux.Handle(prefix+"/api/providers/refresh", authMiddleware(db, "basic", providerRefreshHandler()))
 	mux.Handle(prefix+"/api/providers/reset", authMiddleware(db, "basic", providerResetHandler()))
