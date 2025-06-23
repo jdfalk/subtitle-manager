@@ -9,7 +9,7 @@ import {
   CloudDownload as ProvidersIcon,
   Refresh as RefreshIcon,
   Label as TagsIcon,
-  People as UsersIcon
+  People as UsersIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -21,7 +21,7 @@ import {
   Snackbar,
   Tab,
   Tabs,
-  Typography
+  Typography,
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import ImportDialog from './components/ImportDialog.jsx';
