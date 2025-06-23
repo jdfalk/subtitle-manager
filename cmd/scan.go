@@ -9,6 +9,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 var upgrade bool
@@ -21,6 +22,18 @@ var scanCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("scan")
 		dir, lang := args[0], args[1]
+
+		// Validate inputs before processing
+		if _, err := security.ValidateAndSanitizePath(dir); err != nil {
+			logger.Errorf("invalid directory path: %v", err)
+			return err
+		}
+
+		if err := security.ValidateLanguageCode(lang); err != nil {
+			logger.Errorf("invalid language code: %v", err)
+			return err
+		}
+
 		logger.Infof("scanning %s", dir)
 		ctx := context.Background()
 		var store database.SubtitleStore

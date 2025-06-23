@@ -45,13 +45,13 @@ func TestScanDirectory(t *testing.T) {
 	}
 	// scan with upgrade should replace subtitle
 	m3 := providersmocks.NewProvider(t)
-	m3.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("c"), nil)
+	m3.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("cc"), nil)
 	if err := ScanDirectory(context.Background(), dir, "en", "test", m3, true, 2, nil); err != nil {
 		t.Fatalf("scan upgrade: %v", err)
 	}
 	m3.AssertExpectations(t)
 	data, _ = os.ReadFile(sub)
-	if string(data) != "c" {
+	if string(data) != "cc" {
 		t.Fatalf("subtitle not upgraded: %q", data)
 	}
 }
@@ -67,5 +67,32 @@ func TestProcessFileInvalidPath(t *testing.T) {
 	err := ProcessFile(context.Background(), "../bad/movie.mkv", "en", "test", nil, false, nil)
 	if err == nil {
 		t.Fatalf("expected error for invalid path")
+	}
+}
+
+// TestProcessFile_UpgradeQuality ensures a subtitle is replaced only when the
+// new version is larger, implying better quality.
+func TestProcessFile_UpgradeQuality(t *testing.T) {
+	dir := t.TempDir()
+	vid := filepath.Join(dir, "movie.mkv")
+	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
+		t.Fatalf("create video: %v", err)
+	}
+	sub := filepath.Join(dir, "movie.en.srt")
+	if err := os.WriteFile(sub, []byte("existing subtitle"), 0644); err != nil {
+		t.Fatalf("create sub: %v", err)
+	}
+	m := providersmocks.NewProvider(t)
+	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("a"), nil)
+	if err := ProcessFile(context.Background(), vid, "en", "test", m, true, nil); err != nil {
+		t.Fatalf("process: %v", err)
+	}
+	m.AssertExpectations(t)
+	data, err := os.ReadFile(sub)
+	if err != nil {
+		t.Fatalf("read subtitle: %v", err)
+	}
+	if string(data) != "existing subtitle" {
+		t.Fatalf("subtitle replaced with lower quality: %q", data)
 	}
 }

@@ -3,7 +3,6 @@ package scanner
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -53,9 +52,13 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 // ProcessFile downloads a subtitle for path using providerName for history
 // tracking. The subtitle is saved next to the media file with the language
 // code appended before the extension. If upgrade is false an existing subtitle
-// file is left untouched.
+// file is left untouched. When upgrade is true and a subtitle already exists,
+// the new subtitle replaces it only if the file size is larger, indicating
+// potentially better quality.
 func ProcessFile(ctx context.Context, path, lang string, providerName string, p providers.Provider, upgrade bool, store database.SubtitleStore) error {
 	logger := logging.GetLogger("scanner")
+
+	// Validate and sanitize all user inputs
 	sanitizedPath, err := security.ValidateAndSanitizePath(path)
 	if err != nil {
 		logger.Warnf("invalid path: %v", err)
@@ -63,15 +66,24 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 	path = sanitizedPath
 
-	// Validate the lang parameter to ensure it contains only alphanumeric characters
-	if !isValidLang(lang) {
-		logger.Warnf("invalid language code: %s", lang)
-		return fmt.Errorf("invalid language code: %s", lang)
+	// Validate the language code to prevent path traversal attacks
+	if err := security.ValidateLanguageCode(lang); err != nil {
+		logger.Warnf("invalid language code: %v", err)
+		return err
 	}
 
-	base := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
-	out := filepath.Join(filepath.Dir(path), base+"."+lang+".srt")
-	out = filepath.Clean(out)
+	// Validate provider name if provided
+	if err := security.ValidateProviderName(providerName); err != nil {
+		logger.Warnf("invalid provider name: %v", err)
+		return err
+	}
+
+	// Construct and validate the output path securely
+	out, err := security.ValidateSubtitleOutputPath(path, lang)
+	if err != nil {
+		logger.Warnf("invalid subtitle output path: %v", err)
+		return err
+	}
 	if !upgrade {
 		if _, err := os.Stat(out); err == nil {
 			return nil
@@ -87,6 +99,14 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		logger.Warnf("fetch %s: %v", path, err)
 		return err
 	}
+	if upgrade {
+		if oldData, err := os.ReadFile(out); err == nil {
+			if len(data) <= len(oldData) {
+				logger.Debugf("existing subtitle %s is higher quality", out)
+				return nil
+			}
+		}
+	}
 	if err := os.WriteFile(out, data, 0644); err != nil {
 		logger.Warnf("write %s: %v", out, err)
 		return err
@@ -96,16 +116,6 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
 	}
 	return nil
-}
-
-// isValidLang checks if the language code contains only alphanumeric characters
-func isValidLang(lang string) bool {
-	for _, r := range lang {
-		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9')) {
-			return false
-		}
-	}
-	return true
 }
 
 var videoExtensions = []string{".mkv", ".mp4", ".avi", ".mov"}
