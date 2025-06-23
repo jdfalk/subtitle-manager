@@ -100,6 +100,7 @@ func Start(ctx context.Context, id string, fn func(context.Context) error) *Task
 	t := &Task{ID: id, Status: "running", StartedAt: time.Now()}
 	tasks[id] = t
 	mu.Unlock()
+	broadcast(t.GetSnapshot())
 
 	go func() {
 		err := fn(ctx)
@@ -111,6 +112,7 @@ func Start(ctx context.Context, id string, fn func(context.Context) error) *Task
 		}
 		t.setProgress(100)
 		t.setCompletedAt(time.Now())
+		broadcast(t.GetSnapshot())
 	}()
 	return t
 }
@@ -134,5 +136,6 @@ func Update(id string, progress int) {
 	mu.Unlock()
 	if ok {
 		t.setProgress(progress)
+		broadcast(t.GetSnapshot())
 	}
 }
