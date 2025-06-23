@@ -1,3 +1,4 @@
+// file: pkg/bazarr/client.go
 package bazarr
 
 import (
@@ -18,12 +19,13 @@ type Settings map[string]any
 // A non-200 status code results in an error.
 // This function validates the baseURL to prevent SSRF attacks.
 func FetchSettings(baseURL, apiKey string) (Settings, error) {
-	// Validate the base URL to prevent SSRF attacks
-	if _, err := security.ValidateURL(baseURL); err != nil {
+	// Validate and sanitize the base URL to prevent SSRF attacks
+	sanitized, err := security.ValidateURL(baseURL)
+	if err != nil {
 		return nil, fmt.Errorf("invalid baseURL: %v", err)
 	}
 
-	base, err := url.Parse(baseURL)
+	base, err := url.Parse(sanitized)
 	if err != nil {
 		return nil, fmt.Errorf("invalid baseURL: %v", err)
 	}

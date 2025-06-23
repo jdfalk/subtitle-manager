@@ -1,0 +1,7 @@
+{
+  "action": "update",
+  "number": 1107,
+  "body": "Investigating CodeQL alert; plan to sanitize URL usage.",
+  "labels": ["codex"],
+  "guid": "update-issue-1107-2025-06-23"
+}
