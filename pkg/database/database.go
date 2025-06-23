@@ -172,9 +172,15 @@ func initSchema(db *sql.DB) error {
     )`); err != nil {
 		return err
 	}
-	_ = addColumnIfNotExists(db, "media_items", "release_group", "TEXT")
-	_ = addColumnIfNotExists(db, "media_items", "alt_titles", "TEXT")
-	_ = addColumnIfNotExists(db, "media_items", "field_locks", "TEXT")
+	if err := addColumnIfNotExists(db, "media_items", "release_group", "TEXT"); err != nil {
+		return fmt.Errorf("failed to add column 'release_group' to 'media_items': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "media_items", "alt_titles", "TEXT"); err != nil {
+		return fmt.Errorf("failed to add column 'alt_titles' to 'media_items': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "media_items", "field_locks", "TEXT"); err != nil {
+		return fmt.Errorf("failed to add column 'field_locks' to 'media_items': %w", err)
+	}
 
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
