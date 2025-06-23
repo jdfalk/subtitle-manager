@@ -2,6 +2,7 @@
 package webserver
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
