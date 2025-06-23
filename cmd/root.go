@@ -106,6 +106,7 @@ func init() {
 	rootCmd.AddCommand(batchCmd)
 	rootCmd.AddCommand(sonarrCmd)
 	rootCmd.AddCommand(radarrCmd)
+	rootCmd.AddCommand(renameCmd)
 }
 
 func initConfig() {

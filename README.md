@@ -255,6 +255,7 @@ subtitle-manager scanlib [directory]
 subtitle-manager watch [directory] [lang] [-r]
 subtitle-manager grpc-server --addr :50051
 subtitle-manager delete [file]
+subtitle-manager rename [video] [lang]
 subtitle-manager downloads
 subtitle-manager login [username] [password]
 subtitle-manager login-token [token]
