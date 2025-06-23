@@ -1,0 +1,6 @@
+{
+  "action": "comment",
+  "number": 1107,
+  "body": "Will fix by using sanitized URL returned from ValidateURL.",
+  "guid": "comment-1107-2025-06-23-125028"
+}
