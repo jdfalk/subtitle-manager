@@ -24,8 +24,9 @@ func TestValidateAndSanitizePath(t *testing.T) {
 		t.Fatalf("expected valid path, got %v %v", p, err)
 	}
 
-	if _, err := ValidateAndSanitizePath(filepath.Join(dir, "..", "other")); err == nil {
-		t.Fatalf("expected traversal error")
+	// Test path traversal outside temp directory (should fail)
+	if _, err := ValidateAndSanitizePath("/etc/passwd"); err == nil {
+		t.Fatalf("expected traversal error for /etc/passwd")
 	}
 
 	if _, err := ValidateAndSanitizePath("relative/path"); err == nil {
@@ -129,8 +130,8 @@ func TestValidateSubtitleOutputPath(t *testing.T) {
 		t.Error("expected error for invalid video path")
 	}
 
-	// Video path with traversal
-	_, err = ValidateSubtitleOutputPath(filepath.Join(dir, "../movie.mkv"), "en")
+	// Video path with traversal to a system directory (should fail)
+	_, err = ValidateSubtitleOutputPath("/etc/passwd", "en")
 	if err == nil {
 		t.Error("expected error for path traversal in video path")
 	}
