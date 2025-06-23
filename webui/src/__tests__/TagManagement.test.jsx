@@ -34,7 +34,7 @@ describe('TagManagement component', () => {
 
     render(<TagManagement />);
     await waitFor(() =>
-      expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/api/tags'))
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/api/tags'), expect.any(Object))
     );
 
     fetch.mockResolvedValueOnce({ ok: true });
