@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Add rename command",
+  "body": "Implement CLI command to rename subtitles when video filenames change.",
+  "labels": ["enhancement"],
+  "guid": "create-add-rename-command-2025-06-22"
+}
