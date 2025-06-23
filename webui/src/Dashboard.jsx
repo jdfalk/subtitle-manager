@@ -282,15 +282,28 @@ export default function Dashboard({ backendAvailable = true }) {
                   <Select
                     value={lang}
                     label="Language"
+                    data-testid="language-select"
                     onChange={e => setLang(e.target.value)}
                     disabled={status.running || !backendAvailable}
                   >
-                    <MenuItem value="en">English</MenuItem>
-                    <MenuItem value="es">Spanish</MenuItem>
-                    <MenuItem value="fr">French</MenuItem>
-                    <MenuItem value="de">German</MenuItem>
-                    <MenuItem value="it">Italian</MenuItem>
-                    <MenuItem value="pt">Portuguese</MenuItem>
+                    <MenuItem value="en" data-testid="language-option-en">
+                      English
+                    </MenuItem>
+                    <MenuItem value="es" data-testid="language-option-es">
+                      Spanish
+                    </MenuItem>
+                    <MenuItem value="fr" data-testid="language-option-fr">
+                      French
+                    </MenuItem>
+                    <MenuItem value="de" data-testid="language-option-de">
+                      German
+                    </MenuItem>
+                    <MenuItem value="it" data-testid="language-option-it">
+                      Italian
+                    </MenuItem>
+                    <MenuItem value="pt" data-testid="language-option-pt">
+                      Portuguese
+                    </MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl fullWidth>
@@ -298,6 +311,7 @@ export default function Dashboard({ backendAvailable = true }) {
                   <Select
                     value={provider}
                     label="Provider"
+                    data-testid="provider-select"
                     onChange={e => {
                       setProvider(e.target.value);
                       const p = availableProviders.find(
@@ -311,7 +325,11 @@ export default function Dashboard({ backendAvailable = true }) {
                   >
                     {availableProviders.length > 0
                       ? availableProviders.map(p => (
-                          <MenuItem key={p.name} value={p.name}>
+                          <MenuItem
+                            key={p.name}
+                            value={p.name}
+                            data-testid={`provider-option-${p.name.toLowerCase()}`}
+                          >
                             {formatProviderName(p.name)}
                             {!p.configured && (
                               <Chip
@@ -325,16 +343,32 @@ export default function Dashboard({ backendAvailable = true }) {
                         ))
                       : // Fallback options if providers haven't loaded
                         [
-                          <MenuItem key="opensubtitles" value="opensubtitles">
+                          <MenuItem
+                            key="opensubtitles"
+                            value="opensubtitles"
+                            data-testid="provider-option-opensubtitles"
+                          >
                             OpenSubtitles
                           </MenuItem>,
-                          <MenuItem key="addic7ed" value="addic7ed">
+                          <MenuItem
+                            key="addic7ed"
+                            value="addic7ed"
+                            data-testid="provider-option-addic7ed"
+                          >
                             Addic7ed
                           </MenuItem>,
-                          <MenuItem key="subscene" value="subscene">
+                          <MenuItem
+                            key="subscene"
+                            value="subscene"
+                            data-testid="provider-option-subscene"
+                          >
                             Subscene
                           </MenuItem>,
-                          <MenuItem key="podnapisi" value="podnapisi">
+                          <MenuItem
+                            key="podnapisi"
+                            value="podnapisi"
+                            data-testid="provider-option-podnapisi"
+                          >
                             Podnapisi
                           </MenuItem>,
                         ]}
