@@ -1,5 +1,6 @@
 // file: webui/tests/media-workflow.spec.js
 import { expect, test } from '@playwright/test';
+import { validateAllowedHostname } from '../src/utils/security.js';
 
 /**
  * Test media library workflows including file browsing, subtitle operations,
@@ -412,8 +413,7 @@ test('media file details and subtitle operations', async ({ page }) => {
   await page.addInitScript(() => {
     const originalFetch = window.fetch;
     window.fetch = async (url, options) => {
-      const hostname = new URL(url, window.location.origin).hostname;
-      if (hostname.endsWith('omdbapi.com')) {
+      if (validateAllowedHostname(url, ['omdbapi.com', 'www.omdbapi.com'])) {
         console.log('Mocked OMDb fetch for:', url);
         return {
           ok: true,
