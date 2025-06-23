@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 )
 
 func TestParseFileName(t *testing.T) {
@@ -120,5 +124,33 @@ func TestFetchEpisodeMetadata(t *testing.T) {
 	}
 	if m.Rating != 8.0 || len(m.Languages) != 1 || m.EpisodeTitle != "Episode" {
 		t.Fatalf("unexpected episode info: %+v", m)
+	}
+}
+
+func TestScanLibraryProgress(t *testing.T) {
+	dir := t.TempDir()
+	video := filepath.Join(dir, "movie.mkv")
+	if err := os.WriteFile(video, []byte("x"), 0644); err != nil {
+		t.Fatalf("create video: %v", err)
+	}
+	store, err := database.OpenSQLStore(filepath.Join(dir, "db.sqlite"))
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+	var n int
+	cb := func(string) { n++ }
+	if err := ScanLibraryProgress(context.Background(), dir, store, cb); err != nil {
+		t.Fatalf("scan: %v", err)
+	}
+	if n != 1 {
+		t.Fatalf("callback %d", n)
+	}
+	items, err := store.ListMediaItems()
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if len(items) != 1 || items[0].Path != video {
+		t.Fatalf("items %+v", items)
 	}
 }

@@ -16,6 +16,7 @@ import {
   BugReport as SystemIcon,
   Translate as TranslateIcon,
   Download as WantedIcon,
+  Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -67,6 +68,7 @@ const System = lazy(() => import('./System.jsx'));
 const Extract = lazy(() => import('./Extract.jsx'));
 const Convert = lazy(() => import('./Convert.jsx'));
 const Translate = lazy(() => import('./Translate.jsx'));
+const LibraryScan = lazy(() => import('./LibraryScan.jsx'));
 const Scheduling = lazy(() => import('./Scheduling.jsx'));
 const Setup = lazy(() => import('./Setup.jsx'));
 const ConfigEditor = lazy(() => import('./ConfigEditor.jsx'));
@@ -415,6 +417,12 @@ function App() {
       label: 'Translate',
       icon: <TranslateIcon />,
       path: '/tools/translate',
+    },
+    {
+      id: 'scan',
+      label: 'Library Scan',
+      icon: <RefreshIcon />,
+      path: '/tools/scan',
     },
     {
       id: 'scheduling',
@@ -1000,6 +1008,10 @@ function App() {
               <Route
                 path="/tools/translate"
                 element={<Translate backendAvailable={backendAvailable} />}
+              />
+              <Route
+                path="/tools/scan"
+                element={<LibraryScan backendAvailable={backendAvailable} />}
               />
               <Route
                 path="/tools/scheduling"

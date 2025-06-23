@@ -35,7 +35,7 @@ export function getBasePath() {
 }
 
 const API_BASE_URL =
-  import.meta?.env?.VITE_API_URL || `${window.location.origin}${getBasePath()}`;
+  import.meta?.env?.VITE_API_URL || getBasePath();
 
 /**
  * Enhanced fetch wrapper with error handling and logging

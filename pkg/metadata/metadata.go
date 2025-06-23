@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 var tmdbAPIBase = "https://api.themoviedb.org/3"
@@ -24,6 +25,12 @@ func SetTMDBAPIBase(u string) { tmdbAPIBase = u }
 
 // SetOMDBAPIBase overrides the default OMDb API base URL. Primarily used for testing.
 func SetOMDBAPIBase(u string) { omdbAPIBase = u }
+
+// Supported video file extensions used for library scanning.
+var videoExts = map[string]bool{
+	".mp4": true, ".mkv": true, ".avi": true, ".mov": true,
+	".wmv": true, ".flv": true, ".webm": true, ".m4v": true,
+}
 
 // MediaType differentiates between movie and TV episode metadata.
 type MediaType int
@@ -266,24 +273,17 @@ func fetchOMDBInfo(ctx context.Context, q url.Values) ([]string, float64, error)
 
 // ScanLibrary walks a directory tree and inserts video files into the media database.
 // It parses filenames to extract metadata and stores the results using the provided store.
-func ScanLibrary(ctx context.Context, dir string, store interface{}) error {
-	// Import the database types we need
-	type MediaStore interface {
-		InsertMediaItem(*database.MediaItem) error
+func ScanLibrary(ctx context.Context, dir string, store database.SubtitleStore) error {
+	return scanLibrary(ctx, dir, store, nil)
+}
+
+func scanLibrary(ctx context.Context, dir string, store database.SubtitleStore, cb ProgressFunc) error {
+	sanitizedDir, err := security.ValidateAndSanitizePath(dir)
+	if err != nil {
+		return err
 	}
 
-	mediaStore, ok := store.(MediaStore)
-	if !ok {
-		return fmt.Errorf("store does not implement MediaItem methods")
-	}
-
-	// Supported video extensions
-	videoExts := map[string]bool{
-		".mp4": true, ".mkv": true, ".avi": true, ".mov": true,
-		".wmv": true, ".flv": true, ".webm": true, ".m4v": true,
-	}
-
-	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(sanitizedDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -319,6 +319,22 @@ func ScanLibrary(ctx context.Context, dir string, store interface{}) error {
 		}
 
 		// Insert into database
-		return mediaStore.InsertMediaItem(item)
+		if err := store.InsertMediaItem(item); err != nil {
+			return err
+		}
+
+		if cb != nil {
+			cb(path)
+		}
+
+		return nil
 	})
+}
+
+// ProgressFunc is called with each processed video file path during scanning.
+type ProgressFunc func(file string)
+
+// ScanLibraryProgress performs ScanLibrary and invokes cb for each processed file.
+func ScanLibraryProgress(ctx context.Context, dir string, store database.SubtitleStore, cb ProgressFunc) error {
+	return scanLibrary(ctx, dir, store, cb)
 }
