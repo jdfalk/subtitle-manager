@@ -4,10 +4,14 @@ import { validateAllowedHostname } from '../security.js';
 
 describe('validateAllowedHostname', () => {
   test('accepts allowed host', () => {
-    expect(validateAllowedHostname('https://omdbapi.com/?t=a', ['omdbapi.com'])).toBe(true);
+    expect(
+      validateAllowedHostname('https://omdbapi.com/?t=a', ['omdbapi.com'])
+    ).toBe(true);
   });
 
   test('rejects disallowed host', () => {
-    expect(validateAllowedHostname('https://evil.com/', ['omdbapi.com'])).toBe(false);
+    expect(validateAllowedHostname('https://evil.com/', ['omdbapi.com'])).toBe(
+      false
+    );
   });
 });
