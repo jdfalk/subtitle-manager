@@ -18,6 +18,16 @@ type Task struct {
 	Error       string    `json:"error"`
 }
 
+// TaskSnapshot represents a snapshot of a task without the mutex for safe copying and serialization.
+type TaskSnapshot struct {
+	ID          string    `json:"id"`
+	Status      string    `json:"status"`
+	Progress    int       `json:"progress"`
+	StartedAt   time.Time `json:"started_at"`
+	CompletedAt time.Time `json:"completed_at"`
+	Error       string    `json:"error"`
+}
+
 // GetStatus safely returns the current status of the task.
 func (t *Task) GetStatus() string {
 	t.mu.RLock()
@@ -47,10 +57,10 @@ func (t *Task) GetCompletedAt() time.Time {
 }
 
 // GetSnapshot returns a copy of the task with all fields safely read.
-func (t *Task) GetSnapshot() Task {
+func (t *Task) GetSnapshot() TaskSnapshot {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
-	return Task{
+	return TaskSnapshot{
 		ID:          t.ID,
 		Status:      t.Status,
 		Progress:    t.Progress,
@@ -118,10 +128,10 @@ func Start(ctx context.Context, id string, fn func(context.Context) error) *Task
 }
 
 // List returns a copy of all known tasks keyed by ID.
-func List() map[string]*Task {
+func List() map[string]*TaskSnapshot {
 	mu.Lock()
 	defer mu.Unlock()
-	out := make(map[string]*Task, len(tasks))
+	out := make(map[string]*TaskSnapshot, len(tasks))
 	for k, v := range tasks {
 		snapshot := v.GetSnapshot()
 		out[k] = &snapshot

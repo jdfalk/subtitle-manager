@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -296,7 +297,8 @@ func TestExtract(t *testing.T) {
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 
-	body := strings.NewReader(`{"path":"dummy.mkv"}`)
+	dummyPath := filepath.Join(dir, "dummy.mkv")
+	body := strings.NewReader(fmt.Sprintf(`{"path":%q}`, dummyPath))
 	req, _ := http.NewRequest("POST", srv.URL+"/api/extract", body)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-API-Key", key)

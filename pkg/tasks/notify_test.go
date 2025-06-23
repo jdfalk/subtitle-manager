@@ -8,12 +8,12 @@ import (
 )
 
 // wait receives from ch with timeout.
-func wait(ch chan Task) (Task, bool) {
+func wait(ch chan TaskSnapshot) (TaskSnapshot, bool) {
 	select {
 	case t, ok := <-ch:
 		return t, ok
 	case <-time.After(100 * time.Millisecond):
-		return Task{}, false
+		return TaskSnapshot{}, false
 	}
 }
 
