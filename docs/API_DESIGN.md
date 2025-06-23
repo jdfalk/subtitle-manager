@@ -19,8 +19,8 @@ This document outlines the design philosophy of the REST and gRPC APIs provided 
 - `POST /api/translate` – translate uploaded subtitles to another language.
 - `POST /api/extract` – extract embedded subtitles from media files.
 - `GET /api/history` – list translation and download history.
-- `POST /api/scan` – initiate library scanning.
-- `GET /api/scan/status` – check progress for the last scan.
+- `POST /api/library/scan` – index media files and generate metadata.
+- `GET /api/library/scan/status` – check progress for the last library scan.
 - `GET /api/wanted` – retrieve wanted subtitles list.
 
 Example error response:

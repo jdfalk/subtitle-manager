@@ -329,10 +329,10 @@ The web server exposes a comprehensive REST API for all subtitle operations:
 - `POST /api/extract` - Extract subtitles from media files using ffmpeg
 - `POST /api/download` - Download subtitles for specific media files
 
-#### Library Management
+-#### Library Management
 
-- `POST /api/scan` - Start library scanning with provider selection
-- `GET /api/scan/status` - Check scan progress and status
+- `POST /api/library/scan` - Scan directories and generate metadata
+- `GET /api/library/scan/status` - Check library scan progress
 - `GET /api/search` - Search for subtitles with provider and language filters
 - `GET /api/wanted` - Retrieve wanted subtitles list
 - `POST /api/wanted` - Add subtitles to wanted list

@@ -76,9 +76,9 @@ export default function Dashboard({ backendAvailable = true }) {
       setError(null);
       const response = await apiService.get('/api/providers');
       if (response.ok) {
-        const data = await response.json();
+        const data = typeof response.json === 'function' ? await response.json() : [];
         // Only show enabled providers
-        const enabledProviders = data.filter(p => p.enabled);
+        const enabledProviders = (data || []).filter(p => p.enabled);
         setAvailableProviders(enabledProviders);
 
         // Set default provider to first enabled one
@@ -106,7 +106,8 @@ export default function Dashboard({ backendAvailable = true }) {
     try {
       const resp = await apiService.get('/api/system');
       if (resp.ok) {
-        setSystemInfo(await resp.json());
+        const data = typeof resp.json === 'function' ? await resp.json() : {};
+        setSystemInfo(data);
       }
     } catch (err) {
       console.error('Failed to load system info:', err);
@@ -147,7 +148,7 @@ export default function Dashboard({ backendAvailable = true }) {
         `/api/library/browse?path=${encodeURIComponent(parent)}`
       );
       if (resp.ok) {
-        const data = await resp.json();
+        const data = typeof resp.json === 'function' ? await resp.json() : { items: [] };
         const dirs = (data.items || [])
           .filter(item => item.isDirectory)
           .map(item => item.path)
@@ -167,7 +168,7 @@ export default function Dashboard({ backendAvailable = true }) {
     try {
       const response = await apiService.get('/api/scan/status');
       if (response.ok) {
-        const data = await response.json();
+        const data = typeof response.json === 'function' ? await response.json() : {};
         // Ensure files is always an array to prevent null reference errors
         setStatus({
           running: data.running || false,
