@@ -182,6 +182,14 @@ func initSchema(db *sql.DB) error {
 		return fmt.Errorf("failed to add column 'field_locks' to 'media_items': %w", err)
 	}
 
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS dashboard_prefs (
+        user_id INTEGER PRIMARY KEY,
+        layout TEXT NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
@@ -1036,4 +1044,41 @@ func EnsureMediaItem(db *sql.DB, path string) (int64, error) {
 		return 0, err
 	}
 	return res.LastInsertId()
+}
+
+// SetDashboardLayout stores the widget layout JSON for a user.
+//
+// Parameters:
+//
+//	db - active database handle
+//	userID - identifier for the user
+//	layout - JSON string describing widget placement
+//
+// Returns any error encountered while saving.
+func SetDashboardLayout(db *sql.DB, userID int64, layout string) error {
+	_, err := db.Exec(`INSERT INTO dashboard_prefs (user_id, layout, updated_at) VALUES (?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET layout=excluded.layout, updated_at=excluded.updated_at`,
+		userID, layout, time.Now())
+	return err
+}
+
+// GetDashboardLayout retrieves the widget layout JSON for a user.
+//
+// Parameters:
+//
+//	db - active database handle
+//	userID - identifier for the user
+//
+// Returns the stored layout JSON string and any error encountered. If no layout
+// exists, the string will be empty and error will be nil.
+func GetDashboardLayout(db *sql.DB, userID int64) (string, error) {
+	row := db.QueryRow(`SELECT layout FROM dashboard_prefs WHERE user_id = ?`, userID)
+	var layout string
+	if err := row.Scan(&layout); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+		return "", err
+	}
+	return layout, nil
 }

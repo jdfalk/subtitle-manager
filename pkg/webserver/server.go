@@ -183,6 +183,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/providers", authMiddleware(db, "basic", providersHandler()))
 	mux.Handle(prefix+"/api/library/browse", authMiddleware(db, "basic", libraryBrowseHandler()))
 	mux.Handle(prefix+"/api/library/tags", authMiddleware(db, "basic", libraryTagsHandler(db)))
+	mux.Handle(prefix+"/api/widgets/layout", authMiddleware(db, "basic", dashboardLayoutHandler(db)))
 	mux.Handle(prefix+"/api/users/", authMiddleware(db, "admin", userRouter(db)))
 
 	// Universal tagging system
