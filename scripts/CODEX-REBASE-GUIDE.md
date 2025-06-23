@@ -7,48 +7,139 @@ Use these scripts when Codex encounters rebase conflicts or gets stuck in rebase
 ## Simple Auto-Rebase (Recommended for Codex)
 
 ```bash
-./scripts/codex-rebase.sh
+./scripts/rebase --mode automated --force-push main
 ```
 
-This script:
+This unified script:
 
-- ✅ Automatically resolves conflicts by keeping current changes
-- ✅ Saves incoming changes as `.main.incoming` files
+- ✅ Automatically detects best implementation (Python preferred, shell fallback)
+- ✅ Resolves conflicts intelligently based on file types
 - ✅ Creates backup branch automatically
 - ✅ Force pushes the result
-- ✅ Generates summary report
+- ✅ Generates comprehensive summary report
+- ✅ Saves both versions for code files that need manual review
 
 ## Advanced Rebase with Options
 
 ```bash
 # Dry run to see what would happen
-./scripts/smart-rebase.sh --dry-run main
+./scripts/rebase --dry-run --verbose main
 
-# Full rebase with force push
-./scripts/smart-rebase.sh -f main
+# Automated mode with force push (best for Codex)
+./scripts/rebase --mode automated --force-push main
 
-# Verbose output for debugging
-./scripts/smart-rebase.sh -v -f main
+# Interactive mode for manual conflict resolution
+./scripts/rebase --mode interactive main
+
+# Force specific implementation
+./scripts/rebase --implementation python --force-push main
+./scripts/rebase --implementation shell --force-push main
 ```
 
 ## VS Code Tasks
 
 Use these task IDs in VS Code:
 
-- `"Codex Auto Rebase"` - Simple automated rebase
-- `"Smart Rebase Dry Run"` - Preview changes
-- `"Smart Rebase onto Main"` - Full featured rebase
+- `"Codex Auto Rebase"` - Legacy automated rebase (still available)
+- `"Smart Rebase Dry Run"` - Preview changes (still available)
+- `"Smart Rebase onto Main"` - Legacy full featured rebase (still available)
+
+**New recommended approach:**
+Use the terminal or create custom tasks with the unified `rebase` script:
+
+```bash
+# Add to tasks.json for new unified approach
+{
+    "label": "Rebase: Auto onto Main",
+    "type": "shell",
+    "command": "./scripts/rebase",
+    "args": ["--mode", "automated", "--force-push", "main"],
+    "group": "build"
+},
+{
+    "label": "Rebase: Dry Run",
+    "type": "shell",
+    "command": "./scripts/rebase",
+    "args": ["--dry-run", "--verbose", "main"],
+    "group": "build"
+}
+```
+
+## Suggested VS Code Tasks
+
+Add these tasks to your `.vscode/tasks.json` for easy access:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Rebase: Auto onto Main (Recommended for Codex)",
+      "type": "shell",
+      "command": "./scripts/rebase",
+      "args": ["--mode", "automated", "--force-push", "main"],
+      "group": "build",
+      "detail": "Automated rebase with intelligent conflict resolution"
+    },
+    {
+      "label": "Rebase: Dry Run Preview",
+      "type": "shell",
+      "command": "./scripts/rebase",
+      "args": ["--dry-run", "--verbose", "main"],
+      "group": "build",
+      "detail": "Preview what rebase would do without executing"
+    },
+    {
+      "label": "Rebase: Interactive Mode",
+      "type": "shell",
+      "command": "./scripts/rebase",
+      "args": ["--mode", "interactive", "main"],
+      "group": "build",
+      "detail": "Manual conflict resolution with prompts"
+    },
+    {
+      "label": "Rebase: Force Shell Implementation",
+      "type": "shell",
+      "command": "./scripts/rebase",
+      "args": [
+        "--implementation",
+        "shell",
+        "--mode",
+        "automated",
+        "--force-push",
+        "main"
+      ],
+      "group": "build",
+      "detail": "Use shell fallback implementation"
+    }
+  ]
+}
+```
 
 ## Conflict Resolution Strategy
 
-The scripts use intelligent strategies based on file types:
+The unified rebase script uses intelligent strategies based on file types:
 
-| File Type                              | What Happens                                              |
-| -------------------------------------- | --------------------------------------------------------- |
-| Documentation (`.md`)                  | Accept incoming from main                                 |
-| Build files (`.github/`, `Dockerfile`) | Accept incoming from main                                 |
-| Source code (`.go`, `.js`, etc.)       | Keep current + save incoming as `.filename.main.incoming` |
-| Config files (`.json`, `.yml`)         | Attempt smart merge                                       |
+| File Type                                | Python Implementation                                        | Shell Implementation                   |
+| ---------------------------------------- | ------------------------------------------------------------ | -------------------------------------- |
+| Documentation (`.md`, `docs/*`)          | Accept incoming from main                                    | Accept incoming from main              |
+| Build files (`.github/`, `Dockerfile`)   | Accept incoming from main                                    | Accept incoming from main              |
+| Package files (`go.mod`, `package.json`) | Accept incoming from main                                    | Accept incoming from main              |
+| Config files (`.json`, `.yml`)           | Smart merge or accept incoming                               | Accept incoming                        |
+| Source code (`.go`, `.js`, `.py`)        | Save both versions (`.current` + `.incoming`) + use incoming | Accept incoming (safer for automation) |
+
+**Python Implementation Features:**
+
+- More sophisticated conflict resolution
+- Saves both versions for manual review
+- Better error handling and recovery
+- Comprehensive logging
+
+**Shell Implementation Features:**
+
+- Simpler, more predictable behavior
+- Works in minimal environments
+- Safer defaults (always prefers incoming)
 
 ## Recovery if Something Goes Wrong
 
@@ -59,27 +150,52 @@ The scripts use intelligent strategies based on file types:
 
 ## Files Created
 
-After running, you may see:
+After running the new unified script, you may see:
 
-- `*.main.incoming` - Incoming versions of conflicted files
-- `rebase-summary-TIMESTAMP.md` - Summary of what happened
-- `backup-TIMESTAMP-BRANCH` - Backup branch (safe to delete after verification)
+- `*.current` and `*.incoming` - Both versions of conflicted files (Python implementation)
+- `rebase-summary-TIMESTAMP.md` - Comprehensive summary of what happened
+- `backup/BRANCH/TIMESTAMP` - Backup branch (safe to delete after verification)
 
 ## Best Practices for Codex
 
-1. **Always use `codex-rebase.sh` first** - it's designed for automation
-2. **Check the summary file** for important information
-3. **Review `.main.incoming` files** for important changes you might want to merge
-4. **Test the rebased code** before continuing with other tasks
-5. **Clean up backup branches** when done: `git branch -D backup-*`
+1. **Use the unified script**: `./scripts/rebase --mode automated --force-push main`
+2. **Always use automated mode** for AI agents: `--mode automated`
+3. **Include force-push flag** for continuous integration: `--force-push`
+4. **Use dry-run for testing**: `--dry-run --verbose` to preview changes
+5. **Check the summary file** for important information about what happened
+6. **Review conflict resolution files** when available (`.current` and `.incoming`)
+7. **Test the rebased code** before continuing with other tasks
+8. **Clean up backup branches** when done: `git branch -D backup/*`
 
 ## Environment Variables for Automation
 
+The new script doesn't require environment variables, but you can set these for consistency:
+
 ```bash
-# Set these in Codex environment if needed
+# For backward compatibility with legacy scripts
 export FORCE_PUSH=true
 export DRY_RUN=false
 export VERBOSE=true
+```
+
+## Quick Commands for Codex
+
+**Most Common (Recommended):**
+
+```bash
+./scripts/rebase --mode automated --force-push main
+```
+
+**Safe Testing:**
+
+```bash
+./scripts/rebase --dry-run --verbose main
+```
+
+**Emergency Fallback (if Python fails):**
+
+```bash
+./scripts/rebase --implementation shell --mode automated --force-push main
 ```
 
 ## Common Error Solutions
