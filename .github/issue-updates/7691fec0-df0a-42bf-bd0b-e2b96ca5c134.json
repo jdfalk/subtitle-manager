@@ -1,0 +1,7 @@
+{
+  "action": "update",
+  "number": 1074,
+  "body": "Label issue for Codex work",
+  "labels": ["codex"],
+  "guid": "update-issue-1074-2025-06-23"
+}

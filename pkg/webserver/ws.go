@@ -2,15 +2,18 @@
 package webserver
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/tasks"
 )
 
 var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool { return true },
+	CheckOrigin: func(r *http.Request) bool {
+		origin := r.Header.Get("Origin")
+		return security.ValidateWebSocketOrigin(origin, r.Host)
+	},
 }
 
 // tasksWebSocketHandler streams task updates over WebSocket.
@@ -18,8 +21,6 @@ func tasksWebSocketHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			http.Error(w, "Failed to upgrade to WebSocket: "+err.Error(), http.StatusInternalServerError)
-			log.Printf("WebSocket upgrade failed: %v", err)
 			return
 		}
 		ch := tasks.Subscribe()
