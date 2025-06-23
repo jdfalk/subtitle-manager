@@ -22,7 +22,7 @@ func TranslateFileToSRT(inPath, outPath, lang, service, googleKey, gptKey, grpcA
 	if err != nil {
 		return err
 	}
-	cache := make(map[string]string)
+	cache := make(map[string]string, len(sub.Items))
 	for _, item := range sub.Items {
 		// Extract just the dialogue text for translation and caching,
 		// avoiding timestamps and sequence numbers that prevent deduplication
