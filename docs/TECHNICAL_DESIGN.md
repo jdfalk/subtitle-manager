@@ -8,7 +8,7 @@ For a summary of Bazarr's capabilities used as a target feature set, see [docs/B
 
 The repository is organised using a standard Go project layout. Top level directories include command implementations, reusable packages and documentation.
 
-```text
+\```text
 cmd/                // CLI command definitions
 pkg/                // Core application packages
   database/         // Database layer built on SQLite
@@ -20,7 +20,7 @@ proto/              // gRPC service definitions (generated code in pkg/translato
 internal/           // Internal utilities not intended for external use
 scripts/            // Helper scripts for CI/CD (future work)
 configs/            // Example configuration files
-```
+\```
 
 Every package contains a README giving a quick overview of its responsibilities. Functions are documented using Go doc comments following the style guidelines laid out in `AGENTS.md`.
 
@@ -32,9 +32,9 @@ The CLI is composed of several Cobra commands. The root command initialises conf
 
 `cmd/root.go` sets persistent flags for configuration paths, database locations and global log level. It loads configuration using Viper before executing the selected subcommand. Errors are logged and returned with `os.Exit(1)` where appropriate.
 
-```
+\```
 subtitle-manager [global flags] <command> [command flags]
-```
+\```
 
 Common flags:
 
@@ -47,33 +47,33 @@ Common flags:
 
 #### convert
 
-```
+\```
 subtitle-manager convert <input> <output>
-```
+\```
 
 Converts any supported subtitle format to SRT using utilities in `pkg/subtitles`. The command reads the input file, detects the format with `go-astisub`, and writes SRT to the specified output. Errors in the conversion process are returned to the caller.
 
 #### merge
 
-```
+\```
 subtitle-manager merge <sub1> <sub2> <output>
-```
+\```
 
 Merges two subtitle streams by time code. The command calls `subtitles.MergeTracks` which returns a combined set of subtitles sorted by start time. The resulting subtitles are saved to the output path in SRT format.
 
 #### translate
 
-```
+\```
 subtitle-manager translate <input> <output> <language>
-```
+\```
 
 Translates a subtitle file to the target language. The translator command uses `translator.Translate` which selects the translation backend (Google or ChatGPT) based on configuration. Translation results are stored in the database via `database.InsertSubtitle`.
 
 #### batch
 
-```
+\```
 subtitle-manager batch <language> <files...>
-```
+\```
 
 Translates multiple subtitle files concurrently. The command invokes `subtitles.TranslateFilesToSRT` which utilises the `conc` package to limit the number of worker goroutines.
 
@@ -85,7 +85,7 @@ Displays previously translated files. `database.ListSubtitles` returns rows whic
 
 Configuration is handled by Viper with support for YAML files, environment variables and command line flags. The default configuration file location is `$HOME/.subtitle-manager.yaml` and may contain options shown below.
 
-```yaml
+\```yaml
 log-level: info
 log_levels:
   translate: debug
@@ -94,7 +94,7 @@ translator_api_keys:
   google: "<API key>"
   chatgpt: "<API key>"
 database: "~/.subtitle-manager.db"
-```
+\```
 
 Environment variables are automatically mapped to configuration keys using Viper's `AutomaticEnv`. For example `SUBTITLE_MANAGER_TRANSLATOR=chatgpt` overrides the translator option.
 
@@ -104,10 +104,10 @@ The `pkg/logging` package wraps `logrus` to provide component based logging. `Ge
 
 Example usage:
 
-```go
+\```go
 log := logging.GetLogger("translate")
 log.Debug("calling Google API")
-```
+\```
 
 Logging levels can be updated at runtime through configuration reload (future work) or via CLI flags.
 
@@ -115,7 +115,7 @@ Logging levels can be updated at runtime through configuration reload (future wo
 
 The application stores metadata in an SQLite database managed by `pkg/database`. A PebbleDB implementation provides a drop-in replacement through the `SubtitleStore` interface. The current SQLite schema is defined below and future revisions will add additional tables for subtitle providers and media libraries.
 
-```sql
+\```sql
 CREATE TABLE IF NOT EXISTS subtitles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     file TEXT NOT NULL,
@@ -128,11 +128,11 @@ CREATE TABLE IF NOT EXISTS subtitles (
 );
 
 CREATE INDEX IF NOT EXISTS subtitles_file_idx ON subtitles(file);
-```
+\```
 
 The library scan feature stores discovered videos in a dedicated table:
 
-```sql
+\```sql
 CREATE TABLE IF NOT EXISTS media_items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     path TEXT NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS media_items (
     season INTEGER,
     episode INTEGER
 );
-```
+\```
 
 ### 5.1 Functions
 
@@ -174,10 +174,10 @@ The `pkg/subtitles` package is responsible for reading, writing and manipulating
 
 `pkg/translator` defines a common interface for translation providers.
 
-```go
+\```go
 // TranslateFunc represents a translation function.
 type TranslateFunc func(ctx context.Context, text, lang string) (string, error)
-```
+\```
 
 ### 7.1 Google Translate
 
@@ -189,18 +189,18 @@ type TranslateFunc func(ctx context.Context, text, lang string) (string, error)
 
 The translation command selects the implementation using a map of provider names to functions:
 
-```go
+\```go
 providers := map[string]translator.TranslateFunc{
     "google": translator.GoogleTranslate,
     "chatgpt": translator.GPTTranslate,
 }
-```
+\```
 
 ## 8. gRPC Service (Optional)
 
 To enable remote processing or integration with other services, Subtitle Manager defines a gRPC service in `proto/translator.proto`. Generated code is committed to `pkg/translatorpb`.
 
-```protobuf
+\```protobuf
 syntax = "proto3";
 package translator;
 service Translator {
@@ -213,7 +213,7 @@ message TranslateRequest {
 message TranslateResponse {
   string translated_text = 1;
 }
-```
+\```
 
 A server implementation in `cmd/grpcserver` exposes translation functionality over the network. Clients may configure the CLI to use a remote gRPC server via the `--grpc` flag.
 
@@ -221,12 +221,12 @@ A server implementation in `cmd/grpcserver` exposes translation functionality ov
 
 The `pkg/providers` directory will host modules for fetching subtitles from online services. Each provider implements the following interface:
 
-```go
+\```go
 // Provider downloads subtitles for a given media item.
 type Provider interface {
     Fetch(ctx context.Context, mediaPath string, lang string) ([]byte, error)
 }
-```
+\```
 
 Providers share common configuration such as API keys or user credentials via Viper. Future work includes supporting services used by Bazarr (OpenSubtitles, Addic7ed, Subscene, etc.).
 An initial provider based on the OpenSubtitles REST API has been implemented
@@ -238,7 +238,7 @@ Operations like batch translation and subtitle downloading benefit from concurre
 
 Example workflow for translating multiple files:
 
-```go
+\```go
 pool := conc.NewPool(5)
 for _, file := range files {
     f := file
@@ -249,7 +249,7 @@ for _, file := range files {
 if err := pool.Wait(); err != nil {
     log.WithError(err).Error("batch translation failed")
 }
-```
+\```
 
 Workers share a single database connection pool and logger. Rate limiting is built into each provider implementation where required by the external service.
 
@@ -310,7 +310,7 @@ This design document details the intended architecture for Subtitle Manager. By 
 
 An example configuration demonstrating all available options:
 
-```yaml
+\```yaml
 # Global log level
 log-level: info
 
@@ -344,7 +344,7 @@ providers:
     username: myuser
     password: secret
     api_key: token
-```
+\```
 
 The CLI supports environment variable overrides using the prefix `SUBTITLE_MANAGER_`. For example `SUBTITLE_MANAGER_DATABASE=/tmp/test.db` will force the database location.
 
@@ -352,9 +352,9 @@ The CLI supports environment variable overrides using the prefix `SUBTITLE_MANAG
 
 ### 18.1 Convert Flow
 
-```text
+\```text
 User -> convert command -> subtitles.ConvertToSRT -> write output
-```
+\```
 
 1. The user invokes `subtitle-manager convert spanish.ssa spanish.srt`.
 2. `cmd/convert.go` loads configuration and obtains a logger for the `convert` component.
@@ -363,9 +363,9 @@ User -> convert command -> subtitles.ConvertToSRT -> write output
 
 ### 18.2 Translate Flow
 
-```text
+\```text
 User -> translate command -> subtitles.ConvertToSRT -> translator.Translate -> database.InsertSubtitle
-```
+\```
 
 1. The user invokes `subtitle-manager translate movie.srt translated.srt fr`.
 2. The command converts `movie.srt` to a plain text block and calls `translator.Translate` with the target language `fr`.
@@ -375,9 +375,9 @@ User -> translate command -> subtitles.ConvertToSRT -> translator.Translate -> d
 
 ### 18.3 Merge Flow
 
-```text
+\```text
 sub1 + sub2 -> subtitles.MergeTracks -> subtitles.WriteSRT
-```
+\```
 
 1. The user runs `subtitle-manager merge eng.srt fre.srt dual.srt`.
 2. `subtitles.ReadFile` parses both input files.
@@ -453,7 +453,7 @@ These resources provide background on the tools and libraries used in the projec
 
 Below is a simplified view of the major components and how they interact during a translation operation:
 
-```text
+\```text
 +-------------+     +---------------+     +---------------+
 | CLI Command | --> | Subtitle Utils| --> | Translator API|
 +-------------+     +---------------+     +---------------+
@@ -462,7 +462,7 @@ Below is a simplified view of the major components and how they interact during 
        |                 +-------------+             |
        |                 |  Database   | <-----------+
        |                 +-------------+
-```
+\```
 
 The command reads the input, delegates parsing and formatting to the subtitle utilities, which then call the translator API. Results are stored in the database and returned to the command for output.
 

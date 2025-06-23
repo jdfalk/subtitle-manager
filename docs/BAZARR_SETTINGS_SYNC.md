@@ -29,9 +29,9 @@ Further implementation details should consider error handling for unreachable Ba
 
 Run the CLI tool to automatically migrate your configuration:
 
-```bash
+\```bash
 subtitle-manager import-bazarr http://localhost:6767 MY_API_KEY
-```
+\```
 
 The command fetches `/api/system/settings`, maps the values to Subtitle Manager's
 configuration keys and writes them to your current config file.

@@ -24,22 +24,22 @@ This document outlines the design philosophy of the REST and gRPC APIs provided 
 
 Example error response:
 
-```json
+\```json
 {
   "error": "invalid_request",
   "message": "missing language parameter"
 }
-```
+\```
 
 ## gRPC Service
 
 The optional gRPC service defined in `proto/translator.proto` exposes translation operations.
 
-```
+\```
 service Translator {
   rpc Translate(TranslateRequest) returns (TranslateResponse);
 }
-```
+\```
 
 - **Authentication** is provided through token metadata headers.
 - **Streaming** endpoints may be added in future revisions for batch translation.
