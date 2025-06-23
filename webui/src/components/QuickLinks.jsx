@@ -1,10 +1,10 @@
 // file: webui/src/components/QuickLinks.jsx
 import {
-    History as HistoryIcon,
-    VideoLibrary as LibraryIcon,
-    Settings as SettingsIcon,
-    BugReport as SystemIcon,
-    CloudDownload as WantedIcon,
+  History as HistoryIcon,
+  VideoLibrary as LibraryIcon,
+  Settings as SettingsIcon,
+  BugReport as SystemIcon,
+  CloudDownload as WantedIcon,
 } from '@mui/icons-material';
 import { Button, Card, CardContent, Grid, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
