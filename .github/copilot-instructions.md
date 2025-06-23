@@ -1,5 +1,5 @@
 <!-- file: .github/copilot-instructions.md -->
-<!-- version: 1.0.0 -->
+<!-- version: 1.1.0 -->
 <!-- guid: 7a8b9c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d -->
 
 # Copilot Instructions
@@ -19,6 +19,15 @@
 - Always document tests with clear descriptions of what's being tested and expected outcomes
 - Always escape triple backticks with a backslash in documentation
 - Use consistent documentation style (JSDoc, docstrings, etc.) based on the codebase
+
+## Markdown Formatting Guidelines
+
+- **Before manually fixing markdown issues, always use Prettier first**
+- Check for a VS Code task or run `prettier --write *.md` to format markdown files
+- If a Prettier task exists in `.vscode/tasks.json`, use it instead of manual formatting
+- After running Prettier, only manually fix remaining issues that Prettier cannot resolve
+- If no Prettier setup exists, ask the user to run Prettier formatting first, then fix remaining issues
+- Focus manual fixes on content structure, not formatting that automated tools can handle
 
 ## Documentation Organization Policy
 
