@@ -10,8 +10,8 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
   - [x] Add tags table to the database and expose tag management in settings.
   - [x] Apply tags to media and users to drive language selection and provider behavior.
 - [ ] **Whisper Container Integration**: Optional embedded Whisper service.
-  - [ ] Launch [ahmetoner/whisper-asr-webservice](https://github.com/ahmetoner/whisper-asr-webservice) when `ENABLE_WHISPER=1` is set.
-  - [ ] Document requirement for NVIDIA Container Toolkit and add Docker init to manage the service lifecycle.
+  - [x] Launch [ahmetoner/whisper-asr-webservice](https://github.com/ahmetoner/whisper-asr-webservice) when `ENABLE_WHISPER=1` is set.
+  - [x] Document requirement for NVIDIA Container Toolkit and add Docker init to manage the service lifecycle.
 - [x] **Automated Maintenance Tasks**: Periodic database cleanup, metadata refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md).
 - [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict resolution.
 - [ ] **Online Metadata Sources**: Fetch languages, ratings, and episode data from external APIs.

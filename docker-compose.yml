@@ -17,6 +17,8 @@ services:
       - /path/to/your/tv:/media/tv:ro
       # Optional: Custom subtitle storage location
       - ./subtitles:/subtitles
+      # Optional: allow container to launch Whisper service
+      - /var/run/docker.sock:/var/run/docker.sock
     env_file:
       - .env
     environment:
@@ -28,6 +30,8 @@ services:
       # Performance settings for Docker deployment
       - SM_BATCH_WORKERS=4
       - SM_SCAN_WORKERS=4
+      # Enable Whisper ASR service
+      # - ENABLE_WHISPER=1
 
       # Optional: Automatic admin user creation on first run
       # - SM_ADMIN_USER=admin

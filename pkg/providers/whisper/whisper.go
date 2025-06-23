@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"path/filepath"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 // Client implements the providers.Provider interface for Whisper.
@@ -22,7 +24,7 @@ type Client struct {
 // New returns a Client configured with reasonable defaults.
 func New() *Client {
 	return &Client{
-		APIURL:     "https://api.whisper.com",
+		APIURL:     viper.GetString("providers.whisper.api_url"),
 		HTTPClient: &http.Client{Timeout: 15 * time.Second},
 	}
 }
