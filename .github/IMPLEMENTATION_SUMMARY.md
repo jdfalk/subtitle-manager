@@ -5,6 +5,7 @@
 I've successfully created a unified issue management system that combines and enhances all existing functionality while adding CodeQL alert ticket generation. Here's what was implemented:
 
 ### 1. **Unified Python Script** (`issue_manager.py`)
+
 - **GitHubAPI class**: Centralized GitHub API client with proper authentication, error handling, and common operations
 - **IssueUpdateProcessor**: Handles all issue updates from `issue_updates.json` (create, update, comment, close, delete)
 - **CopilotTicketManager**: Manages Copilot review comment tickets (create, update, delete based on PR events)
@@ -12,11 +13,13 @@ I've successfully created a unified issue management system that combines and en
 - **CodeQLAlertManager**: NEW - Generates tickets for CodeQL security alerts
 
 ### 2. **Enhanced Workflows**
+
 - **`unified-issue-management.yml`**: Comprehensive workflow handling all operations with proper scheduling
 - **`codeql-alert-tickets.yml`**: Dedicated CodeQL alert processing
 - **Updated existing workflows**: Migrated `update-issues.yml` and `copilot-tickets.yml` to use new script
 
 ### 3. **New CodeQL Alert Ticket Generation**
+
 - Automatically creates GitHub issues for open CodeQL security alerts
 - Includes detailed information: rule ID, description, severity, file location, alert URL
 - Prevents duplicate tickets using alert-specific search
@@ -24,6 +27,7 @@ I've successfully created a unified issue management system that combines and en
 - Runs on schedule (twice daily) and when code is pushed
 
 ### 4. **Migration Strategy**
+
 - Both old and new systems run in parallel during transition
 - Existing workflows updated to use new script while maintaining compatibility
 - Migration guide created with rollback plan and success criteria
@@ -31,12 +35,14 @@ I've successfully created a unified issue management system that combines and en
 ## Key Features Added
 
 ### CodeQL Integration
+
 ```bash
 # Generate tickets for CodeQL alerts
 python issue_manager.py codeql-alerts
 ```
 
 ### Unified CLI Interface
+
 ```bash
 python issue_manager.py update-issues      # Process issue_updates.json
 python issue_manager.py copilot-tickets    # Handle Copilot reviews
@@ -46,12 +52,14 @@ python issue_manager.py event-handler      # Handle webhook events
 ```
 
 ### Enhanced Error Handling
+
 - Comprehensive exception handling with detailed logging
 - API rate limit awareness
 - Graceful failure recovery
 - Better debugging information
 
 ### Scheduling
+
 - **Daily 02:00 UTC**: Duplicate issue cleanup
 - **Twice daily 08:00/20:00 UTC**: CodeQL alert checks
 - **Push events**: Issue updates, CodeQL alerts, comprehensive analysis
@@ -60,18 +68,21 @@ python issue_manager.py event-handler      # Handle webhook events
 ## Files Created/Modified
 
 ### New Files
+
 - `.github/scripts/issue_manager.py` - Unified Python script
 - `.github/workflows/unified-issue-management.yml` - Main workflow
 - `.github/workflows/codeql-alert-tickets.yml` - CodeQL-specific workflow
 - `.github/ISSUE_MANAGEMENT_MIGRATION.md` - Migration guide
 
 ### Modified Files
+
 - `.github/workflows/update-issues.yml` - Updated to use new script
 - `.github/workflows/copilot-tickets.yml` - Updated to use new script
 
 ## Permissions Required
 
 The workflows need these GitHub permissions:
+
 - `issues: write` - Create, update, close issues
 - `pull-requests: read` - Read PR information
 - `contents: read` - Read repository content

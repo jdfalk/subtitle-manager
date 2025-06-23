@@ -60,6 +60,7 @@ All actions now support optional `guid` fields that prevent duplicate operations
 ### GUID Format Recommendations
 
 Use descriptive, unique identifiers:
+
 - `"create-feature-request-2025-06-20"`
 - `"update-issue-123-labels-2025-06-20"`
 - `"comment-456-status-update"`
@@ -125,6 +126,7 @@ Operations are processed in a specific order to maintain logical sequencing:
 ```
 
 Valid `state_reason` values:
+
 - `completed` - Issue was completed
 - `not_planned` - Issue will not be worked on
 
@@ -195,6 +197,7 @@ Create an `issue_updates.json` file in the repository root:
 ```
 
 The unified workflow will:
+
 1. Create the new issue
 2. Add the comment to issue #456 (only if no comment with that GUID exists)
 3. Close issue #456 with reason "completed"

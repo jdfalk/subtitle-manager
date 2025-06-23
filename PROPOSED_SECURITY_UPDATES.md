@@ -88,15 +88,15 @@ For Go backend parameters:
 ### Example – Sanitizing Form Input in React
 
 ```jsx
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 function safeContent(userInput) {
-    return { __html: DOMPurify.sanitize(userInput) };
+  return { __html: DOMPurify.sanitize(userInput) };
 }
 
 // Usage within a React component
 export default function Comment({ text }) {
-    return <div dangerouslySetInnerHTML={safeContent(text)} />;
+  return <div dangerouslySetInnerHTML={safeContent(text)} />;
 }
 ```
 
@@ -105,19 +105,19 @@ In this example, `DOMPurify.sanitize` removes any unexpected or dangerous HTML f
 ### Example – Validating API Parameters with express-validator
 
 ```javascript
-import { body, validationResult } from 'express-validator';
+import { body, validationResult } from "express-validator";
 
 export const createSubtitleValidator = [
-    body('title').isString().trim().isLength({ min: 1, max: 100 }),
-    body('language').isISO31661Alpha2(),
+  body("title").isString().trim().isLength({ min: 1, max: 100 }),
+  body("language").isISO31661Alpha2(),
 ];
 
 export function handleValidation(req, res, next) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-    next();
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
 }
 ```
 
@@ -270,19 +270,19 @@ Without CSRF protection, if a logged-in user visits a malicious site, that site 
 ### CSRF Token Example in Express
 
 ```javascript
-import csrf from 'csurf';
-import cookieParser from 'cookie-parser';
+import csrf from "csurf";
+import cookieParser from "cookie-parser";
 
 const csrfProtection = csrf({ cookie: true });
 app.use(cookieParser());
 app.use(csrfProtection);
 
-app.get('/form', (req, res) => {
-    res.render('form', { csrfToken: req.csrfToken() });
+app.get("/form", (req, res) => {
+  res.render("form", { csrfToken: req.csrfToken() });
 });
 
-app.post('/process', (req, res) => {
-    res.send('data is being processed');
+app.post("/process", (req, res) => {
+  res.send("data is being processed");
 });
 ```
 
@@ -369,13 +369,13 @@ jobs:
   govulncheck:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Install Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: 1.22
-    - name: Run govulncheck
-      run: govulncheck ./...
+      - uses: actions/checkout@v4
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22
+      - name: Run govulncheck
+        run: govulncheck ./...
 ```
 
 This workflow ensures Go dependencies are continuously monitored for known issues.
@@ -386,19 +386,19 @@ This workflow ensures Go dependencies are continuously monitored for known issue
 
 Below are libraries and utilities we can adopt to streamline security.
 
-| Area              | Library                     | Purpose                                      |
-| ----------------- | --------------------------- | -------------------------------------------- |
-| Input Validation  | `express-validator`         | Request validation in Node.js/Express        |
-| HTML Sanitization | `DOMPurify`                 | Cleans user-provided HTML                    |
-| CSRF Protection   | `csurf` (Node) / `gorilla/csrf` (Go) | Mitigates CSRF attacks      |
-| Rate Limiting     | `express-rate-limit`        | Prevents brute-force attacks on endpoints    |
-| Security Headers  | `helmet`                    | Sets standard security-related HTTP headers  |
-| Dependency Scans  | `npm audit` / `govulncheck` | Detects vulnerable packages                  |
+| Area              | Library                              | Purpose                                     |
+| ----------------- | ------------------------------------ | ------------------------------------------- |
+| Input Validation  | `express-validator`                  | Request validation in Node.js/Express       |
+| HTML Sanitization | `DOMPurify`                          | Cleans user-provided HTML                   |
+| CSRF Protection   | `csurf` (Node) / `gorilla/csrf` (Go) | Mitigates CSRF attacks                      |
+| Rate Limiting     | `express-rate-limit`                 | Prevents brute-force attacks on endpoints   |
+| Security Headers  | `helmet`                             | Sets standard security-related HTTP headers |
+| Dependency Scans  | `npm audit` / `govulncheck`          | Detects vulnerable packages                 |
 
 ### Example – Integrating Helmet for Express
 
 ```javascript
-import helmet from 'helmet';
+import helmet from "helmet";
 app.use(helmet());
 ```
 
@@ -443,13 +443,13 @@ Security features must be validated with automated tests. Below is an outline of
 ### Example – Vitest for React Input Sanitization
 
 ```jsx
-import { render, screen } from '@testing-library/react';
-import Comment from '../Comment';
+import { render, screen } from "@testing-library/react";
+import Comment from "../Comment";
 
-test('sanitizes dangerous HTML', () => {
-    render(<Comment text="<img src=x onerror=alert(1)>" />);
-    const img = screen.queryByRole('img');
-    expect(img).toBeNull();
+test("sanitizes dangerous HTML", () => {
+  render(<Comment text="<img src=x onerror=alert(1)>" />);
+  const img = screen.queryByRole("img");
+  expect(img).toBeNull();
 });
 ```
 
@@ -492,4 +492,3 @@ Security is an ongoing process. This proposal provides a roadmap for immediate i
 ```
 End of Proposed Security Updates
 ```
-

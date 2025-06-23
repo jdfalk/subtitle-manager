@@ -9,17 +9,17 @@ For a summary of Bazarr's capabilities used as a target feature set, see [docs/B
 The repository is organised using a standard Go project layout. Top level directories include command implementations, reusable packages and documentation.
 
 \```text
-cmd/                // CLI command definitions
-pkg/                // Core application packages
-  database/         // Database layer built on SQLite
-  logging/          // Logging helpers
-  providers/        // Subtitle provider integrations
-  subtitles/        // Subtitle processing (convert, merge, extract)
-  translator/       // Google Translate and ChatGPT clients
-proto/              // gRPC service definitions (generated code in pkg/translatorpb)
-internal/           // Internal utilities not intended for external use
-scripts/            // Helper scripts for CI/CD (future work)
-configs/            // Example configuration files
+cmd/ // CLI command definitions
+pkg/ // Core application packages
+database/ // Database layer built on SQLite
+logging/ // Logging helpers
+providers/ // Subtitle provider integrations
+subtitles/ // Subtitle processing (convert, merge, extract)
+translator/ // Google Translate and ChatGPT clients
+proto/ // gRPC service definitions (generated code in pkg/translatorpb)
+internal/ // Internal utilities not intended for external use
+scripts/ // Helper scripts for CI/CD (future work)
+configs/ // Example configuration files
 \```
 
 Every package contains a README giving a quick overview of its responsibilities. Functions are documented using Go doc comments following the style guidelines laid out in `AGENTS.md`.
@@ -88,11 +88,11 @@ Configuration is handled by Viper with support for YAML files, environment varia
 \```yaml
 log-level: info
 log_levels:
-  translate: debug
+translate: debug
 translator: google
 translator_api_keys:
-  google: "<API key>"
-  chatgpt: "<API key>"
+google: "<API key>"
+chatgpt: "<API key>"
 database: "~/.subtitle-manager.db"
 \```
 
@@ -117,14 +117,14 @@ The application stores metadata in an SQLite database managed by `pkg/database`.
 
 \```sql
 CREATE TABLE IF NOT EXISTS subtitles (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    file TEXT NOT NULL,
-    video_file TEXT,
-    release TEXT,
-    language TEXT NOT NULL,
-    service TEXT NOT NULL,
-    embedded INTEGER NOT NULL DEFAULT 0,
-    created_at TIMESTAMP NOT NULL
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+file TEXT NOT NULL,
+video_file TEXT,
+release TEXT,
+language TEXT NOT NULL,
+service TEXT NOT NULL,
+embedded INTEGER NOT NULL DEFAULT 0,
+created_at TIMESTAMP NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS subtitles_file_idx ON subtitles(file);
@@ -134,11 +134,11 @@ The library scan feature stores discovered videos in a dedicated table:
 
 \```sql
 CREATE TABLE IF NOT EXISTS media_items (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    path TEXT NOT NULL,
-    title TEXT NOT NULL,
-    season INTEGER,
-    episode INTEGER
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+path TEXT NOT NULL,
+title TEXT NOT NULL,
+season INTEGER,
+episode INTEGER
 );
 \```
 
@@ -191,8 +191,8 @@ The translation command selects the implementation using a map of provider names
 
 \```go
 providers := map[string]translator.TranslateFunc{
-    "google": translator.GoogleTranslate,
-    "chatgpt": translator.GPTTranslate,
+"google": translator.GoogleTranslate,
+"chatgpt": translator.GPTTranslate,
 }
 \```
 
@@ -204,14 +204,14 @@ To enable remote processing or integration with other services, Subtitle Manager
 syntax = "proto3";
 package translator;
 service Translator {
-  rpc Translate(TranslateRequest) returns (TranslateResponse);
+rpc Translate(TranslateRequest) returns (TranslateResponse);
 }
 message TranslateRequest {
-  string text = 1;
-  string language = 2;
+string text = 1;
+string language = 2;
 }
 message TranslateResponse {
-  string translated_text = 1;
+string translated_text = 1;
 }
 \```
 
@@ -224,7 +224,7 @@ The `pkg/providers` directory will host modules for fetching subtitles from onli
 \```go
 // Provider downloads subtitles for a given media item.
 type Provider interface {
-    Fetch(ctx context.Context, mediaPath string, lang string) ([]byte, error)
+Fetch(ctx context.Context, mediaPath string, lang string) ([]byte, error)
 }
 \```
 
@@ -240,14 +240,14 @@ Example workflow for translating multiple files:
 
 \```go
 pool := conc.NewPool(5)
-for _, file := range files {
-    f := file
-    pool.Go(func() error {
-        return translateFile(ctx, f)
-    })
+for \_, file := range files {
+f := file
+pool.Go(func() error {
+return translateFile(ctx, f)
+})
 }
 if err := pool.Wait(); err != nil {
-    log.WithError(err).Error("batch translation failed")
+log.WithError(err).Error("batch translation failed")
 }
 \```
 
@@ -311,20 +311,27 @@ This design document details the intended architecture for Subtitle Manager. By 
 An example configuration demonstrating all available options:
 
 \```yaml
+
 # Global log level
+
 log-level: info
 
 # Component specific overrides
+
 log_levels:
-  database: warn
-  translate: debug
+database: warn
+translate: debug
 
 # Database file location
+
 # The path can be absolute or relative to the configuration file
+
 # by default this uses $HOME/.subtitle-manager.db
+
 database: /var/lib/subtitle-manager/app.db
 
 # Translator selection and API keys
+
 translate_service: chatgpt
 google_api_key: YOUR_GOOGLE_API_KEY
 openai_api_key: YOUR_CHATGPT_API_KEY
@@ -334,16 +341,16 @@ ffmpeg_path: /usr/bin/ffmpeg
 batch_workers: 4
 scan_workers: 4
 opensubtitles:
-  api_key: YOUR_OS_API_KEY
-  api_url: https://rest.opensubtitles.org
-  user_agent: subtitle-manager/0.1
+api_key: YOUR_OS_API_KEY
+api_url: https://rest.opensubtitles.org
+user_agent: subtitle-manager/0.1
 
 providers:
-  generic:
-    api_url: https://example.com/subtitles
-    username: myuser
-    password: secret
-    api_key: token
+generic:
+api_url: https://example.com/subtitles
+username: myuser
+password: secret
+api_key: token
 \```
 
 The CLI supports environment variable overrides using the prefix `SUBTITLE_MANAGER_`. For example `SUBTITLE_MANAGER_DATABASE=/tmp/test.db` will force the database location.
@@ -454,14 +461,14 @@ These resources provide background on the tools and libraries used in the projec
 Below is a simplified view of the major components and how they interact during a translation operation:
 
 \```text
-+-------------+     +---------------+     +---------------+
++-------------+ +---------------+ +---------------+
 | CLI Command | --> | Subtitle Utils| --> | Translator API|
-+-------------+     +---------------+     +---------------+
-       |                        |                    |
-       |                        v                    |
-       |                 +-------------+             |
-       |                 |  Database   | <-----------+
-       |                 +-------------+
++-------------+ +---------------+ +---------------+
+| | |
+| v |
+| +-------------+ |
+| | Database | <-----------+
+| +-------------+
 \```
 
 The command reads the input, delegates parsing and formatting to the subtitle utilities, which then call the translator API. Results are stored in the database and returned to the command for output.
@@ -498,8 +505,8 @@ process using the existing translation providers.
 ## 29. Related Documentation
 
 For additional context, see the following documents:
+
 - [API Design](API_DESIGN.md)
 - [Test Design](TEST_DESIGN.md)
 - [Process Workflows](PROCESS_WORKFLOWS.md)
 - [Developer Guide](DEVELOPER_GUIDE.md)
-

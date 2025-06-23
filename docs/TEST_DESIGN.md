@@ -1,4 +1,5 @@
 <!-- file: docs/TEST_DESIGN.md -->
+
 # Test Design
 
 Subtitle Manager uses multiple test layers to ensure code reliability.
@@ -31,4 +32,3 @@ Run with `go test -bench . ./...`.
 
 The `Makefile` provides `make test-all` to run Go and web UI tests.
 CI workflows execute the same command and upload coverage reports when possible.
-

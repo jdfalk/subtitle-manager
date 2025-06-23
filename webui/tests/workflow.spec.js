@@ -44,10 +44,18 @@ test('major workflows execute without errors', async ({ page }) => {
 
   // Generic API mocks for all workflow endpoints
   await page.route('**/api/convert', route =>
-    route.fulfill({ status: 200, body: 'ok', headers: { 'Content-Type': 'text/plain' } })
+    route.fulfill({
+      status: 200,
+      body: 'ok',
+      headers: { 'Content-Type': 'text/plain' },
+    })
   );
   await page.route('**/api/translate', route =>
-    route.fulfill({ status: 200, body: 'ok', headers: { 'Content-Type': 'text/plain' } })
+    route.fulfill({
+      status: 200,
+      body: 'ok',
+      headers: { 'Content-Type': 'text/plain' },
+    })
   );
   await page.route('**/api/extract', route =>
     route.fulfill({
@@ -74,18 +82,24 @@ test('major workflows execute without errors', async ({ page }) => {
   await page.route('**/api/providers/available', route =>
     route.fulfill({
       status: 200,
-      body: JSON.stringify([{ name: 'opensubtitles', displayName: 'OpenSubtitles' }]),
+      body: JSON.stringify([
+        { name: 'opensubtitles', displayName: 'OpenSubtitles' },
+      ]),
       headers: { 'Content-Type': 'application/json' },
     })
   );
   await page.route('**/api/users', route =>
     route.fulfill({
       status: 200,
-      body: JSON.stringify([{ id: 1, username: 'tester', email: 't@example.com' }]),
+      body: JSON.stringify([
+        { id: 1, username: 'tester', email: 't@example.com' },
+      ]),
       headers: { 'Content-Type': 'application/json' },
     })
   );
-  await page.route('**/api/users/1/reset', route => route.fulfill({ status: 200 }));
+  await page.route('**/api/users/1/reset', route =>
+    route.fulfill({ status: 200 })
+  );
   await page.route('**/api/database/info', route =>
     route.fulfill({
       status: 200,
@@ -96,29 +110,49 @@ test('major workflows execute without errors', async ({ page }) => {
   await page.route('**/api/database/stats', route =>
     route.fulfill({
       status: 200,
-      body: JSON.stringify({ totalRecords: 1, users: 1, downloads: 0, mediaItems: 0 }),
+      body: JSON.stringify({
+        totalRecords: 1,
+        users: 1,
+        downloads: 0,
+        mediaItems: 0,
+      }),
       headers: { 'Content-Type': 'application/json' },
     })
   );
   await page.route('**/api/database/backup', route =>
-    route.fulfill({ status: 200, body: 'ok', headers: { 'Content-Type': 'application/octet-stream' } })
+    route.fulfill({
+      status: 200,
+      body: 'ok',
+      headers: { 'Content-Type': 'application/octet-stream' },
+    })
   );
-  await page.route('**/api/database/optimize', route => route.fulfill({ status: 200 }));
+  await page.route('**/api/database/optimize', route =>
+    route.fulfill({ status: 200 })
+  );
   await page.route('**/api/library/browse**', route =>
     route.fulfill({
       status: 200,
-      body: JSON.stringify({ items: [{ name: 'Demo.mkv', path: '/demo.mkv', type: 'file', isVideo: true }] }),
+      body: JSON.stringify({
+        items: [
+          { name: 'Demo.mkv', path: '/demo.mkv', type: 'file', isVideo: true },
+        ],
+      }),
       headers: { 'Content-Type': 'application/json' },
     })
   );
   await page.route('https://www.omdbapi.com/**', route =>
-    route.fulfill({ status: 200, body: JSON.stringify({ Response: 'True', Title: 'Demo' }) })
+    route.fulfill({
+      status: 200,
+      body: JSON.stringify({ Response: 'True', Title: 'Demo' }),
+    })
   );
 
   // Create a dummy test file for file input operations
   await page.addInitScript(() => {
     // Mock file for testing
-    window.dummyFile = new File(['dummy content'], 'dummy.srt', { type: 'text/plain' });
+    window.dummyFile = new File(['dummy content'], 'dummy.srt', {
+      type: 'text/plain',
+    });
   });
 
   // Translation workflow
@@ -151,10 +185,17 @@ test('major workflows execute without errors', async ({ page }) => {
   await page.goto('/tools/extract');
   await page.waitForLoadState('networkidle');
 
-  const mediaPathInput = page.getByLabel(/Media File Path/i).or(page.locator('input[placeholder*="media"]')).or(page.locator('input[type="text"]')).first();
+  const mediaPathInput = page
+    .getByLabel(/Media File Path/i)
+    .or(page.locator('input[placeholder*="media"]'))
+    .or(page.locator('input[type="text"]'))
+    .first();
   const extractButton = page.getByRole('button', { name: /Extract/i });
 
-  if (await mediaPathInput.isVisible({ timeout: 2000 }) && await extractButton.isVisible({ timeout: 2000 })) {
+  if (
+    (await mediaPathInput.isVisible({ timeout: 2000 })) &&
+    (await extractButton.isVisible({ timeout: 2000 }))
+  ) {
     await mediaPathInput.fill('/tmp/movie.mkv');
     await extractButton.click();
   }
@@ -163,10 +204,19 @@ test('major workflows execute without errors', async ({ page }) => {
   await page.goto('/dashboard');
   await page.waitForLoadState('networkidle');
 
-  const scanInput = page.getByPlaceholder(/directory.*scan/i).or(page.locator('input[placeholder*="scan"]')).or(page.locator('input[type="text"]')).first();
-  const scanButton = page.getByRole('button', { name: /Start Scan/i }).or(page.getByRole('button', { name: /Scan/i }));
+  const scanInput = page
+    .getByPlaceholder(/directory.*scan/i)
+    .or(page.locator('input[placeholder*="scan"]'))
+    .or(page.locator('input[type="text"]'))
+    .first();
+  const scanButton = page
+    .getByRole('button', { name: /Start Scan/i })
+    .or(page.getByRole('button', { name: /Scan/i }));
 
-  if (await scanInput.isVisible({ timeout: 2000 }) && await scanButton.isVisible({ timeout: 2000 })) {
+  if (
+    (await scanInput.isVisible({ timeout: 2000 })) &&
+    (await scanButton.isVisible({ timeout: 2000 }))
+  ) {
     await scanInput.fill('/media');
     await scanButton.click();
   }
@@ -191,7 +241,9 @@ test('major workflows execute without errors', async ({ page }) => {
     await providersTab.click();
     await page.waitForTimeout(500);
 
-    const addProviderButton = page.getByText(/Add Provider/i).or(page.getByRole('button', { name: /Add Provider/i }));
+    const addProviderButton = page
+      .getByText(/Add Provider/i)
+      .or(page.getByRole('button', { name: /Add Provider/i }));
     if (await addProviderButton.isVisible({ timeout: 2000 })) {
       await addProviderButton.click();
       const cancelButton = page.getByRole('button', { name: /Cancel/i });
@@ -226,18 +278,24 @@ test('major workflows execute without errors', async ({ page }) => {
     if (await backupButton.isVisible({ timeout: 2000 })) {
       await backupButton.click();
       // Handle confirmation dialog
-      const confirmBackupButton = page.getByRole('button', { name: /Create Backup/i }).last();
+      const confirmBackupButton = page
+        .getByRole('button', { name: /Create Backup/i })
+        .last();
       if (await confirmBackupButton.isVisible({ timeout: 2000 })) {
         await confirmBackupButton.click();
       }
     }
 
     // Test optimize workflow
-    const optimizeButton = page.getByRole('button', { name: /Optimize Database/i });
+    const optimizeButton = page.getByRole('button', {
+      name: /Optimize Database/i,
+    });
     if (await optimizeButton.isVisible({ timeout: 2000 })) {
       await optimizeButton.click();
       // Handle confirmation dialog
-      const confirmOptimizeButton = page.getByRole('button', { name: /Optimize/i });
+      const confirmOptimizeButton = page.getByRole('button', {
+        name: /Optimize/i,
+      });
       if (await confirmOptimizeButton.isVisible({ timeout: 2000 })) {
         await confirmOptimizeButton.click();
       }

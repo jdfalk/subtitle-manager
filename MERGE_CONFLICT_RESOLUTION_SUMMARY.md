@@ -7,16 +7,19 @@ Successfully resolved all merge conflicts in `issue_updates.json` that occurred 
 ## Conflicts Resolved
 
 ### 1. Update Section Conflict
+
 - **Branch 1 (HEAD)**: Added issue #930 and issue #532 updates
 - **Branch 2 (c75f96a)**: Added issue #531 update
 - **Resolution**: Kept all three issue updates (#930, #532, and #531)
 
 ### 2. Comment Section Conflict
+
 - **Branch 1 (HEAD)**: Added comments for issue #930 and #532
 - **Branch 2 (c75f96a)**: Added comment for issue #531
 - **Resolution**: Kept all three comments with their respective plan of action details
 
 ### 3. Close Section Conflict
+
 - **Branch 1 (HEAD)**: Requested to close issue #532
 - **Branch 2 (c75f96a)**: Requested to close issue #531
 - **Resolution**: Kept both close requests for issues #532 and #531
@@ -26,6 +29,7 @@ Successfully resolved all merge conflicts in `issue_updates.json` that occurred 
 The resolved `issue_updates.json` now contains:
 
 ### Updates:
+
 - Issue #920: Add codex label
 - Issue #921: Add codex label and close state
 - Issue #922: Add codex label and update body with backup timeout fix
@@ -35,6 +39,7 @@ The resolved `issue_updates.json` now contains:
 - Issue #531: Add codex and in-progress labels (from c75f96a branch)
 
 ### Comments:
+
 - Issue #920: JSON decode test improvement plan
 - Issue #921: Webhook subtests implementation note
 - Issue #922: Backup timeout fix application
@@ -44,6 +49,7 @@ The resolved `issue_updates.json` now contains:
 - Issue #531: OSDB SDK migration plan (from c75f96a)
 
 ### Close Requests:
+
 - Issue #532: Mark as completed (from HEAD)
 - Issue #531: Mark as completed (from c75f96a)
 
@@ -61,6 +67,7 @@ The resolved `issue_updates.json` now contains:
 ## Impact
 
 The resolved file now properly captures work from both development streams:
+
 1. Security improvements for OMDB API validation (#930)
 2. Performance benchmarking completion (#532)
 3. Provider SDK migration completion (#531)

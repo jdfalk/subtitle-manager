@@ -83,23 +83,27 @@ Subtitle Manager features a comprehensive tagging system that provides unified o
 The tagging system exposes consistent REST endpoints for all entity types:
 
 \```
-GET    /api/{entityType}/{id}/tags     - List tags for entity
-POST   /api/{entityType}/{id}/tags     - Add tag to entity
+GET /api/{entityType}/{id}/tags - List tags for entity
+POST /api/{entityType}/{id}/tags - Add tag to entity
 DELETE /api/{entityType}/{id}/tags/{tagId} - Remove tag from entity
-GET    /api/tags?entity_type={type}    - List tags by entity type
-POST   /api/tags/bulk                  - Bulk tag operations
+GET /api/tags?entity_type={type} - List tags by entity type
+POST /api/tags/bulk - Bulk tag operations
 \```
 
 #### Usage Examples
 
 \```bash
+
 # Tag a movie for family content
+
 POST /api/media/12345/tags {"tag_id": "family"}
 
 # List all users with premium tags
+
 GET /api/tags?entity_type=user&name=premium
 
 # Bulk tag multiple providers
+
 POST /api/tags/bulk {"tag_id": "reliable", "entities": [{"type": "provider", "id": "opensubtitles"}, {"type": "provider", "id": "subscene"}]}
 \```
 
@@ -152,7 +156,7 @@ services are available:
 - Turkcealtyazi.org
 - TuSubtitulo
 - TVSubtitles
- - Whisper (optional local service)
+- Whisper (optional local service)
 - Wizdom
 - XSubs
 - Yavka.net
@@ -193,28 +197,36 @@ The backend provides full production functionality with feature parity to Bazarr
 ### Using Make (Recommended)
 
 \```bash
+
 # Clone repository
+
 git clone <this repository>
 cd subtitle-manager
 
 # Build everything with one command
+
 make build
 
 # Or for development
+
 make quick-build
 
 # See all available targets
+
 make help
 \```
 
 ### Manual Installation
 
 \```bash
+
 # Clone repository
+
 git clone <this repository>
 cd subtitle-manager
 
 # Install dependencies, build web UI and compile
+
 go generate ./webui
 go build
 \```
@@ -248,7 +260,9 @@ subtitle-manager fetch --tags tag1,tag2 [media] [lang] [output]
 subtitle-manager search [media] [lang]
 subtitle-manager batch [lang] [files...]
 subtitle-manager syncbatch -config file.json
-  # syncbatch expects a JSON file describing media and subtitle pairs
+
+# syncbatch expects a JSON file describing media and subtitle pairs
+
 subtitle-manager scan [directory] [lang] [-u]
 subtitle-manager autoscan [directory] [lang] [-i duration] [-s cron] [-u]
 subtitle-manager scanlib [directory]
@@ -336,7 +350,7 @@ Example configuration:
 \```
 log-level: info
 log_levels:
-  translate: debug
+translate: debug
 translate_service: google
 google_api_key: your-google-api-key
 openai_api_key: your-openai-api-key
@@ -346,15 +360,15 @@ ffmpeg_path: /usr/bin/ffmpeg
 batch_workers: 4
 scan_workers: 4
 opensubtitles:
-  api_key: your-os-key
-  api_url: https://rest.opensubtitles.org
-  user_agent: subtitle-manager/0.1
+api_key: your-os-key
+api_url: https://rest.opensubtitles.org
+user_agent: subtitle-manager/0.1
 providers:
-  generic:
-    api_url: https://example.com/subtitles
-    username: myuser
-    password: secret
-    api_key: token123
+generic:
+api_url: https://example.com/subtitles
+username: myuser
+password: secret
+api_key: token123
 github_client_id: yourClientID
 github_client_secret: yourClientSecret
 github_redirect_url: http://localhost:8080/api/oauth/github/callback
@@ -370,57 +384,64 @@ dependencies. The binary is located at `/usr/bin/ffmpeg` and the container sets
 #### Quick Start
 
 \```bash
+
 # Simple start - web interface only
+
 docker run -p 8080:8080 ghcr.io/jdfalk/subtitle-manager:latest
 
 # Complete setup with persistent storage and media access
+
 docker run -d \
-  --name subtitle-manager \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -v $(pwd)/config:/config \
-  -v /path/to/your/movies:/media/movies:ro \
-  -v /path/to/your/tv:/media/tv:ro \
-  -v $(pwd)/subtitles:/subtitles \
-  -e SM_LOG_LEVEL=info \
-  ghcr.io/jdfalk/subtitle-manager:latest
+ --name subtitle-manager \
+ --restart unless-stopped \
+ -p 8080:8080 \
+ -v $(pwd)/config:/config \
+ -v /path/to/your/movies:/media/movies:ro \
+ -v /path/to/your/tv:/media/tv:ro \
+ -v $(pwd)/subtitles:/subtitles \
+ -e SM_LOG_LEVEL=info \
+ ghcr.io/jdfalk/subtitle-manager:latest
 
 # User-requested format with variable substitution
+
 docker run -d \
-  --name subtitle-manager \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -v ${path_on_host_system_to_configdir}:/config \
-  -v ${path_on_host_system_to_media}:/media:ro \
-  ghcr.io/jdfalk/subtitle-manager:latest
+ --name subtitle-manager \
+ --restart unless-stopped \
+ -p 8080:8080 \
+ -v ${path_on_host_system_to_configdir}:/config \
+ -v ${path_on_host_system_to_media}:/media:ro \
+ ghcr.io/jdfalk/subtitle-manager:latest
 
 # Example with actual paths (update paths to match your system)
+
 docker run -d \
-  --name subtitle-manager \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -v /home/user/subtitle-manager/config:/config \
-  -v /media/movies:/media/movies:ro \
-  -v /media/tv:/media/tv:ro \
-  -v /home/user/subtitle-manager/subtitles:/subtitles \
-  ghcr.io/jdfalk/subtitle-manager:latest
+ --name subtitle-manager \
+ --restart unless-stopped \
+ -p 8080:8080 \
+ -v /home/user/subtitle-manager/config:/config \
+ -v /media/movies:/media/movies:ro \
+ -v /media/tv:/media/tv:ro \
+ -v /home/user/subtitle-manager/subtitles:/subtitles \
+ ghcr.io/jdfalk/subtitle-manager:latest
 
 # With local Whisper transcription service (requires Docker socket)
+
 docker run -d \
-  --name subtitle-manager \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -v /home/user/subtitle-manager/config:/config \
-  -v /media/movies:/media/movies:ro \
-  -v /media/tv:/media/tv:ro \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -e ENABLE_WHISPER=1 \
-  ghcr.io/jdfalk/subtitle-manager:latest
+ --name subtitle-manager \
+ --restart unless-stopped \
+ -p 8080:8080 \
+ -v /home/user/subtitle-manager/config:/config \
+ -v /media/movies:/media/movies:ro \
+ -v /media/tv:/media/tv:ro \
+ -v /var/run/docker.sock:/var/run/docker.sock \
+ -e ENABLE_WHISPER=1 \
+ ghcr.io/jdfalk/subtitle-manager:latest
 
 <!-- Customize WHISPER_MODEL=base or WHISPER_DEVICE=cpu to disable GPU -->
 <!-- SM_OPENAI_API_URL will be set automatically to http://localhost:9000/v1 -->
 <!-- Add --gpus all if you want GPU acceleration (requires NVIDIA Container Toolkit) -->
-```
+
+````
 
 Access the web interface at `http://localhost:8080`
 
@@ -692,3 +713,4 @@ Subtitle Manager applies strict security headers and sanitizes HTML content in t
 ## License
 
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
+````

@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Support per-title language preferences",
   "body": "Configure desired subtitle languages per show or movie.",
-  "labels": [
-    "feature"
-  ],
+  "labels": ["feature"],
   "guid": "create-language-preferences-2025-06-20",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1078"
 }

@@ -7,6 +7,7 @@ This enhancement significantly improves the summary reporting capabilities of th
 ### 1. **Enhanced Python Script (`issue_manager.py`)**
 
 #### New `OperationSummary` Class
+
 - **Comprehensive tracking**: Records all operations performed (issues created, updated, closed, deleted, comments added, duplicates closed, alerts processed)
 - **File tracking**: Tracks processed files, archived files, and permalink updates
 - **Error and warning tracking**: Captures and reports all errors and warnings
@@ -15,12 +16,14 @@ This enhancement significantly improves the summary reporting capabilities of th
   - GitHub Actions format for workflow step summaries
 
 #### Updated Operation Classes
+
 - **IssueUpdateProcessor**: Now tracks every issue created, updated, closed, or deleted with links
 - **CopilotTicketManager**: Records Copilot ticket operations and handles events properly
 - **DuplicateIssueManager**: Tracks duplicate issues that are closed with full details
 - **CodeQLAlertManager**: Records security alert processing and ticket creation
 
 #### Summary Features
+
 - **Detailed reporting**: Each operation type shows exactly what was changed
 - **GitHub integration**: Automatically exports summaries to GitHub Actions step summary
 - **Link generation**: Creates clickable links to issues, PRs, and files
@@ -29,16 +32,19 @@ This enhancement significantly improves the summary reporting capabilities of th
 ### 2. **Enhanced Workflow (`unified-issue-management.yml`)**
 
 #### Improved Operation Execution
+
 - **File change detection**: Tracks what files were actually modified
 - **Conditional PR creation**: Only creates PRs when files actually change
 - **Better output capture**: Collects more detailed information from each operation
 
 #### Enhanced Individual Operation Summaries
+
 - **Operation-specific details**: Each operation shows relevant information (files processed, PRs created, etc.)
 - **Status tracking**: Clear success/failure indicators
 - **Timestamp and context**: When, what, and who triggered each operation
 
 #### Comprehensive Final Summary
+
 - **Multi-operation overview**: Aggregates results from all operations in the workflow run
 - **File change tracking**: Shows exactly what files were modified with links to view them
 - **Pull request tracking**: Lists any PRs created during the workflow
@@ -47,12 +53,14 @@ This enhancement significantly improves the summary reporting capabilities of th
 ### 3. **Better User Experience**
 
 #### For Developers
+
 - **Clear visibility**: Know exactly what the workflow changed
 - **Easy navigation**: Click directly to modified files and created issues
 - **Error transparency**: See all errors and warnings in one place
 - **Progress tracking**: Understand what each operation accomplished
 
 #### For Repository Maintainers
+
 - **Audit trail**: Complete record of all automated changes
 - **Quick review**: Easy access to created PRs and modified files
 - **Status overview**: High-level summary of workflow effectiveness
@@ -61,6 +69,7 @@ This enhancement significantly improves the summary reporting capabilities of th
 ## Example Summary Output
 
 ### Individual Operation Summary
+
 ```
 🎯 UPDATE-ISSUES OPERATION SUMMARY
 ==================================================
@@ -89,6 +98,7 @@ This enhancement significantly improves the summary reporting capabilities of th
 ```
 
 ### Final Workflow Summary
+
 ```
 🚀 Unified Issue Management Workflow Summary
 

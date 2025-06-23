@@ -31,12 +31,14 @@ The workflow was designed to generate its own comprehensive summary in addition 
 ### Changes Made
 
 #### Before (Problematic):
+
 - Workflow tried to duplicate operation results
 - Generated separate "Operations Executed" section (often empty)
 - Showed "Files Modified in This Workflow" (often empty)
 - Created confusing duplicate summaries
 
 #### After (Improved):
+
 - **Workflow Summary**: High-level metadata and status only
 - **Operation Details**: Handled entirely by Python script (already working well)
 - **Clear Reference**: Workflow summary points users to job-level details
@@ -58,18 +60,20 @@ The workflow was designed to generate its own comprehensive summary in addition 
 
 📋 **Operations executed:** `update-issues`
 
-ℹ️  Detailed operation results are shown above in individual job summaries.
+ℹ️ Detailed operation results are shown above in individual job summaries.
 
 ## ⚙️ Configuration
+
 - **Operations mode:** `update-issues`
 - **Dry run:** false
 - **Force update:** false
-...
+  ...
 
 ## 🔗 Quick Links
+
 - [🔄 Workflow runs](...)
 - [🐛 Issues](...)
-...
+  ...
 ```
 
 ### Result
@@ -92,6 +96,7 @@ Now users get:
 ## Testing
 
 The improved workflow summary will now:
+
 - ✅ Show overall workflow status clearly
 - ✅ Reference where detailed results are located
 - ✅ Avoid duplicate summary content
@@ -101,11 +106,13 @@ The improved workflow summary will now:
 ## Impact
 
 This resolves the confusion identified in the user's feedback where:
+
 - Two different summaries showed different information
 - Workflow-level summary had empty sections
 - Users couldn't easily understand what actually happened
 
 Now there's a clear hierarchy:
+
 1. **Workflow Summary** → High-level status and metadata
 2. **Job Summaries** → Detailed operation results (from Python script)
 

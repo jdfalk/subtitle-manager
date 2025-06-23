@@ -46,6 +46,7 @@ We've upgraded our issue management system to eliminate merge conflicts! Instead
 ## Examples in the Repo
 
 Check out these example files:
+
 - `bc03b7dc-eba7-4b95-9a90-a0224b274633.json` - Create issue
 - `ff8d269a-ce03-4985-b653-0e0af2d363e2.json` - Update issue
 - `a8f2c4e6-b1d3-4a7e-9c5b-2f8e1a4d6c9b.json` - Add comment
@@ -77,6 +78,7 @@ Check out these example files:
 ## Testing
 
 Use dry-run mode to test your changes:
+
 1. Create your update file
 2. Go to Actions → Unified Issue Management
 3. Click "Run workflow"

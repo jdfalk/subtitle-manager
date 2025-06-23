@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Internationalise CLI and web interface",
   "body": "Provide translations for user-facing messages in the CLI and web UI.",
-  "labels": [
-    "enhancement"
-  ],
+  "labels": ["enhancement"],
   "guid": "create-i18n-support-2025-06-20",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1054"
 }

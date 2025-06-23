@@ -38,17 +38,20 @@ We're migrating from a single `issue_updates.json` file to a distributed approac
 ## Migration Steps
 
 ### Phase 1: Dual Support ✅
+
 - [x] Create `.github/issue-updates/` directory
 - [x] Update workflow to process both formats
 - [x] Add examples and documentation
 - [x] Create helper script for new format
 
 ### Phase 2: Transition (Current)
+
 - [ ] Convert existing items in `issue_updates.json` to individual files
 - [ ] Update documentation to recommend new format
 - [ ] Train team on new workflow
 
 ### Phase 3: Full Migration (Future)
+
 - [ ] Remove legacy `issue_updates.json` support
 - [ ] Archive old file
 - [ ] Update workflow to only use new format
@@ -56,16 +59,19 @@ We're migrating from a single `issue_updates.json` file to a distributed approac
 ## Benefits
 
 ### ✅ Eliminated Merge Conflicts
+
 - Each issue update is in its own file
 - Parallel development without conflicts
 - Atomic operations
 
 ### ✅ Better Organization
+
 - UUID-based file naming prevents conflicts
 - Clear action-based structure
 - Easy to track and review changes
 
 ### ✅ Improved Workflow
+
 - Simplified JSON structure
 - Better git history tracking
 - Easier rollback of individual changes
@@ -121,18 +127,21 @@ The unified issue management workflow now:
 ## Best Practices
 
 ### File Organization
+
 - One operation per file
 - Use descriptive GUIDs
 - Include timestamps in GUIDs
 - Follow consistent naming
 
 ### Content Guidelines
+
 - Keep actions atomic
 - Use clear, descriptive titles
 - Include comprehensive body text
 - Apply appropriate labels
 
 ### Development Workflow
+
 - Create files in feature branches
 - Use meaningful commit messages
 - Review files before merging
@@ -174,6 +183,7 @@ grep -h '"guid"' .github/issue-updates/*.json | sort | uniq -c | grep -v "1 "
 ## Support
 
 For questions or issues:
+
 1. Check this migration guide
 2. Review example files in `.github/issue-updates/`
 3. Use the helper script for new files

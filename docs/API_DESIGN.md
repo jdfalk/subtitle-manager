@@ -1,4 +1,5 @@
 <!-- file: docs/API_DESIGN.md -->
+
 # API Design
 
 This document outlines the design philosophy of the REST and gRPC APIs provided by Subtitle Manager.
@@ -26,8 +27,8 @@ Example error response:
 
 \```json
 {
-  "error": "invalid_request",
-  "message": "missing language parameter"
+"error": "invalid_request",
+"message": "missing language parameter"
 }
 \```
 
@@ -37,7 +38,7 @@ The optional gRPC service defined in `proto/translator.proto` exposes translatio
 
 \```
 service Translator {
-  rpc Translate(TranslateRequest) returns (TranslateResponse);
+rpc Translate(TranslateRequest) returns (TranslateResponse);
 }
 \```
 
@@ -50,4 +51,3 @@ service Translator {
 2. Maintain backward compatibility when possible. Introduce new versions for breaking changes.
 3. Keep request and response schemas concise. Optional fields should have `omitempty` JSON tags.
 4. Write integration tests for each handler using the `webserver` package.
-

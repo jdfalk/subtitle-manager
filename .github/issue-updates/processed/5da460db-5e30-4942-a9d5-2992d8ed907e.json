@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Test Integration with New Format",
   "body": "This is a test issue to validate the new distributed issue update format works correctly.",
-  "labels": [
-    "testing",
-    "automation"
-  ],
+  "labels": ["testing", "automation"],
   "guid": "create-test-integration-with-new-format-2025-06-21",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1073"
 }

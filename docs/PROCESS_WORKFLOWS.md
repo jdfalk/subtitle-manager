@@ -1,4 +1,5 @@
 <!-- file: docs/PROCESS_WORKFLOWS.md -->
+
 # Process Workflows
 
 This document illustrates key workflows in Subtitle Manager using ASCII diagrams.
@@ -42,4 +43,3 @@ Cron -> scheduler -> providers.Fetch -> database.InsertDownload
 
 1. Scheduled scan triggers `providers.Fetch` for missing subtitles.
 2. Downloads are stored in the database and written to disk.
-

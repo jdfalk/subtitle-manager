@@ -26,6 +26,7 @@ Each file should be named with a UUID (e.g., `bc03b7dc-eba7-4b95-9a90-a0224b2746
 ### Examples
 
 #### Create Issue
+
 ```json
 {
   "action": "create",
@@ -37,6 +38,7 @@ Each file should be named with a UUID (e.g., `bc03b7dc-eba7-4b95-9a90-a0224b2746
 ```
 
 #### Update Issue
+
 ```json
 {
   "action": "update",
@@ -48,6 +50,7 @@ Each file should be named with a UUID (e.g., `bc03b7dc-eba7-4b95-9a90-a0224b2746
 ```
 
 #### Comment on Issue
+
 ```json
 {
   "action": "comment",
@@ -58,6 +61,7 @@ Each file should be named with a UUID (e.g., `bc03b7dc-eba7-4b95-9a90-a0224b2746
 ```
 
 #### Close Issue
+
 ```json
 {
   "action": "close",
@@ -78,6 +82,7 @@ Each file should be named with a UUID (e.g., `bc03b7dc-eba7-4b95-9a90-a0224b2746
 ## Workflow Integration
 
 The workflow automatically:
+
 1. Scans all `.json` files in this directory
 2. Processes them in order
 3. Moves processed files to a `processed/` subdirectory (optional)

@@ -1,9 +1,6 @@
 {
   "number": 532,
-  "labels": [
-    "codex",
-    "in-progress"
-  ],
+  "labels": ["codex", "in-progress"],
   "guid": "update-issue-532-2025-06-20",
   "action": "update"
 }

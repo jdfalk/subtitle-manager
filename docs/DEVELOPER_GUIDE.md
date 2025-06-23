@@ -1,4 +1,5 @@
 <!-- file: docs/DEVELOPER_GUIDE.md -->
+
 # Developer Guide
 
 This guide helps new contributors get started with Subtitle Manager.
@@ -43,4 +44,3 @@ This guide helps new contributors get started with Subtitle Manager.
   ./scripts/install-pre-commit-hooks.sh
   \```
 - Submit pull requests with concise descriptions and link related issues.
-

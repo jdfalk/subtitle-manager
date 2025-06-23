@@ -1,8 +1,6 @@
 {
   "number": 923,
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "update-issue-923-2025-06-21",
   "action": "update"
 }

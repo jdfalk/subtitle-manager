@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Optimise database queries",
   "body": "Review indexes and query patterns for better performance.",
-  "labels": [
-    "performance"
-  ],
+  "labels": ["performance"],
   "guid": "create-db-optimization-2025-06-20",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1085"
 }

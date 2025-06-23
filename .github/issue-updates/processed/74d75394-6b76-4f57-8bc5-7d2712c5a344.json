@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Verify RBAC enforcement across Go and React",
   "body": "Ensure role based access control works in both backend and frontend.",
-  "labels": [
-    "security"
-  ],
+  "labels": ["security"],
   "guid": "create-rbac-verification-2025-06-20",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1082"
 }

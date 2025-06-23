@@ -85,4 +85,3 @@ Each module implements functionality found in Bazarr:
 Planned improvements are tracked in `TODO.md`. Notably the audio
 synchronization code will evolve to support CPU vs accuracy tuning and advanced
 multi-language alignment.
-

@@ -130,6 +130,7 @@ Enhanced workflow summaries to show:
 ## Additional Fix Applied
 
 ### **Timestamp Issue Resolution**
+
 Fixed an issue where the `$(date -u '+%Y-%m-%d %H:%M:%S UTC')` command in PR body templates was not being properly executed:
 
 - **Problem**: The date command was being treated as literal text instead of being executed
@@ -138,6 +139,7 @@ Fixed an issue where the `$(date -u '+%Y-%m-%d %H:%M:%S UTC')` command in PR bod
 - **Result**: PR bodies now show accurate "Updated" timestamps
 
 ### **Example PR Body Output**
+
 ```
 ## Summary
 Automatically archiving processed distributed issue update files to the processed/ directory.

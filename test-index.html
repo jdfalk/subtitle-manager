@@ -1,146 +1,216 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Subtitle Manager - Test Interface</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .api-section {
-            margin-bottom: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .api-section h2 {
-            margin-top: 0;
-            color: #0066cc;
-        }
-        .endpoint {
-            font-family: 'Monaco', 'Menlo', monospace;
-            background: #f8f8f8;
-            padding: 8px;
-            border-radius: 4px;
-            margin: 5px 0;
-        }
-        .method {
-            font-weight: bold;
-            color: #0066cc;
-        }
-        .tag-demo {
-            background: #e8f4fd;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        .priority-demo {
-            background: #f0f8e8;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        .status {
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .status.implemented { background: #d4edda; color: #155724; }
-        .status.testing { background: #fff3cd; color: #856404; }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .api-section {
+        margin-bottom: 30px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .api-section h2 {
+        margin-top: 0;
+        color: #0066cc;
+      }
+      .endpoint {
+        font-family: "Monaco", "Menlo", monospace;
+        background: #f8f8f8;
+        padding: 8px;
+        border-radius: 4px;
+        margin: 5px 0;
+      }
+      .method {
+        font-weight: bold;
+        color: #0066cc;
+      }
+      .tag-demo {
+        background: #e8f4fd;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .priority-demo {
+        background: #f0f8e8;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .status {
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .status.implemented {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status.testing {
+        background: #fff3cd;
+        color: #856404;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>Subtitle Manager - Universal Tagging System Test Interface</h1>
+      <h1>Subtitle Manager - Universal Tagging System Test Interface</h1>
 
-        <div class="api-section">
-            <h2>Universal Tagging API Endpoints <span class="status implemented">IMPLEMENTED</span></h2>
-            <div class="endpoint"><span class="method">GET</span> /api/tags?entity_type={type}&type={tag_type}</div>
-            <div class="endpoint"><span class="method">POST</span> /api/tags - Create tag with metadata</div>
-            <div class="endpoint"><span class="method">PATCH</span> /api/tags/{id} - Update tag</div>
-            <div class="endpoint"><span class="method">DELETE</span> /api/tags/{id} - Delete tag</div>
-            <div class="endpoint"><span class="method">POST</span> /api/tags/bulk - Bulk tag operations</div>
+      <div class="api-section">
+        <h2>
+          Universal Tagging API Endpoints
+          <span class="status implemented">IMPLEMENTED</span>
+        </h2>
+        <div class="endpoint">
+          <span class="method">GET</span>
+          /api/tags?entity_type={type}&type={tag_type}
         </div>
-
-        <div class="api-section">
-            <h2>Entity-Specific Tagging <span class="status implemented">IMPLEMENTED</span></h2>
-            <div class="endpoint"><span class="method">GET</span> /api/providers/{id}/tags</div>
-            <div class="endpoint"><span class="method">POST</span> /api/providers/{id}/tags</div>
-            <div class="endpoint"><span class="method">DELETE</span> /api/providers/{id}/tags/{tagId}</div>
-            <div class="endpoint"><span class="method">GET</span> /api/media/{id}/tags</div>
-            <div class="endpoint"><span class="method">GET</span> /api/movies/{id}/tags</div>
-            <div class="endpoint"><span class="method">GET</span> /api/series/{id}/tags</div>
-            <div class="endpoint"><span class="method">GET</span> /api/users/{id}/tags</div>
+        <div class="endpoint">
+          <span class="method">POST</span> /api/tags - Create tag with metadata
         </div>
-
-        <div class="api-section">
-            <h2>Provider Instance Management <span class="status implemented">IMPLEMENTED</span></h2>
-            <div class="priority-demo">
-                <h3>Instance Priorities & Backoff</h3>
-                <p><strong>RegisterInstance()</strong> - Register provider instances with priority levels</p>
-                <p><strong>GetInstance(id)</strong> - Retrieve instance by ID for API download endpoints</p>
-                <p><strong>ListInstances()</strong> - Get all instances sorted by priority</p>
-                <p><strong>SetBackoff/IsInBackoff/ClearBackoff</strong> - Per-instance backoff logic</p>
-            </div>
+        <div class="endpoint">
+          <span class="method">PATCH</span> /api/tags/{id} - Update tag
         </div>
-
-        <div class="api-section">
-            <h2>Universal Tagging Features <span class="status implemented">IMPLEMENTED</span></h2>
-            <div class="tag-demo">
-                <h3>Tag Types & Entity Support</h3>
-                <ul>
-                    <li><strong>Tag Types:</strong> system, user, custom</li>
-                    <li><strong>Entity Types:</strong> provider, media, movie, series, user, language</li>
-                    <li><strong>Metadata:</strong> Color coding, descriptions, created timestamps</li>
-                    <li><strong>Filtering:</strong> By entity type, tag type, multiple tag AND logic</li>
-                    <li><strong>Bulk Operations:</strong> Apply multiple tags to multiple entities</li>
-                </ul>
-            </div>
+        <div class="endpoint">
+          <span class="method">DELETE</span> /api/tags/{id} - Delete tag
         </div>
-
-        <div class="api-section">
-            <h2>Testing Coverage <span class="status implemented">IMPLEMENTED</span></h2>
-            <p>✅ Universal tagging system unit tests</p>
-            <p>✅ Provider instance priority and backoff tests</p>
-            <p>✅ TaggedEntity interface implementation tests</p>
-            <p>✅ Database schema migration compatibility</p>
-            <p>✅ API endpoint integration tests</p>
+        <div class="endpoint">
+          <span class="method">POST</span> /api/tags/bulk - Bulk tag operations
         </div>
+      </div>
 
-        <div class="api-section">
-            <h2>Branch Requirements Status</h2>
-            <p>✅ Allow registering provider instances with priority and tags</p>
-            <p>✅ Expose factory registration for tests or extensions</p>
-            <p>✅ Handle per-instance backoff logic when fetching subtitles</p>
-            <p>✅ Allow API download endpoint to reference provider instance IDs</p>
-            <p>✅ Include minimal webui index for tests</p>
-            <p>✅ Add unit test covering instance priorities</p>
-            <p>✅ Universal tagging system for all entity types</p>
+      <div class="api-section">
+        <h2>
+          Entity-Specific Tagging
+          <span class="status implemented">IMPLEMENTED</span>
+        </h2>
+        <div class="endpoint">
+          <span class="method">GET</span> /api/providers/{id}/tags
         </div>
+        <div class="endpoint">
+          <span class="method">POST</span> /api/providers/{id}/tags
+        </div>
+        <div class="endpoint">
+          <span class="method">DELETE</span> /api/providers/{id}/tags/{tagId}
+        </div>
+        <div class="endpoint">
+          <span class="method">GET</span> /api/media/{id}/tags
+        </div>
+        <div class="endpoint">
+          <span class="method">GET</span> /api/movies/{id}/tags
+        </div>
+        <div class="endpoint">
+          <span class="method">GET</span> /api/series/{id}/tags
+        </div>
+        <div class="endpoint">
+          <span class="method">GET</span> /api/users/{id}/tags
+        </div>
+      </div>
 
-        <script>
-            // Simple JavaScript for testing API endpoints
-            console.log('Subtitle Manager Test Interface Loaded');
-            console.log('Universal Tagging System: Ready for testing');
-            console.log('Provider Instance Management: Ready for testing');
-        </script>
+      <div class="api-section">
+        <h2>
+          Provider Instance Management
+          <span class="status implemented">IMPLEMENTED</span>
+        </h2>
+        <div class="priority-demo">
+          <h3>Instance Priorities & Backoff</h3>
+          <p>
+            <strong>RegisterInstance()</strong> - Register provider instances
+            with priority levels
+          </p>
+          <p>
+            <strong>GetInstance(id)</strong> - Retrieve instance by ID for API
+            download endpoints
+          </p>
+          <p>
+            <strong>ListInstances()</strong> - Get all instances sorted by
+            priority
+          </p>
+          <p>
+            <strong>SetBackoff/IsInBackoff/ClearBackoff</strong> - Per-instance
+            backoff logic
+          </p>
+        </div>
+      </div>
+
+      <div class="api-section">
+        <h2>
+          Universal Tagging Features
+          <span class="status implemented">IMPLEMENTED</span>
+        </h2>
+        <div class="tag-demo">
+          <h3>Tag Types & Entity Support</h3>
+          <ul>
+            <li><strong>Tag Types:</strong> system, user, custom</li>
+            <li>
+              <strong>Entity Types:</strong> provider, media, movie, series,
+              user, language
+            </li>
+            <li>
+              <strong>Metadata:</strong> Color coding, descriptions, created
+              timestamps
+            </li>
+            <li>
+              <strong>Filtering:</strong> By entity type, tag type, multiple tag
+              AND logic
+            </li>
+            <li>
+              <strong>Bulk Operations:</strong> Apply multiple tags to multiple
+              entities
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="api-section">
+        <h2>
+          Testing Coverage <span class="status implemented">IMPLEMENTED</span>
+        </h2>
+        <p>✅ Universal tagging system unit tests</p>
+        <p>✅ Provider instance priority and backoff tests</p>
+        <p>✅ TaggedEntity interface implementation tests</p>
+        <p>✅ Database schema migration compatibility</p>
+        <p>✅ API endpoint integration tests</p>
+      </div>
+
+      <div class="api-section">
+        <h2>Branch Requirements Status</h2>
+        <p>✅ Allow registering provider instances with priority and tags</p>
+        <p>✅ Expose factory registration for tests or extensions</p>
+        <p>✅ Handle per-instance backoff logic when fetching subtitles</p>
+        <p>✅ Allow API download endpoint to reference provider instance IDs</p>
+        <p>✅ Include minimal webui index for tests</p>
+        <p>✅ Add unit test covering instance priorities</p>
+        <p>✅ Universal tagging system for all entity types</p>
+      </div>
+
+      <script>
+        // Simple JavaScript for testing API endpoints
+        console.log("Subtitle Manager Test Interface Loaded");
+        console.log("Universal Tagging System: Ready for testing");
+        console.log("Provider Instance Management: Ready for testing");
+      </script>
     </div>
-</body>
+  </body>
 </html>
