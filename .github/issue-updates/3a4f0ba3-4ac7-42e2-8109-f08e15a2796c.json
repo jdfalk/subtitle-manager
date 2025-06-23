@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Improve developer docs",
+  "body": "Add new developer and API design documentation.",
+  "labels": ["documentation", "enhancement"],
+  "guid": "create-improve-developer-docs-2025-06-22"
+}
