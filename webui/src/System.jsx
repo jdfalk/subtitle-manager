@@ -34,6 +34,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { apiService } from './services/api.js';
 import { sanitizeConfig } from './utils/configSanitizer.js';
 import { sanitizeHTML } from './utils/sanitizeHTML.js';
 
@@ -62,10 +63,10 @@ export default function System({ backendAvailable = true }) {
     setLoading(true);
     try {
       const [logsRes, infoRes, tasksRes, configRes] = await Promise.all([
-        fetch('/api/logs'),
-        fetch('/api/system'),
-        fetch('/api/tasks'),
-        fetch('/api/config'),
+        apiService.get('/api/logs'),
+        apiService.get('/api/system'),
+        apiService.get('/api/tasks'),
+        apiService.get('/api/config'),
       ]);
 
       if (logsRes.ok) setLogs(await logsRes.json());
