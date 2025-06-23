@@ -24,14 +24,26 @@ func TranslateFileToSRT(inPath, outPath, lang, service, googleKey, gptKey, grpcA
 	}
 	cache := make(map[string]string)
 	for _, item := range sub.Items {
-		text := item.String()
-		t, ok := cache[text]
+		// Extract just the dialogue text for translation and caching,
+		// avoiding timestamps and sequence numbers that prevent deduplication
+		var dialogueText string
+		if len(item.Lines) > 0 && len(item.Lines[0].Items) > 0 {
+			dialogueText = item.Lines[0].Items[0].Text
+		}
+
+		// Skip empty dialogue
+		if dialogueText == "" {
+			continue
+		}
+
+		// Check cache for existing translation
+		t, ok := cache[dialogueText]
 		if !ok {
-			t, err = translator.Translate(service, text, lang, googleKey, gptKey, grpcAddr)
+			t, err = translator.Translate(service, dialogueText, lang, googleKey, gptKey, grpcAddr)
 			if err != nil {
 				return err
 			}
-			cache[text] = t
+			cache[dialogueText] = t
 		}
 		item.Lines = []astisub.Line{{Items: []astisub.LineItem{{Text: t}}}}
 	}
