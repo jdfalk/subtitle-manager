@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 )
@@ -17,7 +18,7 @@ var grpcSetConfigCmd = &cobra.Command{
 	Use:   "grpc-set-config",
 	Short: "Set configuration value via gRPC",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		conn, err := grpc.Dial(grpcConfigAddr, grpc.WithInsecure())
+		conn, err := grpc.NewClient(grpcConfigAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			return err
 		}

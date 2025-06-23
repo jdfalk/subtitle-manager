@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	translate "cloud.google.com/go/translate"
+	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 	translatormocks "github.com/jdfalk/subtitle-manager/pkg/translator/mocks"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
@@ -29,7 +30,8 @@ func TestServerTranslate(t *testing.T) {
 	m.On("Close").Return(nil)
 
 	s := grpc.NewServer()
-	pb.RegisterTranslatorServer(s, &server{googleKey: "k"})
+	server := grpcserver.NewServer("k", "", false, "")
+	pb.RegisterTranslatorServer(s, server)
 	go s.Serve(lis)
 	defer s.Stop()
 
