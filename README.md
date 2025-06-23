@@ -415,7 +415,9 @@ docker run -d \
   -e ENABLE_WHISPER=1 \
   ghcr.io/jdfalk/subtitle-manager:latest
 
-<!-- Add --gpus all for GPU acceleration (requires NVIDIA Container Toolkit) -->
+<!-- Customize WHISPER_MODEL=base or WHISPER_DEVICE=cpu to disable GPU -->
+<!-- SM_OPENAI_API_URL will be set automatically to http://localhost:9000/v1 -->
+<!-- Add --gpus all if you want GPU acceleration (requires NVIDIA Container Toolkit) -->
 ```
 
 Access the web interface at `http://localhost:8080`
@@ -452,9 +454,15 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 - `SM_PROVIDERS_GENERIC_API_KEY` - Generic provider API key
 - `ENABLE_WHISPER` - Launch local Whisper service when set to `1`
 - `SM_PROVIDERS_WHISPER_API_URL` - Override Whisper service URL (default `http://localhost:9000`)
+- `SM_OPENAI_API_URL` - Override OpenAI/Whisper API base URL (default `https://api.openai.com/v1`)
 
 #### Whisper Service Requirements
-When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper-asr-webservice`. Mount the Docker socket and install the NVIDIA Container Toolkit if GPU acceleration is desired.
+When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper-asr-webservice`. Mount the Docker socket and install the NVIDIA Container Toolkit if GPU acceleration is desired. Customize the service with these optional variables:
+- `WHISPER_CONTAINER_NAME` - Container name (default `whisper-asr-service`)
+- `WHISPER_IMAGE` - Docker image to use
+- `WHISPER_PORT` - Port to expose (default `9000`)
+- `WHISPER_MODEL` - Whisper model (base, small, medium, large)
+- `WHISPER_DEVICE` - `cuda` or `cpu` to toggle GPU usage
 
 **GitHub OAuth (Optional):**
 

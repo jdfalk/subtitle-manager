@@ -1,0 +1,6 @@
+{
+  "action": "comment",
+  "number": 0,
+  "body": "## Plan of Action\n1. Add SM_OPENAI_API_URL configuration with CLI flag.\n2. Update transcriber to use the configured base URL.\n3. Set SM_OPENAI_API_URL in docker-init.sh when ENABLE_WHISPER=1.\n4. Document new variables in README and .env.example.\n5. Update tests.",
+  "guid": "comment-0-2025-06-23-001052"
+}
