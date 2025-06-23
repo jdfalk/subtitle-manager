@@ -17,6 +17,8 @@ func tasksWebSocketHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
+			http.Error(w, "Failed to upgrade to WebSocket: "+err.Error(), http.StatusInternalServerError)
+			log.Printf("WebSocket upgrade failed: %v", err)
 			return
 		}
 		ch := tasks.Subscribe()
