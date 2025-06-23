@@ -28,3 +28,20 @@ func TestRename(t *testing.T) {
 		t.Fatalf("old subtitle still exists")
 	}
 }
+
+// TestRenameMultiple ensures an error is returned when more than one subtitle matches.
+func TestRenameMultiple(t *testing.T) {
+	dir := t.TempDir()
+	video := filepath.Join(dir, "movie.mkv")
+	if err := os.WriteFile(video, []byte("x"), 0644); err != nil {
+		t.Fatalf("write video: %v", err)
+	}
+	for _, name := range []string{"one.en.srt", "two.en.srt"} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte("y"), 0644); err != nil {
+			t.Fatalf("write sub: %v", err)
+		}
+	}
+	if err := Rename(video, "en"); err == nil {
+		t.Fatal("expected error for multiple subtitles")
+	}
+}

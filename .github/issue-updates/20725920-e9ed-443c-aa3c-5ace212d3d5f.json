@@ -1,0 +1,7 @@
+{
+  "action": "create",
+  "title": "Improve rename command",
+  "body": "Handle multiple matching subtitles to prevent overwrites",
+  "labels": ["bug", "enhancement"],
+  "guid": "create-improve-rename-command-2025-06-23"
+}
