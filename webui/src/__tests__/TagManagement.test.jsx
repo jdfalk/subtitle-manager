@@ -17,7 +17,9 @@ describe('TagManagement component', () => {
     });
 
     render(<TagManagement />);
-    await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/tags'));
+    await waitFor(() =>
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/api/tags'))
+    );
     expect(await screen.findByText('english')).toBeInTheDocument();
   });
 
@@ -28,7 +30,9 @@ describe('TagManagement component', () => {
     });
 
     render(<TagManagement />);
-    await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/tags'));
+    await waitFor(() =>
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/api/tags'))
+    );
 
     fetch.mockResolvedValueOnce({ ok: true });
     fireEvent.click(screen.getByRole('button', { name: /edit/i }));
@@ -39,7 +43,7 @@ describe('TagManagement component', () => {
 
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith(
-        '/api/tags/1',
+        expect.stringContaining('/api/tags/1'),
         expect.objectContaining({ method: 'PATCH' })
       )
     );

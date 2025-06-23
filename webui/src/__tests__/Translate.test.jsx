@@ -43,7 +43,10 @@ describe('Translate component', () => {
 
     fireEvent.click(screen.getByText(/Translate to/));
     await waitFor(() =>
-      expect(fetch).toHaveBeenCalledWith('/api/translate', expect.any(Object))
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/api/translate'),
+        expect.any(Object)
+      )
     );
   });
 });

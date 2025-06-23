@@ -36,7 +36,10 @@ describe('Convert component', () => {
     fireEvent.change(screen.getByTestId('file'), { target: { files: [file] } });
     fireEvent.click(screen.getByText('Convert to SRT'));
     await waitFor(() =>
-      expect(fetch).toHaveBeenCalledWith('/api/convert', expect.any(Object))
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/api/convert'),
+        expect.any(Object)
+      )
     );
   });
 });

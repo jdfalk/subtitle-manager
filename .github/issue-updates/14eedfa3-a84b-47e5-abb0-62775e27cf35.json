@@ -1,0 +1,6 @@
+{
+  "action": "comment",
+  "number": 543,
+  "body": "Plan: update React components to use unified gRPC API with REST fallback",
+  "guid": "comment-543-2025-06-23-125603"
+}
