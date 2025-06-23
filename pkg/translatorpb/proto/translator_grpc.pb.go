@@ -8,7 +8,6 @@ package translatorpb
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -23,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Translator_Translate_FullMethodName = "/translator.Translator/Translate"
 	Translator_GetConfig_FullMethodName = "/translator.Translator/GetConfig"
+	Translator_SetConfig_FullMethodName = "/translator.Translator/SetConfig"
 )
 
 // TranslatorClient is the client API for Translator service.
@@ -31,6 +31,7 @@ const (
 type TranslatorClient interface {
 	Translate(ctx context.Context, in *TranslateRequest, opts ...grpc.CallOption) (*TranslateResponse, error)
 	GetConfig(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ConfigResponse, error)
+	SetConfig(ctx context.Context, in *ConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type translatorClient struct {
@@ -61,12 +62,23 @@ func (c *translatorClient) GetConfig(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
+func (c *translatorClient) SetConfig(ctx context.Context, in *ConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Translator_SetConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TranslatorServer is the server API for Translator service.
 // All implementations must embed UnimplementedTranslatorServer
 // for forward compatibility.
 type TranslatorServer interface {
 	Translate(context.Context, *TranslateRequest) (*TranslateResponse, error)
 	GetConfig(context.Context, *emptypb.Empty) (*ConfigResponse, error)
+	SetConfig(context.Context, *ConfigRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedTranslatorServer()
 }
 
@@ -82,6 +94,9 @@ func (UnimplementedTranslatorServer) Translate(context.Context, *TranslateReques
 }
 func (UnimplementedTranslatorServer) GetConfig(context.Context, *emptypb.Empty) (*ConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
+}
+func (UnimplementedTranslatorServer) SetConfig(context.Context, *ConfigRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetConfig not implemented")
 }
 func (UnimplementedTranslatorServer) mustEmbedUnimplementedTranslatorServer() {}
 func (UnimplementedTranslatorServer) testEmbeddedByValue()                    {}
@@ -140,6 +155,24 @@ func _Translator_GetConfig_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Translator_SetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TranslatorServer).SetConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Translator_SetConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TranslatorServer).SetConfig(ctx, req.(*ConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Translator_ServiceDesc is the grpc.ServiceDesc for Translator service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -154,6 +187,10 @@ var Translator_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConfig",
 			Handler:    _Translator_GetConfig_Handler,
+		},
+		{
+			MethodName: "SetConfig",
+			Handler:    _Translator_SetConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

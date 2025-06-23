@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 service Translator {
   rpc Translate(TranslateRequest) returns (TranslateResponse);
   rpc GetConfig(google.protobuf.Empty) returns (ConfigResponse);
+  rpc SetConfig(ConfigRequest) returns (google.protobuf.Empty);
 }
 
 message TranslateRequest {
@@ -19,5 +20,9 @@ message TranslateResponse {
 }
 
 message ConfigResponse {
+  map<string, string> settings = 1;
+}
+
+message ConfigRequest {
   map<string, string> settings = 1;
 }

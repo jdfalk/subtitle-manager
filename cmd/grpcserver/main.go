@@ -19,6 +19,18 @@ type server struct {
 	gptKey    string
 }
 
+// SetConfig updates server configuration keys provided in req. Only GOOGLE_API_KEY
+// and OPENAI_API_KEY are used by this example server.
+func (s *server) SetConfig(ctx context.Context, req *pb.ConfigRequest) (*emptypb.Empty, error) {
+	if v, ok := req.Settings["GOOGLE_API_KEY"]; ok {
+		s.googleKey = v
+	}
+	if v, ok := req.Settings["OPENAI_API_KEY"]; ok {
+		s.gptKey = v
+	}
+	return &emptypb.Empty{}, nil
+}
+
 func (s *server) GetConfig(ctx context.Context, _ *emptypb.Empty) (*pb.ConfigResponse, error) {
 	out := map[string]string{
 		"GOOGLE_API_KEY": s.googleKey,

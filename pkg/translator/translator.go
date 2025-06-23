@@ -163,6 +163,19 @@ func GRPCTranslate(text, targetLang, addr string) (string, error) {
 	return resp.TranslatedText, nil
 }
 
+// GRPCSetConfig sends configuration key/value pairs to a remote gRPC server.
+// The addr parameter specifies the server address (host:port).
+func GRPCSetConfig(settings map[string]string, addr string) error {
+	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	client := pb.NewTranslatorClient(conn)
+	_, err = client.SetConfig(context.Background(), &pb.ConfigRequest{Settings: settings})
+	return err
+}
+
 var providers = map[string]TranslateFunc{
 	"google":  GoogleTranslate,
 	"gpt":     GPTTranslate,
