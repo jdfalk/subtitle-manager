@@ -59,6 +59,11 @@ func initPostgresSchema(db *sql.DB) error {
             field_locks TEXT,
             created_at TIMESTAMP NOT NULL
         )`,
+		`CREATE TABLE IF NOT EXISTS dashboard_prefs (
+            user_id INTEGER PRIMARY KEY,
+            layout TEXT NOT NULL,
+            updated_at TIMESTAMP NOT NULL
+        )`,
 	}
 	for _, s := range stmts {
 		if _, err := db.Exec(s); err != nil {
