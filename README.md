@@ -152,7 +152,7 @@ services are available:
 - Turkcealtyazi.org
 - TuSubtitulo
 - TVSubtitles
-- Whisper (requires external web service)
+ - Whisper (optional local service)
 - Wizdom
 - XSubs
 - Yavka.net
@@ -161,7 +161,7 @@ services are available:
 
 ## Current Status
 
-**Subtitle Manager backend is mostly complete** with full production readiness achieved, but additional features such as tagging and containerized Whisper support are still in progress.
+**Subtitle Manager backend is mostly complete** with full production readiness achieved. Tagging enhancements are ongoing, and Whisper transcription can now run via an optional local service.
 
 ### ✅ Completed (Production Ready Backend)
 
@@ -402,7 +402,21 @@ docker run -d \
   -v /media/tv:/media/tv:ro \
   -v /home/user/subtitle-manager/subtitles:/subtitles \
   ghcr.io/jdfalk/subtitle-manager:latest
-\```
+
+# With local Whisper transcription service (requires Docker socket)
+docker run -d \
+  --name subtitle-manager \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -v /home/user/subtitle-manager/config:/config \
+  -v /media/movies:/media/movies:ro \
+  -v /media/tv:/media/tv:ro \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e ENABLE_WHISPER=1 \
+  ghcr.io/jdfalk/subtitle-manager:latest
+
+<!-- Add --gpus all for GPU acceleration (requires NVIDIA Container Toolkit) -->
+```
 
 Access the web interface at `http://localhost:8080`
 
@@ -436,6 +450,11 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 - `SM_PROVIDERS_GENERIC_USERNAME` - Generic provider username
 - `SM_PROVIDERS_GENERIC_PASSWORD` - Generic provider password
 - `SM_PROVIDERS_GENERIC_API_KEY` - Generic provider API key
+- `ENABLE_WHISPER` - Launch local Whisper service when set to `1`
+- `SM_PROVIDERS_WHISPER_API_URL` - Override Whisper service URL (default `http://localhost:9000`)
+
+#### Whisper Service Requirements
+When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper-asr-webservice`. Mount the Docker socket and install the NVIDIA Container Toolkit if GPU acceleration is desired.
 
 **GitHub OAuth (Optional):**
 
@@ -648,7 +667,7 @@ make proto-gen
 The generated files live in `pkg/translatorpb` and should be committed with your
 changes.
 
-The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work includes a flexible tagging system, Docker-based Whisper integration, and automated maintenance tasks. See `TODO.md` for details.
+The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work includes a flexible tagging system and automated maintenance tasks. See `TODO.md` for details.
 Extensive architectural details and design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New contributors should review these documents to understand package responsibilities and completed features.
 For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
 Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).

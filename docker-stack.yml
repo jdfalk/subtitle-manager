@@ -15,6 +15,7 @@ services:
       - /mnt/media/tv:/media/tv
       # Subtitle storage
       - subtitle-manager-subtitles:/subtitles
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       # Core configuration with SM_ prefix (required by Viper)
       - SM_LOG_LEVEL=info
@@ -25,6 +26,7 @@ services:
       # Performance tuning for production
       - SM_BATCH_WORKERS=8
       - SM_SCAN_WORKERS=8
+      # - ENABLE_WHISPER=1
 
       # Optional: Automatic admin user creation on first run
       # - SM_ADMIN_USER=admin

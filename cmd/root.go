@@ -94,6 +94,9 @@ func init() {
 	rootCmd.PersistentFlags().String("opensubtitles-user-agent", "", "OpenSubtitles user agent")
 	viper.BindPFlag("opensubtitles.user_agent", rootCmd.PersistentFlags().Lookup("opensubtitles-user-agent"))
 
+	rootCmd.PersistentFlags().String("whisper-api-url", "", "Whisper service URL")
+	viper.BindPFlag("providers.whisper.api_url", rootCmd.PersistentFlags().Lookup("whisper-api-url"))
+
 	rootCmd.PersistentFlags().String("anticaptcha-key", "", "Anti-Captcha API key")
 	viper.BindPFlag("anticaptcha.api_key", rootCmd.PersistentFlags().Lookup("anticaptcha-key"))
 	rootCmd.PersistentFlags().String("anticaptcha-api-url", "", "Anti-Captcha API base URL")
@@ -158,6 +161,7 @@ func initConfig() {
 	viper.SetDefault("providers.generic.username", "")
 	viper.SetDefault("providers.generic.password", "")
 	viper.SetDefault("providers.generic.api_key", "")
+	viper.SetDefault("providers.whisper.api_url", "http://localhost:9000")
 	viper.SetDefault("log_file", "/config/logs/subtitle-manager.log")
 	// Enable embedded subtitle provider by default so users can start
 	// extracting subtitles without additional configuration.

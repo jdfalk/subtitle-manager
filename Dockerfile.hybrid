@@ -68,6 +68,8 @@ RUN mkdir -p /config /media && \
 # Copy binary
 COPY --from=go-builder /src/subtitle-manager /usr/local/bin/subtitle-manager
 RUN chmod +x /usr/local/bin/subtitle-manager
+COPY docker-init.sh /usr/local/bin/docker-init.sh
+RUN chmod +x /usr/local/bin/docker-init.sh
 
 # Switch to non-root user
 USER subtitle
@@ -81,5 +83,5 @@ ENV SM_CONFIG_FILE=/config/subtitle-manager.yaml \
 
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/local/bin/subtitle-manager"]
+ENTRYPOINT ["/usr/local/bin/docker-init.sh"]
 CMD ["web", "--addr", ":8080"]
