@@ -347,7 +347,11 @@ class SmartMigrator:
             except Exception as e:
                 print(f"⚠️  Error reading {file_path}: {e}")
 
-        summary = {"duplicate_files_found": len(duplicate_files), "removed_files": []}
+        summary = {
+            "duplicate_files_found": len(duplicate_files),
+            "removed_files": [],
+            "errors": [],
+        }
 
         if duplicate_files:
             print(f"🔍 Found {len(duplicate_files)} duplicate files:")
@@ -360,7 +364,9 @@ class SmartMigrator:
                         summary["removed_files"].append(dup["filename"])
                         print("    ✅ Removed")
                     except Exception as e:
-                        print(f"    ❌ Failed to remove: {e}")
+                        error_msg = f"Failed to remove {dup['filename']}: {e}"
+                        summary["errors"].append(error_msg)
+                        print(f"    ❌ {error_msg}")
                 else:
                     print("    🔍 Would remove (dry run)")
 
@@ -1061,9 +1067,12 @@ def main():
         result = migrator.clean_duplicates()
 
         print(f"\n📊 Cleanup Summary:")
-        print(f"   🔍 Files checked: {result['files_checked']}")
+        print(f"   🔍 Duplicate files found: {result['duplicate_files_found']}")
         print(f"   🗑️  Files removed: {len(result['removed_files'])}")
-        print(f"   ❌ Errors: {len(result['errors'])}")
+        if "errors" in result:
+            print(f"   ❌ Errors: {len(result['errors'])}")
+        else:
+            print("   ❌ Errors: 0")
 
         if result["removed_files"]:
             print(f"\n🗑️  Removed files:")
