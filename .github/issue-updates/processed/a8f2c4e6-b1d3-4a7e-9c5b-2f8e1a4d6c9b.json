@@ -1,7 +1,8 @@
 {
   "action": "comment",
   "number": 922,
-  "body": "\u2705 Successfully implemented the backup timeout fix. All tests are now passing consistently across different environments.\n\n**Changes made:**\n- Increased timeout from 1s to 3s\n- Added environment detection\n- Improved error messages\n\nReady for merge!",
-  "guid": "comment-922-backup-fix-complete-2025-06-21",
-  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/922"
+  "body": "✅ Successfully implemented the backup timeout fix. All tests are now passing consistently across different environments.\n\n**Changes made:**\n- Increased timeout from 1s to 3s\n- Added environment detection\n- Improved error messages\n\nReady for merge!",
+  "guid": "4f671ced-0e96-44fe-9b3a-624038e6f69c",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/922",
+  "legacy_guid": "comment-922-backup-fix-complete-2025-06-21"
 }

@@ -2,7 +2,10 @@
   "action": "create",
   "title": "Add optional cloud storage for subtitles",
   "body": "Allow storing subtitles and history in cloud providers such as S3.",
-  "labels": ["enhancement"],
-  "guid": "create-cloud-storage-2025-06-20",
-  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1053"
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "352d242f-a44a-4f8a-b7f2-6eb65202734e",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1053",
+  "legacy_guid": "create-cloud-storage-2025-06-20"
 }

@@ -2,6 +2,9 @@
   "action": "update",
   "number": 1100,
   "body": "Fix incomplete URL sanitization by matching exact hostnames in tests.",
-  "labels": ["codex"],
-  "guid": "update-issue-1100-2025-06-23"
+  "labels": [
+    "codex"
+  ],
+  "guid": "4ff8e780-8545-463e-9e88-013759318709",
+  "legacy_guid": "update-issue-1100-2025-06-23"
 }

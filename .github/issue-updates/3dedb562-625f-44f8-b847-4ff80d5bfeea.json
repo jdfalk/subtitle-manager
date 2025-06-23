@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 541,
   "body": "Implement ConfigEditor page to edit YAML config via /api/config endpoint",
-  "guid": "comment-541-2025-06-23-125628"
+  "guid": "4ce208b4-d6e9-45e7-8365-b9ee1fff11a3",
+  "legacy_guid": "comment-541-2025-06-23-125628"
 }

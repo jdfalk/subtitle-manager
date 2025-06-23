@@ -1,6 +1,7 @@
 {
   "number": 936,
   "body": "Cleaned subtitle paths before hashing in OpenSubtitles provider.",
-  "guid": "comment-936-hash-clean-2025-06-21",
-  "action": "comment"
+  "guid": "0feead78-32cb-44c2-9a54-a3b39c0e2114",
+  "action": "comment",
+  "legacy_guid": "comment-936-hash-clean-2025-06-21"
 }

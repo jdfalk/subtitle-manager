@@ -1,6 +1,7 @@
 {
   "number": 942,
   "body": "General sanitization of user-supplied paths across the project resolved CodeQL warnings.",
-  "guid": "comment-942-general-2025-06-21",
-  "action": "comment"
+  "guid": "378d2eb5-303c-48bf-bdd7-bc3eb2bebcb1",
+  "action": "comment",
+  "legacy_guid": "comment-942-general-2025-06-21"
 }

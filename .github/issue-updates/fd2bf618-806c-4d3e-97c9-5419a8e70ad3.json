@@ -2,6 +2,9 @@
   "action": "update",
   "number": 1073,
   "body": "Marking issue for codex work",
-  "labels": ["codex"],
-  "guid": "update-issue-1073-2025-06-23"
+  "labels": [
+    "codex"
+  ],
+  "guid": "8d270aff-8f22-4057-8ed5-90a8eb762ffb",
+  "legacy_guid": "update-issue-1073-2025-06-23"
 }

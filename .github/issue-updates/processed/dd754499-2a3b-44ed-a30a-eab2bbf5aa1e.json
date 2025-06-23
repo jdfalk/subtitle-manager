@@ -1,6 +1,9 @@
 {
   "number": 930,
-  "labels": ["codex"],
-  "guid": "update-issue-930-2025-06-21",
-  "action": "update"
+  "labels": [
+    "codex"
+  ],
+  "guid": "b860e4be-7217-446c-81a0-fe46dec5f94b",
+  "action": "update",
+  "legacy_guid": "update-issue-930-2025-06-21"
 }

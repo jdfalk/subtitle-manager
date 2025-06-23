@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 1107,
   "body": "Implemented fix to sanitize baseURL and added tests.",
-  "guid": "comment-1107-2025-06-23-125255"
+  "guid": "237beeea-3cac-4035-901b-d15cd21bf0dc",
+  "legacy_guid": "comment-1107-2025-06-23-125255"
 }

@@ -1,6 +1,7 @@
 {
   "number": 532,
   "body": "## Plan of Action\n\n1. Add benchmark tests for merging and translation functions\n2. Update issue_updates.json to close the issue after merging",
-  "guid": "plan-comment-532-2025-06-21",
-  "action": "comment"
+  "guid": "67defed4-675a-448e-b36f-f3809dcec7f5",
+  "action": "comment",
+  "legacy_guid": "plan-comment-532-2025-06-21"
 }

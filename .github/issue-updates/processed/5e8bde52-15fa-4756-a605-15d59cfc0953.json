@@ -2,7 +2,10 @@
   "action": "create",
   "title": "Implement asynchronous translation queue",
   "body": "Process heavy translation tasks using a worker queue.",
-  "labels": ["enhancement"],
-  "guid": "create-async-translation-2025-06-20",
-  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1038"
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "b8f495c9-0f48-45cd-925b-285301ef51e0",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1038",
+  "legacy_guid": "create-async-translation-2025-06-20"
 }

@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 1102,
   "body": "Plan: update CI workflow to ignore Codecov errors using continue-on-error.",
-  "guid": "comment-1102-2025-06-23-125302"
+  "guid": "da4d6f0b-55d6-441d-b372-e64ea18f8c07",
+  "legacy_guid": "comment-1102-2025-06-23-125302"
 }

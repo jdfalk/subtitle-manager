@@ -2,7 +2,11 @@
   "action": "create",
   "title": "Complete gRPC configuration API",
   "body": "Expose configuration management over authenticated gRPC.",
-  "labels": ["feature", "grpc"],
-  "guid": "create-grpc-config-api-2025-06-20",
-  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1080"
+  "labels": [
+    "feature",
+    "grpc"
+  ],
+  "guid": "1e0f27b9-78d1-41df-bba2-fad299a00736",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1080",
+  "legacy_guid": "create-grpc-config-api-2025-06-20"
 }

@@ -2,6 +2,10 @@
   "action": "create",
   "title": "Custom OpenAI API URL",
   "body": "Add configuration to override Whisper/OpenAI service base URL for local containers.",
-  "labels": ["enhancement", "codex"],
-  "guid": "create-custom-openai-api-url-2025-06-23"
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
+  "guid": "1cbf9f83-2b9e-466b-adb4-f4eff7ad658e",
+  "legacy_guid": "create-custom-openai-api-url-2025-06-23"
 }

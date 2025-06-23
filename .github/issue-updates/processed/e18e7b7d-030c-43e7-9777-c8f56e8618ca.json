@@ -2,7 +2,10 @@
   "action": "create",
   "title": "Evaluate performance of merging and translation",
   "body": "Benchmark and optimise the merging and translation functions.",
-  "labels": ["performance"],
-  "guid": "create-performance-eval-2025-06-20",
-  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1037"
+  "labels": [
+    "performance"
+  ],
+  "guid": "a032a17d-70b2-46e1-9089-84447a64a8fe",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1037",
+  "legacy_guid": "create-performance-eval-2025-06-20"
 }

@@ -1,6 +1,7 @@
 {
   "number": 933,
   "body": "Ensured Bazarr URLs are built with url.ResolveReference after validation.",
-  "guid": "comment-933-bazarr-url-2025-06-21",
-  "action": "comment"
+  "guid": "400fd129-2740-4802-bbfc-5f03ee1692df",
+  "action": "comment",
+  "legacy_guid": "comment-933-bazarr-url-2025-06-21"
 }

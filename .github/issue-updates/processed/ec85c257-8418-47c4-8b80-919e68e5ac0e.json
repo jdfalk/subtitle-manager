@@ -2,7 +2,10 @@
   "action": "create",
   "title": "Document protobuf regeneration steps",
   "body": "Add instructions for generating gRPC code from proto files.",
-  "labels": ["documentation"],
-  "guid": "create-protobuf-docs-2025-06-20",
-  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1035"
+  "labels": [
+    "documentation"
+  ],
+  "guid": "ba4e2420-9f64-4f7a-8891-340be5c0c109",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1035",
+  "legacy_guid": "create-protobuf-docs-2025-06-20"
 }

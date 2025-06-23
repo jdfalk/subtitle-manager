@@ -1,7 +1,11 @@
 {
   "title": "CI fails due to Codecov upload errors",
   "body": "Backend tests succeeded but CI marked the job failed when the Codecov upload step returned an error. Ignore these failures to avoid false negatives.",
-  "labels": ["bug", "ci"],
-  "guid": "create-codecov-failure-2025-06-21",
-  "action": "create"
+  "labels": [
+    "bug",
+    "ci"
+  ],
+  "guid": "eb5c65f9-0b58-4fa4-b679-50a5a086710c",
+  "action": "create",
+  "legacy_guid": "create-codecov-failure-2025-06-21"
 }

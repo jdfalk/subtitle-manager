@@ -1,6 +1,7 @@
 {
   "number": 932,
   "body": "Sanitized output paths for subtitles to prevent uncontrolled path use.",
-  "guid": "comment-932-output-sanitize-2025-06-21",
-  "action": "comment"
+  "guid": "7741ba50-9962-40a2-aa3c-1278271aa449",
+  "action": "comment",
+  "legacy_guid": "comment-932-output-sanitize-2025-06-21"
 }

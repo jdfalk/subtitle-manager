@@ -2,6 +2,10 @@
   "action": "create",
   "title": "Add tests for Whisper container integration",
   "body": "Implement integration tests verifying docker-init script launches Whisper container when ENABLE_WHISPER=1. Use docker CLI mocking for unit tests.",
-  "labels": ["enhancement", "test"],
-  "guid": "create-add-tests-for-whisper-container-integration-2025-06-22"
+  "labels": [
+    "enhancement",
+    "test"
+  ],
+  "guid": "6e6b4036-000d-4f8c-a3a8-2e5a896476dc",
+  "legacy_guid": "create-add-tests-for-whisper-container-integration-2025-06-22"
 }

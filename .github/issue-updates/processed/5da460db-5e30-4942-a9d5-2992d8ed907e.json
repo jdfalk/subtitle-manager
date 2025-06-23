@@ -2,7 +2,11 @@
   "action": "create",
   "title": "Test Integration with New Format",
   "body": "This is a test issue to validate the new distributed issue update format works correctly.",
-  "labels": ["testing", "automation"],
-  "guid": "create-test-integration-with-new-format-2025-06-21",
-  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1073"
+  "labels": [
+    "testing",
+    "automation"
+  ],
+  "guid": "47c2539b-6881-41d6-8537-70c8c83db876",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1073",
+  "legacy_guid": "create-test-integration-with-new-format-2025-06-21"
 }

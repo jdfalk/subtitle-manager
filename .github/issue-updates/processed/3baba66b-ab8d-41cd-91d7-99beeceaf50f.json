@@ -2,6 +2,10 @@
   "action": "update",
   "number": 530,
   "body": "",
-  "labels": ["codex", "in-progress"],
-  "guid": "update-issue-530-2025-06-21"
+  "labels": [
+    "codex",
+    "in-progress"
+  ],
+  "guid": "a1372a23-9018-4e13-a1e1-98aaaa510485",
+  "legacy_guid": "update-issue-530-2025-06-21"
 }

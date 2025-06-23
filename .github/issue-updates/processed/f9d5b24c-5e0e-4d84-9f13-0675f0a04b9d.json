@@ -2,5 +2,7 @@
   "action": "close",
   "number": 528,
   "state_reason": "completed",
-  "body": "OAuth2 login implemented in commit 27ad00f"
+  "body": "OAuth2 login implemented in commit 27ad00f",
+  "guid": "95d1b568-5400-4fa5-905c-b49d325f2026",
+  "legacy_guid": "c7572514-863c-4c14-baf5-826df76a4104"
 }

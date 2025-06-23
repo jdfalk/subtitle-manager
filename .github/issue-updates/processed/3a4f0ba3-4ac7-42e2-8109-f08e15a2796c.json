@@ -2,6 +2,10 @@
   "action": "create",
   "title": "Improve developer docs",
   "body": "Add new developer and API design documentation.",
-  "labels": ["documentation", "enhancement"],
-  "guid": "create-improve-developer-docs-2025-06-22"
+  "labels": [
+    "documentation",
+    "enhancement"
+  ],
+  "guid": "e8505dc9-0115-4329-ac52-699180f6aafd",
+  "legacy_guid": "create-improve-developer-docs-2025-06-22"
 }

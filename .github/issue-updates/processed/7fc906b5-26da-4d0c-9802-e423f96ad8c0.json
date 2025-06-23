@@ -2,7 +2,10 @@
   "action": "create",
   "title": "Increase test coverage across packages",
   "body": "Add unit tests for remaining packages to improve reliability.",
-  "labels": ["testing"],
-  "guid": "create-test-coverage-2025-06-20",
-  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1084"
+  "labels": [
+    "testing"
+  ],
+  "guid": "48e2d2e7-c625-4b84-99c5-a688112fcb0f",
+  "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1084",
+  "legacy_guid": "create-test-coverage-2025-06-20"
 }

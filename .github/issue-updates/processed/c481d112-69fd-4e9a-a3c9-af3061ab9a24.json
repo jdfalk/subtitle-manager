@@ -1,6 +1,7 @@
 {
   "number": 923,
   "body": "CI updated to ignore Codecov failures using `fail_ci_if_error: false`. This prevents false negatives during backend testing.",
-  "guid": "comment-923-codecov-fix-2025-06-21",
-  "action": "comment"
+  "guid": "39b3fd0a-0d61-4647-956c-1fbe4ae1e00c",
+  "action": "comment",
+  "legacy_guid": "comment-923-codecov-fix-2025-06-21"
 }

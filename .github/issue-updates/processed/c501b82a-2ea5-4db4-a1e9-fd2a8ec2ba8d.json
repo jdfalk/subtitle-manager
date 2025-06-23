@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 1114,
   "body": "Plan: Show a configuration snackbar when an unconfigured provider is selected. Clicking the Configure button will navigate to Settings. Update tests accordingly.",
-  "guid": "comment-1114-2025-06-22-155509"
+  "guid": "07c7d605-0cd8-431a-a36e-c9dc1aaf2183",
+  "legacy_guid": "comment-1114-2025-06-22-155509"
 }

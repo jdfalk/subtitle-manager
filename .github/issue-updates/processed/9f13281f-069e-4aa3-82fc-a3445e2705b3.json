@@ -2,6 +2,10 @@
   "action": "create",
   "title": "Centralize security validations",
   "body": "Introduce security package with URL and path validation. Update packages to use it.",
-  "labels": ["codex", "security"],
-  "guid": "create-centralize-security-validations-2025-06-22"
+  "labels": [
+    "codex",
+    "security"
+  ],
+  "guid": "d1ff24de-1b33-4a5c-a79b-44e12a205a5d",
+  "legacy_guid": "create-centralize-security-validations-2025-06-22"
 }

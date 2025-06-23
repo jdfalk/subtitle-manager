@@ -3,5 +3,6 @@
   "title": "Implement media metadata editor",
   "body": "Add manual metadata selection, alternate titles, release group tracking, and field locks",
   "labels": ["codex", "enhancement"],
-  "guid": "create-implement-media-metadata-editor-2025-06-22"
+  "guid": "2ee3b797-c495-4baa-adce-54f185421398",
+  "legacy_guid": "create-implement-media-metadata-editor-2025-06-22"
 }

@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 1116,
   "body": "Plan: integrate tag parsing across CLI commands and ensure fetch supports tags everywhere",
-  "guid": "comment-1116-2025-06-22-160834"
+  "guid": "80f010c4-175d-443f-bfbe-e4bb1c322b58",
+  "legacy_guid": "comment-1116-2025-06-22-160834"
 }

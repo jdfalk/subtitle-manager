@@ -2,6 +2,10 @@
   "action": "create",
   "title": "Improve rename command",
   "body": "Handle multiple matching subtitles to prevent overwrites",
-  "labels": ["bug", "enhancement"],
-  "guid": "create-improve-rename-command-2025-06-23"
+  "labels": [
+    "bug",
+    "enhancement"
+  ],
+  "guid": "a98d1c74-4176-4522-b64f-255f0b856919",
+  "legacy_guid": "create-improve-rename-command-2025-06-23"
 }

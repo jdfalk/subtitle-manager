@@ -2,6 +2,9 @@
   "action": "update",
   "number": 1106,
   "body": "Label issue with codex",
-  "labels": ["codex"],
-  "guid": "update-issue-1106-2025-06-23"
+  "labels": [
+    "codex"
+  ],
+  "guid": "aab29303-0f2c-4fa2-a804-a8fefceace98",
+  "legacy_guid": "update-issue-1106-2025-06-23"
 }

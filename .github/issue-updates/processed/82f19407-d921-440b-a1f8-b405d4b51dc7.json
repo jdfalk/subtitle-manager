@@ -2,6 +2,10 @@
   "action": "create",
   "title": "Add path index for Pebble media updates",
   "body": "Improve Pebble store performance by indexing media items by path",
-  "labels": ["codex", "enhancement"],
-  "guid": "create-add-path-index-for-pebble-media-updates-2025-06-23"
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
+  "guid": "9b8d2bd5-9f3e-4674-837c-fe4230ad6fb6",
+  "legacy_guid": "create-add-path-index-for-pebble-media-updates-2025-06-23"
 }
