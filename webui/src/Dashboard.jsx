@@ -76,7 +76,8 @@ export default function Dashboard({ backendAvailable = true }) {
       setError(null);
       const response = await apiService.get('/api/providers');
       if (response.ok) {
-        const data = typeof response.json === 'function' ? await response.json() : [];
+        const data =
+          typeof response.json === 'function' ? await response.json() : [];
         // Only show enabled providers
         const enabledProviders = (data || []).filter(p => p.enabled);
         setAvailableProviders(enabledProviders);
@@ -148,7 +149,8 @@ export default function Dashboard({ backendAvailable = true }) {
         `/api/library/browse?path=${encodeURIComponent(parent)}`
       );
       if (resp.ok) {
-        const data = typeof resp.json === 'function' ? await resp.json() : { items: [] };
+        const data =
+          typeof resp.json === 'function' ? await resp.json() : { items: [] };
         const dirs = (data.items || [])
           .filter(item => item.isDirectory)
           .map(item => item.path)
@@ -168,7 +170,8 @@ export default function Dashboard({ backendAvailable = true }) {
     try {
       const response = await apiService.get('/api/scan/status');
       if (response.ok) {
-        const data = typeof response.json === 'function' ? await response.json() : {};
+        const data =
+          typeof response.json === 'function' ? await response.json() : {};
         // Ensure files is always an array to prevent null reference errors
         setStatus({
           running: data.running || false,
