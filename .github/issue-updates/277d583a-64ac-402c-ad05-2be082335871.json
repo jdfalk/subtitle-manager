@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Refine dashboard widget API",
+  "body": "Improve widgets endpoints, update tests, handle unknown widgets",
+  "labels": ["codex"],
+  "guid": "cbba6849-009b-4e59-b0ad-88266ced1382",
+  "legacy_guid": "create-refine-dashboard-widget-api-2025-06-26"
+}

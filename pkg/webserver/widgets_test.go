@@ -60,3 +60,77 @@ func TestDashboardLayout(t *testing.T) {
 		t.Fatalf("expected %s got %s", layout, out.Layout)
 	}
 }
+
+// TestWidgetsList ensures the API returns available dashboard widgets.
+func TestWidgetsList(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("key: %v", err)
+	}
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest(http.MethodGet, srv.URL+"/api/widgets", nil)
+	req.Header.Set("X-API-Key", key)
+	r, err := srv.Client().Do(req)
+	if err != nil || r.StatusCode != http.StatusOK {
+		t.Fatalf("get: %v %d", err, r.StatusCode)
+	}
+	var widgets []Widget
+	if err := json.NewDecoder(r.Body).Decode(&widgets); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	r.Body.Close()
+	if len(widgets) == 0 {
+		t.Fatalf("expected widgets list")
+	}
+}
+
+// TestWidgetsListMethodNotAllowed verifies the handler rejects unsupported methods.
+func TestWidgetsListMethodNotAllowed(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+	key, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("key: %v", err)
+	}
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest(http.MethodPost, srv.URL+"/api/widgets", nil)
+	req.Header.Set("X-API-Key", key)
+	r, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if r.StatusCode != http.StatusMethodNotAllowed {
+		t.Fatalf("expected 405 got %d", r.StatusCode)
+	}
+	r.Body.Close()
+}

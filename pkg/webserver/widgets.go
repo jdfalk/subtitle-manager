@@ -50,3 +50,36 @@ func dashboardLayoutHandler(db *sql.DB) http.Handler {
 		}
 	})
 }
+
+// Widget describes a dashboard widget available to users.
+//
+// Fields:
+//
+//	ID          - unique identifier for the widget
+//	Name        - display name presented in the UI
+//	Description - short explanation of the widget purpose
+type Widget struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// availableWidgets defines the widgets shipped with the application.
+var availableWidgets = []Widget{
+	{ID: "scan", Name: "Scan", Description: "Subtitle scanning controls"},
+	{ID: "system_info", Name: "System Info", Description: "System information"},
+	{ID: "quick_links", Name: "Quick Links", Description: "Navigation shortcuts"},
+}
+
+// widgetsListHandler returns a handler exposing the list of available widgets.
+// Only GET is supported.
+func widgetsListHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(availableWidgets)
+	})
+}

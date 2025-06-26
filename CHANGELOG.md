@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - Advanced audio synchronization improvements with CPU vs accuracy slider, runtime tradeoff, and dual-language alignment.
 - Experimental minimum display time mode that delays subtitles and catches up during silence.
 - Automatic subtitle upgrade detection avoids replacing smaller files.
+- Dashboard Widgets API exposing available widgets and layout endpoints.
 
 ### Changed
 
