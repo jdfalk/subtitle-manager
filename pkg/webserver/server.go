@@ -185,6 +185,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/library/tags", authMiddleware(db, "basic", libraryTagsHandler(db)))
 	mux.Handle(prefix+"/api/library/scan", authMiddleware(db, "basic", libraryScanHandler(db)))
 	mux.Handle(prefix+"/api/library/scan/status", authMiddleware(db, "basic", libraryScanStatusHandler()))
+	mux.Handle(prefix+"/api/widgets", authMiddleware(db, "basic", widgetsListHandler()))
 	mux.Handle(prefix+"/api/widgets/layout", authMiddleware(db, "basic", dashboardLayoutHandler(db)))
 	mux.Handle(prefix+"/api/users/", authMiddleware(db, "admin", userRouter(db)))
 
