@@ -546,6 +546,41 @@ func TestHistory(t *testing.T) {
 	}
 }
 
+// TestHistoryVideoFilter verifies the video file filter works.
+func TestHistoryVideoFilter(t *testing.T) {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create admin: %v", err)
+	}
+	key, _ := auth.GenerateAPIKey(db, 1)
+	_ = database.InsertSubtitle(db, "a.srt", "a.mkv", "en", "google", "", false)
+	_ = database.InsertSubtitle(db, "b.srt", "b.mkv", "en", "google", "", false)
+	h, _ := Handler(db)
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+	req, _ := http.NewRequest("GET", srv.URL+"/api/history?video=b.mkv", nil)
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("history: %v", err)
+	}
+	var out struct {
+		Translations []database.SubtitleRecord `json:"translations"`
+		Downloads    []database.DownloadRecord `json:"downloads"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	resp.Body.Close()
+	if len(out.Translations) != 1 || out.Translations[0].VideoFile != "b.mkv" {
+		t.Fatalf("unexpected filter result")
+	}
+}
+
 // TestDownload verifies that POST /api/download fetches a subtitle and records history.
 func TestDownload(t *testing.T) {
 	db, err := database.Open(":memory:")

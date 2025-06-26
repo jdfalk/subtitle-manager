@@ -326,6 +326,26 @@ func (s *SQLStore) ListDownloads() ([]DownloadRecord, error) {
 	return recs, rows.Err()
 }
 
+// ListDownloadsByVideo retrieves download history for a specific video file.
+func (s *SQLStore) ListDownloadsByVideo(video string) ([]DownloadRecord, error) {
+	rows, err := s.db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads WHERE video_file = ? ORDER BY id DESC`, video)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []DownloadRecord
+	for rows.Next() {
+		var r DownloadRecord
+		var id int64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
 // DeleteDownload removes download records matching file from the database.
 func (s *SQLStore) DeleteDownload(file string) error {
 	_, err := s.db.Exec(`DELETE FROM downloads WHERE file = ?`, file)
@@ -348,6 +368,26 @@ func InsertDownload(db *sql.DB, file, video, provider, lang string) error {
 // ListDownloads retrieves download records using a raw *sql.DB.
 func ListDownloads(db *sql.DB) ([]DownloadRecord, error) {
 	rows, err := db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []DownloadRecord
+	for rows.Next() {
+		var r DownloadRecord
+		var id int64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// ListDownloadsByVideo retrieves download history for a specific video file using a raw *sql.DB.
+func ListDownloadsByVideo(db *sql.DB, video string) ([]DownloadRecord, error) {
+	rows, err := db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads WHERE video_file = ? ORDER BY id DESC`, video)
 	if err != nil {
 		return nil, err
 	}
@@ -496,6 +536,28 @@ func (s *SQLStore) ListSubtitles() ([]SubtitleRecord, error) {
 	return recs, rows.Err()
 }
 
+// ListSubtitlesByVideo retrieves subtitle history for a specific video file.
+func (s *SQLStore) ListSubtitlesByVideo(video string) ([]SubtitleRecord, error) {
+	rows, err := s.db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles WHERE video_file = ? ORDER BY id DESC`, video)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []SubtitleRecord
+	for rows.Next() {
+		var r SubtitleRecord
+		var embedded int
+		var id int64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		r.Embedded = embedded == 1
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
 // DeleteSubtitle removes subtitle records matching file from the database.
 func (s *SQLStore) DeleteSubtitle(file string) error {
 	_, err := s.db.Exec(`DELETE FROM subtitles WHERE file = ?`, file)
@@ -516,6 +578,28 @@ func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
 	}
 	defer rows.Close()
 
+	var recs []SubtitleRecord
+	for rows.Next() {
+		var r SubtitleRecord
+		var embedded int
+		var id int64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		r.Embedded = embedded == 1
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// ListSubtitlesByVideo retrieves subtitle records for a specific video file using a raw *sql.DB.
+func ListSubtitlesByVideo(db *sql.DB, video string) ([]SubtitleRecord, error) {
+	rows, err := db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles WHERE video_file = ? ORDER BY id DESC`, video)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 	var recs []SubtitleRecord
 	for rows.Next() {
 		var r SubtitleRecord

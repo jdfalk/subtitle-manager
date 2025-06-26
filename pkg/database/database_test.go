@@ -76,6 +76,23 @@ func TestDownloadHistory(t *testing.T) {
 	}
 }
 
+func TestHistoryByVideo(t *testing.T) {
+	db, err := Open(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	_ = InsertSubtitle(db, "a.srt", "a.mkv", "en", "g", "", false)
+	_ = InsertSubtitle(db, "b.srt", "b.mkv", "en", "g", "", false)
+	recs, err := ListSubtitlesByVideo(db, "b.mkv")
+	if err != nil {
+		t.Fatalf("list by video: %v", err)
+	}
+	if len(recs) != 1 || recs[0].VideoFile != "b.mkv" {
+		t.Fatalf("unexpected result %+v", recs)
+	}
+}
+
 func TestMediaItems(t *testing.T) {
 	db, err := Open(":memory:")
 	if err != nil {

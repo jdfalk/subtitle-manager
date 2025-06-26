@@ -103,6 +103,26 @@ func (p *PostgresStore) ListSubtitles() ([]SubtitleRecord, error) {
 	return recs, rows.Err()
 }
 
+// ListSubtitlesByVideo retrieves subtitle records for a specific video file.
+func (p *PostgresStore) ListSubtitlesByVideo(video string) ([]SubtitleRecord, error) {
+	rows, err := p.db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles WHERE video_file = $1 ORDER BY id DESC`, video)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []SubtitleRecord
+	for rows.Next() {
+		var r SubtitleRecord
+		var id int64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &r.Embedded, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
 // DeleteSubtitle removes subtitle records matching file.
 func (p *PostgresStore) DeleteSubtitle(file string) error {
 	_, err := p.db.Exec(`DELETE FROM subtitles WHERE file = $1`, file)
@@ -119,6 +139,26 @@ func (p *PostgresStore) InsertDownload(rec *DownloadRecord) error {
 // ListDownloads retrieves download records ordered by most recent.
 func (p *PostgresStore) ListDownloads() ([]DownloadRecord, error) {
 	rows, err := p.db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []DownloadRecord
+	for rows.Next() {
+		var r DownloadRecord
+		var id int64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// ListDownloadsByVideo retrieves download records for a specific video file.
+func (p *PostgresStore) ListDownloadsByVideo(video string) ([]DownloadRecord, error) {
+	rows, err := p.db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads WHERE video_file = $1 ORDER BY id DESC`, video)
 	if err != nil {
 		return nil, err
 	}
