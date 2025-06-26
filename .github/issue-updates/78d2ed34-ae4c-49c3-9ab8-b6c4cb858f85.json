@@ -1,0 +1,7 @@
+{
+  "action": "comment",
+  "number": 0,
+  "body": "Implemented docker-init test verifying Whisper container launches and env vars exported",
+  "guid": "038a8e85-f1ca-4768-9dbe-54e88728a59d",
+  "legacy_guid": "comment-issue-0-2025-06-26"
+}
