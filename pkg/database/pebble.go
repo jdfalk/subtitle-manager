@@ -107,6 +107,21 @@ func (p *PebbleStore) ListSubtitles() ([]SubtitleRecord, error) {
 	return recs, nil
 }
 
+// ListSubtitlesByVideo filters subtitle records by video file path.
+func (p *PebbleStore) ListSubtitlesByVideo(video string) ([]SubtitleRecord, error) {
+	recs, err := p.ListSubtitles()
+	if err != nil {
+		return nil, err
+	}
+	out := recs[:0]
+	for _, r := range recs {
+		if r.VideoFile == video {
+			out = append(out, r)
+		}
+	}
+	return out, nil
+}
+
 // DeleteSubtitle removes all records matching file from the store.
 func (p *PebbleStore) DeleteSubtitle(file string) error {
 	iter, err := p.db.NewIter(nil)
@@ -173,6 +188,21 @@ func (p *PebbleStore) ListDownloads() ([]DownloadRecord, error) {
 		return recs[i].CreatedAt.After(recs[j].CreatedAt)
 	})
 	return recs, nil
+}
+
+// ListDownloadsByVideo filters download records by video file path.
+func (p *PebbleStore) ListDownloadsByVideo(video string) ([]DownloadRecord, error) {
+	recs, err := p.ListDownloads()
+	if err != nil {
+		return nil, err
+	}
+	out := recs[:0]
+	for _, r := range recs {
+		if r.VideoFile == video {
+			out = append(out, r)
+		}
+	}
+	return out, nil
 }
 
 // DeleteDownload removes download records for the given subtitle file.

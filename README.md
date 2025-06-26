@@ -18,7 +18,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Convert subtitles from many formats to SRT.
 - Merge two subtitle tracks sorted by start time.
 - Translate subtitles via Google Translate or ChatGPT APIs.
-- Store translation history in SQLite, PebbleDB or PostgreSQL databases. Retrieve history via the `history` command or `/api/history` endpoint.
+- Store translation history in SQLite, PebbleDB or PostgreSQL databases. Retrieve history via the `history` command or `/api/history` endpoint with optional `lang` and `video` filters.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
 - Convert uploaded subtitle files to SRT via `/api/convert`.
@@ -45,7 +45,7 @@ Subtitle Manager is a comprehensive subtitle management application written in G
 - Run a translation gRPC server.
 - Translate uploaded subtitles through `/api/translate` endpoint.
 - Delete subtitle files and remove history records.
-- Track subtitle download history and list with `downloads` command or `/api/history`.
+- Track subtitle download history and list with `downloads` command or `/api/history` using `lang` and `video` filters.
 - GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
 - Manually search for subtitles with `search` command.
 - Provider registry simplifies adding new sources.
@@ -339,7 +339,7 @@ The web server exposes a comprehensive REST API for all subtitle operations:
 
 #### History and Monitoring
 
-- `GET /api/history` - Retrieve translation and download history
+- `GET /api/history` - Retrieve translation and download history. Supports `lang` and `video` query parameters for filtering.
 - `GET /api/logs` - Get recent log entries
 - `GET /api/system` - System information (Go version, OS, architecture, goroutines)
 - `GET /api/tasks` - Current task status and progress
@@ -701,7 +701,7 @@ make proto-gen
 The generated files live in `pkg/translatorpb` and should be committed with your
 changes.
 
-The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work includes a flexible tagging system and automated maintenance tasks. See `TODO.md` for details.
+The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work focuses on Sonarr/Radarr sync improvements and the metadata editor. See `TODO.md` for details.
 Extensive architectural details and design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New contributors should review these documents to understand package responsibilities and completed features.
 For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
 Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).

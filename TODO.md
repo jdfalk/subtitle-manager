@@ -18,7 +18,7 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 - [ ] **Media Metadata Editor**: Provide manual editing interface.
   - [ ] Allow manual metadata search and selection during import.
   - [ ] Store alternate titles for improved subtitle matching.
-  - [ ] Track release group and subtitle history per file.
+  - [x] Track release group and subtitle history per file via `/api/history?video=`.
   - [ ] Support field-level locks to prevent unwanted updates.
 
 ### Universal Tagging System Implementation

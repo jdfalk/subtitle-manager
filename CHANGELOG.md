@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Automatic subtitle upgrade detection avoids replacing smaller files.
 - Dashboard Widgets API exposing available widgets and layout endpoints.
 - Security header `Referrer-Policy: no-referrer` to reduce referrer leakage.
+- History API now filters by video file path via `video` query parameter.
 
 ### Changed
 

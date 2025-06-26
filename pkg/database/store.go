@@ -6,6 +6,8 @@ type SubtitleStore interface {
 	InsertSubtitle(rec *SubtitleRecord) error
 	// ListSubtitles retrieves all subtitle records sorted by creation time.
 	ListSubtitles() ([]SubtitleRecord, error)
+	// ListSubtitlesByVideo returns subtitle records for a video file.
+	ListSubtitlesByVideo(video string) ([]SubtitleRecord, error)
 	// CountSubtitles returns the total number of subtitle records.
 	CountSubtitles() (int, error)
 	// DeleteSubtitle removes all records for the specified file.
@@ -14,6 +16,8 @@ type SubtitleStore interface {
 	InsertDownload(rec *DownloadRecord) error
 	// ListDownloads retrieves all download records sorted by creation time.
 	ListDownloads() ([]DownloadRecord, error)
+	// ListDownloadsByVideo returns download records for a video file.
+	ListDownloadsByVideo(video string) ([]DownloadRecord, error)
 	// CountDownloads returns the total number of download records.
 	CountDownloads() (int, error)
 	// DeleteDownload removes download records for the specified subtitle file.

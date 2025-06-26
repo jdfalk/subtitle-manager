@@ -22,12 +22,24 @@ func historyHandler(db *sql.DB) http.Handler {
 			return
 		}
 		lang := r.URL.Query().Get("lang")
-		subs, err := database.ListSubtitles(db)
+		video := r.URL.Query().Get("video")
+		var subs []database.SubtitleRecord
+		var downloads []database.DownloadRecord
+		var err error
+		if video != "" {
+			subs, err = database.ListSubtitlesByVideo(db, video)
+		} else {
+			subs, err = database.ListSubtitles(db)
+		}
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		downloads, err := database.ListDownloads(db)
+		if video != "" {
+			downloads, err = database.ListDownloadsByVideo(db, video)
+		} else {
+			downloads, err = database.ListDownloads(db)
+		}
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
