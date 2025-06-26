@@ -1,0 +1,12 @@
+{
+  "action": "create",
+  "title": "Workflow fails to fetch requirements.txt",
+  "body": "Unified issue management fails because it tries to fetch requirements.txt from ghcommon, but that file is missing. Blocked by ghcommon issue \"Add missing requirements.txt for workflow\".",
+  "labels": [
+    "bug",
+    "codex",
+    "dependency"
+  ],
+  "guid": "3468a582-ec80-4ea9-a2ba-835e8db4cc97",
+  "legacy_guid": "create-workflow-fails-to-fetch-requirements-txt-2025-06-26"
+}
