@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Provider config dialog fails to load",
+  "body": "Error when opening provider config: 'b is not a function'. Use apiService for fetching available providers and handle errors gracefully.",
+  "labels": ["bug", "codex"],
+  "guid": "c515ad5e-8d97-417e-9561-a9482f25f066",
+  "legacy_guid": "create-provider-config-dialog-fails-to-load-2025-06-24"
+}

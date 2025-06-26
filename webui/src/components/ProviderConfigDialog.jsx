@@ -17,6 +17,7 @@ import {
   Switch,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { apiService } from '../services/api.js';
 
 /**
  * Fixed ProviderConfigDialog with proper provider selection and configuration options
@@ -38,23 +39,30 @@ export default function ProviderConfigDialog({
 
   // Load available providers when dialog opens
   useEffect(() => {
-    if (open && !provider) {
-      loadAvailableProviders();
-    } else if (provider) {
+    if (!open) return;
+
+    if (provider) {
       setSelectedProvider(provider.name);
       setConfig(provider.config || {});
+    } else {
+      setSelectedProvider('');
+      setConfig({});
+      loadAvailableProviders();
     }
   }, [open, provider]);
 
   const loadAvailableProviders = async () => {
     try {
-      const response = await fetch('/api/providers/available');
+      const response = await apiService.get('/api/providers/available');
       if (response.ok) {
         const providers = await response.json();
         setAvailableProviders(providers);
+      } else {
+        setAvailableProviders([]);
       }
     } catch (error) {
       console.error('Failed to load available providers:', error);
+      setAvailableProviders([]);
     }
   };
 
