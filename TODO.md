@@ -6,16 +6,16 @@ This file tracks remaining work and implementation status for Subtitle Manager. 
 
 ## 🚧 Remaining Work
 
-- [x] **Tagging System**: Implement tagging for language options and preferences.
+- [x] **Tagging System**: Implement tagging for language options and preferences. ([#891](https://github.com/jdfalk/subtitle-manager/issues/891))
   - [x] Add tags table to the database and expose tag management in settings.
   - [x] Apply tags to media and users to drive language selection and provider behavior.
-- [ ] **Whisper Container Integration**: Optional embedded Whisper service.
+- [ ] **Whisper Container Integration**: Optional embedded Whisper service. ([#1132](https://github.com/jdfalk/subtitle-manager/issues/1132))
   - [x] Launch [ahmetoner/whisper-asr-webservice](https://github.com/ahmetoner/whisper-asr-webservice) when `ENABLE_WHISPER=1` is set.
   - [x] Document requirement for NVIDIA Container Toolkit and add Docker init to manage the service lifecycle.
-- [x] **Automated Maintenance Tasks**: Periodic database cleanup, metadata refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md).
-- [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict resolution.
-- [ ] **Online Metadata Sources**: Fetch languages, ratings, and episode data from external APIs.
-- [ ] **Media Metadata Editor**: Provide manual editing interface.
+- [x] **Automated Maintenance Tasks**: Periodic database cleanup, metadata refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md). ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
+- [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict resolution. ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
+- [ ] **Online Metadata Sources**: Fetch languages, ratings, and episode data from external APIs. ([#351](https://github.com/jdfalk/subtitle-manager/issues/351), [#890](https://github.com/jdfalk/subtitle-manager/issues/890))
+- [ ] **Media Metadata Editor**: Provide manual editing interface. ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
   - [ ] Allow manual metadata search and selection during import.
   - [ ] Store alternate titles for improved subtitle matching.
   - [x] Track release group and subtitle history per file via `/api/history?video=`.
