@@ -873,7 +873,7 @@ func TestSecurityHeaders(t *testing.T) {
 	resp := testutil.MustGet(t, "request", func() (*http.Response, error) { return srv.Client().Do(req) })
 
 	headers := resp.Header
-	for _, name := range []string{"X-Frame-Options", "X-Content-Type-Options", "Content-Security-Policy", "Strict-Transport-Security"} {
+	for _, name := range []string{"X-Frame-Options", "X-Content-Type-Options", "Content-Security-Policy", "Strict-Transport-Security", "Referrer-Policy"} {
 		if headers.Get(name) == "" {
 			t.Fatalf("%s header missing", name)
 		}

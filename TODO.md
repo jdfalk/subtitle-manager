@@ -159,7 +159,7 @@ Current tag implementations will be migrated to the unified system:
 
 ### Security Enhancements
 
-- [ ] **[nitpick] Consider adding a Referrer-Policy header** (e.g., no-referrer or strict-origin-when-cross-origin) to enhance privacy and reduce referrer leakage
+- [x] **[nitpick] Add a Referrer-Policy header** (`no-referrer`) to enhance privacy and reduce referrer leakage
 
 ### Development Tools
 
