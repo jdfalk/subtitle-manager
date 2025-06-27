@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - **Enhanced Web UI Testing**: Minimal webui index for comprehensive test coverage
 - Automated maintenance tasks with configurable scheduling
 - Fetch languages, ratings, and episode data from OMDb via new metadata functions
+- CLI flags and env vars for TMDB and OMDb API keys
 - Advanced audio synchronization improvements with CPU vs accuracy slider, runtime tradeoff, and dual-language alignment.
 - Experimental minimum display time mode that delays subtitles and catches up during silence.
 - Automatic subtitle upgrade detection avoids replacing smaller files.

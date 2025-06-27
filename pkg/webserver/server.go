@@ -326,7 +326,8 @@ func StartServer(addr string) error {
 			return
 		}
 		maintenance.StartMetadataRefresh(context.Background(), store,
-			viper.GetString("tmdb_api_key"), viper.GetString("metadata_refresh_frequency"))
+			viper.GetString("tmdb_api_key"), viper.GetString("omdb_api_key"),
+			viper.GetString("metadata_refresh_frequency"))
 	}()
 
 	go maintenance.StartDiskScan(context.Background(), viper.GetString("db_path"),
