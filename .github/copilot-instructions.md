@@ -1,5 +1,5 @@
 <!-- file: .github/copilot-instructions.md -->
-<!-- version: 1.1.0 -->
+<!-- version: 1.1.1 -->
 <!-- guid: 7a8b9c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d -->
 
 # Copilot Instructions
@@ -10,6 +10,13 @@
 - Use this path to determine which file you're working on and where to apply generated changes
 - If this comment is present, prioritize it over any other indications of file path
 - When generating code modifications, reference this path in your response
+- Always ensure every file begins with the standard header, using the correct comment syntax for the file type (e.g., `# file: ...` for Python, `// file: ...` for Go, `<!-- file: ... -->` for Markdown, etc.).
+- The header must include:
+  - The exact relative file path from the repository root (e.g., `# file: path/to/file.py`)
+  - The file's semantic version (e.g., `# version: 1.0.0`)
+  - The file's GUID (e.g., `# guid: 123e4567-e89b-12d3-a456-426614174000`)
+- If this header is present, always use it to determine the file's identity and where to apply changes. Prioritize this over any other indications of file path.
+- When generating code modifications, reference the file path from this header in your response.
 
 ## Code Documentation
 
