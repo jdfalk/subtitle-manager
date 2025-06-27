@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Continuous Sonarr/Radarr sync jobs",
+  "body": "Implement background jobs that continuously sync Sonarr and Radarr libraries, resolving conflicts automatically. Add tests for scheduling and conflict logic. Builds on existing sync enhancements in #889.",
+  "labels": ["enhancement", "codex"],
+  "guid": "06c04066-b88d-4dac-877f-75677911371c",
+  "legacy_guid": "create-continuous-sonarr-radarr-sync-jobs-2025-06-27"
+}
