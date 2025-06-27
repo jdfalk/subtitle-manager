@@ -301,7 +301,7 @@ The interface provides a complete user experience with:
 - **Tags**: Edit and organize custom tags for language preferences
 - **Config File**: Edit the YAML configuration directly in the browser
 
-Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key`, `--openai-key` and `--opensubtitles-key` or in the configuration file. Additional flags include `--ffmpeg-path` for a custom ffmpeg binary, `--batch-workers` and `--scan-workers` to control concurrency. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble` engines. When using PebbleDB a directory path may be supplied instead of a file. Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`. Generic provider options may also be set with variables like `SM_PROVIDERS_GENERIC_API_URL`. For WebSocket security, use `--allowed-websocket-origins` or `SM_ALLOWED_WEBSOCKET_ORIGINS` to specify comma-separated allowed origins (by default only localhost and same-origin connections are allowed).
+Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key`, `--openai-key`, `--opensubtitles-key`, `--tmdb-key`, and `--omdb-key` or in the configuration file. Additional flags include `--ffmpeg-path` for a custom ffmpeg binary, `--batch-workers` and `--scan-workers` to control concurrency. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble` engines. When using PebbleDB a directory path may be supplied instead of a file. Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`. Generic provider options may also be set with variables like `SM_PROVIDERS_GENERIC_API_URL`. For WebSocket security, use `--allowed-websocket-origins` or `SM_ALLOWED_WEBSOCKET_ORIGINS` to specify comma-separated allowed origins (by default only localhost and same-origin connections are allowed).
 Run `subtitle-manager migrate old.db newdir` to copy existing subtitle history from SQLite to PebbleDB.
 
 ### REST API
@@ -465,6 +465,8 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 - `SM_GOOGLE_API_KEY` - Google Translate API key
 - `SM_OPENAI_API_KEY` - OpenAI/ChatGPT API key
 - `SM_OPENSUBTITLES_API_KEY` - OpenSubtitles API key
+- `SM_TMDB_API_KEY` - TheMovieDB API key
+- `SM_OMDB_API_KEY` - OMDb API key
 
 **Performance Tuning:**
 

@@ -14,7 +14,7 @@ Configuration key: `db_cleanup_frequency`
 
 ### Metadata Refresh
 
-Updates stored media items by querying TMDB. Requires a valid `tmdb_api_key`.
+Updates stored media items by querying TMDB and OMDb. Requires valid `tmdb_api_key` and `omdb_api_key` values.
 
 Configuration key: `metadata_refresh_frequency`
 

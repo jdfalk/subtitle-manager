@@ -14,12 +14,16 @@ func TestInitConfigEnv(t *testing.T) {
 	os.Setenv("SM_GOOGLE_API_URL", "http://api")
 	os.Setenv("SM_OPENAI_API_URL", "http://local/v1")
 	os.Setenv("SM_ANTICAPTCHA_API_KEY", "ac")
+	os.Setenv("SM_TMDB_API_KEY", "tkey")
+	os.Setenv("SM_OMDB_API_KEY", "okey")
 	defer os.Unsetenv("SM_GOOGLE_API_KEY")
 	defer os.Unsetenv("SM_OPENSUBTITLES_API_KEY")
 	defer os.Unsetenv("SM_FFMPEG_PATH")
 	defer os.Unsetenv("SM_GOOGLE_API_URL")
 	defer os.Unsetenv("SM_OPENAI_API_URL")
 	defer os.Unsetenv("SM_ANTICAPTCHA_API_KEY")
+	defer os.Unsetenv("SM_TMDB_API_KEY")
+	defer os.Unsetenv("SM_OMDB_API_KEY")
 	initConfig()
 	if got := viper.GetString("google_api_key"); got != "testkey" {
 		t.Fatalf("expected google_api_key=%s, got %s", "testkey", got)
@@ -38,5 +42,11 @@ func TestInitConfigEnv(t *testing.T) {
 	}
 	if got := viper.GetString("anticaptcha.api_key"); got != "ac" {
 		t.Fatalf("expected anticaptcha.api_key=%s, got %s", "ac", got)
+	}
+	if got := viper.GetString("tmdb_api_key"); got != "tkey" {
+		t.Fatalf("expected tmdb_api_key=%s, got %s", "tkey", got)
+	}
+	if got := viper.GetString("omdb_api_key"); got != "okey" {
+		t.Fatalf("expected omdb_api_key=%s, got %s", "okey", got)
 	}
 }

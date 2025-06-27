@@ -72,7 +72,14 @@ func StartDatabaseCleanup(ctx context.Context, db *sql.DB, frequency string) {
 //   - ctx:   cancellation context
 //   - store: media database store
 //   - apiKey: TMDB API key
-func RefreshMetadata(ctx context.Context, store database.SubtitleStore, apiKey string) error {
+//
+// RefreshMetadata updates stored media items with data from TMDB and OMDb.
+// Parameters:
+//   - ctx:     cancellation context
+//   - store:   media database store
+//   - tmdbKey: TMDB API key
+//   - omdbKey: OMDb API key
+func RefreshMetadata(ctx context.Context, store database.SubtitleStore, tmdbKey, omdbKey string) error {
 	items, err := store.ListMediaItems()
 	if err != nil {
 		return err
@@ -84,9 +91,9 @@ func RefreshMetadata(ctx context.Context, store database.SubtitleStore, apiKey s
 		default:
 		}
 		if it.Season > 0 {
-			_, _ = metadata.QueryEpisode(ctx, it.Title, it.Season, it.Episode, apiKey)
+			_, _ = metadata.FetchEpisodeMetadata(ctx, it.Title, it.Season, it.Episode, tmdbKey, omdbKey)
 		} else {
-			_, _ = metadata.QueryMovie(ctx, it.Title, 0, apiKey)
+			_, _ = metadata.FetchMovieMetadata(ctx, it.Title, 0, tmdbKey, omdbKey)
 		}
 	}
 	return nil
@@ -94,10 +101,11 @@ func RefreshMetadata(ctx context.Context, store database.SubtitleStore, apiKey s
 
 // StartMetadataRefresh schedules RefreshMetadata periodically using the
 // provided frequency string.
-func StartMetadataRefresh(ctx context.Context, store database.SubtitleStore, apiKey, frequency string) {
+// StartMetadataRefresh schedules RefreshMetadata periodically using the provided frequency.
+func StartMetadataRefresh(ctx context.Context, store database.SubtitleStore, tmdbKey, omdbKey, frequency string) {
 	interval := frequencyToDuration(frequency)
 	go scheduler.Run(ctx, interval, func(c context.Context) error {
-		return RefreshMetadata(c, store, apiKey)
+		return RefreshMetadata(c, store, tmdbKey, omdbKey)
 	})
 }
 
