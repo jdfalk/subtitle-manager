@@ -353,5 +353,12 @@ subtitle-manager.yaml
 tmp/*
 temp/*
 
+# ==============================================================================
+# Personal Configuration Files
+# ==============================================================================
+
+# Personal Docker stack configuration (keep private)
+docker-stack-jf.yml
+
 
 
