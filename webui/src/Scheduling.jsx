@@ -41,8 +41,7 @@ export default function Scheduling({ backendAvailable = true }) {
       } else {
         setError('Failed to load configuration');
       }
-    } catch (err) {
-      console.error('Failed to load configuration:', err);
+    } catch {
       setError('Failed to load configuration');
     } finally {
       setLoading(false);
@@ -64,9 +63,8 @@ export default function Scheduling({ backendAvailable = true }) {
       if (!res.ok) {
         setError('Failed to save configuration');
       }
-    } catch (err) {
-      console.error('Failed to save configuration:', err);
-      setError('Failed to save configuration');
+    } catch {
+      setError('Failed to update schedule');
     }
   };
 

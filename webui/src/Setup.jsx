@@ -128,7 +128,7 @@ export default function Setup() {
   const [showDebug, setShowDebug] = useState(false);
 
   const [status, setStatus] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState('');
 
   const importBazarr = async () => {
     if (!bazarrURL || !bazarrAPIKey) {
@@ -220,8 +220,7 @@ export default function Setup() {
       } else {
         setStatus('error');
       }
-    } catch (err) {
-      console.error('Setup failed:', err);
+    } catch {
       setStatus('error');
     } finally {
       setLoading(false);

@@ -1,20 +1,20 @@
 // file: webui/src/components/DirectoryChooser.jsx
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  ArrowBack as BackIcon,
+  Folder as FolderIcon,
+} from '@mui/icons-material';
+import {
   Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  CircularProgress,
 } from '@mui/material';
-import {
-  Folder as FolderIcon,
-  ArrowBack as BackIcon,
-} from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { apiService } from '../services/api.js';
 
@@ -30,6 +30,7 @@ export default function DirectoryChooser({ open, onClose, onSelect }) {
   const [currentPath, setCurrentPath] = useState('/');
   const [dirs, setDirs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (open) {
@@ -55,9 +56,8 @@ export default function DirectoryChooser({ open, onClose, onSelect }) {
         } else {
           setDirs([]);
         }
-      } catch (err) {
-        console.error('Failed to browse directory:', err);
-        setDirs([]);
+      } catch {
+        setError('Failed to open directory');
       } finally {
         setLoading(false);
       }
@@ -82,6 +82,7 @@ export default function DirectoryChooser({ open, onClose, onSelect }) {
       <DialogTitle>Select Directory</DialogTitle>
       <DialogContent dividers>
         {loading && <CircularProgress size={20} sx={{ mb: 2 }} />}
+        {error && <div style={{ color: 'red' }}>{error}</div>}
         <List>
           {currentPath !== '/' && (
             <ListItemButton onClick={goUp}>

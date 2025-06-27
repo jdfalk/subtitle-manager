@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format:check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,css,json,md}'",
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,json,md}'",
     "type-check": "echo 'Type checking skipped - project uses JSX without TypeScript'",

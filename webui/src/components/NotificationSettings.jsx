@@ -1,11 +1,22 @@
 // file: webui/src/components/NotificationSettings.jsx
 import {
+  Delete as DeleteIcon,
+  Chat as DiscordIcon,
+  Email as EmailIcon,
+  Notifications as PushIcon,
+  Telegram as TelegramIcon,
+  Send as TestIcon,
+  Webhook as WebhookIcon,
+} from '@mui/icons-material';
+import {
+  Alert,
   Box,
   Button,
   Card,
   CardActions,
   CardContent,
   Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -19,18 +30,7 @@ import {
   Switch,
   TextField,
   Typography,
-  Alert,
-  CircularProgress,
 } from '@mui/material';
-import {
-  Email as EmailIcon,
-  Chat as DiscordIcon,
-  Telegram as TelegramIcon,
-  Notifications as PushIcon,
-  Webhook as WebhookIcon,
-  Delete as DeleteIcon,
-  Send as TestIcon,
-} from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 
 /**
@@ -88,6 +88,9 @@ export default function NotificationSettings({
     loading: false,
   });
   const [resetDialog, setResetDialog] = useState(false);
+
+  // Error state for notification errors
+  const [error, setError] = useState(null);
 
   // Load configuration values when provided
   useEffect(() => {
@@ -178,8 +181,8 @@ export default function NotificationSettings({
         const err = await response.text();
         alert(`Failed to send ${type} notification: ${err}`);
       }
-    } catch (err) {
-      alert(`Failed to send ${type} notification: ${err.message}`);
+    } catch {
+      setError('Failed to update notification settings');
     } finally {
       setTestDialog({ open: false, type: '', loading: false });
     }

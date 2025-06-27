@@ -1,5 +1,5 @@
 // file: webui/src/MediaDetails.jsx
-import { Box, Typography, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ export default function MediaDetails() {
   const title = params.get('title');
   const [info, setInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -29,8 +30,8 @@ export default function MediaDetails() {
             setInfo(data);
           }
         }
-      } catch (err) {
-        console.error('Failed to fetch metadata', err);
+      } catch {
+        setError('Failed to fetch media details');
       } finally {
         setLoading(false);
       }
@@ -42,6 +43,16 @@ export default function MediaDetails() {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box p={4}>
+        <Typography variant="h5" color="error">
+          {error}
+        </Typography>
       </Box>
     );
   }

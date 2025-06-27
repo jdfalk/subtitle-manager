@@ -160,7 +160,7 @@ export default function Dashboard({ backendAvailable = true }) {
         setSuggestions([]);
       }
     } catch {
-      setSuggestions([]);
+      setError('Failed to fetch dashboard data');
     }
   };
 
@@ -327,55 +327,57 @@ export default function Dashboard({ backendAvailable = true }) {
                     }}
                     disabled={status.running || !backendAvailable}
                   >
-                    {availableProviders.length > 0
-                      ? availableProviders.map(p => (
-                          <MenuItem
-                            key={p.name}
-                            value={p.name}
-                            data-testid={`provider-option-${p.name.toLowerCase()}`}
-                          >
-                            {formatProviderName(p.name)}
-                            {!p.configured && (
-                              <Chip
-                                label="Config Required"
-                                size="small"
-                                color="warning"
-                                sx={{ ml: 1 }}
-                              />
-                            )}
-                          </MenuItem>
-                        ))
-                      : // Fallback options if providers haven't loaded
-                        [
-                          <MenuItem
-                            key="opensubtitles"
-                            value="opensubtitles"
-                            data-testid="provider-option-opensubtitles"
-                          >
-                            OpenSubtitles
-                          </MenuItem>,
-                          <MenuItem
-                            key="addic7ed"
-                            value="addic7ed"
-                            data-testid="provider-option-addic7ed"
-                          >
-                            Addic7ed
-                          </MenuItem>,
-                          <MenuItem
-                            key="subscene"
-                            value="subscene"
-                            data-testid="provider-option-subscene"
-                          >
-                            Subscene
-                          </MenuItem>,
-                          <MenuItem
-                            key="podnapisi"
-                            value="podnapisi"
-                            data-testid="provider-option-podnapisi"
-                          >
-                            Podnapisi
-                          </MenuItem>,
-                        ]}
+                    {availableProviders.length > 0 ? (
+                      availableProviders.map(p => (
+                        <MenuItem
+                          key={p.name}
+                          value={p.name}
+                          data-testid={`provider-option-${p.name.toLowerCase()}`}
+                        >
+                          {formatProviderName(p.name)}
+                          {!p.configured && (
+                            <Chip
+                              label="Config Required"
+                              size="small"
+                              color="warning"
+                              sx={{ ml: 1 }}
+                            />
+                          )}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      // Fallback options if providers haven't loaded
+                      <>
+                        <MenuItem
+                          key="opensubtitles"
+                          value="opensubtitles"
+                          data-testid="provider-option-opensubtitles"
+                        >
+                          OpenSubtitles
+                        </MenuItem>
+                        <MenuItem
+                          key="addic7ed"
+                          value="addic7ed"
+                          data-testid="provider-option-addic7ed"
+                        >
+                          Addic7ed
+                        </MenuItem>
+                        <MenuItem
+                          key="subscene"
+                          value="subscene"
+                          data-testid="provider-option-subscene"
+                        >
+                          Subscene
+                        </MenuItem>
+                        <MenuItem
+                          key="podnapisi"
+                          value="podnapisi"
+                          data-testid="provider-option-podnapisi"
+                        >
+                          Podnapisi
+                        </MenuItem>
+                      </>
+                    )}
                   </Select>
                   {availableProviders.length === 0 && (
                     <Alert

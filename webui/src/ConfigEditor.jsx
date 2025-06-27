@@ -1,5 +1,5 @@
 // file: webui/src/ConfigEditor.jsx
-import { Edit as EditIcon, Save as SaveIcon } from '@mui/icons-material';
+import { Save as SaveIcon } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -8,9 +8,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import yaml from 'js-yaml';
 import { useEffect, useState } from 'react';
 import { apiService } from './services/api.js';
-import yaml from 'js-yaml';
 
 /**
  * ConfigEditor allows viewing and editing of the raw configuration
@@ -26,24 +26,6 @@ export default function ConfigEditor({ backendAvailable = true }) {
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
-
-  const loadConfig = async () => {
-    if (!backendAvailable) return;
-    setLoading(true);
-    try {
-      const res = await apiService.get('/api/config');
-      if (res.ok) {
-        const data = await res.json();
-        setYamlText(yaml.dump(data));
-      } else {
-        setError('Failed to load configuration');
-      }
-    } catch {
-      setError('Failed to load configuration');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const saveConfig = async () => {
     if (!backendAvailable) return;
@@ -63,7 +45,25 @@ export default function ConfigEditor({ backendAvailable = true }) {
     }
   };
 
+  // useEffect for loading config
   useEffect(() => {
+    const loadConfig = async () => {
+      if (!backendAvailable) return;
+      setLoading(true);
+      try {
+        const res = await apiService.get('/api/config');
+        if (res.ok) {
+          const data = await res.json();
+          setYamlText(yaml.dump(data));
+        } else {
+          setError('Failed to load configuration');
+        }
+      } catch {
+        setError('Failed to load configuration');
+      } finally {
+        setLoading(false);
+      }
+    };
     loadConfig();
   }, [backendAvailable]);
 

@@ -1,4 +1,5 @@
 // file: webui/src/LibraryScan.jsx
+import FolderIcon from '@mui/icons-material/Folder';
 import {
   Alert,
   Box,
@@ -14,10 +15,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import FolderIcon from '@mui/icons-material/Folder';
 import { useEffect, useState } from 'react';
-import { apiService } from './services/api.js';
 import DirectoryChooser from './components/DirectoryChooser.jsx';
+import { apiService } from './services/api.js';
 
 export default function LibraryScan({ backendAvailable = true }) {
   const [dir, setDir] = useState('');
@@ -61,7 +61,7 @@ export default function LibraryScan({ backendAvailable = true }) {
         setError('Failed to start scan');
       }
     } catch {
-      setError('Failed to start scan');
+      setError('Failed to get scan status');
     } finally {
       setLoading(false);
     }

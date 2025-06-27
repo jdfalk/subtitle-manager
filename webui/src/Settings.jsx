@@ -291,8 +291,7 @@ export default function Settings({ backendAvailable = true }) {
         setSnackbarOpen(true);
       }
     } catch {
-      setStatus('Error saving settings');
-      setSnackbarOpen(true);
+      setError('Failed to update settings');
     }
   };
 

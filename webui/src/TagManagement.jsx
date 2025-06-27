@@ -42,8 +42,8 @@ export default function TagManagement({ backendAvailable = true }) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setTags(Array.isArray(data) ? data : []);
-    } catch (err) {
-      setError(`Failed to load tags: ${err.message}`);
+    } catch {
+      setError('Failed to fetch tag list');
     } finally {
       setLoading(false);
     }
@@ -63,8 +63,8 @@ export default function TagManagement({ backendAvailable = true }) {
       } else {
         setError(`Failed to add tag: HTTP ${res.status}`);
       }
-    } catch (err) {
-      setError(`Failed to add tag: ${err.message}`);
+    } catch {
+      setError('Failed to add tag');
     }
   };
 
@@ -89,8 +89,8 @@ export default function TagManagement({ backendAvailable = true }) {
       } else {
         setError(`Failed to update tag: HTTP ${res.status}`);
       }
-    } catch (err) {
-      setError(`Failed to update tag: ${err.message}`);
+    } catch {
+      setError('Failed to update tag');
     }
   };
 
@@ -109,8 +109,8 @@ export default function TagManagement({ backendAvailable = true }) {
       } else {
         setError(`Failed to delete tag: HTTP ${res.status}`);
       }
-    } catch (err) {
-      setError(`Failed to delete tag: ${err.message}`);
+    } catch {
+      setError('Failed to delete tag');
     }
   };
 
