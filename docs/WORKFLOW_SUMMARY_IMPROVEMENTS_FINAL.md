@@ -87,7 +87,7 @@ Now users get:
 
 ## Files Modified
 
-- `/Users/jdfalk/repos/github.com/jdfalk/ghcommon/.github/workflows/unified-issue-management.yml`
+- `/Users/jdfalk/repos/github.com/jdfalk/ghcommon/.github/workflows/reusable-unified-issue-management.yml`
   - Simplified workflow summary generation
   - Removed duplicate operation result collection
   - Removed redundant file change tracking

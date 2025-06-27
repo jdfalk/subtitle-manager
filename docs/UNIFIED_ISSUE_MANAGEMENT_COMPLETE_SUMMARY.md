@@ -126,7 +126,7 @@ def get_issue(self, issue_number: int) -> Optional[Dict[str, Any]]
    - Implemented missing `get_issue` method (lines 522-541)
    - Added comprehensive error handling and logging
 
-2. **`/Users/jdfalk/repos/github.com/jdfalk/ghcommon/.github/workflows/unified-issue-management.yml`**
+2. **`/Users/jdfalk/repos/github.com/jdfalk/ghcommon/.github/workflows/reusable-unified-issue-management.yml`**
    - Added timestamp generation step
    - Implemented changed files tracking
    - Added PR detection and conditional creation logic

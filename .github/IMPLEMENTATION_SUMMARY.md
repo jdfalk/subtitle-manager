@@ -70,7 +70,7 @@ python issue_manager.py event-handler      # Handle webhook events
 ### New Files
 
 - `.github/scripts/issue_manager.py` - Unified Python script
-- `.github/workflows/unified-issue-management.yml` - Main workflow
+- `.github/workflows/reusable-unified-issue-management.yml` - Main workflow
 - `.github/workflows/codeql-alert-tickets.yml` - CodeQL-specific workflow
 - `.github/ISSUE_MANAGEMENT_MIGRATION.md` - Migration guide
 

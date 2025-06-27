@@ -1,4 +1,4 @@
-# file: .github/workflows/issue-management.yml
+# file: .github/workflows/reusable-issue-management.yml
 #
 # Issue Management Workflow (calls ghcommon reusable workflow)
 #
@@ -45,7 +45,7 @@ on:
 
 jobs:
   issue-management:
-    uses: jdfalk/ghcommon/.github/workflows/unified-issue-management.yml@main
+    uses: jdfalk/ghcommon/.github/workflows/reusable-unified-issue-management.yml@main
     with:
       operations: ${{ inputs.operations }}
       dry_run: ${{ inputs.dry_run }}
