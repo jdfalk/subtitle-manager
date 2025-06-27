@@ -1,80 +1,30 @@
 # file: .github/workflows/docker-build.yml
-name: Build and Push Docker Image
-
-# Auto-cancel previous runs when new commits are pushed
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+name: "docker-build: Build and Push Docker Image for Subtitle Manager"
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver-opts: |
-            image=moby/buildkit:v0.12.0
-            network=host
-
-      - name: Log in to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set version information
-        id: version
-        run: |
-          VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "dev")
-          BUILD_TIME=$(date -u '+%Y-%m-%d_%I:%M:%S%p')
-          GIT_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
-          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          echo "BUILD_TIME=${BUILD_TIME}" >> $GITHUB_OUTPUT
-          echo "GIT_COMMIT=${GIT_COMMIT}" >> $GITHUB_OUTPUT
-          echo "Version: ${VERSION}"
-          echo "Build Time: ${BUILD_TIME} (UTC)"
-          echo "Git Commit: ${GIT_COMMIT}"
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
-            VERSION=${{ steps.version.outputs.VERSION }}
-            BUILD_TIME=${{ steps.version.outputs.BUILD_TIME }}
-            GIT_COMMIT=${{ steps.version.outputs.GIT_COMMIT }}
+    uses: jdfalk/ghcommon/.github/workflows/reusable-docker-build.yml@main
+    with:
+      image-name: subtitle-manager
+      registry: ghcr.io
+      dockerfile: ./Dockerfile
+      context: .
+      platforms: linux/amd64,linux/arm64
+      build-args: |
+        # Add any additional build args here
+      push: true
+      generate-sbom: true
+      generate-attestation: true
+      scan-vulnerability: true
+      tag-suffix: ""
+    secrets:
+      gh-token: ${{ secrets.GITHUB_TOKEN }}
