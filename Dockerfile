@@ -2,7 +2,7 @@
 # Optimized multi-stage Dockerfile to reduce build times from ~20min to ~3-5min
 
 # Stage 1: Node.js build stage (can be cached separately)
-FROM node:24-alpine AS node-builder
+FROM node:24-bookworm AS node-builder
 WORKDIR /src/webui
 
 # Copy package files first for better caching
@@ -14,11 +14,11 @@ COPY webui/ ./
 RUN npm run build
 
 # Stage 2: Go dependencies (can be cached separately)
-FROM golang:1.24-alpine AS go-deps
+FROM golang:1.24-bookworm AS go-deps
 WORKDIR /src
 
 # Install build dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     musl-dev \
     sqlite-dev
@@ -54,10 +54,10 @@ COPY --from=node-builder /src/webui/dist ./webui/dist
 RUN CGO_ENABLED=1 go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./
 
 # Stage 4: Final runtime image
-FROM alpine:3.22
+FROM golang:1.24-bookworm AS final
 
 # Install runtime dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     ca-certificates \
     tzdata
@@ -78,6 +78,9 @@ RUN chmod +x /usr/local/bin/subtitle-manager
 # Copy docker init script
 COPY docker-init.sh /usr/local/bin/docker-init.sh
 RUN chmod +x /usr/local/bin/docker-init.sh
+
+# --- Security update step (close to the end for best caching) ---
+RUN apt-get update && apt-get full-upgrade -y && apt-get autoremove -y && apt-get clean
 
 # Switch to non-root user
 USER subtitle
