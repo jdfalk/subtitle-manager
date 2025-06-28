@@ -769,7 +769,14 @@ func bazarrPreviewHandler() http.Handler {
 			return
 		}
 
-		settings, err := bazarr.FetchSettings(q.URL, q.APIKey)
+		// Validate the URL to prevent SSRF attacks
+		sanitizedURL, err := security.ValidateURL(q.URL)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid URL: %v", err), http.StatusBadRequest)
+			return
+		}
+
+		settings, err := bazarr.FetchSettings(sanitizedURL, q.APIKey)
 		if err != nil {
 			http.Error(w, "Failed to connect to Bazarr: "+err.Error(), http.StatusBadRequest)
 			return
@@ -837,7 +844,14 @@ func bazarrImportConfigHandler() http.Handler {
 			return
 		}
 
-		settings, err := bazarr.FetchSettings(q.URL, q.APIKey)
+		// Validate the URL to prevent SSRF attacks
+		sanitizedURL, err := security.ValidateURL(q.URL)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid URL: %v", err), http.StatusBadRequest)
+			return
+		}
+
+		settings, err := bazarr.FetchSettings(sanitizedURL, q.APIKey)
 		if err != nil {
 			http.Error(w, "Failed to connect to Bazarr: "+err.Error(), http.StatusBadRequest)
 			return
