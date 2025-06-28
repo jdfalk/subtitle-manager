@@ -29,7 +29,6 @@ import (
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // Must is a generic helper that checks for errors and calls t.Fatalf if one occurs.
