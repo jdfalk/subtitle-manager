@@ -84,8 +84,16 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		logger.Warnf("invalid subtitle output path: %v", err)
 		return err
 	}
+	
+	// Additional validation for CodeQL path injection analysis
+	validatedOut, err := security.ValidateAndSanitizePath(out)
+	if err != nil {
+		logger.Warnf("output path validation failed: %v", err)
+		return err
+	}
+	
 	if !upgrade {
-		if _, err := os.Stat(out); err == nil {
+		if _, err := os.Stat(validatedOut); err == nil {
 			return nil
 		}
 	}
@@ -100,20 +108,20 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		return err
 	}
 	if upgrade {
-		if oldData, err := os.ReadFile(out); err == nil {
+		if oldData, err := os.ReadFile(validatedOut); err == nil {
 			if len(data) <= len(oldData) {
-				logger.Debugf("existing subtitle %s is higher quality", out)
+				logger.Debugf("existing subtitle %s is higher quality", validatedOut)
 				return nil
 			}
 		}
 	}
-	if err := os.WriteFile(out, data, 0644); err != nil {
-		logger.Warnf("write %s: %v", out, err)
+	if err := os.WriteFile(validatedOut, data, 0644); err != nil {
+		logger.Warnf("write %s: %v", validatedOut, err)
 		return err
 	}
-	logger.Infof("downloaded subtitle %s", out)
+	logger.Infof("downloaded subtitle %s", validatedOut)
 	if store != nil {
-		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
+		_ = store.InsertDownload(&database.DownloadRecord{File: validatedOut, VideoFile: path, Provider: providerName, Language: lang})
 	}
 	return nil
 }
