@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -47,25 +48,53 @@ var syncBatchCmd = &cobra.Command{
 		if req.Options.GRPCAddr == "" {
 			req.Options.GRPCAddr = viper.GetString("grpc_addr")
 		}
+		logger.Infof("starting batch synchronization of %d items", len(req.Items))
+		start := time.Now()
+
 		errs := syncer.SyncBatch(req.Items, req.Options)
-		var hasErrors bool
+
+		var successCount, failureCount int
+		var failedItems []string
+
 		for i, it := range req.Items {
 			if err := errs[i]; err != nil {
-				logger.Warnf("sync %s: %v", it.Subtitle, err)
-				hasErrors = true
+				logger.Warnf("sync failed for %s: %v", it.Subtitle, err)
+				failureCount++
+				failedItems = append(failedItems, it.Subtitle)
 			} else {
-				logger.Infof("synchronized %s -> %s", it.Subtitle, it.Output)
+				outPath := it.Output
+				if outPath == "" {
+					outPath = it.Subtitle
+				}
+				logger.Infof("✅ synchronized %s -> %s", it.Subtitle, outPath)
+				successCount++
 			}
 		}
-		if hasErrors {
-			return fmt.Errorf("some items failed during synchronization")
+
+		duration := time.Since(start)
+
+		// Print detailed summary
+		logger.Infof("=== BATCH SYNC SUMMARY ===")
+		logger.Infof("Total items: %d", len(req.Items))
+		logger.Infof("Successful: %d", successCount)
+		logger.Infof("Failed: %d", failureCount)
+		logger.Infof("Duration: %v", duration)
+
+		if failureCount > 0 {
+			logger.Warnf("Failed items:")
+			for _, item := range failedItems {
+				logger.Warnf("  - %s", item)
+			}
+			return fmt.Errorf("batch synchronization completed with %d failures out of %d items", failureCount, len(req.Items))
 		}
+
+		logger.Infof("🎉 All %d items synchronized successfully in %v", successCount, duration)
 		return nil
 	},
 }
 
 func init() {
 	syncBatchCmd.Flags().StringVarP(&syncBatchConfig, "config", "c", "", "JSON configuration file")
-	syncBatchCmd.MarkFlagRequired("config")
+	_ = syncBatchCmd.MarkFlagRequired("config")
 	rootCmd.AddCommand(syncBatchCmd)
 }

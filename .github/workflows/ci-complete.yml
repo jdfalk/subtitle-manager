@@ -10,6 +10,10 @@ on:
       build_status:
         required: true
         type: string
+      coverage:
+        required: false
+        type: string
+        default: "N/A"
 
 jobs:
   summary:
@@ -17,13 +21,30 @@ jobs:
     steps:
       - name: Print CI completion summary
         run: |
-          echo "## CI/CD Pipeline Complete" >> $GITHUB_STEP_SUMMARY
-          echo "Build status: ${{ inputs.build_status }}" >> $GITHUB_STEP_SUMMARY
+          echo "## 🚀 CI/CD Pipeline Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Status:** ${{ inputs.build_status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test Coverage:** ${{ inputs.coverage }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflow Run:** [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
           if [ "${{ inputs.build_status }}" = "success" ]; then
-            echo "✅ All checks passed." >> $GITHUB_STEP_SUMMARY
+            echo "### ✅ Success" >> $GITHUB_STEP_SUMMARY
+            echo "All checks passed successfully! 🎉" >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ Some checks failed. Please review the logs above." >> $GITHUB_STEP_SUMMARY
+            echo "### ❌ Failure" >> $GITHUB_STEP_SUMMARY
+            echo "Some checks failed. Please review the logs above for details." >> $GITHUB_STEP_SUMMARY
           fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Generated at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*" >> $GITHUB_STEP_SUMMARY
+
       - name: Always run summary (even on failure)
         if: always()
-        run: echo "CI/CD workflow has finished. See above for details." >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "📊 CI/CD workflow has finished."
+          echo "Build Status: ${{ inputs.build_status }}"
+          echo "Coverage: ${{ inputs.coverage }}"
+          echo "See above for detailed summary." >> $GITHUB_STEP_SUMMARY

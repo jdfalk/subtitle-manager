@@ -1,4 +1,42 @@
-// file: pkg/webhooks/webhooks.go
+// Package webhooks provides webhook management and notification services for subtitle-manager.
+// It supports HTTP webhooks, payload customization, and reliable delivery mechanisms.
+//
+// This package is used to send real-time notifications about subtitle processing events.
+// Clients can register webhook URLs to receive event notifications, which can be
+// customized with specific payload data. The package ensures secure and validated
+// webhook URL handling to prevent common web vulnerabilities.
+//
+// Example usage:
+//
+//	import (
+//		"github.com/jdfalk/subtitle-manager/pkg/webhooks"
+//	)
+//
+//	func main() {
+//		// Create a new webhook dispatcher with validated URLs
+//		dispatcher, err := webhooks.New([]string{"https://example.com/webhook"})
+//		if err != nil {
+//			log.Fatal(err)
+//		}
+//
+//		// Send a test event to the configured webhooks
+//		err = dispatcher.Send(context.Background(), "test.event", map[string]string{"key": "value"})
+//		if err != nil {
+//			log.Fatal(err)
+//		}
+//	}
+//
+//	// Handle incoming webhook events
+//	func handleWebhookEvent(w http.ResponseWriter, r *http.Request) {
+//		// Use the appropriate handler for the webhook source
+//		if strings.Contains(r.Header.Get("User-Agent"), "Sonarr") {
+//			webhooks.SonarrHandler().ServeHTTP(w, r)
+//		} else if strings.Contains(r.Header.Get("User-Agent"), "Radarr") {
+//			webhooks.RadarrHandler().ServeHTTP(w, r)
+//		} else {
+//			webhooks.CustomHandler().ServeHTTP(w, r)
+//		}
+//	}
 package webhooks
 
 import (

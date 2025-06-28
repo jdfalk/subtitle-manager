@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"time"
 
 	"github.com/asticode/go-astisub"
 	"github.com/spf13/cobra"
@@ -50,6 +51,12 @@ Examples:
 		logger := logging.GetLogger("sync")
 		media, subPath, out := args[0], args[1], args[2]
 
+		// Log configuration details
+		logger.Infof("starting subtitle synchronization")
+		logger.Infof("media file: %s", media)
+		logger.Infof("subtitle file: %s", subPath)
+		logger.Infof("output file: %s", out)
+
 		opts := syncer.Options{
 			UseAudio:         syncUseAudio,
 			UseEmbedded:      syncUseEmbedded,
@@ -69,31 +76,60 @@ Examples:
 			GPTKey:           viper.GetString("openai_api_key"),
 		}
 
+		// Log sync method configuration
+		if opts.UseAudio && opts.UseEmbedded {
+			logger.Infof("sync method: combined (audio + embedded, weight=%.1f)", opts.AudioWeight)
+		} else if opts.UseAudio {
+			logger.Infof("sync method: audio transcription only")
+		} else if opts.UseEmbedded {
+			logger.Infof("sync method: embedded subtitles only")
+		}
+
+		if opts.Translate {
+			logger.Infof("translation enabled: %s via %s", opts.TranslateLang, opts.TranslateService)
+		}
+
 		// Default to embedded if no sync method specified
 		if !opts.UseAudio && !opts.UseEmbedded {
 			opts.UseEmbedded = true
 			logger.Info("no sync method specified, defaulting to embedded subtitles")
 		}
+
+		start := time.Now()
 		items, err := syncer.Sync(media, subPath, opts)
 		if err != nil {
+			logger.Errorf("synchronization failed: %v", err)
 			return err
 		}
+		syncDuration := time.Since(start)
+
+		logger.Infof("synchronization completed in %v", syncDuration)
+		logger.Infof("processed %d subtitle items", len(items))
 
 		tmpSub := astisub.Subtitles{Items: items}
 		f, err := os.Create(out)
 		if err != nil {
+			logger.Errorf("failed to create output file: %v", err)
 			return err
 		}
 		defer f.Close()
 		if err := tmpSub.WriteToSRT(f); err != nil {
+			logger.Errorf("failed to write SRT file: %v", err)
 			return err
 		}
 
+		totalDuration := time.Since(start)
+
+		// Print final summary
+		logger.Infof("=== SYNC SUMMARY ===")
 		if opts.Translate {
-			logger.Infof("synchronized and translated %s -> %s (%s)", subPath, out, syncTranslateLang)
+			logger.Infof("✅ synchronized and translated %s -> %s (%s)", subPath, out, syncTranslateLang)
 		} else {
-			logger.Infof("synchronized %s -> %s", subPath, out)
+			logger.Infof("✅ synchronized %s -> %s", subPath, out)
 		}
+		logger.Infof("subtitle items: %d", len(items))
+		logger.Infof("sync duration: %v", syncDuration)
+		logger.Infof("total duration: %v", totalDuration)
 		return nil
 	},
 }

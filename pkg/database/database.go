@@ -1,3 +1,46 @@
+// Package database provides data storage and retrieval functionality for subtitle-manager.
+// It supports SQLite and other database backends for managing subtitle metadata and operations.
+//
+// This package is the core data layer for subtitle-manager, handling persistence and queries.
+// It defines the data models, database schema, and CRUD operations for subtitles, media items,
+// downloads, and user data. It also manages tag-based organization and retrieval of entities.
+//
+// Usage:
+//
+//	import (
+//	    "github.com/yourusername/subtitle-manager/database"
+//	)
+//
+//	func main() {
+//	    // Open the database
+//	    db, err := database.Open("path/to/your/database/file")
+//	    if err != nil {
+//	        log.Fatal(err)
+//	    }
+//	    defer db.Close()
+//
+//	    // Insert a new subtitle record
+//	    err = db.InsertSubtitle(&database.SubtitleRecord{
+//	        File:      "example.srt",
+//	        VideoFile: "example.mp4",
+//	        Release:   "Example Release",
+//	        Language:  "en",
+//	        Service:   "subscene",
+//	        Embedded:  false,
+//	    })
+//	    if err != nil {
+//	        log.Fatal(err)
+//	    }
+//
+//	    // List all subtitles
+//	    subs, err := db.ListSubtitles()
+//	    if err != nil {
+//	        log.Fatal(err)
+//	    }
+//	    for _, sub := range subs {
+//	        fmt.Println(sub.File, sub.Language)
+//	    }
+//	}
 package database
 
 import (

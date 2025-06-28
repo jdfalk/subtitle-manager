@@ -1,4 +1,31 @@
-// file: pkg/audio/audio.go
+// Package audio provides audio extraction and processing utilities for subtitle synchronization.
+// It supports extracting audio tracks from media files and preparing them for transcription.
+//
+// This package is used by subtitle-manager for audio-based subtitle alignment.
+// It requires the ffmpeg and ffprobe binaries to be available in the system's PATH,
+// or alternatively, their paths can be set using the SetFFmpegPath function.
+//
+// Example usage:
+//
+//	import (
+//	    "fmt"
+//	    "log"
+//	    "pkg/audio"
+//	)
+//
+//	func main() {
+//	    // Set custom ffmpeg path if not in PATH
+//	    audio.SetFFmpegPath("/usr/local/bin/ffmpeg")
+//
+//	    // Extract the first audio track from a media file
+//	    track, err := audio.ExtractTrack("video.mp4", 0)
+//	    if err != nil {
+//	        log.Fatalf("failed to extract track: %v", err)
+//	    }
+//	    defer os.Remove(track) // Clean up temporary file
+//
+//	    fmt.Println("Extracted audio track:", track)
+//	}
 package audio
 
 import (

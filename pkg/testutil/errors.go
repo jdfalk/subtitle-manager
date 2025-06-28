@@ -1,3 +1,26 @@
+// Package testutil provides testing utilities and helpers for subtitle-manager.
+// It includes database setup, error handling, and common test fixtures.
+//
+// This package is used across test files to ensure consistent test environments.
+// Developers can add custom test helpers here as needed.
+//
+// Usage:
+//
+//	import (
+//		"github.com/jdfalk/subtitle-manager/pkg/testutil"
+//		"testing"
+//	)
+//
+//	func TestSomething(t *testing.T) {
+//		db := testutil.GetTestDB(t)
+//		defer db.Close()
+//
+//		// ... your test code ...
+//	}
+//
+// For more complex testing needs, consider using table-driven tests or
+// external testing frameworks as appropriate.
+//
 // file: pkg/testutil/errors.go
 package testutil
 

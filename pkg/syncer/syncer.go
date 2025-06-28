@@ -1,3 +1,7 @@
+// Package syncer provides synchronization utilities for subtitle files.
+// It supports batch processing, audio transcription alignment, and embedded subtitle synchronization.
+//
+// This package is used by subtitle-manager to align subtitle timing with media files.
 package syncer
 
 import (
@@ -8,6 +12,7 @@ import (
 	"github.com/asticode/go-astisub"
 
 	"github.com/jdfalk/subtitle-manager/pkg/audio"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
@@ -88,12 +93,18 @@ func (d defaultSubtitleExtractor) ExtractTrack(mediaPath string, track int) ([]*
 // - Weighted combination of both methods for optimal results
 // - Optional translation of synchronized subtitles
 func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
+	logger := logging.GetLogger("syncer")
+	logger.Infof("starting subtitle sync: %s with %s", subPath, mediaPath)
+
 	sub, err := astisub.OpenFile(subPath)
 	if err != nil {
+		logger.Errorf("failed to open subtitle file: %v", err)
 		return nil, err
 	}
 	items := make([]*astisub.Item, len(sub.Items))
 	copy(items, sub.Items)
+
+	logger.Infof("loaded %d subtitle items from %s", len(items), subPath)
 
 	weight := opts.AudioWeight
 	if weight == 0 {
@@ -116,6 +127,7 @@ func Sync(mediaPath, subPath string, opts Options) ([]*astisub.Item, error) {
 	}
 
 	if opts.UseAudio {
+		logger.Infof("using audio transcription (track %d, weight %.1f)", opts.AudioTrack, weight)
 		// Extract specific audio track for transcription
 		audioFile, err := audio.ExtractTrack(mediaPath, opts.AudioTrack)
 		if err != nil {

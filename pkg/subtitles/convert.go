@@ -1,3 +1,8 @@
+// Package subtitles provides utilities for subtitle file processing, conversion, and manipulation.
+// It supports various subtitle formats and includes merging, extracting, and translation capabilities.
+//
+// This package is used by subtitle-manager for all subtitle file operations.
+
 package subtitles
 
 import (

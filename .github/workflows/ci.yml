@@ -14,6 +14,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      coverage: ${{ steps.coverage.outputs.coverage }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,20 +36,46 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: Install dependencies
-        run: go mod tidy
+        run: |
+          echo "📦 Installing Go dependencies..."
+          go mod tidy
+          echo "✅ Dependencies installed successfully"
 
       - name: Build
-        run: go build -v ./...
+        run: |
+          echo "🔨 Building application..."
+          go build -v ./...
+          echo "✅ Build completed successfully"
 
       - name: Run tests with coverage
         run: |
-          go test -v -coverprofile=coverage.out ./...
+          echo "🧪 Running tests with coverage..."
+          go test -v -coverprofile=coverage.out ./... 2>&1 | tee test-output.log
+          echo "✅ Tests completed"
 
-      - name: Upload coverage to GitHub summary
+      - name: Generate coverage report
         run: |
+          echo "📊 Generating coverage report..."
           go tool cover -func=coverage.out > coverage.txt
-          echo '### Test Coverage Report' >> $GITHUB_STEP_SUMMARY
+          TOTAL_COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}')
+          echo "Total coverage: $TOTAL_COVERAGE"
+
+          echo '### 📊 Test Coverage Report' >> $GITHUB_STEP_SUMMARY
+          echo "**Total Coverage: $TOTAL_COVERAGE**" >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
           cat coverage.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # Set coverage as output for use in summary job
+          echo "coverage=$TOTAL_COVERAGE" >> $GITHUB_OUTPUT
+        id: coverage
+
+      - name: Upload test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: test-output.log
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
@@ -61,3 +89,4 @@ jobs:
     uses: ./.github/workflows/ci-complete.yml
     with:
       build_status: ${{ needs.build.result }}
+      coverage: ${{ needs.build.outputs.coverage || 'N/A' }}
