@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Provide systemd service example",
+  "body": "Add systemd unit file and instructions so Subtitle Manager can run as a service on Linux. Include environment file support.",
+  "labels": ["documentation", "enhancement"],
+  "guid": "472e6642-ea06-488e-a8ce-9c1828b00dbf",
+  "legacy_guid": "create-provide-systemd-service-example-2025-06-28"
+}
