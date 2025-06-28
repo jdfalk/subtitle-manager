@@ -914,3 +914,173 @@ func TestSecurityHeaders(t *testing.T) {
 		}
 	}
 }
+
+// TestBrowseDirectoryPathTraversalPrevention tests that browseDirectory prevents path traversal attacks
+func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
+	// Create a temporary directory to serve as the allowed base directory
+	tempDir := t.TempDir()
+	
+	// Set up viper config to use our temp directory as media directory
+	originalMediaDir := viper.GetString("media_directory")
+	viper.Set("media_directory", tempDir)
+	defer viper.Set("media_directory", originalMediaDir)
+	
+	// Create some valid subdirectories and files for testing
+	validSubdir := filepath.Join(tempDir, "movies")
+	if err := os.Mkdir(validSubdir, 0755); err != nil {
+		t.Fatalf("failed to create test subdirectory: %v", err)
+	}
+	
+	validFile := filepath.Join(validSubdir, "movie.mkv")
+	if err := os.WriteFile(validFile, []byte("test movie"), 0644); err != nil {
+		t.Fatalf("failed to create test file: %v", err)
+	}
+
+	tests := []struct {
+		name        string
+		path        string
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name:        "valid path within allowed directory",
+			path:        validSubdir,
+			expectError: false,
+		},
+		{
+			name:        "root path should show allowed directories",
+			path:        "/",
+			expectError: false,
+		},
+		{
+			name:        "path traversal attack with ../ should fail",
+			path:        filepath.Join(tempDir, "../../../etc/passwd"),
+			expectError: true,
+			errorMsg:    "path not in allowed directories",
+		},
+		{
+			name:        "absolute path outside allowed directories should fail",
+			path:        "/etc/passwd",
+			expectError: true,
+			errorMsg:    "path not in allowed directories",
+		},
+		{
+			name:        "relative path should fail",
+			path:        "relative/path",
+			expectError: true,
+			errorMsg:    "path must be absolute",
+		},
+		{
+			name:        "path with .. components should fail",
+			path:        validSubdir + "/../../../../usr/bin/passwd",
+			expectError: true,
+			errorMsg:    "path not in allowed directories",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			items, err := browseDirectory(tt.path)
+			
+			if tt.expectError {
+				if err == nil {
+					t.Errorf("expected error for path %q, but got none", tt.path)
+				} else if !strings.Contains(err.Error(), tt.errorMsg) {
+					t.Errorf("expected error containing %q, got %q", tt.errorMsg, err.Error())
+				}
+			} else {
+				if err != nil {
+					t.Errorf("unexpected error for path %q: %v", tt.path, err)
+				}
+				if items == nil {
+					t.Errorf("expected items to be non-nil for valid path %q", tt.path)
+				}
+				
+				// For valid paths, verify we get meaningful results
+				if tt.path == "/" {
+					// Root path should return allowed base directories
+					found := false
+					for _, item := range items {
+						if item.Path == tempDir && item.IsDirectory {
+							found = true
+							break
+						}
+					}
+					if !found {
+						t.Errorf("root listing should include temp directory %q", tempDir)
+					}
+				} else if tt.path == validSubdir {
+					// Valid subdirectory should contain our test file
+					found := false
+					for _, item := range items {
+						if strings.Contains(item.Name, "movie.mkv") && !item.IsDirectory {
+							found = true
+							break
+						}
+					}
+					if !found {
+						t.Errorf("subdirectory listing should include test movie file")
+					}
+				}
+			}
+		})
+	}
+}
+
+// TestLibraryBrowseHandlerPathTraversal tests that the library browse API endpoint prevents path traversal
+func TestLibraryBrowseHandlerPathTraversal(t *testing.T) {
+	db, err := database.Open(":memory:")
+	testutil.MustNoError(t, "open db", err)
+	defer db.Close()
+
+	// Create test user and API key
+	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
+	key, err := auth.GenerateAPIKey(db, 1)
+	testutil.MustNoError(t, "generate key", err)
+
+	// Create handler
+	h, err := Handler(db)
+	testutil.MustNoError(t, "create handler", err)
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	tests := []struct {
+		name           string
+		path           string
+		expectedStatus int
+	}{
+		{
+			name:           "path traversal should be rejected",
+			path:           "../../../etc/passwd",
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name:           "absolute path outside allowed dirs should be rejected",
+			path:           "/etc/passwd",
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name:           "root path should work",
+			path:           "/",
+			expectedStatus: http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			url := srv.URL + "/api/library/browse?path=" + tt.path
+			req, err := http.NewRequest("GET", url, nil)
+			testutil.MustNoError(t, "create request", err)
+			req.Header.Set("X-API-Key", key)
+
+			resp, err := srv.Client().Do(req)
+			testutil.MustNoError(t, "send request", err)
+			defer resp.Body.Close()
+
+			if resp.StatusCode != tt.expectedStatus {
+				body, _ := io.ReadAll(resp.Body)
+				t.Errorf("expected status %d, got %d. Body: %s", tt.expectedStatus, resp.StatusCode, string(body))
+			}
+		})
+	}
+}
