@@ -85,7 +85,13 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		return err
 	}
 	if !upgrade {
-		if _, err := os.Stat(out); err == nil {
+		// Validate the output path again immediately before file stat to prevent path injection
+		validatedOut, err := security.ValidateAndSanitizePath(out)
+		if err != nil {
+			logger.Warnf("invalid output path before stat: %v", err)
+			return err
+		}
+		if _, err := os.Stat(validatedOut); err == nil {
 			return nil
 		}
 	}
@@ -100,18 +106,30 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		return err
 	}
 	if upgrade {
-		if oldData, err := os.ReadFile(out); err == nil {
+		// Validate the output path again immediately before file read to prevent path injection
+		validatedOut, err := security.ValidateAndSanitizePath(out)
+		if err != nil {
+			logger.Warnf("invalid output path before read: %v", err)
+			return err
+		}
+		if oldData, err := os.ReadFile(validatedOut); err == nil {
 			if len(data) <= len(oldData) {
 				logger.Debugf("existing subtitle %s is higher quality", out)
 				return nil
 			}
 		}
 	}
-	if err := os.WriteFile(out, data, 0644); err != nil {
-		logger.Warnf("write %s: %v", out, err)
+	// Validate the output path again immediately before file write to prevent path injection
+	validatedOut, err := security.ValidateAndSanitizePath(out)
+	if err != nil {
+		logger.Warnf("invalid output path before write: %v", err)
 		return err
 	}
-	logger.Infof("downloaded subtitle %s", out)
+	if err := os.WriteFile(validatedOut, data, 0644); err != nil {
+		logger.Warnf("write %s: %v", validatedOut, err)
+		return err
+	}
+	logger.Infof("downloaded subtitle %s", validatedOut)
 	if store != nil {
 		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
 	}
