@@ -2,19 +2,25 @@
 
 ## Issue Identified
 
-The unified issue management workflow was generating **duplicate and confusing summaries**:
+The unified issue management workflow was generating **duplicate and confusing
+summaries**:
 
-1. **Python Script Summary**: Detailed, accurate summary with actual operation results, issue links, and counts
-2. **Workflow Summary**: Redundant high-level summary that was empty or inaccurate and duplicated information
+1. **Python Script Summary**: Detailed, accurate summary with actual operation
+   results, issue links, and counts
+2. **Workflow Summary**: Redundant high-level summary that was empty or
+   inaccurate and duplicated information
 
-This led to user confusion as there were two different summaries from the same workflow run showing different (and often conflicting) information.
+This led to user confusion as there were two different summaries from the same
+workflow run showing different (and often conflicting) information.
 
 ## Root Cause
 
-The workflow was designed to generate its own comprehensive summary in addition to the detailed summaries that the Python script already generates. This caused:
+The workflow was designed to generate its own comprehensive summary in addition
+to the detailed summaries that the Python script already generates. This caused:
 
 - **Duplicate summary sections** appearing in GitHub Actions summary
-- **Empty or inaccurate workflow-level summaries** (e.g., "Operations Executed" being empty)
+- **Empty or inaccurate workflow-level summaries** (e.g., "Operations Executed"
+  being empty)
 - **Confusion about actual results** since the two summaries didn't always match
 - **Information overload** with redundant metadata and links
 
@@ -24,7 +30,8 @@ The workflow was designed to generate its own comprehensive summary in addition 
 
 **Removed redundant workflow-level detailed summaries** and instead:
 
-1. **Let the Python script handle detailed operation results** (it already does this excellently)
+1. **Let the Python script handle detailed operation results** (it already does
+   this excellently)
 2. **Keep workflow summary focused on metadata and overall status**
 3. **Clearly indicate where detailed results can be found**
 
@@ -40,7 +47,8 @@ The workflow was designed to generate its own comprehensive summary in addition 
 #### After (Improved):
 
 - **Workflow Summary**: High-level metadata and status only
-- **Operation Details**: Handled entirely by Python script (already working well)
+- **Operation Details**: Handled entirely by Python script (already working
+  well)
 - **Clear Reference**: Workflow summary points users to job-level details
 
 ### New Workflow Summary Structure
@@ -48,11 +56,8 @@ The workflow was designed to generate its own comprehensive summary in addition 
 ```markdown
 # 🚀 Unified Issue Management Workflow
 
-**Run ID:** [15799545829](...)
-**Repository:** jdfalk/subtitle-manager
-**Triggered by:** push
-**Actor:** jdfalk
-**Timestamp:** 2025-06-21 20:53:36 UTC
+**Run ID:** [15799545829](...) **Repository:** jdfalk/subtitle-manager
+**Triggered by:** push **Actor:** jdfalk **Timestamp:** 2025-06-21 20:53:36 UTC
 
 ## 📊 Workflow Status
 
@@ -66,14 +71,12 @@ The workflow was designed to generate its own comprehensive summary in addition 
 
 - **Operations mode:** `update-issues`
 - **Dry run:** false
-- **Force update:** false
-  ...
+- **Force update:** false ...
 
 ## 🔗 Quick Links
 
 - [🔄 Workflow runs](...)
-- [🐛 Issues](...)
-  ...
+- [🐛 Issues](...) ...
 ```
 
 ### Result

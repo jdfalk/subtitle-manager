@@ -2,13 +2,15 @@
 
 # Code Overview
 
-This document provides a high level summary of the main source files and how they work together.
+This document provides a high level summary of the main source files and how
+they work together.
 
 ## Directory Structure
 
 - **cmd/** – Cobra commands implementing the CLI interface.
   - `root.go` bootstraps configuration and logging.
-  - `convert.go`, `merge.go`, `translate.go` and others expose subtitle operations.
+  - `convert.go`, `merge.go`, `translate.go` and others expose subtitle
+    operations.
   - `scan.go`, `watch.go` and `autoscan.go` provide library management tools.
 - **pkg/** – Core application packages used by both CLI and web server.
   - `auth/` handles password, session and OAuth2 logic.
@@ -17,24 +19,21 @@ This document provides a high level summary of the main source files and how the
   - `scheduler/` runs cron based tasks and automated scans.
   - `webserver/` exposes REST endpoints and serves the React UI.
 - **webui/** – React front‑end built with Vite.
-  - `src/` includes page components such as `Dashboard.jsx`, `Settings.jsx` and `MediaLibrary.jsx`.
+  - `src/` includes page components such as `Dashboard.jsx`, `Settings.jsx` and
+    `MediaLibrary.jsx`.
   - The UI is embedded into the Go binary via `go generate` in `webui/`.
 
 ## Interaction Flow
 
-\```
-+-------------+ +---------------+ +-------------+
-| CLI (cmd) +------>+ Core Packages +------>+ Storage |
-+-------------+ +---------------+ +-------------+
-| ^ ^
-| | |
-v | +-----------+
-+------------+ | | Web UI |
-| Webserver +---------------+---------------->+ (React) |
-+------------+ +-----------+
-\```
+\``` +-------------+ +---------------+ +-------------+ | CLI (cmd) +------>+
+Core Packages +------>+ Storage | +-------------+ +---------------+
++-------------+ | ^ ^ | | | v | +-----------+ +------------+ | | Web UI | |
+Webserver +---------------+---------------->+ (React) | +------------+
++-----------+ \```
 
-CLI commands and HTTP handlers both rely on the packages in `pkg/` for all business logic. The `webserver` package exposes the same functionality over REST which is consumed by the React application.
+CLI commands and HTTP handlers both rely on the packages in `pkg/` for all
+business logic. The `webserver` package exposes the same functionality over REST
+which is consumed by the React application.
 
 ## Key Files and Responsibilities
 
@@ -54,4 +53,6 @@ CLI commands and HTTP handlers both rely on the packages in `pkg/` for all busin
 | `webui/`            | React front end with pages under `src/`.                               |
 | `Dockerfile`        | Multi-stage build producing the container image.                       |
 
-These components interact as shown in the chart above. The CLI and web server call into the packages under `pkg/`, which manage database access and provider logic. The React UI communicates with the REST API served by `pkg/webserver/`.
+These components interact as shown in the chart above. The CLI and web server
+call into the packages under `pkg/`, which manage database access and provider
+logic. The React UI communicates with the REST API served by `pkg/webserver/`.

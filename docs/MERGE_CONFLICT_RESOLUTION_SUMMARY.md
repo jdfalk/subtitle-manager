@@ -2,7 +2,8 @@
 
 ## Overview
 
-Successfully resolved all merge conflicts in `issue_updates.json` that occurred between two different branches working on separate issues.
+Successfully resolved all merge conflicts in `issue_updates.json` that occurred
+between two different branches working on separate issues.
 
 ## Conflicts Resolved
 
@@ -16,7 +17,8 @@ Successfully resolved all merge conflicts in `issue_updates.json` that occurred 
 
 - **Branch 1 (HEAD)**: Added comments for issue #930 and #532
 - **Branch 2 (c75f96a)**: Added comment for issue #531
-- **Resolution**: Kept all three comments with their respective plan of action details
+- **Resolution**: Kept all three comments with their respective plan of action
+  details
 
 ### 3. Close Section Conflict
 
@@ -72,4 +74,5 @@ The resolved file now properly captures work from both development streams:
 2. Performance benchmarking completion (#532)
 3. Provider SDK migration completion (#531)
 
-This ensures that the unified issue management workflow will process all intended issue operations without data loss or conflicts.
+This ensures that the unified issue management workflow will process all
+intended issue operations without data loss or conflicts.

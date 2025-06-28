@@ -1,6 +1,7 @@
 # Enhanced Unified Issue Management Summary Reporting
 
-This enhancement significantly improves the summary reporting capabilities of the unified issue management workflow system.
+This enhancement significantly improves the summary reporting capabilities of
+the unified issue management workflow system.
 
 ## Key Improvements Made
 
@@ -8,8 +9,10 @@ This enhancement significantly improves the summary reporting capabilities of th
 
 #### New `OperationSummary` Class
 
-- **Comprehensive tracking**: Records all operations performed (issues created, updated, closed, deleted, comments added, duplicates closed, alerts processed)
-- **File tracking**: Tracks processed files, archived files, and permalink updates
+- **Comprehensive tracking**: Records all operations performed (issues created,
+  updated, closed, deleted, comments added, duplicates closed, alerts processed)
+- **File tracking**: Tracks processed files, archived files, and permalink
+  updates
 - **Error and warning tracking**: Captures and reports all errors and warnings
 - **Dual output formats**:
   - Console output with emojis and formatting for terminal viewing
@@ -17,17 +20,22 @@ This enhancement significantly improves the summary reporting capabilities of th
 
 #### Updated Operation Classes
 
-- **IssueUpdateProcessor**: Now tracks every issue created, updated, closed, or deleted with links
-- **CopilotTicketManager**: Records Copilot ticket operations and handles events properly
-- **DuplicateIssueManager**: Tracks duplicate issues that are closed with full details
+- **IssueUpdateProcessor**: Now tracks every issue created, updated, closed, or
+  deleted with links
+- **CopilotTicketManager**: Records Copilot ticket operations and handles events
+  properly
+- **DuplicateIssueManager**: Tracks duplicate issues that are closed with full
+  details
 - **CodeQLAlertManager**: Records security alert processing and ticket creation
 
 #### Summary Features
 
 - **Detailed reporting**: Each operation type shows exactly what was changed
-- **GitHub integration**: Automatically exports summaries to GitHub Actions step summary
+- **GitHub integration**: Automatically exports summaries to GitHub Actions step
+  summary
 - **Link generation**: Creates clickable links to issues, PRs, and files
-- **Error aggregation**: Collects and displays all errors and warnings in one place
+- **Error aggregation**: Collects and displays all errors and warnings in one
+  place
 
 ### 2. **Enhanced Workflow (`unified-issue-management.yml`)**
 
@@ -35,18 +43,22 @@ This enhancement significantly improves the summary reporting capabilities of th
 
 - **File change detection**: Tracks what files were actually modified
 - **Conditional PR creation**: Only creates PRs when files actually change
-- **Better output capture**: Collects more detailed information from each operation
+- **Better output capture**: Collects more detailed information from each
+  operation
 
 #### Enhanced Individual Operation Summaries
 
-- **Operation-specific details**: Each operation shows relevant information (files processed, PRs created, etc.)
+- **Operation-specific details**: Each operation shows relevant information
+  (files processed, PRs created, etc.)
 - **Status tracking**: Clear success/failure indicators
 - **Timestamp and context**: When, what, and who triggered each operation
 
 #### Comprehensive Final Summary
 
-- **Multi-operation overview**: Aggregates results from all operations in the workflow run
-- **File change tracking**: Shows exactly what files were modified with links to view them
+- **Multi-operation overview**: Aggregates results from all operations in the
+  workflow run
+- **File change tracking**: Shows exactly what files were modified with links to
+  view them
 - **Pull request tracking**: Lists any PRs created during the workflow
 - **Quick links**: Direct access to issues, security alerts, workflow runs, etc.
 
@@ -135,11 +147,13 @@ This enhancement significantly improves the summary reporting capabilities of th
 
 ## Benefits
 
-1. **Complete transparency**: Users can see exactly what the workflow accomplished
+1. **Complete transparency**: Users can see exactly what the workflow
+   accomplished
 2. **Easy troubleshooting**: Errors and warnings are clearly displayed
 3. **Better auditability**: Full record of all changes with links
 4. **Improved UX**: Click directly to view modified files and created issues
 5. **Historical tracking**: GitHub step summaries provide permanent records
 6. **Reduced manual work**: No need to manually check what was changed
 
-The enhanced system now provides comprehensive reporting that makes it easy to understand what the unified issue management workflow accomplished in each run.
+The enhanced system now provides comprehensive reporting that makes it easy to
+understand what the unified issue management workflow accomplished in each run.

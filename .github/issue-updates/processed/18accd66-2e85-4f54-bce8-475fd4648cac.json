@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Cache translations to avoid duplicates",
   "body": "Reuse existing results instead of re-translating identical subtitles.",
-  "labels": [
-    "enhancement"
-  ],
+  "labels": ["enhancement"],
   "guid": "8ff992cc-d2bf-4235-ad9c-ded259389f2f",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1086",
   "legacy_guid": "create-translation-cache-2025-06-20"

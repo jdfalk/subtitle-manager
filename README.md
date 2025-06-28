@@ -1,32 +1,51 @@
 # Subtitle Manager
 
-Subtitle Manager is a comprehensive subtitle management application written in Go that provides both CLI and web interfaces for converting, translating, and managing subtitle files. **The project is nearing feature completion with full Bazarr parity planned. It already includes 40+ subtitle providers, enterprise authentication, PostgreSQL support, webhook and notification systems, anti-captcha integration, and a polished React web interface.**
+Subtitle Manager is a comprehensive subtitle management application written in
+Go that provides both CLI and web interfaces for converting, translating, and
+managing subtitle files. **The project is nearing feature completion with full
+Bazarr parity planned. It already includes 40+ subtitle providers, enterprise
+authentication, PostgreSQL support, webhook and notification systems,
+anti-captcha integration, and a polished React web interface.**
 
 ## ✨ Key Highlights
 
-- 🎯 **Production Ready**: Complete with authentication, RBAC, and 40+ subtitle providers
-- 🌐 **Full Web UI**: React-based interface with complete dashboard, settings, history, and system pages
-- 🔐 **Enterprise Auth**: Password, OAuth2, API keys, and role-based access control
-- 🚀 **High Performance**: Concurrent processing with worker pools and gRPC support
+- 🎯 **Production Ready**: Complete with authentication, RBAC, and 40+ subtitle
+  providers
+- 🌐 **Full Web UI**: React-based interface with complete dashboard, settings,
+  history, and system pages
+- 🔐 **Enterprise Auth**: Password, OAuth2, API keys, and role-based access
+  control
+- 🚀 **High Performance**: Concurrent processing with worker pools and gRPC
+  support
 - 📦 **Container Ready**: Docker images published to GitHub Container Registry
-- ✅ **Bazarr Parity**: Full feature compatibility with all major subtitle providers
-- 🔄 **Enterprise Features**: PostgreSQL, webhooks, notifications, anti-captcha, and advanced scheduling
-- 🗄️ **Automated Issue Management**: Workflow archives processed files and opens pull requests.
+- ✅ **Bazarr Parity**: Full feature compatibility with all major subtitle
+  providers
+- 🔄 **Enterprise Features**: PostgreSQL, webhooks, notifications, anti-captcha,
+  and advanced scheduling
+- 🗄️ **Automated Issue Management**: Workflow archives processed files and opens
+  pull requests.
 
 ## Features
 
 - Convert subtitles from many formats to SRT.
 - Merge two subtitle tracks sorted by start time.
 - Translate subtitles via Google Translate or ChatGPT APIs.
-- Store translation history in SQLite, PebbleDB or PostgreSQL databases. Retrieve history via the `history` command or `/api/history` endpoint with optional `lang` and `video` filters.
+- Store translation history in SQLite, PebbleDB or PostgreSQL databases.
+  Retrieve history via the `history` command or `/api/history` endpoint with
+  optional `lang` and `video` filters.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
 - Convert uploaded subtitle files to SRT via `/api/convert`.
 - Transcribe audio tracks to subtitles via Whisper.
-- Automatic subtitle synchronization using audio transcription and embedded tracks with advanced options for track selection, weighted averaging, and translation integration.
-- World-class synchronization algorithm with adjustable CPU vs accuracy slider and optional longer processing for improved precision.
-- Advanced dual-subtitle alignment for languages with different grammar structures.
-- Experimental minimum display time mode that delays subsequent subtitles and catches up during silent gaps.
+- Automatic subtitle synchronization using audio transcription and embedded
+  tracks with advanced options for track selection, weighted averaging, and
+  translation integration.
+- World-class synchronization algorithm with adjustable CPU vs accuracy slider
+  and optional longer processing for improved precision.
+- Advanced dual-subtitle alignment for languages with different grammar
+  structures.
+- Experimental minimum display time mode that delays subsequent subtitles and
+  catches up during silent gaps.
 - Synchronize and translate subtitles to any language during the sync process.
 - Download subtitles from a comprehensive list of providers based on Bazarr,
   including Addic7ed, AnimeKalesi, Animetosho, Assrt, Avistaz, BetaSeries,
@@ -34,48 +53,66 @@ Subtitle Manager is a comprehensive subtitle management application written in G
   and many more.
 - Batch translate multiple files concurrently.
 - Mass synchronize subtitles across entire libraries.
- - Monitor directories and automatically download subtitles.
- - Scan existing libraries and fetch missing or upgraded subtitles, replacing only when the new file is larger.
+- Monitor directories and automatically download subtitles.
+- Scan existing libraries and fetch missing or upgraded subtitles, replacing
+  only when the new file is larger.
 - Download individual subtitles through the web API at `/api/download`.
-- Schedule scans with the `autoscan` command using intervals or cron expressions.
-- Parse file names and retrieve movie or episode details from TheMovieDB with language and rating data from OMDb.
+- Schedule scans with the `autoscan` command using intervals or cron
+  expressions.
+- Parse file names and retrieve movie or episode details from TheMovieDB with
+  language and rating data from OMDb.
 - High performance scanning using concurrent workers.
 - Recursive directory watching with -r flag.
 - Integrate with Sonarr, Radarr and Plex using dedicated commands.
 - Run a translation gRPC server.
 - Translate uploaded subtitles through `/api/translate` endpoint.
 - Delete subtitle files and remove history records.
-- Track subtitle download history and list with `downloads` command or `/api/history` using `lang` and `video` filters.
+- Track subtitle download history and list with `downloads` command or
+  `/api/history` using `lang` and `video` filters.
 - GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
 - Manually search for subtitles with `search` command.
 - Provider registry simplifies adding new sources.
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
-- Integrated authentication system with password, token, OAuth2 and API key support.
-- Generate one time login tokens using `user token` and authenticate with `login-token`.
-- Minimal React web UI with login page and file upload forms for conversion and translation.
-- Role based access control with sensible defaults and session storage in the database.
-- Manage accounts with `user add`, `user role`, `user token` and `user list` commands.
-- **Universal Tagging System**: Unified tagging interface supporting all entity types (media, users, providers, language profiles) with consistent API and advanced filtering capabilities.
+- Integrated authentication system with password, token, OAuth2 and API key
+  support.
+- Generate one time login tokens using `user token` and authenticate with
+  `login-token`.
+- Minimal React web UI with login page and file upload forms for conversion and
+  translation.
+- Role based access control with sensible defaults and session storage in the
+  database.
+- Manage accounts with `user add`, `user role`, `user token` and `user list`
+  commands.
+- **Universal Tagging System**: Unified tagging interface supporting all entity
+  types (media, users, providers, language profiles) with consistent API and
+  advanced filtering capabilities.
 
 ### Universal Tagging System
 
-Subtitle Manager features a comprehensive tagging system that provides unified organization and filtering capabilities across all entity types:
+Subtitle Manager features a comprehensive tagging system that provides unified
+organization and filtering capabilities across all entity types:
 
 #### Supported Entity Types
 
-- **Media Items**: Tag movies, TV series, seasons, and episodes for content organization
+- **Media Items**: Tag movies, TV series, seasons, and episodes for content
+  organization
 - **Users**: Apply preference tags for personalized subtitle selection
-- **Providers**: Tag provider instances for selection logic and priority management
+- **Providers**: Tag provider instances for selection logic and priority
+  management
 - **Language Profiles**: Create tagged language preference groups
 - **Media Profiles**: Content-specific tagging for automated workflows
 
 #### Key Features
 
-- **Polymorphic Design**: Single interface for all entity types with consistent API endpoints
-- **Advanced Filtering**: Search and filter any entity by tags with complex query support
-- **Bulk Operations**: Apply or remove tags from multiple entities simultaneously
-- **Tag Hierarchies**: Support for tag types (system, user, custom) with optional color coding
+- **Polymorphic Design**: Single interface for all entity types with consistent
+  API endpoints
+- **Advanced Filtering**: Search and filter any entity by tags with complex
+  query support
+- **Bulk Operations**: Apply or remove tags from multiple entities
+  simultaneously
+- **Tag Hierarchies**: Support for tag types (system, user, custom) with
+  optional color coding
 - **Provider Integration**: Tag-based provider selection and priority weighting
 - **Migration Support**: Seamless migration from legacy tagging implementations
 
@@ -83,13 +120,11 @@ Subtitle Manager features a comprehensive tagging system that provides unified o
 
 The tagging system exposes consistent REST endpoints for all entity types:
 
-\```
-GET /api/{entityType}/{id}/tags - List tags for entity
-POST /api/{entityType}/{id}/tags - Add tag to entity
-DELETE /api/{entityType}/{id}/tags/{tagId} - Remove tag from entity
-GET /api/tags?entity_type={type} - List tags by entity type
-POST /api/tags/bulk - Bulk tag operations
-\```
+\``` GET /api/{entityType}/{id}/tags - List tags for entity POST
+/api/{entityType}/{id}/tags - Add tag to entity DELETE
+/api/{entityType}/{id}/tags/{tagId} - Remove tag from entity GET
+/api/tags?entity_type={type} - List tags by entity type POST /api/tags/bulk -
+Bulk tag operations \```
 
 #### Usage Examples
 
@@ -105,8 +140,8 @@ GET /api/tags?entity_type=user&name=premium
 
 # Bulk tag multiple providers
 
-POST /api/tags/bulk {"tag_id": "reliable", "entities": [{"type": "provider", "id": "opensubtitles"}, {"type": "provider", "id": "subscene"}]}
-\```
+POST /api/tags/bulk {"tag_id": "reliable", "entities": [{"type": "provider",
+"id": "opensubtitles"}, {"type": "provider", "id": "subscene"}]} \```
 
 ### Supported Subtitle Providers
 
@@ -166,32 +201,44 @@ services are available:
 
 ## Current Status
 
-**Subtitle Manager backend is mostly complete** with full production readiness achieved. Tagging enhancements are ongoing, and Whisper transcription can now run via an optional local service.
+**Subtitle Manager backend is mostly complete** with full production readiness
+achieved. Tagging enhancements are ongoing, and Whisper transcription can now
+run via an optional local service.
 
 ### ✅ Completed (Production Ready Backend)
 
 - **Core Functionality**: All CLI commands fully implemented
-- **Web Interface**: Complete React UI with all major pages (Dashboard, Settings, Extract, History, System, Wanted)
+- **Web Interface**: Complete React UI with all major pages (Dashboard,
+  Settings, Extract, History, System, Wanted)
 - **Authentication**: Full enterprise-grade auth with OAuth2, API keys, RBAC
 - **Providers**: 40+ subtitle providers with full Bazarr parity
 - **APIs**: Complete REST API coverage for all operations
 - **Infrastructure**: Docker support, CI/CD, automated testing
 - **Database**: SQLite, PebbleDB and PostgreSQL backends
-- **Enterprise Features**: Webhooks, notifications, anti-captcha, advanced scheduling
+- **Enterprise Features**: Webhooks, notifications, anti-captcha, advanced
+  scheduling
 
 ### 🔄 High Priority UI/UX Improvements Needed
 
-- **Navigation Issues**: Fix user management display, implement back button, add sidebar pinning
-- **Settings Enhancements**: Bazarr-compatible general settings, improved database management, card-based authentication
-- **Provider System**: Fix configuration modals, implement global language settings
-- **User Experience**: Reorganize navigation, create Tools section, add Languages page
+- **Navigation Issues**: Fix user management display, implement back button, add
+  sidebar pinning
+- **Settings Enhancements**: Bazarr-compatible general settings, improved
+  database management, card-based authentication
+- **Provider System**: Fix configuration modals, implement global language
+  settings
+- **User Experience**: Reorganize navigation, create Tools section, add
+  Languages page
 
 ### 🎯 Optional Remaining Features
 
 - Advanced reverse proxy base URL support
-- ~~Automatic subtitle synchronization using audio and embedded tracks with selectable audio and subtitle stream indices~~ ✅ **COMPLETED**
+- ~~Automatic subtitle synchronization using audio and embedded tracks with
+  selectable audio and subtitle stream indices~~ ✅ **COMPLETED**
 
-The backend provides full production functionality with feature parity to Bazarr for all core subtitle management operations, plus additional enterprise features. The frontend requires UI/UX improvements to match the backend's quality and completeness.
+The backend provides full production functionality with feature parity to Bazarr
+for all core subtitle management operations, plus additional enterprise
+features. The frontend requires UI/UX improvements to match the backend's
+quality and completeness.
 
 ## Installation
 
@@ -201,8 +248,7 @@ The backend provides full production functionality with feature parity to Bazarr
 
 # Clone repository
 
-git clone <this repository>
-cd subtitle-manager
+git clone <this repository> cd subtitle-manager
 
 # Build everything with one command
 
@@ -214,8 +260,7 @@ make quick-build
 
 # See all available targets
 
-make help
-\```
+make help \```
 
 ### Manual Installation
 
@@ -223,18 +268,16 @@ make help
 
 # Clone repository
 
-git clone <this repository>
-cd subtitle-manager
+git clone <this repository> cd subtitle-manager
 
 # Install dependencies, build web UI and compile
 
-go generate ./webui
-go build
-\```
+go generate ./webui go build \```
 
 ### Build Automation
 
-The project includes a comprehensive Makefile that automates all build, test, and deployment tasks:
+The project includes a comprehensive Makefile that automates all build, test,
+and deployment tasks:
 
 - **`make build`** - Complete build including web UI and Go binary
 - **`make quick-build`** - Fast build for development
@@ -244,56 +287,48 @@ The project includes a comprehensive Makefile that automates all build, test, an
 - **`make dev`** - Build and run in development mode
 - **`make help`** - Show all available targets
 
-The Makefile handles dependency resolution, web UI building, Go compilation, testing, Docker builds, and more.
+The Makefile handles dependency resolution, web UI building, Go compilation,
+testing, Docker builds, and more.
 
 ## Usage
 
-\```
-subtitle-manager convert [input] [output]
-subtitle-manager merge [sub1] [sub2] [output]
-subtitle-manager translate [input] [output] [lang]
-subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded] [--translate]
-subtitle-manager history
-subtitle-manager extract [media] [output]
-subtitle-manager transcribe [media] [output] [lang]
-subtitle-manager fetch [media] [lang] [output]
-subtitle-manager fetch --tags tag1,tag2 [media] [lang] [output]
-subtitle-manager search [media] [lang]
-subtitle-manager batch [lang] [files...]
-subtitle-manager syncbatch -config file.json
+\``` subtitle-manager convert [input] [output] subtitle-manager merge [sub1]
+[sub2] [output] subtitle-manager translate [input] [output] [lang]
+subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded]
+[--translate] subtitle-manager history subtitle-manager extract [media] [output]
+subtitle-manager transcribe [media] [output] [lang] subtitle-manager fetch
+[media] [lang] [output] subtitle-manager fetch --tags tag1,tag2 [media] [lang]
+[output] subtitle-manager search [media] [lang] subtitle-manager batch [lang]
+[files...] subtitle-manager syncbatch -config file.json
 
 # syncbatch expects a JSON file describing media and subtitle pairs
 
-subtitle-manager scan [directory] [lang] [-u]
-subtitle-manager autoscan [directory] [lang] [-i duration] [-s cron] [-u]
-subtitle-manager scanlib [directory]
-subtitle-manager watch [directory] [lang] [-r]
-subtitle-manager grpc-server --addr :50051
-subtitle-manager grpc-set-config --addr :50051 --key google_api_key --value NEWKEY
-subtitle-manager metadata search [query]
-subtitle-manager metadata update [file] [--title T] [--release-group G] [--alt "A,B"] [--lock fields]
-subtitle-manager delete [file]
-subtitle-manager rename [video] [lang]
-subtitle-manager downloads
-subtitle-manager login [username] [password]
-subtitle-manager login-token [token]
-subtitle-manager user add [username] [email] [password]
-subtitle-manager user apikey [username]
-subtitle-manager user token [email]
-subtitle-manager user role [username] [role]
-subtitle-manager user list
-\```
+subtitle-manager scan [directory] [lang] [-u] subtitle-manager autoscan
+[directory] [lang] [-i duration] [-s cron] [-u] subtitle-manager scanlib
+[directory] subtitle-manager watch [directory] [lang] [-r] subtitle-manager
+grpc-server --addr :50051 subtitle-manager grpc-set-config --addr :50051 --key
+google_api_key --value NEWKEY subtitle-manager metadata search [query]
+subtitle-manager metadata update [file] [--title T] [--release-group G] [--alt
+"A,B"] [--lock fields] subtitle-manager delete [file] subtitle-manager rename
+[video] [lang] subtitle-manager downloads subtitle-manager login [username]
+[password] subtitle-manager login-token [token] subtitle-manager user add
+[username] [email] [password] subtitle-manager user apikey [username]
+subtitle-manager user token [email] subtitle-manager user role [username] [role]
+subtitle-manager user list \```
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
 ### Web UI
 
-Run `subtitle-manager web` to start the embedded React interface on `:8080`. The SPA is built via `go generate` in the `webui` directory and embedded using Go 1.16's `embed` package.
+Run `subtitle-manager web` to start the embedded React interface on `:8080`. The
+SPA is built via `go generate` in the `webui` directory and embedded using Go
+1.16's `embed` package.
 
 The interface provides a complete user experience with:
 
 - **Dashboard**: Library scanning with progress tracking and provider selection
-- **Settings**: Configuration management that mirrors Bazarr's options, with values retrieved from `/api/config` and saved via POST to the same endpoint
+- **Settings**: Configuration management that mirrors Bazarr's options, with
+  values retrieved from `/api/config` and saved via POST to the same endpoint
 - **Extract**: Subtitle extraction from media files using ffmpeg
 - **History**: Complete translation and download history with language filtering
 - **System**: Real-time logs, task progress, and system information
@@ -301,8 +336,23 @@ The interface provides a complete user experience with:
 - **Tags**: Edit and organize custom tags for language preferences
 - **Config File**: Edit the YAML configuration directly in the browser
 
-Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default. Environment variables prefixed with `SM_` override configuration values. API keys may be specified via flags `--google-key`, `--openai-key`, `--opensubtitles-key`, `--tmdb-key`, and `--omdb-key` or in the configuration file. Additional flags include `--ffmpeg-path` for a custom ffmpeg binary, `--batch-workers` and `--scan-workers` to control concurrency. The SQLite database location defaults to `$HOME/.subtitle-manager.db` and can be overridden with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble` engines. When using PebbleDB a directory path may be supplied instead of a file. Translation can be delegated to a remote gRPC server using the `--grpc` flag and providing an address such as `localhost:50051`. Generic provider options may also be set with variables like `SM_PROVIDERS_GENERIC_API_URL`. For WebSocket security, use `--allowed-websocket-origins` or `SM_ALLOWED_WEBSOCKET_ORIGINS` to specify comma-separated allowed origins (by default only localhost and same-origin connections are allowed).
-Run `subtitle-manager migrate old.db newdir` to copy existing subtitle history from SQLite to PebbleDB.
+Configuration values are loaded from `$HOME/.subtitle-manager.yaml` by default.
+Environment variables prefixed with `SM_` override configuration values. API
+keys may be specified via flags `--google-key`, `--openai-key`,
+`--opensubtitles-key`, `--tmdb-key`, and `--omdb-key` or in the configuration
+file. Additional flags include `--ffmpeg-path` for a custom ffmpeg binary,
+`--batch-workers` and `--scan-workers` to control concurrency. The SQLite
+database location defaults to `$HOME/.subtitle-manager.db` and can be overridden
+with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble`
+engines. When using PebbleDB a directory path may be supplied instead of a file.
+Translation can be delegated to a remote gRPC server using the `--grpc` flag and
+providing an address such as `localhost:50051`. Generic provider options may
+also be set with variables like `SM_PROVIDERS_GENERIC_API_URL`. For WebSocket
+security, use `--allowed-websocket-origins` or `SM_ALLOWED_WEBSOCKET_ORIGINS` to
+specify comma-separated allowed origins (by default only localhost and
+same-origin connections are allowed). Run
+`subtitle-manager migrate old.db newdir` to copy existing subtitle history from
+SQLite to PebbleDB.
 
 ### REST API
 
@@ -339,50 +389,38 @@ The web server exposes a comprehensive REST API for all subtitle operations:
 
 #### History and Monitoring
 
-- `GET /api/history` - Retrieve translation and download history. Supports `lang` and `video` query parameters for filtering.
+- `GET /api/history` - Retrieve translation and download history. Supports
+  `lang` and `video` query parameters for filtering.
 - `GET /api/logs` - Get recent log entries
-- `GET /api/system` - System information (Go version, OS, architecture, goroutines)
+- `GET /api/system` - System information (Go version, OS, architecture,
+  goroutines)
 - `GET /api/tasks` - Current task status and progress
 - `GET /api/users` - List all users (admin only)
 - `POST /api/users/{id}/reset` - Reset a user's password and email credentials
 
-All endpoints require authentication via session cookies or API keys using the `X-API-Key` header. Role-based access control is enforced with three permission levels: `read`, `basic`, and `admin`.
+All endpoints require authentication via session cookies or API keys using the
+`X-API-Key` header. Role-based access control is enforced with three permission
+levels: `read`, `basic`, and `admin`.
 
 Example configuration:
 
-\```
-log-level: info
-log_levels:
-translate: debug
-translate_service: google
-google_api_key: your-google-api-key
-openai_api_key: your-openai-api-key
+\``` log-level: info log_levels: translate: debug translate_service: google
+google_api_key: your-google-api-key openai_api_key: your-openai-api-key
 google_api_url: https://translation.googleapis.com/language/translate/v2
-openai_model: gpt-3.5-turbo
-ffmpeg_path: /usr/bin/ffmpeg
-batch_workers: 4
-scan_workers: 4
-opensubtitles:
-api_key: your-os-key
-api_url: https://rest.opensubtitles.org
-user_agent: subtitle-manager/0.1
-providers:
-generic:
-api_url: https://example.com/subtitles
-username: myuser
-password: secret
-api_key: token123
-github_client_id: yourClientID
-github_client_secret: yourClientSecret
-github_redirect_url: http://localhost:8080/api/oauth/github/callback
-\```
+openai_model: gpt-3.5-turbo ffmpeg_path: /usr/bin/ffmpeg batch_workers: 4
+scan_workers: 4 opensubtitles: api_key: your-os-key api_url:
+https://rest.opensubtitles.org user_agent: subtitle-manager/0.1 providers:
+generic: api_url: https://example.com/subtitles username: myuser password:
+secret api_key: token123 github_client_id: yourClientID github_client_secret:
+yourClientSecret github_redirect_url:
+http://localhost:8080/api/oauth/github/callback \```
 
 ### Docker
 
-Subtitle Manager provides official Docker images with the web interface enabled by default.
-These images include `ffmpeg` so subtitle extraction works without additional
-dependencies. The binary is located at `/usr/bin/ffmpeg` and the container sets
-`SM_FFMPEG_PATH` accordingly.
+Subtitle Manager provides official Docker images with the web interface enabled
+by default. These images include `ffmpeg` so subtitle extraction works without
+additional dependencies. The binary is located at `/usr/bin/ffmpeg` and the
+container sets `SM_FFMPEG_PATH` accordingly.
 
 #### Quick Start
 

@@ -3,202 +3,154 @@
     {
       "title": "Add JSON-based issue workflow",
       "body": "Implement create, update and delete operations using a JSON file.",
-      "labels": [
-        "automation"
-      ],
+      "labels": ["automation"],
       "guid": "b1b7dd76-acd0-4be1-a94b-74311c576f90",
       "legacy_guid": "create-json-workflow-2025-06-20"
     },
     {
       "title": "Implement OAuth2 login support",
       "body": "Allow users to authenticate via providers such as Google or GitHub.",
-      "labels": [
-        "enhancement",
-        "auth"
-      ],
+      "labels": ["enhancement", "auth"],
       "guid": "acdf7d80-af95-4f4c-b9a2-94901f322791",
       "legacy_guid": "create-oauth2-support-2025-06-20"
     },
     {
       "title": "Improve database schema for subtitle metadata",
       "body": "Design a richer schema to track subtitle sources and history.",
-      "labels": [
-        "enhancement",
-        "database"
-      ],
+      "labels": ["enhancement", "database"],
       "guid": "4f04b667-cd1d-4130-872c-dd25f4ff3ea7",
       "legacy_guid": "create-db-schema-improvement-2025-06-20"
     },
     {
       "title": "Document protobuf regeneration steps",
       "body": "Add instructions for generating gRPC code from proto files.",
-      "labels": [
-        "documentation"
-      ],
+      "labels": ["documentation"],
       "guid": "a240e245-fbab-4d44-8214-af8600fcebf6",
       "legacy_guid": "create-protobuf-docs-2025-06-20"
     },
     {
       "title": "Use provider SDKs instead of manual HTTP calls",
       "body": "Refactor provider integrations to use official or community SDKs.",
-      "labels": [
-        "enhancement"
-      ],
+      "labels": ["enhancement"],
       "guid": "3fee76ab-7a24-4d14-8b8a-04fc8e2aa4ef",
       "legacy_guid": "create-provider-sdks-2025-06-20"
     },
     {
       "title": "Evaluate performance of merging and translation",
       "body": "Benchmark and optimise the merging and translation functions.",
-      "labels": [
-        "performance"
-      ],
+      "labels": ["performance"],
       "guid": "9a0f4cdc-281c-452b-a9ef-9bf337413fdd",
       "legacy_guid": "create-performance-eval-2025-06-20"
     },
     {
       "title": "Implement asynchronous translation queue",
       "body": "Process heavy translation tasks using a worker queue.",
-      "labels": [
-        "enhancement"
-      ],
+      "labels": ["enhancement"],
       "guid": "c2f8155d-c063-441b-950b-5d0f1898089a",
       "legacy_guid": "create-async-translation-2025-06-20"
     },
     {
       "title": "Add optional cloud storage for subtitles",
       "body": "Allow storing subtitles and history in cloud providers such as S3.",
-      "labels": [
-        "enhancement"
-      ],
+      "labels": ["enhancement"],
       "guid": "b854d5a2-5e22-4c23-9289-93fcc42f3de3",
       "legacy_guid": "create-cloud-storage-2025-06-20"
     },
     {
       "title": "Internationalise CLI and web interface",
       "body": "Provide translations for user-facing messages in the CLI and web UI.",
-      "labels": [
-        "enhancement"
-      ],
+      "labels": ["enhancement"],
       "guid": "8ab9af73-0d60-442d-9697-b9033eac8a83",
       "legacy_guid": "create-i18n-support-2025-06-20"
     },
     {
       "title": "Implement manual subtitle search",
       "body": "Allow searching and downloading subtitles on demand.",
-      "labels": [
-        "feature"
-      ],
+      "labels": ["feature"],
       "guid": "ee98e2a9-aeb0-4579-b79f-820d37c024df",
       "legacy_guid": "create-manual-search-2025-06-20"
     },
     {
       "title": "Track subtitle download history",
       "body": "Record where and when subtitles were obtained.",
-      "labels": [
-        "feature"
-      ],
+      "labels": ["feature"],
       "guid": "28c44570-c37e-409a-958a-32b57ba29948",
       "legacy_guid": "create-download-history-2025-06-20"
     },
     {
       "title": "Support per-title language preferences",
       "body": "Configure desired subtitle languages per show or movie.",
-      "labels": [
-        "feature"
-      ],
+      "labels": ["feature"],
       "guid": "d8f307cd-97b6-4d89-9ebb-55ffdae748f1",
       "legacy_guid": "create-language-preferences-2025-06-20"
     },
     {
       "title": "Automatic subtitle upgrades",
       "body": "Detect and fetch better quality subtitles when available.",
-      "labels": [
-        "feature"
-      ],
+      "labels": ["feature"],
       "guid": "50f6a43f-f478-4bef-b2c7-90c574818cb9",
       "legacy_guid": "create-subtitle-upgrades-2025-06-20"
     },
     {
       "title": "Complete gRPC configuration API",
       "body": "Expose configuration management over authenticated gRPC.",
-      "labels": [
-        "feature",
-        "grpc"
-      ],
+      "labels": ["feature", "grpc"],
       "guid": "336c4bc1-e611-4c49-ab91-76405abcea54",
       "legacy_guid": "create-grpc-config-api-2025-06-20"
     },
     {
       "title": "Add configuration page to web interface",
       "body": "Allow editing of configuration files through the React UI.",
-      "labels": [
-        "frontend"
-      ],
+      "labels": ["frontend"],
       "guid": "f8570da7-2f40-4191-a15a-a9208f5efb38",
       "legacy_guid": "create-config-page-2025-06-20"
     },
     {
       "title": "Verify RBAC enforcement across Go and React",
       "body": "Ensure role based access control works in both backend and frontend.",
-      "labels": [
-        "security"
-      ],
+      "labels": ["security"],
       "guid": "a96fb8f0-6290-4496-a837-077498603ec8",
       "legacy_guid": "create-rbac-verification-2025-06-20"
     },
     {
       "title": "Use unified API for React front end",
       "body": "React application should interact via the same gRPC API or REST fallback.",
-      "labels": [
-        "frontend"
-      ],
+      "labels": ["frontend"],
       "guid": "59d4e17c-c10e-4877-8d72-097169eda3f5",
       "legacy_guid": "create-unified-api-2025-06-20"
     },
     {
       "title": "Increase test coverage across packages",
       "body": "Add unit tests for remaining packages to improve reliability.",
-      "labels": [
-        "testing"
-      ],
+      "labels": ["testing"],
       "guid": "1c2e4187-b679-46b4-95ed-d4f87ffd8d08",
       "legacy_guid": "create-test-coverage-2025-06-20"
     },
     {
       "title": "Optimise database queries",
       "body": "Review indexes and query patterns for better performance.",
-      "labels": [
-        "performance"
-      ],
+      "labels": ["performance"],
       "guid": "9b5d450c-5cc7-47ae-b788-15847f181648",
       "legacy_guid": "create-db-optimization-2025-06-20"
     },
     {
       "title": "Cache translations to avoid duplicates",
       "body": "Reuse existing results instead of re-translating identical subtitles.",
-      "labels": [
-        "enhancement"
-      ],
+      "labels": ["enhancement"],
       "guid": "8aad7606-f832-4ae5-bb18-505a9ae52f1c",
       "legacy_guid": "create-translation-cache-2025-06-20"
     },
     {
       "title": "Display progress updates in CLI and web UI",
       "body": "Show task progress for long running operations.",
-      "labels": [
-        "enhancement"
-      ],
+      "labels": ["enhancement"],
       "guid": "3c75b644-fa5c-40b7-8b61-53504175db6e",
       "legacy_guid": "create-progress-updates-2025-06-20"
     },
     {
       "title": "CI fails due to Codecov upload errors",
       "body": "Backend tests succeeded but CI marked the job failed when the Codecov upload step returned an error. Ignore these failures to avoid false negatives.",
-      "labels": [
-        "bug",
-        "ci"
-      ],
+      "labels": ["bug", "ci"],
       "guid": "3fd00289-4308-4940-a0ae-3b303a79cf0e",
       "legacy_guid": "create-codecov-failure-2025-06-21"
     }
@@ -206,69 +158,51 @@
   "update": [
     {
       "number": 920,
-      "labels": [
-        "codex"
-      ],
+      "labels": ["codex"],
       "guid": "3c2639a9-2b33-489a-92f6-9d7a7989edaa",
       "legacy_guid": "update-issue-920-2025-06-20"
     },
     {
       "number": 921,
-      "labels": [
-        "codex"
-      ],
+      "labels": ["codex"],
       "state": "closed",
       "guid": "d2d61a6c-3a7e-4107-a232-c521ee2174a8",
       "legacy_guid": "update-issue-921-2025-06-20"
     },
     {
       "number": 922,
-      "labels": [
-        "codex"
-      ],
+      "labels": ["codex"],
       "body": "[nitpick] Consider expanding the time threshold used to validate the backup's creation time, as the current 1-second tolerance may lead to flaky tests on slower systems.\n```suggestion\n        if time.Since(b.CreatedAt) > time.Second*3 {\n```\n\n_Originally posted by @Copilot in https://github.com/jdfalk/subtitle-manager/pull/916#discussion_r2157570601_\n\n---\n**Codex update**: Increased allowed backup creation time to 3 seconds in tests. This gives slower systems enough time and prevents flakiness.",
       "guid": "7f6ba42c-16a5-4b92-bbae-36243d9e8110",
       "legacy_guid": "update-issue-922-2025-06-20"
     },
     {
       "number": 914,
-      "labels": [
-        "codex"
-      ],
+      "labels": ["codex"],
       "guid": "b444e3dd-58cc-45dd-aecd-d9ccb0fe0bca",
       "legacy_guid": "update-issue-914-2025-06-20"
     },
     {
       "number": 930,
-      "labels": [
-        "codex"
-      ],
+      "labels": ["codex"],
       "guid": "bb166d57-8f12-4c16-89a8-2eb6df4cb28a",
       "legacy_guid": "update-issue-930-2025-06-21"
     },
     {
       "number": 532,
-      "labels": [
-        "codex",
-        "in-progress"
-      ],
+      "labels": ["codex", "in-progress"],
       "guid": "6dcdd686-5fbf-4c9f-b3d0-0707d8e71cfe",
       "legacy_guid": "update-issue-532-2025-06-20"
     },
     {
       "number": 531,
-      "labels": [
-        "codex",
-        "in-progress"
-      ],
+      "labels": ["codex", "in-progress"],
       "guid": "da4ce0df-0544-457c-899c-9d8557e49962",
       "legacy_guid": "update-issue-531-2025-06-21"
     },
     {
       "number": 923,
-      "labels": [
-        "codex"
-      ],
+      "labels": ["codex"],
       "guid": "34743fdc-89b8-47c0-bcdc-c25e1b2bad60",
       "legacy_guid": "update-issue-923-2025-06-21"
     }

@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Test Distributed Updates System",
   "body": "This tests the new distributed issue updates system that reads from multiple JSON files.",
-  "labels": [
-    "testing",
-    "automation"
-  ],
+  "labels": ["testing", "automation"],
   "guid": "049cf4e2-769c-45a6-807e-0b392aec7ef2",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1072",
   "legacy_guid": "create-test-distributed-updates-system-2025-06-21"

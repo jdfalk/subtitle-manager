@@ -1,6 +1,8 @@
 # CI/CD Workflows
 
-This project uses a modern CI/CD setup with separate workflows for frontend and backend testing to ensure independent execution and clear separation of concerns.
+This project uses a modern CI/CD setup with separate workflows for frontend and
+backend testing to ensure independent execution and clear separation of
+concerns.
 
 ## Workflow Structure
 
@@ -133,7 +135,8 @@ npm run build
 
 ## Migration from Legacy
 
-The previous `go.yml` workflow has been renamed to `go-legacy.yml` for reference. The new system provides:
+The previous `go.yml` workflow has been renamed to `go-legacy.yml` for
+reference. The new system provides:
 
 - ✅ Better separation of concerns
 - ✅ Independent failure handling

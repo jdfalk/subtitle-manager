@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Improve database schema for subtitle metadata",
   "body": "Design a richer schema to track subtitle sources and history.",
-  "labels": [
-    "enhancement",
-    "database"
-  ],
+  "labels": ["enhancement", "database"],
   "guid": "8cb0d48a-8895-4d80-98ca-9a586c825588",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1034",
   "legacy_guid": "create-db-schema-improvement-2025-06-20"

@@ -1,6 +1,7 @@
 # Smart Rebase Automation Documentation
 
-This directory contains intelligent rebase automation scripts designed to handle Git conflicts automatically, particularly useful for AI agents like Codex.
+This directory contains intelligent rebase automation scripts designed to handle
+Git conflicts automatically, particularly useful for AI agents like Codex.
 
 ## Scripts Overview
 
@@ -196,13 +197,16 @@ brew install jq yq
 ### Common Issues
 
 1. **"Not in a git repository"**
+
    - Ensure you're in the root of your git repository
 
 2. **"Target branch does not exist"**
+
    - Check branch name spelling
    - Ensure you've fetched latest changes: `git fetch origin`
 
 3. **"Force push failed"**
+
    - Someone else may have pushed changes
    - Use `git pull --rebase` first, then retry
 

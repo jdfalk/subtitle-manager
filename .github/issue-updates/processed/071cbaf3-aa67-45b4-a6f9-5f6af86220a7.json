@@ -1,9 +1,6 @@
 {
   "number": 531,
-  "labels": [
-    "codex",
-    "in-progress"
-  ],
+  "labels": ["codex", "in-progress"],
   "guid": "97996778-e2fa-4fbd-9894-a8848e55429c",
   "action": "update",
   "legacy_guid": "update-issue-531-2025-06-21"

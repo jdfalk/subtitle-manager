@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Use unified API for React front end",
   "body": "React application should interact via the same gRPC API or REST fallback.",
-  "labels": [
-    "frontend"
-  ],
+  "labels": ["frontend"],
   "guid": "4696b614-6438-4648-8ad9-ca88d5d56d49",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1083",
   "legacy_guid": "create-unified-api-2025-06-20"

@@ -1,10 +1,13 @@
 # Issue Updates Directory
 
-This directory contains individual issue update files that are processed by the unified issue management workflow.
+This directory contains individual issue update files that are processed by the
+unified issue management workflow.
 
 ## Format
 
-Each file should be named with a UUID (e.g., `bc03b7dc-eba7-4b95-9a90-a0224b274633.json`) and contain a single issue operation.
+Each file should be named with a UUID (e.g.,
+`bc03b7dc-eba7-4b95-9a90-a0224b274633.json`) and contain a single issue
+operation.
 
 ### File Structure
 
@@ -74,7 +77,8 @@ Each file should be named with a UUID (e.g., `bc03b7dc-eba7-4b95-9a90-a0224b2746
 ## Benefits
 
 - **No merge conflicts**: Each update is in its own file
-- **Parallel development**: Multiple developers can create updates simultaneously
+- **Parallel development**: Multiple developers can create updates
+  simultaneously
 - **Atomic operations**: Each file represents a single issue operation
 - **Easy tracking**: Files can be linked to specific features or pull requests
 - **UUID naming**: Prevents filename conflicts
@@ -97,4 +101,5 @@ The workflow automatically:
 
 ## Legacy Support
 
-The workflow still processes the root `issue_updates.json` file for backward compatibility, but new updates should use this directory structure.
+The workflow still processes the root `issue_updates.json` file for backward
+compatibility, but new updates should use this directory structure.

@@ -1,6 +1,8 @@
 # Bazarr Feature Overview
 
-This document catalogues the high level features and subtitle providers supported by [Bazarr](https://github.com/morpheus65535/bazarr). It serves as a reference when evaluating feature parity for Subtitle Manager.
+This document catalogues the high level features and subtitle providers
+supported by [Bazarr](https://github.com/morpheus65535/bazarr). It serves as a
+reference when evaluating feature parity for Subtitle Manager.
 
 ## Major Features
 
@@ -14,12 +16,14 @@ This document catalogues the high level features and subtitle providers supporte
 - **Manual search** allowing on demand subtitle downloads.
 - **Subtitle upgrades** when a better quality subtitle becomes available.
 - **Deleting external subtitles** directly from disk.
-- **Support for over 180 subtitle languages** including forced/foreign variants when provided.
+- **Support for over 180 subtitle languages** including forced/foreign variants
+  when provided.
 - **Web based user interface** inspired by Sonarr.
 
 ## Supported Subtitle Providers
 
-Bazarr integrates with many subtitle services. The providers listed in the README as of the time of writing are:
+Bazarr integrates with many subtitle services. The providers listed in the
+README as of the time of writing are:
 
 - Addic7ed
 - AnimeKalesi

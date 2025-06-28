@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Test PR creation workflow",
   "body": "This is a test issue to verify the workflow creates PRs properly for processed files",
-  "labels": [
-    "test",
-    "workflow"
-  ],
+  "labels": ["test", "workflow"],
   "guid": "821d825a-be80-431b-89cc-2bea7eea9e3f",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1089",
   "legacy_guid": "create-test-pr-creation-workflow-2025-06-21"

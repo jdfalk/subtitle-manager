@@ -2,13 +2,18 @@
 
 ## Problem Identified
 
-The unified issue management workflow was creating too many pull requests for archiving processed files (e.g., PR #1093, #1094, #1096, #1097). Every time the workflow ran on main branch merges, it created a new PR instead of updating the existing one.
+The unified issue management workflow was creating too many pull requests for
+archiving processed files (e.g., PR #1093, #1094, #1096, #1097). Every time the
+workflow ran on main branch merges, it created a new PR instead of updating the
+existing one.
 
 ## Root Cause
 
-1. **Unique branch names**: The workflow used `${{ github.run_id }}` in branch names, making them unique for each run
+1. **Unique branch names**: The workflow used `${{ github.run_id }}` in branch
+   names, making them unique for each run
 2. **No existing PR check**: No logic to detect if a similar PR already existed
-3. **Auto-delete branches**: Set to `delete-branch: true`, removing branches after merge
+3. **Auto-delete branches**: Set to `delete-branch: true`, removing branches
+   after merge
 
 ## Solution Implemented
 
@@ -131,11 +136,15 @@ Enhanced workflow summaries to show:
 
 ### **Timestamp Issue Resolution**
 
-Fixed an issue where the `$(date -u '+%Y-%m-%d %H:%M:%S UTC')` command in PR body templates was not being properly executed:
+Fixed an issue where the `$(date -u '+%Y-%m-%d %H:%M:%S UTC')` command in PR
+body templates was not being properly executed:
 
-- **Problem**: The date command was being treated as literal text instead of being executed
-- **Solution**: Added a dedicated `timestamp` step that generates the current UTC timestamp
-- **Implementation**: Uses `${{ steps.timestamp.outputs.current }}` in PR body templates
+- **Problem**: The date command was being treated as literal text instead of
+  being executed
+- **Solution**: Added a dedicated `timestamp` step that generates the current
+  UTC timestamp
+- **Implementation**: Uses `${{ steps.timestamp.outputs.current }}` in PR body
+  templates
 - **Result**: PR bodies now show accurate "Updated" timestamps
 
 ### **Example PR Body Output**
@@ -159,4 +168,5 @@ Updated: 2025-06-21 14:30:15 UTC
 4. **Enhanced messaging**: Better PR bodies and workflow summaries
 5. **Conditional reporting**: Shows update vs create status
 
-This solution maintains all the functionality while eliminating the duplicate PR problem, providing a much cleaner and more manageable workflow experience.
+This solution maintains all the functionality while eliminating the duplicate PR
+problem, providing a much cleaner and more manageable workflow experience.

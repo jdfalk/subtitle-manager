@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Display progress updates in CLI and web UI",
   "body": "Show task progress for long running operations.",
-  "labels": [
-    "enhancement"
-  ],
+  "labels": ["enhancement"],
   "guid": "64e70ae2-c9bf-40db-a07b-efd01ec899e8",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1087",
   "legacy_guid": "create-progress-updates-2025-06-20"

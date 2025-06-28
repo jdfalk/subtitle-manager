@@ -4,7 +4,8 @@
 
 **Issue**: PostgreSQL tests in CI/CD were causing fragility and slowdowns
 
-**Solution**: Removed PostgreSQL service dependency from CI/CD while maintaining test coverage
+**Solution**: Removed PostgreSQL service dependency from CI/CD while maintaining
+test coverage
 
 ## 🔧 Changes Made
 
@@ -49,7 +50,8 @@
 
 ## 🔍 Implementation Details
 
-The PostgreSQL tests in `pkg/database/postgres_test.go` already had proper skip logic:
+The PostgreSQL tests in `pkg/database/postgres_test.go` already had proper skip
+logic:
 
 ```go
 // Check if PostgreSQL is available
@@ -78,4 +80,6 @@ This means:
 
 **Status: ✅ POSTGRESQL CI/CD ISSUE RESOLVED**
 
-The CI/CD pipeline is now faster, more reliable, and free from PostgreSQL service dependencies while maintaining full test coverage for all other database backends.
+The CI/CD pipeline is now faster, more reliable, and free from PostgreSQL
+service dependencies while maintaining full test coverage for all other database
+backends.

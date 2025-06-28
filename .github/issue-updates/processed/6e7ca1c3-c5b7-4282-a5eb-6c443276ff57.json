@@ -2,9 +2,7 @@
   "action": "update",
   "number": 1089,
   "body": "Labeling with codex",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "fce7f6dc-d847-430f-b696-86c603ff91a3",
   "legacy_guid": "update-issue-1089-2025-06-23"
 }

@@ -2,11 +2,7 @@
   "action": "update",
   "number": 1072,
   "body": "Adding codex label",
-  "labels": [
-    "automation",
-    "testing",
-    "codex"
-  ],
+  "labels": ["automation", "testing", "codex"],
   "guid": "a2bfd34d-1cad-456f-a7d2-d42fc0914c63",
   "legacy_guid": "update-issue-1072-2025-06-23"
 }

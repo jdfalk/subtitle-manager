@@ -2,11 +2,7 @@
   "action": "update",
   "number": 1102,
   "body": "Work is in progress under Codex.",
-  "labels": [
-    "bug",
-    "ci",
-    "codex"
-  ],
+  "labels": ["bug", "ci", "codex"],
   "guid": "721ce4a2-0e9c-4bf3-9e77-0315d7b147fd",
   "legacy_guid": "update-issue-1102-2025-06-23"
 }

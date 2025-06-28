@@ -1,8 +1,6 @@
 {
   "number": 923,
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "a9aba922-2275-4a3a-9abc-d92796e3004c",
   "action": "update",
   "legacy_guid": "update-issue-923-2025-06-21"

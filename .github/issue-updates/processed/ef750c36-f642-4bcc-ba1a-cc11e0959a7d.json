@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Use provider SDKs instead of manual HTTP calls",
   "body": "Refactor provider integrations to use official or community SDKs.",
-  "labels": [
-    "enhancement"
-  ],
+  "labels": ["enhancement"],
   "guid": "66d0d35b-3c75-45b5-b383-841e976a0d4f",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1036",
   "legacy_guid": "create-provider-sdks-2025-06-20"

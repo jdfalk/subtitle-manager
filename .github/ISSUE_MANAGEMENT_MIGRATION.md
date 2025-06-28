@@ -2,11 +2,13 @@
 
 # Issue Management Migration Guide
 
-This document outlines the migration from separate issue management scripts to a unified Python-based system.
+This document outlines the migration from separate issue management scripts to a
+unified Python-based system.
 
 ## Overview
 
-The repository is transitioning from multiple separate workflows and scripts to a unified issue management system:
+The repository is transitioning from multiple separate workflows and scripts to
+a unified issue management system:
 
 ### Before (Legacy)
 
@@ -28,7 +30,8 @@ The repository is transitioning from multiple separate workflows and scripts to 
 
 1. **Unified Python Script** - `issue_manager.py` created with all functionality
 2. **CodeQL Alert Tickets** - New feature to auto-generate security tickets
-3. **Enhanced API Client** - Consistent GitHub API usage with proper error handling
+3. **Enhanced API Client** - Consistent GitHub API usage with proper error
+   handling
 4. **Workflow Updates** - Existing workflows updated to use new script
 
 ### 🔄 In Progress (Parallel Operation)

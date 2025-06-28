@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Provider configuration popover",
   "body": "When selecting an unconfigured provider, the dropdown should show a popover with a direct link to settings.",
-  "labels": [
-    "bug",
-    "codex"
-  ],
+  "labels": ["bug", "codex"],
   "guid": "724b4f7a-8a15-4535-8955-c6e20c29bfe5",
   "legacy_guid": "create-provider-configuration-popover-2025-06-22"
 }

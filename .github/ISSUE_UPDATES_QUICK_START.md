@@ -2,7 +2,9 @@
 
 ## What Changed?
 
-We've upgraded our issue management system to eliminate merge conflicts! Instead of everyone editing the same `issue_updates.json` file, we now use individual files.
+We've upgraded our issue management system to eliminate merge conflicts! Instead
+of everyone editing the same `issue_updates.json` file, we now use individual
+files.
 
 ## Quick Start
 
@@ -41,7 +43,8 @@ We've upgraded our issue management system to eliminate merge conflicts! Instead
 ## File Locations
 
 - **New format**: `.github/issue-updates/{uuid}.json` ← Use this!
-- **Legacy format**: `issue_updates.json` ← Still works but avoid for new updates
+- **Legacy format**: `issue_updates.json` ← Still works but avoid for new
+  updates
 
 ## Examples in the Repo
 
@@ -53,10 +56,10 @@ Check out these example files:
 
 ## Benefits
 
-✅ **No more merge conflicts** - Everyone works on separate files
-✅ **Parallel development** - Multiple people can create updates simultaneously
-✅ **Cleaner git history** - Each update is tracked individually
-✅ **Easier reviews** - Changes are isolated and clear
+✅ **No more merge conflicts** - Everyone works on separate files ✅ **Parallel
+development** - Multiple people can create updates simultaneously ✅ **Cleaner
+git history** - Each update is tracked individually ✅ **Easier reviews** -
+Changes are isolated and clear
 
 ## Actions Supported
 

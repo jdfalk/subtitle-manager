@@ -2,11 +2,14 @@
 
 ## Issue Updates Workflow
 
-The unified issue management workflow processes bulk issue operations from `issue_updates.json` using a new grouped format for better organization and GUID-based duplicate prevention.
+The unified issue management workflow processes bulk issue operations from
+`issue_updates.json` using a new grouped format for better organization and
+GUID-based duplicate prevention.
 
 ## New Grouped Format
 
-The `issue_updates.json` file now uses a grouped structure for better organization:
+The `issue_updates.json` file now uses a grouped structure for better
+organization:
 
 ```json
 {
@@ -51,7 +54,8 @@ The `issue_updates.json` file now uses a grouped structure for better organizati
 
 ## GUID-Based Duplicate Prevention
 
-All actions now support optional `guid` fields that prevent duplicate operations:
+All actions now support optional `guid` fields that prevent duplicate
+operations:
 
 - **Comments**: GUIDs are stored as HTML comments in issue comments
 - **Creates**: GUIDs are embedded in issue body to prevent duplicate creation
@@ -139,11 +143,13 @@ Valid `state_reason` values:
 }
 ```
 
-**Note**: GitHub API doesn't support issue deletion. Issues are closed with "not_planned" reason and marked for deletion instead.
+**Note**: GitHub API doesn't support issue deletion. Issues are closed with
+"not_planned" reason and marked for deletion instead.
 
 ## Legacy Format Support
 
-The workflow continues to support the old flat array format for backward compatibility:
+The workflow continues to support the old flat array format for backward
+compatibility:
 
 ```json
 [
@@ -206,7 +212,8 @@ The unified workflow will:
 
 ## Workflow Integration
 
-The issue updates are processed by the unified issue management workflow (`unified-issue-management.yml`) which handles:
+The issue updates are processed by the unified issue management workflow
+(`unified-issue-management.yml`) which handles:
 
 - **Matrix parallelization** for efficient processing
 - **Comprehensive logging** with operation summaries

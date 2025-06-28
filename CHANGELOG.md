@@ -6,25 +6,32 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Universal Tagging System**: Complete unified tagging interface supporting all entity types
+- **Universal Tagging System**: Complete unified tagging interface supporting
+  all entity types
   - Enhanced Tag model with Type, EntityType, Color, and Description fields
   - Polymorphic tag associations table for consistent entity relationships
-  - Standardized REST API endpoints for all entity types: `/api/{entityType}/{id}/tags`
+  - Standardized REST API endpoints for all entity types:
+    `/api/{entityType}/{id}/tags`
   - Provider instance integration with tag-based selection and priority logic
   - Bulk tagging operations for efficient multi-entity management
   - Legacy migration path for existing user and media tag implementations
-- **Provider Instance Management**: Enhanced provider system with priority and tagging support
+- **Provider Instance Management**: Enhanced provider system with priority and
+  tagging support
   - Instance registration with configurable priority levels
   - Per-instance backoff logic for improved reliability
   - Tag-based provider selection and filtering
   - Factory registration system for tests and extensions
   - API endpoints supporting provider instance ID references
-- **Enhanced Web UI Testing**: Minimal webui index for comprehensive test coverage
+- **Enhanced Web UI Testing**: Minimal webui index for comprehensive test
+  coverage
 - Automated maintenance tasks with configurable scheduling
-- Fetch languages, ratings, and episode data from OMDb via new metadata functions
+- Fetch languages, ratings, and episode data from OMDb via new metadata
+  functions
 - CLI flags and env vars for TMDB and OMDb API keys
-- Advanced audio synchronization improvements with CPU vs accuracy slider, runtime tradeoff, and dual-language alignment.
-- Experimental minimum display time mode that delays subtitles and catches up during silence.
+- Advanced audio synchronization improvements with CPU vs accuracy slider,
+  runtime tradeoff, and dual-language alignment.
+- Experimental minimum display time mode that delays subtitles and catches up
+  during silence.
 - Automatic subtitle upgrade detection avoids replacing smaller files.
 - Dashboard Widgets API exposing available widgets and layout endpoints.
 - Security header `Referrer-Policy: no-referrer` to reduce referrer leakage.
@@ -32,7 +39,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **Tagging Architecture**: Migrated from separate tag systems to unified interface
+- **Tagging Architecture**: Migrated from separate tag systems to unified
+  interface
   - User tags now use universal system with `entity_type='user'`
   - Media tags now use universal system with `entity_type='media'`
   - Provider tags integrated into instance management system
@@ -41,26 +49,36 @@ All notable changes to this project will be documented in this file.
 
 ### Migration Notes
 
-Existing tag data will be automatically migrated to the new unified system during the next database schema update. No manual intervention required for most installations.
+Existing tag data will be automatically migrated to the new unified system
+during the next database schema update. No manual intervention required for most
+installations.
 
 ## [0.9.0] - 2025-06-30
 
 ### Status Update
 
-- **Project Nearing Completion**: Backend and frontend largely implemented but tagging, containerized Whisper, and maintenance tooling remain
-- **Production Ready Backend**: Complete authentication, APIs, and provider support
-- **Enterprise Features**: PostgreSQL, webhooks, notifications, anti-captcha, advanced scheduling complete
-- **UI/UX Overhaul Completed**: All enhancements implemented according to the plan
+- **Project Nearing Completion**: Backend and frontend largely implemented but
+  tagging, containerized Whisper, and maintenance tooling remain
+- **Production Ready Backend**: Complete authentication, APIs, and provider
+  support
+- **Enterprise Features**: PostgreSQL, webhooks, notifications, anti-captcha,
+  advanced scheduling complete
+- **UI/UX Overhaul Completed**: All enhancements implemented according to the
+  plan
 - Code overview documentation added in docs/CODE_OVERVIEW.md
 
 ### Major Features Completed Since Last Release
 
-- **PostgreSQL Database Backend**: Complete enterprise database support with full test coverage
-- **Advanced Webhook System**: Sonarr/Radarr/custom webhook endpoints for library event integration
-- **Anti-Captcha Integration**: Support for Anti-Captcha.com and 2captcha.com services
+- **PostgreSQL Database Backend**: Complete enterprise database support with
+  full test coverage
+- **Advanced Webhook System**: Sonarr/Radarr/custom webhook endpoints for
+  library event integration
+- **Anti-Captcha Integration**: Support for Anti-Captcha.com and 2captcha.com
+  services
 - **Notification Services**: Discord, Telegram, and SMTP notification providers
 - **Advanced Scheduler**: Cron-based scheduling with full expression support
-- **Bazarr Configuration Import**: Command-line tool for seamless Bazarr migration
+- **Bazarr Configuration Import**: Command-line tool for seamless Bazarr
+  migration
 - Complete Web UI implementation with all major pages
 - Full REST API coverage for all operations
 - History page with translation and download filtering
@@ -78,20 +96,25 @@ Existing tag data will be automatically migrated to the new unified system durin
 
 ### Added
 
-- **PostgreSQL database backend** with full enterprise support and graceful test skipping
-- **Advanced webhook system** with `/api/webhooks/sonarr`, `/api/webhooks/radarr`, and `/api/webhooks/custom` endpoints
-- **Anti-captcha integration** supporting Anti-Captcha.com and 2captcha.com services
+- **PostgreSQL database backend** with full enterprise support and graceful test
+  skipping
+- **Advanced webhook system** with `/api/webhooks/sonarr`,
+  `/api/webhooks/radarr`, and `/api/webhooks/custom` endpoints
+- **Anti-captcha integration** supporting Anti-Captcha.com and 2captcha.com
+  services
 - **Notification services** with Discord, Telegram, and SMTP providers
-- **Advanced cron-based scheduler** with full expression support and granular controls
-- **Bazarr configuration import** command for seamless migration from existing Bazarr installations
+- **Advanced cron-based scheduler** with full expression support and granular
+  controls
+- **Bazarr configuration import** command for seamless migration from existing
+  Bazarr installations
 - REST endpoint `/api/convert` for subtitle file conversion
 - REST endpoint `/api/translate` for translating uploaded subtitle files
 - REST endpoint `/api/download` for on-demand subtitle fetching
-- Build process now runs `go generate ./webui` to embed the latest web assets
-  in the binary and container image.
+- Build process now runs `go generate ./webui` to embed the latest web assets in
+  the binary and container image.
 - Automated workflow closes duplicate issues by title
-- Embedded provider now enabled by default. Other providers remain hidden
-  until explicitly added or imported.
+- Embedded provider now enabled by default. Other providers remain hidden until
+  explicitly added or imported.
 - Enhanced General Settings page with Bazarr-compatible host, proxy, update,
   logging, backup and analytics options.
 
@@ -99,7 +122,8 @@ Existing tag data will be automatically migrated to the new unified system durin
 
 ### Major Milestone: Production Ready Release
 
-This release marks ~95% project completion with full production readiness achieved.
+This release marks ~95% project completion with full production readiness
+achieved.
 
 ### Added
 
@@ -127,7 +151,8 @@ This release marks ~95% project completion with full production readiness achiev
 
 ### Changed
 
-- `GoogleTranslate` now uses the official Google Cloud SDK instead of manual HTTP requests.
+- `GoogleTranslate` now uses the official Google Cloud SDK instead of manual
+  HTTP requests.
 
 ### Added
 
@@ -174,7 +199,8 @@ This release marks ~95% project completion with full production readiness achiev
 ### Added
 
 - Batch translation command for concurrent processing of multiple files.
-- Helper functions `TranslateFileToSRT` and `TranslateFilesToSRT` in `pkg/subtitles`.
+- Helper functions `TranslateFileToSRT` and `TranslateFilesToSRT` in
+  `pkg/subtitles`.
 - Documentation updates for the new command and concurrency model.
 
 ## [0.1.6] - 2025-06-11
@@ -198,8 +224,10 @@ This release marks ~95% project completion with full production readiness achiev
 
 ### Added
 
-- Comprehensive subtitle provider list from Bazarr documented in README and TODO.
-- Implemented Addic7ed, BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi, LegendasDivx and GreekSubs providers.
+- Comprehensive subtitle provider list from Bazarr documented in README and
+  TODO.
+- Implemented Addic7ed, BetaSeries, BSplayer, Podnapisi, TVSubtitles, Titlovi,
+  LegendasDivx and GreekSubs providers.
 
 ## [0.1.9] - 2025-06-14
 
@@ -227,7 +255,8 @@ This release marks ~95% project completion with full production readiness achiev
 
 ### Added
 
-- Authentication system supporting password login, one time tokens, OAuth2 and API keys.
+- Authentication system supporting password login, one time tokens, OAuth2 and
+  API keys.
 - Simple user manager commands for creating users and generating API keys.
 - RBAC with default roles and database backed session storage.
 
@@ -298,11 +327,11 @@ This release marks ~95% project completion with full production readiness achiev
 
 ### Changed
 
-- `GoogleTranslate` now uses the official Google Cloud SDK instead of manual HTTP requests.
+- `GoogleTranslate` now uses the official Google Cloud SDK instead of manual
+  HTTP requests.
 
 ## [0.3.10] - 2025-06-27
 
 ### Added
 
 - Documentation update verifying PR workflow.
-

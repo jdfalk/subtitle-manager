@@ -2,7 +2,10 @@
 
 ## Problem
 
-The rebase scripts (`codex-rebase.sh` and `smart-rebase.sh`) were failing in CI environments because they assumed the `origin` remote would always be configured. In CI environments like GitHub Actions, the repository might be cloned without a remote configured.
+The rebase scripts (`codex-rebase.sh` and `smart-rebase.sh`) were failing in CI
+environments because they assumed the `origin` remote would always be
+configured. In CI environments like GitHub Actions, the repository might be
+cloned without a remote configured.
 
 ## Error
 
@@ -13,12 +16,14 @@ fatal: Could not read from remote repository.
 
 ## Solution
 
-Added automatic remote configuration to both scripts with the following features:
+Added automatic remote configuration to both scripts with the following
+features:
 
 ### 1. Remote Setup Function
 
 - Check if `origin` remote exists using `git remote get-url origin`
-- If not found, automatically configure it for `https://github.com/jdfalk/subtitle-manager.git`
+- If not found, automatically configure it for
+  `https://github.com/jdfalk/subtitle-manager.git`
 - Log the configuration process for transparency
 
 ### 2. Enhanced Error Handling
@@ -32,7 +37,8 @@ Added automatic remote configuration to both scripts with the following features
 ### scripts/codex-rebase.sh
 
 - Added `setup_remote()` function
-- Enhanced error handling for `git fetch origin` and `git push --force-with-lease origin`
+- Enhanced error handling for `git fetch origin` and
+  `git push --force-with-lease origin`
 - Call `setup_remote()` at script start
 
 ### scripts/smart-rebase.sh
@@ -43,9 +49,12 @@ Added automatic remote configuration to both scripts with the following features
 
 ## Benefits
 
-1. **CI Compatibility**: Scripts now work in CI environments without manual remote configuration
-2. **Better Debugging**: Clear error messages help identify authentication and network issues
-3. **Automatic Recovery**: Scripts auto-configure missing remotes instead of failing
+1. **CI Compatibility**: Scripts now work in CI environments without manual
+   remote configuration
+2. **Better Debugging**: Clear error messages help identify authentication and
+   network issues
+3. **Automatic Recovery**: Scripts auto-configure missing remotes instead of
+   failing
 4. **Transparency**: All remote operations are logged for troubleshooting
 
 ## Testing
@@ -56,4 +65,5 @@ Both scripts should now work in:
 - CI/CD pipelines (remotes auto-configured)
 - Fresh repository clones (remotes auto-configured)
 
-The scripts will continue to work normally if `origin` is already configured, and will automatically set it up if missing.
+The scripts will continue to work normally if `origin` is already configured,
+and will automatically set it up if missing.

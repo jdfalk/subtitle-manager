@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document summarizes the implementation of automatic subtitle synchronization functionality that merges features from 4 different PRs (#846-#849) into a comprehensive solution.
+This document summarizes the implementation of automatic subtitle
+synchronization functionality that merges features from 4 different PRs
+(#846-#849) into a comprehensive solution.
 
 ## Implementation Summary
 
@@ -52,7 +54,8 @@ This document summarizes the implementation of automatic subtitle synchronizatio
 ### 2. Audio Package (`pkg/audio/`)
 
 - **Track Extraction**: Extract specific audio tracks using ffmpeg
-- **Format Optimization**: WAV format with Whisper-compatible settings (16kHz, mono)
+- **Format Optimization**: WAV format with Whisper-compatible settings (16kHz,
+  mono)
 - **Duration Control**: Extract specific time segments for efficiency
 - **Track Discovery**: List available audio tracks with metadata
 - **Error Handling**: Graceful fallbacks and cleanup
@@ -118,7 +121,8 @@ subtitle-manager sync movie.mkv subs.srt output.srt --use-embedded --translate -
 3. **Offset Calculation**: Compare reference timing with input timing
 4. **Weighted Averaging**: Combine offsets based on AudioWeight setting
 5. **Apply Adjustment**: Shift all subtitle items by calculated offset
-6. **Translation** (optional): Translate adjusted subtitles using selected service
+6. **Translation** (optional): Translate adjusted subtitles using selected
+   service
 7. **Output**: Save synchronized (and optionally translated) subtitles
 
 ### Configuration Integration
@@ -145,11 +149,14 @@ subtitle-manager sync movie.mkv subs.srt output.srt --use-embedded --translate -
 
 ## Project Impact
 
-This implementation represents the completion of the final major feature in the Subtitle Manager roadmap. The project now provides:
+This implementation represents the completion of the final major feature in the
+Subtitle Manager roadmap. The project now provides:
 
 - **100% Feature Completion**: All planned core functionality implemented
 - **Bazarr Parity Plus**: Complete feature parity + additional capabilities
 - **Production Ready**: Comprehensive testing and error handling
 - **Enterprise Grade**: Advanced configuration and integration options
 
-The automatic subtitle synchronization system provides superior capabilities compared to existing solutions, with flexible configuration, multiple sync methods, and seamless translation integration.
+The automatic subtitle synchronization system provides superior capabilities
+compared to existing solutions, with flexible configuration, multiple sync
+methods, and seamless translation integration.
