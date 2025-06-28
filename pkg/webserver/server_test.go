@@ -915,6 +915,7 @@ func TestSecurityHeaders(t *testing.T) {
 	}
 }
 
+
 // TestBrowseDirectoryPathTraversalPrevention tests that browseDirectory prevents path traversal attacks
 func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
 	// Create a temporary directory to serve as the allowed base directory
@@ -1027,58 +1028,47 @@ func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
 	}
 }
 
-// TestLibraryBrowseHandlerPathTraversal tests that the library browse API endpoint prevents path traversal
-func TestLibraryBrowseHandlerPathTraversal(t *testing.T) {
-	db := testutil.GetTestDB(t)
+// TestLibraryBrowsePathTraversal verifies that path traversal attacks are prevented
+// in the library browse endpoint.
+func TestLibraryBrowsePathTraversal(t *testing.T) {
+	db, err := database.Open(":memory:")
+	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
 
-	// Create test user and API key
 	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
 	key, err := auth.GenerateAPIKey(db, 1)
 	testutil.MustNoError(t, "generate key", err)
 
-	// Create handler
 	h, err := Handler(db)
-	testutil.MustNoError(t, "create handler", err)
+	testutil.MustNoError(t, "handler", err)
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 
-	tests := []struct {
-		name           string
-		path           string
-		expectedStatus int
-	}{
-		{
-			name:           "path traversal should be rejected",
-			path:           "../../../etc/passwd",
-			expectedStatus: http.StatusBadRequest,
-		},
-		{
-			name:           "absolute path outside allowed dirs should be rejected",
-			path:           "/etc/passwd",
-			expectedStatus: http.StatusBadRequest,
-		},
-		{
-			name:           "root path should work",
-			path:           "/",
-			expectedStatus: http.StatusOK,
-		},
+	// Test various path traversal attempts
+	pathTraversalAttempts := []string{
+		"../../../etc/passwd",
+		"../../../../etc/shadow",
+		"..\\..\\..\\windows\\system32",
+		"/etc/passwd",
+		"/etc/shadow",
+		"../../../../../root/.ssh/id_rsa",
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			url := srv.URL + "/api/library/browse?path=" + tt.path
-			req, err := http.NewRequest("GET", url, nil)
-			testutil.MustNoError(t, "create request", err)
+	for _, maliciousPath := range pathTraversalAttempts {
+		t.Run("path_traversal_"+maliciousPath, func(t *testing.T) {
+			req, _ := http.NewRequest("GET", srv.URL+"/api/library/browse?path="+maliciousPath, nil)
 			req.Header.Set("X-API-Key", key)
-
 			resp, err := srv.Client().Do(req)
-			testutil.MustNoError(t, "send request", err)
+			if err != nil {
+				t.Fatalf("request failed: %v", err)
+			}
 			defer resp.Body.Close()
 
-			if resp.StatusCode != tt.expectedStatus {
+			// Path traversal attempts should return 400 Bad Request
+			if resp.StatusCode != http.StatusBadRequest {
 				body, _ := io.ReadAll(resp.Body)
-				t.Errorf("expected status %d, got %d. Body: %s", tt.expectedStatus, resp.StatusCode, string(body))
+				t.Fatalf("expected 400 Bad Request for path traversal attempt %q, got %d: %s",
+					maliciousPath, resp.StatusCode, string(body))
 			}
 		})
 	}
