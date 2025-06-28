@@ -19,9 +19,9 @@ WORKDIR /src
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     gcc \
-    musl-dev \
-    sqlite-dev
+    sqlite3 libsqlite3-dev
 
 # Copy go.mod and go.sum first for better dependency caching
 COPY go.mod go.sum ./
