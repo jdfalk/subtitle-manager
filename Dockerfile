@@ -49,9 +49,15 @@ COPY --from=node-builder /src/webui/dist ./webui/dist
 # The embed.go file will automatically embed the dist directory during go build
 
 # Build the application with version information
-# Since we're building in a Linux Alpine container for Linux target,
-# we don't need cross-compilation - just build directly
-RUN CGO_ENABLED=1 go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./
+# Use conditional CGO and build tags based on target architecture
+ARG TARGETARCH
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+    echo "Building for ARM64 with pure Go (no CGO)" && \
+    CGO_ENABLED=0 go build -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./; \
+    else \
+    echo "Building for AMD64 with CGO and SQLite support" && \
+    CGO_ENABLED=1 go build -tags=sqlite -ldflags="-s -w -X 'main.Version=${VERSION}' -X 'main.BuildTime=${BUILD_TIME}' -X 'main.GitCommit=${GIT_COMMIT}'" -o subtitle-manager ./; \
+    fi
 
 # Stage 4: Final runtime image
 FROM golang:1.24-bookworm AS final

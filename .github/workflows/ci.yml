@@ -1,5 +1,5 @@
 # file: .github/workflows/ci.yml
-# version: 1.0.1
+# version: 3.0.0
 # guid: 7e2b1c4d-5f6a-4b7c-8d9e-0a1b2c3d4e5f
 
 name: CI
@@ -12,81 +12,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    outputs:
-      coverage: ${{ steps.coverage.outputs.coverage }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.22"
-
-      - name: Cache Go modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      - name: Install dependencies
-        run: |
-          echo "📦 Installing Go dependencies..."
-          go mod tidy
-          echo "✅ Dependencies installed successfully"
-
-      - name: Build
-        run: |
-          echo "🔨 Building application..."
-          go build -v ./...
-          echo "✅ Build completed successfully"
-
-      - name: Run tests with coverage
-        run: |
-          echo "🧪 Running tests with coverage..."
-          go test -v -coverprofile=coverage.out ./... 2>&1 | tee test-output.log
-          echo "✅ Tests completed"
-
-      - name: Generate coverage report
-        run: |
-          echo "📊 Generating coverage report..."
-          go tool cover -func=coverage.out > coverage.txt
-          TOTAL_COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}')
-          echo "Total coverage: $TOTAL_COVERAGE"
-
-          echo '### 📊 Test Coverage Report' >> $GITHUB_STEP_SUMMARY
-          echo "**Total Coverage: $TOTAL_COVERAGE**" >> $GITHUB_STEP_SUMMARY
-          echo '' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat coverage.txt >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-
-          # Set coverage as output for use in summary job
-          echo "coverage=$TOTAL_COVERAGE" >> $GITHUB_OUTPUT
-        id: coverage
-
-      - name: Upload test logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-logs
-          path: test-output.log
-
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage.txt
-
-  call-reusable-ci:
-    if: always()
-    needs: build
-    uses: ./.github/workflows/ci-complete.yml
+  ci:
+    uses: jdfalk/ghcommon/.github/workflows/reusable-ci.yml@main
     with:
-      build_status: ${{ needs.build.result }}
-      coverage: ${{ needs.build.outputs.coverage || 'N/A' }}
+      go-version: "1.24"
+      run-lint: true
+      run-test: true
+      run-build: true
