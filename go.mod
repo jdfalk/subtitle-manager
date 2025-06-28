@@ -3,7 +3,7 @@ module github.com/jdfalk/subtitle-manager
 go 1.24
 
 require (
-	cloud.google.com/go/translate v1.12.5
+	cloud.google.com/go/translate v1.12.6
 	github.com/asticode/go-astisub v0.34.0
 	github.com/cockroachdb/pebble v1.1.5
 	github.com/google/uuid v1.6.0
@@ -34,7 +34,7 @@ require (
 )
 
 require (
-	cloud.google.com/go v0.120.0 // indirect
+	cloud.google.com/go v0.121.2 // indirect
 	cloud.google.com/go/auth v0.16.2 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	cloud.google.com/go/compute/metadata v0.7.0 // indirect
