@@ -1039,7 +1039,12 @@ func getProviderType(name string) string {
 
 // browseDirectory lists media files and directories with subtitle information
 func browseDirectory(path string) ([]MediaItem, error) {
-	safePath := filepath.Clean(path)
+	// Validate and sanitize the path to prevent path traversal attacks
+	safePath, err := security.ValidateAndSanitizePath(path)
+	if err != nil {
+		return nil, fmt.Errorf("invalid path: %w", err)
+	}
+
 	if safePath == "" || safePath == "/" {
 		// Show existing directories from allowed bases for the root view
 		dirs := security.GetAllowedBaseDirs()
