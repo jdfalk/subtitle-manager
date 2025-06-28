@@ -152,18 +152,19 @@ func TestProcessFileInvalidProvider(t *testing.T) {
 	}
 }
 
-func TestProcessFilePathInjectionSafety(t *testing.T) {
+// TestProcessFilePathValidation ensures ProcessFile properly validates paths and upgrades subtitles only when appropriate.
+func TestProcessFilePathValidation(t *testing.T) {
 	dir := t.TempDir()
 	viper.Set("media_directory", dir)
 	defer viper.Reset()
 
-	// Create a test video file
+	// Create a valid video file
 	vid := filepath.Join(dir, "movie.mkv")
 	if err := os.WriteFile(vid, []byte("test video"), 0644); err != nil {
 		t.Fatalf("create video: %v", err)
 	}
 
-	// Create an existing subtitle to test the upgrade path (where os.ReadFile is called)
+	// Create an existing subtitle to test the upgrade path
 	existingSub := filepath.Join(dir, "movie.en.srt")
 	if err := os.WriteFile(existingSub, []byte("existing subtitle"), 0644); err != nil {
 		t.Fatalf("create existing subtitle: %v", err)
@@ -173,7 +174,7 @@ func TestProcessFilePathInjectionSafety(t *testing.T) {
 	m := providersmocks.NewProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("new larger subtitle content"), nil)
 
-	// Test ProcessFile with upgrade=true, which triggers the path validation before os.ReadFile
+	// Test ProcessFile with upgrade=true, which should replace the subtitle if new content is larger
 	err := ProcessFile(context.Background(), vid, "en", "test", m, true, nil)
 	if err != nil {
 		t.Fatalf("ProcessFile should succeed with valid paths: %v", err)
