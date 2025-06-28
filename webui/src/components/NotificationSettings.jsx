@@ -250,6 +250,13 @@ export default function NotificationSettings({
         </Alert>
       )}
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {/* Display backend error from notification update */}
+          {error}
+        </Alert>
+      )}
+
       <Grid container spacing={3}>
         {/* Email Notifications */}
         <Grid item xs={12} md={6}>

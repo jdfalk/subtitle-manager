@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Fix lint errors in LibraryScan and NotificationSettings",
+  "body": "ESLint flagged unused variables in the poller and notification components. Use these variables so lint passes.",
+  "labels": ["codex"],
+  "guid": "d43397b6-b186-4f9e-8534-ee1a7962495d",
+  "legacy_guid": "create-fix-lint-errors-in-libraryscan-and-notificationsettings-2025-06-28"
+}
