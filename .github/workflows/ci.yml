@@ -1,25 +1,63 @@
 # file: .github/workflows/ci.yml
 # version: 1.0.1
-# guid: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+# guid: 7e2b1c4d-5f6a-4b7c-8d9e-0a1b2c3d4e5f
 
 name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
+  workflow_dispatch:
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Run tests with coverage
+        run: |
+          go test -v -coverprofile=coverage.out ./...
+
+      - name: Upload coverage to GitHub summary
+        run: |
+          go tool cover -func=coverage.out > coverage.txt
+          echo '### Test Coverage Report' >> $GITHUB_STEP_SUMMARY
+          cat coverage.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.txt
+
   call-reusable-ci:
-    uses: jdfalk/ghcommon/.github/workflows/reusable-ci.yml@main
+    if: always()
+    needs: build
+    uses: ./.github/workflows/ci-complete.yml
     with:
-      enable-backend-frontend: true
-      frontend-path: webui
-      python-version: "3.12"
-      node-version: "22"
-      go-version: "1.22"
-      run-lint: true
-      run-test: true
-      run-build: false
-    secrets: inherit
+      build_status: ${{ needs.build.result }}

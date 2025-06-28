@@ -1,3 +1,10 @@
+// Package cmd implements the CLI commands for subtitle-manager.
+// It provides the root command and subcommands for all user-facing operations.
+//
+// This package is the entry point for the application's command-line interface.
+// It allows users to convert subtitles to different formats, manage subtitle files,
+// and perform other related tasks from the command line.
+
 package cmd
 
 import (

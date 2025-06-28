@@ -1,0 +1,29 @@
+# .github/workflows/ci-complete.yml
+# version: 1.0.0
+# guid: 8e2b1c4d-5f6a-4b7c-8d9e-0a1b2c3d4e5f
+
+name: CI Complete Summary
+
+on:
+  workflow_call:
+    inputs:
+      build_status:
+        required: true
+        type: string
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print CI completion summary
+        run: |
+          echo "## CI/CD Pipeline Complete" >> $GITHUB_STEP_SUMMARY
+          echo "Build status: ${{ inputs.build_status }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ inputs.build_status }}" = "success" ]; then
+            echo "✅ All checks passed." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Some checks failed. Please review the logs above." >> $GITHUB_STEP_SUMMARY
+          fi
+      - name: Always run summary (even on failure)
+        if: always()
+        run: echo "CI/CD workflow has finished. See above for details." >> $GITHUB_STEP_SUMMARY

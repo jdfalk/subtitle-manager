@@ -1,3 +1,10 @@
+// Package sonarr provides a client and utilities for interacting with the Sonarr API.
+// It enables subtitle synchronization, library management, and automation for Sonarr servers.
+//
+// This package is used by subtitle-manager to keep Sonarr libraries in sync and manage subtitles.
+//
+// See: https://sonarr.tv/
+
 package sonarr
 
 import (

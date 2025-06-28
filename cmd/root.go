@@ -1,3 +1,21 @@
+// Package cmd implements the CLI commands for subtitle-manager.
+// It provides the root command and subcommands for all user-facing operations.
+//
+// This package is the entry point for the application's command-line interface.
+// It initializes configuration, sets up logging, and defines the available commands
+// such as convert, merge, translate, fetch, batch, sonarr, radarr, and rename.
+//
+// The root command, when executed, will run the associated subcommand or show
+// the help information if no subcommand is specified. Configuration options can
+// be provided via command-line flags or through a configuration file, and are
+// managed using the viper package. Logging is handled by the logrus package,
+// with log level and output configuration options available.
+//
+// The package also includes database path and backend configuration, with
+// support for SQLite, Pebble, and Postgres databases. API keys and other
+// settings for translation and transcription services are also configured
+// within this package.
+
 package cmd
 
 import (

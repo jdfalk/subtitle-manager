@@ -1,4 +1,11 @@
-// file: pkg/backups/backups.go
+// Package backups provides utilities for managing database backup files.
+// It supports creating, listing, and storing backup metadata for subtitle-manager.
+//
+// Backup represents a database backup on disk.
+// Create simulates creating a new backup file and stores metadata in memory.
+// List returns all known backups.
+// Restore pretends to restore the latest backup and returns its name.
+
 package backups
 
 import (

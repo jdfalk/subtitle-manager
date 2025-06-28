@@ -1,4 +1,49 @@
-// file: pkg/notifications/notifications.go
+// Package notifications provides notification services for subtitle-manager.
+// It supports sending notifications via Discord, Telegram, Email, and other channels.
+//
+// This package is used to alert users and systems about subtitle events and errors.
+// It includes features for validating webhook URLs, formatting messages, and dispatching
+// notifications to multiple targets. The Service struct is the primary interface for
+// sending notifications, and it can be configured with the necessary credentials and
+// endpoint URLs for the desired notification channels.
+//
+// Example usage:
+//
+// 	import (
+// 		"context"
+// 		"log"
+// 		"github.com/yourusername/yourproject/pkg/notifications"
+// 	)
+//
+// 	func main() {
+// 		// Create a new notification service
+// 		svc, err := notifications.New(
+// 			"https://discord.com/api/webhooks/...",
+// 			"telegram_bot_token",
+// 			"telegram_chat_id",
+// 			"https://your-email-service.com/send",
+// 		)
+// 		if err != nil {
+// 			log.Fatalf("failed to create notification service: %v", err)
+// 		}
+//
+// 		// Send a test notification
+// 		err = svc.Send(context.Background(), "Hello, this is a test notification!")
+// 		if err != nil {
+// 			log.Fatalf("failed to send notification: %v", err)
+// 		}
+// 	}
+//
+// The notifications package is designed to be flexible and extensible, allowing
+// integration with various notification services as needed. Contributions and
+// improvements are welcome to support additional features and services.
+//
+// See the README.md file for more information about the subtitle-manager project,
+// and how to configure and use the notifications package.
+//
+// Copyright (c) 2023 Your Name. All rights reserved.
+// License: MIT License (see LICENSE file for details)
+
 package notifications
 
 import (

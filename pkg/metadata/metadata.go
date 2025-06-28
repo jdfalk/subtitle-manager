@@ -1,4 +1,10 @@
-// file: pkg/metadata/metadata.go
+// Package metadata provides tools for extracting, parsing, and managing media metadata.
+// It supports TMDB lookups, filename parsing, and metadata enrichment for subtitle management.
+//
+// This package is used by subtitle-manager to associate subtitles with the correct media files.
+//
+// See: https://www.themoviedb.org/
+// File: pkg/metadata/metadata.go
 package metadata
 
 import (

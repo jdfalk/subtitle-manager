@@ -1,3 +1,6 @@
+// Package main is the entry point for the subtitle-manager application.
+// It initializes version information and starts the CLI command handler.
+
 package main
 
 import "github.com/jdfalk/subtitle-manager/cmd"
@@ -12,5 +15,3 @@ func main() {
 	cmd.SetVersionInfo(Version, BuildTime, GitCommit)
 	cmd.Execute()
 }
-
-// test comment

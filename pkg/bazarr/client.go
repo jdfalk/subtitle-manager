@@ -1,3 +1,11 @@
+// Package bazarr provides a client for interacting with the Bazarr subtitle management API.
+// It includes functions for fetching configuration and communicating with Bazarr instances.
+//
+// This package is used by the subtitle-manager to import and synchronize subtitle settings
+// from Bazarr servers in a secure and robust way.
+//
+// See: https://www.bazarr.media/
+
 // file: pkg/bazarr/client.go
 package bazarr
 

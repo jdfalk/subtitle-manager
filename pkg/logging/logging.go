@@ -1,3 +1,8 @@
+// Package logging provides structured logging utilities for subtitle-manager.
+// It wraps logrus and supports per-component log levels, file output, and configuration.
+//
+// This package is used throughout subtitle-manager for consistent, configurable logging.
+
 package logging
 
 import (
