@@ -66,7 +66,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV SM_FFMPEG_PATH=/usr/bin/ffmpeg
 
 # Create non-root user
-RUN addgroup -S subtitle && adduser -S subtitle -G subtitle
+RUN addgroup --system subtitle && adduser --system --ingroup subtitle subtitle
 
 # Create directories
 RUN mkdir -p /config /media && \

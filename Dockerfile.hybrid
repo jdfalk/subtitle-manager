@@ -2,7 +2,7 @@
 # Hybrid approach: Install Node.js in Go builder for go generate compatibility
 
 # Stage 1: Node.js build stage (can be cached separately)
-FROM node:24-alpine AS node-builder
+FROM node:24-bookworm AS node-builder
 WORKDIR /src/webui
 
 # Copy package files first for better caching
@@ -14,16 +14,17 @@ COPY webui/ ./
 RUN npm run build
 
 # Stage 2: Go build stage with Node.js for go generate
-FROM golang:1.24-alpine AS go-builder
+FROM golang:1.24-bookworm AS go-builder
 WORKDIR /src
 
 # Install build dependencies including Node.js
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     gcc \
-    musl-dev \
-    sqlite-dev \
+    sqlite3 libsqlite3-dev \
     nodejs \
-    npm
+    npm \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy go.mod and go.sum first for better dependency caching
 COPY go.mod go.sum ./
@@ -47,19 +48,20 @@ RUN CGO_ENABLED=1 \
     go build -ldflags="-s -w" -o subtitle-manager ./
 
 # Stage 3: Final runtime image
-FROM alpine:3.22
+FROM golang:1.24-bookworm AS final
 
 # Install runtime dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     ca-certificates \
-    tzdata
+    tzdata \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set ffmpeg path for the application
 ENV SM_FFMPEG_PATH=/usr/bin/ffmpeg
 
 # Create non-root user
-RUN addgroup -S subtitle && adduser -S subtitle -G subtitle
+RUN addgroup --system subtitle && adduser --system --ingroup subtitle subtitle
 
 # Create directories
 RUN mkdir -p /config /media && \
