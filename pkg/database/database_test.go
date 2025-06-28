@@ -1,19 +1,43 @@
 package database
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
+
+// getTestStore returns a test store, preferring Pebble when SQLite is not available
+func getTestStore(t *testing.T) SubtitleStore {
+	// Try SQLite first (in-memory), fall back to Pebble (temp directory)
+	store, err := OpenStore(":memory:", "sqlite")
+	if err != nil {
+		// SQLite not available, use Pebble with temp directory
+		store, err = OpenStore(t.TempDir(), "pebble")
+		if err != nil {
+			t.Fatalf("Failed to open both SQLite and Pebble stores: %v", err)
+		}
+	}
+	return store
+}
 
 func TestInsertAndList(t *testing.T) {
-	db, err := Open(":memory:")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer db.Close()
+	store := getTestStore(t)
+	defer store.Close()
 
-	if err := InsertSubtitle(db, "file.srt", "video.mkv", "es", "google", "", false); err != nil {
+	rec := &SubtitleRecord{
+		File:      "file.srt",
+		VideoFile: "video.mkv",
+		Language:  "es",
+		Service:   "google",
+		Release:   "",
+		Embedded:  false,
+		CreatedAt: time.Now(),
+	}
+
+	if err := store.InsertSubtitle(rec); err != nil {
 		t.Fatalf("insert: %v", err)
 	}
 
-	recs, err := ListSubtitles(db)
+	recs, err := store.ListSubtitles()
 	if err != nil {
 		t.Fatalf("list: %v", err)
 	}
@@ -28,18 +52,26 @@ func TestInsertAndList(t *testing.T) {
 }
 
 func TestDeleteSubtitle(t *testing.T) {
-	db, err := Open(":memory:")
-	if err != nil {
-		t.Fatal(err)
+	store := getTestStore(t)
+	defer store.Close()
+
+	rec := &SubtitleRecord{
+		File:      "file.srt",
+		VideoFile: "video.mkv",
+		Language:  "es",
+		Service:   "google",
+		Release:   "",
+		Embedded:  false,
+		CreatedAt: time.Now(),
 	}
-	defer db.Close()
-	if err := InsertSubtitle(db, "file.srt", "video.mkv", "es", "google", "", false); err != nil {
+
+	if err := store.InsertSubtitle(rec); err != nil {
 		t.Fatalf("insert: %v", err)
 	}
-	if err := DeleteSubtitle(db, "file.srt"); err != nil {
+	if err := store.DeleteSubtitle("file.srt"); err != nil {
 		t.Fatalf("delete: %v", err)
 	}
-	recs, err := ListSubtitles(db)
+	recs, err := store.ListSubtitles()
 	if err != nil {
 		t.Fatalf("list: %v", err)
 	}
@@ -49,25 +81,33 @@ func TestDeleteSubtitle(t *testing.T) {
 }
 
 func TestDownloadHistory(t *testing.T) {
-	db, err := Open(":memory:")
+	store, err := OpenStore(t.TempDir(), "pebble")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer db.Close()
-	if err := InsertDownload(db, "file.srt", "video.mkv", "opensubtitles", "en"); err != nil {
+	defer store.Close()
+
+	rec := &DownloadRecord{
+		File:      "file.srt",
+		VideoFile: "video.mkv",
+		Provider:  "opensubtitles",
+		Language:  "en",
+		CreatedAt: time.Now(),
+	}
+	if err := store.InsertDownload(rec); err != nil {
 		t.Fatalf("insert download: %v", err)
 	}
-	recs, err := ListDownloads(db)
+	recs, err := store.ListDownloads()
 	if err != nil {
 		t.Fatalf("list downloads: %v", err)
 	}
 	if len(recs) != 1 || recs[0].Provider != "opensubtitles" {
 		t.Fatalf("unexpected records %+v", recs)
 	}
-	if err := DeleteDownload(db, "file.srt"); err != nil {
+	if err := store.DeleteDownload("file.srt"); err != nil {
 		t.Fatalf("delete download: %v", err)
 	}
-	recs, err = ListDownloads(db)
+	recs, err = store.ListDownloads()
 	if err != nil {
 		t.Fatalf("list downloads: %v", err)
 	}
@@ -77,14 +117,30 @@ func TestDownloadHistory(t *testing.T) {
 }
 
 func TestHistoryByVideo(t *testing.T) {
-	db, err := Open(":memory:")
+	store, err := OpenStore(t.TempDir(), "pebble")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer db.Close()
-	_ = InsertSubtitle(db, "a.srt", "a.mkv", "en", "g", "", false)
-	_ = InsertSubtitle(db, "b.srt", "b.mkv", "en", "g", "", false)
-	recs, err := ListSubtitlesByVideo(db, "b.mkv")
+	defer store.Close()
+
+	rec1 := &SubtitleRecord{
+		File:      "a.srt",
+		VideoFile: "a.mkv",
+		Language:  "en",
+		Service:   "g",
+		CreatedAt: time.Now(),
+	}
+	rec2 := &SubtitleRecord{
+		File:      "b.srt",
+		VideoFile: "b.mkv",
+		Language:  "en",
+		Service:   "g",
+		CreatedAt: time.Now(),
+	}
+	_ = store.InsertSubtitle(rec1)
+	_ = store.InsertSubtitle(rec2)
+
+	recs, err := store.ListSubtitlesByVideo("b.mkv")
 	if err != nil {
 		t.Fatalf("list by video: %v", err)
 	}
@@ -94,26 +150,33 @@ func TestHistoryByVideo(t *testing.T) {
 }
 
 func TestMediaItems(t *testing.T) {
-	db, err := Open(":memory:")
+	store, err := OpenStore(t.TempDir(), "pebble")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer db.Close()
+	defer store.Close()
 
-	if err := InsertMediaItem(db, "video.mkv", "Show", 1, 2); err != nil {
+	rec := &MediaItem{
+		Path:      "video.mkv",
+		Title:     "Show",
+		Season:    1,
+		Episode:   2,
+		CreatedAt: time.Now(),
+	}
+	if err := store.InsertMediaItem(rec); err != nil {
 		t.Fatalf("insert media item: %v", err)
 	}
-	if err := SetMediaReleaseGroup(db, "video.mkv", "GROUP"); err != nil {
+	if err := store.SetMediaReleaseGroup("video.mkv", "GROUP"); err != nil {
 		t.Fatalf("set release group: %v", err)
 	}
-	if err := SetMediaAltTitles(db, "video.mkv", []string{"Alt"}); err != nil {
+	if err := store.SetMediaAltTitles("video.mkv", []string{"Alt"}); err != nil {
 		t.Fatalf("set alt titles: %v", err)
 	}
-	if err := SetMediaFieldLocks(db, "video.mkv", "title"); err != nil {
+	if err := store.SetMediaFieldLocks("video.mkv", "title"); err != nil {
 		t.Fatalf("set locks: %v", err)
 	}
 
-	items, err := ListMediaItems(db)
+	items, err := store.ListMediaItems()
 	if err != nil {
 		t.Fatalf("list media items: %v", err)
 	}
@@ -121,10 +184,10 @@ func TestMediaItems(t *testing.T) {
 		t.Fatalf("unexpected items %+v", items)
 	}
 
-	if err := DeleteMediaItem(db, "video.mkv"); err != nil {
+	if err := store.DeleteMediaItem("video.mkv"); err != nil {
 		t.Fatalf("delete media item: %v", err)
 	}
-	items, err = ListMediaItems(db)
+	items, err = store.ListMediaItems()
 	if err != nil {
 		t.Fatalf("list media items: %v", err)
 	}

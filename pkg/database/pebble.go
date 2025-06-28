@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -353,36 +354,6 @@ func (p *PebbleStore) CountMediaItems() (int, error) {
 	return count, nil
 }
 
-// InsertTag is unsupported for PebbleStore and returns nil for compatibility.
-func (p *PebbleStore) InsertTag(name string) error { return nil }
-
-// ListTags returns no tags for PebbleStore.
-func (p *PebbleStore) ListTags() ([]Tag, error) { return nil, nil }
-
-// DeleteTag is a no-op for PebbleStore.
-func (p *PebbleStore) DeleteTag(id int64) error { return nil }
-
-// UpdateTag is a no-op for PebbleStore.
-func (p *PebbleStore) UpdateTag(id int64, name string) error { return nil }
-
-// AssignTagToUser is a no-op for PebbleStore.
-func (p *PebbleStore) AssignTagToUser(userID, tagID int64) error { return nil }
-
-// RemoveTagFromUser is a no-op for PebbleStore.
-func (p *PebbleStore) RemoveTagFromUser(userID, tagID int64) error { return nil }
-
-// ListTagsForUser returns no tags for PebbleStore.
-func (p *PebbleStore) ListTagsForUser(userID int64) ([]Tag, error) { return nil, nil }
-
-// AssignTagToMedia is a no-op for PebbleStore.
-func (p *PebbleStore) AssignTagToMedia(mediaID, tagID int64) error { return nil }
-
-// RemoveTagFromMedia is a no-op for PebbleStore.
-func (p *PebbleStore) RemoveTagFromMedia(mediaID, tagID int64) error { return nil }
-
-// ListTagsForMedia returns no tags for PebbleStore.
-func (p *PebbleStore) ListTagsForMedia(mediaID int64) ([]Tag, error) { return nil, nil }
-
 // SetMediaReleaseGroup stores the release group in the media item record.
 func (p *PebbleStore) SetMediaReleaseGroup(path, group string) error {
 	item, _, err := p.getMediaByPath(path)
@@ -425,4 +396,949 @@ func (p *PebbleStore) SetMediaTitle(path, title string) error {
 	}
 	item.Title = title
 	return p.InsertMediaItem(item)
+}
+
+// ==================== USER AUTHENTICATION FUNCTIONS ====================
+
+// User represents an account in the system for Pebble storage.
+type User struct {
+	ID           string    `json:"id"`
+	Username     string    `json:"username"`
+	PasswordHash string    `json:"password_hash"`
+	Email        string    `json:"email"`
+	Role         string    `json:"role"`
+	CreatedAt    time.Time `json:"created_at"`
+}
+
+// Session represents a user session for Pebble storage.
+type Session struct {
+	ID        string    `json:"id"`
+	UserID    string    `json:"user_id"`
+	Token     string    `json:"token"`
+	ExpiresAt time.Time `json:"expires_at"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// ApiKey represents an API key for Pebble storage.
+type ApiKey struct {
+	ID        string    `json:"id"`
+	UserID    string    `json:"user_id"`
+	Key       string    `json:"key"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// LoginToken represents a one-time login token for Pebble storage.
+type LoginToken struct {
+	ID        string    `json:"id"`
+	UserID    string    `json:"user_id"`
+	Token     string    `json:"token"`
+	ExpiresAt time.Time `json:"expires_at"`
+	Used      bool      `json:"used"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// Permission represents a role-based permission for Pebble storage.
+type Permission struct {
+	ID         string `json:"id"`
+	Role       string `json:"role"`
+	Permission string `json:"permission"`
+}
+
+// DashboardPref represents user dashboard preferences for Pebble storage.
+type DashboardPref struct {
+	UserID    string    `json:"user_id"`
+	Layout    string    `json:"layout"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+// Helper functions for key generation
+func userKey(id string) []byte               { return []byte("user:" + id) }
+func userUsernameKey(username string) []byte { return []byte("user_username:" + username) }
+func userEmailKey(email string) []byte       { return []byte("user_email:" + email) }
+func sessionKey(id string) []byte            { return []byte("session:" + id) }
+func sessionTokenKey(token string) []byte    { return []byte("session_token:" + token) }
+func apiKeyKey(id string) []byte             { return []byte("api_key:" + id) }
+func apiKeyValueKey(key string) []byte       { return []byte("api_key_value:" + key) }
+func loginTokenKey(id string) []byte         { return []byte("login_token:" + id) }
+func loginTokenValueKey(token string) []byte { return []byte("login_token_value:" + token) }
+func permissionKey(id string) []byte         { return []byte("permission:" + id) }
+func dashboardKey(userID string) []byte      { return []byte("dashboard:" + userID) }
+func tagKey(id string) []byte                { return []byte("tag:" + id) }
+func tagNameKey(name string) []byte          { return []byte("tag_name:" + name) }
+func tagAssocKey(tagID, entityType, entityID string) []byte {
+	return []byte("tag_assoc:" + tagID + ":" + entityType + ":" + entityID)
+}
+
+// CreateUser inserts a new user with hashed password.
+func (p *PebbleStore) CreateUser(username, passwordHash, email, role string) (string, error) {
+	id := uuid.NewString()
+	user := User{
+		ID:           id,
+		Username:     username,
+		PasswordHash: passwordHash,
+		Email:        email,
+		Role:         role,
+		CreatedAt:    time.Now(),
+	}
+
+	userData, err := json.Marshal(user)
+	if err != nil {
+		return "", err
+	}
+
+	batch := p.db.NewBatch()
+	if err := batch.Set(userKey(id), userData, nil); err != nil {
+		batch.Close()
+		return "", err
+	}
+	if err := batch.Set(userUsernameKey(username), []byte(id), nil); err != nil {
+		batch.Close()
+		return "", err
+	}
+	if email != "" {
+		if err := batch.Set(userEmailKey(email), []byte(id), nil); err != nil {
+			batch.Close()
+			return "", err
+		}
+	}
+	if err := batch.Commit(pebble.Sync); err != nil {
+		return "", err
+	}
+	return id, nil
+}
+
+// GetUserByUsername retrieves a user by username.
+func (p *PebbleStore) GetUserByUsername(username string) (*User, error) {
+	val, closer, err := p.db.Get(userUsernameKey(username))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	closer.Close()
+
+	id := string(val)
+	userData, closer, err := p.db.Get(userKey(id))
+	if err != nil {
+		return nil, err
+	}
+	defer closer.Close()
+
+	var user User
+	if err := json.Unmarshal(userData, &user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// GetUserByEmail retrieves a user by email address.
+func (p *PebbleStore) GetUserByEmail(email string) (*User, error) {
+	val, closer, err := p.db.Get(userEmailKey(email))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	closer.Close()
+
+	id := string(val)
+	userData, closer, err := p.db.Get(userKey(id))
+	if err != nil {
+		return nil, err
+	}
+	defer closer.Close()
+
+	var user User
+	if err := json.Unmarshal(userData, &user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// GetUserByID retrieves a user by ID.
+func (p *PebbleStore) GetUserByID(id string) (*User, error) {
+	userData, closer, err := p.db.Get(userKey(id))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	defer closer.Close()
+
+	var user User
+	if err := json.Unmarshal(userData, &user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// ListUsers returns all users sorted by creation time.
+func (p *PebbleStore) ListUsers() ([]User, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var users []User
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "user:") {
+			continue
+		}
+		var user User
+		if err := json.Unmarshal(iter.Value(), &user); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	if err := iter.Error(); err != nil {
+		return nil, err
+	}
+
+	sort.Slice(users, func(i, j int) bool {
+		return users[i].CreatedAt.Before(users[j].CreatedAt)
+	})
+	return users, nil
+}
+
+// UpdateUserRole updates a user's role.
+func (p *PebbleStore) UpdateUserRole(username, role string) error {
+	user, err := p.GetUserByUsername(username)
+	if err != nil || user == nil {
+		return err
+	}
+
+	user.Role = role
+	userData, err := json.Marshal(user)
+	if err != nil {
+		return err
+	}
+
+	return p.db.Set(userKey(user.ID), userData, pebble.Sync)
+}
+
+// UpdateUserPassword updates a user's password hash.
+func (p *PebbleStore) UpdateUserPassword(userID, passwordHash string) error {
+	user, err := p.GetUserByID(userID)
+	if err != nil || user == nil {
+		return err
+	}
+
+	user.PasswordHash = passwordHash
+	userData, err := json.Marshal(user)
+	if err != nil {
+		return err
+	}
+
+	return p.db.Set(userKey(userID), userData, pebble.Sync)
+}
+
+// CreateSession creates a new user session.
+func (p *PebbleStore) CreateSession(userID, token string, duration time.Duration) error {
+	id := uuid.NewString()
+	session := Session{
+		ID:        id,
+		UserID:    userID,
+		Token:     token,
+		ExpiresAt: time.Now().Add(duration),
+		CreatedAt: time.Now(),
+	}
+
+	sessionData, err := json.Marshal(session)
+	if err != nil {
+		return err
+	}
+
+	batch := p.db.NewBatch()
+	if err := batch.Set(sessionKey(id), sessionData, nil); err != nil {
+		batch.Close()
+		return err
+	}
+	if err := batch.Set(sessionTokenKey(token), []byte(id), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	return batch.Commit(pebble.Sync)
+}
+
+// ValidateSession validates a session token and returns the user ID.
+func (p *PebbleStore) ValidateSession(token string) (string, error) {
+	val, closer, err := p.db.Get(sessionTokenKey(token))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return "", nil
+		}
+		return "", err
+	}
+	closer.Close()
+
+	sessionID := string(val)
+	sessionData, closer, err := p.db.Get(sessionKey(sessionID))
+	if err != nil {
+		return "", err
+	}
+	defer closer.Close()
+
+	var session Session
+	if err := json.Unmarshal(sessionData, &session); err != nil {
+		return "", err
+	}
+
+	if time.Now().After(session.ExpiresAt) {
+		// Session expired, clean it up
+		p.InvalidateSession(token)
+		return "", nil
+	}
+
+	return session.UserID, nil
+}
+
+// InvalidateSession removes a session token.
+func (p *PebbleStore) InvalidateSession(token string) error {
+	val, closer, err := p.db.Get(sessionTokenKey(token))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil // Already gone
+		}
+		return err
+	}
+	closer.Close()
+
+	sessionID := string(val)
+	batch := p.db.NewBatch()
+	if err := batch.Delete(sessionKey(sessionID), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	if err := batch.Delete(sessionTokenKey(token), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	return batch.Commit(pebble.Sync)
+}
+
+// InvalidateUserSessions removes all sessions for a user.
+func (p *PebbleStore) InvalidateUserSessions(userID string) error {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return err
+	}
+	defer iter.Close()
+
+	batch := p.db.NewBatch()
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "session:") {
+			continue
+		}
+		var session Session
+		if err := json.Unmarshal(iter.Value(), &session); err != nil {
+			continue
+		}
+		if session.UserID == userID {
+			if err := batch.Delete(iter.Key(), nil); err != nil {
+				batch.Close()
+				return err
+			}
+			if err := batch.Delete(sessionTokenKey(session.Token), nil); err != nil {
+				batch.Close()
+				return err
+			}
+		}
+	}
+	return batch.Commit(pebble.Sync)
+}
+
+// CleanupExpiredSessions removes expired sessions.
+func (p *PebbleStore) CleanupExpiredSessions() error {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return err
+	}
+	defer iter.Close()
+
+	now := time.Now()
+	batch := p.db.NewBatch()
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "session:") {
+			continue
+		}
+		var session Session
+		if err := json.Unmarshal(iter.Value(), &session); err != nil {
+			continue
+		}
+		if now.After(session.ExpiresAt) {
+			if err := batch.Delete(iter.Key(), nil); err != nil {
+				batch.Close()
+				return err
+			}
+			if err := batch.Delete(sessionTokenKey(session.Token), nil); err != nil {
+				batch.Close()
+				return err
+			}
+		}
+	}
+	return batch.Commit(pebble.Sync)
+}
+
+// CreateAPIKey creates a new API key for a user.
+func (p *PebbleStore) CreateAPIKey(userID, key string) error {
+	id := uuid.NewString()
+	apiKey := ApiKey{
+		ID:        id,
+		UserID:    userID,
+		Key:       key,
+		CreatedAt: time.Now(),
+	}
+
+	keyData, err := json.Marshal(apiKey)
+	if err != nil {
+		return err
+	}
+
+	batch := p.db.NewBatch()
+	if err := batch.Set(apiKeyKey(id), keyData, nil); err != nil {
+		batch.Close()
+		return err
+	}
+	if err := batch.Set(apiKeyValueKey(key), []byte(userID), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	return batch.Commit(pebble.Sync)
+}
+
+// ValidateAPIKey validates an API key and returns the user ID.
+func (p *PebbleStore) ValidateAPIKey(key string) (string, error) {
+	val, closer, err := p.db.Get(apiKeyValueKey(key))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return "", nil
+		}
+		return "", err
+	}
+	defer closer.Close()
+
+	return string(val), nil
+}
+
+// CreateOneTimeToken creates a one-time login token.
+func (p *PebbleStore) CreateOneTimeToken(userID, token string, duration time.Duration) error {
+	id := uuid.NewString()
+	loginToken := LoginToken{
+		ID:        id,
+		UserID:    userID,
+		Token:     token,
+		ExpiresAt: time.Now().Add(duration),
+		Used:      false,
+		CreatedAt: time.Now(),
+	}
+
+	tokenData, err := json.Marshal(loginToken)
+	if err != nil {
+		return err
+	}
+
+	batch := p.db.NewBatch()
+	if err := batch.Set(loginTokenKey(id), tokenData, nil); err != nil {
+		batch.Close()
+		return err
+	}
+	if err := batch.Set(loginTokenValueKey(token), []byte(id), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	return batch.Commit(pebble.Sync)
+}
+
+// ConsumeOneTimeToken validates and marks a token as used.
+func (p *PebbleStore) ConsumeOneTimeToken(token string) (string, error) {
+	val, closer, err := p.db.Get(loginTokenValueKey(token))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return "", nil
+		}
+		return "", err
+	}
+	closer.Close()
+
+	tokenID := string(val)
+	tokenData, closer, err := p.db.Get(loginTokenKey(tokenID))
+	if err != nil {
+		return "", err
+	}
+	defer closer.Close()
+
+	var loginToken LoginToken
+	if err := json.Unmarshal(tokenData, &loginToken); err != nil {
+		return "", err
+	}
+
+	if loginToken.Used || time.Now().After(loginToken.ExpiresAt) {
+		return "", nil
+	}
+
+	loginToken.Used = true
+	updatedData, err := json.Marshal(loginToken)
+	if err != nil {
+		return "", err
+	}
+
+	if err := p.db.Set(loginTokenKey(tokenID), updatedData, pebble.Sync); err != nil {
+		return "", err
+	}
+
+	return loginToken.UserID, nil
+}
+
+// SetDashboardLayout sets the dashboard layout for a user.
+func (p *PebbleStore) SetDashboardLayout(userID, layout string) error {
+	pref := DashboardPref{
+		UserID:    userID,
+		Layout:    layout,
+		UpdatedAt: time.Now(),
+	}
+
+	prefData, err := json.Marshal(pref)
+	if err != nil {
+		return err
+	}
+
+	return p.db.Set(dashboardKey(userID), prefData, pebble.Sync)
+}
+
+// GetDashboardLayout gets the dashboard layout for a user.
+func (p *PebbleStore) GetDashboardLayout(userID string) (string, error) {
+	prefData, closer, err := p.db.Get(dashboardKey(userID))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return "", nil
+		}
+		return "", err
+	}
+	defer closer.Close()
+
+	var pref DashboardPref
+	if err := json.Unmarshal(prefData, &pref); err != nil {
+		return "", err
+	}
+
+	return pref.Layout, nil
+}
+
+// ==================== ENHANCED TAG SYSTEM ====================
+
+// InsertTag creates a new tag (overrides the stub implementation).
+func (p *PebbleStore) InsertTag(name string) error {
+	return p.CreateTag(name, "user", "all", "", "")
+}
+
+// CreateTag creates a new tag with full metadata.
+func (p *PebbleStore) CreateTag(name, tagType, entityType, color, description string) error {
+	id := uuid.NewString()
+	tag := Tag{
+		ID:          id,
+		Name:        name,
+		Type:        tagType,
+		EntityType:  entityType,
+		Color:       color,
+		Description: description,
+		CreatedAt:   time.Now(),
+	}
+
+	tagData, err := json.Marshal(tag)
+	if err != nil {
+		return err
+	}
+
+	batch := p.db.NewBatch()
+	if err := batch.Set(tagKey(id), tagData, nil); err != nil {
+		batch.Close()
+		return err
+	}
+	if err := batch.Set(tagNameKey(name), []byte(id), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	return batch.Commit(pebble.Sync)
+}
+
+// ListTags returns all tags (overrides the stub implementation).
+func (p *PebbleStore) ListTags() ([]Tag, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var tags []Tag
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "tag:") {
+			continue
+		}
+		var tag Tag
+		if err := json.Unmarshal(iter.Value(), &tag); err != nil {
+			return nil, err
+		}
+		tags = append(tags, tag)
+	}
+	if err := iter.Error(); err != nil {
+		return nil, err
+	}
+
+	sort.Slice(tags, func(i, j int) bool {
+		return tags[i].Name < tags[j].Name
+	})
+	return tags, nil
+}
+
+// GetTagByName retrieves a tag by name.
+func (p *PebbleStore) GetTagByName(name string) (*Tag, error) {
+	val, closer, err := p.db.Get(tagNameKey(name))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	closer.Close()
+
+	id := string(val)
+	tagData, closer, err := p.db.Get(tagKey(id))
+	if err != nil {
+		return nil, err
+	}
+	defer closer.Close()
+
+	var tag Tag
+	if err := json.Unmarshal(tagData, &tag); err != nil {
+		return nil, err
+	}
+	return &tag, nil
+}
+
+// UpdateTag updates an existing tag.
+func (p *PebbleStore) UpdateTag(id int64, name string) error {
+	// For legacy compatibility, we need to store a mapping of int64 IDs to string UUIDs
+	// First, find all tags and check which one corresponds to this int64 ID
+	tags, err := p.ListTags()
+	if err != nil {
+		return err
+	}
+
+	// Find the tag by matching the legacy ID (we'll use array index for now)
+	if id <= 0 || int(id-1) >= len(tags) {
+		return errors.New("tag not found")
+	}
+
+	tag := tags[id-1] // Use array index as legacy ID
+	oldName := tag.Name
+
+	// Remove old name mapping
+	if err := p.db.Delete(tagNameKey(oldName), nil); err != nil {
+		return err
+	}
+
+	tag.Name = name
+	updatedData, err := json.Marshal(tag)
+	if err != nil {
+		return err
+	}
+
+	batch := p.db.NewBatch()
+	if err := batch.Set(tagKey(tag.ID), updatedData, nil); err != nil {
+		batch.Close()
+		return err
+	}
+	if err := batch.Set(tagNameKey(name), []byte(tag.ID), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	return batch.Commit(pebble.Sync)
+}
+
+// DeleteTag removes a tag and all its associations.
+func (p *PebbleStore) DeleteTag(id int64) error {
+	// For legacy compatibility, find tag by index
+	tags, err := p.ListTags()
+	if err != nil {
+		return err
+	}
+
+	if id <= 0 || int(id-1) >= len(tags) {
+		return errors.New("tag not found")
+	}
+
+	tag := tags[id-1] // Use array index as legacy ID
+	tagID := tag.ID
+
+	// Remove all associations for this tag
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return err
+	}
+	defer iter.Close()
+
+	batch := p.db.NewBatch()
+	prefix := "tag_assoc:" + tagID + ":"
+	for iter.First(); iter.Valid(); iter.Next() {
+		if strings.HasPrefix(string(iter.Key()), prefix) {
+			if err := batch.Delete(iter.Key(), nil); err != nil {
+				batch.Close()
+				return err
+			}
+		}
+	}
+
+	// Remove tag and name mapping
+	if err := batch.Delete(tagKey(tagID), nil); err != nil {
+		batch.Close()
+		return err
+	}
+	if err := batch.Delete(tagNameKey(tag.Name), nil); err != nil {
+		batch.Close()
+		return err
+	}
+
+	return batch.Commit(pebble.Sync)
+}
+
+// AssignTagToEntity creates a tag association.
+func (p *PebbleStore) AssignTagToEntity(tagID, entityType, entityID string) error {
+	assoc := TagAssociation{
+		TagID:      tagID,
+		EntityType: entityType,
+		EntityID:   entityID,
+		CreatedAt:  time.Now(),
+	}
+
+	assocData, err := json.Marshal(assoc)
+	if err != nil {
+		return err
+	}
+
+	key := tagAssocKey(tagID, entityType, entityID)
+	return p.db.Set(key, assocData, pebble.Sync)
+}
+
+// RemoveTagFromEntity removes a tag association.
+func (p *PebbleStore) RemoveTagFromEntity(tagID, entityType, entityID string) error {
+	key := tagAssocKey(tagID, entityType, entityID)
+	return p.db.Delete(key, pebble.Sync)
+}
+
+// ListTagsForEntity returns tags associated with an entity.
+func (p *PebbleStore) ListTagsForEntity(entityType, entityID string) ([]Tag, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var tagIDs []string
+	prefix := "tag_assoc:"
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), prefix) {
+			continue
+		}
+		var assoc TagAssociation
+		if err := json.Unmarshal(iter.Value(), &assoc); err != nil {
+			continue
+		}
+		if assoc.EntityType == entityType && assoc.EntityID == entityID {
+			tagIDs = append(tagIDs, assoc.TagID)
+		}
+	}
+
+	var tags []Tag
+	for _, tagID := range tagIDs {
+		tagData, closer, err := p.db.Get(tagKey(tagID))
+		if err != nil {
+			continue
+		}
+		var tag Tag
+		if err := json.Unmarshal(tagData, &tag); err != nil {
+			closer.Close()
+			continue
+		}
+		closer.Close()
+		tags = append(tags, tag)
+	}
+
+	sort.Slice(tags, func(i, j int) bool {
+		return tags[i].Name < tags[j].Name
+	})
+	return tags, nil
+}
+
+// Legacy compatibility functions for the existing tag interface
+
+// AssignTagToUser assigns a tag to a user (legacy compatibility).
+func (p *PebbleStore) AssignTagToUser(userID, tagID int64) error {
+	// Convert legacy int64 IDs to string format
+	userIDStr := strconv.FormatInt(userID, 10)
+
+	// For tagID, we need to map from legacy int64 to our UUID strings
+	tags, err := p.ListTags()
+	if err != nil {
+		return err
+	}
+
+	if tagID <= 0 || int(tagID-1) >= len(tags) {
+		return errors.New("tag not found")
+	}
+
+	tag := tags[tagID-1] // Use array index as legacy ID
+	return p.AssignTagToEntity(tag.ID, "user", userIDStr)
+}
+
+// RemoveTagFromUser removes a tag from a user (legacy compatibility).
+func (p *PebbleStore) RemoveTagFromUser(userID, tagID int64) error {
+	userIDStr := strconv.FormatInt(userID, 10)
+
+	tags, err := p.ListTags()
+	if err != nil {
+		return err
+	}
+
+	if tagID <= 0 || int(tagID-1) >= len(tags) {
+		return errors.New("tag not found")
+	}
+
+	tag := tags[tagID-1]
+	return p.RemoveTagFromEntity(tag.ID, "user", userIDStr)
+}
+
+// ListTagsForUser returns tags for a user (legacy compatibility).
+func (p *PebbleStore) ListTagsForUser(userID int64) ([]Tag, error) {
+	userIDStr := strconv.FormatInt(userID, 10)
+	return p.ListTagsForEntity("user", userIDStr)
+}
+
+// AssignTagToMedia assigns a tag to media (legacy compatibility).
+func (p *PebbleStore) AssignTagToMedia(mediaID, tagID int64) error {
+	mediaIDStr := strconv.FormatInt(mediaID, 10)
+
+	tags, err := p.ListTags()
+	if err != nil {
+		return err
+	}
+
+	if tagID <= 0 || int(tagID-1) >= len(tags) {
+		return errors.New("tag not found")
+	}
+
+	tag := tags[tagID-1]
+	return p.AssignTagToEntity(tag.ID, "media", mediaIDStr)
+}
+
+// RemoveTagFromMedia removes a tag from media (legacy compatibility).
+func (p *PebbleStore) RemoveTagFromMedia(mediaID, tagID int64) error {
+	mediaIDStr := strconv.FormatInt(mediaID, 10)
+
+	tags, err := p.ListTags()
+	if err != nil {
+		return err
+	}
+
+	if tagID <= 0 || int(tagID-1) >= len(tags) {
+		return errors.New("tag not found")
+	}
+
+	tag := tags[tagID-1]
+	return p.RemoveTagFromEntity(tag.ID, "media", mediaIDStr)
+}
+
+// ListTagsForMedia returns tags for media (legacy compatibility).
+func (p *PebbleStore) ListTagsForMedia(mediaID int64) ([]Tag, error) {
+	mediaIDStr := strconv.FormatInt(mediaID, 10)
+	return p.ListTagsForEntity("media", mediaIDStr)
+}
+
+// ==================== PERMISSION SYSTEM ====================
+
+// CreatePermission creates a new permission.
+func (p *PebbleStore) CreatePermission(role, permission string) error {
+	id := uuid.NewString()
+	perm := Permission{
+		ID:         id,
+		Role:       role,
+		Permission: permission,
+	}
+
+	permData, err := json.Marshal(perm)
+	if err != nil {
+		return err
+	}
+
+	return p.db.Set(permissionKey(id), permData, pebble.Sync)
+}
+
+// ListPermissions returns all permissions.
+func (p *PebbleStore) ListPermissions() ([]Permission, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var permissions []Permission
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "permission:") {
+			continue
+		}
+		var perm Permission
+		if err := json.Unmarshal(iter.Value(), &perm); err != nil {
+			return nil, err
+		}
+		permissions = append(permissions, perm)
+	}
+	if err := iter.Error(); err != nil {
+		return nil, err
+	}
+
+	return permissions, nil
+}
+
+// GetPermissionsForRole returns permissions for a specific role.
+func (p *PebbleStore) GetPermissionsForRole(role string) ([]string, error) {
+	perms, err := p.ListPermissions()
+	if err != nil {
+		return nil, err
+	}
+
+	var permissions []string
+	for _, perm := range perms {
+		if perm.Role == role {
+			permissions = append(permissions, perm.Permission)
+		}
+	}
+
+	return permissions, nil
+}
+
+// InitializeDefaultPermissions seeds default permissions if none exist.
+func (p *PebbleStore) InitializeDefaultPermissions() error {
+	perms, err := p.ListPermissions()
+	if err != nil {
+		return err
+	}
+
+	if len(perms) == 0 {
+		defaults := []struct{ role, permission string }{
+			{"admin", "all"},
+			{"user", "read"},
+			{"user", "download"},
+		}
+
+		for _, def := range defaults {
+			if err := p.CreatePermission(def.role, def.permission); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

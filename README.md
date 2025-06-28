@@ -290,6 +290,45 @@ and deployment tasks:
 The Makefile handles dependency resolution, web UI building, Go compilation,
 testing, Docker builds, and more.
 
+### Database Backend Build Options
+
+Subtitle Manager supports multiple database backends that can be selected at
+build time:
+
+#### Pure Go Build (Default)
+
+```bash
+# Build without CGO dependencies (uses PebbleDB)
+go build -tags nosqlite .
+```
+
+- **No CGO required** - Fully portable binary
+- **PebbleDB backend** - High-performance embedded key-value store
+- **All features supported** - Authentication, sessions, tags, permissions, etc.
+- **Smaller binary size** - No SQLite dependencies
+
+#### SQLite Build (CGO Required)
+
+```bash
+# Build with SQLite support (requires CGO)
+go build -tags sqlite .
+```
+
+- **CGO required** - Needs C compiler and SQLite libraries
+- **SQLite backend** - Traditional SQL database
+- **Full SQL querying** - Standard SQL operations available
+- **Migration support** - Can migrate from existing SQLite databases
+
+#### Build Tag Summary
+
+- **No tags or `-tags nosqlite`**: Pure Go build with PebbleDB (recommended)
+- **`-tags sqlite`**: CGO build with SQLite support
+- **Tests**: Run `go test -tags nosqlite` or `go test -tags sqlite` respectively
+
+Both backends provide identical functionality for all user-facing features
+including authentication, session management, API keys, dashboard preferences,
+tags, permissions, and subtitle history.
+
 ## Usage
 
 \``` subtitle-manager convert [input] [output] subtitle-manager merge [sub1]
@@ -341,10 +380,31 @@ Environment variables prefixed with `SM_` override configuration values. API
 keys may be specified via flags `--google-key`, `--openai-key`,
 `--opensubtitles-key`, `--tmdb-key`, and `--omdb-key` or in the configuration
 file. Additional flags include `--ffmpeg-path` for a custom ffmpeg binary,
-`--batch-workers` and `--scan-workers` to control concurrency. The SQLite
-database location defaults to `$HOME/.subtitle-manager.db` and can be overridden
-with `--db`. Use `--db-backend` to switch between the `sqlite` and `pebble`
-engines. When using PebbleDB a directory path may be supplied instead of a file.
+`--batch-workers` and `--scan-workers` to control concurrency.
+
+#### Database Configuration
+
+The database location and backend can be configured with:
+
+- **`--db`** - Database file path (SQLite) or directory path (PebbleDB)
+  - Default: `$HOME/.subtitle-manager.db` (SQLite) or
+    `$HOME/.subtitle-manager-data/` (PebbleDB)
+- **`--db-backend`** - Choose between `sqlite`, `pebble`, or `postgres` engines
+  - Default: `pebble` (pure Go builds), `sqlite` (CGO builds)
+
+**Database Backend Selection:**
+
+- **PebbleDB** (`pebble`): Default for pure Go builds, no CGO required, high
+  performance
+- **SQLite** (`sqlite`): Traditional SQL database, requires CGO, migration
+  support
+- **PostgreSQL** (`postgres`): External database server, requires connection
+  string
+
+When using PebbleDB, a directory path should be supplied instead of a file. To
+migrate existing SQLite databases to PebbleDB, run:
+`subtitle-manager migrate old.db newdir`
+
 Translation can be delegated to a remote gRPC server using the `--grpc` flag and
 providing an address such as `localhost:50051`. Generic provider options may
 also be set with variables like `SM_PROVIDERS_GENERIC_API_URL`. For WebSocket
