@@ -151,3 +151,43 @@ func TestProcessFileInvalidProvider(t *testing.T) {
 		t.Fatalf("expected error for provider name with path traversal")
 	}
 }
+
+func TestProcessFilePathValidation(t *testing.T) {
+	// Test that ProcessFile properly validates paths for CodeQL path injection prevention
+	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	defer viper.Reset()
+
+	// Create a valid video file
+	vid := filepath.Join(dir, "movie.mkv")
+	if err := os.WriteFile(vid, []byte("x"), 0644); err != nil {
+		t.Fatalf("create video: %v", err)
+	}
+
+	// Mock provider that returns subtitle data
+	m := providersmocks.NewProvider(t)
+	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("subtitle content"), nil)
+
+	// Call ProcessFile - this should work without path injection issues
+	err := ProcessFile(context.Background(), vid, "en", "test", m, false, nil)
+	if err != nil {
+		t.Fatalf("ProcessFile failed: %v", err)
+	}
+
+	// Verify the subtitle file was created with the validated path
+	sub := filepath.Join(dir, "movie.en.srt")
+	if _, err := os.Stat(sub); err != nil {
+		t.Fatalf("subtitle file not created: %v", err)
+	}
+
+	// Verify the content is correct
+	data, err := os.ReadFile(sub)
+	if err != nil {
+		t.Fatalf("read subtitle: %v", err)
+	}
+	if string(data) != "subtitle content" {
+		t.Fatalf("unexpected subtitle content: %q", data)
+	}
+
+	m.AssertExpectations(t)
+}
