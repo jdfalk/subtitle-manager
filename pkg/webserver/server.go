@@ -19,6 +19,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/bazarr"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/maintenance"
 	"github.com/jdfalk/subtitle-manager/pkg/radarr"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
@@ -208,9 +209,12 @@ func Handler(db *sql.DB) (http.Handler, error) {
 
 // StartServer starts an HTTP server on the given address serving the embedded UI.
 func StartServer(addr string) error {
+	logger := logging.GetLogger("webserver")
+	logger.Infof("starting web server on %s", addr)
 	// Get database configuration
 	backend := database.GetDatabaseBackend()
 	dbPath := viper.GetString("db_path")
+	logger.Infof("using %s database at %s", backend, dbPath)
 
 	var db *sql.DB
 	var err error
@@ -219,11 +223,11 @@ func StartServer(addr string) error {
 	// If backend is not sqlite, we still need to create a SQLite DB for auth
 	if backend == "sqlite" {
 		fullPath := database.GetDatabasePath()
-		// Ensure directory exists
 		if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
 			return fmt.Errorf("failed to create database directory: %w", err)
 		}
 		db, err = database.Open(fullPath)
+		logger.Infof("opened SQLite database %s", fullPath)
 	} else {
 		// For non-SQLite backends, create a separate SQLite DB for auth
 		authDbPath := filepath.Join(dbPath, "auth.db")
@@ -232,12 +236,14 @@ func StartServer(addr string) error {
 			return fmt.Errorf("failed to create database directory: %w", err)
 		}
 		db, err = database.Open(authDbPath)
+		logger.Infof("opened auth database %s", authDbPath)
 	}
 
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
 	defer db.Close()
+	logger.Info("database initialized")
 
 	// Check for automatic admin user creation via environment variables
 	if err := createDefaultAdminIfNeeded(db); err != nil {
@@ -250,17 +256,20 @@ func StartServer(addr string) error {
 	}
 
 	// Start periodic cleanup of expired sessions
+	logger.Info("starting session cleanup task")
 	go startSessionCleanup(db)
 
 	// Start automatic update checker if enabled
 	if viper.GetBool("auto_update") {
 		freq := viper.GetString("update_frequency")
 		repo := "subtitle-manager/subtitle-manager"
+		logger.Infof("auto update enabled, frequency %s", freq)
 		ctx := context.Background()
 		updater.StartPeriodic(ctx, repo, AppVersion, freq)
 	}
 
 	// Start automated maintenance tasks
+	logger.Info("starting database cleanup task")
 	go maintenance.StartDatabaseCleanup(context.Background(), db,
 		viper.GetString("db_cleanup_frequency"))
 
@@ -284,6 +293,7 @@ func StartServer(addr string) error {
 			}
 			url := fmt.Sprintf("%s://%s:%v/%s", scheme, host, port, base)
 			c := radarr.NewClient(url, key)
+			logger.Infof("starting Radarr sync every %d minutes", interval)
 			ctx := context.Background()
 			radarr.StartSync(ctx, time.Duration(interval)*time.Minute, c, store)
 		}
@@ -303,6 +313,7 @@ func StartServer(addr string) error {
 			}
 			url := fmt.Sprintf("%s://%s:%v/%s", scheme, host, port, base)
 			c := sonarr.NewClient(url, key)
+			logger.Infof("starting Sonarr sync every %d minutes", interval)
 			ctx := context.Background()
 			sonarr.StartSync(ctx, time.Duration(interval)*time.Minute, c, store)
 		}
@@ -311,6 +322,7 @@ func StartServer(addr string) error {
 	// Start additional maintenance tasks for metadata and disk scanning
 	storePath = database.GetDatabasePath()
 	backend = database.GetDatabaseBackend()
+	logger.Info("starting metadata refresh and disk scan tasks")
 	go func() {
 		var store database.SubtitleStore
 		var err error
@@ -333,6 +345,7 @@ func StartServer(addr string) error {
 	go maintenance.StartDiskScan(context.Background(), viper.GetString("db_path"),
 		viper.GetString("disk_scan_frequency"))
 
+	logger.Infof("listening on %s", addr)
 	return http.ListenAndServe(addr, h)
 }
 
@@ -360,7 +373,7 @@ func createDefaultAdminIfNeeded(db *sql.DB) error {
 		return fmt.Errorf("failed to create admin user: %w", err)
 	}
 
-	fmt.Printf("Created default admin user from environment variables: %s\n", adminUser)
+	logging.GetLogger("webserver").Infof("created default admin user from environment variables: %s", adminUser)
 	return nil
 }
 
@@ -1238,14 +1251,13 @@ func extractLanguageFromFilename(filename string) string {
 // startSessionCleanup runs a periodic cleanup of expired sessions.
 // This prevents the sessions table from growing indefinitely with expired tokens.
 func startSessionCleanup(db *sql.DB) {
+	logger := logging.GetLogger("webserver")
 	ticker := time.NewTicker(1 * time.Hour) // Cleanup every hour
 	defer ticker.Stop()
 
 	for range ticker.C {
 		if err := auth.CleanupExpiredSessions(db); err != nil {
-			// Log the error but don't stop the cleanup routine
-			// In a production app, you'd use proper logging here
-			fmt.Printf("Failed to cleanup expired sessions: %v\n", err)
+			logger.Warnf("failed to cleanup expired sessions: %v", err)
 		}
 	}
 }
