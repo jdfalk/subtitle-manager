@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add Prometheus metrics endpoint",
+  "body": "Expose /metrics endpoint using Prometheus client for monitoring. Include provider request and translation counters, and document setup.",
+  "labels": ["enhancement", "monitoring"],
+  "guid": "7ef6a28b-698c-4935-8dcf-36bb9c050abd",
+  "legacy_guid": "create-add-prometheus-metrics-endpoint-2025-06-28"
+}
