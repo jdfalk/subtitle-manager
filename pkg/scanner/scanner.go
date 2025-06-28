@@ -88,7 +88,13 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		return err
 	}
 	if !upgrade {
-		if _, err := os.Stat(out); err == nil {
+		// Validate the output path again immediately before file stat to prevent path injection
+		validatedOut, err := security.ValidateAndSanitizePath(out)
+		if err != nil {
+			logger.Warnf("invalid output path before stat: %v", err)
+			return err
+		}
+		if _, err := os.Stat(validatedOut); err == nil {
 			return nil
 		}
 	}
@@ -114,7 +120,13 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 	var wasUpgrade bool
 	if upgrade {
-		if oldData, err := os.ReadFile(out); err == nil {
+		// Validate the output path again immediately before file read to prevent path injection
+		validatedOut, err := security.ValidateAndSanitizePath(out)
+		if err != nil {
+			logger.Warnf("invalid output path before read: %v", err)
+			return err
+		}
+		if oldData, err := os.ReadFile(validatedOut); err == nil {
 			if len(data) <= len(oldData) {
 				logger.Debugf("existing subtitle %s is higher quality", out)
 				return nil
@@ -122,9 +134,14 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 			wasUpgrade = true
 		}
 	}
-	if err := os.WriteFile(out, data, 0644); err != nil {
-		logger.Warnf("write %s: %v", out, err)
-
+	// Validate the output path again immediately before file write to prevent path injection
+	validatedOut, err := security.ValidateAndSanitizePath(out)
+	if err != nil {
+		logger.Warnf("invalid output path before write: %v", err)
+		return err
+	}
+	if err := os.WriteFile(validatedOut, data, 0644); err != nil {
+		logger.Warnf("write %s: %v", validatedOut, err)
 		// Send event for file write failure
 		events.PublishSubtitleFailed(ctx, events.SubtitleFailedData{
 			FilePath:  path,
@@ -133,14 +150,13 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 			Error:     "Failed to write subtitle file: " + err.Error(),
 			Timestamp: time.Now(),
 		})
-
 		return err
 	}
-	logger.Infof("downloaded subtitle %s", out)
+	logger.Infof("downloaded subtitle %s", validatedOut)
 
 	// Get file size for webhook event
 	var fileSize int64
-	if stat, err := os.Stat(out); err == nil {
+	if stat, err := os.Stat(validatedOut); err == nil {
 		fileSize = stat.Size()
 	}
 
@@ -148,7 +164,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	if wasUpgrade {
 		events.PublishSubtitleUpgraded(ctx, events.SubtitleUpgradedData{
 			FilePath:        path,
-			NewSubtitlePath: out,
+			NewSubtitlePath: validatedOut,
 			Language:        lang,
 			NewProvider:     providerName,
 			NewScore:        1.0, // Default score, could be enhanced
@@ -157,7 +173,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	} else {
 		events.PublishSubtitleDownloaded(ctx, events.SubtitleDownloadedData{
 			FilePath:     path,
-			SubtitlePath: out,
+			SubtitlePath: validatedOut,
 			Language:     lang,
 			Provider:     providerName,
 			Score:        1.0, // Default score, could be enhanced
@@ -167,7 +183,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 
 	if store != nil {
-		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
+		_ = store.InsertDownload(&database.DownloadRecord{File: validatedOut, VideoFile: path, Provider: providerName, Language: lang})
 	}
 	return nil
 }
