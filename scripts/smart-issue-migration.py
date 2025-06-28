@@ -1041,24 +1041,24 @@ def main():
             print(f"❌ Migration failed: {result['error']}")
             exit(1)
 
-        print(f"\n📊 Migration Summary:")
+        print("\n📊 Migration Summary:")
         print(f"   📋 Total actions: {result['total_actions']}")
         print(f"   ✅ Files created: {len(result['created_files'])}")
         print(f"   ⏭️  Skipped duplicates: {len(result['skipped_duplicates'])}")
         print(f"   ❌ Errors: {len(result['errors'])}")
 
         if result["created_files"]:
-            print(f"\n📁 Created files:")
+            print("\n📁 Created files:")
             for file in result["created_files"]:
                 print(f"   • {file}")
 
         if result["skipped_duplicates"]:
-            print(f"\n⏭️  Skipped duplicates:")
+            print("\n⏭️  Skipped duplicates:")
             for dup in result["skipped_duplicates"]:
                 print(f"   • {dup['action']} (duplicate of {dup['existing_file']})")
 
         if result["errors"]:
-            print(f"\n❌ Errors:")
+            print("\n❌ Errors:")
             for error in result["errors"]:
                 print(f"   • {error}")
 
@@ -1066,7 +1066,7 @@ def main():
         print("🧹 Cleaning duplicate files...")
         result = migrator.clean_duplicates()
 
-        print(f"\n📊 Cleanup Summary:")
+        print("\n📊 Cleanup Summary:")
         print(f"   🔍 Duplicate files found: {result['duplicate_files_found']}")
         print(f"   🗑️  Files removed: {len(result['removed_files'])}")
         if "errors" in result:
@@ -1075,12 +1075,12 @@ def main():
             print("   ❌ Errors: 0")
 
         if result["removed_files"]:
-            print(f"\n🗑️  Removed files:")
+            print("\n🗑️  Removed files:")
             for file in result["removed_files"]:
                 print(f"   • {file}")
 
         if result["errors"]:
-            print(f"\n❌ Errors:")
+            print("\n❌ Errors:")
             for error in result["errors"]:
                 print(f"   • {error}")
 
@@ -1088,18 +1088,18 @@ def main():
         print("🔍 Analyzing issue update files...")
         result = migrator.analyze_files()
 
-        print(f"\n📊 Analysis Summary:")
+        print("\n📊 Analysis Summary:")
         print(f"   📁 Total files: {result['total_files']}")
         print(f"   📋 Total actions: {result['total_actions']}")
         print(f"   🔄 Duplicate groups: {len(result['duplicates'])}")
 
         action_counts = result["action_counts"]
-        print(f"   📝 Actions by type:")
+        print("   📝 Actions by type:")
         for action, count in action_counts.items():
             print(f"      • {action}: {count}")
 
         if result["duplicates"]:
-            print(f"\n🔄 Duplicate groups found:")
+            print("\n🔄 Duplicate groups found:")
             for i, group in enumerate(result["duplicates"], 1):
                 print(f"   Group {i}:")
                 for file_info in group:
@@ -1124,13 +1124,13 @@ def main():
         print("🔍 Analyzing GUID usage...")
         result = migrator.analyze_guid_duplicates()
 
-        print(f"\n📊 GUID Analysis:")
+        print("\n📊 GUID Analysis:")
         print(f"   📋 Total GUIDs: {result['total_guids']}")
         print(f"   🔄 Duplicate GUIDs: {result['duplicate_guids']}")
         print(f"   ✅ Unique GUIDs: {result['unique_guids']}")
 
         if result["duplicates"]:
-            print(f"\n🔄 Duplicate GUIDs found:")
+            print("\n🔄 Duplicate GUIDs found:")
             for guid, files in result["duplicates"].items():
                 print(f"   GUID: {guid}")
                 for file_info in files:
@@ -1140,13 +1140,13 @@ def main():
         print("🔧 Fixing duplicate GUIDs...")
         result = migrator.fix_guid_duplicates()
 
-        print(f"\n📊 GUID Fix Summary:")
+        print("\n📊 GUID Fix Summary:")
         print(f"   🔍 Files checked: {result['files_checked']}")
         print(f"   🔧 Files updated: {result['files_updated']}")
         print(f"   🔄 GUIDs fixed: {result['guids_fixed']}")
 
         if result["errors"]:
-            print(f"\n❌ Errors:")
+            print("\n❌ Errors:")
             for error in result["errors"]:
                 print(f"   • {error}")
 
@@ -1169,14 +1169,14 @@ def main():
         print("🔄 Migrating to dual-GUID format...")
         result = migrator.migrate_to_dual_guid_format()
 
-        print(f"\n📊 Dual-GUID Migration Summary:")
+        print("\n📊 Dual-GUID Migration Summary:")
         print(f"   📁 Files processed: {result['files_processed']}")
         print(f"   ✅ Files migrated: {result['files_migrated']}")
         print(f"   ⏭️  Files already migrated: {result['files_already_migrated']}")
         print(f"   📋 Items migrated: {result['items_migrated']}")
 
         if result["errors"]:
-            print(f"\n❌ Errors:")
+            print("\n❌ Errors:")
             for error in result["errors"]:
                 print(f"   • {error}")
 
@@ -1184,7 +1184,7 @@ def main():
         print("✅ Validating dual-GUID format...")
         result = migrator.validate_dual_guid_format()
 
-        print(f"\n📊 Dual-GUID Validation:")
+        print("\n📊 Dual-GUID Validation:")
         print(f"   📁 Files checked: {result['files_checked']}")
         print(f"   📋 Items checked: {result['items_checked']}")
         print(f"   🔄 Items with legacy GUIDs: {result['items_with_legacy_guids']}")
@@ -1196,7 +1196,7 @@ def main():
             print("   ❌ Some files have missing GUIDs")
 
         if result["errors"]:
-            print(f"\n❌ Errors:")
+            print("\n❌ Errors:")
             for error in result["errors"]:
                 print(f"   • {error}")
 
