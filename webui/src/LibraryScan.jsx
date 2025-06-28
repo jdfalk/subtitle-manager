@@ -45,6 +45,8 @@ export default function LibraryScan({ backendAvailable = true }) {
         }
       }
     } catch (err) {
+      // Log poll failure before notifying user
+      console.error(err);
       setError('Failed to get scan status');
     }
   };
