@@ -916,7 +916,6 @@ func TestSecurityHeaders(t *testing.T) {
 	}
 }
 
-
 // TestBrowseDirectoryPathTraversalPrevention tests that browseDirectory prevents path traversal attacks
 func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
 	// Create a temporary directory to serve as the allowed base directory
