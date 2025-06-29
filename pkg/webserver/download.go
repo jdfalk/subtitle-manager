@@ -5,13 +5,13 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"path/filepath"
 	"strings"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/metrics"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 // downloadHandler downloads a subtitle using a provider and stores history.
@@ -39,38 +39,60 @@ func downloadHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+
+		// Validate and sanitize the file path to prevent path injection
+		validatedPath, err := security.ValidateAndSanitizePath(q.Path)
+		if err != nil {
+			http.Error(w, "Invalid file path", http.StatusBadRequest)
+			return
+		}
+
 		// Validate the language code to ensure it conforms to expected patterns
+		if err := security.ValidateLanguageCode(q.Lang); err != nil {
+			http.Error(w, "Invalid language code", http.StatusBadRequest)
+			return
+		}
+		// Additional validation to ensure language code does not contain path traversal characters
 		if strings.Contains(q.Lang, "/") || strings.Contains(q.Lang, "\\") || strings.Contains(q.Lang, "..") {
 			http.Error(w, "Invalid language code", http.StatusBadRequest)
 			return
 		}
+
+		// Validate provider name if provided
+		if q.Provider != "" {
+			if err := security.ValidateProviderName(q.Provider); err != nil {
+				http.Error(w, "Invalid provider name", http.StatusBadRequest)
+				return
+			}
+		}
 		var p providers.Provider
 		var name string
-		var err error
+		var providerErr error
 		if q.Provider != "" {
 			if inst, ok := providers.GetInstance(q.Provider); ok {
-				p, err = providers.Get(inst.Name, "")
+				p, providerErr = providers.Get(inst.Name, "")
 				name = inst.ID
 			} else {
-				p, err = providers.Get(q.Provider, "")
+				p, providerErr = providers.Get(q.Provider, "")
 				name = q.Provider
 			}
-			if err != nil {
-				metrics.APIRequests.WithLabelValues("/api/download", "POST", "400").Inc()
+			if providerErr != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
 		}
-		if err := scanner.ProcessFile(r.Context(), q.Path, q.Lang, name, p, false, nil); err != nil {
-			metrics.ProviderRequests.WithLabelValues(name, "error").Inc()
+		if err := scanner.ProcessFile(r.Context(), validatedPath, q.Lang, name, p, false, nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		metrics.ProviderRequests.WithLabelValues(name, "success").Inc()
-		metrics.SubtitleDownloads.WithLabelValues(name, q.Lang).Inc()
-		out := strings.TrimSuffix(q.Path, filepath.Ext(q.Path)) + "." + q.Lang + ".srt"
+		// Construct output path using validated inputs
+		out, outErr := security.ValidateSubtitleOutputPath(validatedPath, q.Lang)
+		if outErr != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		if db != nil {
-			_ = database.InsertDownload(db, out, q.Path, name, q.Lang)
+			_ = database.InsertDownload(db, out, validatedPath, name, q.Lang)
 		}
 		metrics.APIRequests.WithLabelValues("/api/download", "POST", "200").Inc()
 		w.Header().Set("Content-Type", "application/json")
