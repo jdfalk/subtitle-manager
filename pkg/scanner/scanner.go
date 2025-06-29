@@ -84,14 +84,14 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		logger.Warnf("invalid subtitle output path: %v", err)
 		return err
 	}
-	
+
 	// Additional validation for CodeQL path injection analysis
 	validatedOut, err := security.ValidateAndSanitizePath(out)
 	if err != nil {
 		logger.Warnf("output path validation failed: %v", err)
 		return err
 	}
-	
+
 	if !upgrade {
 		if _, err := os.Stat(validatedOut); err == nil {
 			return nil
