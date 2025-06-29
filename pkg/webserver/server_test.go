@@ -1055,7 +1055,8 @@ func TestLibraryBrowsePathTraversal(t *testing.T) {
 	}
 
 	for _, maliciousPath := range pathTraversalAttempts {
-		t.Run("path_traversal_"+maliciousPath, func(t *testing.T) {
+		sanitizedPath := sanitizeSubtestName(maliciousPath)
+		t.Run("path_traversal_"+sanitizedPath, func(t *testing.T) {
 			req, _ := http.NewRequest("GET", srv.URL+"/api/library/browse?path="+maliciousPath, nil)
 			req.Header.Set("X-API-Key", key)
 			resp, err := srv.Client().Do(req)
