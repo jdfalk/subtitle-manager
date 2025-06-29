@@ -13,6 +13,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -1057,7 +1058,8 @@ func TestLibraryBrowsePathTraversal(t *testing.T) {
 	for _, maliciousPath := range pathTraversalAttempts {
 		sanitizedPath := sanitizeSubtestName(maliciousPath)
 		t.Run("path_traversal_"+sanitizedPath, func(t *testing.T) {
-			req, _ := http.NewRequest("GET", srv.URL+"/api/library/browse?path="+maliciousPath, nil)
+			escapedPath := url.QueryEscape(maliciousPath)
+			req, _ := http.NewRequest("GET", srv.URL+"/api/library/browse?path="+escapedPath, nil)
 			req.Header.Set("X-API-Key", key)
 			resp, err := srv.Client().Do(req)
 			if err != nil {
@@ -1073,4 +1075,14 @@ func TestLibraryBrowsePathTraversal(t *testing.T) {
 			}
 		})
 	}
+}
+
+// sanitizeSubtestName removes problematic characters from test names to make them valid.
+func sanitizeSubtestName(name string) string {
+	// Replace path separators and other problematic characters with underscores
+	sanitized := strings.ReplaceAll(name, "/", "_")
+	sanitized = strings.ReplaceAll(sanitized, "\\", "_")
+	sanitized = strings.ReplaceAll(sanitized, ".", "_")
+	sanitized = strings.ReplaceAll(sanitized, " ", "_")
+	return sanitized
 }
