@@ -39,6 +39,11 @@ func downloadHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+		// Validate the language code to ensure it conforms to expected patterns
+		if strings.Contains(q.Lang, "/") || strings.Contains(q.Lang, "\\") || strings.Contains(q.Lang, "..") {
+			http.Error(w, "Invalid language code", http.StatusBadRequest)
+			return
+		}
 		var p providers.Provider
 		var name string
 		var err error
