@@ -1029,8 +1029,7 @@ func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
 
 // TestLibraryBrowseHandlerPathTraversal tests that the library browse API endpoint prevents path traversal
 func TestLibraryBrowseHandlerPathTraversal(t *testing.T) {
-	db, err := database.Open(":memory:")
-	testutil.MustNoError(t, "open db", err)
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	// Create test user and API key

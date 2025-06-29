@@ -9,15 +9,12 @@ import (
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
-	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 // TestDashboardLayout verifies storing and retrieving layout preferences.
 func TestDashboardLayout(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
@@ -63,10 +60,7 @@ func TestDashboardLayout(t *testing.T) {
 
 // TestWidgetsList ensures the API returns available dashboard widgets.
 func TestWidgetsList(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
@@ -102,10 +96,7 @@ func TestWidgetsList(t *testing.T) {
 
 // TestWidgetsListMethodNotAllowed verifies the handler rejects unsupported methods.
 func TestWidgetsListMethodNotAllowed(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {

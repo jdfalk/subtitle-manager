@@ -26,6 +26,7 @@ package testutil
 
 import (
 	"database/sql"
+	"strings"
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
@@ -149,12 +150,16 @@ func indexByte(s, substr string) int {
 
 // GetTestDB creates an in-memory SQLite database for testing.
 // The returned database is fully initialized with the schema and ready for use.
+// If SQLite support is not available, the test will be skipped.
 func GetTestDB(t *testing.T) *sql.DB {
 	t.Helper()
 
 	// Use the existing OpenSQLStore function to get a properly initialized database
 	store, err := database.OpenSQLStore(":memory:")
 	if err != nil {
+		if strings.Contains(err.Error(), "SQLite support not available") {
+			t.Skip("SQLite support not available - skipping test that requires SQLite")
+		}
 		t.Fatalf("Failed to create test database: %v", err)
 	}
 

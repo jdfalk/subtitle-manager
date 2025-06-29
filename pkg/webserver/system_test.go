@@ -7,16 +7,13 @@ import (
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
-	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 // TestSystemHandlers verifies /api/logs and /api/system endpoints.
 func TestSystemHandlers(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create user: %v", err)
