@@ -919,18 +919,18 @@ func TestSecurityHeaders(t *testing.T) {
 func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
 	// Create a temporary directory to serve as the allowed base directory
 	tempDir := t.TempDir()
-	
+
 	// Set up viper config to use our temp directory as media directory
 	originalMediaDir := viper.GetString("media_directory")
 	viper.Set("media_directory", tempDir)
 	defer viper.Set("media_directory", originalMediaDir)
-	
+
 	// Create some valid subdirectories and files for testing
 	validSubdir := filepath.Join(tempDir, "movies")
 	if err := os.Mkdir(validSubdir, 0755); err != nil {
 		t.Fatalf("failed to create test subdirectory: %v", err)
 	}
-	
+
 	validFile := filepath.Join(validSubdir, "movie.mkv")
 	if err := os.WriteFile(validFile, []byte("test movie"), 0644); err != nil {
 		t.Fatalf("failed to create test file: %v", err)
@@ -981,7 +981,7 @@ func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			items, err := browseDirectory(tt.path)
-			
+
 			if tt.expectError {
 				if err == nil {
 					t.Errorf("expected error for path %q, but got none", tt.path)
@@ -995,7 +995,7 @@ func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
 				if items == nil {
 					t.Errorf("expected items to be non-nil for valid path %q", tt.path)
 				}
-				
+
 				// For valid paths, verify we get meaningful results
 				if tt.path == "/" {
 					// Root path should return allowed base directories
