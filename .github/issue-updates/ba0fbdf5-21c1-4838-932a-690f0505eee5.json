@@ -1,0 +1,7 @@
+{
+  "action": "delete",
+  "number": 345,
+  "reason": "duplicate",
+  "guid": "ba0fbdf5-21c1-4838-932a-690f0505eee5",
+  "legacy_guid": "delete-issue-345-2025-06-29"
+}
