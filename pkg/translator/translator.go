@@ -39,7 +39,7 @@ type TranslateFunc func(text, targetLang, apiKey string) (string, error)
 // GoogleClient wraps the methods used from the Google Translate SDK.
 // It allows tests to mock the SDK without real credentials.
 //
-//go:generate go run github.com/vektra/mockery/v2 --name=GoogleClient --output=mocks --outpkg=mocks --filename=google_client.go
+// Mock generation is now handled by the root generate.go file
 type GoogleClient interface {
 	Translate(ctx context.Context, src []string, target language.Tag, opts *translate.Options) ([]translate.Translation, error)
 	Close() error
@@ -60,7 +60,7 @@ var newGoogleClient = defaultGoogleClient
 // OpenAIClient wraps the methods used from the OpenAI SDK.
 // It allows tests to mock the ChatGPT API without real credentials.
 //
-//go:generate go run github.com/vektra/mockery/v2 --name=OpenAIClient --output=mocks --outpkg=mocks --filename=openai_client.go
+// Mock generation is now handled by the root generate.go file
 type OpenAIClient interface {
 	CreateChatCompletion(ctx context.Context, req openai.ChatCompletionRequest) (openai.ChatCompletionResponse, error)
 }

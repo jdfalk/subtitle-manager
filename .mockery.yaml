@@ -1,8 +1,42 @@
 # file: .mockery.yaml
-# Mockery configuration file to address deprecation warnings
-# Migration from command-line args to packages configuration
+# version: 1.3.0
+# guid: 7f4a1b2c-8e9d-4a5b-9c6e-3f8d7e6a5b4c
+# Mockery configuration file - using packages configuration for v3 compatibility
 
 with-expecter: true
 issue-845-fix: true
 resolve-type-alias: false
 disable-version-string: true
+
+packages:
+  github.com/jdfalk/subtitle-manager/pkg/providers:
+    interfaces:
+      Provider:
+        config:
+          dir: "pkg/providers/mocks"
+          outpkg: "mocks"
+          filename: "provider.go"
+  github.com/jdfalk/subtitle-manager/pkg/syncer:
+    interfaces:
+      Transcriber:
+        config:
+          dir: "pkg/syncer/mocks"
+          outpkg: "mocks"
+          filename: "transcriber.go"
+      SubtitleExtractor:
+        config:
+          dir: "pkg/syncer/mocks"
+          outpkg: "mocks"
+          filename: "subtitle_extractor.go"
+  github.com/jdfalk/subtitle-manager/pkg/translator:
+    interfaces:
+      GoogleClient:
+        config:
+          dir: "pkg/translator/mocks"
+          outpkg: "mocks"
+          filename: "google_client.go"
+      OpenAIClient:
+        config:
+          dir: "pkg/translator/mocks"
+          outpkg: "mocks"
+          filename: "openai_client.go"
