@@ -394,7 +394,8 @@ docker-benchmark:
 .PHONY: proto-gen
 proto-gen: ## Generate protobuf code
 	@echo "$(COLOR_BLUE)Generating protobuf code...$(COLOR_RESET)"
-	@PATH="$(PATH):$(shell go env GOPATH)/bin" && cd $(PROTO_DIR) && $(PROTOC) --go_out=../pkg/translatorpb --go-grpc_out=../pkg/translatorpb translator.proto
+	@mkdir -p pkg/translatorpb
+	@PATH="$(PATH):$(shell go env GOPATH)/bin" && cd $(PROTO_DIR) && $(PROTOC) --go_out=.. --go-grpc_out=.. --go_opt=module=github.com/jdfalk/subtitle-manager --go-grpc_opt=module=github.com/jdfalk/subtitle-manager translator.proto
 	@echo "$(COLOR_GREEN)✓ Protobuf code generated$(COLOR_RESET)"
 
 .PHONY: mock-gen  
