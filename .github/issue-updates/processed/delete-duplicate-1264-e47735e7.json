@@ -1,0 +1,17 @@
+{
+  "action": "delete",
+  "number": 1264,
+  "guid": "491f17ee-2120-4ea5-9400-cfaf6afb6cbe",
+  "legacy_guid": "delete-duplicate-1264-2025-06-29",
+  "reason": "Duplicate of #1226",
+  "duplicate_of": 1226,
+  "metadata": {
+    "duplicate_title": "CodeQL Alert #39: Uncontrolled data used in path expression",
+    "canonical_title": "CodeQL Alert #39: Uncontrolled data used in path expression",
+    "canonical_url": "https://github.com/jdfalk/subtitle-manager/issues/1226",
+    "duplicate_created": "2025-06-27T20:02:35Z",
+    "canonical_created": "2025-06-23T15:30:56Z",
+    "cleanup_generated": "2025-06-29T15:50:56.340988",
+    "cleanup_reason": "Closed duplicate without proper labeling"
+  }
+}
