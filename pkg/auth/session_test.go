@@ -6,19 +6,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 // TestSessionLifecycle tests the complete session lifecycle including invalidation.
 func TestSessionLifecycle(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("failed to open database: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	// Create a test user
-	err = CreateUser(db, "testuser", "password123", "test@example.com", "basic")
+	err := CreateUser(db, "testuser", "password123", "test@example.com", "basic")
 	if err != nil {
 		t.Fatalf("failed to create user: %v", err)
 	}
@@ -59,14 +56,11 @@ func TestSessionLifecycle(t *testing.T) {
 
 // TestInvalidateUserSessions tests invalidating all sessions for a user.
 func TestInvalidateUserSessions(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("failed to open database: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	// Create a test user
-	err = CreateUser(db, "testuser", "password123", "test@example.com", "basic")
+	err := CreateUser(db, "testuser", "password123", "test@example.com", "basic")
 	if err != nil {
 		t.Fatalf("failed to create user: %v", err)
 	}
@@ -119,14 +113,11 @@ func TestInvalidateUserSessions(t *testing.T) {
 
 // TestCleanupExpiredSessions tests the cleanup of expired sessions.
 func TestCleanupExpiredSessions(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("failed to open database: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	// Create a test user
-	err = CreateUser(db, "testuser", "password123", "test@example.com", "basic")
+	err := CreateUser(db, "testuser", "password123", "test@example.com", "basic")
 	if err != nil {
 		t.Fatalf("failed to create user: %v", err)
 	}

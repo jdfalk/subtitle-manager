@@ -8,10 +8,16 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 // TestDeleteCmd ensures that subtitle files and database records are removed.
 func TestDeleteCmd(t *testing.T) {
+	// This test uses SQLite file database, skip if not available
+	if err := testutil.CheckSQLiteSupport(); err != nil {
+		t.Skipf("SQLite support not available: %v", err)
+	}
+
 	dir := t.TempDir()
 	file := filepath.Join(dir, "sub.srt")
 	if err := os.WriteFile(file, []byte("x"), 0644); err != nil {

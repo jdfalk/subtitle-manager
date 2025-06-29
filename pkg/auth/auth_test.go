@@ -4,14 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 func TestSetUserRole(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 	if err := CreateUser(db, "u", "p", "", "user"); err != nil {
 		t.Fatalf("create: %v", err)
@@ -29,10 +26,7 @@ func TestSetUserRole(t *testing.T) {
 }
 
 func TestOneTimeToken(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 	if err := CreateUser(db, "u", "p", "e@example.com", "user"); err != nil {
 		t.Fatalf("create: %v", err)
@@ -54,10 +48,7 @@ func TestOneTimeToken(t *testing.T) {
 }
 
 func TestListUsers(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 	if err := CreateUser(db, "u1", "p1", "e1@example.com", "user"); err != nil {
 		t.Fatalf("create: %v", err)

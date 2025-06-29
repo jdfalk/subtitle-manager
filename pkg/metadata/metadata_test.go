@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 func TestParseFileName(t *testing.T) {
@@ -128,6 +129,11 @@ func TestFetchEpisodeMetadata(t *testing.T) {
 }
 
 func TestScanLibraryProgress(t *testing.T) {
+	// This test uses SQLite file database, skip if not available
+	if err := testutil.CheckSQLiteSupport(); err != nil {
+		t.Skipf("SQLite support not available: %v", err)
+	}
+
 	dir := t.TempDir()
 	video := filepath.Join(dir, "movie.mkv")
 	if err := os.WriteFile(video, []byte("x"), 0644); err != nil {

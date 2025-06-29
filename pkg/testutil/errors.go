@@ -166,3 +166,14 @@ func GetTestDB(t *testing.T) *sql.DB {
 	// Return the underlying *sql.DB
 	return store.DB()
 }
+
+// CheckSQLiteSupport checks if SQLite support is available.
+// Returns an error if SQLite is not supported.
+func CheckSQLiteSupport() error {
+	db, err := database.Open(":memory:")
+	if err != nil {
+		return err
+	}
+	db.Close()
+	return nil
+}

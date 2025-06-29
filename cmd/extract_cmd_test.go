@@ -8,11 +8,17 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 // TestExtractCmdStoresRecord verifies that running the extract command
 // records the generated subtitle in the database.
 func TestExtractCmdStoresRecord(t *testing.T) {
+	// This test uses SQLite file database, skip if not available
+	if err := testutil.CheckSQLiteSupport(); err != nil {
+		t.Skipf("SQLite support not available: %v", err)
+	}
+
 	dir := t.TempDir()
 	script := filepath.Join(dir, "ffmpeg")
 	data := "#!/bin/sh\ncp ../testdata/simple.srt \"$6\"\n"

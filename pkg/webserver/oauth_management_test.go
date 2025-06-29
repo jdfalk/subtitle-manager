@@ -18,8 +18,7 @@ import (
 
 // TestGitHubOAuthGenerate verifies POST /api/oauth/github/generate creates new credentials.
 func TestGitHubOAuthGenerate(t *testing.T) {
-	db, err := database.Open(":memory:")
-	testutil.MustNoError(t, "open db", err)
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))

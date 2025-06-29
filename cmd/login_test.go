@@ -11,10 +11,16 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 // TestLoginCmd verifies that the login command authenticates a user and stores a session token.
 func TestLoginCmd(t *testing.T) {
+	// This test uses SQLite file database, skip if not available
+	if err := testutil.CheckSQLiteSupport(); err != nil {
+		t.Skipf("SQLite support not available: %v", err)
+	}
+
 	dir := t.TempDir()
 	dbPath := filepath.Join(dir, "test.db")
 	viper.Set("db_path", dbPath)
@@ -56,6 +62,11 @@ func TestLoginCmd(t *testing.T) {
 
 // TestLoginTokenCmd verifies authentication using a one-time token.
 func TestLoginTokenCmd(t *testing.T) {
+	// This test uses SQLite file database, skip if not available
+	if err := testutil.CheckSQLiteSupport(); err != nil {
+		t.Skipf("SQLite support not available: %v", err)
+	}
+
 	dir := t.TempDir()
 	dbPath := filepath.Join(dir, "test.db")
 	viper.Set("db_path", dbPath)

@@ -8,15 +8,12 @@ import (
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
-	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 // TestCleanupDatabase ensures expired sessions are removed and VACUUM executes.
 func TestCleanupDatabase(t *testing.T) {
-	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	db := testutil.GetTestDB(t)
 	defer db.Close()
 
 	if err := auth.CreateUser(db, "user", "pass", "u@example.com", "basic"); err != nil {

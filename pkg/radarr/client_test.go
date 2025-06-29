@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
 // TestMovies verifies that Movies fetches media items from the Radarr API.
@@ -40,6 +41,11 @@ func TestMovies(t *testing.T) {
 
 // TestSync verifies that Sync stores new media items only once.
 func TestSync(t *testing.T) {
+	// This test uses SQLite database, skip if not available
+	if err := testutil.CheckSQLiteSupport(); err != nil {
+		t.Skipf("SQLite support not available: %v", err)
+	}
+
 	store, err := database.OpenSQLStore(":memory:")
 	if err != nil {
 		t.Fatal(err)
