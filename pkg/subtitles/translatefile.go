@@ -2,6 +2,7 @@ package subtitles
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"github.com/asticode/go-astisub"
 	"github.com/sourcegraph/conc/pool"
 
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 )
 
@@ -18,7 +20,18 @@ import (
 // depending on the service selected. Results are cached in-memory so
 // identical lines are only translated once per invocation.
 func TranslateFileToSRT(inPath, outPath, lang, service, googleKey, gptKey, grpcAddr string) error {
-	sub, err := astisub.OpenFile(inPath)
+	// Validate and sanitize input paths to prevent path injection attacks
+	validatedInPath, err := security.ValidateAndSanitizePath(inPath)
+	if err != nil {
+		return fmt.Errorf("invalid input path: %w", err)
+	}
+
+	validatedOutPath, err := security.ValidateAndSanitizePath(outPath)
+	if err != nil {
+		return fmt.Errorf("invalid output path: %w", err)
+	}
+
+	sub, err := astisub.OpenFile(validatedInPath)
 	if err != nil {
 		return err
 	}
@@ -51,7 +64,7 @@ func TranslateFileToSRT(inPath, outPath, lang, service, googleKey, gptKey, grpcA
 	if err := sub.WriteToSRT(buf); err != nil {
 		return err
 	}
-	return os.WriteFile(outPath, buf.Bytes(), 0644)
+	return os.WriteFile(validatedOutPath, buf.Bytes(), 0644)
 }
 
 // TranslateFilesToSRT concurrently translates each file in paths using
