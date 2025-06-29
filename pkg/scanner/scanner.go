@@ -70,9 +70,15 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	path = sanitizedPath
 
 	// Validate the language code to prevent path traversal attacks
+	// Validate the language code to ensure it conforms to expected patterns
 	if err := security.ValidateLanguageCode(lang); err != nil {
 		logger.Warnf("invalid language code: %v", err)
 		return err
+	}
+	// Ensure the language code does not contain any path traversal characters
+	if strings.Contains(lang, "/") || strings.Contains(lang, "\\") || strings.Contains(lang, "..") {
+		logger.Warnf("language code contains invalid characters")
+		return fmt.Errorf("invalid language code")
 	}
 
 	// Validate provider name if provided
