@@ -19,8 +19,6 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
-const safeDir = "/safe/directory/" // Replace with the actual safe directory path
-
 // ScanDirectory walks through the directory and downloads subtitles for video files
 // using provider p for the given language. providerName is stored in download
 // history. If upgrade is false existing subtitle files are skipped.
@@ -90,34 +88,14 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 
 	// Construct and validate the output path securely
-	out, err := security.ValidateSubtitleOutputPath(path, lang)
+	validatedOutputPath, err := security.ValidateSubtitleOutputPath(path, lang)
 	if err != nil {
 		logger.Warnf("invalid subtitle output path: %v", err)
 		return err
 	}
 
-	// Validate the output path once for all file operations
-	validatedOut, err := security.ValidateAndSanitizePath(out)
-	if err != nil {
-		logger.Warnf("output path validation failed: %v", err)
-		return err
-	}
-
-	// Ensure the validated path is within the safe directory
-	const safeDir = "/safe/subtitles/"
-	absValidatedOut, err := filepath.Abs(filepath.Clean(validatedOut))
-	if err != nil {
-		logger.Warnf("failed to resolve absolute path: %v", err)
-		return fmt.Errorf("invalid output path")
-	}
-	relPath, err := filepath.Rel(safeDir, absValidatedOut)
-	if err != nil || strings.HasPrefix(relPath, "..") {
-		logger.Warnf("output path is outside the safe directory: %s", absValidatedOut)
-		return fmt.Errorf("invalid output path")
-	}
-
 	if !upgrade {
-		if _, err := os.Stat(absValidatedOut); err == nil {
+		if _, err := os.Stat(validatedOutputPath); err == nil {
 			return nil
 		}
 	}
@@ -143,16 +121,16 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 	var wasUpgrade bool
 	if upgrade {
-		if oldData, err := os.ReadFile(validatedOut); err == nil {
+		if oldData, err := os.ReadFile(validatedOutputPath); err == nil {
 			if len(data) <= len(oldData) {
-				logger.Debugf("existing subtitle %s is higher quality", validatedOut)
+				logger.Debugf("existing subtitle %s is higher quality", validatedOutputPath)
 				return nil
 			}
 			wasUpgrade = true
 		}
 	}
-	if err := os.WriteFile(validatedOut, data, 0644); err != nil {
-		logger.Warnf("write %s: %v", validatedOut, err)
+	if err := os.WriteFile(validatedOutputPath, data, 0644); err != nil {
+		logger.Warnf("write %s: %v", validatedOutputPath, err)
 
 		// Send event for file write failure
 		events.PublishSubtitleFailed(ctx, events.SubtitleFailedData{
@@ -164,11 +142,11 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		})
 		return err
 	}
-	logger.Infof("downloaded subtitle %s", validatedOut)
+	logger.Infof("downloaded subtitle %s", validatedOutputPath)
 
 	// Get file size for webhook event
 	var fileSize int64
-	if stat, err := os.Stat(validatedOut); err == nil {
+	if stat, err := os.Stat(validatedOutputPath); err == nil {
 		fileSize = stat.Size()
 	}
 
@@ -176,7 +154,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	if wasUpgrade {
 		events.PublishSubtitleUpgraded(ctx, events.SubtitleUpgradedData{
 			FilePath:        path,
-			NewSubtitlePath: validatedOut,
+			NewSubtitlePath: validatedOutputPath,
 			Language:        lang,
 			NewProvider:     providerName,
 			NewScore:        1.0, // Default score, could be enhanced
@@ -185,7 +163,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	} else {
 		events.PublishSubtitleDownloaded(ctx, events.SubtitleDownloadedData{
 			FilePath:     path,
-			SubtitlePath: validatedOut,
+			SubtitlePath: validatedOutputPath,
 			Language:     lang,
 			Provider:     providerName,
 			Score:        1.0, // Default score, could be enhanced
@@ -194,7 +172,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		})
 	}
 	if store != nil {
-		_ = store.InsertDownload(&database.DownloadRecord{File: validatedOut, VideoFile: path, Provider: providerName, Language: lang})
+		_ = store.InsertDownload(&database.DownloadRecord{File: validatedOutputPath, VideoFile: path, Provider: providerName, Language: lang})
 	}
 	return nil
 }

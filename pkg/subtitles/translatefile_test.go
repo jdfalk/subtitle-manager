@@ -20,8 +20,14 @@ func TestTranslateFileToSRT(t *testing.T) {
 	translator.SetGoogleAPIURL(srv.URL)
 	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
 
+	// Get absolute path to test data
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	inPath := filepath.Join(wd, "../../testdata/simple.srt")
 	out := filepath.Join(t.TempDir(), "out.srt")
-	err := TranslateFileToSRT("../../testdata/simple.srt", out, "es", "google", "k", "", "")
+	err = TranslateFileToSRT(inPath, out, "es", "google", "k", "", "")
 	if err != nil {
 		t.Fatalf("translate: %v", err)
 	}
