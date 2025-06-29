@@ -394,8 +394,18 @@ docker-benchmark:
 .PHONY: proto-gen
 proto-gen: ## Generate protobuf code
 	@echo "$(COLOR_BLUE)Generating protobuf code...$(COLOR_RESET)"
-	cd $(PROTO_DIR) && $(PROTOC) --go_out=../pkg/translatorpb --go-grpc_out=../pkg/translatorpb translator.proto
+	@PATH="$(PATH):$(shell go env GOPATH)/bin" && cd $(PROTO_DIR) && $(PROTOC) --go_out=../pkg/translatorpb --go-grpc_out=../pkg/translatorpb translator.proto
 	@echo "$(COLOR_GREEN)✓ Protobuf code generated$(COLOR_RESET)"
+
+.PHONY: mock-gen  
+mock-gen: ## Generate mock files
+	@echo "$(COLOR_BLUE)Generating mock files...$(COLOR_RESET)"
+	@go generate .
+	@echo "$(COLOR_GREEN)✓ Mock files generated$(COLOR_RESET)"
+
+.PHONY: generate
+generate: proto-gen mock-gen ## Generate all protobuf and mock files
+	@echo "$(COLOR_GREEN)✓ All generated files updated$(COLOR_RESET)"
 
 #
 # Quality Assurance

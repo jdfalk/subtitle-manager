@@ -9,7 +9,7 @@ type Provider interface {
 	Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error)
 }
 
-//go:generate go run github.com/vektra/mockery/v2 --name=Provider --output=mocks --outpkg=mocks --filename=provider.go
+// Mock generation is now handled by the root generate.go file
 
 // Searcher optionally exposes subtitle search functionality.
 type Searcher interface {
