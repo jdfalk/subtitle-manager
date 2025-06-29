@@ -61,7 +61,7 @@ func scanHandler() http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		
+
 		// Validate directory path to prevent path injection
 		if q.Directory != "" {
 			if _, err := security.ValidateAndSanitizePath(q.Directory); err != nil {
@@ -69,7 +69,7 @@ func scanHandler() http.Handler {
 				return
 			}
 		}
-		
+
 		// Validate language code
 		if q.Lang != "" {
 			if err := security.ValidateLanguageCode(q.Lang); err != nil {
@@ -77,7 +77,7 @@ func scanHandler() http.Handler {
 				return
 			}
 		}
-		
+
 		// Validate provider name
 		if q.Provider != "" {
 			if err := security.ValidateProviderName(q.Provider); err != nil {
@@ -143,7 +143,7 @@ func libraryScanHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		
+
 		// Validate and sanitize the path to prevent path injection
 		if _, err := security.ValidateAndSanitizePath(q.Path); err != nil {
 			w.WriteHeader(http.StatusBadRequest)

@@ -37,14 +37,14 @@ func downloadHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		
+
 		// Validate and sanitize the file path to prevent path injection
 		validatedPath, err := security.ValidateAndSanitizePath(q.Path)
 		if err != nil {
 			http.Error(w, "Invalid file path", http.StatusBadRequest)
 			return
 		}
-		
+
 		// Validate the language code to ensure it conforms to expected patterns
 		if err := security.ValidateLanguageCode(q.Lang); err != nil {
 			http.Error(w, "Invalid language code", http.StatusBadRequest)
@@ -55,7 +55,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 			http.Error(w, "Invalid language code", http.StatusBadRequest)
 			return
 		}
-		
+
 		// Validate provider name if provided
 		if q.Provider != "" {
 			if err := security.ValidateProviderName(q.Provider); err != nil {
@@ -83,7 +83,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		
+
 		// Construct output path using validated inputs
 		out, outErr := security.ValidateSubtitleOutputPath(validatedPath, q.Lang)
 		if outErr != nil {
