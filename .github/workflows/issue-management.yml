@@ -10,13 +10,13 @@ name: Issue Management (Unified)
 
 # Permissions required by the reusable workflow
 permissions:
-  contents: write        # For creating commits and PRs
-  issues: write         # For creating and updating issues
-  pull-requests: write  # For creating PRs
+  contents: write # For creating commits and PRs
+  issues: write # For creating and updating issues
+  pull-requests: write # For creating PRs
   security-events: read # For reading CodeQL alerts
   repository-projects: read # For accessing project data
-  actions: read         # For workflow access
-  checks: write         # For workflow status
+  actions: read # For workflow access
+  checks: write # For workflow status
 
 on:
   workflow_dispatch:
