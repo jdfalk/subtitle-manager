@@ -103,8 +103,16 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		return err
 	}
 
+	// Ensure the validated path is within the safe directory
+	const safeDir = "/safe/subtitles/"
+	absValidatedOut, err := filepath.Abs(validatedOut)
+	if err != nil || !strings.HasPrefix(absValidatedOut, safeDir) {
+		logger.Warnf("output path is outside the safe directory: %s", absValidatedOut)
+		return fmt.Errorf("invalid output path")
+	}
+
 	if !upgrade {
-		if _, err := os.Stat(validatedOut); err == nil {
+		if _, err := os.Stat(absValidatedOut); err == nil {
 			return nil
 		}
 	}
