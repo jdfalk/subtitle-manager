@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 542,
   "body": "Plan: add frontend RBAC test and handle forbidden status",
-  "guid": "comment-542-2025-06-23-125739"
+  "guid": "d7b04bb2-9562-4dfa-9652-d62aa8e26794",
+  "legacy_guid": "comment-542-2025-06-23-125739"
 }

@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 1110,
   "body": "## Plan of Action\n\n1. Update server handlers to validate URL and API key.\n2. Extend UI with connection form.\n3. Write tests covering preview and import.",
-  "guid": "comment-1110-2025-06-22-144738"
+  "guid": "df7e9c08-c476-4765-9dfc-bfb1093d103d",
+  "legacy_guid": "comment-1110-2025-06-22-144738"
 }

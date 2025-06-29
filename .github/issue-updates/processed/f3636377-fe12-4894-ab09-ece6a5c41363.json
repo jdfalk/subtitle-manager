@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 546,
   "body": "Plan: implement caching in translator to reuse translations for identical text.",
-  "guid": "comment-546-2025-06-23-125627"
+  "guid": "ecf55e6e-23fe-4078-a78c-42f22631acd1",
+  "legacy_guid": "comment-546-2025-06-23-125627"
 }

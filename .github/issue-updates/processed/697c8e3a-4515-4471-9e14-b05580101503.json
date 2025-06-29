@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 1074,
   "body": "Implement WebSocket endpoint for task updates. React components will consume this feed to show real-time progress.",
-  "guid": "comment-1074-2025-06-23-125717"
+  "guid": "d66b22fa-08d3-41ab-9fa5-315ccd6c1ccc",
+  "legacy_guid": "comment-1074-2025-06-23-125717"
 }

@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 1105,
   "body": "Use security.ValidateAndSanitizePath for batch output",
-  "guid": "comment-1105-2025-06-23-130428"
+  "guid": "09edd031-bfad-49db-af71-7bf1786f45d6",
+  "legacy_guid": "comment-1105-2025-06-23-130428"
 }

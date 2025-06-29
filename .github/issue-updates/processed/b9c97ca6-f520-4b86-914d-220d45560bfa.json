@@ -2,6 +2,9 @@
   "action": "update",
   "number": 542,
   "body": "Add codex label",
-  "labels": ["codex"],
-  "guid": "update-issue-542-2025-06-23"
+  "labels": [
+    "codex"
+  ],
+  "guid": "8b758026-e222-4782-baf9-9e503de6fb40",
+  "legacy_guid": "update-issue-542-2025-06-23"
 }

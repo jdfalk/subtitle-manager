@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 543,
   "body": "Plan: update React components to use unified gRPC API with REST fallback",
-  "guid": "comment-543-2025-06-23-125603"
+  "guid": "15d99194-cfd2-49c8-a00f-88fa8853f65c",
+  "legacy_guid": "comment-543-2025-06-23-125603"
 }

@@ -2,5 +2,6 @@
   "action": "comment",
   "number": 1105,
   "body": "Sanitize batch output path with filepath.Clean to prevent path injection",
-  "guid": "comment-1105-2025-06-23-125446"
+  "guid": "d9da48bc-5365-4a33-8190-1b222355a1cf",
+  "legacy_guid": "comment-1105-2025-06-23-125446"
 }
