@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -18,9 +19,16 @@ func BenchmarkTranslateFileToSRT(b *testing.B) {
 	translator.SetGoogleAPIURL(srv.URL)
 	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
 
+	// Get absolute path to test data
+	wd, err := os.Getwd()
+	if err != nil {
+		b.Fatalf("getwd: %v", err)
+	}
+	inPath := filepath.Join(wd, "../../testdata/simple.srt")
+
 	for i := 0; i < b.N; i++ {
 		out := filepath.Join(b.TempDir(), fmt.Sprintf("out-%d.srt", i))
-		if err := TranslateFileToSRT("../../testdata/simple.srt", out, "es", "google", "k", "", ""); err != nil {
+		if err := TranslateFileToSRT(inPath, out, "es", "google", "k", "", ""); err != nil {
 			b.Fatalf("translate: %v", err)
 		}
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/queue"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/tasks"
 )
@@ -21,6 +22,13 @@ var translateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("translate")
 		in, out, lang := args[0], args[1], args[2]
+
+		// Validate language code to prevent path traversal attacks
+		if err := security.ValidateLanguageCode(lang); err != nil {
+			logger.Warnf("invalid language code: %v", err)
+			return err
+		}
+
 		service := viper.GetString("translate_service")
 		gKey := viper.GetString("google_api_key")
 		gptKey := viper.GetString("openai_api_key")
