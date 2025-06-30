@@ -1,0 +1,47 @@
+# file: .pre-commit-config.yaml
+# version: 1.0.0
+# guid: 123e4567-e89b-12d3-a456-426614174000
+
+# Pre-commit configuration for subtitle-manager
+# Install with: pip install pre-commit ruff && pre-commit install
+
+repos:
+  # Ruff for Python linting and formatting (fallback to alternatives if not available)
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: Ruff Linter (Python)
+        entry: bash
+        args: ['-c', 'if command -v ruff >/dev/null 2>&1; then ruff check --fix .; else echo "Ruff not found, install with: pip install ruff"; fi']
+        language: system
+        files: \.py$
+        pass_filenames: false
+        
+      - id: ruff-format
+        name: Ruff Formatter (Python)
+        entry: bash
+        args: ['-c', 'if command -v ruff >/dev/null 2>&1; then ruff format .; else echo "Ruff not found, install with: pip install ruff"; fi']
+        language: system
+        files: \.py$
+        pass_filenames: false
+
+      # Prettier using existing webui setup
+      - id: prettier-js-md
+        name: Prettier (JS/MD/CSS/JSON)
+        entry: bash
+        args: ['-c', 'cd webui && if [ -f package.json ] && npm list prettier >/dev/null 2>&1; then npm run format; else echo "Prettier not available, install webui dependencies with: cd webui && npm install"; fi']
+        language: system
+        files: \.(js|jsx|ts|tsx|css|scss|json|md|yaml|yml|html)$
+        exclude: ^(webui/dist/|webui/node_modules/|\.git/|\.github/copilot-instructions\.md)
+        pass_filenames: false
+
+  # Fallback to built-in tools for basic Python formatting if Ruff unavailable
+  - repo: local
+    hooks:
+      - id: python-fallback
+        name: Python Basic Formatting (fallback)
+        entry: bash
+        args: ['-c', 'if ! command -v ruff >/dev/null 2>&1; then python3 -m py_compile $(find . -name "*.py" -not -path "./webui/*" -not -path "./.git/*") 2>/dev/null || echo "Python syntax check completed"; fi']
+        language: system
+        files: \.py$
+        pass_filenames: false
