@@ -857,7 +857,31 @@ This means **you don't need to worry about code formatting** - just focus on you
 
 #### Optional Local Pre-commit Hooks
 
-For developers who prefer to format code locally before pushing, you can install pre-commit hooks:
+For developers who prefer to format code locally before pushing, you have several options:
+
+##### Modern Pre-commit Framework (Recommended)
+
+The repository includes a `.pre-commit-config.yaml` configuration with Ruff for Python and Prettier for JavaScript/Markdown:
+
+\```bash
+# Install pre-commit and tools
+pip install pre-commit ruff
+
+# Install the pre-commit hooks
+pre-commit install
+
+# Run on all files (one-time setup)
+pre-commit run --all-files
+\```
+
+This will automatically:
+- **Python files**: Lint and format with Ruff (fast, modern replacement for flake8/black)
+- **JS/MD/CSS files**: Format with Prettier using the existing webui configuration
+- **All files**: Check for trailing whitespace, file endings, YAML/JSON syntax
+
+##### Shell-based Pre-commit Hooks (Legacy)
+
+You can also use the existing shell-based hooks:
 
 \```bash
 # Install the auto-formatting pre-commit hook
@@ -878,6 +902,12 @@ The **legacy quality-check hook** (`install-hooks.sh`) will:
 - Check Go file formatting with `gofmt -s`
 - Run `go vet` for static analysis
 - Prevent commits that don't pass these checks
+
+**Benefits of the modern pre-commit framework:**
+- ✅ **Ruff for Python**: Much faster than traditional tools (10-100x faster than flake8)
+- ✅ **Consistent formatting**: Uses the same Prettier configuration as CI
+- ✅ **Extensible**: Easy to add new languages and tools
+- ✅ **Smart**: Only runs on changed files by default
 
 To bypass any hook temporarily, use `git commit --no-verify`.
 
