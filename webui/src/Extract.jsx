@@ -21,6 +21,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { apiService } from './services/api.js';
 
 /**
  * Extract provides a simple form to request subtitle extraction for a media file.
@@ -46,20 +47,16 @@ export default function Extract({ backendAvailable = true }) {
     setExtractedItems([]);
 
     try {
-      const res = await fetch('/api/extract', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path }),
-      });
+      const response = await apiService.subtitles.extract(path);
 
-      if (res.ok) {
-        const items = await res.json();
+      if (response.ok) {
+        const items = await response.json();
         setExtractedItems(items || []);
         setStatus(
           `Successfully extracted ${items?.length || 0} subtitle streams`
         );
       } else {
-        const errorText = await res.text();
+        const errorText = await response.text();
         setStatus(`Error: ${errorText || 'Failed to extract subtitles'}`);
       }
     } catch (error) {
