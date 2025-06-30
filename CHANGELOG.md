@@ -6,6 +6,27 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Automatic Episode Monitoring System**: Complete subtitle monitoring solution
+  for TV episodes and movies
+  - Sonarr/Radarr integration for automatic media library synchronization
+  - Multi-language subtitle monitoring with configurable retry logic
+  - Intelligent blacklist management with automatic and manual controls
+  - Provider integration using existing priority and backoff systems
+  - Quality upgrade monitoring for improved subtitle versions
+  - Comprehensive CLI commands for monitoring management:
+    - `subtitle-manager monitor sync` - Sync media from Sonarr/Radarr
+    - `subtitle-manager monitor start` - Start monitoring daemon
+    - `subtitle-manager monitor status` - View monitoring statistics
+    - `subtitle-manager monitor list` - List all monitored items
+    - `subtitle-manager monitor blacklist` - Manage blacklisted items
+  - Scheduler integration for periodic monitoring with jitter
+  - Database schema extensions for monitored items with retry tracking
+  - Detailed statistics and progress reporting
+  - Files modified: [pkg/monitoring/monitor.go](pkg/monitoring/monitor.go),
+    [pkg/monitoring/sync.go](pkg/monitoring/sync.go),
+    [pkg/monitoring/blacklist.go](pkg/monitoring/blacklist.go),
+    [pkg/monitoring/scheduler.go](pkg/monitoring/scheduler.go),
+    [cmd/monitor.go](cmd/monitor.go)
 - **Universal Tagging System**: Complete unified tagging interface supporting
   all entity types
   - Enhanced Tag model with Type, EntityType, Color, and Description fields
