@@ -184,6 +184,10 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/webhooks/custom", webhooks.CustomHandler())
 	mux.Handle(prefix+"/api/translate", authMiddleware(db, "basic", translateHandler()))
 	mux.Handle(prefix+"/api/sync/batch", authMiddleware(db, "basic", syncBatchHandler()))
+	// New search API endpoints
+	mux.Handle(prefix+"/api/search", authMiddleware(db, "basic", searchHandler()))
+	mux.Handle(prefix+"/api/search/preview", authMiddleware(db, "basic", searchPreviewHandler()))
+	mux.Handle(prefix+"/api/search/history", authMiddleware(db, "basic", searchHistoryHandler(db)))
 	// New API endpoints for modern UI
 	mux.Handle(prefix+"/api/providers", authMiddleware(db, "basic", providersHandler()))
 	mux.Handle(prefix+"/api/library/browse", authMiddleware(db, "basic", libraryBrowseHandler()))
