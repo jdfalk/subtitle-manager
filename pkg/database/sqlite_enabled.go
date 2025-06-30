@@ -184,6 +184,30 @@ func initSchema(db *sql.DB) error {
 		return err
 	}
 
+	// Language profiles table for Bazarr-style language management
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS language_profiles (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        config TEXT NOT NULL,
+        cutoff_score INTEGER NOT NULL DEFAULT 75,
+        is_default BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	// Media profile assignments table
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_profiles (
+        media_id TEXT NOT NULL,
+        profile_id TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        PRIMARY KEY (media_id),
+        FOREIGN KEY (profile_id) REFERENCES language_profiles(id) ON DELETE CASCADE
+    )`); err != nil {
+		return err
+	}
+
 	// Seed default roles and permissions if empty
 	var count int
 	row := db.QueryRow(`SELECT COUNT(1) FROM permissions`)
@@ -195,6 +219,19 @@ func initSchema(db *sql.DB) error {
             ('admin', 'all'),
             ('user', 'read'),
             ('user', 'download')`); err != nil {
+			return err
+		}
+	}
+
+	// Seed default language profile if empty
+	var profileCount int
+	profileRow := db.QueryRow(`SELECT COUNT(1) FROM language_profiles`)
+	if err := profileRow.Scan(&profileCount); err != nil {
+		return err
+	}
+	if profileCount == 0 {
+		if _, err := db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at) VALUES
+            ('default', 'Default English', '[{"language":"en","priority":1,"forced":false,"hi":false}]', 75, TRUE, datetime('now'), datetime('now'))`); err != nil {
 			return err
 		}
 	}

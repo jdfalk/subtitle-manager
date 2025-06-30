@@ -1,5 +1,13 @@
 package database
 
+import "github.com/jdfalk/subtitle-manager/pkg/profiles"
+
+// LanguageProfile alias for convenience
+type LanguageProfile = profiles.LanguageProfile
+
+// MediaProfileAssignment alias for convenience  
+type MediaProfileAssignment = profiles.MediaProfileAssignment
+
 // SubtitleStore abstracts subtitle history storage backends.
 type SubtitleStore interface {
 	// InsertSubtitle stores a subtitle record.
@@ -58,6 +66,26 @@ type SubtitleStore interface {
 	SetMediaFieldLocks(path, locks string) error
 	// SetMediaTitle updates the title for a media item.
 	SetMediaTitle(path, title string) error
+	// CreateLanguageProfile stores a new language profile.
+	CreateLanguageProfile(profile *LanguageProfile) error
+	// GetLanguageProfile retrieves a language profile by ID.
+	GetLanguageProfile(id string) (*LanguageProfile, error)
+	// ListLanguageProfiles retrieves all language profiles.
+	ListLanguageProfiles() ([]LanguageProfile, error)
+	// UpdateLanguageProfile updates an existing language profile.
+	UpdateLanguageProfile(profile *LanguageProfile) error
+	// DeleteLanguageProfile removes a language profile by ID.
+	DeleteLanguageProfile(id string) error
+	// SetDefaultLanguageProfile marks a profile as the default.
+	SetDefaultLanguageProfile(id string) error
+	// GetDefaultLanguageProfile retrieves the default language profile.
+	GetDefaultLanguageProfile() (*LanguageProfile, error)
+	// AssignProfileToMedia assigns a language profile to a media item.
+	AssignProfileToMedia(mediaID, profileID string) error
+	// RemoveProfileFromMedia removes language profile assignment from a media item.
+	RemoveProfileFromMedia(mediaID string) error
+	// GetMediaProfile retrieves the language profile assigned to a media item.
+	GetMediaProfile(mediaID string) (*LanguageProfile, error)
 	// Close releases any resources held by the store.
 	Close() error
 }

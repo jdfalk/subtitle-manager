@@ -47,6 +47,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -1005,4 +1006,170 @@ func GetDashboardLayout(db *sql.DB, userID int64) (string, error) {
 		return "", err
 	}
 	return layout, nil
+}
+
+// Language Profile operations
+
+// CreateLanguageProfile stores a new language profile.
+func (s *SQLStore) CreateLanguageProfile(profile *LanguageProfile) error {
+	config, err := profile.MarshalConfig()
+	if err != nil {
+		return fmt.Errorf("failed to marshal profile config: %w", err)
+	}
+
+	_, err = s.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at) 
+		VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		profile.ID, profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
+		profile.CreatedAt, profile.UpdatedAt)
+	return err
+}
+
+// GetLanguageProfile retrieves a language profile by ID.
+func (s *SQLStore) GetLanguageProfile(id string) (*LanguageProfile, error) {
+	var profile LanguageProfile
+	var configStr string
+
+	row := s.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+		FROM language_profiles WHERE id = ?`, id)
+
+	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore, 
+		&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
+	}
+
+	return &profile, nil
+}
+
+// ListLanguageProfiles retrieves all language profiles.
+func (s *SQLStore) ListLanguageProfiles() ([]LanguageProfile, error) {
+	rows, err := s.db.Query(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+		FROM language_profiles ORDER BY is_default DESC, name ASC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var profiles []LanguageProfile
+	for rows.Next() {
+		var profile LanguageProfile
+		var configStr string
+
+		err := rows.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
+			&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
+		}
+
+		profiles = append(profiles, profile)
+	}
+
+	return profiles, rows.Err()
+}
+
+// UpdateLanguageProfile updates an existing language profile.
+func (s *SQLStore) UpdateLanguageProfile(profile *LanguageProfile) error {
+	config, err := profile.MarshalConfig()
+	if err != nil {
+		return fmt.Errorf("failed to marshal profile config: %w", err)
+	}
+
+	_, err = s.db.Exec(`UPDATE language_profiles 
+		SET name = ?, config = ?, cutoff_score = ?, is_default = ?, updated_at = ?
+		WHERE id = ?`,
+		profile.Name, string(config), profile.CutoffScore, profile.IsDefault, 
+		profile.UpdatedAt, profile.ID)
+	return err
+}
+
+// DeleteLanguageProfile removes a language profile by ID.
+func (s *SQLStore) DeleteLanguageProfile(id string) error {
+	// First remove any media assignments
+	if _, err := s.db.Exec(`DELETE FROM media_profiles WHERE profile_id = ?`, id); err != nil {
+		return err
+	}
+	
+	// Then remove the profile itself
+	_, err := s.db.Exec(`DELETE FROM language_profiles WHERE id = ?`, id)
+	return err
+}
+
+// SetDefaultLanguageProfile marks a profile as the default.
+func (s *SQLStore) SetDefaultLanguageProfile(id string) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Clear all default flags
+	if _, err := tx.Exec(`UPDATE language_profiles SET is_default = FALSE`); err != nil {
+		return err
+	}
+
+	// Set the specified profile as default
+	if _, err := tx.Exec(`UPDATE language_profiles SET is_default = TRUE WHERE id = ?`, id); err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}
+
+// GetDefaultLanguageProfile retrieves the default language profile.
+func (s *SQLStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
+	var profile LanguageProfile
+	var configStr string
+
+	row := s.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+		FROM language_profiles WHERE is_default = TRUE LIMIT 1`)
+
+	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
+		&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
+	}
+
+	return &profile, nil
+}
+
+// AssignProfileToMedia assigns a language profile to a media item.
+func (s *SQLStore) AssignProfileToMedia(mediaID, profileID string) error {
+	_, err := s.db.Exec(`INSERT OR REPLACE INTO media_profiles (media_id, profile_id, created_at) 
+		VALUES (?, ?, ?)`, mediaID, profileID, time.Now())
+	return err
+}
+
+// RemoveProfileFromMedia removes language profile assignment from a media item.
+func (s *SQLStore) RemoveProfileFromMedia(mediaID string) error {
+	_, err := s.db.Exec(`DELETE FROM media_profiles WHERE media_id = ?`, mediaID)
+	return err
+}
+
+// GetMediaProfile retrieves the language profile assigned to a media item.
+func (s *SQLStore) GetMediaProfile(mediaID string) (*LanguageProfile, error) {
+	var profileID string
+	row := s.db.QueryRow(`SELECT profile_id FROM media_profiles WHERE media_id = ?`, mediaID)
+	
+	err := row.Scan(&profileID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// No profile assigned, return default profile
+			return s.GetDefaultLanguageProfile()
+		}
+		return nil, err
+	}
+
+	return s.GetLanguageProfile(profileID)
 }

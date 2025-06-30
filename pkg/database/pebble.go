@@ -11,7 +11,13 @@ import (
 
 	"github.com/cockroachdb/pebble"
 	"github.com/google/uuid"
+	"github.com/jdfalk/subtitle-manager/pkg/profiles"
 )
+
+// DefaultLanguageProfile returns a default profile
+func DefaultLanguageProfile() *LanguageProfile {
+	return profiles.DefaultLanguageProfile()
+}
 
 // PebbleStore wraps a Pebble database and implements basic CRUD operations
 // for SubtitleRecord documents.
@@ -1341,4 +1347,207 @@ func (p *PebbleStore) InitializeDefaultPermissions() error {
 	}
 
 	return nil
+}
+
+// Language Profile operations for PebbleStore
+
+func languageProfileKey(id string) []byte                  { return []byte("language_profile:" + id) }
+func mediaProfileKey(mediaID string) []byte               { return []byte("media_profile:" + mediaID) }
+
+// CreateLanguageProfile stores a new language profile.
+func (p *PebbleStore) CreateLanguageProfile(profile *LanguageProfile) error {
+	profileData, err := json.Marshal(profile)
+	if err != nil {
+		return err
+	}
+	return p.db.Set(languageProfileKey(profile.ID), profileData, pebble.Sync)
+}
+
+// GetLanguageProfile retrieves a language profile by ID.
+func (p *PebbleStore) GetLanguageProfile(id string) (*LanguageProfile, error) {
+	profileData, closer, err := p.db.Get(languageProfileKey(id))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	defer closer.Close()
+
+	var profile LanguageProfile
+	if err := json.Unmarshal(profileData, &profile); err != nil {
+		return nil, err
+	}
+	return &profile, nil
+}
+
+// ListLanguageProfiles retrieves all language profiles.
+func (p *PebbleStore) ListLanguageProfiles() ([]LanguageProfile, error) {
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var profiles []LanguageProfile
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "language_profile:") {
+			continue
+		}
+		var profile LanguageProfile
+		if err := json.Unmarshal(iter.Value(), &profile); err != nil {
+			return nil, err
+		}
+		profiles = append(profiles, profile)
+	}
+	if err := iter.Error(); err != nil {
+		return nil, err
+	}
+
+	// Sort by default first, then by name
+	sort.Slice(profiles, func(i, j int) bool {
+		if profiles[i].IsDefault != profiles[j].IsDefault {
+			return profiles[i].IsDefault
+		}
+		return profiles[i].Name < profiles[j].Name
+	})
+	return profiles, nil
+}
+
+// UpdateLanguageProfile updates an existing language profile.
+func (p *PebbleStore) UpdateLanguageProfile(profile *LanguageProfile) error {
+	profile.UpdatedAt = time.Now()
+	profileData, err := json.Marshal(profile)
+	if err != nil {
+		return err
+	}
+	return p.db.Set(languageProfileKey(profile.ID), profileData, pebble.Sync)
+}
+
+// DeleteLanguageProfile removes a language profile by ID.
+func (p *PebbleStore) DeleteLanguageProfile(id string) error {
+	// First remove any media assignments
+	iter, err := p.db.NewIter(nil)
+	if err != nil {
+		return err
+	}
+	defer iter.Close()
+
+	batch := p.db.NewBatch()
+	for iter.First(); iter.Valid(); iter.Next() {
+		if !strings.HasPrefix(string(iter.Key()), "media_profile:") {
+			continue
+		}
+		var assignment MediaProfileAssignment
+		if err := json.Unmarshal(iter.Value(), &assignment); err != nil {
+			continue
+		}
+		if assignment.ProfileID == id {
+			if err := batch.Delete(iter.Key(), nil); err != nil {
+				batch.Close()
+				return err
+			}
+		}
+	}
+
+	// Remove the profile itself
+	if err := batch.Delete(languageProfileKey(id), nil); err != nil {
+		batch.Close()
+		return err
+	}
+
+	return batch.Commit(pebble.Sync)
+}
+
+// SetDefaultLanguageProfile marks a profile as the default.
+func (p *PebbleStore) SetDefaultLanguageProfile(id string) error {
+	// First get all profiles and clear default flags
+	profiles, err := p.ListLanguageProfiles()
+	if err != nil {
+		return err
+	}
+
+	batch := p.db.NewBatch()
+	for _, profile := range profiles {
+		profile.IsDefault = (profile.ID == id)
+		profile.UpdatedAt = time.Now()
+		profileData, err := json.Marshal(profile)
+		if err != nil {
+			batch.Close()
+			return err
+		}
+		if err := batch.Set(languageProfileKey(profile.ID), profileData, nil); err != nil {
+			batch.Close()
+			return err
+		}
+	}
+
+	return batch.Commit(pebble.Sync)
+}
+
+// GetDefaultLanguageProfile retrieves the default language profile.
+func (p *PebbleStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
+	profiles, err := p.ListLanguageProfiles()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, profile := range profiles {
+		if profile.IsDefault {
+			return &profile, nil
+		}
+	}
+
+	// No default found, return the first profile or create one
+	if len(profiles) > 0 {
+		return &profiles[0], nil
+	}
+
+	// Create and return a default profile
+	defaultProfile := DefaultLanguageProfile()
+	if err := p.CreateLanguageProfile(defaultProfile); err != nil {
+		return nil, err
+	}
+	return defaultProfile, nil
+}
+
+// AssignProfileToMedia assigns a language profile to a media item.
+func (p *PebbleStore) AssignProfileToMedia(mediaID, profileID string) error {
+	assignment := MediaProfileAssignment{
+		MediaID:   mediaID,
+		ProfileID: profileID,
+		CreatedAt: time.Now(),
+	}
+
+	assignmentData, err := json.Marshal(assignment)
+	if err != nil {
+		return err
+	}
+
+	return p.db.Set(mediaProfileKey(mediaID), assignmentData, pebble.Sync)
+}
+
+// RemoveProfileFromMedia removes language profile assignment from a media item.
+func (p *PebbleStore) RemoveProfileFromMedia(mediaID string) error {
+	return p.db.Delete(mediaProfileKey(mediaID), pebble.Sync)
+}
+
+// GetMediaProfile retrieves the language profile assigned to a media item.
+func (p *PebbleStore) GetMediaProfile(mediaID string) (*LanguageProfile, error) {
+	assignmentData, closer, err := p.db.Get(mediaProfileKey(mediaID))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			// No profile assigned, return default profile
+			return p.GetDefaultLanguageProfile()
+		}
+		return nil, err
+	}
+	defer closer.Close()
+
+	var assignment MediaProfileAssignment
+	if err := json.Unmarshal(assignmentData, &assignment); err != nil {
+		return nil, err
+	}
+
+	return p.GetLanguageProfile(assignment.ProfileID)
 }
