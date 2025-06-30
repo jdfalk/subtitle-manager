@@ -15,6 +15,7 @@ import {
   Typography,
 } from '@mui/material';
 import UserEditorDialog from './components/UserEditorDialog.jsx';
+import { apiService } from './services/api.js';
 
 /**
  * UserManagement displays all users and allows password resets.
@@ -39,19 +40,13 @@ export default function UserManagement({ backendAvailable = true }) {
       setLoading(true);
       setError(null);
 
-      const res = await fetch('/api/users', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
+      const response = await apiService.users.list();
 
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const userData = await res.json();
+      const userData = await response.json();
       console.log('User data received:', userData);
       const userArray = Array.isArray(userData)
         ? userData
@@ -69,16 +64,13 @@ export default function UserManagement({ backendAvailable = true }) {
     if (!window.confirm('Reset password for this user?')) return;
 
     try {
-      const res = await fetch(`/api/users/${id}/reset`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      const response = await apiService.users.resetPassword(id);
 
-      if (res.ok) {
+      if (response.ok) {
         alert('Password reset and emailed');
         await loadUsers();
       } else {
-        const errorText = await res.text();
+        const errorText = await response.text();
         alert(`Reset failed: ${errorText}`);
       }
     } catch (error) {
@@ -91,17 +83,15 @@ export default function UserManagement({ backendAvailable = true }) {
 
   const saveUser = async data => {
     try {
-      const res = await fetch(
-        data.id ? `/api/users/${data.id}` : '/api/users',
-        {
-          method: data.id ? 'PUT' : 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(data),
-        }
-      );
-      if (!res.ok) {
-        const txt = await res.text();
+      let response;
+      if (data.id) {
+        response = await apiService.users.update(data.id, data);
+      } else {
+        response = await apiService.users.create(data);
+      }
+      
+      if (!response.ok) {
+        const txt = await response.text();
         throw new Error(txt);
       }
       await loadUsers();

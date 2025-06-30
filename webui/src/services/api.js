@@ -202,6 +202,35 @@ export const apiService = {
   },
 
   /**
+   * OAuth Management
+   */
+  oauth: {
+    /**
+     * Generate GitHub OAuth configuration
+     * @returns {Promise<Response>} - Generate OAuth response
+     */
+    async generateGitHub() {
+      return apiService.post('/api/oauth/github/generate');
+    },
+
+    /**
+     * Regenerate GitHub OAuth configuration
+     * @returns {Promise<Response>} - Regenerate OAuth response
+     */
+    async regenerateGitHub() {
+      return apiService.post('/api/oauth/github/regenerate');
+    },
+
+    /**
+     * Reset GitHub OAuth configuration
+     * @returns {Promise<Response>} - Reset OAuth response
+     */
+    async resetGitHub() {
+      return apiService.post('/api/oauth/github/reset');
+    },
+  },
+
+  /**
    * Configuration Management
    */
   config: {
@@ -587,6 +616,15 @@ export const apiService = {
      */
     async delete(userId) {
       return apiService.delete(`/api/users/${userId}`);
+    },
+
+    /**
+     * Reset user password
+     * @param {string} userId - User ID
+     * @returns {Promise<Response>} - Reset password response
+     */
+    async resetPassword(userId) {
+      return apiService.post(`/api/users/${userId}/reset`);
     },
   },
 

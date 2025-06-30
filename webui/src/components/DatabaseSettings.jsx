@@ -27,6 +27,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { apiService } from '../services/api.js';
 
 /**
  * Enhanced DatabaseSettings component with comprehensive database management.
@@ -53,13 +54,13 @@ export default function DatabaseSettings({
 
     setLoading(true);
     try {
-      const response = await fetch('/api/database/info');
+      const response = await apiService.database.getInfo();
       if (response.ok) {
         const data = await response.json();
         setDbInfo(data);
       }
 
-      const statsResponse = await fetch('/api/database/stats');
+      const statsResponse = await apiService.database.getStats();
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setStats(statsData);
@@ -80,7 +81,7 @@ export default function DatabaseSettings({
 
   const handleBackup = async () => {
     try {
-      const response = await fetch('/api/database/backup', { method: 'POST' });
+      const response = await apiService.database.backup();
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -101,9 +102,7 @@ export default function DatabaseSettings({
 
   const handleOptimize = async () => {
     try {
-      const response = await fetch('/api/database/optimize', {
-        method: 'POST',
-      });
+      const response = await apiService.database.optimize();
       if (response.ok) {
         alert('Database optimization completed successfully');
         setOptimizeDialog(false);
