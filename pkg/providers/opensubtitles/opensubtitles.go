@@ -294,6 +294,71 @@ func (c *Client) Search(ctx context.Context, mediaPath, lang string) ([]string, 
 	return nil, fmt.Errorf("failed to decode search response")
 }
 
+// SearchWithResults returns detailed search results for scoring.
+func (c *Client) SearchWithResults(ctx context.Context, mediaPath, lang string) ([]SearchResult, error) {
+	token, err := c.getToken(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("authentication failed: %w", err)
+	}
+
+	hash, size, err := fileHashFunc(mediaPath)
+	if err != nil {
+		return nil, err
+	}
+
+	// Use the new REST API v1 endpoint
+	url := fmt.Sprintf("%s/subtitles?moviehash=%x&moviebytesize=%d&languages=%s", c.APIURL, hash, size, lang)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusUnauthorized {
+		// Token might be expired, try to login again
+		c.tokenMu.Lock()
+		c.token = ""
+		c.tokenMu.Unlock()
+
+		token, err = c.getToken(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("re-authentication failed: %w", err)
+		}
+
+		// Retry the request with new token
+		req.Header.Set("Authorization", "Bearer "+token)
+		resp, err = c.HTTPClient.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("search failed with status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var searchResp SearchResponse
+	if err := json.Unmarshal(body, &searchResp); err == nil {
+		return searchResp.Data, nil
+	}
+
+	return nil, fmt.Errorf("failed to decode search response")
+}
+
 // Fetch downloads the first matching subtitle for mediaPath in lang.
 func (c *Client) Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error) {
 	urls, err := c.Search(ctx, mediaPath, lang)
