@@ -94,7 +94,6 @@ The resolved `issue_updates.json` now contains:
 The resolved file now properly captures work from both development streams:
 
 1. **Security and Performance Work (HEAD):**
-
    - OMDB API hostname validation security fixes (#930)
    - Performance benchmarking completion (#532)
    - Provider SDK migration completion (#531)

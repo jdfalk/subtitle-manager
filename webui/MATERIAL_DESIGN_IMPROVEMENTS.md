@@ -94,21 +94,18 @@ This document outlines the comprehensive Material Design 3 improvements made to 
 ### Modified Files
 
 1. **`src/App.jsx`**
-
    - Complete theme system overhaul
    - Dark mode toggle implementation
    - Enhanced layout with proper Material Design spacing
    - Improved login page design
 
 2. **`src/System.jsx`**
-
    - Fixed dark mode visibility issues
    - Implemented collapsible raw data sections
    - Enhanced code block styling
    - Better status indicators and typography
 
 3. **`src/App.css`**
-
    - Comprehensive Material Design 3 styles
    - Enhanced dark mode support
    - Custom scrollbar styling
