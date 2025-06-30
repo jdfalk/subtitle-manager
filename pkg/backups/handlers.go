@@ -52,6 +52,8 @@ func (h *Handlers) CreateBackupHandler() http.Handler {
 			backup, err = h.service.CreateDatabaseBackup(r.Context())
 		case "configuration":
 			backup, err = h.service.CreateConfigBackup(r.Context())
+		case "subtitles":
+			backup, err = h.service.CreateSubtitleBackup(r.Context())
 		case "full":
 			backup, err = h.service.CreateFullBackup(r.Context())
 		default:
@@ -217,11 +219,13 @@ func NewServiceFromConfig(store database.SubtitleStore) (*Service, error) {
 	}
 
 	config := ServiceConfig{
-		BackupPath:        backupPath,
-		EnableEncryption:  enableEncryption,
-		EncryptionKey:     encryptionKeyBytes,
-		EnableCompression: viper.GetBool("backup_compression_enabled"),
-		DatabaseStore:     store,
+		BackupPath:         backupPath,
+		EnableEncryption:   enableEncryption,
+		EncryptionKey:      encryptionKeyBytes,
+		EnableCompression:  viper.GetBool("backup_compression_enabled"),
+		DatabaseStore:      store,
+		EnableCloudStorage: viper.GetBool("backup_cloud_enabled"),
+		CloudStorageType:   viper.GetString("backup_cloud_type"),
 	}
 
 	return NewService(config)
