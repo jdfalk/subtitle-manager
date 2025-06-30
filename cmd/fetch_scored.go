@@ -17,6 +17,16 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/scoring"
 )
 
+var (
+	minScore     int
+	providerWgt  float64
+	releaseWgt   float64
+	formatWgt    float64
+	metadataWgt  float64
+	allowHI      bool
+	preferHI     bool
+)
+
 var fetchScoredCmd = &cobra.Command{
 	Use:   "fetch-scored [media] [lang] [output]",
 	Short: "Download subtitles using quality-based scoring",
@@ -64,8 +74,37 @@ This command evaluates subtitles based on:
 		// Extract media information from path
 		mediaItem := scoring.FromMediaPath(media)
 
-		// Use default scoring profile
-		profile := scoring.DefaultProfile()
+		// Load scoring profile from configuration
+		profile := scoring.LoadProfileFromConfig()
+
+		// Validate profile
+		if err := scoring.ValidateProfile(profile); err != nil {
+			logger.Warnf("invalid scoring configuration: %v, using defaults", err)
+			profile = scoring.DefaultProfile()
+		}
+
+		// Apply command-line overrides
+		if cmd.Flags().Changed("min-score") {
+			profile.MinScore = minScore
+		}
+		if cmd.Flags().Changed("provider-weight") {
+			profile.ProviderWeight = providerWgt
+		}
+		if cmd.Flags().Changed("release-weight") {
+			profile.ReleaseWeight = releaseWgt
+		}
+		if cmd.Flags().Changed("format-weight") {
+			profile.FormatWeight = formatWgt
+		}
+		if cmd.Flags().Changed("metadata-weight") {
+			profile.MetadataWeight = metadataWgt
+		}
+		if cmd.Flags().Changed("allow-hi") {
+			profile.AllowHI = allowHI
+		}
+		if cmd.Flags().Changed("prefer-hi") {
+			profile.PreferHI = preferHI
+		}
 
 		// Score and select best subtitle
 		best, score := scoring.SelectBest(subtitles, mediaItem, profile)
@@ -127,4 +166,13 @@ This command evaluates subtitles based on:
 
 func init() {
 	rootCmd.AddCommand(fetchScoredCmd)
+	
+	// Scoring configuration flags
+	fetchScoredCmd.Flags().IntVar(&minScore, "min-score", 50, "Minimum score threshold (0-100)")
+	fetchScoredCmd.Flags().Float64Var(&providerWgt, "provider-weight", 0.25, "Provider reliability weight (0.0-1.0)")
+	fetchScoredCmd.Flags().Float64Var(&releaseWgt, "release-weight", 0.35, "Release match weight (0.0-1.0)")
+	fetchScoredCmd.Flags().Float64Var(&formatWgt, "format-weight", 0.15, "Format preference weight (0.0-1.0)")
+	fetchScoredCmd.Flags().Float64Var(&metadataWgt, "metadata-weight", 0.25, "Metadata quality weight (0.0-1.0)")
+	fetchScoredCmd.Flags().BoolVar(&allowHI, "allow-hi", true, "Allow hearing impaired subtitles")
+	fetchScoredCmd.Flags().BoolVar(&preferHI, "prefer-hi", false, "Prefer hearing impaired subtitles")
 }
