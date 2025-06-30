@@ -11,6 +11,7 @@ import {
   Refresh as RefreshIcon,
   Label as TagsIcon,
   People as UsersIcon,
+  Webhook as WebhookIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -45,6 +46,7 @@ const LanguageProfiles = lazy(
 const NotificationSettings = lazy(
   () => import('./components/NotificationSettings.jsx')
 );
+const WebhookSettings = lazy(() => import('./components/WebhookSettings.jsx'));
 const UserManagement = lazy(() => import('./UserManagement.jsx'));
 const TagManagement = lazy(() => import('./TagManagement.jsx'));
 
@@ -563,6 +565,17 @@ export default function Settings({ backendAvailable = true }) {
           fallback={<LoadingComponent message="Loading Tag Management..." />}
         >
           <TagManagement backendAvailable={backendAvailable} />
+        </Suspense>
+      ),
+    },
+    {
+      label: 'Webhooks',
+      icon: <WebhookIcon />,
+      component: () => (
+        <Suspense
+          fallback={<LoadingComponent message="Loading Webhook Settings..." />}
+        >
+          <WebhookSettings backendAvailable={backendAvailable} />
         </Suspense>
       ),
     },
