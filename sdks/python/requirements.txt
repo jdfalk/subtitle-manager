@@ -1,0 +1,15 @@
+# file: sdks/python/requirements.txt
+# version: 1.0.0
+# guid: 550e8400-e29b-41d4-a716-446655440009
+
+# Core dependencies
+requests>=2.25.0
+
+# Optional dependencies for development
+pytest>=6.0; extra == "dev"
+pytest-cov>=2.0; extra == "dev"
+pytest-mock>=3.0; extra == "dev"
+black>=21.0; extra == "dev"
+flake8>=3.8; extra == "dev"
+mypy>=0.900; extra == "dev"
+responses>=0.18.0; extra == "dev"
