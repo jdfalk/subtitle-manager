@@ -9,8 +9,7 @@
 
 # HTML/CSS Style Guide (Google)
 
-This document summarizes Google's HTML and CSS style guides for use in code
-generation and review.
+This document summarizes Google's HTML and CSS style guides for use in code generation and review.
 
 ## Core Principles
 
@@ -399,14 +398,14 @@ body {
 
 ```css
 /* Good */
-@import url('//www.google.com/css/maia.css');
+@import url("//www.google.com/css/maia.css");
 
 html {
-  font-family: 'open sans', arial, sans-serif;
+  font-family: "open sans", arial, sans-serif;
 }
 
 /* When spaces are present */
-font-family: 'Helvetica Neue', Arial, sans-serif;
+font-family: "Helvetica Neue", Arial, sans-serif;
 ```
 
 ## Advanced CSS Guidelines
@@ -565,7 +564,7 @@ div.container ul.nav li.nav-item a.nav-link:hover {
 :root {
   --primary-color: #007cba;
   --secondary-color: #6c757d;
-  --font-family: 'Helvetica Neue', Arial, sans-serif;
+  --font-family: "Helvetica Neue", Arial, sans-serif;
   --border-radius: 4px;
 }
 
@@ -610,5 +609,4 @@ div.container ul.nav li.nav-item a.nav-link:hover {
 - Use autoprefixer for vendor prefixes
 - Optimize CSS delivery (critical CSS, async loading)
 
-This style guide should be used as the foundation for all HTML and CSS code
-generation and formatting decisions.
+This style guide should be used as the foundation for all HTML and CSS code generation and formatting decisions.

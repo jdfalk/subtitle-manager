@@ -7,8 +7,7 @@
 
 # JSON Style Guide (Google)
 
-This document summarizes Google's JSON style guide for use in code generation
-and review.
+This document summarizes Google's JSON style guide for use in code generation and review.
 
 ## Core Principles
 
@@ -566,5 +565,4 @@ and review.
 }
 ```
 
-This style guide should be used as the foundation for all JSON formatting and
-structure decisions.
+This style guide should be used as the foundation for all JSON formatting and structure decisions.
