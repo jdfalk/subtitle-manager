@@ -7,8 +7,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/spf13/viper"
 
@@ -18,6 +21,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/radarr"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 	"github.com/jdfalk/subtitle-manager/pkg/sonarr"
+	"github.com/jdfalk/subtitle-manager/pkg/tasks"
 )
 
 // scanStatus tracks progress for an active scan.
@@ -68,30 +72,74 @@ func scanHandler() http.Handler {
 		}
 		status = scanStatus{Running: true, Files: []string{}}
 		scanMu.Unlock()
-		go func() {
+		
+		// Start task with proper integration
+		taskID := fmt.Sprintf("scan-%s-%s", q.Directory, q.Lang)
+		task := tasks.Start(r.Context(), taskID, func(ctx context.Context) error {
 			var p providers.Provider
 			var err error
 			if q.Provider != "" {
 				p, err = providers.Get(q.Provider, "")
 				if err != nil {
-					scanMu.Lock()
-					status.Running = false
-					scanMu.Unlock()
-					return
+					return err
 				}
 			}
+			
+			// Count files for progress tracking
+			var fileCount int
+			videoExtensions := []string{".mkv", ".mp4", ".avi", ".mov"}
+			isVideoFile := func(path string) bool {
+				ext := strings.ToLower(filepath.Ext(path))
+				for _, e := range videoExtensions {
+					if ext == e {
+						return true
+					}
+				}
+				return false
+			}
+			
+			err = filepath.Walk(q.Directory, func(path string, info os.FileInfo, err error) error {
+				if err != nil {
+					return err
+				}
+				if !info.IsDir() && isVideoFile(path) {
+					fileCount++
+				}
+				return nil
+			})
+			if err != nil {
+				return err
+			}
+			
+			processed := 0
 			cb := func(f string) {
 				scanMu.Lock()
 				status.Completed++
 				status.Files = append(status.Files, f)
 				scanMu.Unlock()
+				
+				processed++
+				if fileCount > 0 {
+					tasks.Update(taskID, (processed*100)/fileCount)
+				}
 			}
-			_ = scanner.ScanDirectoryProgress(context.Background(), q.Directory, q.Lang, q.Provider, p, false, 2, nil, cb)
+			
+			return scanner.ScanDirectoryProgress(ctx, q.Directory, q.Lang, q.Provider, p, false, 2, nil, cb)
+		})
+		
+		go func() {
+			// Wait for task completion and clean up local status
+			<-time.After(100 * time.Millisecond)
+			for task.GetStatus() == "running" {
+				<-time.After(1 * time.Second)
+			}
 			scanMu.Lock()
 			status.Running = false
 			scanMu.Unlock()
 		}()
+		
 		w.WriteHeader(http.StatusAccepted)
+		json.NewEncoder(w).Encode(map[string]string{"task_id": taskID})
 	})
 }
 

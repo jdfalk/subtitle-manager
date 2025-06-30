@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/jdfalk/subtitle-manager/pkg/cli"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/metadata"
@@ -27,7 +30,36 @@ var scanLibCmd = &cobra.Command{
 		}
 		defer store.Close()
 		logger.Infof("scanning %s", dir)
-		return metadata.ScanLibrary(context.Background(), dir, store)
+
+		// Count media files for progress tracking
+		var mediaFiles []string
+		err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() {
+				// Simple media file detection
+				ext := filepath.Ext(path)
+				if ext == ".mkv" || ext == ".mp4" || ext == ".avi" || ext == ".mov" {
+					mediaFiles = append(mediaFiles, path)
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+
+		// Create progress bar
+		progress := cli.NewProgressBar(len(mediaFiles), "Scanning library")
+		defer progress.Finish()
+
+		// Progress callback
+		progressCallback := func(file string) {
+			progress.Update(file)
+		}
+
+		return metadata.ScanLibraryProgress(context.Background(), dir, store, progressCallback)
 	},
 }
 
