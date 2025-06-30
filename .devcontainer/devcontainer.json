@@ -1,0 +1,107 @@
+{
+  "name": "Subtitle Manager Development",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "go.useLanguageServer": true,
+        "go.gopath": "/go",
+        "go.goroot": "/usr/local/go",
+        "go.lintTool": "golangci-lint",
+        "go.lintOnSave": "package",
+        "go.formatTool": "goimports",
+        "go.enableCodeLens": {
+          "references": true,
+          "runtest": true
+        },
+        "go.buildTags": "sqlite",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "explicit"
+        },
+        "[go]": {
+          "editor.insertSpaces": false,
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+          }
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[javascriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+      },
+      "extensions": [
+        "golang.go",
+        "ms-vscode.vscode-go",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-eslint",
+        "ms-vscode.vscode-typescript-next",
+        "ms-vscode.js-debug",
+        "redhat.vscode-yaml",
+        "ms-vscode.makefile-tools",
+        "ms-vscode.test-adapter-converter",
+        "hbenl.vscode-test-explorer",
+        "ms-vscode.vscode-json"
+      ]
+    }
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  "forwardPorts": [8080, 3000],
+  "portsAttributes": {
+    "8080": {
+      "label": "Application",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Web UI Dev Server",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "postCreateCommand": ".devcontainer/post-create.sh",
+
+  "remoteUser": "vscode",
+  
+  "settings": {},
+  
+  "extensions": [],
+
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=subtitle-manager-go-mod-cache,target=/go/pkg/mod,type=volume",
+    "source=subtitle-manager-node-modules,target=/workspace/webui/node_modules,type=volume"
+  ],
+
+  "containerUser": "vscode",
+  
+  "containerEnv": {
+    "CGO_ENABLED": "1",
+    "GOOS": "linux",
+    "GOARCH": "amd64"
+  }
+}
