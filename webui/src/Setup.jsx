@@ -37,6 +37,7 @@ import {
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
+import { apiService } from './services/api.js';
 
 // Material Design 3 theme
 const theme = createTheme({
@@ -140,17 +141,10 @@ export default function Setup() {
     setBazarrError('');
 
     try {
-      const res = await fetch('/api/setup/bazarr', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: bazarrURL,
-          api_key: bazarrAPIKey,
-        }),
-      });
+      const response = await apiService.setup.importBazarr(bazarrURL, bazarrAPIKey);
 
-      if (res.ok) {
-        const data = await res.json();
+      if (response.ok) {
+        const data = await response.json();
         setBazarrRawData(data.raw_settings); // Store raw data for debugging
         setBazarrSettings(data.preview);
         setBazarrMappings(data.mappings || []);
@@ -173,7 +167,7 @@ export default function Setup() {
         console.log('Mapped Bazarr data:', data.preview);
         console.log('Mapping details:', data.mappings);
       } else {
-        const errorText = await res.text();
+        const errorText = await response.text();
         setBazarrError(errorText || 'Failed to connect to Bazarr');
       }
     } catch (err) {
@@ -208,13 +202,9 @@ export default function Setup() {
     };
 
     try {
-      const res = await fetch('/api/setup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+      const response = await apiService.setup.initialize(body);
 
-      if (res.ok) {
+      if (response.ok) {
         setStatus('complete');
         setTimeout(() => window.location.reload(), 2000);
       } else {
