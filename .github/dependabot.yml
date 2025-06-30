@@ -1,6 +1,6 @@
 # Smart Dependabot configuration for subtitle-manager
 # Only monitors ecosystems that actually exist in this project
-# Automatically detected: Go, Node.js/npm, Docker, GitHub Actions
+# Automatically detected: Go, Node.js/npm, Docker, GitHub Actions, Python
 
 version: 2
 updates:
@@ -145,3 +145,29 @@ updates:
         update-types:
           - "minor"
           - "patch"
+
+  # Python dependencies (scripts/*.py found)
+  - package-ecosystem: "pip"
+    directory: "/scripts"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "jdfalk"
+    assignees:
+      - "jdfalk"
+    commit-message:
+      prefix: "python"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "python"
+      - "scripts"
+    allow:
+      - dependency-type: "direct"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
