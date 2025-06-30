@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"time"
+
+	"github.com/jdfalk/subtitle-manager/pkg/events"
 )
 
 // FetchFromAll tries each known provider in order until one returns a subtitle.
@@ -35,6 +37,7 @@ func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, str
 	}
 
 	delay := time.Second
+	var lastError error
 	for i, inst := range insts {
 		if IsInBackoff(inst.ID) {
 			continue
@@ -50,6 +53,7 @@ func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, str
 			SetBackoff(inst.ID, 0)
 			return data, inst.ID, nil
 		}
+		lastError = err
 		if ctx.Err() != nil {
 			return nil, "", ctx.Err()
 		}
@@ -60,6 +64,19 @@ func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, str
 			return nil, "", ctx.Err()
 		}
 	}
+	
+	// Send search failed event
+	errorMsg := "no subtitle found"
+	if lastError != nil {
+		errorMsg = lastError.Error()
+	}
+	events.PublishSearchFailed(ctx, events.SearchFailedData{
+		Query:     fmt.Sprintf("media:%s lang:%s", mediaPath, lang),
+		Language:  lang,
+		Error:     errorMsg,
+		Timestamp: time.Now(),
+	})
+	
 	return nil, "", fmt.Errorf("no subtitle found")
 }
 

@@ -378,7 +378,49 @@ func (rl *RateLimiter) Allow() bool {
 	return false
 }
 
-// generateHMACSignature creates an HMAC-SHA256 signature for webhook validation.
+// UpdateEndpoint updates an existing webhook endpoint.
+func (wm *WebhookManager) UpdateEndpoint(id string, updateFunc func(*OutgoingEndpoint)) error {
+	wm.mu.Lock()
+	defer wm.mu.Unlock()
+
+	for i := range wm.outgoing {
+		if wm.outgoing[i].ID == id {
+			updateFunc(&wm.outgoing[i])
+			wm.outgoing[i].UpdatedAt = time.Now()
+			wm.logger.Infof("Updated webhook endpoint: %s", wm.outgoing[i].Name)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("webhook endpoint not found: %s", id)
+}
+
+// RemoveEndpoint removes a webhook endpoint by ID.
+func (wm *WebhookManager) RemoveEndpoint(id string) error {
+	wm.mu.Lock()
+	defer wm.mu.Unlock()
+
+	for i, endpoint := range wm.outgoing {
+		if endpoint.ID == id {
+			// Remove endpoint from slice
+			wm.outgoing = append(wm.outgoing[:i], wm.outgoing[i+1:]...)
+			wm.logger.Infof("Removed webhook endpoint: %s", endpoint.Name)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("webhook endpoint not found: %s", id)
+}
+
+// TestEndpoint sends a test event to a specific endpoint.
+func (wm *WebhookManager) TestEndpoint(ctx context.Context, endpoint *OutgoingEndpoint, event WebhookEvent) error {
+	payload, err := json.Marshal(event)
+	if err != nil {
+		return fmt.Errorf("failed to marshal test event: %v", err)
+	}
+
+	return wm.doHTTPRequest(ctx, endpoint, payload)
+}
 func generateHMACSignature(payload []byte, secret string) string {
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write(payload)

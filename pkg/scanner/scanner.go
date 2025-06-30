@@ -7,10 +7,12 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/sourcegraph/conc/pool"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/events"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
@@ -98,21 +100,72 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 	if err != nil {
 		logger.Warnf("fetch %s: %v", path, err)
+		
+		// Send event for subtitle fetch failure
+		events.PublishSubtitleFailed(ctx, events.SubtitleFailedData{
+			FilePath:  path,
+			Language:  lang,
+			Provider:  providerName,
+			Error:     err.Error(),
+			Timestamp: time.Now(),
+		})
+		
 		return err
 	}
+	var wasUpgrade bool
 	if upgrade {
 		if oldData, err := os.ReadFile(out); err == nil {
 			if len(data) <= len(oldData) {
 				logger.Debugf("existing subtitle %s is higher quality", out)
 				return nil
 			}
+			wasUpgrade = true
 		}
 	}
 	if err := os.WriteFile(out, data, 0644); err != nil {
 		logger.Warnf("write %s: %v", out, err)
+		
+		// Send event for file write failure
+		events.PublishSubtitleFailed(ctx, events.SubtitleFailedData{
+			FilePath:  path,
+			Language:  lang,
+			Provider:  providerName,
+			Error:     "Failed to write subtitle file: " + err.Error(),
+			Timestamp: time.Now(),
+		})
+		
 		return err
 	}
 	logger.Infof("downloaded subtitle %s", out)
+	
+	// Get file size for webhook event
+	var fileSize int64
+	if stat, err := os.Stat(out); err == nil {
+		fileSize = stat.Size()
+	}
+	
+	// Send appropriate event
+	if wasUpgrade {
+		events.PublishSubtitleUpgraded(ctx, events.SubtitleUpgradedData{
+			FilePath:        path,
+			NewSubtitlePath: out,
+			Language:        lang,
+			NewProvider:     providerName,
+			NewScore:        1.0, // Default score, could be enhanced
+			Timestamp:       time.Now(),
+		})
+	} else {
+		events.PublishSubtitleDownloaded(ctx, events.SubtitleDownloadedData{
+			FilePath:     path,
+			SubtitlePath: out,
+			Language:     lang,
+			Provider:     providerName,
+			Score:        1.0, // Default score, could be enhanced
+			Size:         fileSize,
+			Timestamp:    time.Now(),
+		})
+	}
+	
 	if store != nil {
 		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
 	}
