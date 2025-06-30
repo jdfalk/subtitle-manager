@@ -52,6 +52,27 @@ var monitorListCmd = &cobra.Command{
 	RunE:  runMonitorList,
 }
 
+var monitorBlacklistCmd = &cobra.Command{
+	Use:   "blacklist",
+	Short: "Manage blacklisted items",
+	Long:  `Manage items that are blacklisted from monitoring`,
+}
+
+var monitorBlacklistListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List blacklisted items",
+	Long:  `List all items currently blacklisted from monitoring`,
+	RunE:  runMonitorBlacklistList,
+}
+
+var monitorBlacklistRemoveCmd = &cobra.Command{
+	Use:   "remove [item-id]",
+	Short: "Remove item from blacklist",
+	Long:  `Remove an item from the blacklist to resume monitoring`,
+	Args:  cobra.ExactArgs(1),
+	RunE:  runMonitorBlacklistRemove,
+}
+
 // Flags for monitoring commands
 var (
 	monitorInterval    string
@@ -68,6 +89,11 @@ func init() {
 	monitorCmd.AddCommand(monitorSyncCmd)
 	monitorCmd.AddCommand(monitorStatusCmd)
 	monitorCmd.AddCommand(monitorListCmd)
+	monitorCmd.AddCommand(monitorBlacklistCmd)
+
+	// Blacklist subcommands
+	monitorBlacklistCmd.AddCommand(monitorBlacklistListCmd)
+	monitorBlacklistCmd.AddCommand(monitorBlacklistRemoveCmd)
 
 	// Start command flags
 	monitorStartCmd.Flags().StringVar(&monitorInterval, "interval", "1h", "Monitoring interval (e.g. 30m, 1h, 2h)")
@@ -252,5 +278,75 @@ func runMonitorList(cmd *cobra.Command, args []string) error {
 		fmt.Println()
 	}
 
+	return nil
+}
+
+func runMonitorBlacklistList(cmd *cobra.Command, args []string) error {
+	// Open database
+	store, err := database.OpenStoreWithConfig()
+	if err != nil {
+		return fmt.Errorf("failed to open database: %v", err)
+	}
+	defer store.Close()
+
+	// Create monitor
+	monitor := monitoring.NewEpisodeMonitor(
+		time.Hour, // Not used for blacklist ops
+		nil, nil,  // Clients not needed
+		store,
+		0, false, // Not used
+	)
+
+	// Get blacklisted items
+	items, err := monitor.GetBlacklistedItems()
+	if err != nil {
+		return fmt.Errorf("failed to get blacklisted items: %v", err)
+	}
+
+	if len(items) == 0 {
+		fmt.Println("No items are currently blacklisted.")
+		return nil
+	}
+
+	// Display blacklisted items
+	fmt.Printf("Blacklisted Items (%d total):\n\n", len(items))
+	for _, item := range items {
+		fmt.Printf("ID: %s\n", item.ID)
+		fmt.Printf("  Path: %s\n", item.Path)
+		fmt.Printf("  Languages: %s\n", item.Languages)
+		fmt.Printf("  Status: %s\n", item.Status)
+		fmt.Printf("  Retries: %d/%d\n", item.RetryCount, item.MaxRetries)
+		fmt.Printf("  Last Checked: %s\n", item.LastChecked.Format("2006-01-02 15:04:05"))
+		fmt.Printf("  Updated: %s\n", item.UpdatedAt.Format("2006-01-02 15:04:05"))
+		fmt.Println()
+	}
+
+	return nil
+}
+
+func runMonitorBlacklistRemove(cmd *cobra.Command, args []string) error {
+	itemID := args[0]
+
+	// Open database
+	store, err := database.OpenStoreWithConfig()
+	if err != nil {
+		return fmt.Errorf("failed to open database: %v", err)
+	}
+	defer store.Close()
+
+	// Create monitor
+	monitor := monitoring.NewEpisodeMonitor(
+		time.Hour, // Not used for blacklist ops
+		nil, nil,  // Clients not needed
+		store,
+		0, false, // Not used
+	)
+
+	// Remove from blacklist
+	if err := monitor.RemoveFromBlacklist(itemID); err != nil {
+		return fmt.Errorf("failed to remove from blacklist: %v", err)
+	}
+
+	fmt.Printf("Removed item %s from blacklist\n", itemID)
 	return nil
 }
