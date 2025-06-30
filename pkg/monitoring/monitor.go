@@ -123,6 +123,12 @@ func (m *EpisodeMonitor) checkForSubtitles(ctx context.Context) error {
 
 // processItem processes a single monitored item.
 func (m *EpisodeMonitor) processItem(ctx context.Context, item *MonitoredItem) error {
+	// Skip if item is blacklisted
+	if m.IsBlacklisted(item.ID, "") {
+		m.logger.Debugf("Skipping blacklisted item: %s", item.Path)
+		return nil
+	}
+
 	// Update last checked time
 	item.LastChecked = time.Now()
 
@@ -142,6 +148,11 @@ func (m *EpisodeMonitor) processItem(ctx context.Context, item *MonitoredItem) e
 		if item.RetryCount >= item.MaxRetries {
 			item.Status = StatusFailed
 			m.logger.Warnf("Item %s failed after %d retries", item.Path, item.RetryCount)
+			
+			// Auto-blacklist on failure
+			if err := m.AutoBlacklistOnFailure(item); err != nil {
+				m.logger.Errorf("Failed to auto-blacklist item %s: %v", item.Path, err)
+			}
 		} else {
 			item.Status = StatusMonitoring
 		}
