@@ -1,21 +1,39 @@
 import {
   Add as AddIcon,
+  CheckBox as CheckBoxIcon,
+  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   Delete as DeleteIcon,
+  Download as DownloadIcon,
+  FilterList as FilterIcon,
+  History as HistoryIcon,
   Language as LanguageIcon,
   Movie as MediaIcon,
+  Preview as PreviewIcon,
   CloudDownload as ProviderIcon,
   Search as SearchIcon,
+  Star as StarIcon,
+  Visibility as ViewIcon,
   Download as WantedIcon,
 } from '@mui/icons-material';
 import {
   Alert,
+  Autocomplete,
+  Badge,
   Box,
   Button,
   Card,
   CardContent,
+  Checkbox,
   Chip,
   CircularProgress,
+  Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   Grid,
   IconButton,
   InputLabel,
@@ -25,8 +43,17 @@ import {
   ListItemText,
   MenuItem,
   Paper,
+  Rating,
   Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableSortLabel,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -39,22 +66,41 @@ import { useEffect, useState } from 'react';
  * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
 export default function Wanted({ backendAvailable = true }) {
-  // Start with embedded provider available out of the box
-  const [provider, setProvider] = useState('embedded');
+  // Enhanced state for comprehensive search functionality
+  const [selectedProviders, setSelectedProviders] = useState(['opensubtitles', 'subscene']);
   const [path, setPath] = useState('');
   const [lang, setLang] = useState('en');
   const [results, setResults] = useState([]);
   const [wanted, setWanted] = useState([]);
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(true);
+  
+  // Advanced search filters
+  const [season, setSeason] = useState('');
+  const [episode, setEpisode] = useState('');
+  const [year, setYear] = useState('');
+  const [releaseGroup, setReleaseGroup] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Table and UI state
+  const [selectedResults, setSelectedResults] = useState([]);
+  const [sortBy, setSortBy] = useState('score');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [previewDialog, setPreviewDialog] = useState({ open: false, content: '', name: '', provider: '' });
+  
+  // Search history
+  const [searchHistory, setSearchHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   const providers = [
-    { value: 'embedded', label: 'Embedded' },
-    { value: 'generic', label: 'Generic' },
-    { value: 'opensubtitles', label: 'OpenSubtitles' },
-    { value: 'addic7ed', label: 'Addic7ed' },
-    { value: 'podnapisi', label: 'Podnapisi' },
-    { value: 'subscene', label: 'Subscene' },
+    { value: 'embedded', label: 'Embedded', available: true },
+    { value: 'generic', label: 'Generic', available: true },
+    { value: 'opensubtitles', label: 'OpenSubtitles', available: true },
+    { value: 'addic7ed', label: 'Addic7ed', available: true },
+    { value: 'podnapisi', label: 'Podnapisi', available: true },
+    { value: 'subscene', label: 'Subscene', available: true },
+    { value: 'bsplayer', label: 'BSPlayer', available: false },
+    { value: 'tvsubtitles', label: 'TVSubtitles', available: false },
   ];
 
   const languages = [
@@ -98,15 +144,45 @@ export default function Wanted({ backendAvailable = true }) {
       return;
     }
 
+    if (selectedProviders.length === 0) {
+      alert('Please select at least one provider');
+      return;
+    }
+
     setSearching(true);
     setResults([]);
 
     try {
-      const params = new URLSearchParams({ provider, path, lang });
-      const res = await fetch(`/api/search?${params.toString()}`);
-      if (res.ok) {
-        const data = await res.json();
-        setResults(data || []);
+      // Prepare search request
+      const searchRequest = {
+        providers: selectedProviders,
+        mediaPath: path,
+        language: lang,
+        ...(season && { season: parseInt(season) }),
+        ...(episode && { episode: parseInt(episode) }),
+        ...(year && { year: parseInt(year) }),
+        ...(releaseGroup && { releaseGroup }),
+      };
+
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(searchRequest),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResults(data.results || []);
+        
+        // Save to search history
+        const historyItem = {
+          query: searchRequest,
+          timestamp: new Date(),
+          results: data.results?.length || 0,
+        };
+        setSearchHistory(prev => [historyItem, ...prev.slice(0, 9)]); // Keep last 10 searches
+      } else {
+        console.error('Search failed:', response.statusText);
       }
     } catch (error) {
       console.error('Search failed:', error);
@@ -151,6 +227,96 @@ export default function Wanted({ backendAvailable = true }) {
     }
   };
 
+  // Provider selection handlers
+  const handleProviderToggle = (providerValue) => {
+    setSelectedProviders(prev => 
+      prev.includes(providerValue)
+        ? prev.filter(p => p !== providerValue)
+        : [...prev, providerValue]
+    );
+  };
+
+  const handleSelectAllProviders = () => {
+    const availableProviders = providers.filter(p => p.available).map(p => p.value);
+    setSelectedProviders(
+      selectedProviders.length === availableProviders.length ? [] : availableProviders
+    );
+  };
+
+  // Result selection handlers
+  const handleResultSelect = (resultId) => {
+    setSelectedResults(prev =>
+      prev.includes(resultId)
+        ? prev.filter(id => id !== resultId)
+        : [...prev, resultId]
+    );
+  };
+
+  const handleSelectAllResults = () => {
+    setSelectedResults(
+      selectedResults.length === results.length 
+        ? [] 
+        : results.map(r => r.id)
+    );
+  };
+
+  // Preview handler
+  const handlePreview = async (result) => {
+    try {
+      const response = await fetch(`/api/search/preview?url=${encodeURIComponent(result.downloadUrl)}&provider=${result.provider}&lang=${result.language}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPreviewDialog({
+          open: true,
+          content: data.content,
+          name: data.name || result.name,
+          provider: data.provider || result.provider,
+        });
+      }
+    } catch (error) {
+      console.error('Preview failed:', error);
+    }
+  };
+
+  // Batch download handler
+  const handleBatchDownload = () => {
+    const selectedItems = results.filter(r => selectedResults.includes(r.id));
+    selectedItems.forEach(result => {
+      add(result.downloadUrl);
+    });
+    setSelectedResults([]);
+  };
+
+  // Sort results
+  const sortedResults = [...results].sort((a, b) => {
+    let aValue = a[sortBy];
+    let bValue = b[sortBy];
+    
+    if (typeof aValue === 'string') {
+      aValue = aValue.toLowerCase();
+      bValue = bValue.toLowerCase();
+    }
+    
+    if (sortOrder === 'asc') {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
+
+  // Search from history
+  const searchFromHistory = (historyItem) => {
+    const query = historyItem.query;
+    setSelectedProviders(query.providers);
+    setPath(query.mediaPath);
+    setLang(query.language);
+    setSeason(query.season?.toString() || '');
+    setEpisode(query.episode?.toString() || '');
+    setYear(query.year?.toString() || '');
+    setReleaseGroup(query.releaseGroup || '');
+    setShowHistory(false);
+  };
+
   return (
     <Box>
       <Typography variant="h4" component="h1" gutterBottom>
@@ -174,32 +340,76 @@ export default function Wanted({ backendAvailable = true }) {
         <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                <SearchIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-                Search Subtitles
-              </Typography>
-              <Grid container spacing={2} alignItems="center">
-                <Grid size={{ xs: 12, sm: 3 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>Provider</InputLabel>
-                    <Select
-                      value={provider}
-                      label="Provider"
-                      onChange={e => setProvider(e.target.value)}
-                      disabled={searching}
-                      startAdornment={
-                        <ProviderIcon sx={{ mr: 1, color: 'action.active' }} />
+              <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                <Typography variant="h6" display="flex" alignItems="center">
+                  <SearchIcon sx={{ mr: 1 }} />
+                  Manual Subtitle Search
+                </Typography>
+                <Box>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<HistoryIcon />}
+                    onClick={() => setShowHistory(!showHistory)}
+                    sx={{ mr: 1 }}
+                  >
+                    History
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<FilterIcon />}
+                    onClick={() => setShowFilters(!showFilters)}
+                  >
+                    Filters
+                  </Button>
+                </Box>
+              </Box>
+
+              {/* Provider Selection */}
+              <Box mb={3}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Subtitle Providers
+                </Typography>
+                <Box display="flex" alignItems="center" mb={1}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={selectedProviders.length === providers.filter(p => p.available).length}
+                        indeterminate={selectedProviders.length > 0 && selectedProviders.length < providers.filter(p => p.available).length}
+                        onChange={handleSelectAllProviders}
+                      />
+                    }
+                    label="Select All"
+                  />
+                </Box>
+                <FormGroup row>
+                  {providers.map(provider => (
+                    <FormControlLabel
+                      key={provider.value}
+                      control={
+                        <Checkbox
+                          checked={selectedProviders.includes(provider.value)}
+                          onChange={() => handleProviderToggle(provider.value)}
+                          disabled={!provider.available}
+                        />
                       }
-                    >
-                      {providers.map(p => (
-                        <MenuItem key={p.value} value={p.value}>
-                          {p.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 5 }}>
+                      label={
+                        <Box display="flex" alignItems="center">
+                          {provider.label}
+                          {!provider.available && (
+                            <Chip label="Config Required" size="small" color="warning" sx={{ ml: 1 }} />
+                          )}
+                        </Box>
+                      }
+                    />
+                  ))}
+                </FormGroup>
+              </Box>
+
+              {/* Main Search Fields */}
+              <Grid container spacing={2} alignItems="center">
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
                     label="Media File Path"
@@ -215,7 +425,7 @@ export default function Wanted({ backendAvailable = true }) {
                     }}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 2 }}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <FormControl fullWidth>
                     <InputLabel>Language</InputLabel>
                     <Select
@@ -242,7 +452,7 @@ export default function Wanted({ backendAvailable = true }) {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 2 }}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <Button
                     variant="contained"
                     startIcon={
@@ -253,7 +463,7 @@ export default function Wanted({ backendAvailable = true }) {
                       )
                     }
                     onClick={search}
-                    disabled={searching || !path.trim()}
+                    disabled={searching || !path.trim() || selectedProviders.length === 0}
                     fullWidth
                     size="large"
                   >
@@ -261,6 +471,89 @@ export default function Wanted({ backendAvailable = true }) {
                   </Button>
                 </Grid>
               </Grid>
+
+              {/* Advanced Filters */}
+              <Collapse in={showFilters}>
+                <Box mt={3} pt={2} borderTop={1} borderColor="divider">
+                  <Typography variant="subtitle2" gutterBottom>
+                    Advanced Filters
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 6, sm: 3 }}>
+                      <TextField
+                        fullWidth
+                        label="Season"
+                        type="number"
+                        value={season}
+                        onChange={e => setSeason(e.target.value)}
+                        size="small"
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 6, sm: 3 }}>
+                      <TextField
+                        fullWidth
+                        label="Episode"
+                        type="number"
+                        value={episode}
+                        onChange={e => setEpisode(e.target.value)}
+                        size="small"
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 6, sm: 3 }}>
+                      <TextField
+                        fullWidth
+                        label="Year"
+                        type="number"
+                        value={year}
+                        onChange={e => setYear(e.target.value)}
+                        size="small"
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 6, sm: 3 }}>
+                      <TextField
+                        fullWidth
+                        label="Release Group"
+                        value={releaseGroup}
+                        onChange={e => setReleaseGroup(e.target.value)}
+                        size="small"
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Collapse>
+
+              {/* Search History */}
+              <Collapse in={showHistory}>
+                <Box mt={3} pt={2} borderTop={1} borderColor="divider">
+                  <Typography variant="subtitle2" gutterBottom>
+                    Recent Searches
+                  </Typography>
+                  {searchHistory.length === 0 ? (
+                    <Alert severity="info">No search history available</Alert>
+                  ) : (
+                    <List dense>
+                      {searchHistory.slice(0, 5).map((item, index) => (
+                        <ListItem
+                          key={index}
+                          button
+                          onClick={() => searchFromHistory(item)}
+                          divider={index < searchHistory.length - 1}
+                        >
+                          <ListItemText
+                            primary={item.query.mediaPath}
+                            secondary={`${item.results} results • ${item.timestamp.toLocaleString()}`}
+                          />
+                          <Chip 
+                            label={item.query.providers.join(', ')} 
+                            size="small" 
+                            variant="outlined" 
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  )}
+                </Box>
+              </Collapse>
             </CardContent>
           </Card>
         </Grid>
@@ -269,67 +562,181 @@ export default function Wanted({ backendAvailable = true }) {
         <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Search Results ({results.length})
-              </Typography>
+              <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                <Typography variant="h6">
+                  Search Results ({results.length})
+                </Typography>
+                {results.length > 0 && (
+                  <Box>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selectedResults.length === results.length}
+                          indeterminate={selectedResults.length > 0 && selectedResults.length < results.length}
+                          onChange={handleSelectAllResults}
+                        />
+                      }
+                      label="Select All"
+                    />
+                    {selectedResults.length > 0 && (
+                      <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<DownloadIcon />}
+                        onClick={handleBatchDownload}
+                        sx={{ ml: 1 }}
+                      >
+                        Download Selected ({selectedResults.length})
+                      </Button>
+                    )}
+                  </Box>
+                )}
+              </Box>
+              
               {searching ? (
                 <Box display="flex" justifyContent="center" p={3}>
                   <CircularProgress />
                 </Box>
               ) : results.length === 0 ? (
                 <Alert severity="info">
-                  No search results. Try searching for a media file to find
-                  subtitles.
+                  No search results. Try searching for a media file to find subtitles.
                 </Alert>
               ) : (
-                <Paper
-                  variant="outlined"
-                  sx={{ maxHeight: 400, overflow: 'auto' }}
-                >
-                  <List>
-                    {results.map((url, index) => (
-                      <ListItem
-                        key={index}
-                        divider={index < results.length - 1}
-                      >
-                        <ListItemText
-                          primary={
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                fontFamily: 'monospace',
-                                wordBreak: 'break-all',
-                              }}
-                            >
-                              {url}
-                            </Typography>
-                          }
-                          secondary={
-                            <Box component="span">
-                              <Chip
-                                label={provider}
-                                size="small"
-                                variant="outlined"
-                                sx={{ mt: 1 }}
-                              />
-                            </Box>
-                          }
-                        />
-                        <ListItemSecondaryAction>
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            startIcon={<AddIcon />}
-                            onClick={() => add(url)}
-                            disabled={wanted.includes(url)}
+                <TableContainer component={Paper} variant="outlined">
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={selectedResults.length === results.length}
+                            indeterminate={selectedResults.length > 0 && selectedResults.length < results.length}
+                            onChange={handleSelectAllResults}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TableSortLabel
+                            active={sortBy === 'score'}
+                            direction={sortBy === 'score' ? sortOrder : 'asc'}
+                            onClick={() => {
+                              if (sortBy === 'score') {
+                                setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                              } else {
+                                setSortBy('score');
+                                setSortOrder('desc');
+                              }
+                            }}
                           >
-                            {wanted.includes(url) ? 'Added' : 'Add to Wanted'}
-                          </Button>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Paper>
+                            Score
+                          </TableSortLabel>
+                        </TableCell>
+                        <TableCell>Provider</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Language</TableCell>
+                        <TableCell>
+                          <TableSortLabel
+                            active={sortBy === 'downloads'}
+                            direction={sortBy === 'downloads' ? sortOrder : 'asc'}
+                            onClick={() => {
+                              if (sortBy === 'downloads') {
+                                setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                              } else {
+                                setSortBy('downloads');
+                                setSortOrder('desc');
+                              }
+                            }}
+                          >
+                            Downloads
+                          </TableSortLabel>
+                        </TableCell>
+                        <TableCell>Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {sortedResults.map((result) => (
+                        <TableRow
+                          key={result.id}
+                          hover
+                          selected={selectedResults.includes(result.id)}
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={selectedResults.includes(result.id)}
+                              onChange={() => handleResultSelect(result.id)}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Box display="flex" alignItems="center">
+                              <Rating
+                                value={result.score}
+                                max={1}
+                                precision={0.1}
+                                size="small"
+                                readOnly
+                              />
+                              <Typography variant="caption" sx={{ ml: 1 }}>
+                                {(result.score * 100).toFixed(0)}%
+                              </Typography>
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={result.provider}
+                              size="small"
+                              variant="outlined"
+                              color={result.fromTrusted ? 'success' : 'default'}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" noWrap>
+                              {result.name}
+                              {result.isHI && (
+                                <Chip label="HI" size="small" sx={{ ml: 1 }} />
+                              )}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={result.language.toUpperCase()}
+                              size="small"
+                              sx={{ minWidth: 40 }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2">
+                              {result.downloads ? result.downloads.toLocaleString() : '-'}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Box display="flex" gap={1}>
+                              <Tooltip title="Preview">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handlePreview(result)}
+                                >
+                                  <PreviewIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Add to Wanted">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => add(result.downloadUrl)}
+                                  disabled={wanted.includes(result.downloadUrl)}
+                                  color={wanted.includes(result.downloadUrl) ? 'success' : 'default'}
+                                >
+                                  {wanted.includes(result.downloadUrl) ? (
+                                    <CheckBoxIcon fontSize="small" />
+                                  ) : (
+                                    <AddIcon fontSize="small" />
+                                  )}
+                                </IconButton>
+                              </Tooltip>
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               )}
             </CardContent>
           </Card>
@@ -392,6 +799,41 @@ export default function Wanted({ backendAvailable = true }) {
           </Card>
         </Grid>
       </Grid>
+
+      {/* Preview Dialog */}
+      <Dialog
+        open={previewDialog.open}
+        onClose={() => setPreviewDialog(prev => ({ ...prev, open: false }))}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          Subtitle Preview - {previewDialog.name}
+        </DialogTitle>
+        <DialogContent>
+          <Box mb={2}>
+            <Chip label={previewDialog.provider} size="small" variant="outlined" />
+          </Box>
+          <Paper variant="outlined" sx={{ p: 2, maxHeight: 400, overflow: 'auto' }}>
+            <Typography
+              variant="body2"
+              component="pre"
+              sx={{
+                fontFamily: 'monospace',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
+            >
+              {previewDialog.content}
+            </Typography>
+          </Paper>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPreviewDialog(prev => ({ ...prev, open: false }))}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
