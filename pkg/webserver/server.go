@@ -202,6 +202,11 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/series/", authMiddleware(db, "basic", universalTagsHandler(db)))
 	mux.Handle(prefix+"/api/languages/", authMiddleware(db, "admin", universalTagsHandler(db)))
 
+	// Language profiles management
+	mux.Handle(prefix+"/api/profiles", authMiddleware(db, "admin", profilesHandler(db)))
+	mux.Handle(prefix+"/api/profiles/", authMiddleware(db, "admin", profilesHandler(db)))
+	mux.Handle(prefix+"/api/media/profile/", authMiddleware(db, "basic", mediaProfilesHandler(db)))
+
 	fsHandler := spaFileServer(f)
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
 	return securityHeadersMiddleware(mux), nil
