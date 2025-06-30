@@ -19,6 +19,8 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
+const safeDir = "/safe/directory/" // Replace with the actual safe directory path
+
 // ScanDirectory walks through the directory and downloads subtitles for video files
 // using provider p for the given language. providerName is stored in download
 // history. If upgrade is false existing subtitle files are skipped.
@@ -133,9 +135,14 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 			logger.Warnf("invalid output path before read: %v", err)
 			return err
 		}
-		if oldData, err := os.ReadFile(validatedOut); err == nil {
+		absValidatedOut, err := filepath.Abs(validatedOut)
+		if err != nil || !strings.HasPrefix(absValidatedOut, safeDir) {
+			logger.Warnf("output path is outside the safe directory: %v", absValidatedOut)
+			return fmt.Errorf("output path is not within the safe directory")
+		}
+		if oldData, err := os.ReadFile(absValidatedOut); err == nil {
 			if len(data) <= len(oldData) {
-				logger.Debugf("existing subtitle %s is higher quality", out)
+				logger.Debugf("existing subtitle %s is higher quality", absValidatedOut)
 				return nil
 			}
 			wasUpgrade = true
