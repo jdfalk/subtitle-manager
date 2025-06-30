@@ -32,6 +32,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DirectoryChooser from './components/DirectoryChooser.jsx';
 import QuickLinks from './components/QuickLinks.jsx';
+import TaskProgressIndicator from './components/TaskProgressIndicator.jsx';
 import { apiService } from './services/api.js';
 
 /**
@@ -47,6 +48,8 @@ export default function Dashboard({ backendAvailable = true }) {
     completed: 0,
     files: [],
   });
+  const [tasks, setTasks] = useState({});
+  const [currentTaskId, setCurrentTaskId] = useState(null);
   const [dir, setDir] = useState('');
   const [lang, setLang] = useState('en');
   // Provider is selected from available options
@@ -112,6 +115,29 @@ export default function Dashboard({ backendAvailable = true }) {
       }
     } catch (err) {
       console.error('Failed to load system info:', err);
+    }
+  };
+
+  const pollTasks = async () => {
+    if (!backendAvailable) return;
+    try {
+      const response = await apiService.get('/api/tasks');
+      if (response.ok) {
+        const data = typeof response.json === 'function' ? await response.json() : {};
+        setTasks(data || {});
+        
+        // Check if our current task is still running
+        if (currentTaskId && data[currentTaskId]) {
+          const task = data[currentTaskId];
+          if (task.status === 'completed' || task.status === 'failed') {
+            setCurrentTaskId(null);
+            // Refresh the old scan status for compatibility
+            poll();
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to poll tasks:', error);
     }
   };
 
@@ -200,7 +226,12 @@ export default function Dashboard({ backendAvailable = true }) {
       const body = { provider, directory: dir, lang };
       const response = await apiService.post('/api/scan', body);
       if (response.ok) {
+        const result = typeof response.json === 'function' ? await response.json() : {};
+        if (result.task_id) {
+          setCurrentTaskId(result.task_id);
+        }
         poll();
+        pollTasks();
       } else {
         setError('Failed to start scan');
       }
@@ -213,9 +244,17 @@ export default function Dashboard({ backendAvailable = true }) {
   };
 
   useEffect(() => {
-    poll();
-    loadSystemInfo();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (backendAvailable) {
+      poll();
+      loadProviders();
+      loadSystemInfo();
+      pollTasks();
+      
+      // Set up regular task polling
+      const taskInterval = setInterval(pollTasks, 2000);
+      return () => clearInterval(taskInterval);
+    }
+  }, [backendAvailable]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box>
@@ -434,6 +473,7 @@ export default function Dashboard({ backendAvailable = true }) {
                   variant={status.running ? 'filled' : 'outlined'}
                 />
               </Box>
+              {/* Enhanced progress tracking */}
               {status.running && (
                 <Box sx={{ mb: 2 }}>
                   <Typography
@@ -446,6 +486,31 @@ export default function Dashboard({ backendAvailable = true }) {
                   <LinearProgress variant="indeterminate" sx={{ mb: 1 }} />
                 </Box>
               )}
+              
+              {/* Task-based progress indicators */}
+              {currentTaskId && tasks[currentTaskId] && (
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Current Task Progress
+                  </Typography>
+                  <TaskProgressIndicator task={tasks[currentTaskId]} />
+                </Box>
+              )}
+              
+              {/* Show other running tasks */}
+              {Object.values(tasks).filter(task => task.status === 'running' && task.id !== currentTaskId).length > 0 && (
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Other Running Tasks
+                  </Typography>
+                  {Object.values(tasks)
+                    .filter(task => task.status === 'running' && task.id !== currentTaskId)
+                    .map(task => (
+                      <TaskProgressIndicator key={task.id} task={task} showDetails={false} />
+                    ))}
+                </Box>
+              )}
+              
               {status.files.length > 0 && (
                 <Alert severity="info" sx={{ mt: 2 }}>
                   Found {status.files.length} files to process

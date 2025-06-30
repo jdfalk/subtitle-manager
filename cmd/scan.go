@@ -2,10 +2,14 @@ package cmd
 
 import (
 	"context"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/jdfalk/subtitle-manager/pkg/cli"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
@@ -47,7 +51,43 @@ var scanCmd = &cobra.Command{
 			}
 		}
 		workers := viper.GetInt("scan_workers")
-		return scanner.ScanDirectory(ctx, dir, lang, "", nil, upgrade, workers, store)
+
+		// Count video files for progress tracking  
+		videoExtensions := []string{".mkv", ".mp4", ".avi", ".mov"}
+		isVideoFile := func(path string) bool {
+			ext := strings.ToLower(filepath.Ext(path))
+			for _, e := range videoExtensions {
+				if ext == e {
+					return true
+				}
+			}
+			return false
+		}
+
+		var videoFiles []string
+		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() && isVideoFile(path) {
+				videoFiles = append(videoFiles, path)
+			}
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+
+		// Create progress bar
+		progress := cli.NewProgressBar(len(videoFiles), "Scanning")
+		defer progress.Finish()
+
+		// Progress callback
+		progressCallback := func(file string) {
+			progress.Update(file)
+		}
+
+		return scanner.ScanDirectoryProgress(ctx, dir, lang, "", nil, upgrade, workers, store, progressCallback)
 	},
 }
 

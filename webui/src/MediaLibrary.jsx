@@ -44,6 +44,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import TagSelector from './components/TagSelector.jsx';
+import TaskProgressIndicator from './components/TaskProgressIndicator.jsx';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -67,6 +68,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
     file: null,
   });
   const [progress, setProgress] = useState(null);
+  const [tasks, setTasks] = useState({});
   // View mode: list, poster, or grid
   const [viewMode, setViewMode] = useState('list');
   const navigate = useNavigate();
@@ -199,7 +201,26 @@ export default function MediaLibrary({ backendAvailable = true }) {
 
   useEffect(() => {
     loadCurrentDirectory();
-  }, [currentPath]); // eslint-disable-line react-hooks/exhaustive-deps
+    
+    // Set up task polling if backend is available
+    if (backendAvailable) {
+      const pollTasks = async () => {
+        try {
+          const response = await fetch('/api/tasks');
+          if (response.ok) {
+            const data = await response.json();
+            setTasks(data || {});
+          }
+        } catch (error) {
+          console.error('Failed to poll tasks:', error);
+        }
+      };
+      
+      pollTasks();
+      const taskInterval = setInterval(pollTasks, 2000);
+      return () => clearInterval(taskInterval);
+    }
+  }, [currentPath, backendAvailable]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Navigate to a subdirectory
@@ -471,6 +492,20 @@ export default function MediaLibrary({ backendAvailable = true }) {
             {progress.file}
           </Typography>
           <LinearProgress />
+        </Paper>
+      )}
+
+      {/* Task-based Progress Indicators */}
+      {Object.values(tasks).filter(task => task.status === 'running').length > 0 && (
+        <Paper sx={{ p: 2, mb: 3 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Active Operations
+          </Typography>
+          {Object.values(tasks)
+            .filter(task => task.status === 'running')
+            .map(task => (
+              <TaskProgressIndicator key={task.id} task={task} />
+            ))}
         </Paper>
       )}
 
