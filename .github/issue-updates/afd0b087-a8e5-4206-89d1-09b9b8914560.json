@@ -1,0 +1,48 @@
+{
+  "action": "create",
+  "title": "Create Comprehensive API Documentation and Client SDKs",
+  "body": "## Description
+Document all API endpoints and create client SDKs for popular languages.
+
+## Documentation Requirements
+- OpenAPI 3.0 specification
+- Interactive API explorer
+- Authentication guide
+- Rate limit documentation
+- Webhook integration guide
+- Example requests/responses
+
+## SDK Languages
+- Python (priority)
+- JavaScript/TypeScript
+- Go
+- C# (.NET)
+- Java
+
+## Documentation Sections
+1. Getting Started
+2. Authentication
+3. Core Resources
+4. Webhooks
+5. Errors
+6. Rate Limits
+7. Changelog
+
+## SDK Features
+- Type safety
+- Automatic retry
+- Error handling
+- Pagination support
+- Webhook helpers
+
+## Acceptance Criteria
+- [ ] Complete OpenAPI spec
+- [ ] Deployed documentation site
+- [ ] Python SDK with tests
+- [ ] JavaScript SDK with types
+- [ ] SDK documentation
+- [ ] Integration examples",
+  "labels": ["enhancement", "documentation", "developer-experience", "priority-low"],
+  "guid": "bd6f798b-89a4-4dfd-9255-2d94135dac5d",
+  "legacy_guid": "create-create-comprehensive-api-documentation-and-client-sdks-2025-06-29"
+}

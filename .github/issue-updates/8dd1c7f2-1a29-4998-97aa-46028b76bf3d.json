@@ -1,0 +1,51 @@
+{
+  "action": "create",
+  "title": "Implement Automatic Episode Monitoring System",
+  "body": "## Description
+Create an automatic monitoring system for TV episodes that detects missing subtitles and downloads them when available.
+
+## Core Features
+- Monitor Sonarr/Radarr for new episodes
+- Track subtitle availability by language
+- Automatic download when available
+- Quality upgrade monitoring
+- Blacklist management
+- Retry failed downloads
+
+## Technical Design
+```go
+// pkg/monitoring/monitor.go
+type EpisodeMonitor struct {
+    interval   time.Duration
+    sonarr     *sonarr.Client
+    radarr     *radarr.Client
+    providers  []providers.Provider
+}
+
+type MonitoredItem struct {
+    MediaID     int
+    Path        string
+    Languages   []string
+    LastChecked time.Time
+    Status      MonitorStatus
+}
+```
+
+## Configuration
+- Monitoring interval (hourly, daily, etc)
+- Quality upgrade threshold
+- Maximum retry attempts
+- Provider priority for monitoring
+- Language profile assignment
+
+## Acceptance Criteria
+- [ ] Automated episode detection
+- [ ] Missing subtitle identification
+- [ ] Scheduled download attempts
+- [ ] Progress reporting in UI
+- [ ] Blacklist management interface
+- [ ] Monitoring statistics dashboard",
+  "labels": ["enhancement", "backend", "integration", "priority-high"],
+  "guid": "0ea5652d-a7be-4c97-bb2a-f1dee947d7d2",
+  "legacy_guid": "create-implement-automatic-episode-monitoring-system-2025-06-29"
+}

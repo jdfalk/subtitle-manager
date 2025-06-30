@@ -1,0 +1,57 @@
+{
+  "action": "create",
+  "title": "Standardize Error Handling Across Application",
+  "body": "## Description
+Implement consistent error handling, reporting, and recovery mechanisms throughout the application.
+
+## Error Categories
+- Provider errors (retry-able)
+- Network errors (retry-able)
+- Authentication errors
+- Validation errors
+- System errors
+- User errors
+
+## Implementation
+```go
+// pkg/errors/types.go
+type AppError struct {
+    Code       string
+    Message    string
+    UserMsg    string
+    Err        error
+    Retryable  bool
+    StatusCode int
+}
+
+// pkg/errors/handler.go
+type ErrorHandler interface {
+    Handle(ctx context.Context, err error) Response
+    Recover(ctx context.Context, panic interface{}) Response
+}
+```
+
+## Error Reporting
+- Structured logging
+- User notifications
+- Admin alerts
+- Error aggregation
+- Stack trace capture
+
+## Recovery Mechanisms
+- Automatic retry with backoff
+- Circuit breaker pattern
+- Fallback strategies
+- Graceful degradation
+
+## Acceptance Criteria
+- [ ] Standardized error types
+- [ ] Consistent error responses
+- [ ] Error tracking dashboard
+- [ ] Alert configuration
+- [ ] Recovery automation
+- [ ] Error documentation",
+  "labels": ["enhancement", "backend", "reliability", "priority-medium"],
+  "guid": "4ca2506b-f2af-41af-ab0d-5650fc3dd670",
+  "legacy_guid": "create-standardize-error-handling-across-application-2025-06-29"
+}

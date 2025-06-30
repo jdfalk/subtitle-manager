@@ -1,0 +1,56 @@
+{
+  "action": "create",
+  "title": "Master Plan: Achieve Full Bazarr Feature Parity",
+  "body": "## Overview
+This is the master tracking issue for achieving full Bazarr feature parity in Subtitle Manager.
+
+## Current Status
+- ✅ Core subtitle management (85% complete)
+- ✅ 40+ providers integrated
+- ✅ Web UI with Material Design
+- ✅ Authentication and RBAC
+- ✅ Media library management
+- ⚠️ Missing critical features for parity
+
+## Implementation Phases
+
+### Phase 1: Critical Features (2-3 weeks)
+- [ ] #1 Whisper ASR Integration
+- [ ] #2 Language Profiles
+- [ ] #3 Subtitle Quality Scoring
+- [ ] #4 Manual Search UI
+- [ ] #5 Episode Monitoring
+
+### Phase 2: Enhanced Integration (1-2 weeks)
+- [ ] #6 Complete Webhook System
+- [ ] #7 Caching Layer
+- [ ] #8 Backup/Restore System
+
+### Phase 3: Quality & Polish (2 weeks)
+- [ ] #9 Error Handling Standardization
+- [ ] #10 90%+ Test Coverage
+- [ ] #11 API Documentation
+- [ ] #12 Performance Optimization
+
+## Success Metrics
+- Feature parity with Bazarr 1.4.x
+- 90%+ test coverage
+- < 200ms API response time
+- Support for 1000+ concurrent users
+- Zero data loss backup/restore
+
+## Resources
+- [Technical Analysis](docs/TECHNICAL_ANALYSIS_AND_ROADMAP.md)
+- [Complete Breakdown](docs/COMPLETE_TECHNICAL_BREAKDOWN.md)
+- [Bazarr Feature List](docs/BAZARR_FEATURE_LIST_COMPLETE.md)
+
+## Timeline
+- Start Date: 2025-06-23
+- Target Completion: 2025-09-01 (10 weeks)
+- First Release Candidate: 2025-08-15
+
+This issue will be updated weekly with progress reports.",
+  "labels": ["epic", "planning", "coordination"],
+  "guid": "cc6ddd5c-6fb5-47f8-bb7f-0eec1e34d2a7",
+  "legacy_guid": "create-master-plan-achieve-full-bazarr-feature-parity-2025-06-29"
+}

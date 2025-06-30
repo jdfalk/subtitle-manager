@@ -1,0 +1,77 @@
+{
+  "action": "create",
+  "title": "Immediate Action Items for Bazarr Parity Sprint",
+  "body": "## Immediate Actions Required
+
+### Week 1 Tasks (Start immediately)
+
+#### Backend Team
+1. **Whisper Integration Scaffold**
+   - Set up Docker client in `pkg/transcriber/`
+   - Create container management interface
+   - Add configuration schema
+
+2. **Language Profile Schema**
+   - Design database tables
+   - Create migration scripts
+   - Implement CRUD operations
+
+3. **Scoring System Foundation**
+   - Define scoring algorithm
+   - Create score calculation service
+   - Add database fields
+
+#### Frontend Team
+1. **Manual Search UI**
+   - Create search component
+   - Add provider selection
+   - Implement result table
+
+2. **Language Profile UI**
+   - Profile management page
+   - Media assignment interface
+   - Migration wizard
+
+#### DevOps Team
+1. **Testing Infrastructure**
+   - Set up integration test environment
+   - Configure coverage reporting
+   - Add performance benchmarks
+
+2. **Caching Setup**
+   - Evaluate Redis vs in-memory
+   - Design cache key structure
+   - Implement cache wrapper
+
+### Daily Standup Topics
+- Blockers and dependencies
+- API contract agreements
+- Testing requirements
+- Documentation needs
+
+### Week 1 Deliverables
+- [ ] Whisper integration design doc
+- [ ] Language profile API spec
+- [ ] Manual search UI mockups
+- [ ] Scoring algorithm proposal
+- [ ] Test plan document
+
+### Success Criteria
+- All scaffolding in place
+- No breaking changes to existing features
+- Clear path forward for Week 2
+- Team alignment on implementation
+
+## Resources
+- Bazarr source: https://github.com/morpheus65535/bazarr
+- OpenAPI spec template in `docs/api/`
+- UI component library in Storybook
+
+## Communication
+- Daily standups at 9 AM
+- Slack channel: #subtitle-manager-dev
+- Weekly demo on Fridays",
+  "labels": ["planning", "coordination", "sprint"],
+  "guid": "721a6ed8-3a95-4ef6-9f82-b607afef8b65",
+  "legacy_guid": "create-immediate-action-items-for-bazarr-parity-sprint-2025-06-29"
+}

@@ -1,0 +1,57 @@
+{
+  "action": "create",
+  "title": "Implement Comprehensive Backup and Restore System",
+  "body": "## Description
+Create a robust backup and restore system for configuration, database, and subtitles.
+
+## Backup Components
+- Database (all tables)
+- Configuration files
+- Subtitle files (optional)
+- Provider settings
+- User preferences
+- Custom scripts
+
+## Features
+- Scheduled backups
+- Manual backup trigger
+- Backup rotation
+- Compression support
+- Encryption option
+- Cloud upload (S3, GCS)
+
+## Implementation
+```go
+// pkg/backup/manager.go
+type BackupManager struct {
+    store      storage.Store
+    compressor compression.Engine
+    encryptor  encryption.Engine
+}
+
+type Backup struct {
+    ID        string
+    Timestamp time.Time
+    Size      int64
+    Type      BackupType
+    Contents  []string
+}
+```
+
+## Restore Features
+- Backup validation
+- Selective restore
+- Migration between versions
+- Rollback capability
+
+## Acceptance Criteria
+- [ ] Backup scheduling UI
+- [ ] Manual backup/restore
+- [ ] Backup history view
+- [ ] Storage management
+- [ ] Cloud provider integration
+- [ ] Restore progress tracking",
+  "labels": ["enhancement", "backend", "reliability", "priority-medium"],
+  "guid": "2c1fac0e-0698-4cb5-8414-e8ebbbb78536",
+  "legacy_guid": "create-implement-comprehensive-backup-and-restore-system-2025-06-29"
+}
