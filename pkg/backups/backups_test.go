@@ -10,9 +10,9 @@ import (
 
 // resetHistory clears the package state between tests.
 func resetHistory() {
-	mu.Lock()
-	history = nil
-	mu.Unlock()
+	defaultManager.mu.Lock()
+	defaultManager.backups = make(map[string]*Backup)
+	defaultManager.mu.Unlock()
 }
 
 // TestCreate verifies that Create records a backup and the returned name can be used on a fake file system.
