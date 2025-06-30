@@ -314,12 +314,20 @@ func calculateScores(results []SearchResult, req SearchRequest) []SearchResult {
 // calculateNameMatch calculates similarity between subtitle name and media path
 func calculateNameMatch(subtitleName, mediaPath string) float64 {
 	// Simple name matching - can be enhanced with more sophisticated algorithms
-	mediaName := strings.ToLower(strings.TrimSuffix(mediaPath, filepath.Ext(mediaPath)))
+	if subtitleName == "" || mediaPath == "" {
+		return 0
+	}
+	
+	mediaName := strings.ToLower(strings.TrimSuffix(filepath.Base(mediaPath), filepath.Ext(mediaPath)))
 	subName := strings.ToLower(subtitleName)
 	
 	// Check for common words
 	mediaWords := strings.Fields(mediaName)
 	subWords := strings.Fields(subName)
+	
+	if len(mediaWords) == 0 {
+		return 0
+	}
 	
 	matches := 0
 	for _, mWord := range mediaWords {
@@ -331,16 +339,16 @@ func calculateNameMatch(subtitleName, mediaPath string) float64 {
 		}
 	}
 	
-	if len(mediaWords) == 0 {
-		return 0
-	}
-	
 	return float64(matches) / float64(len(mediaWords))
 }
 
 // extractNameFromURL extracts a readable name from download URL
 func extractNameFromURL(url string) string {
 	// Simple extraction - can be enhanced based on provider URL patterns
+	if url == "" {
+		return "Subtitle"
+	}
+	
 	parts := strings.Split(url, "/")
 	if len(parts) > 0 {
 		name := parts[len(parts)-1]
@@ -348,7 +356,9 @@ func extractNameFromURL(url string) string {
 		if idx := strings.Index(name, "?"); idx > 0 {
 			name = name[:idx]
 		}
-		return name
+		if name != "" {
+			return name
+		}
 	}
 	return "Subtitle"
 }
