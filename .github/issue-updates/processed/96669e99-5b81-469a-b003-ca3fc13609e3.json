@@ -2,9 +2,7 @@
   "action": "update",
   "number": 540,
   "body": "Planning to implement configuration gRPC endpoints",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "ba5792c5-31a1-43c9-98d8-db2f6cac8a8b",
   "legacy_guid": "update-issue-540-2025-06-23"
 }

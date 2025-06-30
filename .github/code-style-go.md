@@ -4,7 +4,8 @@
 
 # Go Style Guide (Google)
 
-This document summarizes Google's Go style guide for use in code generation and review.
+This document summarizes Google's Go style guide for use in code generation and
+review.
 
 ## Core Principles
 
@@ -284,4 +285,5 @@ func NewClient(opts ...Option) *Client {
 - Enable import organization
 - Configure linter integration
 
-This style guide should be used as the foundation for all Go code generation and formatting decisions.
+This style guide should be used as the foundation for all Go code generation and
+formatting decisions.

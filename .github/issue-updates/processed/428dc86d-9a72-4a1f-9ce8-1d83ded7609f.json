@@ -2,9 +2,7 @@
   "action": "update",
   "number": 543,
   "body": "Labeling issue for Codex work",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "3e582e78-bfcd-4a8d-bb5f-26416850b50f",
   "legacy_guid": "update-issue-543-2025-06-23"
 }

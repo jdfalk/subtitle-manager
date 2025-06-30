@@ -127,12 +127,14 @@ def get_issue(self, issue_number: int) -> Optional[Dict[str, Any]]
 ### Core Implementation Files:
 
 1. **`/Users/jdfalk/repos/github.com/jdfalk/ghcommon/scripts/issue_manager.py`**
+
    - Added `OperationSummary` class (lines 45-195)
    - Enhanced all operation methods with summary tracking
    - Implemented missing `get_issue` method (lines 522-541)
    - Added comprehensive error handling and logging
 
 2. **`/Users/jdfalk/repos/github.com/jdfalk/ghcommon/.github/workflows/reusable-unified-issue-management.yml`**
+
    - Added timestamp generation step
    - Implemented changed files tracking
    - Added PR detection and conditional creation logic
@@ -147,9 +149,11 @@ def get_issue(self, issue_number: int) -> Optional[Dict[str, Any]]
 ### Documentation Files:
 
 4. **`/Users/jdfalk/repos/github.com/jdfalk/subtitle-manager/UNIFIED_ISSUE_MANAGEMENT_SUMMARY_ENHANCEMENT.md`**
+
    - Comprehensive workflow improvement documentation
 
 5. **`/Users/jdfalk/repos/github.com/jdfalk/subtitle-manager/DUPLICATE_PR_FIX_SUMMARY.md`**
+
    - Duplicate PR prevention implementation details
 
 6. **`/Users/jdfalk/repos/github.com/jdfalk/subtitle-manager/MISSING_GET_ISSUE_METHOD_FIX.md`**

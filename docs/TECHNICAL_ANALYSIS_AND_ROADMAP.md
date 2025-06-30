@@ -49,6 +49,7 @@ operational status with Bazarr parity.
   - Multi-provider support with fallback
   - Progress tracking and parallel processing
 - `scanlib.go`: Media library indexing
+
   - TMDB/OMDb metadata fetching
   - Database storage of media items
 
@@ -315,6 +316,7 @@ downloadCount prometheus.Counter apiLatency prometheus.Histogram } \`\`\`
 ## Security Considerations
 
 1. **API Security**
+
    - Implement rate limiting
    - Add request signing for webhooks
    - Enable CORS configuration

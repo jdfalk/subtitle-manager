@@ -25,7 +25,7 @@
 **Configuration Hierarchy**:
 
 1. CLI flags
-2. Environment variables (SM_* prefix)
+2. Environment variables (SM\_\* prefix)
 3. Config file (YAML)
 4. Defaults
 
@@ -132,12 +132,9 @@
 
 #### Store Interface
 
-\`\`\`go
-type SubtitleStore interface {
-    // Subtitle operations
-    InsertSubtitle(*SubtitleRecord) error
-    ListSubtitles() ([]SubtitleRecord, error)
-    DeleteSubtitle(path string) error
+\`\`\`go type SubtitleStore interface { // Subtitle operations
+InsertSubtitle(\*SubtitleRecord) error ListSubtitles() ([]SubtitleRecord, error)
+DeleteSubtitle(path string) error
 
     // Download tracking
     InsertDownload(*DownloadRecord) error
@@ -147,8 +144,8 @@ type SubtitleStore interface {
     InsertMediaItem(*MediaItem) error
     UpdateMediaItem(*MediaItem) error
     ListMediaItems() ([]MediaItem, error)
-}
-\`\`\`
+
+} \`\`\`
 
 #### Implementations
 
@@ -174,15 +171,11 @@ type SubtitleStore interface {
 
 #### Provider Interface
 
-\`\`\`go
-type Provider interface {
-    Fetch(ctx context.Context, mediaPath, lang string) ([]byte, error)
-}
+\`\`\`go type Provider interface { Fetch(ctx context.Context, mediaPath, lang
+string) ([]byte, error) }
 
-type Searcher interface {
-    Search(ctx context.Context, mediaPath, lang string) ([]string, error)
-}
-\`\`\`
+type Searcher interface { Search(ctx context.Context, mediaPath, lang string)
+([]string, error) } \`\`\`
 
 #### Registry System
 
@@ -229,17 +222,10 @@ type Searcher interface {
 
 #### Parsing Engine
 
-\`\`\`go
-type MediaInfo struct {
-    Title    string
-    Year     int
-    Season   int
-    Episode  int
-    Type     MediaType
-}
+\`\`\`go type MediaInfo struct { Title string Year int Season int Episode int
+Type MediaType }
 
-func ParseFileName(filename string) (*MediaInfo, error)
-\`\`\`
+func ParseFileName(filename string) (\*MediaInfo, error) \`\`\`
 
 #### API Clients
 
@@ -259,16 +245,9 @@ func ParseFileName(filename string) (*MediaInfo, error)
 
 #### Task System
 
-\`\`\`go
-type Task struct {
-    ID       string
-    Status   Status
-    Progress int
-    Error    error
-}
+\`\`\`go type Task struct { ID string Status Status Progress int Error error }
 
-func Start(ctx context.Context, id string, fn TaskFunc) *Task
-\`\`\`
+func Start(ctx context.Context, id string, fn TaskFunc) \*Task \`\`\`
 
 #### Features
 
@@ -326,17 +305,9 @@ func Start(ctx context.Context, id string, fn TaskFunc) *Task
 
 #### Component Structure
 
-\`\`\`
-App.jsx
-├── Dashboard.jsx
-├── MediaLibrary.jsx
-├── Settings.jsx
-│   ├── GeneralSettings.jsx
-│   ├── ProviderSettings.jsx
-│   └── NotificationSettings.jsx
-├── System.jsx
-└── Setup.jsx
-\`\`\`
+\`\`\` App.jsx ├── Dashboard.jsx ├── MediaLibrary.jsx ├── Settings.jsx │ ├──
+GeneralSettings.jsx │ ├── ProviderSettings.jsx │ └── NotificationSettings.jsx
+├── System.jsx └── Setup.jsx \`\`\`
 
 #### State Management
 
@@ -368,57 +339,36 @@ App.jsx
 
 ### Authentication
 
-\`\`\`
-POST   /api/login         - User login
-POST   /api/logout        - User logout
-GET    /api/user          - Current user info
-POST   /api/users         - Create user
-GET    /api/users         - List users
-PUT    /api/users/:id     - Update user
-DELETE /api/users/:id     - Delete user
+\`\`\` POST /api/login - User login POST /api/logout - User logout GET
+/api/user - Current user info POST /api/users - Create user GET /api/users -
+List users PUT /api/users/:id - Update user DELETE /api/users/:id - Delete user
 \`\`\`
 
 ### Subtitles
 
-\`\`\`
-POST   /api/scan          - Start directory scan
-GET    /api/scan/status   - Scan progress
-POST   /api/search        - Search subtitles
-POST   /api/download      - Download subtitle
-POST   /api/translate     - Translate subtitle
-POST   /api/sync          - Synchronize subtitle
-POST   /api/extract       - Extract embedded
-GET    /api/history       - Download history
-\`\`\`
+\`\`\` POST /api/scan - Start directory scan GET /api/scan/status - Scan
+progress POST /api/search - Search subtitles POST /api/download - Download
+subtitle POST /api/translate - Translate subtitle POST /api/sync - Synchronize
+subtitle POST /api/extract - Extract embedded GET /api/history - Download
+history \`\`\`
 
 ### Media Library
 
-\`\`\`
-GET    /api/media         - List media items
-GET    /api/media/:id     - Get media details
-PUT    /api/media/:id     - Update media
-POST   /api/media/scan    - Scan library
-GET    /api/media/browse  - File browser
-\`\`\`
+\`\`\` GET /api/media - List media items GET /api/media/:id - Get media details
+PUT /api/media/:id - Update media POST /api/media/scan - Scan library GET
+/api/media/browse - File browser \`\`\`
 
 ### Providers
 
-\`\`\`
-GET    /api/providers     - List providers
-GET    /api/providers/:id - Provider details
-PUT    /api/providers/:id - Update provider
-POST   /api/providers/test - Test provider
-\`\`\`
+\`\`\` GET /api/providers - List providers GET /api/providers/:id - Provider
+details PUT /api/providers/:id - Update provider POST /api/providers/test - Test
+provider \`\`\`
 
 ### System
 
-\`\`\`
-GET    /api/system/info   - System information
-GET    /api/system/logs   - Application logs
-GET    /api/system/tasks  - Running tasks
-POST   /api/system/backup - Create backup
-POST   /api/system/restore - Restore backup
-\`\`\`
+\`\`\` GET /api/system/info - System information GET /api/system/logs -
+Application logs GET /api/system/tasks - Running tasks POST /api/system/backup -
+Create backup POST /api/system/restore - Restore backup \`\`\`
 
 ## Database Schema
 
@@ -426,58 +376,25 @@ POST   /api/system/restore - Restore backup
 
 #### users
 
-\`\`\`sql
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE,
-    password TEXT,
-    email TEXT,
-    role TEXT,
-    created_at TIMESTAMP
-);
-\`\`\`
+\`\`\`sql CREATE TABLE users ( id INTEGER PRIMARY KEY, username TEXT UNIQUE,
+password TEXT, email TEXT, role TEXT, created_at TIMESTAMP ); \`\`\`
 
 #### subtitles
 
-\`\`\`sql
-CREATE TABLE subtitles (
-    id INTEGER PRIMARY KEY,
-    file TEXT,
-    video_file TEXT,
-    language TEXT,
-    service TEXT,
-    created_at TIMESTAMP
-);
-\`\`\`
+\`\`\`sql CREATE TABLE subtitles ( id INTEGER PRIMARY KEY, file TEXT, video_file
+TEXT, language TEXT, service TEXT, created_at TIMESTAMP ); \`\`\`
 
 #### media_items
 
-\`\`\`sql
-CREATE TABLE media_items (
-    id INTEGER PRIMARY KEY,
-    path TEXT UNIQUE,
-    title TEXT,
-    year INTEGER,
-    media_type TEXT,
-    tmdb_id TEXT,
-    imdb_id TEXT,
-    metadata JSONB
-);
-\`\`\`
+\`\`\`sql CREATE TABLE media_items ( id INTEGER PRIMARY KEY, path TEXT UNIQUE,
+title TEXT, year INTEGER, media_type TEXT, tmdb_id TEXT, imdb_id TEXT, metadata
+JSONB ); \`\`\`
 
 #### download_history
 
-\`\`\`sql
-CREATE TABLE download_history (
-    id INTEGER PRIMARY KEY,
-    video_path TEXT,
-    subtitle_path TEXT,
-    language TEXT,
-    provider TEXT,
-    score INTEGER,
-    downloaded_at TIMESTAMP
-);
-\`\`\`
+\`\`\`sql CREATE TABLE download_history ( id INTEGER PRIMARY KEY, video_path
+TEXT, subtitle_path TEXT, language TEXT, provider TEXT, score INTEGER,
+downloaded_at TIMESTAMP ); \`\`\`
 
 ### Indexes
 
@@ -600,12 +517,7 @@ CREATE TABLE download_history (
 
 ### Error Types
 
-\`\`\`go
-type SubtitleError struct {
-    Code    string
-    Message string
-    Err     error
-}
+\`\`\`go type SubtitleError struct { Code string Message string Err error }
 \`\`\`
 
 ### Recovery Mechanisms
@@ -699,4 +611,5 @@ type SubtitleError struct {
 - Cache warming
 - Invalidation strategies
 
-This completes the comprehensive technical breakdown of every component in the Subtitle Manager system.
+This completes the comprehensive technical breakdown of every component in the
+Subtitle Manager system.

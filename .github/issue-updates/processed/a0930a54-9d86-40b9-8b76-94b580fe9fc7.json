@@ -2,9 +2,7 @@
   "action": "update",
   "number": 544,
   "body": "Work started by Codex",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "465760b1-0fcd-4f6f-8c25-6daa0764cf0d",
   "legacy_guid": "update-issue-544-2025-06-23"
 }

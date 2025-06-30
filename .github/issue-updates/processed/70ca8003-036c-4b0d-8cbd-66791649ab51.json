@@ -2,9 +2,7 @@
   "action": "update",
   "number": 546,
   "body": "Working on caching translation results",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "49a9f927-d909-471b-80a0-3beb18fff5ef",
   "legacy_guid": "update-issue-546-2025-06-23"
 }

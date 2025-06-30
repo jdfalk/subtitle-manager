@@ -1,174 +1,15 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
-# Dependabot configuration file
-# This file configures Dependabot to check for dependency updates across multiple ecosystems
-# Place this file at .github/dependabot.yml in your repository
+# Smart Dependabot configuration for subtitle-manager
+# Only monitors ecosystems that actually exist in this project
+# Automatically detected: Go, Node.js/npm, Docker, GitHub Actions
 
 version: 2
 updates:
-  # JavaScript/Node.js dependencies (package.json)
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: America/New_York
-    open-pull-requests-limit: 10
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "npm"
-      prefix-development: "npm-dev"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "npm"
-    target-branch: "main"
-    versioning-strategy: "increase"
-    allow:
-      - dependency-type: "direct"
-      - dependency-type: "indirect"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-    groups:
-      test-dependencies:
-        patterns:
-          - "*jest*"
-          - "*mocha*"
-          - "*chai*"
-          - "*cypress*"
-          - "*playwright*"
-        update-types:
-          - "minor"
-          - "patch"
-      build-dependencies:
-        patterns:
-          - "*webpack*"
-          - "*babel*"
-          - "*rollup*"
-          - "*vite*"
-        update-types:
-          - "minor"
-          - "patch"
-
-  # Python dependencies (requirements.txt, Pipfile, pyproject.toml)
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "09:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "pip"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "python"
-    allow:
-      - dependency-type: "direct"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-    groups:
-      test-dependencies:
-        patterns:
-          - "pytest*"
-          - "*test*"
-        update-types:
-          - "minor"
-          - "patch"
-
-  # Docker dependencies
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "wednesday"
-      time: "09:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "docker"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "docker"
-
-  # GitHub Actions dependencies
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "thursday"
-      time: "09:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "actions"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "github-actions"
-    groups:
-      ci-dependencies:
-        patterns:
-          - "actions/*"
-        update-types:
-          - "minor"
-          - "patch"
-
-  # Ruby dependencies (Gemfile)
-  - package-ecosystem: "bundler"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "friday"
-      time: "09:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "bundler"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "ruby"
-    allow:
-      - dependency-type: "direct"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-
-  # Go dependencies (go.mod)
+  # Go dependencies (go.mod found at root)
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "saturday"
+      day: "monday"
       time: "09:00"
       timezone: "America/New_York"
     open-pull-requests-limit: 5
@@ -188,136 +29,15 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
 
-  # Java dependencies (Maven)
-  - package-ecosystem: "maven"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "09:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "maven"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "java"
-    allow:
-      - dependency-type: "direct"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-
-  # Java dependencies (Gradle)
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "10:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "gradle"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "java"
-    allow:
-      - dependency-type: "direct"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-
-  # .NET dependencies (NuGet)
-  - package-ecosystem: "nuget"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "10:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "nuget"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "dotnet"
-    allow:
-      - dependency-type: "direct"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-
-  # Composer dependencies (PHP)
-  - package-ecosystem: "composer"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "10:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "composer"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "php"
-    allow:
-      - dependency-type: "direct"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-
-  # Terraform dependencies
-  - package-ecosystem: "terraform"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "wednesday"
-      time: "10:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
-    commit-message:
-      prefix: "terraform"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "terraform"
-      - "infrastructure"
-
-  # Additional subdirectory for frontend (webui directory)
+  # Frontend dependencies (webui/package.json)
   - package-ecosystem: "npm"
     directory: "/webui"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "11:00"
+      day: "tuesday"
+      time: "09:00"
       timezone: "America/New_York"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 8
     reviewers:
       - "jdfalk"
     assignees:
@@ -329,14 +49,72 @@ updates:
       - "dependencies"
       - "frontend"
       - "npm"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      ui-dependencies:
+        patterns:
+          - "react*"
+          - "@types/react*"
+          - "tailwindcss*"
+          - "@tailwindcss/*"
+        update-types:
+          - "minor"
+          - "patch"
+      test-dependencies:
+        patterns:
+          - "*jest*"
+          - "*vitest*"
+          - "*testing-library*"
+          - "chai*"
+          - "cypress*"
+          - "playwright*"
+        update-types:
+          - "minor"
+          - "patch"
+      build-dependencies:
+        patterns:
+          - "*webpack*"
+          - "*babel*"
+          - "*rollup*"
+          - "*vite*"
+          - "*esbuild*"
+        update-types:
+          - "minor"
+          - "patch"
 
-  # Additional subdirectory for backend (if applicable)
-  - package-ecosystem: "pip"
-    directory: "/backend"
+  # Docker dependencies (multiple Dockerfiles found)
+  - package-ecosystem: "docker"
+    directory: "/"
     schedule:
       interval: "weekly"
-      day: "tuesday"
-      time: "11:00"
+      day: "wednesday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "jdfalk"
+    assignees:
+      - "jdfalk"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "infrastructure"
+
+  # GitHub Actions dependencies (.github/workflows/*.yml found)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "09:00"
       timezone: "America/New_York"
     open-pull-requests-limit: 5
     reviewers:
@@ -344,9 +122,26 @@ updates:
     assignees:
       - "jdfalk"
     commit-message:
-      prefix: "backend"
+      prefix: "actions"
       include: "scope"
     labels:
       - "dependencies"
-      - "backend"
-      - "python"
+      - "github-actions"
+      - "ci"
+    groups:
+      ci-dependencies:
+        patterns:
+          - "actions/*"
+          - "github/*"
+        update-types:
+          - "minor"
+          - "patch"
+      external-actions:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "actions/*"
+          - "github/*"
+        update-types:
+          - "minor"
+          - "patch"

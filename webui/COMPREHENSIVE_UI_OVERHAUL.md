@@ -92,12 +92,14 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 ### New Components Created
 
 1. **`ProviderCard.jsx`**
+
    - Reusable provider tile component
    - Enable/disable functionality
    - Configuration status display
    - Add provider card for new providers
 
 2. **`ProviderConfigDialog.jsx`**
+
    - Dynamic configuration forms based on provider type
    - Field validation and error handling
    - Provider-specific help and documentation
@@ -112,11 +114,13 @@ This document outlines the comprehensive overhaul of the Subtitle Manager web UI
 ### Enhanced Components
 
 1. **`Settings.jsx`** - Complete rewrite
+
    - Tabbed interface for different setting categories
    - Provider management integration
    - Modern Material Design 3 implementation
 
 2. **`Dashboard.jsx`** - Provider integration
+
    - Dynamic provider loading
    - Shows only enabled providers
    - Configuration status indicators
@@ -176,11 +180,13 @@ POST /api/bulk-operation         # Bulk operations
 ### Provider Management (Bazarr-Style)
 
 1. **Visual Provider Overview**:
+
    - See all 48+ providers at a glance
    - Enabled/disabled status clearly visible
    - Configuration status indicators
 
 2. **Easy Configuration**:
+
    - Provider-specific configuration forms
    - Clear field labels and help text
    - Validation and error messages
@@ -193,11 +199,13 @@ POST /api/bulk-operation         # Bulk operations
 ### Media File Management
 
 1. **Integrated Workflow**:
+
    - Browse media files and see subtitle status
    - Perform operations directly on files
    - No need for separate extraction page
 
 2. **Bulk Operations**:
+
    - Select multiple files for batch processing
    - Progress indicators for long operations
    - Clear feedback on operation status

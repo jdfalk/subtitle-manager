@@ -4,14 +4,17 @@
 
 # Angular Coding Style Guide
 
-This guide is based on the [Angular Style Guide](https://angular.io/guide/styleguide) and provides comprehensive guidelines for writing clean, consistent Angular applications.
+This guide is based on the
+[Angular Style Guide](https://angular.io/guide/styleguide) and provides
+comprehensive guidelines for writing clean, consistent Angular applications.
 
 ## Style Vocabulary
 
 ### Guideline Strength
 
 - **Do**: Should always be followed (with rare exceptions)
-- **Consider**: Generally should be followed unless there's a good reason to deviate
+- **Consider**: Generally should be followed unless there's a good reason to
+  deviate
 - **Avoid**: Should almost never be done
 
 ## Naming Conventions
@@ -24,7 +27,8 @@ This guide is based on the [Angular Style Guide](https://angular.io/guide/styleg
 
 ### File Naming
 
-- **Separate with dots and dashes**: Use dashes for descriptive words, dots for type separation
+- **Separate with dots and dashes**: Use dashes for descriptive words, dots for
+  type separation
 - **Type naming**: `.service`, `.component`, `.pipe`, `.module`, `.directive`
 - **Examples**:
   - `hero-list.component.ts`
@@ -35,7 +39,8 @@ This guide is based on the [Angular Style Guide](https://angular.io/guide/styleg
 
 - **Classes**: `UpperCamelCase` (PascalCase)
 - **Match symbol to filename**: Symbol name should match file name
-- **Add conventional suffixes**: `Component`, `Directive`, `Module`, `Pipe`, `Service`
+- **Add conventional suffixes**: `Component`, `Directive`, `Module`, `Pipe`,
+  `Service`
 
 | Symbol Type | Class Name            | File Name                 |
 | ----------- | --------------------- | ------------------------- |
@@ -155,9 +160,9 @@ src/
 
 ```typescript
 @Component({
-  selector: "toh-hero-list",
-  templateUrl: "./hero-list.component.html",
-  styleUrls: ["./hero-list.component.css"],
+  selector: 'toh-hero-list',
+  templateUrl: './hero-list.component.html',
+  styleUrls: ['./hero-list.component.css'],
 })
 export class HeroListComponent implements OnInit {
   // Public properties first
@@ -183,7 +188,7 @@ export class HeroListComponent implements OnInit {
 
   // Private methods
   private loadHeroes(): void {
-    this.heroService.getHeroes().subscribe((heroes) => (this.heroes = heroes));
+    this.heroService.getHeroes().subscribe(heroes => (this.heroes = heroes));
   }
 }
 ```
@@ -199,7 +204,8 @@ export class HeroListComponent implements OnInit {
 
 ### Component Logic
 
-- **Delegate complex logic to services**: Keep components focused on presentation
+- **Delegate complex logic to services**: Keep components focused on
+  presentation
 - **Put presentation logic in component class**: Not in template
 - **Initialize inputs**: Provide defaults or mark as optional with `?`
 
@@ -207,27 +213,29 @@ export class HeroListComponent implements OnInit {
 
 ### Purpose and Usage
 
-- **Use for element enhancement**: When you need presentation logic without template
+- **Use for element enhancement**: When you need presentation logic without
+  template
 - **Attribute directives**: For behavior modification
 - **Structural directives**: For DOM manipulation
 
 ### Host Bindings
 
-- **Prefer decorators**: Use `@HostListener` and `@HostBinding` over `host` metadata
+- **Prefer decorators**: Use `@HostListener` and `@HostBinding` over `host`
+  metadata
 - **Be consistent**: Choose one approach and stick with it
 
 ```typescript
 @Directive({
-  selector: "[tohHighlight]",
+  selector: '[tohHighlight]',
 })
 export class HighlightDirective {
-  @HostBinding("class.highlighted") isHighlighted = false;
+  @HostBinding('class.highlighted') isHighlighted = false;
 
-  @HostListener("mouseenter") onMouseEnter() {
+  @HostListener('mouseenter') onMouseEnter() {
     this.isHighlighted = true;
   }
 
-  @HostListener("mouseleave") onMouseLeave() {
+  @HostListener('mouseleave') onMouseLeave() {
     this.isHighlighted = false;
   }
 }
@@ -249,13 +257,13 @@ export class HighlightDirective {
 
 ```typescript
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class HeroService {
   constructor(private http: HttpClient) {}
 
   getHeroes(): Observable<Hero[]> {
-    return this.http.get<Hero[]>("api/heroes");
+    return this.http.get<Hero[]>('api/heroes');
   }
 }
 ```
@@ -322,14 +330,14 @@ export class SharedModule {}
 ## Example Component Template
 
 ```typescript
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
-import { Hero } from "../shared/hero.model";
-import { HeroService } from "../shared/hero.service";
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Hero } from '../shared/hero.model';
+import { HeroService } from '../shared/hero.service';
 
 @Component({
-  selector: "toh-hero-detail",
-  templateUrl: "./hero-detail.component.html",
-  styleUrls: ["./hero-detail.component.css"],
+  selector: 'toh-hero-detail',
+  templateUrl: './hero-detail.component.html',
+  styleUrls: ['./hero-detail.component.css'],
 })
 export class HeroDetailComponent implements OnInit {
   @Input() hero?: Hero;
@@ -350,7 +358,7 @@ export class HeroDetailComponent implements OnInit {
 
   saveHero(): void {
     if (this.hero) {
-      this.heroService.updateHero(this.hero).subscribe((hero) => {
+      this.heroService.updateHero(this.hero).subscribe(hero => {
         this.isEditing = false;
         this.heroSaved.emit(hero);
       });
@@ -367,4 +375,6 @@ export class HeroDetailComponent implements OnInit {
 }
 ```
 
-This style guide ensures consistency, maintainability, and scalability in Angular applications while following Google's recommended practices and Angular team guidelines.
+This style guide ensures consistency, maintainability, and scalability in
+Angular applications while following Google's recommended practices and Angular
+team guidelines.

@@ -2,9 +2,7 @@
   "action": "update",
   "number": 539,
   "body": "In progress via Codex: implementing quality-based upgrade logic",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "88c765ab-38dc-4306-8b55-033914641368",
   "legacy_guid": "update-issue-539-2025-06-23"
 }
