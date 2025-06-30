@@ -194,6 +194,11 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/widgets/layout", authMiddleware(db, "basic", dashboardLayoutHandler(db)))
 	mux.Handle(prefix+"/api/users/", authMiddleware(db, "admin", userRouter(db)))
 
+	// Scoring system endpoints
+	mux.Handle(prefix+"/api/scoring/config", authMiddleware(db, "basic", scoringConfigHandler()))
+	mux.Handle(prefix+"/api/scoring/test", authMiddleware(db, "basic", scoringTestHandler()))
+	mux.Handle(prefix+"/api/scoring/defaults", authMiddleware(db, "basic", scoringDefaultsHandler()))
+
 	// Universal tagging system
 	mux.Handle(prefix+"/api/tags", authMiddleware(db, "admin", tagsHandler(db)))
 	mux.Handle(prefix+"/api/tags/", authMiddleware(db, "admin", tagItemHandler(db)))
