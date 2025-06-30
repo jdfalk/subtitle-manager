@@ -18,6 +18,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { apiService } from './services/api.js';
 
 /**
  * Convert provides a form to upload a subtitle file which is
@@ -38,12 +39,10 @@ export default function Convert({ backendAvailable = true }) {
     setStatus('');
 
     try {
-      const form = new FormData();
-      form.append('file', file);
-      const res = await fetch('/api/convert', { method: 'POST', body: form });
+      const response = await apiService.subtitles.convert(file);
 
-      if (res.ok) {
-        const blob = await res.blob();
+      if (response.ok) {
+        const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -55,7 +54,8 @@ export default function Convert({ backendAvailable = true }) {
       } else {
         setStatus('Error converting file. Please try again.');
       }
-    } catch {
+    } catch (error) {
+      console.error('Convert error:', error);
       setStatus('Network error. Please check your connection.');
     } finally {
       setConverting(false);

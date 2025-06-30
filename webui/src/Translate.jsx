@@ -24,6 +24,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { apiService } from './services/api.js';
 
 /**
  * Translate provides a form to upload a subtitle file and request
@@ -72,13 +73,10 @@ export default function Translate({ backendAvailable = true }) {
     setStatus('');
 
     try {
-      const form = new FormData();
-      form.append('file', file);
-      form.append('lang', lang);
-      const res = await fetch('/api/translate', { method: 'POST', body: form });
+      const response = await apiService.subtitles.translate(file, lang);
 
-      if (res.ok) {
-        const blob = await res.blob();
+      if (response.ok) {
+        const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -91,7 +89,7 @@ export default function Translate({ backendAvailable = true }) {
         );
         setSnackbarOpen(true);
       } else {
-        const errorText = await res.text();
+        const errorText = await response.text();
         setStatus(`Translation failed: ${errorText || 'Unknown error'}`);
       }
     } catch (error) {
