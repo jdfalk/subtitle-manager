@@ -1,51 +1,7 @@
 {
   "action": "create",
   "title": "Complete Webhook System Implementation",
-  "body": "## Description
-Finish the webhook system to support incoming webhooks from Sonarr/Radarr and outgoing notifications.
-
-## Incoming Webhooks
-- Sonarr on-download webhook
-- Radarr on-download webhook
-- Custom webhook endpoint
-- Payload validation
-- Action triggers
-
-## Outgoing Webhooks
-- Subtitle downloaded
-- Subtitle upgraded
-- Search failed
-- System events
-- Custom events
-
-## Implementation
-```go
-// pkg/webhooks/manager.go
-type WebhookManager struct {
-    incoming map[string]IncomingHandler
-    outgoing []OutgoingEndpoint
-}
-
-type WebhookEvent struct {
-    Type      string
-    Timestamp time.Time
-    Data      interface{}
-}
-```
-
-## Security
-- HMAC signature validation
-- IP whitelisting
-- Rate limiting
-- Payload size limits
-
-## Acceptance Criteria
-- [ ] Incoming webhook registration
-- [ ] Outgoing webhook configuration UI
-- [ ] Event type selection
-- [ ] Retry logic for failed webhooks
-- [ ] Webhook testing interface
-- [ ] Event history log",
+  "body": "## Description\nFinish the webhook system to support incoming webhooks from Sonarr/Radarr and outgoing notifications.\n\n## Incoming Webhooks\n- Sonarr on-download webhook\n- Radarr on-download webhook\n- Custom webhook endpoint\n- Payload validation\n- Action triggers\n\n## Outgoing Webhooks\n- Subtitle downloaded\n- Subtitle upgraded\n- Search failed\n- System events\n- Custom events\n\n## Implementation\n```go\n// pkg/webhooks/manager.go\ntype WebhookManager struct {\n    incoming map[string]IncomingHandler\n    outgoing []OutgoingEndpoint\n}\n\ntype WebhookEvent struct {\n    Type      string\n    Timestamp time.Time\n    Data      interface{}\n}\n```\n\n## Security\n- HMAC signature validation\n- IP whitelisting\n- Rate limiting\n- Payload size limits\n\n## Acceptance Criteria\n- [ ] Incoming webhook registration\n- [ ] Outgoing webhook configuration UI\n- [ ] Event type selection\n- [ ] Retry logic for failed webhooks\n- [ ] Webhook testing interface\n- [ ] Event history log",
   "labels": ["enhancement", "backend", "integration", "priority-medium"],
   "guid": "16a17deb-29fd-4877-ae25-ba112db3d040",
   "legacy_guid": "create-complete-webhook-system-implementation-2025-06-29"

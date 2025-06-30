@@ -1,56 +1,7 @@
 {
   "action": "create",
   "title": "Implement Comprehensive Backup and Restore System",
-  "body": "## Description
-Create a robust backup and restore system for configuration, database, and subtitles.
-
-## Backup Components
-- Database (all tables)
-- Configuration files
-- Subtitle files (optional)
-- Provider settings
-- User preferences
-- Custom scripts
-
-## Features
-- Scheduled backups
-- Manual backup trigger
-- Backup rotation
-- Compression support
-- Encryption option
-- Cloud upload (S3, GCS)
-
-## Implementation
-```go
-// pkg/backup/manager.go
-type BackupManager struct {
-    store      storage.Store
-    compressor compression.Engine
-    encryptor  encryption.Engine
-}
-
-type Backup struct {
-    ID        string
-    Timestamp time.Time
-    Size      int64
-    Type      BackupType
-    Contents  []string
-}
-```
-
-## Restore Features
-- Backup validation
-- Selective restore
-- Migration between versions
-- Rollback capability
-
-## Acceptance Criteria
-- [ ] Backup scheduling UI
-- [ ] Manual backup/restore
-- [ ] Backup history view
-- [ ] Storage management
-- [ ] Cloud provider integration
-- [ ] Restore progress tracking",
+  "body": "## Description\nCreate a robust backup and restore system for configuration, database, and subtitles.\n\n## Backup Components\n- Database (all tables)\n- Configuration files\n- Subtitle files (optional)\n- Provider settings\n- User preferences\n- Custom scripts\n\n## Features\n- Scheduled backups\n- Manual backup trigger\n- Backup rotation\n- Compression support\n- Encryption option\n- Cloud upload (S3, GCS)\n\n## Implementation\n```go\n// pkg/backup/manager.go\ntype BackupManager struct {\n    store      storage.Store\n    compressor compression.Engine\n    encryptor  encryption.Engine\n}\n\ntype Backup struct {\n    ID        string\n    Timestamp time.Time\n    Size      int64\n    Type      BackupType\n    Contents  []string\n}\n```\n\n## Restore Features\n- Backup validation\n- Selective restore\n- Migration between versions\n- Rollback capability\n\n## Acceptance Criteria\n- [ ] Backup scheduling UI\n- [ ] Manual backup/restore\n- [ ] Backup history view\n- [ ] Storage management\n- [ ] Cloud provider integration\n- [ ] Restore progress tracking",
   "labels": ["enhancement", "backend", "reliability", "priority-medium"],
   "guid": "2c1fac0e-0698-4cb5-8414-e8ebbbb78536",
   "legacy_guid": "create-implement-comprehensive-backup-and-restore-system-2025-06-29"

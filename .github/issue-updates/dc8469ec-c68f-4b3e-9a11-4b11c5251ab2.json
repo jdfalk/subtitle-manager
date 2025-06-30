@@ -1,54 +1,7 @@
 {
   "action": "create",
   "title": "Achieve 90%+ Test Coverage with Comprehensive Test Suite",
-  "body": "## Description
-Expand test coverage to 90%+ with unit, integration, and end-to-end tests.
-
-## Test Categories
-
-### Unit Tests (Target: 95%)
-- All business logic
-- Provider implementations
-- Database operations
-- API handlers
-- Utility functions
-
-### Integration Tests (Target: 85%)
-- API endpoints
-- Database migrations
-- Provider communication
-- File operations
-- Authentication flows
-
-### E2E Tests (Target: 70%)
-- Critical user workflows
-- Cross-browser testing
-- Mobile responsiveness
-- Performance testing
-- Load testing
-
-## Implementation Plan
-1. Add missing unit tests
-2. Create test fixtures
-3. Mock external services
-4. Add integration test suite
-5. Expand E2E coverage
-6. Add performance benchmarks
-
-## Testing Infrastructure
-- CI/CD test automation
-- Coverage reporting
-- Performance tracking
-- Flaky test detection
-- Test parallelization
-
-## Acceptance Criteria
-- [ ] 90%+ overall coverage
-- [ ] All critical paths tested
-- [ ] Mock implementations for providers
-- [ ] Test data generators
-- [ ] Performance benchmarks
-- [ ] Load test scenarios",
+  "body": "## Description\nExpand test coverage to 90%+ with unit, integration, and end-to-end tests.\n\n## Test Categories\n\n### Unit Tests (Target: 95%)\n- All business logic\n- Provider implementations\n- Database operations\n- API handlers\n- Utility functions\n\n### Integration Tests (Target: 85%)\n- API endpoints\n- Database migrations\n- Provider communication\n- File operations\n- Authentication flows\n\n### E2E Tests (Target: 70%)\n- Critical user workflows\n- Cross-browser testing\n- Mobile responsiveness\n- Performance testing\n- Load testing\n\n## Implementation Plan\n1. Add missing unit tests\n2. Create test fixtures\n3. Mock external services\n4. Add integration test suite\n5. Expand E2E coverage\n6. Add performance benchmarks\n\n## Testing Infrastructure\n- CI/CD test automation\n- Coverage reporting\n- Performance tracking\n- Flaky test detection\n- Test parallelization\n\n## Acceptance Criteria\n- [ ] 90%+ overall coverage\n- [ ] All critical paths tested\n- [ ] Mock implementations for providers\n- [ ] Test data generators\n- [ ] Performance benchmarks\n- [ ] Load test scenarios",
   "labels": ["enhancement", "testing", "quality", "priority-high"],
   "guid": "56927f92-1bfa-4dbf-960c-e06f861968d3",
   "legacy_guid": "create-achieve-90-test-coverage-with-comprehensive-test-suite-2025-06-29"

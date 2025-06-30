@@ -1,46 +1,7 @@
 {
   "action": "create",
   "title": "Complete Manual Subtitle Search UI",
-  "body": "## Description
-Implement a comprehensive manual subtitle search interface similar to Bazarr's implementation.
-
-## Features Required
-- Provider selection checkboxes
-- Search filters (season, episode, year)
-- Result table with scores
-- Preview subtitle content
-- Download with rename options
-- Multi-select for batch operations
-- Search history
-
-## UI Mockup
-```
-[Search Box] [Language Dropdown] [Search Button]
-
-Filters:
-[x] OpenSubtitles  [x] Subscene  [x] Addic7ed
-[Season] [Episode] [Year] [Release Group]
-
-Results:
-| Score | Provider | Name | Language | Downloads | Actions |
-|-------|----------|------|----------|-----------|---------|
-| 95    | OS       | ...  | English  | 1,234     | Preview/DL |
-```
-
-## Backend Requirements
-- Parallel provider search
-- Result aggregation
-- Duplicate detection
-- Score calculation
-- Preview API endpoint
-
-## Acceptance Criteria
-- [ ] Search UI with provider selection
-- [ ] Real-time search progress
-- [ ] Result sorting and filtering
-- [ ] Subtitle preview modal
-- [ ] Batch download support
-- [ ] Search history persistence",
+  "body": "## Description\nImplement a comprehensive manual subtitle search interface similar to Bazarr's implementation.\n\n## Features Required\n- Provider selection checkboxes\n- Search filters (season, episode, year)\n- Result table with scores\n- Preview subtitle content\n- Download with rename options\n- Multi-select for batch operations\n- Search history\n\n## UI Mockup\n```\n[Search Box] [Language Dropdown] [Search Button]\n\nFilters:\n[x] OpenSubtitles  [x] Subscene  [x] Addic7ed\n[Season] [Episode] [Year] [Release Group]\n\nResults:\n| Score | Provider | Name | Language | Downloads | Actions |\n|-------|----------|------|----------|-----------|---------|\n| 95    | OS       | ...  | English  | 1,234     | Preview/DL |\n```\n\n## Backend Requirements\n- Parallel provider search\n- Result aggregation\n- Duplicate detection\n- Score calculation\n- Preview API endpoint\n\n## Acceptance Criteria\n- [ ] Search UI with provider selection\n- [ ] Real-time search progress\n- [ ] Result sorting and filtering\n- [ ] Subtitle preview modal\n- [ ] Batch download support\n- [ ] Search history persistence",
   "labels": ["enhancement", "frontend", "priority-high"],
   "guid": "6bdaf25d-eac0-4087-ad80-416a410a6b57",
   "legacy_guid": "create-complete-manual-subtitle-search-ui-2025-06-29"

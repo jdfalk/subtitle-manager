@@ -1,56 +1,7 @@
 {
   "action": "create",
   "title": "Standardize Error Handling Across Application",
-  "body": "## Description
-Implement consistent error handling, reporting, and recovery mechanisms throughout the application.
-
-## Error Categories
-- Provider errors (retry-able)
-- Network errors (retry-able)
-- Authentication errors
-- Validation errors
-- System errors
-- User errors
-
-## Implementation
-```go
-// pkg/errors/types.go
-type AppError struct {
-    Code       string
-    Message    string
-    UserMsg    string
-    Err        error
-    Retryable  bool
-    StatusCode int
-}
-
-// pkg/errors/handler.go
-type ErrorHandler interface {
-    Handle(ctx context.Context, err error) Response
-    Recover(ctx context.Context, panic interface{}) Response
-}
-```
-
-## Error Reporting
-- Structured logging
-- User notifications
-- Admin alerts
-- Error aggregation
-- Stack trace capture
-
-## Recovery Mechanisms
-- Automatic retry with backoff
-- Circuit breaker pattern
-- Fallback strategies
-- Graceful degradation
-
-## Acceptance Criteria
-- [ ] Standardized error types
-- [ ] Consistent error responses
-- [ ] Error tracking dashboard
-- [ ] Alert configuration
-- [ ] Recovery automation
-- [ ] Error documentation",
+  "body": "## Description\nImplement consistent error handling, reporting, and recovery mechanisms throughout the application.\n\n## Error Categories\n- Provider errors (retry-able)\n- Network errors (retry-able)\n- Authentication errors\n- Validation errors\n- System errors\n- User errors\n\n## Implementation\n```go\n// pkg/errors/types.go\ntype AppError struct {\n    Code       string\n    Message    string\n    UserMsg    string\n    Err        error\n    Retryable  bool\n    StatusCode int\n}\n\n// pkg/errors/handler.go\ntype ErrorHandler interface {\n    Handle(ctx context.Context, err error) Response\n    Recover(ctx context.Context, panic interface{}) Response\n}\n```\n\n## Error Reporting\n- Structured logging\n- User notifications\n- Admin alerts\n- Error aggregation\n- Stack trace capture\n\n## Recovery Mechanisms\n- Automatic retry with backoff\n- Circuit breaker pattern\n- Fallback strategies\n- Graceful degradation\n\n## Acceptance Criteria\n- [ ] Standardized error types\n- [ ] Consistent error responses\n- [ ] Error tracking dashboard\n- [ ] Alert configuration\n- [ ] Recovery automation\n- [ ] Error documentation",
   "labels": ["enhancement", "backend", "reliability", "priority-medium"],
   "guid": "4ca2506b-f2af-41af-ab0d-5650fc3dd670",
   "legacy_guid": "create-standardize-error-handling-across-application-2025-06-29"
