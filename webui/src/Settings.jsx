@@ -5,6 +5,7 @@ import {
   Storage as DatabaseIcon,
   Settings as GeneralIcon,
   CloudUpload as ImportIcon,
+  Language as LanguageIcon,
   Notifications as NotificationIcon,
   CloudDownload as ProvidersIcon,
   Refresh as RefreshIcon,
@@ -36,6 +37,7 @@ const DatabaseSettings = lazy(
   () => import('./components/DatabaseSettings.jsx')
 );
 const GeneralSettings = lazy(() => import('./components/GeneralSettings.jsx'));
+const LanguageProfiles = lazy(() => import('./components/LanguageProfiles.jsx'));
 const NotificationSettings = lazy(
   () => import('./components/NotificationSettings.jsx')
 );
@@ -447,6 +449,17 @@ export default function Settings({ backendAvailable = true }) {
             onSave={saveSettings}
             backendAvailable={backendAvailable}
           />
+        </Suspense>
+      ),
+    },
+    {
+      label: 'Language Profiles',
+      icon: <LanguageIcon />,
+      component: () => (
+        <Suspense
+          fallback={<LoadingComponent message="Loading Language Profiles..." />}
+        >
+          <LanguageProfiles backendAvailable={backendAvailable} />
         </Suspense>
       ),
     },
