@@ -20,6 +20,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/bazarr"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/events"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/maintenance"
 	"github.com/jdfalk/subtitle-manager/pkg/radarr"
@@ -128,6 +129,9 @@ func setupHandler(db *sql.DB) http.Handler {
 
 // Handler returns an http.Handler that serves the embedded web UI.
 func Handler(db *sql.DB) (http.Handler, error) {
+	// Initialize webhook system
+	initializeWebhooks()
+	
 	f, err := fs.Sub(webui.FS, "dist")
 	if err != nil {
 		return nil, err
@@ -183,6 +187,11 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/webhooks/sonarr", webhooks.SonarrHandler())
 	mux.Handle(prefix+"/api/webhooks/radarr", webhooks.RadarrHandler())
 	mux.Handle(prefix+"/api/webhooks/custom", webhooks.CustomHandler())
+	// Webhook management endpoints
+	mux.Handle(prefix+"/api/webhooks/config", authMiddleware(db, "basic", webhookConfigHandler()))
+	mux.Handle(prefix+"/api/webhooks/test", authMiddleware(db, "basic", webhookTestHandler()))
+	mux.Handle(prefix+"/api/webhooks/history", authMiddleware(db, "basic", webhookHistoryHandler()))
+	mux.Handle(prefix+"/api/webhooks/event-types", authMiddleware(db, "basic", webhookEventTypesHandler()))
 	mux.Handle(prefix+"/api/translate", authMiddleware(db, "basic", translateHandler()))
 	mux.Handle(prefix+"/api/sync/batch", authMiddleware(db, "basic", syncBatchHandler()))
 	// New search API endpoints
@@ -1306,4 +1315,34 @@ func startSessionCleanup(db *sql.DB) {
 			logger.Warnf("failed to cleanup expired sessions: %v", err)
 		}
 	}
+}
+
+// initializeWebhooks initializes the webhook system and event publisher.
+func initializeWebhooks() {
+	// Initialize the global webhook manager
+	webhooks.InitializeGlobalManager()
+	
+	// Create the webhook event publisher adapter
+	manager := webhooks.GetGlobalManager()
+	publisher := webhooks.NewWebhookEventPublisher(manager)
+	
+	// Set it as the global event publisher
+	events.SetGlobalPublisher(publisher)
+	
+	// Register incoming webhook handlers with secrets from configuration
+	sonarrSecret := viper.GetString("webhooks.sonarr.secret")
+	radarrSecret := viper.GetString("webhooks.radarr.secret")
+	customSecret := viper.GetString("webhooks.custom.secret")
+	
+	manager.RegisterIncomingHandler("sonarr", webhooks.NewSonarrHandler(sonarrSecret))
+	manager.RegisterIncomingHandler("radarr", webhooks.NewRadarrHandler(radarrSecret))
+	manager.RegisterIncomingHandler("custom", webhooks.NewCustomHandler(customSecret))
+	
+	// Set up IP whitelist if configured
+	if whitelist := viper.GetStringSlice("webhooks.ip_whitelist"); len(whitelist) > 0 {
+		manager.SetIPWhitelist(whitelist)
+	}
+	
+	logger := logging.GetLogger("webserver")
+	logger.Info("Webhook system initialized")
 }
