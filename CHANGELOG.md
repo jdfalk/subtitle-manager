@@ -36,6 +36,12 @@ All notable changes to this project will be documented in this file.
 - Dashboard Widgets API exposing available widgets and layout endpoints.
 - Security header `Referrer-Policy: no-referrer` to reduce referrer leakage.
 - History API now filters by video file path via `video` query parameter.
+- **Enhanced Issue Management Workflow**: Updated GitHub workflow configuration
+  - Automatic triggering on merges to main branch when issue files change
+  - Weekly scheduled maintenance on Sundays at 2 AM UTC
+  - Manual workflow dispatch with comprehensive input options
+  - Integration with ghcommon unified issue management system
+  - Support for sub-issues with parent-child linking and automatic labeling
 
 ### Changed
 
