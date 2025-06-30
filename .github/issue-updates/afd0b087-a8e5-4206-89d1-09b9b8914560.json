@@ -1,48 +1,13 @@
 {
   "action": "create",
   "title": "Create Comprehensive API Documentation and Client SDKs",
-  "body": "## Description
-Document all API endpoints and create client SDKs for popular languages.
-
-## Documentation Requirements
-- OpenAPI 3.0 specification
-- Interactive API explorer
-- Authentication guide
-- Rate limit documentation
-- Webhook integration guide
-- Example requests/responses
-
-## SDK Languages
-- Python (priority)
-- JavaScript/TypeScript
-- Go
-- C# (.NET)
-- Java
-
-## Documentation Sections
-1. Getting Started
-2. Authentication
-3. Core Resources
-4. Webhooks
-5. Errors
-6. Rate Limits
-7. Changelog
-
-## SDK Features
-- Type safety
-- Automatic retry
-- Error handling
-- Pagination support
-- Webhook helpers
-
-## Acceptance Criteria
-- [ ] Complete OpenAPI spec
-- [ ] Deployed documentation site
-- [ ] Python SDK with tests
-- [ ] JavaScript SDK with types
-- [ ] SDK documentation
-- [ ] Integration examples",
-  "labels": ["enhancement", "documentation", "developer-experience", "priority-low"],
+  "body": "## Description\nDocument all API endpoints and create client SDKs for popular languages.\n\n## Documentation Requirements\n- OpenAPI 3.0 specification\n- Interactive API explorer\n- Authentication guide\n- Rate limit documentation\n- Webhook integration guide\n- Example requests/responses\n\n## SDK Languages\n- Python (priority)\n- JavaScript/TypeScript\n- Go\n- C# (.NET)\n- Java\n\n## Documentation Sections\n1. Getting Started\n2. Authentication\n3. Core Resources\n4. Webhooks\n5. Errors\n6. Rate Limits\n7. Changelog\n\n## SDK Features\n- Type safety\n- Automatic retry\n- Error handling\n- Pagination support\n- Webhook helpers\n\n## Acceptance Criteria\n- [ ] Complete OpenAPI spec\n- [ ] Deployed documentation site\n- [ ] Python SDK with tests\n- [ ] JavaScript SDK with types\n- [ ] SDK documentation\n- [ ] Integration examples",
+  "labels": [
+    "enhancement",
+    "documentation",
+    "developer-experience",
+    "priority-low"
+  ],
   "guid": "bd6f798b-89a4-4dfd-9255-2d94135dac5d",
   "legacy_guid": "create-create-comprehensive-api-documentation-and-client-sdks-2025-06-29"
 }

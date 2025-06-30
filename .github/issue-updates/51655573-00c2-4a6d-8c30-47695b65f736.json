@@ -1,29 +1,7 @@
 {
   "action": "create",
   "title": "Implement Whisper ASR Container Integration",
-  "body": "## Description
-Implement embedded Whisper ASR support for automatic subtitle generation from media files.
-
-## Requirements
-- Docker container management for Whisper service
-- API integration with OpenAI Whisper
-- Fallback to external API if container unavailable
-- Progress tracking for transcription jobs
-- WebSocket updates for real-time progress
-
-## Technical Details
-- Create `pkg/transcriber/whisper_container.go`
-- Add Docker client dependency
-- Implement container lifecycle management
-- Add configuration options for model selection
-- Create UI for transcription management
-
-## Acceptance Criteria
-- [ ] Whisper container can be started/stopped via UI
-- [ ] Media files can be transcribed to subtitles
-- [ ] Progress is shown in real-time
-- [ ] Multiple language support
-- [ ] Configurable model selection (tiny, base, small, medium, large)",
+  "body": "## Description\nImplement embedded Whisper ASR support for automatic subtitle generation from media files.\n\n## Requirements\n- Docker container management for Whisper service\n- API integration with OpenAI Whisper\n- Fallback to external API if container unavailable\n- Progress tracking for transcription jobs\n- WebSocket updates for real-time progress\n\n## Technical Details\n- Create `pkg/transcriber/whisper_container.go`\n- Add Docker client dependency\n- Implement container lifecycle management\n- Add configuration options for model selection\n- Create UI for transcription management\n\n## Acceptance Criteria\n- [ ] Whisper container can be started/stopped via UI\n- [ ] Media files can be transcribed to subtitles\n- [ ] Progress is shown in real-time\n- [ ] Multiple language support\n- [ ] Configurable model selection (tiny, base, small, medium, large)",
   "labels": ["enhancement", "backend", "priority-high"],
   "guid": "7b3eee8e-1264-45db-8a29-8c6db843adf7",
   "legacy_guid": "create-implement-whisper-asr-container-integration-2025-06-29"

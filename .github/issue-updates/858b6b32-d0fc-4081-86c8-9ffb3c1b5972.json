@@ -1,52 +1,7 @@
 {
   "action": "create",
   "title": "Optimize Application Performance and Resource Usage",
-  "body": "## Description
-Identify and fix performance bottlenecks to improve response times and reduce resource usage.
-
-## Optimization Areas
-
-### Database
-- Query optimization
-- Index analysis
-- Connection pooling
-- Query caching
-- Batch operations
-
-### API Performance
-- Response compression
-- Pagination optimization
-- Parallel processing
-- Request caching
-- CDN integration
-
-### Frontend
-- Code splitting
-- Lazy loading
-- Bundle optimization
-- Image optimization
-- Service worker
-
-### Background Jobs
-- Worker pool sizing
-- Job prioritization
-- Resource limits
-- Batch processing
-
-## Metrics to Track
-- API response times
-- Database query times
-- Memory usage
-- CPU utilization
-- Concurrent users
-
-## Acceptance Criteria
-- [ ] 50% reduction in API response times
-- [ ] 30% reduction in memory usage
-- [ ] Database query optimization
-- [ ] Frontend bundle < 500KB
-- [ ] Load test passing 1000 users
-- [ ] Performance monitoring dashboard",
+  "body": "## Description\nIdentify and fix performance bottlenecks to improve response times and reduce resource usage.\n\n## Optimization Areas\n\n### Database\n- Query optimization\n- Index analysis\n- Connection pooling\n- Query caching\n- Batch operations\n\n### API Performance\n- Response compression\n- Pagination optimization\n- Parallel processing\n- Request caching\n- CDN integration\n\n### Frontend\n- Code splitting\n- Lazy loading\n- Bundle optimization\n- Image optimization\n- Service worker\n\n### Background Jobs\n- Worker pool sizing\n- Job prioritization\n- Resource limits\n- Batch processing\n\n## Metrics to Track\n- API response times\n- Database query times\n- Memory usage\n- CPU utilization\n- Concurrent users\n\n## Acceptance Criteria\n- [ ] 50% reduction in API response times\n- [ ] 30% reduction in memory usage\n- [ ] Database query optimization\n- [ ] Frontend bundle < 500KB\n- [ ] Load test passing 1000 users\n- [ ] Performance monitoring dashboard",
   "labels": ["enhancement", "performance", "optimization", "priority-low"],
   "guid": "9664bf21-7ed5-4531-b5dc-31f30f1a4e88",
   "legacy_guid": "create-optimize-application-performance-and-resource-usage-2025-06-29"

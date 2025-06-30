@@ -1,45 +1,7 @@
 {
   "action": "create",
   "title": "Implement Subtitle Quality Scoring System",
-  "body": "## Description
-Add a scoring system to evaluate subtitle quality and automatically select the best match.
-
-## Scoring Criteria
-- Provider reliability score
-- Release match (proper, web-dl, bluray)
-- Subtitle format (SRT preferred)
-- Hearing impaired (HI) tags
-- Forced subtitle detection
-- Upload date (newer preferred)
-- Download count/rating
-- File size correlation
-
-## Implementation
-```go
-// pkg/scoring/scorer.go
-type SubtitleScore struct {
-    Total         int
-    ProviderScore int
-    ReleaseScore  int
-    FormatScore   int
-    MetadataScore int
-}
-
-func CalculateScore(subtitle Subtitle, media MediaItem, profile Profile) SubtitleScore
-```
-
-## UI Requirements
-- Score display in search results
-- Configurable scoring weights
-- Score threshold settings
-- Manual override option
-
-## Acceptance Criteria
-- [ ] Scoring algorithm implementation
-- [ ] Score-based automatic selection
-- [ ] UI display of scores
-- [ ] Configurable scoring weights
-- [ ] Score history tracking",
+  "body": "## Description\nAdd a scoring system to evaluate subtitle quality and automatically select the best match.\n\n## Scoring Criteria\n- Provider reliability score\n- Release match (proper, web-dl, bluray)\n- Subtitle format (SRT preferred)\n- Hearing impaired (HI) tags\n- Forced subtitle detection\n- Upload date (newer preferred)\n- Download count/rating\n- File size correlation\n\n## Implementation\n```go\n// pkg/scoring/scorer.go\ntype SubtitleScore struct {\n    Total         int\n    ProviderScore int\n    ReleaseScore  int\n    FormatScore   int\n    MetadataScore int\n}\n\nfunc CalculateScore(subtitle Subtitle, media MediaItem, profile Profile) SubtitleScore\n```\n\n## UI Requirements\n- Score display in search results\n- Configurable scoring weights\n- Score threshold settings\n- Manual override option\n\n## Acceptance Criteria\n- [ ] Scoring algorithm implementation\n- [ ] Score-based automatic selection\n- [ ] UI display of scores\n- [ ] Configurable scoring weights\n- [ ] Score history tracking",
   "labels": ["enhancement", "backend", "frontend", "priority-high"],
   "guid": "cc4982ca-68cc-4391-bbda-413e4831f4d4",
   "legacy_guid": "create-implement-subtitle-quality-scoring-system-2025-06-29"
