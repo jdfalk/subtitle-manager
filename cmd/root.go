@@ -217,6 +217,15 @@ func initConfig() {
 	viper.SetDefault("metadata_refresh_frequency", "weekly")
 	viper.SetDefault("disk_scan_frequency", "weekly")
 	viper.SetDefault("language", "en")
+	// Backup configuration defaults
+	viper.SetDefault("backup_frequency", "daily")
+	viper.SetDefault("backup_type", "full")
+	viper.SetDefault("backup_compression_enabled", true)
+	viper.SetDefault("backup_encryption_enabled", false)
+	viper.SetDefault("backup_encryption_key", "")
+	viper.SetDefault("backup_retention_days", 30)
+	viper.SetDefault("backup_retention_count", 10)
+	viper.SetDefault("backup_path", "")
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
