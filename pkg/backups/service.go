@@ -23,16 +23,19 @@ type Service struct {
 	manager        *BackupManager
 	dbBackupper    *DatabaseBackupper
 	configBackupper *ConfigBackupper
+	subtitleBackupper *SubtitleBackupper
 	logger         *logrus.Entry
 }
 
 // ServiceConfig holds configuration for the backup service.
 type ServiceConfig struct {
-	BackupPath     string
-	EnableEncryption bool
-	EncryptionKey  []byte
+	BackupPath        string
+	EnableEncryption  bool
+	EncryptionKey     []byte
 	EnableCompression bool
-	DatabaseStore  database.SubtitleStore
+	DatabaseStore     database.SubtitleStore
+	EnableCloudStorage bool
+	CloudStorageType  string // "s3", "gcs", "multi"
 }
 
 // NewService creates a new backup service with the provided configuration.
@@ -40,7 +43,22 @@ func NewService(config ServiceConfig) (*Service, error) {
 	logger := logging.GetLogger("backup")
 
 	// Create storage
-	storage := NewLocalStorage(config.BackupPath)
+	var storage Storage
+	if config.EnableCloudStorage && config.CloudStorageType != "" {
+		// Try to create cloud storage
+		cloudStorage, err := NewCloudStorageFromConfig()
+		if err != nil {
+			logger.Warnf("Failed to create cloud storage, falling back to local: %v", err)
+			storage = NewLocalStorage(config.BackupPath)
+		} else {
+			// Combine local and cloud storage
+			localStorage := NewLocalStorage(config.BackupPath)
+			storage = NewMultiStorage(localStorage, cloudStorage)
+			logger.Info("Using multi-storage (local + cloud)")
+		}
+	} else {
+		storage = NewLocalStorage(config.BackupPath)
+	}
 
 	// Create compression if enabled
 	var compression Compression
@@ -64,12 +82,14 @@ func NewService(config ServiceConfig) (*Service, error) {
 	// Create specialized backuppers
 	dbBackupper := NewDatabaseBackupper(config.DatabaseStore)
 	configBackupper := NewConfigBackupper()
+	subtitleBackupper := NewSubtitleBackupper(config.DatabaseStore)
 
 	return &Service{
-		manager:         manager,
-		dbBackupper:     dbBackupper,
-		configBackupper: configBackupper,
-		logger:          logger,
+		manager:           manager,
+		dbBackupper:       dbBackupper,
+		configBackupper:   configBackupper,
+		subtitleBackupper: subtitleBackupper,
+		logger:            logger,
 	}, nil
 }
 
@@ -110,6 +130,18 @@ func (s *Service) CreateFullBackup(ctx context.Context) (*Backup, error) {
 			backupData["config-file"+ext] = configFileData
 			contents = append(contents, "config-file")
 		}
+	}
+
+	// Backup subtitle files if enabled
+	subtitlePaths := GetSubtitleBackupPaths()
+	if len(subtitlePaths) > 0 {
+		s.logger.Infof("Backing up subtitle files from %d paths", len(subtitlePaths))
+		subtitleData, err := s.subtitleBackupper.CreateSubtitleBackup(ctx, subtitlePaths)
+		if err != nil {
+			return nil, fmt.Errorf("failed to backup subtitle files: %w", err)
+		}
+		backupData["subtitles.json"] = subtitleData
+		contents = append(contents, "subtitles")
 	}
 
 	// Combine all backup data into a single archive
@@ -164,6 +196,29 @@ func (s *Service) CreateConfigBackup(ctx context.Context) (*Backup, error) {
 	return backup, nil
 }
 
+// CreateSubtitleBackup creates a backup of only subtitle files.
+func (s *Service) CreateSubtitleBackup(ctx context.Context) (*Backup, error) {
+	s.logger.Info("Starting subtitle backup")
+
+	subtitlePaths := GetSubtitleBackupPaths()
+	if len(subtitlePaths) == 0 {
+		return nil, fmt.Errorf("no subtitle paths configured for backup")
+	}
+
+	subtitleData, err := s.subtitleBackupper.CreateSubtitleBackup(ctx, subtitlePaths)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create subtitle backup: %w", err)
+	}
+
+	backup, err := s.manager.CreateBackup(ctx, BackupTypeSubtitles, []string{"subtitles"}, subtitleData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to store subtitle backup: %w", err)
+	}
+
+	s.logger.Infof("Subtitle backup created successfully: %s", backup.ID)
+	return backup, nil
+}
+
 // RestoreBackup restores data from a backup.
 func (s *Service) RestoreBackup(ctx context.Context, backupID string) error {
 	s.logger.Infof("Starting restore from backup: %s", backupID)
@@ -185,6 +240,12 @@ func (s *Service) RestoreBackup(ctx context.Context, backupID string) error {
 		return s.dbBackupper.RestoreDatabaseBackup(ctx, data)
 	case BackupTypeConfiguration:
 		return s.configBackupper.RestoreConfigBackup(ctx, data)
+	case BackupTypeSubtitles:
+		restorePath := viper.GetString("backup_subtitle_restore_path")
+		if restorePath == "" {
+			restorePath = "/config/restored-subtitles"
+		}
+		return s.subtitleBackupper.RestoreSubtitleBackup(ctx, data, restorePath)
 	default:
 		return fmt.Errorf("unsupported backup type: %s", backup.Type)
 	}
@@ -300,6 +361,18 @@ func (s *Service) restoreFullBackup(ctx context.Context, data []byte) error {
 				s.logger.Info("Config file restored successfully")
 			}
 		}
+	}
+
+	// Restore subtitles if present
+	if subtitleDataStr, ok := archive["subtitles.json"].(string); ok {
+		restorePath := viper.GetString("backup_subtitle_restore_path")
+		if restorePath == "" {
+			restorePath = "/config/restored-subtitles"
+		}
+		if err := s.subtitleBackupper.RestoreSubtitleBackup(ctx, []byte(subtitleDataStr), restorePath); err != nil {
+			return fmt.Errorf("failed to restore subtitles: %w", err)
+		}
+		s.logger.Info("Subtitles restored successfully")
 	}
 
 	return nil
