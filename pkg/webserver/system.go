@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/backups"
+	"github.com/jdfalk/subtitle-manager/pkg/errors"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/tasks"
@@ -204,4 +205,28 @@ func announcementsHandler() http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(data)
 	})
+}
+
+// errorStatsHandler returns error statistics for the admin dashboard.
+func errorStatsHandler() http.Handler {
+	dashboard := errors.GetDashboard()
+	return dashboard.StatsHandler()
+}
+
+// errorRecentHandler returns recent error events.
+func errorRecentHandler() http.Handler {
+	dashboard := errors.GetDashboard()
+	return dashboard.RecentHandler()
+}
+
+// errorTopHandler returns the most frequent errors.
+func errorTopHandler() http.Handler {
+	dashboard := errors.GetDashboard()
+	return dashboard.TopErrorsHandler()
+}
+
+// errorHealthHandler returns overall error health status.
+func errorHealthHandler() http.Handler {
+	dashboard := errors.GetDashboard()
+	return dashboard.HealthHandler()
 }
