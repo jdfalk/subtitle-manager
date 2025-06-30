@@ -175,9 +175,7 @@ func libraryScanHandler(db *sql.DB) http.Handler {
 		libStatus = libScanStatus{Running: true, Files: []string{}}
 		libMu.Unlock()
 		go func() {
-			backend := database.GetDatabaseBackend()
-			storePath := database.GetDatabasePath()
-			store, err := database.OpenStore(storePath, backend)
+			store, err := database.OpenStoreWithConfig()
 			if err != nil {
 				libMu.Lock()
 				libStatus.Running = false

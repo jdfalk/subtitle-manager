@@ -12,3 +12,10 @@ func OpenStore(path, backend string) (SubtitleStore, error) {
 		return OpenSQLStore(path)
 	}
 }
+
+// OpenStoreWithConfig opens a store using the current configuration.
+func OpenStoreWithConfig() (SubtitleStore, error) {
+	path := GetDatabasePath()
+	backend := GetDatabaseBackend()
+	return OpenStore(path, backend)
+}

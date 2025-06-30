@@ -1,0 +1,256 @@
+// file: cmd/monitor.go
+// version: 1.0.0
+// guid: 12345678-1234-1234-1234-123456789014
+
+package cmd
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/monitoring"
+	"github.com/jdfalk/subtitle-manager/pkg/radarr"
+	"github.com/jdfalk/subtitle-manager/pkg/sonarr"
+)
+
+var monitorCmd = &cobra.Command{
+	Use:   "monitor",
+	Short: "Manage automatic subtitle monitoring",
+	Long:  `Manage automatic subtitle monitoring for TV episodes and movies from Sonarr/Radarr`,
+}
+
+var monitorStartCmd = &cobra.Command{
+	Use:   "start",
+	Short: "Start the monitoring daemon",
+	Long:  `Start the automatic subtitle monitoring daemon`,
+	RunE:  runMonitorStart,
+}
+
+var monitorSyncCmd = &cobra.Command{
+	Use:   "sync",
+	Short: "Sync media from Sonarr/Radarr",
+	Long:  `Synchronize media library from Sonarr/Radarr and add to monitoring`,
+	RunE:  runMonitorSync,
+}
+
+var monitorStatusCmd = &cobra.Command{
+	Use:   "status",
+	Short: "Show monitoring status",
+	Long:  `Show current monitoring statistics and status`,
+	RunE:  runMonitorStatus,
+}
+
+var monitorListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List monitored items",
+	Long:  `List all items currently being monitored`,
+	RunE:  runMonitorList,
+}
+
+// Flags for monitoring commands
+var (
+	monitorInterval    string
+	monitorLanguages   []string
+	monitorMaxRetries  int
+	monitorQualityCheck bool
+	monitorForceRefresh bool
+	monitorSource      string
+)
+
+func init() {
+	// Add subcommands
+	monitorCmd.AddCommand(monitorStartCmd)
+	monitorCmd.AddCommand(monitorSyncCmd)
+	monitorCmd.AddCommand(monitorStatusCmd)
+	monitorCmd.AddCommand(monitorListCmd)
+
+	// Start command flags
+	monitorStartCmd.Flags().StringVar(&monitorInterval, "interval", "1h", "Monitoring interval (e.g. 30m, 1h, 2h)")
+	monitorStartCmd.Flags().IntVar(&monitorMaxRetries, "max-retries", 3, "Maximum retry attempts per item")
+	monitorStartCmd.Flags().BoolVar(&monitorQualityCheck, "quality-check", true, "Enable quality upgrade monitoring")
+
+	// Sync command flags
+	monitorSyncCmd.Flags().StringSliceVar(&monitorLanguages, "languages", []string{"en"}, "Languages to monitor (comma-separated)")
+	monitorSyncCmd.Flags().IntVar(&monitorMaxRetries, "max-retries", 3, "Maximum retry attempts per item")
+	monitorSyncCmd.Flags().BoolVar(&monitorForceRefresh, "force-refresh", false, "Refresh existing monitored items")
+	monitorSyncCmd.Flags().StringVar(&monitorSource, "source", "both", "Source to sync from: sonarr, radarr, or both")
+
+	rootCmd.AddCommand(monitorCmd)
+}
+
+func runMonitorStart(cmd *cobra.Command, args []string) error {
+	// Parse interval
+	interval, err := time.ParseDuration(monitorInterval)
+	if err != nil {
+		return fmt.Errorf("invalid interval: %v", err)
+	}
+
+	// Open database
+	store, err := database.OpenStoreWithConfig()
+	if err != nil {
+		return fmt.Errorf("failed to open database: %v", err)
+	}
+	defer store.Close()
+
+	// Create Sonarr client if configured
+	var sonarrClient *sonarr.Client
+	if sonarrURL := viper.GetString("sonarr_url"); sonarrURL != "" {
+		sonarrClient = sonarr.NewClient(sonarrURL, viper.GetString("sonarr_api_key"))
+	}
+
+	// Create Radarr client if configured
+	var radarrClient *radarr.Client
+	if radarrURL := viper.GetString("radarr_url"); radarrURL != "" {
+		radarrClient = radarr.NewClient(radarrURL, viper.GetString("radarr_api_key"))
+	}
+
+	// Create monitor
+	monitor := monitoring.NewEpisodeMonitor(
+		interval,
+		sonarrClient,
+		radarrClient,
+		store,
+		monitorMaxRetries,
+		monitorQualityCheck,
+	)
+
+	fmt.Printf("Starting monitoring daemon (interval: %v)\n", interval)
+	
+	// Start monitoring
+	ctx := context.Background()
+	return monitor.Start(ctx)
+}
+
+func runMonitorSync(cmd *cobra.Command, args []string) error {
+	// Open database
+	store, err := database.OpenStoreWithConfig()
+	if err != nil {
+		return fmt.Errorf("failed to open database: %v", err)
+	}
+	defer store.Close()
+
+	// Create Sonarr client if configured
+	var sonarrClient *sonarr.Client
+	if sonarrURL := viper.GetString("sonarr_url"); sonarrURL != "" {
+		sonarrClient = sonarr.NewClient(sonarrURL, viper.GetString("sonarr_api_key"))
+	}
+
+	// Create Radarr client if configured
+	var radarrClient *radarr.Client
+	if radarrURL := viper.GetString("radarr_url"); radarrURL != "" {
+		radarrClient = radarr.NewClient(radarrURL, viper.GetString("radarr_api_key"))
+	}
+
+	// Create monitor
+	monitor := monitoring.NewEpisodeMonitor(
+		time.Hour, // Not used for sync
+		sonarrClient,
+		radarrClient,
+		store,
+		monitorMaxRetries,
+		false, // Quality check not used for sync
+	)
+
+	// Sync options
+	opts := monitoring.SyncOptions{
+		Languages:    monitorLanguages,
+		MaxRetries:   monitorMaxRetries,
+		ForceRefresh: monitorForceRefresh,
+	}
+
+	ctx := context.Background()
+
+	// Sync from Sonarr
+	if (monitorSource == "both" || monitorSource == "sonarr") && sonarrClient != nil {
+		fmt.Println("Syncing from Sonarr...")
+		if err := monitor.SyncFromSonarr(ctx, opts); err != nil {
+			return fmt.Errorf("failed to sync from Sonarr: %v", err)
+		}
+		fmt.Println("Sonarr sync complete")
+	}
+
+	// Sync from Radarr
+	if (monitorSource == "both" || monitorSource == "radarr") && radarrClient != nil {
+		fmt.Println("Syncing from Radarr...")
+		if err := monitor.SyncFromRadarr(ctx, opts); err != nil {
+			return fmt.Errorf("failed to sync from Radarr: %v", err)
+		}
+		fmt.Println("Radarr sync complete")
+	}
+
+	return nil
+}
+
+func runMonitorStatus(cmd *cobra.Command, args []string) error {
+	// Open database
+	store, err := database.OpenStoreWithConfig()
+	if err != nil {
+		return fmt.Errorf("failed to open database: %v", err)
+	}
+	defer store.Close()
+
+	// Create monitor
+	monitor := monitoring.NewEpisodeMonitor(
+		time.Hour, // Not used for status
+		nil, nil,  // Clients not needed for status
+		store,
+		0, false, // Not used for status
+	)
+
+	// Get stats
+	stats, err := monitor.GetMonitoringStats()
+	if err != nil {
+		return fmt.Errorf("failed to get monitoring stats: %v", err)
+	}
+
+	// Display stats
+	fmt.Printf("Monitoring Status:\n")
+	fmt.Printf("  Total items:    %d\n", stats.Total)
+	fmt.Printf("  Pending:        %d\n", stats.Pending)
+	fmt.Printf("  Monitoring:     %d\n", stats.Monitoring)
+	fmt.Printf("  Found:          %d\n", stats.Found)
+	fmt.Printf("  Failed:         %d\n", stats.Failed)
+	fmt.Printf("  Blacklisted:    %d\n", stats.Blacklisted)
+
+	return nil
+}
+
+func runMonitorList(cmd *cobra.Command, args []string) error {
+	// Open database
+	store, err := database.OpenStoreWithConfig()
+	if err != nil {
+		return fmt.Errorf("failed to open database: %v", err)
+	}
+	defer store.Close()
+
+	// Get monitored items
+	items, err := store.ListMonitoredItems()
+	if err != nil {
+		return fmt.Errorf("failed to list monitored items: %v", err)
+	}
+
+	if len(items) == 0 {
+		fmt.Println("No items are currently being monitored.")
+		return nil
+	}
+
+	// Display items
+	fmt.Printf("Monitored Items (%d total):\n\n", len(items))
+	for _, item := range items {
+		fmt.Printf("ID: %s\n", item.ID)
+		fmt.Printf("  Path: %s\n", item.Path)
+		fmt.Printf("  Languages: %s\n", item.Languages)
+		fmt.Printf("  Status: %s\n", item.Status)
+		fmt.Printf("  Retries: %d/%d\n", item.RetryCount, item.MaxRetries)
+		fmt.Printf("  Last Checked: %s\n", item.LastChecked.Format("2006-01-02 15:04:05"))
+		fmt.Printf("  Created: %s\n", item.CreatedAt.Format("2006-01-02 15:04:05"))
+		fmt.Println()
+	}
+
+	return nil
+}

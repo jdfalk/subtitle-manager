@@ -1638,3 +1638,89 @@ func (p *PebbleStore) DeleteSubtitleSource(sourceHash string) error {
 func subtitleSourceKey(sourceHash string) []byte {
 	return []byte("subtitle_source:" + sourceHash)
 }
+
+// ==================== MONITORING FUNCTIONS ====================
+
+// InsertMonitoredItem stores a monitored item record.
+func (p *PebbleStore) InsertMonitoredItem(rec *MonitoredItem) error {
+	if rec.ID == "" {
+		rec.ID = uuid.NewString()
+	}
+	if rec.CreatedAt.IsZero() {
+		rec.CreatedAt = time.Now()
+	}
+	rec.UpdatedAt = time.Now()
+
+	b, err := json.Marshal(rec)
+	if err != nil {
+		return err
+	}
+	return p.db.Set([]byte("monitored:"+rec.ID), b, nil)
+}
+
+// ListMonitoredItems retrieves all monitored items.
+func (p *PebbleStore) ListMonitoredItems() ([]MonitoredItem, error) {
+	iter, err := p.db.NewIter(&pebble.IterOptions{
+		LowerBound: []byte("monitored:"),
+		UpperBound: []byte("monitored;"),
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var items []MonitoredItem
+	for iter.First(); iter.Valid(); iter.Next() {
+		var item MonitoredItem
+		if err := json.Unmarshal(iter.Value(), &item); err != nil {
+			continue
+		}
+		items = append(items, item)
+	}
+	return items, iter.Error()
+}
+
+// UpdateMonitoredItem updates an existing monitored item.
+func (p *PebbleStore) UpdateMonitoredItem(rec *MonitoredItem) error {
+	rec.UpdatedAt = time.Now()
+	b, err := json.Marshal(rec)
+	if err != nil {
+		return err
+	}
+	return p.db.Set([]byte("monitored:"+rec.ID), b, nil)
+}
+
+// DeleteMonitoredItem removes a monitored item by ID.
+func (p *PebbleStore) DeleteMonitoredItem(id string) error {
+	return p.db.Delete([]byte("monitored:"+id), nil)
+}
+
+// GetMonitoredItemsToCheck returns items that need monitoring.
+func (p *PebbleStore) GetMonitoredItemsToCheck(interval time.Duration) ([]MonitoredItem, error) {
+	cutoff := time.Now().Add(-interval)
+
+	iter, err := p.db.NewIter(&pebble.IterOptions{
+		LowerBound: []byte("monitored:"),
+		UpperBound: []byte("monitored;"),
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	var items []MonitoredItem
+	for iter.First(); iter.Valid(); iter.Next() {
+		var item MonitoredItem
+		if err := json.Unmarshal(iter.Value(), &item); err != nil {
+			continue
+		}
+
+		// Check if item needs monitoring
+		if (item.Status == "pending" || item.Status == "monitoring" || item.Status == "failed") &&
+			item.LastChecked.Before(cutoff) &&
+			item.RetryCount < item.MaxRetries {
+			items = append(items, item)
+		}
+	}
+	return items, iter.Error()
+}

@@ -217,6 +217,22 @@ func initSchema(db *sql.DB) error {
 		return err
 	}
 
+	// Monitored items table for automatic subtitle monitoring
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS monitored_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        media_id TEXT NOT NULL,
+        path TEXT NOT NULL,
+        languages TEXT NOT NULL,
+        last_checked TIMESTAMP,
+        status TEXT NOT NULL DEFAULT 'pending',
+        retry_count INTEGER NOT NULL DEFAULT 0,
+        max_retries INTEGER NOT NULL DEFAULT 3,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
 	// Universal tag associations table for polymorphic relationships
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS tag_associations (
         tag_id INTEGER NOT NULL,

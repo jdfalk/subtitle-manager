@@ -671,3 +671,66 @@ func (p *PostgresStore) DeleteSubtitleSource(sourceHash string) error {
 	_, err := p.db.Exec(`DELETE FROM subtitle_sources WHERE source_hash = $1`, sourceHash)
 	return err
 }
+
+// ==================== MONITORING FUNCTIONS ====================
+
+// InsertMonitoredItem stores a monitored item record.
+func (p *PostgresStore) InsertMonitoredItem(rec *MonitoredItem) error {
+	_, err := p.db.Exec(`INSERT INTO monitored_items (media_id, path, languages, last_checked, status, retry_count, max_retries, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+		rec.MediaID, rec.Path, rec.Languages, rec.LastChecked, rec.Status, rec.RetryCount, rec.MaxRetries, time.Now(), time.Now())
+	return err
+}
+
+// ListMonitoredItems retrieves all monitored items.
+func (p *PostgresStore) ListMonitoredItems() ([]MonitoredItem, error) {
+	rows, err := p.db.Query(`SELECT id, media_id, path, languages, last_checked, status, retry_count, max_retries, created_at, updated_at FROM monitored_items ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []MonitoredItem
+	for rows.Next() {
+		var r MonitoredItem
+		var id int64
+		if err := rows.Scan(&id, &r.MediaID, &r.Path, &r.Languages, &r.LastChecked, &r.Status, &r.RetryCount, &r.MaxRetries, &r.CreatedAt, &r.UpdatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// UpdateMonitoredItem updates an existing monitored item.
+func (p *PostgresStore) UpdateMonitoredItem(rec *MonitoredItem) error {
+	_, err := p.db.Exec(`UPDATE monitored_items SET last_checked = $2, status = $3, retry_count = $4, updated_at = $5 WHERE id = $1`,
+		rec.ID, rec.LastChecked, rec.Status, rec.RetryCount, time.Now())
+	return err
+}
+
+// DeleteMonitoredItem removes a monitored item by ID.
+func (p *PostgresStore) DeleteMonitoredItem(id string) error {
+	_, err := p.db.Exec(`DELETE FROM monitored_items WHERE id = $1`, id)
+	return err
+}
+
+// GetMonitoredItemsToCheck returns items that need monitoring.
+func (p *PostgresStore) GetMonitoredItemsToCheck(interval time.Duration) ([]MonitoredItem, error) {
+	cutoff := time.Now().Add(-interval)
+	rows, err := p.db.Query(`SELECT id, media_id, path, languages, last_checked, status, retry_count, max_retries, created_at, updated_at FROM monitored_items WHERE status IN ('pending', 'monitoring', 'failed') AND last_checked < $1 AND retry_count < max_retries ORDER BY last_checked ASC`, cutoff)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []MonitoredItem
+	for rows.Next() {
+		var r MonitoredItem
+		var id int64
+		if err := rows.Scan(&id, &r.MediaID, &r.Path, &r.Languages, &r.LastChecked, &r.Status, &r.RetryCount, &r.MaxRetries, &r.CreatedAt, &r.UpdatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
