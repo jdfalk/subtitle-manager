@@ -292,9 +292,7 @@ func StartServer(addr string) error {
 		viper.GetString("db_cleanup_frequency"))
 
 	// Start Sonarr/Radarr sync tasks when configured
-	storeBackend := database.GetDatabaseBackend()
-	storePath := viper.GetString("db_path")
-	if store, err := database.OpenStore(storePath, storeBackend); err == nil {
+	if store, err := database.OpenStoreWithConfig(); err == nil {
 		if viper.GetBool("integrations.radarr.enabled") {
 			host := viper.GetString("integrations.radarr.host")
 			port := viper.GetString("integrations.radarr.port")
@@ -338,8 +336,7 @@ func StartServer(addr string) error {
 	}
 
 	// Start additional maintenance tasks for metadata and disk scanning
-	storePath = database.GetDatabasePath()
-	backend = database.GetDatabaseBackend()
+	storePath := database.GetDatabasePath()
 	logger.Info("starting metadata refresh and disk scan tasks")
 	go func() {
 		var store database.SubtitleStore

@@ -178,6 +178,20 @@ type TaggedEntity interface {
 	SetTags([]string)
 }
 
+// MonitoredItem represents a media item being monitored for subtitle availability.
+type MonitoredItem struct {
+	ID          string    `json:"id"`
+	MediaID     string    `json:"media_id"`
+	Path        string    `json:"path"`
+	Languages   string    `json:"languages"` // JSON array of language codes
+	LastChecked time.Time `json:"last_checked"`
+	Status      string    `json:"status"` // pending, monitoring, found, failed, blacklisted
+	RetryCount  int       `json:"retry_count"`
+	MaxRetries  int       `json:"max_retries"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
 // SQLStore implements SubtitleStore using an SQLite database.
 type SQLStore struct {
 	db *sql.DB
@@ -667,34 +681,6 @@ func ListMediaItems(db *sql.DB) ([]MediaItem, error) {
 // DeleteMediaItem removes media items with the given path using a raw *sql.DB.
 func DeleteMediaItem(db *sql.DB, path string) error {
 	_, err := db.Exec(`DELETE FROM media_items WHERE path = ?`, path)
-	return err
-}
-
-// SetMediaReleaseGroup updates the release group for a media item using a raw database handle.
-func SetMediaReleaseGroup(db *sql.DB, path, group string) error {
-	_, err := db.Exec(`UPDATE media_items SET release_group = ? WHERE path = ?`, group, path)
-	return err
-}
-
-// SetMediaAltTitles updates alternate titles for a media item using a raw database handle.
-func SetMediaAltTitles(db *sql.DB, path string, titles []string) error {
-	data, err := json.Marshal(titles)
-	if err != nil {
-		return err
-	}
-	_, err = db.Exec(`UPDATE media_items SET alt_titles = ? WHERE path = ?`, string(data), path)
-	return err
-}
-
-// SetMediaFieldLocks updates field locks for a media item using a raw database handle.
-func SetMediaFieldLocks(db *sql.DB, path, locks string) error {
-	_, err := db.Exec(`UPDATE media_items SET field_locks = ? WHERE path = ?`, locks, path)
-	return err
-}
-
-// SetMediaTitle updates the title for a media item using a raw database handle.
-func SetMediaTitle(db *sql.DB, path, title string) error {
-	_, err := db.Exec(`UPDATE media_items SET title = ? WHERE path = ?`, title, path)
 	return err
 }
 
@@ -1295,7 +1281,7 @@ func (s *SQLStore) CreateLanguageProfile(profile *LanguageProfile) error {
 		return fmt.Errorf("failed to marshal profile config: %w", err)
 	}
 
-	_, err = s.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at) 
+	_, err = s.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		profile.ID, profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
 		profile.CreatedAt, profile.UpdatedAt)
@@ -1307,7 +1293,7 @@ func (s *SQLStore) GetLanguageProfile(id string) (*LanguageProfile, error) {
 	var profile LanguageProfile
 	var configStr string
 
-	row := s.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	row := s.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at
 		FROM language_profiles WHERE id = ?`, id)
 
 	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
@@ -1325,7 +1311,7 @@ func (s *SQLStore) GetLanguageProfile(id string) (*LanguageProfile, error) {
 
 // ListLanguageProfiles retrieves all language profiles.
 func (s *SQLStore) ListLanguageProfiles() ([]LanguageProfile, error) {
-	rows, err := s.db.Query(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	rows, err := s.db.Query(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at
 		FROM language_profiles ORDER BY is_default DESC, name ASC`)
 	if err != nil {
 		return nil, err
@@ -1360,7 +1346,7 @@ func (s *SQLStore) UpdateLanguageProfile(profile *LanguageProfile) error {
 		return fmt.Errorf("failed to marshal profile config: %w", err)
 	}
 
-	_, err = s.db.Exec(`UPDATE language_profiles 
+	_, err = s.db.Exec(`UPDATE language_profiles
 		SET name = ?, config = ?, cutoff_score = ?, is_default = ?, updated_at = ?
 		WHERE id = ?`,
 		profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
@@ -1406,7 +1392,7 @@ func (s *SQLStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 	var profile LanguageProfile
 	var configStr string
 
-	row := s.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	row := s.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at
 		FROM language_profiles WHERE is_default = TRUE LIMIT 1`)
 
 	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
@@ -1424,7 +1410,7 @@ func (s *SQLStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 
 // AssignProfileToMedia assigns a language profile to a media item.
 func (s *SQLStore) AssignProfileToMedia(mediaID, profileID string) error {
-	_, err := s.db.Exec(`INSERT OR REPLACE INTO media_profiles (media_id, profile_id, created_at) 
+	_, err := s.db.Exec(`INSERT OR REPLACE INTO media_profiles (media_id, profile_id, created_at)
 		VALUES (?, ?, ?)`, mediaID, profileID, time.Now())
 	return err
 }
@@ -1450,4 +1436,65 @@ func (s *SQLStore) GetMediaProfile(mediaID string) (*LanguageProfile, error) {
 	}
 
 	return s.GetLanguageProfile(profileID)
+}
+
+// InsertMonitoredItem stores a monitored item record.
+func (s *SQLStore) InsertMonitoredItem(rec *MonitoredItem) error {
+	_, err := s.db.Exec(`INSERT INTO monitored_items (media_id, path, languages, last_checked, status, retry_count, max_retries, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		rec.MediaID, rec.Path, rec.Languages, rec.LastChecked, rec.Status, rec.RetryCount, rec.MaxRetries, time.Now(), time.Now())
+	return err
+}
+
+// ListMonitoredItems retrieves all monitored items.
+func (s *SQLStore) ListMonitoredItems() ([]MonitoredItem, error) {
+	rows, err := s.db.Query(`SELECT id, media_id, path, languages, last_checked, status, retry_count, max_retries, created_at, updated_at FROM monitored_items ORDER BY id DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []MonitoredItem
+	for rows.Next() {
+		var r MonitoredItem
+		var id int64
+		if err := rows.Scan(&id, &r.MediaID, &r.Path, &r.Languages, &r.LastChecked, &r.Status, &r.RetryCount, &r.MaxRetries, &r.CreatedAt, &r.UpdatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
+}
+
+// UpdateMonitoredItem updates an existing monitored item.
+func (s *SQLStore) UpdateMonitoredItem(rec *MonitoredItem) error {
+	_, err := s.db.Exec(`UPDATE monitored_items SET last_checked = ?, status = ?, retry_count = ?, updated_at = ? WHERE id = ?`,
+		rec.LastChecked, rec.Status, rec.RetryCount, time.Now(), rec.ID)
+	return err
+}
+
+// DeleteMonitoredItem removes a monitored item by ID.
+func (s *SQLStore) DeleteMonitoredItem(id string) error {
+	_, err := s.db.Exec(`DELETE FROM monitored_items WHERE id = ?`, id)
+	return err
+}
+
+// GetMonitoredItemsToCheck returns items that need monitoring.
+func (s *SQLStore) GetMonitoredItemsToCheck(interval time.Duration) ([]MonitoredItem, error) {
+	cutoff := time.Now().Add(-interval)
+	rows, err := s.db.Query(`SELECT id, media_id, path, languages, last_checked, status, retry_count, max_retries, created_at, updated_at FROM monitored_items WHERE status IN ('pending', 'monitoring', 'failed') AND last_checked < ? AND retry_count < max_retries ORDER BY last_checked ASC`, cutoff)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var recs []MonitoredItem
+	for rows.Next() {
+		var r MonitoredItem
+		var id int64
+		if err := rows.Scan(&id, &r.MediaID, &r.Path, &r.Languages, &r.LastChecked, &r.Status, &r.RetryCount, &r.MaxRetries, &r.CreatedAt, &r.UpdatedAt); err != nil {
+			return nil, err
+		}
+		r.ID = strconv.FormatInt(id, 10)
+		recs = append(recs, r)
+	}
+	return recs, rows.Err()
 }

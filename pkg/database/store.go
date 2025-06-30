@@ -1,6 +1,10 @@
 package database
 
-import "github.com/jdfalk/subtitle-manager/pkg/profiles"
+import (
+	"time"
+
+	"github.com/jdfalk/subtitle-manager/pkg/profiles"
+)
 
 // LanguageProfile alias for convenience
 type LanguageProfile = profiles.LanguageProfile
@@ -92,6 +96,17 @@ type SubtitleStore interface {
 	UpdateSubtitleSourceStats(sourceHash string, downloadCount, successCount int, avgRating *float64) error
 	ListSubtitleSources(provider string, limit int) ([]SubtitleSource, error)
 	DeleteSubtitleSource(sourceHash string) error
+	// Monitoring methods
+	// InsertMonitoredItem stores a monitored item record.
+	InsertMonitoredItem(rec *MonitoredItem) error
+	// ListMonitoredItems retrieves all monitored items.
+	ListMonitoredItems() ([]MonitoredItem, error)
+	// UpdateMonitoredItem updates an existing monitored item.
+	UpdateMonitoredItem(rec *MonitoredItem) error
+	// DeleteMonitoredItem removes a monitored item by ID.
+	DeleteMonitoredItem(id string) error
+	// GetMonitoredItemsToCheck returns items that need monitoring.
+	GetMonitoredItemsToCheck(interval time.Duration) ([]MonitoredItem, error)
 	// Close releases any resources held by the store.
 	Close() error
 }
