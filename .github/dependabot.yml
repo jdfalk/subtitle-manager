@@ -309,9 +309,9 @@ updates:
       - "terraform"
       - "infrastructure"
 
-  # Additional subdirectory for frontend (if applicable)
+  # Additional subdirectory for frontend (webui directory)
   - package-ecosystem: "npm"
-    directory: "/frontend"
+    directory: "/webui"
     schedule:
       interval: "weekly"
       day: "monday"

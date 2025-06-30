@@ -19,3 +19,5 @@ jobs:
       run-lint: true
       run-test: true
       run-build: true
+      enable-backend-frontend: true
+      frontend-path: "webui"
