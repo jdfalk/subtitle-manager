@@ -4,22 +4,18 @@
 
 # Python Code Style Guide (Google Style)
 
-This file provides Python coding style guidelines based on Google's Python Style
-Guide.
+This file provides Python coding style guidelines based on Google's Python Style Guide.
 
 ## Overview
 
-Python is the main dynamic language used at Google. This style guide is a list
-of dos and don'ts for Python programs that follows Google's comprehensive style
-guide.
+Python is the main dynamic language used at Google. This style guide is a list of dos and don'ts for Python programs that follows Google's comprehensive style guide.
 
 ## Key Principles
 
 - **BE CONSISTENT**: Follow the established patterns in your codebase
 - **Readability counts**: Code is read more often than it is written
 - **Simple is better than complex**: Prefer clarity over cleverness
-- **Use tools**: Leverage formatters like `ruff`, `black`, and `isort` for
-  consistency
+- **Use tools**: Leverage formatters like `ruff`, `black`, and `isort` for consistency
 
 ## Language Rules
 
@@ -32,8 +28,7 @@ guide.
 ### 2.2 Imports
 
 - Use `import x` for importing packages and modules
-- Use `from x import y` where `x` is the package prefix and `y` is the module
-  name
+- Use `from x import y` where `x` is the package prefix and `y` is the module name
 - Use `from x import y as z` for disambiguation or overly long names
 - **Import each module using the full pathname location**
 - Do not use relative imports

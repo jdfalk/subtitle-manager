@@ -4,22 +4,6 @@
 
 # Copilot Instructions
 
-## CRITICAL: Commit Message Requirements
-
-**ALL COMMITS MUST USE CONVENTIONAL COMMIT FORMAT WITH FILE CHANGE DOCUMENTATION**
-
-```text
-<type>[scope]: <description>
-
-<body explaining motivation>
-
-Files changed:
-- Summary: [file/path.ext](file/path.ext)
-- Another change: [other/file.go](other/file.go)
-```
-
-See [commit-messages.md](commit-messages.md) for complete guidelines.
-
 ## File Identification
 
 - Always check the first line of a file for a comment in the format `# file: $(relative_path_to_file)`
