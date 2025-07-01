@@ -7,22 +7,22 @@ info:
   title: Subtitle Manager API
   description: |
     A comprehensive REST API for managing subtitle files, translations, and media integrations.
-    
+
     ## Authentication
-    
+
     The API supports multiple authentication methods:
     - **Session Cookies**: For web UI authentication
     - **API Keys**: Send via `X-API-Key` header
     - **OAuth2**: GitHub OAuth2 integration
-    
+
     ## Authorization Levels
-    
+
     - `read`: View-only access to resources
     - `basic`: Standard user operations (download, convert, translate)
     - `admin`: Administrative operations (user management, system config)
-    
+
     ## Error Handling
-    
+
     Errors are returned as JSON objects with `error` and `message` fields:
     ```json
     {
@@ -30,14 +30,14 @@ info:
       "message": "Missing required parameter"
     }
     ```
-    
+
     ## Rate Limiting
-    
+
     API requests are subject to rate limiting based on user role:
     - Read operations: 1000 requests/hour
     - Basic operations: 500 requests/hour  
     - Admin operations: 200 requests/hour
-    
+
   version: "1.0.0"
   contact:
     name: Subtitle Manager
@@ -86,7 +86,7 @@ paths:
                   description: User password
                   example: password123
       responses:
-        '200':
+        "200":
           description: Login successful
           headers:
             Set-Cookie:
@@ -110,10 +110,10 @@ paths:
                     type: string
                     enum: [read, basic, admin]
                     description: User role/permission level
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /api/logout:
     post:
@@ -125,10 +125,10 @@ paths:
       security:
         - sessionCookie: []
       responses:
-        '204':
+        "204":
           description: Logout successful
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   # Setup Endpoints
   /api/setup/status:
@@ -140,7 +140,7 @@ paths:
       operationId: getSetupStatus
       security: []
       responses:
-        '200':
+        "200":
           description: Setup status
           content:
             application/json:
@@ -187,11 +187,11 @@ paths:
                   additionalProperties: true
                   description: Integration settings
       responses:
-        '204':
+        "204":
           description: Setup completed successfully
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
           description: Setup already completed
 
   # OAuth2 Endpoints
@@ -204,7 +204,7 @@ paths:
       operationId: githubOAuthLogin
       security: []
       responses:
-        '302':
+        "302":
           description: Redirect to GitHub
           headers:
             Location:
@@ -234,7 +234,7 @@ paths:
             type: string
           description: OAuth state parameter
       responses:
-        '302':
+        "302":
           description: Redirect after successful login
           headers:
             Set-Cookie:
@@ -245,10 +245,10 @@ paths:
               description: Redirect URL
               schema:
                 type: string
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /api/oauth/github/generate:
     post:
@@ -261,16 +261,16 @@ paths:
         - sessionCookie: []
         - apiKey: []
       responses:
-        '200':
+        "200":
           description: OAuth credentials generated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthCredentials'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+                $ref: "#/components/schemas/OAuthCredentials"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /api/oauth/github/regenerate:
     post:
@@ -283,16 +283,16 @@ paths:
         - sessionCookie: []
         - apiKey: []
       responses:
-        '200':
+        "200":
           description: OAuth secret regenerated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthCredentials'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '403':
-          $ref: '#/components/responses/Forbidden'
+                $ref: "#/components/schemas/OAuthCredentials"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /api/oauth/github/reset:
     post:
@@ -305,10 +305,10 @@ paths:
         - sessionCookie: []
         - apiKey: []
       responses:
-        '204':
+        "204":
           description: OAuth configuration reset
-        '403':
-          $ref: '#/components/responses/Forbidden'
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   # Configuration Endpoints
   /api/config:
@@ -322,7 +322,7 @@ paths:
         - sessionCookie: []
         - apiKey: []
       responses:
-        '200':
+        "200":
           description: Current configuration
           content:
             application/json:
@@ -330,8 +330,8 @@ paths:
                 type: object
                 additionalProperties: true
                 description: Configuration key-value pairs
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   # Subtitle Operations
   /api/convert:
@@ -358,7 +358,7 @@ paths:
                   format: binary
                   description: Subtitle file to convert
       responses:
-        '200':
+        "200":
           description: Converted SRT file
           headers:
             Content-Type:
@@ -375,12 +375,12 @@ paths:
                 type: string
                 format: binary
                 description: SRT subtitle file content
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /api/translate:
     post:
@@ -416,7 +416,7 @@ paths:
                   enum: [google, openai]
                   default: google
       responses:
-        '200':
+        "200":
           description: Translated subtitle file
           headers:
             Content-Type:
@@ -433,12 +433,12 @@ paths:
                 type: string
                 format: binary
                 description: Translated SRT subtitle file
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /api/extract:
     post:
@@ -472,7 +472,7 @@ paths:
                   description: Subtitle track number (0-based)
                   default: 0
       responses:
-        '200':
+        "200":
           description: Extracted subtitle file
           headers:
             Content-Type:
@@ -489,14 +489,14 @@ paths:
                 type: string
                 format: binary
                 description: Extracted SRT subtitle file
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
           description: No subtitles found in video file
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   # Download and Scanning
   /api/download:
@@ -534,7 +534,7 @@ paths:
                   description: Preferred providers (optional)
                   example: [opensubtitles, subscene]
       responses:
-        '200':
+        "200":
           description: Subtitles downloaded successfully
           content:
             application/json:
@@ -549,14 +549,14 @@ paths:
                   provider:
                     type: string
                     description: Provider used
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
           description: No subtitles found
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /api/scan:
     post:
@@ -583,7 +583,7 @@ paths:
                   description: Force rescan of existing files
                   default: false
       responses:
-        '202':
+        "202":
           description: Scan started
           content:
             application/json:
@@ -593,9 +593,9 @@ paths:
                   scan_id:
                     type: string
                     description: Scan job ID
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '409':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
           description: Scan already in progress
 
   /api/scan/status:
@@ -609,14 +609,14 @@ paths:
         - sessionCookie: []
         - apiKey: []
       responses:
-        '200':
+        "200":
           description: Scan status
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ScanStatus'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: "#/components/schemas/ScanStatus"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   # History
   /api/history:
@@ -630,8 +630,8 @@ paths:
         - sessionCookie: []
         - apiKey: []
       parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/LimitParam'
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
         - name: type
           in: query
           schema:
@@ -651,7 +651,7 @@ paths:
             format: date-time
           description: Filter operations before this date
       responses:
-        '200':
+        "200":
           description: Operation history
           content:
             application/json:
@@ -661,7 +661,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/HistoryItem'
+                      $ref: "#/components/schemas/HistoryItem"
                   total:
                     type: integer
                     description: Total number of items
@@ -671,8 +671,8 @@ paths:
                   limit:
                     type: integer
                     description: Items per page
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   # System Information
   /api/system:
@@ -686,14 +686,14 @@ paths:
         - sessionCookie: []
         - apiKey: []
       responses:
-        '200':
+        "200":
           description: System information
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SystemInfo'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: "#/components/schemas/SystemInfo"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /api/logs:
     get:
@@ -721,16 +721,16 @@ paths:
             default: 100
           description: Maximum number of log entries
       responses:
-        '200':
+        "200":
           description: Log entries
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LogEntry'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                  $ref: "#/components/schemas/LogEntry"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
 components:
   securitySchemes:
@@ -739,13 +739,13 @@ components:
       in: cookie
       name: session
       description: Session-based authentication using HTTP-only cookies
-    
+
     apiKey:
       type: apiKey
       in: header
       name: X-API-Key
       description: API key authentication for programmatic access
-    
+
     oauth2:
       type: oauth2
       description: GitHub OAuth2 authentication
@@ -943,7 +943,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: invalid_request
             message: Missing required parameter
@@ -953,7 +953,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: unauthorized
             message: Authentication required
@@ -963,7 +963,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: forbidden
             message: Admin access required
@@ -973,7 +973,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: not_found
             message: Resource not found
@@ -983,7 +983,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             error: internal_error
             message: An unexpected error occurred
