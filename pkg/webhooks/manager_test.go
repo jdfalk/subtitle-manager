@@ -76,7 +76,7 @@ func TestWebhookManager_SendEvent(t *testing.T) {
 	defer server.Close()
 
 	wm := NewWebhookManager()
-	wm.testMode = true // Enable synchronous mode for testing
+	wm.testMode = true          // Enable synchronous mode for testing
 	wm.client = server.Client() // Use test client that accepts self-signed certs
 
 	// Add endpoint subscribed to subtitle events - directly add to bypass validation

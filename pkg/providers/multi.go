@@ -64,7 +64,7 @@ func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, str
 			return nil, "", ctx.Err()
 		}
 	}
-	
+
 	// Send search failed event
 	errorMsg := "no subtitle found"
 	if lastError != nil {
@@ -76,7 +76,7 @@ func FetchFromAll(ctx context.Context, mediaPath, lang, key string) ([]byte, str
 		Error:     errorMsg,
 		Timestamp: time.Now(),
 	})
-	
+
 	return nil, "", fmt.Errorf("no subtitle found")
 }
 

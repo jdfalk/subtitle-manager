@@ -131,7 +131,7 @@ func setupHandler(db *sql.DB) http.Handler {
 func Handler(db *sql.DB) (http.Handler, error) {
 	// Initialize webhook system
 	initializeWebhooks()
-	
+
 	f, err := fs.Sub(webui.FS, "dist")
 	if err != nil {
 		return nil, err
@@ -1321,28 +1321,28 @@ func startSessionCleanup(db *sql.DB) {
 func initializeWebhooks() {
 	// Initialize the global webhook manager
 	webhooks.InitializeGlobalManager()
-	
+
 	// Create the webhook event publisher adapter
 	manager := webhooks.GetGlobalManager()
 	publisher := webhooks.NewWebhookEventPublisher(manager)
-	
+
 	// Set it as the global event publisher
 	events.SetGlobalPublisher(publisher)
-	
+
 	// Register incoming webhook handlers with secrets from configuration
 	sonarrSecret := viper.GetString("webhooks.sonarr.secret")
 	radarrSecret := viper.GetString("webhooks.radarr.secret")
 	customSecret := viper.GetString("webhooks.custom.secret")
-	
+
 	manager.RegisterIncomingHandler("sonarr", webhooks.NewSonarrHandler(sonarrSecret))
 	manager.RegisterIncomingHandler("radarr", webhooks.NewRadarrHandler(radarrSecret))
 	manager.RegisterIncomingHandler("custom", webhooks.NewCustomHandler(customSecret))
-	
+
 	// Set up IP whitelist if configured
 	if whitelist := viper.GetStringSlice("webhooks.ip_whitelist"); len(whitelist) > 0 {
 		manager.SetIPWhitelist(whitelist)
 	}
-	
+
 	logger := logging.GetLogger("webserver")
 	logger.Info("Webhook system initialized")
 }
