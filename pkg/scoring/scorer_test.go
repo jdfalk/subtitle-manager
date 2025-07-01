@@ -120,12 +120,12 @@ func TestCalculateScore(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := CalculateScore(tt.subtitle, tt.media, tt.profile)
-			
+
 			// Allow for some variance in total score due to floating point math
 			if abs(got.Total-tt.want.Total) > 5 {
 				t.Errorf("CalculateScore() Total = %v, want %v", got.Total, tt.want.Total)
 			}
-			
+
 			// Check individual scores with tolerance
 			if abs(got.ProviderScore-tt.want.ProviderScore) > 10 {
 				t.Errorf("CalculateScore() ProviderScore = %v, want %v", got.ProviderScore, tt.want.ProviderScore)
@@ -145,7 +145,7 @@ func TestCalculateScore(t *testing.T) {
 
 func TestCalculateProviderScore(t *testing.T) {
 	profile := DefaultProfile()
-	
+
 	tests := []struct {
 		name     string
 		subtitle Subtitle
@@ -190,7 +190,7 @@ func TestCalculateProviderScore(t *testing.T) {
 
 func TestCalculateReleaseScore(t *testing.T) {
 	profile := DefaultProfile()
-	
+
 	tests := []struct {
 		name     string
 		subtitle Subtitle
@@ -256,7 +256,7 @@ func TestCalculateReleaseScore(t *testing.T) {
 
 func TestCalculateFormatScore(t *testing.T) {
 	profile := DefaultProfile()
-	
+
 	tests := []struct {
 		name     string
 		subtitle Subtitle
@@ -297,7 +297,7 @@ func TestCalculateFormatScore(t *testing.T) {
 
 func TestCalculateMetadataScore(t *testing.T) {
 	profile := DefaultProfile()
-	
+
 	tests := []struct {
 		name     string
 		subtitle Subtitle
@@ -341,7 +341,7 @@ func TestCalculateMetadataScore(t *testing.T) {
 			} else {
 				profile.PreferHI = false
 			}
-			
+
 			media := MediaItem{} // Empty media for this test
 			got := calculateMetadataScore(tt.subtitle, media, profile)
 			// Allow some tolerance for complex calculations

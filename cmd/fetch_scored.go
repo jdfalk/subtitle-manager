@@ -18,13 +18,13 @@ import (
 )
 
 var (
-	minScore     int
-	providerWgt  float64
-	releaseWgt   float64
-	formatWgt    float64
-	metadataWgt  float64
-	allowHI      bool
-	preferHI     bool
+	minScore    int
+	providerWgt float64
+	releaseWgt  float64
+	formatWgt   float64
+	metadataWgt float64
+	allowHI     bool
+	preferHI    bool
 )
 
 var fetchScoredCmd = &cobra.Command{
@@ -118,9 +118,9 @@ This command evaluates subtitles based on:
 		// Find corresponding search result for download
 		var selectedResult *opensubtitles.SearchResult
 		for i, subtitle := range subtitles {
-			if subtitle.Release == best.Release && 
-			   subtitle.DownloadCount == best.DownloadCount && 
-			   subtitle.Rating == best.Rating {
+			if subtitle.Release == best.Release &&
+				subtitle.DownloadCount == best.DownloadCount &&
+				subtitle.Rating == best.Rating {
 				selectedResult = &results[i]
 				break
 			}
@@ -166,7 +166,7 @@ This command evaluates subtitles based on:
 
 func init() {
 	rootCmd.AddCommand(fetchScoredCmd)
-	
+
 	// Scoring configuration flags
 	fetchScoredCmd.Flags().IntVar(&minScore, "min-score", 50, "Minimum score threshold (0-100)")
 	fetchScoredCmd.Flags().Float64Var(&providerWgt, "provider-weight", 0.25, "Provider reliability weight (0.0-1.0)")

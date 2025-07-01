@@ -67,13 +67,13 @@ func SaveProfileToConfig(profile Profile) {
 	viper.Set("scoring.release_weight", profile.ReleaseWeight)
 	viper.Set("scoring.format_weight", profile.FormatWeight)
 	viper.Set("scoring.metadata_weight", profile.MetadataWeight)
-	
+
 	viper.Set("scoring.preferred_formats", profile.PreferredFormats)
 	viper.Set("scoring.allow_hi", profile.AllowHI)
 	viper.Set("scoring.prefer_hi", profile.PreferHI)
 	viper.Set("scoring.allow_forced", profile.AllowForced)
 	viper.Set("scoring.prefer_forced", profile.PreferForced)
-	
+
 	viper.Set("scoring.min_score", profile.MinScore)
 	viper.Set("scoring.max_age_days", int(profile.MaxAge.Hours()/24))
 }

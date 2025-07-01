@@ -14,10 +14,10 @@ import (
 // scoringConfigHandler handles GET/POST requests for scoring configuration.
 func scoringConfigHandler() http.Handler {
 	logger := logging.GetLogger("scoring-config")
-	
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		switch r.Method {
 		case http.MethodGet:
 			// Return current scoring configuration
@@ -27,7 +27,7 @@ func scoringConfigHandler() http.Handler {
 				w.WriteHeader(http.StatusInternalServerError)
 				json.NewEncoder(w).Encode(map[string]string{"error": "failed to load configuration"})
 			}
-			
+
 		case http.MethodPost:
 			// Update scoring configuration
 			var profile scoring.Profile
@@ -37,7 +37,7 @@ func scoringConfigHandler() http.Handler {
 				json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
 				return
 			}
-			
+
 			// Validate the profile
 			if err := scoring.ValidateProfile(profile); err != nil {
 				logger.Errorf("invalid profile: %v", err)
@@ -45,13 +45,13 @@ func scoringConfigHandler() http.Handler {
 				json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 				return
 			}
-			
+
 			// Save the profile
 			scoring.SaveProfileToConfig(profile)
-			
+
 			logger.Infof("scoring configuration updated")
 			json.NewEncoder(w).Encode(map[string]string{"status": "success"})
-			
+
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			json.NewEncoder(w).Encode(map[string]string{"error": "method not allowed"})
@@ -62,17 +62,17 @@ func scoringConfigHandler() http.Handler {
 // scoringTestHandler provides a test endpoint for scoring subtitles.
 func scoringTestHandler() http.Handler {
 	logger := logging.GetLogger("scoring-test")
-	
+
 	type testRequest struct {
 		MediaPath string `json:"mediaPath"`
 		Language  string `json:"language"`
 	}
-	
+
 	type scoredResult struct {
 		Subtitle scoring.Subtitle      `json:"subtitle"`
 		Score    scoring.SubtitleScore `json:"score"`
 	}
-	
+
 	// LocalMediaItem to avoid import conflicts
 	type LocalMediaItem struct {
 		Title        string `json:"title"`
@@ -84,23 +84,23 @@ func scoringTestHandler() http.Handler {
 		Codec        string `json:"codec"`
 		FileSize     int64  `json:"fileSize"`
 	}
-	
+
 	type testResponse struct {
 		MediaItem LocalMediaItem  `json:"mediaItem"`
 		Profile   scoring.Profile `json:"profile"`
 		Results   []scoredResult  `json:"results"`
 		Best      *scoredResult   `json:"best,omitempty"`
 	}
-	
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			json.NewEncoder(w).Encode(map[string]string{"error": "method not allowed"})
 			return
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		var req testRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			logger.Errorf("failed to decode request: %v", err)
@@ -108,13 +108,13 @@ func scoringTestHandler() http.Handler {
 			json.NewEncoder(w).Encode(map[string]string{"error": "invalid request body"})
 			return
 		}
-		
+
 		if req.MediaPath == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(map[string]string{"error": "mediaPath is required"})
 			return
 		}
-		
+
 		// Create sample subtitles for demonstration
 		sampleSubtitles := []scoring.Subtitle{
 			{
@@ -149,10 +149,10 @@ func scoringTestHandler() http.Handler {
 				MachineTranslated: true,
 			},
 		}
-		
+
 		// Extract media information
 		mediaItem := scoring.FromMediaPath(req.MediaPath)
-		
+
 		// Convert to our response type
 		responseMediaItem := LocalMediaItem{
 			Title:        mediaItem.Title,
@@ -164,10 +164,10 @@ func scoringTestHandler() http.Handler {
 			Codec:        mediaItem.Codec,
 			FileSize:     mediaItem.FileSize,
 		}
-		
+
 		// Load scoring profile
 		profile := scoring.LoadProfileFromConfig()
-		
+
 		// Score all subtitles
 		var results []scoredResult
 		for _, subtitle := range sampleSubtitles {
@@ -177,7 +177,7 @@ func scoringTestHandler() http.Handler {
 				Score:    score,
 			})
 		}
-		
+
 		// Find best subtitle
 		best, bestScore := scoring.SelectBest(sampleSubtitles, mediaItem, profile)
 		var bestResult *scoredResult
@@ -187,14 +187,14 @@ func scoringTestHandler() http.Handler {
 				Score:    *bestScore,
 			}
 		}
-		
+
 		response := testResponse{
 			MediaItem: responseMediaItem,
 			Profile:   profile,
 			Results:   results,
 			Best:      bestResult,
 		}
-		
+
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			logger.Errorf("failed to encode response: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -210,7 +210,7 @@ func scoringDefaultsHandler() http.Handler {
 			json.NewEncoder(w).Encode(map[string]string{"error": "method not allowed"})
 			return
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		profile := scoring.DefaultProfile()
 		json.NewEncoder(w).Encode(profile)

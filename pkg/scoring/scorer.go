@@ -22,21 +22,21 @@ type Subtitle struct {
 	// Provider information
 	ProviderName string `json:"providerName"`
 	IsTrusted    bool   `json:"isTrusted"`
-	
+
 	// Release information
-	Release    string `json:"release"`
-	FileName   string `json:"fileName"`
-	
+	Release  string `json:"release"`
+	FileName string `json:"fileName"`
+
 	// Quality metadata
-	Format           string    `json:"format"`
-	HearingImpaired  bool      `json:"hearingImpaired"`
-	ForcedSubtitle   bool      `json:"forcedSubtitle"`
-	UploadDate       time.Time `json:"uploadDate"`
-	DownloadCount    int       `json:"downloadCount"`
-	Rating           float64   `json:"rating"`
-	Votes            int       `json:"votes"`
-	FileSize         int64     `json:"fileSize"`
-	
+	Format          string    `json:"format"`
+	HearingImpaired bool      `json:"hearingImpaired"`
+	ForcedSubtitle  bool      `json:"forcedSubtitle"`
+	UploadDate      time.Time `json:"uploadDate"`
+	DownloadCount   int       `json:"downloadCount"`
+	Rating          float64   `json:"rating"`
+	Votes           int       `json:"votes"`
+	FileSize        int64     `json:"fileSize"`
+
 	// Additional flags
 	AutoTranslated    bool `json:"autoTranslated"`
 	MachineTranslated bool `json:"machineTranslated"`
@@ -58,21 +58,21 @@ type MediaItem struct {
 // Profile represents user preferences for subtitle scoring.
 type Profile struct {
 	// Scoring weights (0.0 to 1.0)
-	ProviderWeight  float64 `json:"providerWeight"`
-	ReleaseWeight   float64 `json:"releaseWeight"`
-	FormatWeight    float64 `json:"formatWeight"`
-	MetadataWeight  float64 `json:"metadataWeight"`
-	
+	ProviderWeight float64 `json:"providerWeight"`
+	ReleaseWeight  float64 `json:"releaseWeight"`
+	FormatWeight   float64 `json:"formatWeight"`
+	MetadataWeight float64 `json:"metadataWeight"`
+
 	// Preferences
 	PreferredFormats []string `json:"preferredFormats"`
 	AllowHI          bool     `json:"allowHI"`
 	PreferHI         bool     `json:"preferHI"`
 	AllowForced      bool     `json:"allowForced"`
 	PreferForced     bool     `json:"preferForced"`
-	
+
 	// Thresholds
-	MinScore         int `json:"minScore"`
-	MaxAge           time.Duration `json:"maxAge"`
+	MinScore int           `json:"minScore"`
+	MaxAge   time.Duration `json:"maxAge"`
 }
 
 // DefaultProfile returns a profile with sensible default scoring weights.
@@ -98,15 +98,15 @@ func CalculateScore(subtitle Subtitle, media MediaItem, profile Profile) Subtitl
 	releaseScore := calculateReleaseScore(subtitle, media, profile)
 	formatScore := calculateFormatScore(subtitle, profile)
 	metadataScore := calculateMetadataScore(subtitle, media, profile)
-	
+
 	// Apply weights and calculate total
 	total := int(
 		float64(providerScore)*profile.ProviderWeight +
-		float64(releaseScore)*profile.ReleaseWeight +
-		float64(formatScore)*profile.FormatWeight +
-		float64(metadataScore)*profile.MetadataWeight,
+			float64(releaseScore)*profile.ReleaseWeight +
+			float64(formatScore)*profile.FormatWeight +
+			float64(metadataScore)*profile.MetadataWeight,
 	)
-	
+
 	return SubtitleScore{
 		Total:         total,
 		ProviderScore: providerScore,
@@ -119,12 +119,12 @@ func CalculateScore(subtitle Subtitle, media MediaItem, profile Profile) Subtitl
 // calculateProviderScore evaluates provider reliability and trustworthiness.
 func calculateProviderScore(subtitle Subtitle, profile Profile) int {
 	score := 50 // Base score
-	
+
 	// Trusted providers get a bonus
 	if subtitle.IsTrusted {
 		score += 30
 	}
-	
+
 	// Provider-specific scoring
 	switch strings.ToLower(subtitle.ProviderName) {
 	case "opensubtitles", "opensubtitlescom":
@@ -136,7 +136,7 @@ func calculateProviderScore(subtitle Subtitle, profile Profile) int {
 	default:
 		score += 5
 	}
-	
+
 	// Penalty for machine-translated content
 	if subtitle.MachineTranslated {
 		score -= 20
@@ -144,24 +144,24 @@ func calculateProviderScore(subtitle Subtitle, profile Profile) int {
 	if subtitle.AutoTranslated {
 		score -= 10
 	}
-	
+
 	return clampScore(score)
 }
 
 // calculateReleaseScore evaluates how well the subtitle matches the media release.
 func calculateReleaseScore(subtitle Subtitle, media MediaItem, profile Profile) int {
 	score := 50 // Base score
-	
+
 	subtitleRelease := strings.ToLower(subtitle.Release)
 	mediaSource := strings.ToLower(media.Source)
 	mediaGroup := strings.ToLower(media.ReleaseGroup)
-	
+
 	// Perfect release group match
 	if mediaGroup != "" && strings.Contains(subtitleRelease, mediaGroup) {
 		score += 40
 		return clampScore(score)
 	}
-	
+
 	// Source quality matching
 	if mediaSource != "" {
 		if strings.Contains(subtitleRelease, mediaSource) {
@@ -170,11 +170,11 @@ func calculateReleaseScore(subtitle Subtitle, media MediaItem, profile Profile) 
 			// Partial matches based on quality hierarchy
 			switch mediaSource {
 			case "bluray", "blu-ray":
-				if strings.Contains(subtitleRelease, "remux") || 
-				   strings.Contains(subtitleRelease, "bdremux") {
+				if strings.Contains(subtitleRelease, "remux") ||
+					strings.Contains(subtitleRelease, "bdremux") {
 					score += 25
 				} else if strings.Contains(subtitleRelease, "bdrip") ||
-						  strings.Contains(subtitleRelease, "brrip") {
+					strings.Contains(subtitleRelease, "brrip") {
 					score += 20
 				}
 			case "web-dl", "webdl":
@@ -188,14 +188,14 @@ func calculateReleaseScore(subtitle Subtitle, media MediaItem, profile Profile) 
 			}
 		}
 	}
-	
+
 	// Resolution matching
 	if media.Resolution != "" {
 		if strings.Contains(subtitleRelease, media.Resolution) {
 			score += 15
 		}
 	}
-	
+
 	// Codec matching
 	if media.Codec != "" {
 		codecLower := strings.ToLower(media.Codec)
@@ -203,7 +203,7 @@ func calculateReleaseScore(subtitle Subtitle, media MediaItem, profile Profile) 
 			score += 10
 		}
 	}
-	
+
 	// Penalty for mismatched quality indicators
 	if mediaSource == "bluray" && strings.Contains(subtitleRelease, "cam") {
 		score -= 30
@@ -211,16 +211,16 @@ func calculateReleaseScore(subtitle Subtitle, media MediaItem, profile Profile) 
 	if mediaSource == "web-dl" && strings.Contains(subtitleRelease, "ts") {
 		score -= 25
 	}
-	
+
 	return clampScore(score)
 }
 
 // calculateFormatScore evaluates subtitle format preferences.
 func calculateFormatScore(subtitle Subtitle, profile Profile) int {
 	score := 50 // Base score
-	
+
 	format := strings.ToLower(subtitle.Format)
-	
+
 	// Check preferred formats
 	for i, preferred := range profile.PreferredFormats {
 		if format == strings.ToLower(preferred) {
@@ -229,7 +229,7 @@ func calculateFormatScore(subtitle Subtitle, profile Profile) int {
 			break
 		}
 	}
-	
+
 	// Default format scoring if not in preferences
 	if len(profile.PreferredFormats) == 0 || !contains(profile.PreferredFormats, format) {
 		switch format {
@@ -245,14 +245,14 @@ func calculateFormatScore(subtitle Subtitle, profile Profile) int {
 			score += 5
 		}
 	}
-	
+
 	return clampScore(score)
 }
 
 // calculateMetadataScore evaluates additional quality indicators.
 func calculateMetadataScore(subtitle Subtitle, media MediaItem, profile Profile) int {
 	score := 50 // Base score
-	
+
 	// Age scoring (newer is better, but with diminishing returns)
 	if !subtitle.UploadDate.IsZero() {
 		age := time.Since(subtitle.UploadDate)
@@ -268,7 +268,7 @@ func calculateMetadataScore(subtitle Subtitle, media MediaItem, profile Profile)
 			score -= 20 // Penalty for very old subtitles
 		}
 	}
-	
+
 	// Download popularity (logarithmic scaling)
 	if subtitle.DownloadCount > 0 {
 		// Convert to score: log base 10 scaled
@@ -278,7 +278,7 @@ func calculateMetadataScore(subtitle Subtitle, media MediaItem, profile Profile)
 		}
 		score += downloadScore
 	}
-	
+
 	// Rating scoring
 	if subtitle.Rating > 0 && subtitle.Votes > 0 {
 		// Weight rating by number of votes
@@ -295,26 +295,26 @@ func calculateMetadataScore(subtitle Subtitle, media MediaItem, profile Profile)
 			score = 100
 		}
 	}
-	
+
 	// Hearing Impaired preferences
 	if profile.PreferHI && subtitle.HearingImpaired {
 		score += 15
 	} else if !profile.AllowHI && subtitle.HearingImpaired {
 		score -= 25
 	}
-	
+
 	// Forced subtitle preferences
 	if profile.PreferForced && subtitle.ForcedSubtitle {
 		score += 10
 	} else if !profile.AllowForced && subtitle.ForcedSubtitle {
 		score -= 15
 	}
-	
+
 	// HD content bonus
 	if subtitle.HD {
 		score += 10
 	}
-	
+
 	// File size correlation (if media size is known)
 	if media.FileSize > 0 && subtitle.FileSize > 0 {
 		// Expect subtitle to be roughly 0.01% to 0.1% of video size
@@ -325,7 +325,7 @@ func calculateMetadataScore(subtitle Subtitle, media MediaItem, profile Profile)
 			score -= 5 // Too large
 		}
 	}
-	
+
 	return clampScore(score)
 }
 
@@ -365,7 +365,7 @@ func ScoreSubtitles(subtitles []Subtitle, media MediaItem, profile Profile) []Sc
 			Score:    CalculateScore(sub, media, profile),
 		}
 	}
-	
+
 	// Sort by total score (descending)
 	for i := 0; i < len(scored)-1; i++ {
 		for j := i + 1; j < len(scored); j++ {
@@ -374,7 +374,7 @@ func ScoreSubtitles(subtitles []Subtitle, media MediaItem, profile Profile) []Sc
 			}
 		}
 	}
-	
+
 	return scored
 }
 
@@ -383,16 +383,16 @@ func SelectBest(subtitles []Subtitle, media MediaItem, profile Profile) (*Subtit
 	if len(subtitles) == 0 {
 		return nil, nil
 	}
-	
+
 	scored := ScoreSubtitles(subtitles, media, profile)
-	
+
 	// Find first subtitle that meets minimum score
 	for _, s := range scored {
 		if s.Score.Total >= profile.MinScore {
 			return &s.Subtitle, &s.Score
 		}
 	}
-	
+
 	// If none meet minimum, return highest scoring
 	return &scored[0].Subtitle, &scored[0].Score
 }
