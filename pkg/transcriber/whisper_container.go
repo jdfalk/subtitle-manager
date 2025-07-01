@@ -328,8 +328,5 @@ func ValidateModel(model string) bool {
 
 // Close closes the Docker client connection.
 func (w *WhisperContainer) Close() error {
-	if w.client != nil {
-		return w.client.Close()
-	}
-	return nil
+	return w.client.Close()
 }
