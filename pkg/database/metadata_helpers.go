@@ -44,11 +44,11 @@ func (pm *ProviderMetadata) FromJSON(jsonStr string) error {
 
 // ModificationTypes contains constants for subtitle modification types.
 const (
-	ModificationTypeOriginal     = "original"
-	ModificationTypeSync         = "sync"
-	ModificationTypeTranslate    = "translate"
-	ModificationTypeManualEdit   = "manual_edit"
-	ModificationTypeAutoCorrect  = "auto_correct"
+	ModificationTypeOriginal      = "original"
+	ModificationTypeSync          = "sync"
+	ModificationTypeTranslate     = "translate"
+	ModificationTypeManualEdit    = "manual_edit"
+	ModificationTypeAutoCorrect   = "auto_correct"
 	ModificationTypeFormatConvert = "format_convert"
 )
 
@@ -148,11 +148,11 @@ func GetProviderPerformanceStats(store SubtitleStore, provider string) (*Provide
 	}
 
 	stats := &ProviderStats{
-		Provider:    provider,
-		TotalSources: len(sources),
+		Provider:       provider,
+		TotalSources:   len(sources),
 		TotalDownloads: 0,
 		TotalSuccesses: 0,
-		LastSeen:    time.Time{},
+		LastSeen:       time.Time{},
 	}
 
 	var ratingSum float64
@@ -161,11 +161,11 @@ func GetProviderPerformanceStats(store SubtitleStore, provider string) (*Provide
 	for _, source := range sources {
 		stats.TotalDownloads += source.DownloadCount
 		stats.TotalSuccesses += source.SuccessCount
-		
+
 		if source.LastSeen.After(stats.LastSeen) {
 			stats.LastSeen = source.LastSeen
 		}
-		
+
 		if source.AvgRating != nil {
 			ratingSum += *source.AvgRating
 			ratingCount++
@@ -186,13 +186,13 @@ func GetProviderPerformanceStats(store SubtitleStore, provider string) (*Provide
 
 // ProviderStats represents performance statistics for a subtitle provider.
 type ProviderStats struct {
-	Provider      string     `json:"provider"`
-	TotalSources  int        `json:"total_sources"`
+	Provider       string    `json:"provider"`
+	TotalSources   int       `json:"total_sources"`
 	TotalDownloads int       `json:"total_downloads"`
 	TotalSuccesses int       `json:"total_successes"`
-	SuccessRate   float64    `json:"success_rate"`
-	AvgRating     *float64   `json:"avg_rating,omitempty"`
-	LastSeen      time.Time  `json:"last_seen"`
+	SuccessRate    float64   `json:"success_rate"`
+	AvgRating      *float64  `json:"avg_rating,omitempty"`
+	LastSeen       time.Time `json:"last_seen"`
 }
 
 // TrackSubtitleRelationship creates a subtitle record that tracks its relationship to a parent.

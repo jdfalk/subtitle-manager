@@ -169,12 +169,12 @@ func TestCreateSubtitleSource(t *testing.T) {
 
 func TestTrackSubtitleRelationship(t *testing.T) {
 	parentRec := &SubtitleRecord{
-		ID:           "parent-123",
-		File:         "parent.srt",
-		VideoFile:    "video.mkv",
-		Language:     "en",
-		Service:      "opensubtitles",
-		SourceURL:    "https://example.com/123",
+		ID:              "parent-123",
+		File:            "parent.srt",
+		VideoFile:       "video.mkv",
+		Language:        "en",
+		Service:         "opensubtitles",
+		SourceURL:       "https://example.com/123",
 		ConfidenceScore: func() *float64 { score := 0.95; return &score }(),
 	}
 
@@ -200,7 +200,7 @@ func TestTrackSubtitleRelationship(t *testing.T) {
 func TestValidateConfidenceScore(t *testing.T) {
 	// Valid scores
 	validScores := []*float64{
-		nil,                                              // nil is valid
+		nil, // nil is valid
 		func() *float64 { score := 0.0; return &score }(), // 0.0 is valid
 		func() *float64 { score := 0.5; return &score }(), // 0.5 is valid
 		func() *float64 { score := 1.0; return &score }(), // 1.0 is valid
@@ -229,10 +229,10 @@ func TestValidateConfidenceScore(t *testing.T) {
 func TestValidateMatchScore(t *testing.T) {
 	// Valid scores
 	validScores := []*float64{
-		nil,                                              // nil is valid
-		func() *float64 { score := 0.0; return &score }(), // 0.0 is valid
+		nil, // nil is valid
+		func() *float64 { score := 0.0; return &score }(),  // 0.0 is valid
 		func() *float64 { score := 0.85; return &score }(), // 0.85 is valid
-		func() *float64 { score := 1.0; return &score }(), // 1.0 is valid
+		func() *float64 { score := 1.0; return &score }(),  // 1.0 is valid
 	}
 
 	for i, score := range validScores {
