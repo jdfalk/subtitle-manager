@@ -89,7 +89,7 @@ export default function UserManagement({ backendAvailable = true }) {
       } else {
         response = await apiService.users.create(data);
       }
-      
+
       if (!response.ok) {
         const txt = await response.text();
         throw new Error(txt);
