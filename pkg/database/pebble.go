@@ -1551,3 +1551,90 @@ func (p *PebbleStore) GetMediaProfile(mediaID string) (*LanguageProfile, error) 
 
 	return p.GetLanguageProfile(assignment.ProfileID)
 }
+
+// Subtitle Source operations for PebbleStore
+
+// InsertSubtitleSource stores a new subtitle source record.
+func (p *PebbleStore) InsertSubtitleSource(src *SubtitleSource) error {
+	if src.ID == "" {
+		src.ID = uuid.NewString()
+	}
+	data, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+	return p.db.Set(subtitleSourceKey(src.SourceHash), data, pebble.Sync)
+}
+
+// GetSubtitleSource retrieves a subtitle source by hash.
+func (p *PebbleStore) GetSubtitleSource(sourceHash string) (*SubtitleSource, error) {
+	data, closer, err := p.db.Get(subtitleSourceKey(sourceHash))
+	if err != nil {
+		return nil, err
+	}
+	defer closer.Close()
+	
+	var src SubtitleSource
+	if err := json.Unmarshal(data, &src); err != nil {
+		return nil, err
+	}
+	
+	return &src, nil
+}
+
+// UpdateSubtitleSourceStats updates download statistics for a subtitle source.
+func (p *PebbleStore) UpdateSubtitleSourceStats(sourceHash string, downloadCount, successCount int, avgRating *float64) error {
+	src, err := p.GetSubtitleSource(sourceHash)
+	if err != nil {
+		return err
+	}
+	
+	src.DownloadCount = downloadCount
+	src.SuccessCount = successCount
+	src.AvgRating = avgRating
+	src.LastSeen = time.Now()
+	
+	return p.InsertSubtitleSource(src)
+}
+
+// ListSubtitleSources retrieves all subtitle sources for a provider.
+func (p *PebbleStore) ListSubtitleSources(provider string, limit int) ([]SubtitleSource, error) {
+	iter, err := p.db.NewIter(&pebble.IterOptions{
+		LowerBound: []byte("subtitle_source:"),
+		UpperBound: []byte("subtitle_source;"),
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+	
+	var sources []SubtitleSource
+	count := 0
+	
+	for iter.First(); iter.Valid(); iter.Next() {
+		if limit > 0 && count >= limit {
+			break
+		}
+		
+		var src SubtitleSource
+		if err := json.Unmarshal(iter.Value(), &src); err != nil {
+			continue
+		}
+		
+		if provider == "" || src.Provider == provider {
+			sources = append(sources, src)
+			count++
+		}
+	}
+	
+	return sources, iter.Error()
+}
+
+// DeleteSubtitleSource removes a subtitle source record.
+func (p *PebbleStore) DeleteSubtitleSource(sourceHash string) error {
+	return p.db.Delete(subtitleSourceKey(sourceHash), pebble.Sync)
+}
+
+func subtitleSourceKey(sourceHash string) []byte {
+	return []byte("subtitle_source:" + sourceHash)
+}

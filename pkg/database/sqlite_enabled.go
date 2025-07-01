@@ -46,6 +46,11 @@ func initSchema(db *sql.DB) error {
         language TEXT NOT NULL,
         service TEXT NOT NULL,
         embedded INTEGER NOT NULL DEFAULT 0,
+        source_url TEXT,
+        provider_metadata TEXT,
+        confidence_score REAL,
+        parent_id INTEGER,
+        modification_type TEXT,
         created_at TIMESTAMP NOT NULL
     )`); err != nil {
 		return err
@@ -57,6 +62,11 @@ func initSchema(db *sql.DB) error {
         video_file TEXT NOT NULL,
         provider TEXT NOT NULL,
         language TEXT NOT NULL,
+        search_query TEXT,
+        match_score REAL,
+        download_attempts INTEGER DEFAULT 1,
+        error_message TEXT,
+        response_time_ms INTEGER,
         created_at TIMESTAMP NOT NULL
     )`); err != nil {
 		return err
@@ -75,6 +85,40 @@ func initSchema(db *sql.DB) error {
     )`); err != nil {
 		return err
 	}
+	// Add new subtitle metadata columns
+	if err := addColumnIfNotExists(db, "subtitles", "source_url", "TEXT"); err != nil {
+		return fmt.Errorf("failed to add column 'source_url' to 'subtitles': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "subtitles", "provider_metadata", "TEXT"); err != nil {
+		return fmt.Errorf("failed to add column 'provider_metadata' to 'subtitles': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "subtitles", "confidence_score", "REAL"); err != nil {
+		return fmt.Errorf("failed to add column 'confidence_score' to 'subtitles': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "subtitles", "parent_id", "INTEGER"); err != nil {
+		return fmt.Errorf("failed to add column 'parent_id' to 'subtitles': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "subtitles", "modification_type", "TEXT"); err != nil {
+		return fmt.Errorf("failed to add column 'modification_type' to 'subtitles': %w", err)
+	}
+
+	// Add new download metadata columns
+	if err := addColumnIfNotExists(db, "downloads", "search_query", "TEXT"); err != nil {
+		return fmt.Errorf("failed to add column 'search_query' to 'downloads': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "downloads", "match_score", "REAL"); err != nil {
+		return fmt.Errorf("failed to add column 'match_score' to 'downloads': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "downloads", "download_attempts", "INTEGER DEFAULT 1"); err != nil {
+		return fmt.Errorf("failed to add column 'download_attempts' to 'downloads': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "downloads", "error_message", "TEXT"); err != nil {
+		return fmt.Errorf("failed to add column 'error_message' to 'downloads': %w", err)
+	}
+	if err := addColumnIfNotExists(db, "downloads", "response_time_ms", "INTEGER"); err != nil {
+		return fmt.Errorf("failed to add column 'response_time_ms' to 'downloads': %w", err)
+	}
+
 	if err := addColumnIfNotExists(db, "media_items", "release_group", "TEXT"); err != nil {
 		return fmt.Errorf("failed to add column 'release_group' to 'media_items': %w", err)
 	}
@@ -83,6 +127,25 @@ func initSchema(db *sql.DB) error {
 	}
 	if err := addColumnIfNotExists(db, "media_items", "field_locks", "TEXT"); err != nil {
 		return fmt.Errorf("failed to add column 'field_locks' to 'media_items': %w", err)
+	}
+
+	// Subtitle sources table for tracking provider performance and metadata
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS subtitle_sources (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        source_hash TEXT UNIQUE NOT NULL,
+        original_url TEXT NOT NULL,
+        provider TEXT NOT NULL,
+        title TEXT,
+        release_info TEXT,
+        file_size INTEGER,
+        download_count INTEGER DEFAULT 0,
+        success_count INTEGER DEFAULT 0,
+        avg_rating REAL,
+        last_seen TIMESTAMP,
+        metadata TEXT,
+        created_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
 	}
 
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS dashboard_prefs (

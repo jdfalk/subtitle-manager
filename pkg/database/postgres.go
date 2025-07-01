@@ -551,3 +551,123 @@ func (p *PostgresStore) GetMediaProfile(mediaID string) (*LanguageProfile, error
 
 	return p.GetLanguageProfile(profileID)
 }
+
+// Subtitle Source operations for PostgresStore
+
+// InsertSubtitleSource stores a new subtitle source record.
+func (p *PostgresStore) InsertSubtitleSource(src *SubtitleSource) error {
+	_, err := p.db.Exec(`INSERT INTO subtitle_sources (source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+		src.SourceHash, src.OriginalURL, src.Provider, src.Title, src.ReleaseInfo, src.FileSize, src.DownloadCount, src.SuccessCount, src.AvgRating, src.LastSeen, src.Metadata, time.Now())
+	return err
+}
+
+// GetSubtitleSource retrieves a subtitle source by hash.
+func (p *PostgresStore) GetSubtitleSource(sourceHash string) (*SubtitleSource, error) {
+	var src SubtitleSource
+	var id int64
+	var title, releaseInfo, metadata sql.NullString
+	var fileSize sql.NullInt64
+	var avgRating sql.NullFloat64
+	
+	row := p.db.QueryRow(`SELECT id, source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at FROM subtitle_sources WHERE source_hash = $1`, sourceHash)
+	
+	err := row.Scan(&id, &src.SourceHash, &src.OriginalURL, &src.Provider, &title, &releaseInfo, &fileSize, &src.DownloadCount, &src.SuccessCount, &avgRating, &src.LastSeen, &metadata, &src.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	
+	src.ID = strconv.FormatInt(id, 10)
+	if title.Valid {
+		src.Title = title.String
+	}
+	if releaseInfo.Valid {
+		src.ReleaseInfo = releaseInfo.String
+	}
+	if fileSize.Valid {
+		size := int(fileSize.Int64)
+		src.FileSize = &size
+	}
+	if avgRating.Valid {
+		src.AvgRating = &avgRating.Float64
+	}
+	if metadata.Valid {
+		src.Metadata = metadata.String
+	}
+	
+	return &src, nil
+}
+
+// UpdateSubtitleSourceStats updates download statistics for a subtitle source.
+func (p *PostgresStore) UpdateSubtitleSourceStats(sourceHash string, downloadCount, successCount int, avgRating *float64) error {
+	_, err := p.db.Exec(`UPDATE subtitle_sources SET download_count = $1, success_count = $2, avg_rating = $3, last_seen = $4 WHERE source_hash = $5`,
+		downloadCount, successCount, avgRating, time.Now(), sourceHash)
+	return err
+}
+
+// ListSubtitleSources retrieves all subtitle sources for a provider.
+func (p *PostgresStore) ListSubtitleSources(provider string, limit int) ([]SubtitleSource, error) {
+	query := `SELECT id, source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at FROM subtitle_sources`
+	args := []interface{}{}
+	
+	if provider != "" {
+		query += ` WHERE provider = $1`
+		args = append(args, provider)
+	}
+	
+	query += ` ORDER BY last_seen DESC`
+	if limit > 0 {
+		if provider != "" {
+			query += ` LIMIT $2`
+		} else {
+			query += ` LIMIT $1`
+		}
+		args = append(args, limit)
+	}
+	
+	rows, err := p.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	
+	var sources []SubtitleSource
+	for rows.Next() {
+		var src SubtitleSource
+		var id int64
+		var title, releaseInfo, metadata sql.NullString
+		var fileSize sql.NullInt64
+		var avgRating sql.NullFloat64
+		
+		if err := rows.Scan(&id, &src.SourceHash, &src.OriginalURL, &src.Provider, &title, &releaseInfo, &fileSize, &src.DownloadCount, &src.SuccessCount, &avgRating, &src.LastSeen, &metadata, &src.CreatedAt); err != nil {
+			return nil, err
+		}
+		
+		src.ID = strconv.FormatInt(id, 10)
+		if title.Valid {
+			src.Title = title.String
+		}
+		if releaseInfo.Valid {
+			src.ReleaseInfo = releaseInfo.String
+		}
+		if fileSize.Valid {
+			size := int(fileSize.Int64)
+			src.FileSize = &size
+		}
+		if avgRating.Valid {
+			src.AvgRating = &avgRating.Float64
+		}
+		if metadata.Valid {
+			src.Metadata = metadata.String
+		}
+		
+		sources = append(sources, src)
+	}
+	
+	return sources, rows.Err()
+}
+
+// DeleteSubtitleSource removes a subtitle source record.
+func (p *PostgresStore) DeleteSubtitleSource(sourceHash string) error {
+	_, err := p.db.Exec(`DELETE FROM subtitle_sources WHERE source_hash = $1`, sourceHash)
+	return err
+}

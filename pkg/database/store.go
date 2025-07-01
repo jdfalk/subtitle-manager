@@ -86,6 +86,12 @@ type SubtitleStore interface {
 	RemoveProfileFromMedia(mediaID string) error
 	// GetMediaProfile retrieves the language profile assigned to a media item.
 	GetMediaProfile(mediaID string) (*LanguageProfile, error)
+	// Subtitle source tracking operations
+	InsertSubtitleSource(src *SubtitleSource) error
+	GetSubtitleSource(sourceHash string) (*SubtitleSource, error)
+	UpdateSubtitleSourceStats(sourceHash string, downloadCount, successCount int, avgRating *float64) error
+	ListSubtitleSources(provider string, limit int) ([]SubtitleSource, error)
+	DeleteSubtitleSource(sourceHash string) error
 	// Close releases any resources held by the store.
 	Close() error
 }
