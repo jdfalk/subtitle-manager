@@ -67,27 +67,35 @@ import { useEffect, useState } from 'react';
  */
 export default function Wanted({ backendAvailable = true }) {
   // Enhanced state for comprehensive search functionality
-  const [selectedProviders, setSelectedProviders] = useState(['opensubtitles', 'subscene']);
+  const [selectedProviders, setSelectedProviders] = useState([
+    'opensubtitles',
+    'subscene',
+  ]);
   const [path, setPath] = useState('');
   const [lang, setLang] = useState('en');
   const [results, setResults] = useState([]);
   const [wanted, setWanted] = useState([]);
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   // Advanced search filters
   const [season, setSeason] = useState('');
   const [episode, setEpisode] = useState('');
   const [year, setYear] = useState('');
   const [releaseGroup, setReleaseGroup] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // Table and UI state
   const [selectedResults, setSelectedResults] = useState([]);
   const [sortBy, setSortBy] = useState('score');
   const [sortOrder, setSortOrder] = useState('desc');
-  const [previewDialog, setPreviewDialog] = useState({ open: false, content: '', name: '', provider: '' });
-  
+  const [previewDialog, setPreviewDialog] = useState({
+    open: false,
+    content: '',
+    name: '',
+    provider: '',
+  });
+
   // Search history
   const [searchHistory, setSearchHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -173,7 +181,7 @@ export default function Wanted({ backendAvailable = true }) {
       if (response.ok) {
         const data = await response.json();
         setResults(data.results || []);
-        
+
         // Save to search history
         const historyItem = {
           query: searchRequest,
@@ -228,8 +236,8 @@ export default function Wanted({ backendAvailable = true }) {
   };
 
   // Provider selection handlers
-  const handleProviderToggle = (providerValue) => {
-    setSelectedProviders(prev => 
+  const handleProviderToggle = providerValue => {
+    setSelectedProviders(prev =>
       prev.includes(providerValue)
         ? prev.filter(p => p !== providerValue)
         : [...prev, providerValue]
@@ -237,14 +245,18 @@ export default function Wanted({ backendAvailable = true }) {
   };
 
   const handleSelectAllProviders = () => {
-    const availableProviders = providers.filter(p => p.available).map(p => p.value);
+    const availableProviders = providers
+      .filter(p => p.available)
+      .map(p => p.value);
     setSelectedProviders(
-      selectedProviders.length === availableProviders.length ? [] : availableProviders
+      selectedProviders.length === availableProviders.length
+        ? []
+        : availableProviders
     );
   };
 
   // Result selection handlers
-  const handleResultSelect = (resultId) => {
+  const handleResultSelect = resultId => {
     setSelectedResults(prev =>
       prev.includes(resultId)
         ? prev.filter(id => id !== resultId)
@@ -254,16 +266,16 @@ export default function Wanted({ backendAvailable = true }) {
 
   const handleSelectAllResults = () => {
     setSelectedResults(
-      selectedResults.length === results.length 
-        ? [] 
-        : results.map(r => r.id)
+      selectedResults.length === results.length ? [] : results.map(r => r.id)
     );
   };
 
   // Preview handler
-  const handlePreview = async (result) => {
+  const handlePreview = async result => {
     try {
-      const response = await fetch(`/api/search/preview?url=${encodeURIComponent(result.downloadUrl)}&provider=${result.provider}&lang=${result.language}`);
+      const response = await fetch(
+        `/api/search/preview?url=${encodeURIComponent(result.downloadUrl)}&provider=${result.provider}&lang=${result.language}`
+      );
       if (response.ok) {
         const data = await response.json();
         setPreviewDialog({
@@ -291,12 +303,12 @@ export default function Wanted({ backendAvailable = true }) {
   const sortedResults = [...results].sort((a, b) => {
     let aValue = a[sortBy];
     let bValue = b[sortBy];
-    
+
     if (typeof aValue === 'string') {
       aValue = aValue.toLowerCase();
       bValue = bValue.toLowerCase();
     }
-    
+
     if (sortOrder === 'asc') {
       return aValue > bValue ? 1 : -1;
     } else {
@@ -305,7 +317,7 @@ export default function Wanted({ backendAvailable = true }) {
   });
 
   // Search from history
-  const searchFromHistory = (historyItem) => {
+  const searchFromHistory = historyItem => {
     const query = historyItem.query;
     setSelectedProviders(query.providers);
     setPath(query.mediaPath);
@@ -340,7 +352,12 @@ export default function Wanted({ backendAvailable = true }) {
         <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
-              <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                mb={2}
+              >
                 <Typography variant="h6" display="flex" alignItems="center">
                   <SearchIcon sx={{ mr: 1 }} />
                   Manual Subtitle Search
@@ -375,8 +392,15 @@ export default function Wanted({ backendAvailable = true }) {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={selectedProviders.length === providers.filter(p => p.available).length}
-                        indeterminate={selectedProviders.length > 0 && selectedProviders.length < providers.filter(p => p.available).length}
+                        checked={
+                          selectedProviders.length ===
+                          providers.filter(p => p.available).length
+                        }
+                        indeterminate={
+                          selectedProviders.length > 0 &&
+                          selectedProviders.length <
+                            providers.filter(p => p.available).length
+                        }
                         onChange={handleSelectAllProviders}
                       />
                     }
@@ -398,7 +422,12 @@ export default function Wanted({ backendAvailable = true }) {
                         <Box display="flex" alignItems="center">
                           {provider.label}
                           {!provider.available && (
-                            <Chip label="Config Required" size="small" color="warning" sx={{ ml: 1 }} />
+                            <Chip
+                              label="Config Required"
+                              size="small"
+                              color="warning"
+                              sx={{ ml: 1 }}
+                            />
                           )}
                         </Box>
                       }
@@ -463,7 +492,11 @@ export default function Wanted({ backendAvailable = true }) {
                       )
                     }
                     onClick={search}
-                    disabled={searching || !path.trim() || selectedProviders.length === 0}
+                    disabled={
+                      searching ||
+                      !path.trim() ||
+                      selectedProviders.length === 0
+                    }
                     fullWidth
                     size="large"
                   >
@@ -543,10 +576,10 @@ export default function Wanted({ backendAvailable = true }) {
                             primary={item.query.mediaPath}
                             secondary={`${item.results} results • ${item.timestamp.toLocaleString()}`}
                           />
-                          <Chip 
-                            label={item.query.providers.join(', ')} 
-                            size="small" 
-                            variant="outlined" 
+                          <Chip
+                            label={item.query.providers.join(', ')}
+                            size="small"
+                            variant="outlined"
                           />
                         </ListItem>
                       ))}
@@ -562,7 +595,12 @@ export default function Wanted({ backendAvailable = true }) {
         <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
-              <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                mb={2}
+              >
                 <Typography variant="h6">
                   Search Results ({results.length})
                 </Typography>
@@ -572,7 +610,10 @@ export default function Wanted({ backendAvailable = true }) {
                       control={
                         <Checkbox
                           checked={selectedResults.length === results.length}
-                          indeterminate={selectedResults.length > 0 && selectedResults.length < results.length}
+                          indeterminate={
+                            selectedResults.length > 0 &&
+                            selectedResults.length < results.length
+                          }
                           onChange={handleSelectAllResults}
                         />
                       }
@@ -592,14 +633,15 @@ export default function Wanted({ backendAvailable = true }) {
                   </Box>
                 )}
               </Box>
-              
+
               {searching ? (
                 <Box display="flex" justifyContent="center" p={3}>
                   <CircularProgress />
                 </Box>
               ) : results.length === 0 ? (
                 <Alert severity="info">
-                  No search results. Try searching for a media file to find subtitles.
+                  No search results. Try searching for a media file to find
+                  subtitles.
                 </Alert>
               ) : (
                 <TableContainer component={Paper} variant="outlined">
@@ -609,7 +651,10 @@ export default function Wanted({ backendAvailable = true }) {
                         <TableCell padding="checkbox">
                           <Checkbox
                             checked={selectedResults.length === results.length}
-                            indeterminate={selectedResults.length > 0 && selectedResults.length < results.length}
+                            indeterminate={
+                              selectedResults.length > 0 &&
+                              selectedResults.length < results.length
+                            }
                             onChange={handleSelectAllResults}
                           />
                         </TableCell>
@@ -619,7 +664,9 @@ export default function Wanted({ backendAvailable = true }) {
                             direction={sortBy === 'score' ? sortOrder : 'asc'}
                             onClick={() => {
                               if (sortBy === 'score') {
-                                setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                                setSortOrder(
+                                  sortOrder === 'asc' ? 'desc' : 'asc'
+                                );
                               } else {
                                 setSortBy('score');
                                 setSortOrder('desc');
@@ -635,10 +682,14 @@ export default function Wanted({ backendAvailable = true }) {
                         <TableCell>
                           <TableSortLabel
                             active={sortBy === 'downloads'}
-                            direction={sortBy === 'downloads' ? sortOrder : 'asc'}
+                            direction={
+                              sortBy === 'downloads' ? sortOrder : 'asc'
+                            }
                             onClick={() => {
                               if (sortBy === 'downloads') {
-                                setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                                setSortOrder(
+                                  sortOrder === 'asc' ? 'desc' : 'asc'
+                                );
                               } else {
                                 setSortBy('downloads');
                                 setSortOrder('desc');
@@ -652,7 +703,7 @@ export default function Wanted({ backendAvailable = true }) {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {sortedResults.map((result) => (
+                      {sortedResults.map(result => (
                         <TableRow
                           key={result.id}
                           hover
@@ -703,7 +754,9 @@ export default function Wanted({ backendAvailable = true }) {
                           </TableCell>
                           <TableCell>
                             <Typography variant="body2">
-                              {result.downloads ? result.downloads.toLocaleString() : '-'}
+                              {result.downloads
+                                ? result.downloads.toLocaleString()
+                                : '-'}
                             </Typography>
                           </TableCell>
                           <TableCell>
@@ -721,7 +774,11 @@ export default function Wanted({ backendAvailable = true }) {
                                   size="small"
                                   onClick={() => add(result.downloadUrl)}
                                   disabled={wanted.includes(result.downloadUrl)}
-                                  color={wanted.includes(result.downloadUrl) ? 'success' : 'default'}
+                                  color={
+                                    wanted.includes(result.downloadUrl)
+                                      ? 'success'
+                                      : 'default'
+                                  }
                                 >
                                   {wanted.includes(result.downloadUrl) ? (
                                     <CheckBoxIcon fontSize="small" />
@@ -807,14 +864,19 @@ export default function Wanted({ backendAvailable = true }) {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>
-          Subtitle Preview - {previewDialog.name}
-        </DialogTitle>
+        <DialogTitle>Subtitle Preview - {previewDialog.name}</DialogTitle>
         <DialogContent>
           <Box mb={2}>
-            <Chip label={previewDialog.provider} size="small" variant="outlined" />
+            <Chip
+              label={previewDialog.provider}
+              size="small"
+              variant="outlined"
+            />
           </Box>
-          <Paper variant="outlined" sx={{ p: 2, maxHeight: 400, overflow: 'auto' }}>
+          <Paper
+            variant="outlined"
+            sx={{ p: 2, maxHeight: 400, overflow: 'auto' }}
+          >
             <Typography
               variant="body2"
               component="pre"
@@ -829,7 +891,9 @@ export default function Wanted({ backendAvailable = true }) {
           </Paper>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setPreviewDialog(prev => ({ ...prev, open: false }))}>
+          <Button
+            onClick={() => setPreviewDialog(prev => ({ ...prev, open: false }))}
+          >
             Close
           </Button>
         </DialogActions>
