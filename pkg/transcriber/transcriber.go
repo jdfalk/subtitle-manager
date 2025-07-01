@@ -7,6 +7,16 @@ import (
 	openai "github.com/sashabaranov/go-openai"
 )
 
+// TranscriptionMethod represents the method used for transcription
+type TranscriptionMethod string
+
+const (
+	// MethodOpenAI uses the OpenAI Whisper API
+	MethodOpenAI TranscriptionMethod = "openai"
+	// MethodDocker uses a local Docker container
+	MethodDocker TranscriptionMethod = "docker"
+)
+
 // whisperModel is the OpenAI model used for transcriptions.
 var whisperModel = openai.Whisper1
 
@@ -21,6 +31,29 @@ func SetWhisperModel(m string) {
 // SetBaseURL overrides the OpenAI API base URL used for transcription requests.
 func SetBaseURL(u string) {
 	baseURL = u
+}
+
+// TranscribeWithMethod transcribes a media file using the specified method.
+// This function provides a unified interface for both OpenAI API and Docker-based transcription.
+func TranscribeWithMethod(ctx context.Context, method TranscriptionMethod, path, lang, apiKey string, dockerConfig *DockerTranscriberConfig) ([]byte, error) {
+	switch method {
+	case MethodOpenAI:
+		return WhisperTranscribe(path, lang, apiKey)
+	case MethodDocker:
+		transcriber, err := NewDockerTranscriber(dockerConfig)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create Docker transcriber: %w", err)
+		}
+		defer transcriber.Close()
+
+		if !transcriber.IsAvailable(ctx) {
+			return nil, fmt.Errorf("Docker is not available")
+		}
+
+		return transcriber.TranscribeFile(ctx, path)
+	default:
+		return nil, fmt.Errorf("unsupported transcription method: %s", method)
+	}
 }
 
 // WhisperTranscribe transcribes the media file at path using the Whisper API.
