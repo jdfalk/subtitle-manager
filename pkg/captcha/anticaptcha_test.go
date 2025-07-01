@@ -67,9 +67,11 @@ func TestTwoCaptcha_Solve_Success(t *testing.T) {
 	})
 	server := httptest.NewServer(handler)
 	defer server.Close()
+
 	solver := NewTwoCaptcha("test-api-key")
 	solver.BaseURL = server.URL
 	solver.client = server.Client()
+
 	result, err := solver.Solve(context.Background(), "test-site-key", "https://example.com")
 	require.NoError(t, err)
 	assert.Equal(t, "solved-captcha-token", result)
@@ -87,9 +89,11 @@ func TestTwoCaptcha_Solve_SubmitError(t *testing.T) {
 	})
 	server := httptest.NewServer(handler)
 	defer server.Close()
+
 	solver := NewTwoCaptcha("test-api-key")
 	solver.BaseURL = server.URL
 	solver.client = server.Client()
+
 	result, err := solver.Solve(context.Background(), "test-site-key", "https://example.com")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "ERROR_ZERO_BALANCE")
@@ -116,12 +120,16 @@ func TestTwoCaptcha_Solve_NotReady(t *testing.T) {
 	})
 	server := httptest.NewServer(handler)
 	defer server.Close()
+
 	solver := NewTwoCaptcha("test-api-key")
 	solver.BaseURL = server.URL
 	solver.client = server.Client()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 100*1000) // Short timeout for test
 	defer cancel()
+
 	result, err := solver.Solve(ctx, "test-site-key", "https://example.com")
+	// Should timeout because captcha is never ready
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "context deadline exceeded")
 	assert.Empty(t, result)
@@ -139,11 +147,14 @@ func TestTwoCaptcha_Solve_ContextCanceled(t *testing.T) {
 	})
 	server := httptest.NewServer(handler)
 	defer server.Close()
+
 	solver := NewTwoCaptcha("test-api-key")
 	solver.BaseURL = server.URL
 	solver.client = server.Client()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
+
 	result, err := solver.Solve(ctx, "test-site-key", "https://example.com")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "context canceled")
@@ -158,9 +169,11 @@ func TestTwoCaptcha_Solve_InvalidJSON(t *testing.T) {
 	})
 	server := httptest.NewServer(handler)
 	defer server.Close()
+
 	solver := NewTwoCaptcha("test-api-key")
 	solver.BaseURL = server.URL
 	solver.client = server.Client()
+
 	result, err := solver.Solve(context.Background(), "test-site-key", "https://example.com")
 	assert.Error(t, err)
 	assert.Empty(t, result)
@@ -173,9 +186,11 @@ func TestTwoCaptcha_Solve_HTTPError(t *testing.T) {
 	})
 	server := httptest.NewServer(handler)
 	defer server.Close()
+
 	solver := NewTwoCaptcha("test-api-key")
 	solver.BaseURL = server.URL
 	solver.client = server.Client()
+
 	result, err := solver.Solve(context.Background(), "test-site-key", "https://example.com")
 	assert.Error(t, err)
 	assert.Empty(t, result)
@@ -218,9 +233,11 @@ func TestTwoCaptcha_Solve_PollingHappyPath(t *testing.T) {
 	})
 	server := httptest.NewServer(handler)
 	defer server.Close()
+
 	solver := NewTwoCaptcha("test-api-key")
 	solver.BaseURL = server.URL
 	solver.client = server.Client()
+
 	ctx := context.Background()
 	result, err := solver.Solve(ctx, "test-site-key", "https://example.com")
 	assert.NoError(t, err)
@@ -260,9 +277,11 @@ func TestTwoCaptcha_Solve_PollingError(t *testing.T) {
 	})
 	server := httptest.NewServer(handler)
 	defer server.Close()
+
 	solver := NewTwoCaptcha("test-api-key")
 	solver.BaseURL = server.URL
 	solver.client = server.Client()
+
 	ctx := context.Background()
 	result, err := solver.Solve(ctx, "test-site-key", "https://example.com")
 	assert.Error(t, err)

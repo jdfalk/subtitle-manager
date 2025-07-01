@@ -42,7 +42,7 @@ func TestNewServer(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			server := NewServer(tt.googleKey, tt.gptKey, tt.persistConfig, tt.configKeyPrefix)
-			
+
 			assert.NotNil(t, server)
 			assert.Equal(t, tt.googleKey, server.googleKey)
 			assert.Equal(t, tt.gptKey, server.gptKey)
@@ -94,18 +94,18 @@ func TestServer_SetConfig(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			server := NewServer("initial-google", "initial-gpt", tt.persistConfig, tt.configKeyPrefix)
-			
+
 			req := &pb.ConfigRequest{
 				Settings: tt.settings,
 			}
-			
+
 			_, err := server.SetConfig(context.Background(), req)
-			
+
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-				
+
 				// Verify API keys were updated correctly
 				for k, v := range tt.settings {
 					switch k {
@@ -155,15 +155,15 @@ func TestServer_GetConfig(t *testing.T) {
 			// Reset viper for each test
 			viper.Reset()
 			tt.setupViper()
-			
+
 			server := NewServer(tt.googleKey, tt.gptKey, tt.persistConfig, "")
-			
+
 			resp, err := server.GetConfig(context.Background(), &emptypb.Empty{})
-			
+
 			assert.NoError(t, err)
 			assert.NotNil(t, resp)
 			assert.NotNil(t, resp.Settings)
-			
+
 			if !tt.persistConfig {
 				// For non-persistent config, should return API keys
 				assert.Equal(t, tt.googleKey, resp.Settings["GOOGLE_API_KEY"])
@@ -202,14 +202,14 @@ func TestServer_Translate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			server := NewServer("fake-google-key", "fake-gpt-key", false, "")
-			
+
 			req := &pb.TranslateRequest{
 				Text:     tt.text,
 				Language: tt.language,
 			}
-			
+
 			resp, err := server.Translate(context.Background(), req)
-			
+
 			if tt.expectError {
 				assert.Error(t, err)
 				assert.Nil(t, resp)
@@ -226,16 +226,16 @@ func TestServer_Translate(t *testing.T) {
 func TestServer_SetConfigWithPersistence_ErrorHandling(t *testing.T) {
 	// Test error handling when viper config writing fails
 	server := NewServer("google-key", "gpt-key", true, "")
-	
+
 	// Set an invalid config file that will cause WriteConfig to fail
 	viper.SetConfigFile("/invalid/path/config.yaml")
-	
+
 	req := &pb.ConfigRequest{
 		Settings: map[string]string{
 			"test_key": "test_value",
 		},
 	}
-	
+
 	// Should handle the error gracefully
 	// Note: This test might pass or fail depending on viper's internal handling
 	// The important thing is that it doesn't panic
@@ -247,11 +247,11 @@ func TestServer_SetConfigWithPersistence_ErrorHandling(t *testing.T) {
 func TestServer_InterfaceCompliance(t *testing.T) {
 	// Verify that Server implements the required gRPC interface
 	server := NewServer("test", "test", false, "")
-	
+
 	// This test ensures the server properly embeds the UnimplementedTranslatorServer
 	// and can be used as a pb.TranslatorServer
 	var _ pb.TranslatorServer = server
-	
+
 	// Test that the server can handle the basic gRPC methods
 	require.NotNil(t, server)
 }
