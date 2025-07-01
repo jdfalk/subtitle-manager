@@ -85,6 +85,13 @@ build-static: ## Build static binary (no CGO)
 	@mkdir -p $(BIN_DIR)
 	CGO_ENABLED=0 go build $(GO_BUILD_FLAGS) -o $(BINARY_PATH)-static .
 
+.PHONY: build-sqlite
+build-sqlite: webui-build go-generate ## Build binary with SQLite support for web server
+	@echo "$(COLOR_BLUE)Building with SQLite support for web server...$(COLOR_RESET)"
+	@mkdir -p $(BIN_DIR)
+	CGO_ENABLED=1 go build -tags sqlite $(GO_BUILD_FLAGS) -o $(BINARY_PATH)-sqlite .
+	@echo "$(COLOR_GREEN)✓ Binary with SQLite support built: $(BINARY_PATH)-sqlite$(COLOR_RESET)"
+
 .PHONY: build-all-platforms
 build-all-platforms: ## Build for multiple platforms
 	@echo "$(COLOR_BLUE)Building for multiple platforms...$(COLOR_RESET)"
@@ -638,6 +645,11 @@ test-binary: binary ## Test that the binary works correctly
 run-web: binary ## Build and run the web server
 	@echo "$(COLOR_BLUE)Starting web server...$(COLOR_RESET)"
 	$(BINARY_PATH) web
+
+.PHONY: run-web-sqlite
+run-web-sqlite: build-sqlite ## Build with SQLite support and run the web server
+	@echo "$(COLOR_BLUE)Starting web server with SQLite support...$(COLOR_RESET)"
+	$(BINARY_PATH)-sqlite web
 
 .PHONY: check-cgo
 check-cgo: ## Check if CGO is properly configured

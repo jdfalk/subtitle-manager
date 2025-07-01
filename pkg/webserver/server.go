@@ -271,6 +271,10 @@ func StartServer(addr string) error {
 	}
 
 	if err != nil {
+		// Check if this is a SQLite support issue and provide helpful error message
+		if strings.Contains(err.Error(), "SQLite support not available") {
+			return fmt.Errorf("web server requires SQLite for authentication. Please build with: go build -tags sqlite\nOriginal error: %w", err)
+		}
 		return fmt.Errorf("failed to open database: %w", err)
 	}
 	defer db.Close()
