@@ -202,9 +202,19 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/series/", authMiddleware(db, "basic", universalTagsHandler(db)))
 	mux.Handle(prefix+"/api/languages/", authMiddleware(db, "admin", universalTagsHandler(db)))
 
+	// Performance monitoring endpoints
+	mux.Handle(prefix+"/api/performance/stats", authMiddleware(db, "admin", PerformanceStatsHandler()))
+	mux.Handle(prefix+"/api/performance/metrics", authMiddleware(db, "admin", PerformanceMetricsHandler()))
+	mux.Handle(prefix+"/api/performance/cache", authMiddleware(db, "admin", CacheMetricsHandler()))
+	mux.Handle(prefix+"/api/performance/workers", authMiddleware(db, "admin", WorkerPoolMetricsHandler()))
+	mux.Handle(prefix+"/api/health", HealthCheckHandler()) // Public health check endpoint
+
 	fsHandler := spaFileServer(f)
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
-	return securityHeadersMiddleware(mux), nil
+	
+	// Apply performance middleware chain: performance monitoring -> compression -> caching -> security
+	// Order matters: performance monitoring should be outermost to track everything
+	return performanceMiddleware(compressionMiddleware(CacheMiddleware(securityHeadersMiddleware(mux)))), nil
 }
 
 // StartServer starts an HTTP server on the given address serving the embedded UI.
