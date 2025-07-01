@@ -13,49 +13,49 @@ import (
 
 func TestNewAppError(t *testing.T) {
 	tests := []struct {
-		name           string
-		code           ErrorCode
-		message        string
-		userMsg        string
-		err            error
+		name            string
+		code            ErrorCode
+		message         string
+		userMsg         string
+		err             error
 		expectRetryable bool
-		expectStatus   int
+		expectStatus    int
 	}{
 		{
-			name:           "provider timeout",
-			code:           CodeProviderTimeout,
-			message:        "Provider timeout",
-			userMsg:        "Service temporarily unavailable",
-			err:            errors.New("timeout"),
+			name:            "provider timeout",
+			code:            CodeProviderTimeout,
+			message:         "Provider timeout",
+			userMsg:         "Service temporarily unavailable",
+			err:             errors.New("timeout"),
 			expectRetryable: true,
-			expectStatus:   http.StatusServiceUnavailable,
+			expectStatus:    http.StatusServiceUnavailable,
 		},
 		{
-			name:           "validation error",
-			code:           CodeValidationInput,
-			message:        "Invalid input",
-			userMsg:        "Please check your input",
-			err:            nil,
+			name:            "validation error",
+			code:            CodeValidationInput,
+			message:         "Invalid input",
+			userMsg:         "Please check your input",
+			err:             nil,
 			expectRetryable: false,
-			expectStatus:   http.StatusBadRequest,
+			expectStatus:    http.StatusBadRequest,
 		},
 		{
-			name:           "system database error",
-			code:           CodeSystemDatabase,
-			message:        "Database connection failed",
-			userMsg:        "Database error occurred",
-			err:            errors.New("connection refused"),
+			name:            "system database error",
+			code:            CodeSystemDatabase,
+			message:         "Database connection failed",
+			userMsg:         "Database error occurred",
+			err:             errors.New("connection refused"),
 			expectRetryable: false,
-			expectStatus:   http.StatusInternalServerError,
+			expectStatus:    http.StatusInternalServerError,
 		},
 		{
-			name:           "user not found",
-			code:           CodeUserNotFound,
-			message:        "User not found",
-			userMsg:        "User does not exist",
-			err:            nil,
+			name:            "user not found",
+			code:            CodeUserNotFound,
+			message:         "User not found",
+			userMsg:         "User does not exist",
+			err:             nil,
 			expectRetryable: false,
-			expectStatus:   http.StatusNotFound,
+			expectStatus:    http.StatusNotFound,
 		},
 	}
 
@@ -131,7 +131,7 @@ func TestAppError_Error(t *testing.T) {
 
 func TestAppError_WithContext(t *testing.T) {
 	appErr := NewAppError(CodeProviderTimeout, "Test error", "User message", nil)
-	
+
 	appErr.WithContext("request_id", "12345")
 	appErr.WithContext("user_id", 42)
 
@@ -190,7 +190,7 @@ func TestWrapError(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := WrapError(tt.err, tt.code, tt.message, tt.userMsg)
-			
+
 			if tt.expected == nil {
 				if result != nil {
 					t.Errorf("Expected nil result, got %v", result)
@@ -264,7 +264,7 @@ func TestNewSuccessResponse(t *testing.T) {
 	if response.Data == nil {
 		t.Error("Expected response to contain data")
 	}
-	
+
 	// Type check the data
 	if dataMap, ok := response.Data.(map[string]string); !ok {
 		t.Error("Expected data to be a map[string]string")

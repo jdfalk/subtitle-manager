@@ -19,47 +19,47 @@ type ErrorCode string
 // Standard error codes for different categories of errors.
 const (
 	// Provider errors (retry-able)
-	CodeProviderTimeout    ErrorCode = "PROVIDER_TIMEOUT"
+	CodeProviderTimeout     ErrorCode = "PROVIDER_TIMEOUT"
 	CodeProviderUnavailable ErrorCode = "PROVIDER_UNAVAILABLE"
-	CodeProviderRateLimit  ErrorCode = "PROVIDER_RATE_LIMIT"
-	CodeProviderAuth       ErrorCode = "PROVIDER_AUTH"
-	
+	CodeProviderRateLimit   ErrorCode = "PROVIDER_RATE_LIMIT"
+	CodeProviderAuth        ErrorCode = "PROVIDER_AUTH"
+
 	// Network errors (retry-able)
 	CodeNetworkTimeout     ErrorCode = "NETWORK_TIMEOUT"
 	CodeNetworkUnreachable ErrorCode = "NETWORK_UNREACHABLE"
 	CodeNetworkDNS         ErrorCode = "NETWORK_DNS"
-	
+
 	// Authentication errors
-	CodeAuthInvalid        ErrorCode = "AUTH_INVALID"
-	CodeAuthExpired        ErrorCode = "AUTH_EXPIRED"
-	CodeAuthForbidden      ErrorCode = "AUTH_FORBIDDEN"
-	
+	CodeAuthInvalid   ErrorCode = "AUTH_INVALID"
+	CodeAuthExpired   ErrorCode = "AUTH_EXPIRED"
+	CodeAuthForbidden ErrorCode = "AUTH_FORBIDDEN"
+
 	// Validation errors
-	CodeValidationInput    ErrorCode = "VALIDATION_INPUT"
-	CodeValidationFormat   ErrorCode = "VALIDATION_FORMAT"
-	CodeValidationMissing  ErrorCode = "VALIDATION_MISSING"
-	
+	CodeValidationInput   ErrorCode = "VALIDATION_INPUT"
+	CodeValidationFormat  ErrorCode = "VALIDATION_FORMAT"
+	CodeValidationMissing ErrorCode = "VALIDATION_MISSING"
+
 	// System errors
-	CodeSystemDatabase     ErrorCode = "SYSTEM_DATABASE"
-	CodeSystemFileIO       ErrorCode = "SYSTEM_FILE_IO"
-	CodeSystemMemory       ErrorCode = "SYSTEM_MEMORY"
-	CodeSystemInternal     ErrorCode = "SYSTEM_INTERNAL"
-	
+	CodeSystemDatabase ErrorCode = "SYSTEM_DATABASE"
+	CodeSystemFileIO   ErrorCode = "SYSTEM_FILE_IO"
+	CodeSystemMemory   ErrorCode = "SYSTEM_MEMORY"
+	CodeSystemInternal ErrorCode = "SYSTEM_INTERNAL"
+
 	// User errors
-	CodeUserNotFound       ErrorCode = "USER_NOT_FOUND"
-	CodeUserConflict       ErrorCode = "USER_CONFLICT"
-	CodeUserQuotaExceeded  ErrorCode = "USER_QUOTA_EXCEEDED"
+	CodeUserNotFound      ErrorCode = "USER_NOT_FOUND"
+	CodeUserConflict      ErrorCode = "USER_CONFLICT"
+	CodeUserQuotaExceeded ErrorCode = "USER_QUOTA_EXCEEDED"
 )
 
 // AppError represents a standardized application error with context and metadata.
 type AppError struct {
-	Code       ErrorCode `json:"code"`
-	Message    string    `json:"message"`
-	UserMsg    string    `json:"user_message"`
-	Err        error     `json:"-"`
-	Retryable  bool      `json:"retryable"`
-	StatusCode int       `json:"status_code"`
-	Timestamp  time.Time `json:"timestamp"`
+	Code       ErrorCode              `json:"code"`
+	Message    string                 `json:"message"`
+	UserMsg    string                 `json:"user_message"`
+	Err        error                  `json:"-"`
+	Retryable  bool                   `json:"retryable"`
+	StatusCode int                    `json:"status_code"`
+	Timestamp  time.Time              `json:"timestamp"`
 	Context    map[string]interface{} `json:"context,omitempty"`
 }
 
@@ -99,46 +99,46 @@ func NewAppError(code ErrorCode, message, userMsg string, err error) *AppError {
 		Err:       err,
 		Timestamp: time.Now(),
 	}
-	
+
 	// Set retryable and status code based on error category
 	switch code {
 	case CodeProviderTimeout, CodeProviderUnavailable, CodeProviderRateLimit:
 		appErr.Retryable = true
 		appErr.StatusCode = http.StatusServiceUnavailable
-		
+
 	case CodeNetworkTimeout, CodeNetworkUnreachable, CodeNetworkDNS:
 		appErr.Retryable = true
 		appErr.StatusCode = http.StatusServiceUnavailable
-		
+
 	case CodeProviderAuth, CodeAuthInvalid, CodeAuthExpired, CodeAuthForbidden:
 		appErr.Retryable = false
 		appErr.StatusCode = http.StatusUnauthorized
-		
+
 	case CodeValidationInput, CodeValidationFormat, CodeValidationMissing:
 		appErr.Retryable = false
 		appErr.StatusCode = http.StatusBadRequest
-		
+
 	case CodeSystemDatabase, CodeSystemFileIO, CodeSystemMemory, CodeSystemInternal:
 		appErr.Retryable = false
 		appErr.StatusCode = http.StatusInternalServerError
-		
+
 	case CodeUserNotFound:
 		appErr.Retryable = false
 		appErr.StatusCode = http.StatusNotFound
-		
+
 	case CodeUserConflict:
 		appErr.Retryable = false
 		appErr.StatusCode = http.StatusConflict
-		
+
 	case CodeUserQuotaExceeded:
 		appErr.Retryable = false
 		appErr.StatusCode = http.StatusTooManyRequests
-		
+
 	default:
 		appErr.Retryable = false
 		appErr.StatusCode = http.StatusInternalServerError
 	}
-	
+
 	return appErr
 }
 
@@ -147,12 +147,12 @@ func WrapError(err error, code ErrorCode, message, userMsg string) *AppError {
 	if err == nil {
 		return nil
 	}
-	
+
 	// If it's already an AppError, return it
 	if appErr, ok := err.(*AppError); ok {
 		return appErr
 	}
-	
+
 	return NewAppError(code, message, userMsg, err)
 }
 
@@ -184,7 +184,7 @@ func NewSuccessResponse(data interface{}) *Response {
 type ErrorHandler interface {
 	// Handle processes an error and returns an appropriate response.
 	Handle(ctx context.Context, err error) *Response
-	
+
 	// Recover handles panic recovery and returns an appropriate response.
 	Recover(ctx context.Context, recovered interface{}) *Response
 }

@@ -32,7 +32,7 @@ func (h *DefaultErrorHandler) Handle(ctx context.Context, err error) *Response {
 	if err == nil {
 		return NewSuccessResponse(nil)
 	}
-	
+
 	// Convert to AppError if needed
 	var appErr *AppError
 	if existingAppErr, ok := err.(*AppError); ok {
@@ -41,7 +41,7 @@ func (h *DefaultErrorHandler) Handle(ctx context.Context, err error) *Response {
 		// Try to categorize unknown errors
 		appErr = h.categorizeError(err)
 	}
-	
+
 	// Add request context if available
 	if reqID := ctx.Value("request_id"); reqID != nil {
 		appErr.WithContext("request_id", reqID)
@@ -49,13 +49,13 @@ func (h *DefaultErrorHandler) Handle(ctx context.Context, err error) *Response {
 	if userID := ctx.Value("user_id"); userID != nil {
 		appErr.WithContext("user_id", userID)
 	}
-	
+
 	// Log the error with structured data
 	h.logError(ctx, appErr)
-	
+
 	// Track the error for monitoring
 	Track(appErr)
-	
+
 	return NewErrorResponse(appErr)
 }
 
@@ -65,7 +65,7 @@ func (h *DefaultErrorHandler) Recover(ctx context.Context, recovered interface{}
 	buf := make([]byte, 4096)
 	n := runtime.Stack(buf, false)
 	stackTrace := string(buf[:n])
-	
+
 	// Create error from panic
 	var err error
 	if e, ok := recovered.(error); ok {
@@ -73,77 +73,77 @@ func (h *DefaultErrorHandler) Recover(ctx context.Context, recovered interface{}
 	} else {
 		err = fmt.Errorf("panic: %v", recovered)
 	}
-	
+
 	appErr := NewAppError(
 		CodeSystemInternal,
 		fmt.Sprintf("Internal panic: %v", recovered),
 		"An unexpected error occurred. Please try again.",
 		err,
 	)
-	
+
 	appErr.WithContext("stack_trace", stackTrace)
 	appErr.WithContext("panic_value", recovered)
-	
+
 	// Add request context if available
 	if reqID := ctx.Value("request_id"); reqID != nil {
 		appErr.WithContext("request_id", reqID)
 	}
-	
+
 	// Log the panic with critical level
 	h.logger.WithFields(map[string]interface{}{
-		"error_code":   appErr.Code,
-		"error_msg":    appErr.Message,
-		"user_msg":     appErr.UserMsg,
-		"retryable":    appErr.Retryable,
-		"status_code":  appErr.StatusCode,
-		"panic_value":  recovered,
-		"stack_trace":  stackTrace,
-		"context":      appErr.Context,
+		"error_code":  appErr.Code,
+		"error_msg":   appErr.Message,
+		"user_msg":    appErr.UserMsg,
+		"retryable":   appErr.Retryable,
+		"status_code": appErr.StatusCode,
+		"panic_value": recovered,
+		"stack_trace": stackTrace,
+		"context":     appErr.Context,
 	}).Error("Application panic recovered")
-	
+
 	// Track the error for monitoring
 	Track(appErr)
-	
+
 	return NewErrorResponse(appErr)
 }
 
 // categorizeError attempts to classify unknown errors into appropriate categories.
 func (h *DefaultErrorHandler) categorizeError(err error) *AppError {
 	errStr := strings.ToLower(err.Error())
-	
+
 	// Network/timeout related errors
 	if strings.Contains(errStr, "timeout") || strings.Contains(errStr, "deadline exceeded") {
 		return WrapError(err, CodeNetworkTimeout, "Request timeout", "The request took too long to complete. Please try again.")
 	}
-	
+
 	if strings.Contains(errStr, "connection refused") || strings.Contains(errStr, "unreachable") {
 		return WrapError(err, CodeNetworkUnreachable, "Network unreachable", "Unable to connect to the service. Please check your connection.")
 	}
-	
+
 	if strings.Contains(errStr, "dns") || strings.Contains(errStr, "no such host") {
 		return WrapError(err, CodeNetworkDNS, "DNS resolution failed", "Unable to resolve the hostname.")
 	}
-	
+
 	// Database related errors
 	if strings.Contains(errStr, "database") || strings.Contains(errStr, "sql") {
 		return WrapError(err, CodeSystemDatabase, "Database error", "A database error occurred. Please try again.")
 	}
-	
+
 	// File I/O errors
 	if strings.Contains(errStr, "no such file") || strings.Contains(errStr, "permission denied") {
 		return WrapError(err, CodeSystemFileIO, "File operation failed", "Unable to access the requested file.")
 	}
-	
+
 	// Authentication/authorization errors
 	if strings.Contains(errStr, "unauthorized") || strings.Contains(errStr, "forbidden") {
 		return WrapError(err, CodeAuthInvalid, "Authentication failed", "Invalid credentials provided.")
 	}
-	
+
 	// Rate limiting
 	if strings.Contains(errStr, "rate limit") || strings.Contains(errStr, "too many requests") {
 		return WrapError(err, CodeProviderRateLimit, "Rate limit exceeded", "Too many requests. Please wait before trying again.")
 	}
-	
+
 	// Default to internal error
 	return WrapError(err, CodeSystemInternal, "Internal error", "An unexpected error occurred. Please try again.")
 }
@@ -158,19 +158,19 @@ func (h *DefaultErrorHandler) logError(ctx context.Context, appErr *AppError) {
 		"status_code": appErr.StatusCode,
 		"timestamp":   appErr.Timestamp,
 	}
-	
+
 	// Add underlying error if present
 	if appErr.Err != nil {
 		fields["underlying_error"] = appErr.Err.Error()
 	}
-	
+
 	// Add context information
 	if appErr.Context != nil {
 		for k, v := range appErr.Context {
 			fields[fmt.Sprintf("ctx_%s", k)] = v
 		}
 	}
-	
+
 	// Choose log level based on error severity
 	var logLevel string
 	switch {
@@ -181,7 +181,7 @@ func (h *DefaultErrorHandler) logError(ctx context.Context, appErr *AppError) {
 	default:
 		logLevel = "info"
 	}
-	
+
 	// Log with appropriate level
 	switch logLevel {
 	case "error":
