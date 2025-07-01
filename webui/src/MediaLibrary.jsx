@@ -113,7 +113,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
       <Grid item xs={6} md={3} key={`grid-item-${item?.path || Math.random()}`}>
         <CardActionArea
           onClick={() =>
-            navigate(`/details?title=${encodeURIComponent(item?.name || '')}`)
+            navigate(`/details?title=${encodeURIComponent(item?.name || '')}&path=${encodeURIComponent(item?.path || '')}`)
           }
         >
           <Card sx={{ height: '100%' }}>
@@ -150,7 +150,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
       <Grid item xs={12} md={6}>
         <CardActionArea
           onClick={() =>
-            navigate(`/details?title=${encodeURIComponent(item?.name || '')}`)
+            navigate(`/details?title=${encodeURIComponent(item?.name || '')}&path=${encodeURIComponent(item?.path || '')}`)
           }
         >
           <Card sx={{ display: 'flex' }}>
@@ -532,7 +532,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
                     navigateToPath(item?.path || '/');
                   } else {
                     navigate(
-                      `/details?title=${encodeURIComponent(item?.name || '')}`
+                      `/details?title=${encodeURIComponent(item?.name || '')}&path=${encodeURIComponent(item?.path || '')}`
                     );
                   }
                 }}
