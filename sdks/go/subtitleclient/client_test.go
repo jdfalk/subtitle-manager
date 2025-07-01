@@ -5,7 +5,6 @@
 package subtitleclient
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -271,12 +270,12 @@ func TestGetHistory(t *testing.T) {
 
 func TestGetScanStatus(t *testing.T) {
 	scanStatus := ScanStatus{
-		Scanning:        true,
-		Progress:        0.75,
-		CurrentPath:     stringPtr("/movies/subfolder"),
-		FilesProcessed:  intPtr(150),
-		FilesTotal:      intPtr(200),
-		StartTime:       timePtr(time.Now()),
+		Scanning:       true,
+		Progress:       0.75,
+		CurrentPath:    stringPtr("/movies/subfolder"),
+		FilesProcessed: intPtr(150),
+		FilesTotal:     intPtr(200),
+		StartTime:      timePtr(time.Now()),
 	}
 
 	server, client := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
@@ -351,7 +350,7 @@ func TestHistoryIterator(t *testing.T) {
 	page := 0
 	server, client := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		page++
-		
+
 		var response HistoryResponse
 		if page == 1 {
 			response = HistoryResponse{
@@ -380,12 +379,12 @@ func TestHistoryIterator(t *testing.T) {
 	defer server.Close()
 
 	iterator := client.GetHistoryIterator(context.Background(), HistoryParams{Limit: 2})
-	
+
 	var items []HistoryItem
 	for iterator.Next(context.Background()) {
 		items = append(items, *iterator.Item())
 	}
-	
+
 	require.NoError(t, iterator.Err())
 	assert.Len(t, items, 3)
 	assert.Equal(t, int64(1), items[0].ID)
@@ -416,15 +415,15 @@ func TestRateLimiting(t *testing.T) {
 	// Make multiple requests quickly
 	start := time.Now()
 	ctx := context.Background()
-	
+
 	_, err := client.GetSystemInfo(ctx)
 	require.NoError(t, err)
-	
+
 	_, err = client.GetSystemInfo(ctx)
 	require.NoError(t, err)
-	
+
 	elapsed := time.Since(start)
-	
+
 	// Second request should be delayed by rate limiter
 	assert.GreaterOrEqual(t, elapsed, time.Second)
 	assert.Equal(t, 2, requestCount)
