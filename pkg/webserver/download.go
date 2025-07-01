@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/metrics"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 )
@@ -34,6 +35,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 		}
 		var q req
 		if err := json.NewDecoder(r.Body).Decode(&q); err != nil || q.Path == "" || q.Lang == "" {
+			metrics.APIRequests.WithLabelValues("/api/download", "POST", "400").Inc()
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -49,18 +51,23 @@ func downloadHandler(db *sql.DB) http.Handler {
 				name = q.Provider
 			}
 			if err != nil {
+				metrics.APIRequests.WithLabelValues("/api/download", "POST", "400").Inc()
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
 		}
 		if err := scanner.ProcessFile(r.Context(), q.Path, q.Lang, name, p, false, nil); err != nil {
+			metrics.ProviderRequests.WithLabelValues(name, "error").Inc()
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		metrics.ProviderRequests.WithLabelValues(name, "success").Inc()
+		metrics.SubtitleDownloads.WithLabelValues(name, q.Lang).Inc()
 		out := strings.TrimSuffix(q.Path, filepath.Ext(q.Path)) + "." + q.Lang + ".srt"
 		if db != nil {
 			_ = database.InsertDownload(db, out, q.Path, name, q.Lang)
 		}
+		metrics.APIRequests.WithLabelValues("/api/download", "POST", "200").Inc()
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(resp{File: out})
 	})
