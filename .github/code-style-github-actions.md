@@ -5,7 +5,8 @@
 ## Workflow File Structure
 
 - Use `.github/workflows/` directory for all workflow files
-- Use descriptive names for workflow files (e.g., `ci.yml`, `deploy-production.yml`)
+- Use descriptive names for workflow files (e.g., `ci.yml`,
+  `deploy-production.yml`)
 - Use lowercase, hyphen-separated names for workflow files
 - Include file extension `.yml` (preferred) or `.yaml`
 
@@ -72,7 +73,8 @@ jobs:
 
 ### Actions References
 
-- Always pin actions to specific versions using SHA hashes for critical workflows
+- Always pin actions to specific versions using SHA hashes for critical
+  workflows
 - Use major version references (`@v4`) for general usage
 - Avoid using `@master` or `@main` references
 
@@ -116,7 +118,7 @@ jobs:
 
 ```yaml
 env:
-  NODE_VERSION: "20"
+  NODE_VERSION: '20'
 
 jobs:
   build:
@@ -125,7 +127,7 @@ jobs:
     steps:
       - name: Use specific variable
         env:
-          SPECIFIC_VAR: "value"
+          SPECIFIC_VAR: 'value'
         run: echo $SPECIFIC_VAR
 ```
 

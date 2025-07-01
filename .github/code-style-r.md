@@ -2,7 +2,10 @@
 
 # R Coding Style Guide (Google/Tidyverse Style)
 
-This guide combines the [Google R Style Guide](https://google.github.io/styleguide/Rguide.html) and [Tidyverse Style Guide](https://style.tidyverse.org/) to provide comprehensive guidelines for writing clean, consistent R code.
+This guide combines the
+[Google R Style Guide](https://google.github.io/styleguide/Rguide.html) and
+[Tidyverse Style Guide](https://style.tidyverse.org/) to provide comprehensive
+guidelines for writing clean, consistent R code.
 
 ## Naming Conventions
 
@@ -462,4 +465,6 @@ validate_input <- function(x) {
 - Configure lintr for real-time style checking
 - Set up project-level style preferences
 
-This style guide ensures your R code is readable, maintainable, and follows industry best practices combining Google's enterprise focus with tidyverse's modern R approaches.
+This style guide ensures your R code is readable, maintainable, and follows
+industry best practices combining Google's enterprise focus with tidyverse's
+modern R approaches.

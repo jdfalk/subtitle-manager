@@ -4,13 +4,15 @@
 
 # GitHub Actions Workflow Usage Instructions
 
-This document provides instructions for GitHub Copilot on how to properly use and recommend the reusable workflows in this repository.
+This document provides instructions for GitHub Copilot on how to properly use
+and recommend the reusable workflows in this repository.
 
 ## Available Reusable Workflows
 
 ### 1. Semantic Versioning (`semantic-versioning.yml`)
 
-**Purpose**: Automatically calculate semantic versions based on conventional commits.
+**Purpose**: Automatically calculate semantic versions based on conventional
+commits.
 
 **Key Features**:
 
@@ -39,7 +41,8 @@ versioning:
 
 ### 2. Multi-Arch Container Build (`buildah-multiarch.yml`)
 
-**Purpose**: Build secure, multi-architecture container images with comprehensive attestation.
+**Purpose**: Build secure, multi-architecture container images with
+comprehensive attestation.
 
 **Key Features**:
 
@@ -71,7 +74,8 @@ container:
 
 ### 3. Automatic Release (`automatic-release.yml`)
 
-**Purpose**: Create GitHub releases with automatic version detection and comprehensive artifact management.
+**Purpose**: Create GitHub releases with automatic version detection and
+comprehensive artifact management.
 
 **Key Features**:
 
@@ -104,7 +108,8 @@ release:
 
 ### Complete CI/CD Pipeline (`templates/workflows/complete-ci-cd.yml`)
 
-**Use Case**: Full-featured CI/CD pipeline with building, testing, container creation, and deployment.
+**Use Case**: Full-featured CI/CD pipeline with building, testing, container
+creation, and deployment.
 
 **Includes**:
 
@@ -132,7 +137,8 @@ release:
 
 ### Library Release Pipeline (`templates/workflows/library-release.yml`)
 
-**Use Case**: Libraries, packages, or tools that need testing across multiple versions and publishing.
+**Use Case**: Libraries, packages, or tools that need testing across multiple
+versions and publishing.
 
 **Includes**:
 
@@ -141,7 +147,8 @@ release:
 - Publishing to package registries
 - Comprehensive testing
 
-**Recommend for**: NPM packages, Python libraries, Go modules, reusable components
+**Recommend for**: NPM packages, Python libraries, Go modules, reusable
+components
 
 ## Best Practices for Workflow Recommendations
 
