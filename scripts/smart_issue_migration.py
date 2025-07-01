@@ -1,1 +1,0 @@
-./smart-issue-migration.py
