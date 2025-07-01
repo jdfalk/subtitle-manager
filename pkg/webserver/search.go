@@ -20,36 +20,36 @@ import (
 
 // SearchRequest represents the request payload for subtitle search
 type SearchRequest struct {
-	Providers     []string `json:"providers"`
-	MediaPath     string   `json:"mediaPath"`
-	Language      string   `json:"language"`
-	Season        int      `json:"season,omitempty"`
-	Episode       int      `json:"episode,omitempty"`
-	Year          int      `json:"year,omitempty"`
-	ReleaseGroup  string   `json:"releaseGroup,omitempty"`
+	Providers    []string `json:"providers"`
+	MediaPath    string   `json:"mediaPath"`
+	Language     string   `json:"language"`
+	Season       int      `json:"season,omitempty"`
+	Episode      int      `json:"episode,omitempty"`
+	Year         int      `json:"year,omitempty"`
+	ReleaseGroup string   `json:"releaseGroup,omitempty"`
 }
 
 // SearchResult represents a single subtitle search result
 type SearchResult struct {
-	ID           string  `json:"id"`
-	Provider     string  `json:"provider"`
-	Name         string  `json:"name"`
-	Language     string  `json:"language"`
-	Score        float64 `json:"score"`
-	Downloads    int     `json:"downloads"`
-	DownloadURL  string  `json:"downloadUrl"`
-	PreviewURL   string  `json:"previewUrl"`
-	FileSize     int64   `json:"fileSize,omitempty"`
-	UploadDate   string  `json:"uploadDate,omitempty"`
-	IsHI         bool    `json:"isHI,omitempty"`         // Hearing Impaired
-	FromTrusted  bool    `json:"fromTrusted,omitempty"`  // From trusted uploader
+	ID          string  `json:"id"`
+	Provider    string  `json:"provider"`
+	Name        string  `json:"name"`
+	Language    string  `json:"language"`
+	Score       float64 `json:"score"`
+	Downloads   int     `json:"downloads"`
+	DownloadURL string  `json:"downloadUrl"`
+	PreviewURL  string  `json:"previewUrl"`
+	FileSize    int64   `json:"fileSize,omitempty"`
+	UploadDate  string  `json:"uploadDate,omitempty"`
+	IsHI        bool    `json:"isHI,omitempty"`        // Hearing Impaired
+	FromTrusted bool    `json:"fromTrusted,omitempty"` // From trusted uploader
 }
 
 // SearchResponse represents the complete search response
 type SearchResponse struct {
 	Results []SearchResult `json:"results"`
-	Total   int           `json:"total"`
-	Query   SearchRequest `json:"query"`
+	Total   int            `json:"total"`
+	Query   SearchRequest  `json:"query"`
 }
 
 // PreviewResponse represents subtitle content preview
@@ -204,13 +204,13 @@ func handleSearchQuery(w http.ResponseWriter, r *http.Request) {
 func performParallelSearch(ctx context.Context, req SearchRequest) []SearchResult {
 	var wg sync.WaitGroup
 	resultsChan := make(chan []SearchResult, len(req.Providers))
-	
+
 	// Search each provider in parallel
 	for _, providerName := range req.Providers {
 		wg.Add(1)
 		go func(name string) {
 			defer wg.Done()
-			
+
 			provider, err := providers.Get(name, "")
 			if err != nil {
 				return
@@ -241,7 +241,7 @@ func performParallelSearch(ctx context.Context, req SearchRequest) []SearchResul
 				}
 				results = append(results, result)
 			}
-			
+
 			resultsChan <- results
 		}(providerName)
 	}
@@ -265,7 +265,7 @@ func performParallelSearch(ctx context.Context, req SearchRequest) []SearchResul
 func calculateScores(results []SearchResult, req SearchRequest) []SearchResult {
 	for i := range results {
 		score := 0.5 // Base score
-		
+
 		// Score based on provider reliability
 		switch results[i].Provider {
 		case "opensubtitles":
@@ -317,18 +317,18 @@ func calculateNameMatch(subtitleName, mediaPath string) float64 {
 	if subtitleName == "" || mediaPath == "" {
 		return 0
 	}
-	
+
 	mediaName := strings.ToLower(strings.TrimSuffix(filepath.Base(mediaPath), filepath.Ext(mediaPath)))
 	subName := strings.ToLower(subtitleName)
-	
+
 	// Check for common words
 	mediaWords := strings.Fields(mediaName)
 	subWords := strings.Fields(subName)
-	
+
 	if len(mediaWords) == 0 {
 		return 0
 	}
-	
+
 	matches := 0
 	for _, mWord := range mediaWords {
 		for _, sWord := range subWords {
@@ -338,7 +338,7 @@ func calculateNameMatch(subtitleName, mediaPath string) float64 {
 			}
 		}
 	}
-	
+
 	return float64(matches) / float64(len(mediaWords))
 }
 
@@ -348,7 +348,7 @@ func extractNameFromURL(url string) string {
 	if url == "" {
 		return "Subtitle"
 	}
-	
+
 	parts := strings.Split(url, "/")
 	if len(parts) > 0 {
 		name := parts[len(parts)-1]
@@ -435,7 +435,7 @@ func searchHistoryHandler(db *sql.DB) http.Handler {
 func handleGetSearchHistory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// For now, return empty array - can be implemented later with proper DB schema
 	history := []SearchHistoryItem{}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(history)
 }
@@ -449,7 +449,7 @@ func handleSaveSearchHistory(w http.ResponseWriter, r *http.Request, db *sql.DB)
 
 // handleDeleteSearchHistory removes search history
 func handleDeleteSearchHistory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	// For now, just return success - can be implemented later  
+	// For now, just return success - can be implemented later
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]bool{"success": true})
 }
