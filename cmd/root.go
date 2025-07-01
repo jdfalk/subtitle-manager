@@ -129,6 +129,56 @@ func init() {
 	rootCmd.PersistentFlags().String("anticaptcha-api-url", "", "Anti-Captcha API base URL")
 	viper.BindPFlag("anticaptcha.api_url", rootCmd.PersistentFlags().Lookup("anticaptcha-api-url"))
 
+	// Cache configuration flags
+	rootCmd.PersistentFlags().String("cache-backend", "memory", "cache backend: memory or redis")
+	viper.BindPFlag("cache.backend", rootCmd.PersistentFlags().Lookup("cache-backend"))
+	rootCmd.PersistentFlags().String("cache-redis-address", "localhost:6379", "Redis server address")
+	viper.BindPFlag("cache.redis.address", rootCmd.PersistentFlags().Lookup("cache-redis-address"))
+	rootCmd.PersistentFlags().String("cache-redis-password", "", "Redis password")
+	viper.BindPFlag("cache.redis.password", rootCmd.PersistentFlags().Lookup("cache-redis-password"))
+	rootCmd.PersistentFlags().Int("cache-redis-database", 0, "Redis database number")
+	viper.BindPFlag("cache.redis.database", rootCmd.PersistentFlags().Lookup("cache-redis-database"))
+	rootCmd.PersistentFlags().String("cache-redis-key-prefix", "subtitle-manager:", "Redis key prefix")
+	viper.BindPFlag("cache.redis.key_prefix", rootCmd.PersistentFlags().Lookup("cache-redis-key-prefix"))
+	rootCmd.PersistentFlags().Int("cache-memory-max-entries", 10000, "Maximum number of memory cache entries")
+	viper.BindPFlag("cache.memory.max_entries", rootCmd.PersistentFlags().Lookup("cache-memory-max-entries"))
+	rootCmd.PersistentFlags().Int64("cache-memory-max-memory", 104857600, "Maximum memory cache size in bytes (100MB)")
+	viper.BindPFlag("cache.memory.max_memory", rootCmd.PersistentFlags().Lookup("cache-memory-max-memory"))
+
+	// Cloud storage configuration
+	rootCmd.PersistentFlags().String("storage-provider", "local", "storage provider: local, s3, azure, gcs")
+	viper.BindPFlag("storage.provider", rootCmd.PersistentFlags().Lookup("storage-provider"))
+	rootCmd.PersistentFlags().String("storage-local-path", "subtitles", "local storage path")
+	viper.BindPFlag("storage.local_path", rootCmd.PersistentFlags().Lookup("storage-local-path"))
+	// S3 configuration
+	rootCmd.PersistentFlags().String("s3-region", "", "S3 region")
+	viper.BindPFlag("storage.s3_region", rootCmd.PersistentFlags().Lookup("s3-region"))
+	rootCmd.PersistentFlags().String("s3-bucket", "", "S3 bucket name")
+	viper.BindPFlag("storage.s3_bucket", rootCmd.PersistentFlags().Lookup("s3-bucket"))
+	rootCmd.PersistentFlags().String("s3-endpoint", "", "S3 endpoint URL (for S3-compatible services)")
+	viper.BindPFlag("storage.s3_endpoint", rootCmd.PersistentFlags().Lookup("s3-endpoint"))
+	rootCmd.PersistentFlags().String("s3-access-key", "", "S3 access key")
+	viper.BindPFlag("storage.s3_access_key", rootCmd.PersistentFlags().Lookup("s3-access-key"))
+	rootCmd.PersistentFlags().String("s3-secret-key", "", "S3 secret key")
+	viper.BindPFlag("storage.s3_secret_key", rootCmd.PersistentFlags().Lookup("s3-secret-key"))
+	// Azure configuration
+	rootCmd.PersistentFlags().String("azure-account", "", "Azure storage account name")
+	viper.BindPFlag("storage.azure_account", rootCmd.PersistentFlags().Lookup("azure-account"))
+	rootCmd.PersistentFlags().String("azure-key", "", "Azure storage account key")
+	viper.BindPFlag("storage.azure_key", rootCmd.PersistentFlags().Lookup("azure-key"))
+	rootCmd.PersistentFlags().String("azure-container", "", "Azure blob container name")
+	viper.BindPFlag("storage.azure_container", rootCmd.PersistentFlags().Lookup("azure-container"))
+	// GCS configuration
+	rootCmd.PersistentFlags().String("gcs-bucket", "", "Google Cloud Storage bucket name")
+	viper.BindPFlag("storage.gcs_bucket", rootCmd.PersistentFlags().Lookup("gcs-bucket"))
+	rootCmd.PersistentFlags().String("gcs-credentials", "", "Google Cloud credentials JSON file path")
+	viper.BindPFlag("storage.gcs_credentials", rootCmd.PersistentFlags().Lookup("gcs-credentials"))
+	// Storage options
+	rootCmd.PersistentFlags().Bool("storage-enable-backup", false, "enable cloud backup of subtitle files")
+	viper.BindPFlag("storage.enable_backup", rootCmd.PersistentFlags().Lookup("storage-enable-backup"))
+	rootCmd.PersistentFlags().Bool("storage-backup-history", false, "enable cloud backup of history data")
+	viper.BindPFlag("storage.backup_history", rootCmd.PersistentFlags().Lookup("storage-backup-history"))
+
 	// Add language support
 	rootCmd.PersistentFlags().String("language", "en", "language for user interface (en, es, fr)")
 	viper.BindPFlag("language", rootCmd.PersistentFlags().Lookup("language"))
@@ -148,6 +198,40 @@ func init() {
 	viper.BindPFlag("cache.memory.max_entries", rootCmd.PersistentFlags().Lookup("cache-memory-max-entries"))
 	rootCmd.PersistentFlags().Int64("cache-memory-max-memory", 104857600, "Maximum memory cache size in bytes (100MB)")
 	viper.BindPFlag("cache.memory.max_memory", rootCmd.PersistentFlags().Lookup("cache-memory-max-memory"))
+
+	// Cloud storage configuration
+	rootCmd.PersistentFlags().String("storage-provider", "local", "storage provider: local, s3, azure, gcs")
+	viper.BindPFlag("storage.provider", rootCmd.PersistentFlags().Lookup("storage-provider"))
+	rootCmd.PersistentFlags().String("storage-local-path", "subtitles", "local storage path")
+	viper.BindPFlag("storage.local_path", rootCmd.PersistentFlags().Lookup("storage-local-path"))
+	// S3 configuration
+	rootCmd.PersistentFlags().String("s3-region", "", "S3 region")
+	viper.BindPFlag("storage.s3_region", rootCmd.PersistentFlags().Lookup("s3-region"))
+	rootCmd.PersistentFlags().String("s3-bucket", "", "S3 bucket name")
+	viper.BindPFlag("storage.s3_bucket", rootCmd.PersistentFlags().Lookup("s3-bucket"))
+	rootCmd.PersistentFlags().String("s3-endpoint", "", "S3 endpoint URL (for S3-compatible services)")
+	viper.BindPFlag("storage.s3_endpoint", rootCmd.PersistentFlags().Lookup("s3-endpoint"))
+	rootCmd.PersistentFlags().String("s3-access-key", "", "S3 access key")
+	viper.BindPFlag("storage.s3_access_key", rootCmd.PersistentFlags().Lookup("s3-access-key"))
+	rootCmd.PersistentFlags().String("s3-secret-key", "", "S3 secret key")
+	viper.BindPFlag("storage.s3_secret_key", rootCmd.PersistentFlags().Lookup("s3-secret-key"))
+	// Azure configuration
+	rootCmd.PersistentFlags().String("azure-account", "", "Azure storage account name")
+	viper.BindPFlag("storage.azure_account", rootCmd.PersistentFlags().Lookup("azure-account"))
+	rootCmd.PersistentFlags().String("azure-key", "", "Azure storage account key")
+	viper.BindPFlag("storage.azure_key", rootCmd.PersistentFlags().Lookup("azure-key"))
+	rootCmd.PersistentFlags().String("azure-container", "", "Azure blob container name")
+	viper.BindPFlag("storage.azure_container", rootCmd.PersistentFlags().Lookup("azure-container"))
+	// GCS configuration
+	rootCmd.PersistentFlags().String("gcs-bucket", "", "Google Cloud Storage bucket name")
+	viper.BindPFlag("storage.gcs_bucket", rootCmd.PersistentFlags().Lookup("gcs-bucket"))
+	rootCmd.PersistentFlags().String("gcs-credentials", "", "Google Cloud credentials JSON file path")
+	viper.BindPFlag("storage.gcs_credentials", rootCmd.PersistentFlags().Lookup("gcs-credentials"))
+	// Storage options
+	rootCmd.PersistentFlags().Bool("storage-enable-backup", false, "enable cloud backup of subtitle files")
+	viper.BindPFlag("storage.enable_backup", rootCmd.PersistentFlags().Lookup("storage-enable-backup"))
+	rootCmd.PersistentFlags().Bool("storage-backup-history", false, "enable cloud backup of history data")
+	viper.BindPFlag("storage.backup_history", rootCmd.PersistentFlags().Lookup("storage-backup-history"))
 
 	rootCmd.AddCommand(convertCmd)
 	rootCmd.AddCommand(mergeCmd)
