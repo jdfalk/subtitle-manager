@@ -45,7 +45,7 @@ var translateCmd = &cobra.Command{
 
 			logger.Infof("Translation job queued with ID: %s", taskID)
 			logger.Info("Processing translation asynchronously...")
-			
+
 			// Wait for the job to complete since this is a CLI command
 			for {
 				taskList := tasks.List()
@@ -59,7 +59,7 @@ var translateCmd = &cobra.Command{
 				}
 				time.Sleep(100 * time.Millisecond)
 			}
-			
+
 			// Record in database like sync version
 			if dbPath := viper.GetString("db_path"); dbPath != "" {
 				backend := viper.GetString("db_backend")

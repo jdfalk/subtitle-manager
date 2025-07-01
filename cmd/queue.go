@@ -25,10 +25,10 @@ var queueStatusCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		q := queue.GetQueue()
 		status := q.Status()
-		
+
 		output, _ := json.MarshalIndent(status, "", "  ")
 		fmt.Println(string(output))
-		
+
 		// Also show active tasks
 		taskList := tasks.List()
 		if len(taskList) > 0 {
@@ -42,10 +42,10 @@ var queueStatusCmd = &cobra.Command{
 		} else {
 			fmt.Println("\nNo active tasks")
 		}
-		
+
 		fmt.Println("\nNote: Queue workers are automatically managed within long-running services.")
 		fmt.Println("Use 'subtitle-manager translate --async' to queue translation jobs.")
-		
+
 		return nil
 	},
 }
@@ -60,7 +60,7 @@ var queueStartCmd = &cobra.Command{
 			return fmt.Errorf("failed to start queue: %w", err)
 		}
 		fmt.Println("Translation queue started (will stop when command exits)")
-		
+
 		// Keep the process running to demonstrate the queue
 		fmt.Println("Press Ctrl+C to stop...")
 		select {} // Block forever until interrupt
