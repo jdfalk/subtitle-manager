@@ -1,5 +1,23 @@
 # Conventional Commits Guide
 
+## AI Agent Instructions
+
+**ALWAYS use conventional commit format with required file documentation:**
+
+```text
+<type>[scope]: <description>
+
+<body explaining motivation and changes>
+
+Files changed:
+- Summary of change: [file/path.ext](file/path.ext)
+- Another change: [other/file.go](other/file.go)
+```
+
+**Required types**: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+
+---
+
 ## Format
 
 Use this template for your conventional commits:
