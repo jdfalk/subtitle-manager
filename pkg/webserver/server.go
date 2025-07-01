@@ -209,6 +209,13 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/whisper/transcribe", authMiddleware(db, "basic", whisperTranscribeHandler()))
 	mux.Handle(prefix+"/api/whisper/models", authMiddleware(db, "basic", whisperModelsHandler()))
 
+	// Cache management endpoints
+	mux.Handle(prefix+"/api/cache/stats", authMiddleware(db, "basic", cacheStatsHandler()))
+	mux.Handle(prefix+"/api/cache/clear", authMiddleware(db, "admin", cacheClearHandler()))
+	mux.Handle(prefix+"/api/cache/config", authMiddleware(db, "basic", cacheConfigHandler()))
+	mux.Handle(prefix+"/api/cache/health", authMiddleware(db, "basic", cacheHealthHandler()))
+	mux.Handle(prefix+"/api/cache/types/", authMiddleware(db, "admin", cacheTypedOperationsHandler()))
+
 	// Universal tagging system
 	mux.Handle(prefix+"/api/tags", authMiddleware(db, "admin", tagsHandler(db)))
 	mux.Handle(prefix+"/api/tags/", authMiddleware(db, "admin", tagItemHandler(db)))
@@ -272,6 +279,15 @@ func StartServer(addr string) error {
 	// Check for automatic admin user creation via environment variables
 	if err := createDefaultAdminIfNeeded(db); err != nil {
 		return fmt.Errorf("failed to create initial admin user: %w", err)
+	}
+
+	// Initialize cache system
+	logger.Info("initializing cache system")
+	if err := InitializeCache(); err != nil {
+		logger.Warnf("failed to initialize cache: %v", err)
+		// Don't fail server startup if cache initialization fails
+	} else {
+		logger.Info("cache system initialized successfully")
 	}
 
 	h, err := Handler(db)

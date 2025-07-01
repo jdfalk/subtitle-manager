@@ -120,6 +120,7 @@ func init() {
 	rootCmd.PersistentFlags().String("opensubtitles-user-agent", "", "OpenSubtitles user agent")
 	viper.BindPFlag("opensubtitles.user_agent", rootCmd.PersistentFlags().Lookup("opensubtitles-user-agent"))
 
+	// Whisper and Anti-Captcha provider flags
 	rootCmd.PersistentFlags().String("whisper-api-url", "", "Whisper service URL")
 	viper.BindPFlag("providers.whisper.api_url", rootCmd.PersistentFlags().Lookup("whisper-api-url"))
 
@@ -131,6 +132,22 @@ func init() {
 	// Add language support
 	rootCmd.PersistentFlags().String("language", "en", "language for user interface (en, es, fr)")
 	viper.BindPFlag("language", rootCmd.PersistentFlags().Lookup("language"))
+
+	// Cache configuration flags
+	rootCmd.PersistentFlags().String("cache-backend", "memory", "cache backend: memory or redis")
+	viper.BindPFlag("cache.backend", rootCmd.PersistentFlags().Lookup("cache-backend"))
+	rootCmd.PersistentFlags().String("cache-redis-address", "localhost:6379", "Redis server address")
+	viper.BindPFlag("cache.redis.address", rootCmd.PersistentFlags().Lookup("cache-redis-address"))
+	rootCmd.PersistentFlags().String("cache-redis-password", "", "Redis password")
+	viper.BindPFlag("cache.redis.password", rootCmd.PersistentFlags().Lookup("cache-redis-password"))
+	rootCmd.PersistentFlags().Int("cache-redis-database", 0, "Redis database number")
+	viper.BindPFlag("cache.redis.database", rootCmd.PersistentFlags().Lookup("cache-redis-database"))
+	rootCmd.PersistentFlags().String("cache-redis-key-prefix", "subtitle-manager:", "Redis key prefix")
+	viper.BindPFlag("cache.redis.key_prefix", rootCmd.PersistentFlags().Lookup("cache-redis-key-prefix"))
+	rootCmd.PersistentFlags().Int("cache-memory-max-entries", 10000, "Maximum number of memory cache entries")
+	viper.BindPFlag("cache.memory.max_entries", rootCmd.PersistentFlags().Lookup("cache-memory-max-entries"))
+	rootCmd.PersistentFlags().Int64("cache-memory-max-memory", 104857600, "Maximum memory cache size in bytes (100MB)")
+	viper.BindPFlag("cache.memory.max_memory", rootCmd.PersistentFlags().Lookup("cache-memory-max-memory"))
 
 	rootCmd.AddCommand(convertCmd)
 	rootCmd.AddCommand(mergeCmd)
@@ -210,6 +227,27 @@ func initConfig() {
 	viper.SetDefault("plex.token", "")
 	viper.SetDefault("server_name", "Subtitle Manager")
 	viper.SetDefault("base_url", "")
+
+	// Cache configuration defaults
+	viper.SetDefault("cache.backend", "memory")
+	viper.SetDefault("cache.memory.max_entries", 10000)
+	viper.SetDefault("cache.memory.max_memory", 104857600) // 100MB
+	viper.SetDefault("cache.memory.default_ttl", "1h")
+	viper.SetDefault("cache.memory.cleanup_interval", "10m")
+	viper.SetDefault("cache.redis.address", "localhost:6379")
+	viper.SetDefault("cache.redis.password", "")
+	viper.SetDefault("cache.redis.database", 0)
+	viper.SetDefault("cache.redis.pool_size", 10)
+	viper.SetDefault("cache.redis.min_idle_conns", 2)
+	viper.SetDefault("cache.redis.dial_timeout", "5s")
+	viper.SetDefault("cache.redis.read_timeout", "3s")
+	viper.SetDefault("cache.redis.write_timeout", "3s")
+	viper.SetDefault("cache.redis.key_prefix", "subtitle-manager:")
+	viper.SetDefault("cache.ttls.provider_search_results", "5m")
+	viper.SetDefault("cache.ttls.tmdb_metadata", "24h")
+	viper.SetDefault("cache.ttls.translation_results", "0") // permanent
+	viper.SetDefault("cache.ttls.user_sessions", "24h")
+	viper.SetDefault("cache.ttls.api_responses", "30m")
 	viper.SetDefault("reverse_proxy", false)
 	viper.SetDefault("integrations.sonarr.enabled", false)
 	viper.SetDefault("integrations.radarr.enabled", false)
