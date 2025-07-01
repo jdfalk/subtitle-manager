@@ -14,10 +14,10 @@ import (
 
 // DatabaseBackupData represents the complete database backup structure.
 type DatabaseBackupData struct {
-	Subtitles    []database.SubtitleRecord `json:"subtitles"`
-	Downloads    []database.DownloadRecord `json:"downloads"`
-	MediaItems   []database.MediaItem      `json:"media_items"`
-	Tags         []database.Tag            `json:"tags"`
+	Subtitles  []database.SubtitleRecord `json:"subtitles"`
+	Downloads  []database.DownloadRecord `json:"downloads"`
+	MediaItems []database.MediaItem      `json:"media_items"`
+	Tags       []database.Tag            `json:"tags"`
 	// Add other tables as needed
 }
 

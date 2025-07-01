@@ -121,19 +121,23 @@ func (m *mockSubtitleStore) ListTags() ([]database.Tag, error) {
 	return m.tags, nil
 }
 
-func (m *mockSubtitleStore) DeleteTag(id int64) error { return nil }
-func (m *mockSubtitleStore) UpdateTag(id int64, name string) error { return nil }
-func (m *mockSubtitleStore) AssignTagToUser(userID, tagID int64) error { return nil }
+func (m *mockSubtitleStore) DeleteTag(id int64) error                    { return nil }
+func (m *mockSubtitleStore) UpdateTag(id int64, name string) error       { return nil }
+func (m *mockSubtitleStore) AssignTagToUser(userID, tagID int64) error   { return nil }
 func (m *mockSubtitleStore) RemoveTagFromUser(userID, tagID int64) error { return nil }
-func (m *mockSubtitleStore) ListTagsForUser(userID int64) ([]database.Tag, error) { return []database.Tag{}, nil }
-func (m *mockSubtitleStore) AssignTagToMedia(mediaID, tagID int64) error { return nil }
+func (m *mockSubtitleStore) ListTagsForUser(userID int64) ([]database.Tag, error) {
+	return []database.Tag{}, nil
+}
+func (m *mockSubtitleStore) AssignTagToMedia(mediaID, tagID int64) error   { return nil }
 func (m *mockSubtitleStore) RemoveTagFromMedia(mediaID, tagID int64) error { return nil }
-func (m *mockSubtitleStore) ListTagsForMedia(mediaID int64) ([]database.Tag, error) { return []database.Tag{}, nil }
-func (m *mockSubtitleStore) SetMediaReleaseGroup(path, group string) error { return nil }
+func (m *mockSubtitleStore) ListTagsForMedia(mediaID int64) ([]database.Tag, error) {
+	return []database.Tag{}, nil
+}
+func (m *mockSubtitleStore) SetMediaReleaseGroup(path, group string) error        { return nil }
 func (m *mockSubtitleStore) SetMediaAltTitles(path string, titles []string) error { return nil }
-func (m *mockSubtitleStore) SetMediaFieldLocks(path, locks string) error { return nil }
-func (m *mockSubtitleStore) SetMediaTitle(path, title string) error { return nil }
-func (m *mockSubtitleStore) Close() error { return nil }
+func (m *mockSubtitleStore) SetMediaFieldLocks(path, locks string) error          { return nil }
+func (m *mockSubtitleStore) SetMediaTitle(path, title string) error               { return nil }
+func (m *mockSubtitleStore) Close() error                                         { return nil }
 
 func TestService_CreateDatabaseBackup(t *testing.T) {
 	store := newMockSubtitleStore()

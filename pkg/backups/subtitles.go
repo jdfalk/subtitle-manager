@@ -24,18 +24,18 @@ import (
 
 // SubtitleBackupData represents subtitle file backup information.
 type SubtitleBackupData struct {
-	Files    []SubtitleFileInfo `json:"files"`
+	Files    []SubtitleFileInfo        `json:"files"`
 	Metadata []database.SubtitleRecord `json:"metadata"`
-	Created  time.Time          `json:"created"`
+	Created  time.Time                 `json:"created"`
 }
 
 // SubtitleFileInfo contains information about a backed up subtitle file.
 type SubtitleFileInfo struct {
-	RelativePath string `json:"relative_path"`
-	OriginalPath string `json:"original_path"`
-	Size         int64  `json:"size"`
+	RelativePath string    `json:"relative_path"`
+	OriginalPath string    `json:"original_path"`
+	Size         int64     `json:"size"`
 	ModTime      time.Time `json:"mod_time"`
-	Hash         string `json:"hash"`
+	Hash         string    `json:"hash"`
 }
 
 // SubtitleBackupper provides subtitle file backup and restore functionality.
