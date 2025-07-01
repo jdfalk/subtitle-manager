@@ -78,27 +78,57 @@ func GetDatabaseBackend() string {
 // SubtitleRecord represents a subtitle file that has been processed.
 // VideoFile is the path to the media file the subtitle belongs to.
 // Release denotes the original release name including group when known.
+// Enhanced with source tracking and relationship metadata.
 type SubtitleRecord struct {
-	ID        string
-	File      string
-	VideoFile string
-	Release   string
-	Language  string
-	Service   string
-	Embedded  bool
-	CreatedAt time.Time
+	ID               string
+	File             string
+	VideoFile        string
+	Release          string
+	Language         string
+	Service          string
+	Embedded         bool
+	SourceURL        string  // Original download URL
+	ProviderMetadata string  // JSON metadata from provider
+	ConfidenceScore  *float64 // Quality/match confidence (0-1)
+	ParentID         *string  // Parent subtitle ID for tracking modifications
+	ModificationType string  // sync, translate, manual_edit, etc.
+	CreatedAt        time.Time
 }
 
 // DownloadRecord represents a downloaded subtitle file.
 // File is the path to the subtitle file stored on disk.
 // VideoFile is the media file the subtitle corresponds to.
+// Enhanced with search and performance tracking metadata.
 type DownloadRecord struct {
-	ID        string
-	File      string
-	VideoFile string
-	Provider  string
-	Language  string
-	CreatedAt time.Time
+	ID               string
+	File             string
+	VideoFile        string
+	Provider         string
+	Language         string
+	SearchQuery      string  // Original search query used
+	MatchScore       *float64 // How well the result matched (0-1)
+	DownloadAttempts int     // Number of download attempts
+	ErrorMessage     string  // Last error message if failed
+	ResponseTimeMs   *int    // Provider response time in milliseconds
+	CreatedAt        time.Time
+}
+
+// SubtitleSource represents metadata about subtitle sources and provider performance.
+// Tracks where subtitles come from and how well providers perform over time.
+type SubtitleSource struct {
+	ID           string
+	SourceHash   string    // Unique hash of the subtitle content/source
+	OriginalURL  string    // Original download URL
+	Provider     string    // Provider name
+	Title        string    // Subtitle title from provider
+	ReleaseInfo  string    // Release information
+	FileSize     *int      // File size in bytes
+	DownloadCount int      // Total download attempts
+	SuccessCount int       // Successful downloads
+	AvgRating    *float64  // Average user rating (0-5)
+	LastSeen     time.Time // Last time this source was seen
+	Metadata     string    // JSON metadata from provider
+	CreatedAt    time.Time
 }
 
 // MediaItem represents a video file discovered in the library.
@@ -155,14 +185,14 @@ type SQLStore struct {
 
 // InsertDownload stores a download record.
 func (s *SQLStore) InsertDownload(rec *DownloadRecord) error {
-	_, err := s.db.Exec(`INSERT INTO downloads (file, video_file, provider, language, created_at) VALUES (?, ?, ?, ?, ?)`,
-		rec.File, rec.VideoFile, rec.Provider, rec.Language, time.Now())
+	_, err := s.db.Exec(`INSERT INTO downloads (file, video_file, provider, language, search_query, match_score, download_attempts, error_message, response_time_ms, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		rec.File, rec.VideoFile, rec.Provider, rec.Language, rec.SearchQuery, rec.MatchScore, rec.DownloadAttempts, rec.ErrorMessage, rec.ResponseTimeMs, time.Now())
 	return err
 }
 
 // ListDownloads retrieves download records ordered by most recent.
 func (s *SQLStore) ListDownloads() ([]DownloadRecord, error) {
-	rows, err := s.db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads ORDER BY id DESC`)
+	rows, err := s.db.Query(`SELECT id, file, video_file, provider, language, search_query, match_score, download_attempts, error_message, response_time_ms, created_at FROM downloads ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -171,10 +201,26 @@ func (s *SQLStore) ListDownloads() ([]DownloadRecord, error) {
 	for rows.Next() {
 		var r DownloadRecord
 		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
+		var searchQuery, errorMessage sql.NullString
+		var matchScore sql.NullFloat64
+		var responseTimeMs sql.NullInt64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &searchQuery, &matchScore, &r.DownloadAttempts, &errorMessage, &responseTimeMs, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
+		if searchQuery.Valid {
+			r.SearchQuery = searchQuery.String
+		}
+		if matchScore.Valid {
+			r.MatchScore = &matchScore.Float64
+		}
+		if errorMessage.Valid {
+			r.ErrorMessage = errorMessage.String
+		}
+		if responseTimeMs.Valid {
+			respTime := int(responseTimeMs.Int64)
+			r.ResponseTimeMs = &respTime
+		}
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -182,7 +228,7 @@ func (s *SQLStore) ListDownloads() ([]DownloadRecord, error) {
 
 // ListDownloadsByVideo retrieves download history for a specific video file.
 func (s *SQLStore) ListDownloadsByVideo(video string) ([]DownloadRecord, error) {
-	rows, err := s.db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads WHERE video_file = ? ORDER BY id DESC`, video)
+	rows, err := s.db.Query(`SELECT id, file, video_file, provider, language, search_query, match_score, download_attempts, error_message, response_time_ms, created_at FROM downloads WHERE video_file = ? ORDER BY id DESC`, video)
 	if err != nil {
 		return nil, err
 	}
@@ -191,10 +237,26 @@ func (s *SQLStore) ListDownloadsByVideo(video string) ([]DownloadRecord, error) 
 	for rows.Next() {
 		var r DownloadRecord
 		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
+		var searchQuery, errorMessage sql.NullString
+		var matchScore sql.NullFloat64
+		var responseTimeMs sql.NullInt64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &searchQuery, &matchScore, &r.DownloadAttempts, &errorMessage, &responseTimeMs, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
+		if searchQuery.Valid {
+			r.SearchQuery = searchQuery.String
+		}
+		if matchScore.Valid {
+			r.MatchScore = &matchScore.Float64
+		}
+		if errorMessage.Valid {
+			r.ErrorMessage = errorMessage.String
+		}
+		if responseTimeMs.Valid {
+			respTime := int(responseTimeMs.Int64)
+			r.ResponseTimeMs = &respTime
+		}
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -214,14 +276,14 @@ func (s *SQLStore) DeleteDownload(file string) error {
 
 // InsertDownload stores a download record using a raw *sql.DB.
 func InsertDownload(db *sql.DB, file, video, provider, lang string) error {
-	_, err := db.Exec(`INSERT INTO downloads (file, video_file, provider, language, created_at) VALUES (?, ?, ?, ?, ?)`,
+	_, err := db.Exec(`INSERT INTO downloads (file, video_file, provider, language, search_query, match_score, download_attempts, error_message, response_time_ms, created_at) VALUES (?, ?, ?, ?, '', NULL, 1, '', NULL, ?)`,
 		file, video, provider, lang, time.Now())
 	return err
 }
 
 // ListDownloads retrieves download records using a raw *sql.DB.
 func ListDownloads(db *sql.DB) ([]DownloadRecord, error) {
-	rows, err := db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads ORDER BY id DESC`)
+	rows, err := db.Query(`SELECT id, file, video_file, provider, language, search_query, match_score, download_attempts, error_message, response_time_ms, created_at FROM downloads ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -230,10 +292,26 @@ func ListDownloads(db *sql.DB) ([]DownloadRecord, error) {
 	for rows.Next() {
 		var r DownloadRecord
 		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
+		var searchQuery, errorMessage sql.NullString
+		var matchScore sql.NullFloat64
+		var responseTimeMs sql.NullInt64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &searchQuery, &matchScore, &r.DownloadAttempts, &errorMessage, &responseTimeMs, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
+		if searchQuery.Valid {
+			r.SearchQuery = searchQuery.String
+		}
+		if matchScore.Valid {
+			r.MatchScore = &matchScore.Float64
+		}
+		if errorMessage.Valid {
+			r.ErrorMessage = errorMessage.String
+		}
+		if responseTimeMs.Valid {
+			respTime := int(responseTimeMs.Int64)
+			r.ResponseTimeMs = &respTime
+		}
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -241,7 +319,7 @@ func ListDownloads(db *sql.DB) ([]DownloadRecord, error) {
 
 // ListDownloadsByVideo retrieves download history for a specific video file using a raw *sql.DB.
 func ListDownloadsByVideo(db *sql.DB, video string) ([]DownloadRecord, error) {
-	rows, err := db.Query(`SELECT id, file, video_file, provider, language, created_at FROM downloads WHERE video_file = ? ORDER BY id DESC`, video)
+	rows, err := db.Query(`SELECT id, file, video_file, provider, language, search_query, match_score, download_attempts, error_message, response_time_ms, created_at FROM downloads WHERE video_file = ? ORDER BY id DESC`, video)
 	if err != nil {
 		return nil, err
 	}
@@ -250,10 +328,26 @@ func ListDownloadsByVideo(db *sql.DB, video string) ([]DownloadRecord, error) {
 	for rows.Next() {
 		var r DownloadRecord
 		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &r.CreatedAt); err != nil {
+		var searchQuery, errorMessage sql.NullString
+		var matchScore sql.NullFloat64
+		var responseTimeMs sql.NullInt64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Provider, &r.Language, &searchQuery, &matchScore, &r.DownloadAttempts, &errorMessage, &responseTimeMs, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
+		if searchQuery.Valid {
+			r.SearchQuery = searchQuery.String
+		}
+		if matchScore.Valid {
+			r.MatchScore = &matchScore.Float64
+		}
+		if errorMessage.Valid {
+			r.ErrorMessage = errorMessage.String
+		}
+		if responseTimeMs.Valid {
+			respTime := int(responseTimeMs.Int64)
+			r.ResponseTimeMs = &respTime
+		}
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -362,14 +456,14 @@ func (s *SQLStore) Close() error {
 
 // InsertSubtitle stores a new subtitle record with associated metadata.
 func (s *SQLStore) InsertSubtitle(rec *SubtitleRecord) error {
-	_, err := s.db.Exec(`INSERT INTO subtitles (file, video_file, release, language, service, embedded, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		rec.File, rec.VideoFile, rec.Release, rec.Language, rec.Service, boolToInt(rec.Embedded), time.Now())
+	_, err := s.db.Exec(`INSERT INTO subtitles (file, video_file, release, language, service, embedded, source_url, provider_metadata, confidence_score, parent_id, modification_type, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		rec.File, rec.VideoFile, rec.Release, rec.Language, rec.Service, boolToInt(rec.Embedded), rec.SourceURL, rec.ProviderMetadata, rec.ConfidenceScore, rec.ParentID, rec.ModificationType, time.Now())
 	return err
 }
 
 // ListSubtitles retrieves subtitle records ordered by most recent.
 func (s *SQLStore) ListSubtitles() ([]SubtitleRecord, error) {
-	rows, err := s.db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles ORDER BY id DESC`)
+	rows, err := s.db.Query(`SELECT id, file, video_file, release, language, service, embedded, source_url, provider_metadata, confidence_score, parent_id, modification_type, created_at FROM subtitles ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -380,11 +474,28 @@ func (s *SQLStore) ListSubtitles() ([]SubtitleRecord, error) {
 		var r SubtitleRecord
 		var embedded int
 		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &r.CreatedAt); err != nil {
+		var sourceURL, providerMetadata, parentID, modificationType sql.NullString
+		var confidenceScore sql.NullFloat64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &sourceURL, &providerMetadata, &confidenceScore, &parentID, &modificationType, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
 		r.Embedded = embedded == 1
+		if sourceURL.Valid {
+			r.SourceURL = sourceURL.String
+		}
+		if providerMetadata.Valid {
+			r.ProviderMetadata = providerMetadata.String
+		}
+		if confidenceScore.Valid {
+			r.ConfidenceScore = &confidenceScore.Float64
+		}
+		if parentID.Valid {
+			r.ParentID = &parentID.String
+		}
+		if modificationType.Valid {
+			r.ModificationType = modificationType.String
+		}
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -392,7 +503,7 @@ func (s *SQLStore) ListSubtitles() ([]SubtitleRecord, error) {
 
 // ListSubtitlesByVideo retrieves subtitle history for a specific video file.
 func (s *SQLStore) ListSubtitlesByVideo(video string) ([]SubtitleRecord, error) {
-	rows, err := s.db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles WHERE video_file = ? ORDER BY id DESC`, video)
+	rows, err := s.db.Query(`SELECT id, file, video_file, release, language, service, embedded, source_url, provider_metadata, confidence_score, parent_id, modification_type, created_at FROM subtitles WHERE video_file = ? ORDER BY id DESC`, video)
 	if err != nil {
 		return nil, err
 	}
@@ -402,11 +513,28 @@ func (s *SQLStore) ListSubtitlesByVideo(video string) ([]SubtitleRecord, error) 
 		var r SubtitleRecord
 		var embedded int
 		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &r.CreatedAt); err != nil {
+		var sourceURL, providerMetadata, parentID, modificationType sql.NullString
+		var confidenceScore sql.NullFloat64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &sourceURL, &providerMetadata, &confidenceScore, &parentID, &modificationType, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
 		r.Embedded = embedded == 1
+		if sourceURL.Valid {
+			r.SourceURL = sourceURL.String
+		}
+		if providerMetadata.Valid {
+			r.ProviderMetadata = providerMetadata.String
+		}
+		if confidenceScore.Valid {
+			r.ConfidenceScore = &confidenceScore.Float64
+		}
+		if parentID.Valid {
+			r.ParentID = &parentID.String
+		}
+		if modificationType.Valid {
+			r.ModificationType = modificationType.String
+		}
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -420,13 +548,13 @@ func (s *SQLStore) DeleteSubtitle(file string) error {
 
 // InsertSubtitle stores a new subtitle record with associated metadata.
 func InsertSubtitle(db *sql.DB, file, video, lang, service, release string, embedded bool) error {
-	_, err := db.Exec(`INSERT INTO subtitles (file, video_file, release, language, service, embedded, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+	_, err := db.Exec(`INSERT INTO subtitles (file, video_file, release, language, service, embedded, source_url, provider_metadata, confidence_score, parent_id, modification_type, created_at) VALUES (?, ?, ?, ?, ?, ?, '', '', NULL, NULL, '', ?)`,
 		file, video, release, lang, service, boolToInt(embedded), time.Now())
 	return err
 }
 
 func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
-	rows, err := db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles ORDER BY id DESC`)
+	rows, err := db.Query(`SELECT id, file, video_file, release, language, service, embedded, source_url, provider_metadata, confidence_score, parent_id, modification_type, created_at FROM subtitles ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -437,11 +565,28 @@ func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
 		var r SubtitleRecord
 		var embedded int
 		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &r.CreatedAt); err != nil {
+		var sourceURL, providerMetadata, parentID, modificationType sql.NullString
+		var confidenceScore sql.NullFloat64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &sourceURL, &providerMetadata, &confidenceScore, &parentID, &modificationType, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
 		r.Embedded = embedded == 1
+		if sourceURL.Valid {
+			r.SourceURL = sourceURL.String
+		}
+		if providerMetadata.Valid {
+			r.ProviderMetadata = providerMetadata.String
+		}
+		if confidenceScore.Valid {
+			r.ConfidenceScore = &confidenceScore.Float64
+		}
+		if parentID.Valid {
+			r.ParentID = &parentID.String
+		}
+		if modificationType.Valid {
+			r.ModificationType = modificationType.String
+		}
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -449,7 +594,7 @@ func ListSubtitles(db *sql.DB) ([]SubtitleRecord, error) {
 
 // ListSubtitlesByVideo retrieves subtitle records for a specific video file using a raw *sql.DB.
 func ListSubtitlesByVideo(db *sql.DB, video string) ([]SubtitleRecord, error) {
-	rows, err := db.Query(`SELECT id, file, video_file, release, language, service, embedded, created_at FROM subtitles WHERE video_file = ? ORDER BY id DESC`, video)
+	rows, err := db.Query(`SELECT id, file, video_file, release, language, service, embedded, source_url, provider_metadata, confidence_score, parent_id, modification_type, created_at FROM subtitles WHERE video_file = ? ORDER BY id DESC`, video)
 	if err != nil {
 		return nil, err
 	}
@@ -459,11 +604,28 @@ func ListSubtitlesByVideo(db *sql.DB, video string) ([]SubtitleRecord, error) {
 		var r SubtitleRecord
 		var embedded int
 		var id int64
-		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &r.CreatedAt); err != nil {
+		var sourceURL, providerMetadata, parentID, modificationType sql.NullString
+		var confidenceScore sql.NullFloat64
+		if err := rows.Scan(&id, &r.File, &r.VideoFile, &r.Release, &r.Language, &r.Service, &embedded, &sourceURL, &providerMetadata, &confidenceScore, &parentID, &modificationType, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		r.ID = strconv.FormatInt(id, 10)
 		r.Embedded = embedded == 1
+		if sourceURL.Valid {
+			r.SourceURL = sourceURL.String
+		}
+		if providerMetadata.Valid {
+			r.ProviderMetadata = providerMetadata.String
+		}
+		if confidenceScore.Valid {
+			r.ConfidenceScore = &confidenceScore.Float64
+		}
+		if parentID.Valid {
+			r.ParentID = &parentID.String
+		}
+		if modificationType.Valid {
+			r.ModificationType = modificationType.String
+		}
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
@@ -533,6 +695,122 @@ func SetMediaFieldLocks(db *sql.DB, path, locks string) error {
 // SetMediaTitle updates the title for a media item using a raw database handle.
 func SetMediaTitle(db *sql.DB, path, title string) error {
 	_, err := db.Exec(`UPDATE media_items SET title = ? WHERE path = ?`, title, path)
+	return err
+}
+
+// Subtitle Source operations
+
+// InsertSubtitleSource stores a new subtitle source record.
+func (s *SQLStore) InsertSubtitleSource(src *SubtitleSource) error {
+	_, err := s.db.Exec(`INSERT INTO subtitle_sources (source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		src.SourceHash, src.OriginalURL, src.Provider, src.Title, src.ReleaseInfo, src.FileSize, src.DownloadCount, src.SuccessCount, src.AvgRating, src.LastSeen, src.Metadata, time.Now())
+	return err
+}
+
+// GetSubtitleSource retrieves a subtitle source by hash.
+func (s *SQLStore) GetSubtitleSource(sourceHash string) (*SubtitleSource, error) {
+	var src SubtitleSource
+	var id int64
+	var title, releaseInfo, metadata sql.NullString
+	var fileSize sql.NullInt64
+	var avgRating sql.NullFloat64
+	
+	row := s.db.QueryRow(`SELECT id, source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at FROM subtitle_sources WHERE source_hash = ?`, sourceHash)
+	
+	err := row.Scan(&id, &src.SourceHash, &src.OriginalURL, &src.Provider, &title, &releaseInfo, &fileSize, &src.DownloadCount, &src.SuccessCount, &avgRating, &src.LastSeen, &metadata, &src.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	
+	src.ID = strconv.FormatInt(id, 10)
+	if title.Valid {
+		src.Title = title.String
+	}
+	if releaseInfo.Valid {
+		src.ReleaseInfo = releaseInfo.String
+	}
+	if fileSize.Valid {
+		size := int(fileSize.Int64)
+		src.FileSize = &size
+	}
+	if avgRating.Valid {
+		src.AvgRating = &avgRating.Float64
+	}
+	if metadata.Valid {
+		src.Metadata = metadata.String
+	}
+	
+	return &src, nil
+}
+
+// UpdateSubtitleSourceStats updates download statistics for a subtitle source.
+func (s *SQLStore) UpdateSubtitleSourceStats(sourceHash string, downloadCount, successCount int, avgRating *float64) error {
+	_, err := s.db.Exec(`UPDATE subtitle_sources SET download_count = ?, success_count = ?, avg_rating = ?, last_seen = ? WHERE source_hash = ?`,
+		downloadCount, successCount, avgRating, time.Now(), sourceHash)
+	return err
+}
+
+// ListSubtitleSources retrieves all subtitle sources for a provider.
+func (s *SQLStore) ListSubtitleSources(provider string, limit int) ([]SubtitleSource, error) {
+	query := `SELECT id, source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at FROM subtitle_sources`
+	args := []interface{}{}
+	
+	if provider != "" {
+		query += ` WHERE provider = ?`
+		args = append(args, provider)
+	}
+	
+	query += ` ORDER BY last_seen DESC`
+	if limit > 0 {
+		query += ` LIMIT ?`
+		args = append(args, limit)
+	}
+	
+	rows, err := s.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	
+	var sources []SubtitleSource
+	for rows.Next() {
+		var src SubtitleSource
+		var id int64
+		var title, releaseInfo, metadata sql.NullString
+		var fileSize sql.NullInt64
+		var avgRating sql.NullFloat64
+		
+		if err := rows.Scan(&id, &src.SourceHash, &src.OriginalURL, &src.Provider, &title, &releaseInfo, &fileSize, &src.DownloadCount, &src.SuccessCount, &avgRating, &src.LastSeen, &metadata, &src.CreatedAt); err != nil {
+			return nil, err
+		}
+		
+		src.ID = strconv.FormatInt(id, 10)
+		if title.Valid {
+			src.Title = title.String
+		}
+		if releaseInfo.Valid {
+			src.ReleaseInfo = releaseInfo.String
+		}
+		if fileSize.Valid {
+			size := int(fileSize.Int64)
+			src.FileSize = &size
+		}
+		if avgRating.Valid {
+			src.AvgRating = &avgRating.Float64
+		}
+		if metadata.Valid {
+			src.Metadata = metadata.String
+		}
+		
+		sources = append(sources, src)
+	}
+	
+	return sources, rows.Err()
+}
+
+// DeleteSubtitleSource removes a subtitle source record.
+func (s *SQLStore) DeleteSubtitleSource(sourceHash string) error {
+	_, err := s.db.Exec(`DELETE FROM subtitle_sources WHERE source_hash = ?`, sourceHash)
 	return err
 }
 
