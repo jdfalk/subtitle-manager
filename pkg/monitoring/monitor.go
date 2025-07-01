@@ -25,25 +25,25 @@ import (
 type MonitorStatus string
 
 const (
-	StatusPending    MonitorStatus = "pending"
-	StatusMonitoring MonitorStatus = "monitoring"
-	StatusFound      MonitorStatus = "found"
-	StatusFailed     MonitorStatus = "failed"
+	StatusPending     MonitorStatus = "pending"
+	StatusMonitoring  MonitorStatus = "monitoring"
+	StatusFound       MonitorStatus = "found"
+	StatusFailed      MonitorStatus = "failed"
 	StatusBlacklisted MonitorStatus = "blacklisted"
 )
 
 // MonitoredItem represents a media item that is being monitored for subtitle availability.
 type MonitoredItem struct {
-	ID          string         `json:"id"`
-	MediaID     string         `json:"media_id"`
-	Path        string         `json:"path"`
-	Languages   []string       `json:"languages"`
-	LastChecked time.Time      `json:"last_checked"`
-	Status      MonitorStatus  `json:"status"`
-	RetryCount  int            `json:"retry_count"`
-	MaxRetries  int            `json:"max_retries"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
+	ID          string        `json:"id"`
+	MediaID     string        `json:"media_id"`
+	Path        string        `json:"path"`
+	Languages   []string      `json:"languages"`
+	LastChecked time.Time     `json:"last_checked"`
+	Status      MonitorStatus `json:"status"`
+	RetryCount  int           `json:"retry_count"`
+	MaxRetries  int           `json:"max_retries"`
+	CreatedAt   time.Time     `json:"created_at"`
+	UpdatedAt   time.Time     `json:"updated_at"`
 }
 
 // EpisodeMonitor provides automatic subtitle monitoring for TV episodes and movies.
@@ -148,7 +148,7 @@ func (m *EpisodeMonitor) processItem(ctx context.Context, item *MonitoredItem) e
 		if item.RetryCount >= item.MaxRetries {
 			item.Status = StatusFailed
 			m.logger.Warnf("Item %s failed after %d retries", item.Path, item.RetryCount)
-			
+
 			// Auto-blacklist on failure
 			if err := m.AutoBlacklistOnFailure(item); err != nil {
 				m.logger.Errorf("Failed to auto-blacklist item %s: %v", item.Path, err)

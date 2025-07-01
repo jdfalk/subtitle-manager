@@ -1,5 +1,5 @@
 // file: pkg/monitoring/integration_test.go
-// version: 1.0.0  
+// version: 1.0.0
 // guid: 12345678-1234-1234-1234-123456789018
 
 package monitoring
@@ -18,7 +18,7 @@ import (
 // TestMonitoringWorkflow tests the complete monitoring workflow
 func TestMonitoringWorkflow(t *testing.T) {
 	store := &MockSubtitleStore{}
-	
+
 	// Test setup
 	monitor := NewEpisodeMonitor(
 		time.Minute,
@@ -55,11 +55,11 @@ func TestMonitoringWorkflow(t *testing.T) {
 		{ID: "2", Status: "monitoring"},
 		{ID: "3", Status: "found"},
 	}
-	
+
 	// Clear previous expectations and set new ones
 	store.ExpectedCalls = nil
 	store.On("ListMonitoredItems").Return(mockItems, nil).Once()
-	
+
 	stats, err := monitor.GetMonitoringStats()
 	assert.NoError(t, err)
 	assert.Equal(t, 3, stats.Total)
@@ -73,7 +73,7 @@ func TestMonitoringWorkflow(t *testing.T) {
 // TestBlacklistManagement tests blacklist functionality
 func TestBlacklistManagement(t *testing.T) {
 	store := &MockSubtitleStore{}
-	
+
 	monitor := NewEpisodeMonitor(
 		time.Minute,
 		nil, nil,
@@ -85,7 +85,7 @@ func TestBlacklistManagement(t *testing.T) {
 	mockItems := []database.MonitoredItem{
 		{ID: "1", Status: "failed", RetryCount: 3, MaxRetries: 3},
 	}
-	
+
 	// Set expectations for AddToBlacklist call
 	store.On("ListMonitoredItems").Return(mockItems, nil).Once()
 	store.On("UpdateMonitoredItem", mock.MatchedBy(func(item *database.MonitoredItem) bool {
@@ -100,10 +100,10 @@ func TestBlacklistManagement(t *testing.T) {
 	blacklistedItems := []database.MonitoredItem{
 		{ID: "1", Status: "blacklisted", RetryCount: 3, MaxRetries: 3},
 	}
-	
+
 	store.ExpectedCalls = nil // Clear previous expectations
 	store.On("ListMonitoredItems").Return(blacklistedItems, nil).Once()
-	
+
 	blacklisted := monitor.IsBlacklisted("1", "en")
 	assert.True(t, blacklisted)
 
@@ -113,7 +113,7 @@ func TestBlacklistManagement(t *testing.T) {
 // TestScheduledMonitor tests the scheduler integration
 func TestScheduledMonitor(t *testing.T) {
 	store := &MockSubtitleStore{}
-	
+
 	scheduledMonitor := NewScheduledMonitor(
 		nil, // no sonarr
 		nil, // no radarr
@@ -134,7 +134,7 @@ func TestScheduledMonitor(t *testing.T) {
 	// This would normally sync from Sonarr/Radarr but we have nil clients
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)
 	defer cancel()
-	
+
 	err := scheduledMonitor.RunSyncTask(ctx, opts)
 	assert.NoError(t, err) // Should not error even with nil clients
 }

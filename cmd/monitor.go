@@ -75,12 +75,12 @@ var monitorBlacklistRemoveCmd = &cobra.Command{
 
 // Flags for monitoring commands
 var (
-	monitorInterval    string
-	monitorLanguages   []string
-	monitorMaxRetries  int
+	monitorInterval     string
+	monitorLanguages    []string
+	monitorMaxRetries   int
 	monitorQualityCheck bool
 	monitorForceRefresh bool
-	monitorSource      string
+	monitorSource       string
 )
 
 func init() {
@@ -146,7 +146,7 @@ func runMonitorStart(cmd *cobra.Command, args []string) error {
 	)
 
 	fmt.Printf("Starting monitoring daemon (interval: %v)\n", interval)
-	
+
 	// Start monitoring
 	ctx := context.Background()
 	return monitor.Start(ctx)
