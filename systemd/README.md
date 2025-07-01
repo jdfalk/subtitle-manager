@@ -79,10 +79,18 @@ sudo chmod +x /usr/local/bin/subtitle-manager
 ```bash
 git clone https://github.com/jdfalk/subtitle-manager.git
 cd subtitle-manager
-make build
+
+# Build with SQLite support (recommended for production)
+CGO_ENABLED=1 go build -tags sqlite -o subtitle-manager .
+
+# OR build without CGO (PebbleDB only, smaller binary)
+CGO_ENABLED=0 go build -o subtitle-manager .
+
 sudo cp bin/subtitle-manager /usr/local/bin/subtitle-manager
 sudo chmod +x /usr/local/bin/subtitle-manager
 ```
+
+**Note**: For production deployments, building with SQLite support is recommended for better database compatibility. The default systemd configuration supports both SQLite and PebbleDB backends.
 
 #### 4. Install Service Files
 

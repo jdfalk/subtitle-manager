@@ -13,7 +13,7 @@ Type=simple
 User=subtitle-manager
 Group=subtitle-manager
 WorkingDirectory=/opt/subtitle-manager
-ExecStart=/usr/local/bin/subtitle-manager web --addr :8080
+ExecStart=/usr/local/bin/subtitle-manager web --addr :8080 --db-backend sqlite
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
 RestartSec=5
@@ -33,6 +33,7 @@ ProtectControlGroups=true
 # Environment
 Environment=SM_CONFIG_FILE=/etc/subtitle-manager/subtitle-manager.yaml
 Environment=SM_DB_PATH=/var/lib/subtitle-manager/db
+Environment=SM_DB_BACKEND=sqlite
 Environment=SM_LOG_LEVEL=info
 EnvironmentFile=-/etc/subtitle-manager/subtitle-manager.env
 
