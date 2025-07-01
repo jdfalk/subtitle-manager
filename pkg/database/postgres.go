@@ -389,165 +389,165 @@ func (p *PostgresStore) ListTagsForMedia(mediaID int64) ([]Tag, error) {
 
 // CreateLanguageProfile stores a new language profile.
 func (p *PostgresStore) CreateLanguageProfile(profile *LanguageProfile) error {
-config, err := profile.MarshalConfig()
-if err != nil {
-return fmt.Errorf("failed to marshal profile config: %w", err)
-}
+	config, err := profile.MarshalConfig()
+	if err != nil {
+		return fmt.Errorf("failed to marshal profile config: %w", err)
+	}
 
-_, err = p.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at) 
+	_, err = p.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at) 
 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-profile.ID, profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
-profile.CreatedAt, profile.UpdatedAt)
-return err
+		profile.ID, profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
+		profile.CreatedAt, profile.UpdatedAt)
+	return err
 }
 
 // GetLanguageProfile retrieves a language profile by ID.
 func (p *PostgresStore) GetLanguageProfile(id string) (*LanguageProfile, error) {
-var profile LanguageProfile
-var configStr string
+	var profile LanguageProfile
+	var configStr string
 
-row := p.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	row := p.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
 FROM language_profiles WHERE id = $1`, id)
 
-err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore, 
-&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
-if err != nil {
-return nil, err
-}
+	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
+		&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
 
-if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
-return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
-}
+	if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
+	}
 
-return &profile, nil
+	return &profile, nil
 }
 
 // ListLanguageProfiles retrieves all language profiles.
 func (p *PostgresStore) ListLanguageProfiles() ([]LanguageProfile, error) {
-rows, err := p.db.Query(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	rows, err := p.db.Query(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
 FROM language_profiles ORDER BY is_default DESC, name ASC`)
-if err != nil {
-return nil, err
-}
-defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-var profiles []LanguageProfile
-for rows.Next() {
-var profile LanguageProfile
-var configStr string
+	var profiles []LanguageProfile
+	for rows.Next() {
+		var profile LanguageProfile
+		var configStr string
 
-err := rows.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
-&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
-if err != nil {
-return nil, err
-}
+		err := rows.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
+			&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
 
-if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
-return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
-}
+		if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
+		}
 
-profiles = append(profiles, profile)
-}
+		profiles = append(profiles, profile)
+	}
 
-return profiles, rows.Err()
+	return profiles, rows.Err()
 }
 
 // UpdateLanguageProfile updates an existing language profile.
 func (p *PostgresStore) UpdateLanguageProfile(profile *LanguageProfile) error {
-config, err := profile.MarshalConfig()
-if err != nil {
-return fmt.Errorf("failed to marshal profile config: %w", err)
-}
+	config, err := profile.MarshalConfig()
+	if err != nil {
+		return fmt.Errorf("failed to marshal profile config: %w", err)
+	}
 
-_, err = p.db.Exec(`UPDATE language_profiles 
+	_, err = p.db.Exec(`UPDATE language_profiles 
 SET name = $1, config = $2, cutoff_score = $3, is_default = $4, updated_at = $5
 WHERE id = $6`,
-profile.Name, string(config), profile.CutoffScore, profile.IsDefault, 
-profile.UpdatedAt, profile.ID)
-return err
+		profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
+		profile.UpdatedAt, profile.ID)
+	return err
 }
 
 // DeleteLanguageProfile removes a language profile by ID.
 func (p *PostgresStore) DeleteLanguageProfile(id string) error {
-// First remove any media assignments
-if _, err := p.db.Exec(`DELETE FROM media_profiles WHERE profile_id = $1`, id); err != nil {
-return err
-}
+	// First remove any media assignments
+	if _, err := p.db.Exec(`DELETE FROM media_profiles WHERE profile_id = $1`, id); err != nil {
+		return err
+	}
 
-// Then remove the profile itself
-_, err := p.db.Exec(`DELETE FROM language_profiles WHERE id = $1`, id)
-return err
+	// Then remove the profile itself
+	_, err := p.db.Exec(`DELETE FROM language_profiles WHERE id = $1`, id)
+	return err
 }
 
 // SetDefaultLanguageProfile marks a profile as the default.
 func (p *PostgresStore) SetDefaultLanguageProfile(id string) error {
-tx, err := p.db.Begin()
-if err != nil {
-return err
-}
-defer tx.Rollback()
+	tx, err := p.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
 
-// Clear all default flags
-if _, err := tx.Exec(`UPDATE language_profiles SET is_default = FALSE`); err != nil {
-return err
-}
+	// Clear all default flags
+	if _, err := tx.Exec(`UPDATE language_profiles SET is_default = FALSE`); err != nil {
+		return err
+	}
 
-// Set the specified profile as default
-if _, err := tx.Exec(`UPDATE language_profiles SET is_default = TRUE WHERE id = $1`, id); err != nil {
-return err
-}
+	// Set the specified profile as default
+	if _, err := tx.Exec(`UPDATE language_profiles SET is_default = TRUE WHERE id = $1`, id); err != nil {
+		return err
+	}
 
-return tx.Commit()
+	return tx.Commit()
 }
 
 // GetDefaultLanguageProfile retrieves the default language profile.
 func (p *PostgresStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
-var profile LanguageProfile
-var configStr string
+	var profile LanguageProfile
+	var configStr string
 
-row := p.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	row := p.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
 FROM language_profiles WHERE is_default = TRUE LIMIT 1`)
 
-err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
-&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
-if err != nil {
-return nil, err
-}
+	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
+		&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
 
-if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
-return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
-}
+	if err := profile.UnmarshalConfig([]byte(configStr)); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal profile config: %w", err)
+	}
 
-return &profile, nil
+	return &profile, nil
 }
 
 // AssignProfileToMedia assigns a language profile to a media item.
 func (p *PostgresStore) AssignProfileToMedia(mediaID, profileID string) error {
-_, err := p.db.Exec(`INSERT INTO media_profiles (media_id, profile_id, created_at) 
-VALUES ($1, $2, $3) ON CONFLICT (media_id) DO UPDATE SET profile_id = EXCLUDED.profile_id, created_at = EXCLUDED.created_at`, 
-mediaID, profileID, time.Now())
-return err
+	_, err := p.db.Exec(`INSERT INTO media_profiles (media_id, profile_id, created_at) 
+VALUES ($1, $2, $3) ON CONFLICT (media_id) DO UPDATE SET profile_id = EXCLUDED.profile_id, created_at = EXCLUDED.created_at`,
+		mediaID, profileID, time.Now())
+	return err
 }
 
 // RemoveProfileFromMedia removes language profile assignment from a media item.
 func (p *PostgresStore) RemoveProfileFromMedia(mediaID string) error {
-_, err := p.db.Exec(`DELETE FROM media_profiles WHERE media_id = $1`, mediaID)
-return err
+	_, err := p.db.Exec(`DELETE FROM media_profiles WHERE media_id = $1`, mediaID)
+	return err
 }
 
 // GetMediaProfile retrieves the language profile assigned to a media item.
 func (p *PostgresStore) GetMediaProfile(mediaID string) (*LanguageProfile, error) {
-var profileID string
-row := p.db.QueryRow(`SELECT profile_id FROM media_profiles WHERE media_id = $1`, mediaID)
+	var profileID string
+	row := p.db.QueryRow(`SELECT profile_id FROM media_profiles WHERE media_id = $1`, mediaID)
 
-err := row.Scan(&profileID)
-if err != nil {
-if err == sql.ErrNoRows {
-// No profile assigned, return default profile
-return p.GetDefaultLanguageProfile()
-}
-return nil, err
-}
+	err := row.Scan(&profileID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// No profile assigned, return default profile
+			return p.GetDefaultLanguageProfile()
+		}
+		return nil, err
+	}
 
-return p.GetLanguageProfile(profileID)
+	return p.GetLanguageProfile(profileID)
 }

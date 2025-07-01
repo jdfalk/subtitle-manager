@@ -29,8 +29,8 @@ type LanguageProfile struct {
 type LanguageConfig struct {
 	Language string `json:"language"`
 	Priority int    `json:"priority"`
-	Forced   bool   `json:"forced"`   // Whether forced subtitles are preferred
-	HI       bool   `json:"hi"`       // Whether hearing impaired subtitles are preferred
+	Forced   bool   `json:"forced"` // Whether forced subtitles are preferred
+	HI       bool   `json:"hi"`     // Whether hearing impaired subtitles are preferred
 }
 
 // MediaProfileAssignment represents the assignment of a language profile to a media item.

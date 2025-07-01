@@ -37,7 +37,9 @@ const DatabaseSettings = lazy(
   () => import('./components/DatabaseSettings.jsx')
 );
 const GeneralSettings = lazy(() => import('./components/GeneralSettings.jsx'));
-const LanguageProfiles = lazy(() => import('./components/LanguageProfiles.jsx'));
+const LanguageProfiles = lazy(
+  () => import('./components/LanguageProfiles.jsx')
+);
 const NotificationSettings = lazy(
   () => import('./components/NotificationSettings.jsx')
 );

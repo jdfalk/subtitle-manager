@@ -1351,8 +1351,8 @@ func (p *PebbleStore) InitializeDefaultPermissions() error {
 
 // Language Profile operations for PebbleStore
 
-func languageProfileKey(id string) []byte                  { return []byte("language_profile:" + id) }
-func mediaProfileKey(mediaID string) []byte               { return []byte("media_profile:" + mediaID) }
+func languageProfileKey(id string) []byte   { return []byte("language_profile:" + id) }
+func mediaProfileKey(mediaID string) []byte { return []byte("media_profile:" + mediaID) }
 
 // CreateLanguageProfile stores a new language profile.
 func (p *PebbleStore) CreateLanguageProfile(profile *LanguageProfile) error {
