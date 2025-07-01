@@ -977,6 +977,8 @@ Additional references include [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)
 
 Subtitle Manager applies strict security headers, including `Referrer-Policy: no-referrer`, and sanitizes HTML content in the web interface using DOMPurify. When contributing UI or API code, ensure all user-provided data is properly validated and sanitized.
 
+For security vulnerability reporting and our complete security policy, see [SECURITY.md](SECURITY.md).
+
 ## License
 
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
