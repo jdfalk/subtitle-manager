@@ -106,8 +106,10 @@ syntax for the file type:
 
 **Important Notes:**
 
-- For shell scripts and Python files, the shebang line must be first, followed immediately by the file header
-- Use the appropriate comment syntax for each language (`#`, `//`, `/* */`, `<!-- -->`, `--`, etc.)
+- For shell scripts and Python files, the shebang line must be first, followed
+  immediately by the file header
+- Use the appropriate comment syntax for each language (`#`, `//`, `/* */`,
+  `<!-- -->`, `--`, etc.)
 - The header must include: file path, version, and GUID
 - This header helps with file identification and change tracking
 
@@ -115,7 +117,8 @@ syntax for the file type:
 
 - Use git to commit your changes
 - If pre-commit fails, fix issues and retry
-- Check git status to confirm your commit. You must leave your worktree in a clean state
+- Check git status to confirm your commit. You must leave your worktree in a
+  clean state
 
 ### Commit Message Format (REQUIRED)
 
@@ -174,234 +177,136 @@ Files changed:
 
 ---
 
-## 4. Code Style Guidelines
+## 4. Detailed Guidelines Reference
 
-### 4.1 Go
+**All detailed guidelines are maintained in separate files to avoid duplication.
+Agents MUST consult these files:**
 
-- Use `gofmt` or `go fmt` to format code
-- Tabs for indentation, line length <100 chars
-- Package names: short, lowercase, no underscores
-- Interface names: -er suffix for actions
-- Variable/function names: MixedCaps, not underscores
-- Exported names: Capitalized; unexported: lowercase
-- Acronyms all caps (e.g., HTTPServer)
-- Group imports: stdlib, third-party, project
-- All exported declarations must have doc comments
-- Always check errors, return errors (not panic)
-- Early returns to reduce nesting
-- Defer file/resource closing
-- Use context for cancellation/deadlines
-- Keep functions short/focused
-- Prefer value receivers unless mutation is needed
-- Use channels for concurrency, avoid shared memory
+### 4.1 Code Style Guidelines
 
-### 4.2 Python
+- **Go**: [.github/code-style-go.md](.github/code-style-go.md)
+- **Python**: [.github/code-style-python.md](.github/code-style-python.md)
+- **TypeScript**:
+  [.github/code-style-typescript.md](.github/code-style-typescript.md)
+- **JavaScript**:
+  [.github/code-style-javascript.md](.github/code-style-javascript.md)
+- **Markdown**: [.github/code-style-markdown.md](.github/code-style-markdown.md)
+- **HTML/CSS**: [.github/code-style-html-css.md](.github/code-style-html-css.md)
+- **Shell Scripts**: [.github/code-style-shell.md](.github/code-style-shell.md)
+- **GitHub Actions**:
+  [.github/code-style-github-actions.md](.github/code-style-github-actions.md)
+- **Protocol Buffers**:
+  [.github/code-style-protobuf.md](.github/code-style-protobuf.md)
+- **Additional Languages**: C++
+  ([.github/code-style-cpp.md](.github/code-style-cpp.md)), C#
+  ([.github/code-style-csharp.md](.github/code-style-csharp.md)), Swift
+  ([.github/code-style-swift.md](.github/code-style-swift.md)), R
+  ([.github/code-style-r.md](.github/code-style-r.md)), Angular
+  ([.github/code-style-angular.md](.github/code-style-angular.md)), JSON
+  ([.github/code-style-json.md](.github/code-style-json.md))
 
-- 4 spaces for indentation, no tabs
-- Max line length: 80
-- Import order: stdlib, third-party, app-specific
-- One import per line, no wildcards
-- Naming: `module_name`, `ClassName`, `method_name`, `CONSTANT_NAME`,
-  `_private_attribute`
-- Use docstrings for all public modules, functions, classes, methods
-- Follow PEP 8
-- Use type hints where applicable
-- Prefer comprehensions over loops where readable
+### 4.2 Development Process Guidelines
 
-### 4.3 TypeScript/JavaScript
+- **Commit Messages**:
+  [.github/commit-messages.md](.github/commit-messages.md) - **REQUIRED**
+  conventional commit format with file documentation
+- **Pull Request Descriptions**:
+  [.github/pull-request-descriptions.md](.github/pull-request-descriptions.md)
+- **Code Review Guidelines**:
+  [.github/review-selection.md](.github/review-selection.md)
+- **Test Generation**: [.github/test-generation.md](.github/test-generation.md)
+- **Security Guidelines**:
+  [.github/security-guidelines.md](.github/security-guidelines.md)
 
-- 2 spaces for indentation
-- Use semicolons
-- Prefer `const` over `let`, avoid `var`
-- PascalCase for classes, camelCase for functions/variables
-- UPPER_SNAKE_CASE for constants
-- Always use explicit type annotations in TypeScript
-- Prefer interfaces over types for object shapes
-- Use async/await over promises
+### 4.3 Repository and Workflow Management
 
-### 4.4 Markdown
+- **Complete Copilot/AI Instructions**:
+  [.github/copilot-instructions.md](.github/copilot-instructions.md)
+- **Repository Setup**:
+  [.github/repository-setup.md](.github/repository-setup.md)
+- **Workflow Usage**: [.github/workflow-usage.md](.github/workflow-usage.md)
 
-- Use consistent heading hierarchy
-- Fenced code blocks with language
-- Line length: 80-100
-- Use meaningful link text
-- Use `-` for bullets
-- Blank lines around code blocks and headers
+### 4.4 Documentation Organization
 
----
-
-## 5. Commit Message Standards
-
-- Use [Conventional Commits](https://www.conventionalcommits.org/)
-- Format: `<type>[optional scope]: <description>`
-- Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
-- **REQUIRED:** Always include a "Files changed:" section in the commit body
-  with summary and links:
-
-  ```markdown
-  Files changed:
-
-  - Added feature: [src/feature.js](src/feature.js)
-  - Updated tests: [test/feature.test.js](test/feature.test.js)
-  ```
-
-- Use imperative present tense ("add" not "added")
-- No period at end, keep under 50 chars
-- Include motivation and contrast with previous behavior in body
-- Reference real issues only: `Fixes #123` or `Closes #456`
-- No commit should be submitted without file change documentation
+- **README.md**: Repository introduction, setup instructions, basic usage,
+  critical information
+- **TODO.md**: Project roadmap, planning, implementation status, architectural
+  decisions
+- **CHANGELOG.md**: Version information, release notes, breaking changes,
+  feature additions, bug fixes
+- **docs/**: Comprehensive technical guides and consolidated documentation
 
 ---
 
-## 6. Pull Request Description Guidelines
+## 5. Security & Best Practices Summary
 
-- Use this template:
-
-  ```markdown
-  ## Description
-
-  [Concise overview of the changes]
-
-  ## Motivation
-
-  [Why these changes were necessary]
-
-  ## Changes
-
-  [Detailed list of changes made]
-
-  ## Testing
-
-  [How the changes were tested]
-
-  ## Screenshots
-
-  [If applicable]
-
-  ## Related Issues
-
-  [Links to related tickets/issues]
-  ```
-
-- Be concise, focus on what/why
-- Use bullet points for changes
-- Describe how changes were tested
-- Link to all relevant issues/tickets
-- For breaking changes, include a "Breaking Changes" section
-
----
-
-## 7. Code Review Guidelines
-
-- Review focus areas (in order):
-  1. Correctness
-  2. Security
-  3. Performance
-  4. Readability
-  5. Maintainability
-  6. Test Coverage
-
-- Be specific about what needs changing and why
-- Provide constructive feedback with examples
-- Differentiate between required changes and suggestions
-- Focus on critical issues first
-- For UI, check accessibility/responsiveness
-- For API, verify docs/versioning
-- For DB, review migrations/data integrity
-- For security, apply extra scrutiny
-- For performance, request benchmarks
-
----
-
-## 8. Test Generation Guidelines
-
-- Use Arrange-Act-Assert structure:
-
-  ```markdown
-  [Setup] - Prepare the test environment and inputs [Exercise] - Execute the
-  functionality being tested [Verify] - Check that the results match
-  expectations [Teardown] - Clean up any resources (if needed)
-  ```
-
-- Test naming: `test[UnitOfWork_StateUnderTest_ExpectedBehavior]`
-- Test types: Unit, Integration, Functional, Performance, Security,
-  Accessibility
-- Test one specific behavior per test case
-- Mock external dependencies
-- Cover happy paths and edge cases
-- Use clear assertions with meaningful messages
-- Group tests by feature/component
-- Avoid flaky tests, excessive mocking, and testing implementation details
-
----
-
-## 9. Documentation & File Responsibilities
-
-- **README.md**: Repo intro, setup, usage, critical info
-- **TODO.md**: Roadmap, planning, architecture, diagrams
-- **CHANGELOG.md**: Version info, release notes, breaking changes, features, bug
-  fixes
-
----
-
-## 10. Security & Best Practices
-
-- Avoid hardcoding sensitive info (API keys, passwords, tokens)
+- Avoid hardcoding sensitive information (API keys, passwords, tokens)
 - Use proper error handling with meaningful messages
-- Validate inputs (sanitize file paths, validate formats)
-- Consider performance implications
-- Look for injection vulnerabilities
-- Use secure defaults for file permissions and temp files
+- Validate inputs appropriately (sanitize file paths, validate formats)
+- Consider performance implications of code changes
+- Look for injection vulnerabilities (command injection, path traversal)
+- Use secure defaults for file permissions and temporary files
 - Review file handling security (path traversal, file size limits)
 - Verify secure handling of sensitive data
 
----
-
-## 11. Version Control Standards
-
-- Write clear commit messages
-- Keep PRs focused on a single feature/fix
-- Reference issue numbers in commits/PRs (only real issues)
-- Use conventional commit format
-- Include comprehensive file change documentation in all commits
-- Use semantic versioning for releases
-- Tag releases appropriately
+**See [.github/security-guidelines.md](.github/security-guidelines.md) for
+complete security guidelines.**
 
 ---
 
-## 12. Project-Specific Guidelines
+## 6. Project-Specific Guidelines
 
-- Import from project modules, don't duplicate functionality
-- Respect established architecture patterns
+- Import from project modules rather than duplicating functionality
+- Respect the established architecture patterns
 - Before suggesting one-off commands, check for a defined task in tasks.json
-- Use meaningful variable names
-- Keep functions small and focused
-- Use the existing CLI/web UI framework patterns for new commands/handlers
+- Use meaningful variable names that indicate purpose
+- Keep functions small and focused on a single responsibility
+- Use the existing CLI framework patterns for new commands
+- Follow established patterns for web UI handlers and templates
 - Use appropriate logging levels and structured logging
 
 ---
 
-## 13. Codex Agent-Specific Instructions
+## 8. Complete Reference List
 
-- All references to "copilot" in prior instructions are replaced with "codex"
-  for this repository.
-- All code, documentation, and process instructions in this file are mandatory
-  for codex agents.
-- If you find programmatic checks in AGENTS.md, you must run them and validate
-  they pass after your changes.
+**For comprehensive details, always consult these authoritative files:**
 
----
+### Core Agent Instructions
 
-## 14. Includes
+- [.github/copilot-instructions.md](.github/copilot-instructions.md) - Complete
+  AI agent instructions
+- [.github/commit-messages.md](.github/commit-messages.md) - **REQUIRED**
+  conventional commit format
+- [.github/pull-request-descriptions.md](.github/pull-request-descriptions.md)
+- [.github/review-selection.md](.github/review-selection.md)
+- [.github/test-generation.md](.github/test-generation.md)
+- [.github/security-guidelines.md](.github/security-guidelines.md)
 
-This file contains a basic version of the more detailed following files, import
-them as needed:
+### Code Style Guides (All Languages)
 
-- .github/commit-messages.md
-- .github/copilot-instructions.md (as codex-instructions)
-- .github/pull-request-descriptions.md
-- .github/review-selection.md
-- .github/test-generation.md
-- All code style guides (Go, Python, TypeScript, JavaScript, Markdown)
+- [.github/code-style-go.md](.github/code-style-go.md) (Primary language)
+- [.github/code-style-python.md](.github/code-style-python.md)
+- [.github/code-style-typescript.md](.github/code-style-typescript.md)
+- [.github/code-style-javascript.md](.github/code-style-javascript.md)
+- [.github/code-style-markdown.md](.github/code-style-markdown.md)
+- [.github/code-style-html-css.md](.github/code-style-html-css.md)
+- [.github/code-style-shell.md](.github/code-style-shell.md)
+- [.github/code-style-github-actions.md](.github/code-style-github-actions.md)
+- [.github/code-style-protobuf.md](.github/code-style-protobuf.md)
+- [.github/code-style-cpp.md](.github/code-style-cpp.md)
+- [.github/code-style-csharp.md](.github/code-style-csharp.md)
+- [.github/code-style-swift.md](.github/code-style-swift.md)
+- [.github/code-style-r.md](.github/code-style-r.md)
+- [.github/code-style-angular.md](.github/code-style-angular.md)
+- [.github/code-style-json.md](.github/code-style-json.md)
+
+### Repository Management
+
+- [.github/repository-setup.md](.github/repository-setup.md)
+- [.github/workflow-usage.md](.github/workflow-usage.md)
+
+**Note**: This AGENTS.md file provides essential workflow guidelines. For
+detailed implementation guidelines, always reference the specific files listed
+above to ensure current and complete information.
 
 ---
