@@ -15,6 +15,7 @@ import (
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/tasks"
@@ -251,7 +252,8 @@ func (w *WhisperContainer) GetContainerStatus(ctx context.Context) (string, erro
 
 // TranscribeFile transcribes a media file using the container or fallback to external API.
 func (w *WhisperContainer) TranscribeFile(ctx context.Context, filePath, language string) (*tasks.Task, error) {
-	taskID := fmt.Sprintf("transcribe_%d", time.Now().Unix())
+	taskID := fmt.Sprintf("transcribe_%d_%s", time.Now().Unix(), uuid.NewString()[:8])
+
 	task := tasks.Start(ctx, taskID, func(ctx context.Context) error {
 		// Check if container is running
 		running, err := w.IsContainerRunning(ctx)
