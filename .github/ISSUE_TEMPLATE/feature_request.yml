@@ -1,0 +1,147 @@
+# file: .github/ISSUE_TEMPLATE/feature_request.yml
+# version: 1.0.0
+# guid: b2c3d4e5-f6g7-8901-bcde-f23456789012
+
+name: Feature Request
+description: Suggest an idea or enhancement for Subtitle Manager
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please provide detailed information to help us understand and evaluate your request.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: A clear and concise description of the feature you'd like to see implemented.
+      placeholder: Briefly describe the feature...
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation & Use Case
+      description: Why would this feature be useful? What problem does it solve?
+      placeholder: |
+        - What problem are you trying to solve?
+        - Who would benefit from this feature?
+        - How would this improve your workflow?
+    validations:
+      required: true
+
+  - type: textarea
+    id: detailed-description
+    attributes:
+      label: Detailed Description
+      description: Provide a detailed description of how you envision this feature working.
+      placeholder: |
+        Explain the feature in detail:
+        - How should it work?
+        - What should the user interface look like?
+        - Any specific behavior or requirements?
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define clear, testable criteria for when this feature is considered complete.
+      placeholder: |
+        - [ ] Criterion 1: User can...
+        - [ ] Criterion 2: System should...
+        - [ ] Criterion 3: Feature includes...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would be helpful
+        - High - Important for my workflow
+        - Critical - Blocking current usage
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Implementation Complexity (if known)
+      description: If you have technical knowledge, estimate the complexity
+      options:
+        - Unknown
+        - Low - Simple addition/modification
+        - Medium - Moderate changes required
+        - High - Significant development effort
+        - Very High - Major architectural changes
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: |
+        - Alternative 1: ...
+        - Alternative 2: ...
+        - Current workaround: ...
+
+  - type: textarea
+    id: related-features
+    attributes:
+      label: Related Features/Issues
+      description: Are there any existing features or issues related to this request?
+      placeholder: |
+        - Related to #123
+        - Similar to existing feature X
+        - Depends on #456
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Examples
+      description: Any mockups, screenshots, or examples that illustrate the feature
+      placeholder: |
+        Attach images or provide links to examples from other tools...
+
+  - type: textarea
+    id: technical-considerations
+    attributes:
+      label: Technical Considerations
+      description: Any technical aspects to consider (performance, security, compatibility, etc.)
+      placeholder: |
+        - Performance implications: ...
+        - Security considerations: ...
+        - Compatibility requirements: ...
+        - Dependencies: ...
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to contribute to this feature?
+      options:
+        - label: I would be willing to implement this feature myself
+        - label: I would be willing to help test this feature
+        - label: I would be willing to help with documentation
+        - label: I would be willing to provide feedback during development
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have provided clear acceptance criteria
+          required: true
+        - label: I have explained the motivation and use case
+          required: true

@@ -1,0 +1,54 @@
+# file: .github/ISSUE_TEMPLATE/blank_issue.yml
+# version: 1.0.0
+# guid: e5f6g7h8-i9j0-1234-efgh-567890123456
+
+name: Other Issue
+description: For issues that don't fit the standard templates
+title: "[Other]: "
+labels: ["needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for questions, discussions, or issues that don't fit the bug report or feature request templates.
+        
+        **Before creating this issue, please consider:**
+        - Is this a bug? Use the Bug Report template instead
+        - Is this a feature request? Use the Feature Request template instead
+        - Is this a question? Consider using GitHub Discussions instead
+
+  - type: textarea
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What type of issue is this?
+      placeholder: e.g., Question, Documentation improvement, Build issue, etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe your issue in detail
+      placeholder: Provide a clear and detailed description...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any additional information that might be helpful
+      placeholder: Screenshots, links, references, etc.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have considered using the appropriate template or GitHub Discussions
+          required: true
