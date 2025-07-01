@@ -256,7 +256,10 @@ func TestErrorEvent_JSONSerialization(t *testing.T) {
 	assert.Equal(t, event.Code, decoded.Code)
 	assert.Equal(t, event.Message, decoded.Message)
 	assert.Equal(t, event.UserMsg, decoded.UserMsg)
-	assert.Equal(t, event.Context, decoded.Context)
+
+	// Check context values individually to handle JSON number unmarshaling
+	assert.Equal(t, "value1", decoded.Context["key1"])
+	assert.Equal(t, float64(123), decoded.Context["key2"]) // JSON numbers unmarshal as float64
 }
 
 func TestErrorStats_JSONSerialization(t *testing.T) {
