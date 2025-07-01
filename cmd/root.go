@@ -130,6 +130,7 @@ func init() {
 	rootCmd.AddCommand(convertCmd)
 	rootCmd.AddCommand(mergeCmd)
 	rootCmd.AddCommand(translateCmd)
+	rootCmd.AddCommand(queueCmd)
 	rootCmd.AddCommand(fetchCmd)
 	rootCmd.AddCommand(batchCmd)
 	rootCmd.AddCommand(sonarrCmd)
