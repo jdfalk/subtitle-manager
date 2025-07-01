@@ -385,7 +385,12 @@ function App() {
       icon: <LibraryIcon />,
       path: '/library',
     },
-    { id: 'wanted', label: t('nav.wanted'), icon: <WantedIcon />, path: '/wanted' },
+    {
+      id: 'wanted',
+      label: t('nav.wanted'),
+      icon: <WantedIcon />,
+      path: '/wanted',
+    },
     {
       id: 'history',
       label: t('nav.history'),
@@ -398,7 +403,12 @@ function App() {
       icon: <SettingsIcon />,
       path: '/settings',
     },
-    { id: 'system', label: t('nav.system'), icon: <SystemIcon />, path: '/system' },
+    {
+      id: 'system',
+      label: t('nav.system'),
+      icon: <SystemIcon />,
+      path: '/system',
+    },
   ];
 
   const toolsItems = [

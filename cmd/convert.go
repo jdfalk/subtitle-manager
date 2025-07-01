@@ -24,7 +24,7 @@ var convertCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Set the short description with i18n after initialization
 		cmd.Short = i18n.T("cli.convert.short")
-		
+
 		logger := logging.GetLogger("convert")
 		in, out := args[0], args[1]
 		data, err := subtitles.ConvertToSRT(in)

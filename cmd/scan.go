@@ -27,7 +27,7 @@ var scanCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Set the short description with i18n after initialization
 		cmd.Short = i18n.T("cli.scan.short")
-		
+
 		logger := logging.GetLogger("scan")
 		dir, lang := args[0], args[1]
 

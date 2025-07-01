@@ -17,7 +17,7 @@ func TestInitialize(t *testing.T) {
 	once = sync.Once{}
 
 	Initialize()
-	
+
 	assert.NotNil(t, globalLocalizer)
 	assert.Equal(t, "en", globalLocalizer.currentLang.String())
 	assert.NotEmpty(t, globalLocalizer.messages)
@@ -60,19 +60,19 @@ func TestTranslation(t *testing.T) {
 
 	// Test English (default)
 	assert.Equal(t, "Scan directory and download subtitles", T("cli.scan.short"))
-	
+
 	// Test Spanish
 	SetLanguage("es")
 	assert.Equal(t, "Escanear directorio y descargar subtítulos", T("cli.scan.short"))
-	
-	// Test French  
+
+	// Test French
 	SetLanguage("fr")
 	assert.Equal(t, "Analyser le répertoire et télécharger les sous-titres", T("cli.scan.short"))
-	
+
 	// Reset to English and test fallback
 	SetLanguage("en")
 	assert.Equal(t, "Scan directory and download subtitles", T("cli.scan.short"))
-	
+
 	// Test fallback to key for completely missing key
 	assert.Equal(t, "missing.key", T("missing.key"))
 }
@@ -82,9 +82,9 @@ func TestGetAvailableLanguages(t *testing.T) {
 	globalLocalizer = nil
 	once = sync.Once{}
 	Initialize()
-	
+
 	languages := GetAvailableLanguages()
-	
+
 	assert.Contains(t, languages, "en")
 	assert.Contains(t, languages, "es")
 	assert.Contains(t, languages, "fr")
