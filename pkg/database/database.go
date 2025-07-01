@@ -87,11 +87,11 @@ type SubtitleRecord struct {
 	Language         string
 	Service          string
 	Embedded         bool
-	SourceURL        string  // Original download URL
-	ProviderMetadata string  // JSON metadata from provider
+	SourceURL        string   // Original download URL
+	ProviderMetadata string   // JSON metadata from provider
 	ConfidenceScore  *float64 // Quality/match confidence (0-1)
 	ParentID         *string  // Parent subtitle ID for tracking modifications
-	ModificationType string  // sync, translate, manual_edit, etc.
+	ModificationType string   // sync, translate, manual_edit, etc.
 	CreatedAt        time.Time
 }
 
@@ -105,30 +105,30 @@ type DownloadRecord struct {
 	VideoFile        string
 	Provider         string
 	Language         string
-	SearchQuery      string  // Original search query used
+	SearchQuery      string   // Original search query used
 	MatchScore       *float64 // How well the result matched (0-1)
-	DownloadAttempts int     // Number of download attempts
-	ErrorMessage     string  // Last error message if failed
-	ResponseTimeMs   *int    // Provider response time in milliseconds
+	DownloadAttempts int      // Number of download attempts
+	ErrorMessage     string   // Last error message if failed
+	ResponseTimeMs   *int     // Provider response time in milliseconds
 	CreatedAt        time.Time
 }
 
 // SubtitleSource represents metadata about subtitle sources and provider performance.
 // Tracks where subtitles come from and how well providers perform over time.
 type SubtitleSource struct {
-	ID           string
-	SourceHash   string    // Unique hash of the subtitle content/source
-	OriginalURL  string    // Original download URL
-	Provider     string    // Provider name
-	Title        string    // Subtitle title from provider
-	ReleaseInfo  string    // Release information
-	FileSize     *int      // File size in bytes
-	DownloadCount int      // Total download attempts
-	SuccessCount int       // Successful downloads
-	AvgRating    *float64  // Average user rating (0-5)
-	LastSeen     time.Time // Last time this source was seen
-	Metadata     string    // JSON metadata from provider
-	CreatedAt    time.Time
+	ID            string
+	SourceHash    string    // Unique hash of the subtitle content/source
+	OriginalURL   string    // Original download URL
+	Provider      string    // Provider name
+	Title         string    // Subtitle title from provider
+	ReleaseInfo   string    // Release information
+	FileSize      *int      // File size in bytes
+	DownloadCount int       // Total download attempts
+	SuccessCount  int       // Successful downloads
+	AvgRating     *float64  // Average user rating (0-5)
+	LastSeen      time.Time // Last time this source was seen
+	Metadata      string    // JSON metadata from provider
+	CreatedAt     time.Time
 }
 
 // MediaItem represents a video file discovered in the library.
@@ -714,14 +714,14 @@ func (s *SQLStore) GetSubtitleSource(sourceHash string) (*SubtitleSource, error)
 	var title, releaseInfo, metadata sql.NullString
 	var fileSize sql.NullInt64
 	var avgRating sql.NullFloat64
-	
+
 	row := s.db.QueryRow(`SELECT id, source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at FROM subtitle_sources WHERE source_hash = ?`, sourceHash)
-	
+
 	err := row.Scan(&id, &src.SourceHash, &src.OriginalURL, &src.Provider, &title, &releaseInfo, &fileSize, &src.DownloadCount, &src.SuccessCount, &avgRating, &src.LastSeen, &metadata, &src.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	src.ID = strconv.FormatInt(id, 10)
 	if title.Valid {
 		src.Title = title.String
@@ -739,7 +739,7 @@ func (s *SQLStore) GetSubtitleSource(sourceHash string) (*SubtitleSource, error)
 	if metadata.Valid {
 		src.Metadata = metadata.String
 	}
-	
+
 	return &src, nil
 }
 
@@ -754,24 +754,24 @@ func (s *SQLStore) UpdateSubtitleSourceStats(sourceHash string, downloadCount, s
 func (s *SQLStore) ListSubtitleSources(provider string, limit int) ([]SubtitleSource, error) {
 	query := `SELECT id, source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at FROM subtitle_sources`
 	args := []interface{}{}
-	
+
 	if provider != "" {
 		query += ` WHERE provider = ?`
 		args = append(args, provider)
 	}
-	
+
 	query += ` ORDER BY last_seen DESC`
 	if limit > 0 {
 		query += ` LIMIT ?`
 		args = append(args, limit)
 	}
-	
+
 	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	var sources []SubtitleSource
 	for rows.Next() {
 		var src SubtitleSource
@@ -779,11 +779,11 @@ func (s *SQLStore) ListSubtitleSources(provider string, limit int) ([]SubtitleSo
 		var title, releaseInfo, metadata sql.NullString
 		var fileSize sql.NullInt64
 		var avgRating sql.NullFloat64
-		
+
 		if err := rows.Scan(&id, &src.SourceHash, &src.OriginalURL, &src.Provider, &title, &releaseInfo, &fileSize, &src.DownloadCount, &src.SuccessCount, &avgRating, &src.LastSeen, &metadata, &src.CreatedAt); err != nil {
 			return nil, err
 		}
-		
+
 		src.ID = strconv.FormatInt(id, 10)
 		if title.Valid {
 			src.Title = title.String
@@ -801,10 +801,10 @@ func (s *SQLStore) ListSubtitleSources(provider string, limit int) ([]SubtitleSo
 		if metadata.Valid {
 			src.Metadata = metadata.String
 		}
-		
+
 		sources = append(sources, src)
 	}
-	
+
 	return sources, rows.Err()
 }
 
