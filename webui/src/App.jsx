@@ -45,6 +45,7 @@ import {
   Typography,
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   NavLink,
   Route,
@@ -291,6 +292,7 @@ const createAppTheme = (isDarkMode = true, kidMode = false) =>
   });
 
 function App() {
+  const { t } = useTranslation();
   const basePath = getBasePath();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -373,60 +375,60 @@ function App() {
   const navigationItems = [
     {
       id: 'dashboard',
-      label: 'Dashboard',
+      label: t('nav.dashboard'),
       icon: <DashboardIcon />,
       path: '/dashboard',
     },
     {
       id: 'library',
-      label: 'Media Library',
+      label: t('nav.library'),
       icon: <LibraryIcon />,
       path: '/library',
     },
-    { id: 'wanted', label: 'Wanted', icon: <WantedIcon />, path: '/wanted' },
+    { id: 'wanted', label: t('nav.wanted'), icon: <WantedIcon />, path: '/wanted' },
     {
       id: 'history',
-      label: 'History',
+      label: t('nav.history'),
       icon: <HistoryIcon />,
       path: '/history',
     },
     {
       id: 'settings',
-      label: 'Settings',
+      label: t('nav.settings'),
       icon: <SettingsIcon />,
       path: '/settings',
     },
-    { id: 'system', label: 'System', icon: <SystemIcon />, path: '/system' },
+    { id: 'system', label: t('nav.system'), icon: <SystemIcon />, path: '/system' },
   ];
 
   const toolsItems = [
     {
       id: 'extract',
-      label: 'Extract',
+      label: t('nav.extract'),
       icon: <ExtractIcon />,
       path: '/tools/extract',
     },
     {
       id: 'convert',
-      label: 'Convert',
+      label: t('nav.convert'),
       icon: <ConvertIcon />,
       path: '/tools/convert',
     },
     {
       id: 'translate',
-      label: 'Translate',
+      label: t('nav.translate'),
       icon: <TranslateIcon />,
       path: '/tools/translate',
     },
     {
       id: 'scan',
-      label: 'Library Scan',
+      label: t('library.scan'),
       icon: <RefreshIcon />,
       path: '/tools/scan',
     },
     {
       id: 'scheduling',
-      label: 'Scheduling',
+      label: t('nav.scheduling'),
       icon: <ScheduleIcon />,
       path: '/tools/scheduling',
     },
@@ -521,7 +523,7 @@ function App() {
         >
           <CircularProgress size={60} sx={{ mb: 2 }} />
           <Typography variant="h6" color="text.secondary">
-            Connecting to Subtitle Manager...
+            Connecting to {t('app.title')}...
           </Typography>
         </Box>
       </ThemeProvider>
@@ -566,7 +568,7 @@ function App() {
                 Backend Unavailable
               </Typography>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                The Subtitle Manager backend service is currently not available.
+                The {t('app.title')} backend service is currently not available.
                 Please check that the server is running and try again.
               </Typography>
 
@@ -674,7 +676,7 @@ function App() {
                   gutterBottom
                   color="primary"
                 >
-                  Subtitle Manager
+                  {t('app.title')}
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
                   Sign in to access your subtitle management dashboard
@@ -825,7 +827,7 @@ function App() {
               component="div"
               sx={{ flexGrow: 1 }}
             >
-              Subtitle Manager
+              {t('app.title')}
             </Typography>
             <IconButton
               color="inherit"
