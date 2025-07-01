@@ -4,9 +4,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/sourcegraph/conc/pool"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/sourcegraph/conc/pool"
 
 	"github.com/jdfalk/subtitle-manager/pkg/cli"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"

@@ -123,9 +123,10 @@ export default function Dashboard({ backendAvailable = true }) {
     try {
       const response = await apiService.get('/api/tasks');
       if (response.ok) {
-        const data = typeof response.json === 'function' ? await response.json() : {};
+        const data =
+          typeof response.json === 'function' ? await response.json() : {};
         setTasks(data || {});
-        
+
         // Check if our current task is still running
         if (currentTaskId && data[currentTaskId]) {
           const task = data[currentTaskId];
@@ -226,7 +227,8 @@ export default function Dashboard({ backendAvailable = true }) {
       const body = { provider, directory: dir, lang };
       const response = await apiService.post('/api/scan', body);
       if (response.ok) {
-        const result = typeof response.json === 'function' ? await response.json() : {};
+        const result =
+          typeof response.json === 'function' ? await response.json() : {};
         if (result.task_id) {
           setCurrentTaskId(result.task_id);
         }
@@ -249,7 +251,7 @@ export default function Dashboard({ backendAvailable = true }) {
       loadProviders();
       loadSystemInfo();
       pollTasks();
-      
+
       // Set up regular task polling
       const taskInterval = setInterval(pollTasks, 2000);
       return () => clearInterval(taskInterval);
@@ -486,7 +488,7 @@ export default function Dashboard({ backendAvailable = true }) {
                   <LinearProgress variant="indeterminate" sx={{ mb: 1 }} />
                 </Box>
               )}
-              
+
               {/* Task-based progress indicators */}
               {currentTaskId && tasks[currentTaskId] && (
                 <Box sx={{ mb: 2 }}>
@@ -496,21 +498,30 @@ export default function Dashboard({ backendAvailable = true }) {
                   <TaskProgressIndicator task={tasks[currentTaskId]} />
                 </Box>
               )}
-              
+
               {/* Show other running tasks */}
-              {Object.values(tasks).filter(task => task.status === 'running' && task.id !== currentTaskId).length > 0 && (
+              {Object.values(tasks).filter(
+                task => task.status === 'running' && task.id !== currentTaskId
+              ).length > 0 && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle2" gutterBottom>
                     Other Running Tasks
                   </Typography>
                   {Object.values(tasks)
-                    .filter(task => task.status === 'running' && task.id !== currentTaskId)
+                    .filter(
+                      task =>
+                        task.status === 'running' && task.id !== currentTaskId
+                    )
                     .map(task => (
-                      <TaskProgressIndicator key={task.id} task={task} showDetails={false} />
+                      <TaskProgressIndicator
+                        key={task.id}
+                        task={task}
+                        showDetails={false}
+                      />
                     ))}
                 </Box>
               )}
-              
+
               {status.files.length > 0 && (
                 <Alert severity="info" sx={{ mt: 2 }}>
                   Found {status.files.length} files to process

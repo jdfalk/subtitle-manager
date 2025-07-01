@@ -37,13 +37,13 @@ func (p *ProgressBar) Update(file string) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.current++
-	
+
 	// Throttle updates to avoid excessive drawing
 	if time.Since(p.lastDraw) < 100*time.Millisecond && p.current < p.total {
 		return
 	}
 	p.lastDraw = time.Now()
-	
+
 	p.draw(file)
 }
 
@@ -61,21 +61,21 @@ func (p *ProgressBar) draw(file string) {
 	if p.total == 0 {
 		return
 	}
-	
+
 	percent := float64(p.current) / float64(p.total)
 	filled := int(percent * float64(p.width))
-	
+
 	bar := strings.Repeat("█", filled) + strings.Repeat("░", p.width-filled)
-	
+
 	// Truncate filename if too long
 	displayFile := file
 	maxFileLen := 30
 	if len(displayFile) > maxFileLen {
 		displayFile = "..." + displayFile[len(displayFile)-maxFileLen+3:]
 	}
-	
+
 	// Clear line and redraw
-	fmt.Fprintf(os.Stderr, "\r%s [%s] %d/%d (%.1f%%) %s", 
+	fmt.Fprintf(os.Stderr, "\r%s [%s] %d/%d (%.1f%%) %s",
 		p.prefix, bar, p.current, p.total, percent*100, displayFile)
 }
 
