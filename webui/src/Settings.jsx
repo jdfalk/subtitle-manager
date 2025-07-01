@@ -1,28 +1,28 @@
 // file: webui/src/Settings.jsx
 
 import {
-  Security as AuthIcon,
-  Storage as DatabaseIcon,
-  Settings as GeneralIcon,
-  CloudUpload as ImportIcon,
-  Language as LanguageIcon,
-  Notifications as NotificationIcon,
-  CloudDownload as ProvidersIcon,
-  Refresh as RefreshIcon,
-  Label as TagsIcon,
-  People as UsersIcon,
+    Security as AuthIcon,
+    Storage as DatabaseIcon,
+    Settings as GeneralIcon,
+    CloudUpload as ImportIcon,
+    Language as LanguageIcon,
+    Notifications as NotificationIcon,
+    CloudDownload as ProvidersIcon,
+    Refresh as RefreshIcon,
+    Label as TagsIcon,
+    People as UsersIcon
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  Paper,
-  Snackbar,
-  Tab,
-  Tabs,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Grid,
+    Paper,
+    Snackbar,
+    Tab,
+    Tabs,
+    Typography,
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
