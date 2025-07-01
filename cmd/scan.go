@@ -11,6 +11,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/cli"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/i18n"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
@@ -24,21 +25,24 @@ var scanCmd = &cobra.Command{
 	Short: "Scan directory and download subtitles",
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Set the short description with i18n after initialization
+		cmd.Short = i18n.T("cli.scan.short")
+		
 		logger := logging.GetLogger("scan")
 		dir, lang := args[0], args[1]
 
 		// Validate inputs before processing
 		if _, err := security.ValidateAndSanitizePath(dir); err != nil {
-			logger.Errorf("invalid directory path: %v", err)
+			logger.Errorf(i18n.T("common.error.invalid_path"), err)
 			return err
 		}
 
 		if err := security.ValidateLanguageCode(lang); err != nil {
-			logger.Errorf("invalid language code: %v", err)
+			logger.Errorf(i18n.T("common.error.invalid_lang"), err)
 			return err
 		}
 
-		logger.Infof("scanning %s", dir)
+		logger.Infof(i18n.T("cli.scan.scanning"), dir)
 		ctx := context.Background()
 		var store database.SubtitleStore
 		if dbPath := viper.GetString("db_path"); dbPath != "" {
@@ -47,7 +51,7 @@ var scanCmd = &cobra.Command{
 				store = s
 				defer s.Close()
 			} else {
-				logger.Warnf("db open: %v", err)
+				logger.Warnf(i18n.T("common.error.db_open"), err)
 			}
 		}
 		workers := viper.GetInt("scan_workers")

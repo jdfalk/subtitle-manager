@@ -30,6 +30,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/captcha"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/i18n"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
@@ -127,6 +128,10 @@ func init() {
 	rootCmd.PersistentFlags().String("anticaptcha-api-url", "", "Anti-Captcha API base URL")
 	viper.BindPFlag("anticaptcha.api_url", rootCmd.PersistentFlags().Lookup("anticaptcha-api-url"))
 
+	// Add language support
+	rootCmd.PersistentFlags().String("language", "en", "language for user interface (en, es, fr)")
+	viper.BindPFlag("language", rootCmd.PersistentFlags().Lookup("language"))
+
 	rootCmd.AddCommand(convertCmd)
 	rootCmd.AddCommand(mergeCmd)
 	rootCmd.AddCommand(translateCmd)
@@ -210,9 +215,18 @@ func initConfig() {
 	viper.SetDefault("db_cleanup_frequency", "daily")
 	viper.SetDefault("metadata_refresh_frequency", "weekly")
 	viper.SetDefault("disk_scan_frequency", "weekly")
+	viper.SetDefault("language", "en")
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+
+	// Initialize i18n
+	i18n.Initialize()
+	if lang := viper.GetString("language"); lang != "" {
+		if err := i18n.SetLanguage(lang); err != nil {
+			fmt.Printf("Warning: failed to set language %s: %v\n", lang, err)
+		}
 	}
 
 	level, err := logrus.ParseLevel(viper.GetString("log-level"))

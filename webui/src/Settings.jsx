@@ -25,7 +25,9 @@ import {
   Typography,
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ImportDialog from './components/ImportDialog.jsx';
+import LanguageSelector from './components/LanguageSelector.jsx';
 import LoadingComponent from './components/LoadingComponent.jsx';
 import ProviderCard from './components/ProviderCard.jsx';
 import ProviderConfigDialog from './components/ProviderConfigDialog.jsx';
@@ -53,6 +55,7 @@ const TagManagement = lazy(() => import('./TagManagement.jsx'));
  * @param {boolean} props.backendAvailable - Whether the backend service is available
  */
 export default function Settings({ backendAvailable = true }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState(0);
   const [_config, setConfig] = useState(null);
   const [providers, setProviders] = useState([]);
@@ -455,13 +458,38 @@ export default function Settings({ backendAvailable = true }) {
       ),
     },
     {
-      label: 'Language Profiles',
+      label: t('settings.language'),
       icon: <LanguageIcon />,
       component: () => (
         <Suspense
-          fallback={<LoadingComponent message="Loading Language Profiles..." />}
+          fallback={<LoadingComponent message={t('common.loading')} />}
         >
-          <LanguageProfiles backendAvailable={backendAvailable} />
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              {t('settings.title')}
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Paper elevation={1} sx={{ p: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Interface Language
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Choose your preferred language for the user interface.
+                  </Typography>
+                  <LanguageSelector />
+                </Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper elevation={1} sx={{ p: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Language Profiles
+                  </Typography>
+                  <LanguageProfiles backendAvailable={backendAvailable} />
+                </Paper>
+              </Grid>
+            </Grid>
+          </Box>
         </Suspense>
       ),
     },
