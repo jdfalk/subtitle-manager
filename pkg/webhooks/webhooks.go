@@ -49,6 +49,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/spf13/viper"
+
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
@@ -143,7 +146,20 @@ func handle(w http.ResponseWriter, r *http.Request, ev event) {
 			return
 		}
 	}
-	if err := scanner.ProcessFile(r.Context(), ev.Path, ev.Lang, name, p, true, nil); err != nil {
+
+	// Open database store for download tracking
+	var store database.SubtitleStore
+	if dbPath := viper.GetString("db_path"); dbPath != "" {
+		backend := viper.GetString("db_backend")
+		if s, err := database.OpenStore(dbPath, backend); err == nil {
+			store = s
+			defer s.Close()
+		} else {
+			logger.Warnf("failed to open database for download tracking: %v", err)
+		}
+	}
+
+	if err := scanner.ProcessFile(r.Context(), ev.Path, ev.Lang, name, p, true, store); err != nil {
 		logger.Warnf("process %s: %v", ev.Path, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
