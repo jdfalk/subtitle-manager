@@ -367,13 +367,9 @@ func ScoreSubtitles(subtitles []Subtitle, media MediaItem, profile Profile) []Sc
 	}
 
 	// Sort by total score (descending)
-	for i := 0; i < len(scored)-1; i++ {
-		for j := i + 1; j < len(scored); j++ {
-			if scored[i].Score.Total < scored[j].Score.Total {
-				scored[i], scored[j] = scored[j], scored[i]
-			}
-		}
-	}
+	sort.Slice(scored, func(i, j int) bool {
+		return scored[i].Score.Total > scored[j].Score.Total
+	})
 
 	return scored
 }
