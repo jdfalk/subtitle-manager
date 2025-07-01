@@ -6,7 +6,8 @@
 
 # TypeScript/JavaScript Style Guide (Google)
 
-This document summarizes Google's TypeScript and JavaScript style guides for use in code generation and review.
+This document summarizes Google's TypeScript and JavaScript style guides for use
+in code generation and review.
 
 ## Core Principles
 
@@ -28,13 +29,13 @@ This document summarizes Google's TypeScript and JavaScript style guides for use
 
 ```typescript
 // Named imports (preferred)
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
 
 // Default imports
-import React from "react";
+import React from 'react';
 
 // Namespace imports (when many symbols are used)
-import * as fs from "fs";
+import * as fs from 'fs';
 
 // Export syntax
 export class MyComponent {}
@@ -55,7 +56,7 @@ export default MyClass;
 
 ```typescript
 // Use camelCase for variables and functions
-const userName = "john";
+const userName = 'john';
 const maxRetryCount = 3;
 
 function calculateTotal(items: Item[]): number {
@@ -88,7 +89,7 @@ interface ApiResponse<T> {
 // Prefix interfaces with 'I' is discouraged in TypeScript
 // Use descriptive names instead
 interface UserSettings {
-  theme: "light" | "dark";
+  theme: 'light' | 'dark';
   notifications: boolean;
 }
 ```
@@ -98,7 +99,7 @@ interface UserSettings {
 ```typescript
 // Use SCREAMING_SNAKE_CASE for module-level constants
 const MAX_RETRY_ATTEMPTS = 3;
-const API_BASE_URL = "https://api.example.com";
+const API_BASE_URL = 'https://api.example.com';
 
 // Use camelCase for local constants
 const defaultTimeout = 5000;
@@ -118,9 +119,9 @@ enum HttpStatus {
 
 // Prefer string enums for better debugging
 enum Theme {
-  Light = "light",
-  Dark = "dark",
-  Auto = "auto",
+  Light = 'light',
+  Dark = 'dark',
+  Auto = 'auto',
 }
 ```
 
@@ -147,7 +148,7 @@ function identity<T>(arg: T): T {
 
 ```typescript
 // Let TypeScript infer simple types
-const message = "Hello, world!"; // string inferred
+const message = 'Hello, world!'; // string inferred
 const count = 42; // number inferred
 
 // Annotate when inference isn't clear
@@ -158,7 +159,7 @@ const config: Partial<Config> = {};
 const apiResponse: ApiResponse<User[]> = {
   data: users,
   status: 200,
-  message: "Success",
+  message: 'Success',
 };
 ```
 
@@ -179,7 +180,7 @@ const apiResponse: ApiResponse<User[]> = {
 - Always use semicolons to terminate statements
 
 ```typescript
-const message = "Hello, world!";
+const message = 'Hello, world!';
 doSomething();
 ```
 
@@ -189,7 +190,7 @@ doSomething();
 - Use template literals for string interpolation
 
 ```typescript
-const name = "John";
+const name = 'John';
 const greeting = `Hello, ${name}!`;
 ```
 
@@ -199,15 +200,15 @@ const greeting = `Hello, ${name}!`;
 
 ```typescript
 const config = {
-  apiUrl: "https://api.example.com",
+  apiUrl: 'https://api.example.com',
   timeout: 5000,
   retries: 3, // trailing comma
 };
 
 const items = [
-  "apple",
-  "banana",
-  "cherry", // trailing comma
+  'apple',
+  'banana',
+  'cherry', // trailing comma
 ];
 ```
 
@@ -228,7 +229,7 @@ interface AdminUser extends User {
 }
 
 // Use type aliases for unions, primitives, or computed types
-type Status = "pending" | "approved" | "rejected";
+type Status = 'pending' | 'approved' | 'rejected';
 type EventHandler<T> = (event: T) => void;
 type UserKeys = keyof User;
 ```
@@ -243,7 +244,7 @@ interface Identifiable {
 
 function updateEntity<T extends Identifiable>(
   entity: T,
-  updates: Partial<T>,
+  updates: Partial<T>
 ): T {
   return { ...entity, ...updates };
 }
@@ -255,8 +256,8 @@ function updateEntity<T extends Identifiable>(
 // Use built-in utility types
 type PartialUser = Partial<User>;
 type RequiredUser = Required<User>;
-type UserEmail = Pick<User, "email">;
-type UserWithoutId = Omit<User, "id">;
+type UserEmail = Pick<User, 'email'>;
+type UserWithoutId = Omit<User, 'id'>;
 ```
 
 ## Error Handling
@@ -268,10 +269,10 @@ type UserWithoutId = Omit<User, "id">;
 class ValidationError extends Error {
   constructor(
     message: string,
-    public readonly field: string,
+    public readonly field: string
   ) {
     super(message);
-    this.name = "ValidationError";
+    this.name = 'ValidationError';
   }
 }
 
@@ -298,19 +299,19 @@ async function fetchUser(id: string): Promise<Result<User>> {
 // Use strict null checks
 // Prefer undefined over null
 function findUser(id: string): User | undefined {
-  return users.find((user) => user.id === id);
+  return users.find(user => user.id === id);
 }
 
 // Use optional chaining and nullish coalescing
-const userName = user?.profile?.name ?? "Anonymous";
+const userName = user?.profile?.name ?? 'Anonymous';
 ```
 
 ### Array and Object Manipulation
 
 ```typescript
 // Use array methods instead of loops
-const activeUsers = users.filter((user) => user.isActive);
-const userNames = users.map((user) => user.name);
+const activeUsers = users.filter(user => user.isActive);
+const userNames = users.map(user => user.name);
 const totalAge = users.reduce((sum, user) => sum + user.age, 0);
 
 // Use object spread for copying
@@ -328,9 +329,9 @@ const [first, second, ...rest] = items;
 async function processUsers(): Promise<void> {
   try {
     const users = await fetchUsers();
-    await Promise.all(users.map((user) => processUser(user)));
+    await Promise.all(users.map(user => processUser(user)));
   } catch (error) {
-    logger.error("Failed to process users:", error);
+    logger.error('Failed to process users:', error);
     throw error;
   }
 }
@@ -357,8 +358,8 @@ function calculateTax(amount: number, rate: number): number {
 }
 
 // Use function overloads for different signatures
-function createElement(tag: "div"): HTMLDivElement;
-function createElement(tag: "span"): HTMLSpanElement;
+function createElement(tag: 'div'): HTMLDivElement;
+function createElement(tag: 'span'): HTMLSpanElement;
 function createElement(tag: string): HTMLElement {
   return document.createElement(tag);
 }
@@ -369,21 +370,21 @@ function createElement(tag: string): HTMLElement {
 ### Test Structure
 
 ```typescript
-describe("UserService", () => {
+describe('UserService', () => {
   let userService: UserService;
 
   beforeEach(() => {
     userService = new UserService();
   });
 
-  describe("validateUser", () => {
-    it("should return true for valid user", () => {
-      const user = { id: "1", name: "John", email: "john@example.com" };
+  describe('validateUser', () => {
+    it('should return true for valid user', () => {
+      const user = { id: '1', name: 'John', email: 'john@example.com' };
       expect(userService.validateUser(user)).toBe(true);
     });
 
-    it("should return false for invalid email", () => {
-      const user = { id: "1", name: "John", email: "invalid-email" };
+    it('should return false for invalid email', () => {
+      const user = { id: '1', name: 'John', email: 'invalid-email' };
       expect(userService.validateUser(user)).toBe(false);
     });
   });
@@ -404,7 +405,7 @@ describe("UserService", () => {
  */
 function calculateTotalPrice(basePrice: number, taxRate: number): number {
   if (basePrice < 0 || taxRate < 0) {
-    throw new ValidationError("Price and tax rate must be non-negative");
+    throw new ValidationError('Price and tax rate must be non-negative');
   }
   return basePrice * (1 + taxRate);
 }
@@ -453,4 +454,5 @@ if (user.lastLogin && Date.now() - user.lastLogin.getTime() > SESSION_TIMEOUT) {
 }
 ```
 
-This style guide should be used as the foundation for all TypeScript and JavaScript code generation and formatting decisions.
+This style guide should be used as the foundation for all TypeScript and
+JavaScript code generation and formatting decisions.

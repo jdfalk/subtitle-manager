@@ -80,12 +80,10 @@ describe('SubtitleManagerClient', () => {
     });
 
     test('should handle authentication error', async () => {
-      nock(baseURL)
-        .get('/api/system')
-        .reply(401, {
-          error: 'unauthorized',
-          message: 'Authentication required',
-        });
+      nock(baseURL).get('/api/system').reply(401, {
+        error: 'unauthorized',
+        message: 'Authentication required',
+      });
 
       await expect(client.getSystemInfo()).rejects.toThrow(AuthenticationError);
     });
@@ -358,12 +356,10 @@ describe('SubtitleManagerClient', () => {
     });
 
     test('should handle validation error', async () => {
-      nock(baseURL)
-        .post('/api/download')
-        .reply(400, {
-          error: 'validation_error',
-          message: 'Invalid request data',
-        });
+      nock(baseURL).post('/api/download').reply(400, {
+        error: 'validation_error',
+        message: 'Invalid request data',
+      });
 
       await expect(client.downloadSubtitles('', '')).rejects.toThrow(
         ValidationError

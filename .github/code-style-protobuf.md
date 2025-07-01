@@ -2,7 +2,10 @@
 
 ## Overview
 
-This style guide defines standards for Protocol Buffers in the GCommon project, focusing on Edition 2023 features with hybrid API support. We're transitioning from syntax-based protobuf to edition-based protobuf for better future-proofing and enhanced features.
+This style guide defines standards for Protocol Buffers in the GCommon project,
+focusing on Edition 2023 features with hybrid API support. We're transitioning
+from syntax-based protobuf to edition-based protobuf for better future-proofing
+and enhanced features.
 
 ## Table of Contents
 
@@ -558,7 +561,8 @@ message DeleteResponse {
 9. **Include audit trails** in all service operations
 10. **Design for extensibility** with reserved field numbers
 
-This style guide ensures consistency, maintainability, and future-proofing across all Protocol Buffer definitions in the GCommon project.
+This style guide ensures consistency, maintainability, and future-proofing
+across all Protocol Buffer definitions in the GCommon project.
 
 ## Message Design
 
@@ -1011,4 +1015,5 @@ message DeleteResponse {
 9. **Include audit trails** in all service operations
 10. **Design for extensibility** with reserved field numbers
 
-This style guide ensures consistency, maintainability, and future-proofing across all Protocol Buffer definitions in the GCommon project.
+This style guide ensures consistency, maintainability, and future-proofing
+across all Protocol Buffer definitions in the GCommon project.

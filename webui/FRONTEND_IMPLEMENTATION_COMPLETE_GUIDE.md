@@ -1,5 +1,7 @@
 # file: webui/FRONTEND_IMPLEMENTATION_COMPLETE_GUIDE.md
+
 # version: 1.0.0
+
 # guid: 11111111-2222-3333-4444-555555555555
 
 # Frontend Implementation Complete Guide
@@ -138,7 +140,7 @@ const checkBackendHealth = async () => {
   try {
     const response = await fetch('/api/health', {
       timeout: 10000,
-      signal: AbortSignal.timeout(10000)
+      signal: AbortSignal.timeout(10000),
     });
     return response.ok;
   } catch (error) {
@@ -153,10 +155,22 @@ const checkBackendHealth = async () => {
 ```javascript
 // Offline/Backend unavailable component
 const OfflineScreen = ({ onRetry, isRetrying }) => (
-  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 8 }}>
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      mt: 8,
+    }}
+  >
     <CloudOffIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-    <Typography variant="h4" gutterBottom>Backend Unavailable</Typography>
-    <Typography variant="body1" sx={{ mb: 3, textAlign: 'center', maxWidth: 400 }}>
+    <Typography variant="h4" gutterBottom>
+      Backend Unavailable
+    </Typography>
+    <Typography
+      variant="body1"
+      sx={{ mb: 3, textAlign: 'center', maxWidth: 400 }}
+    >
       Cannot connect to the Subtitle Manager backend service.
     </Typography>
     <Button variant="contained" onClick={onRetry} disabled={isRetrying}>
@@ -293,12 +307,14 @@ This section outlines the comprehensive overhaul of the Subtitle Manager web UI 
 #### 1. ✅ Provider System Completely Redesigned
 
 **Previous Issues:**
+
 - Only 4 hardcoded providers shown out of 48+ available
 - No dynamic provider loading
 - No provider configuration interface
 - No way to enable/disable providers
 
 **New Implementation:**
+
 - **Dynamic Provider Loading**: Fetches all 48+ providers from `/api/providers`
 - **Bazarr-Style Provider Cards**: Beautiful tile-based interface with:
   - Provider icons and descriptions
@@ -311,12 +327,14 @@ This section outlines the comprehensive overhaul of the Subtitle Manager web UI 
 #### 2. ✅ Settings Page Completely Rebuilt
 
 **Previous Issues:**
+
 - Generic text boxes showing `[object Object]`
 - No organization or structure
 - Impossible to configure providers properly
 - Terrible user experience
 
 **New Implementation:**
+
 - **Modern Tabbed Interface**:
   - Providers tab with card-based management
   - Full tabs for General, Database, Authentication and Notifications
@@ -331,12 +349,14 @@ This section outlines the comprehensive overhaul of the Subtitle Manager web UI 
 #### 3. ✅ Media Library with Integrated Extraction
 
 **Previous Issues:**
+
 - Separate extraction page was pointless
 - No integrated media file management
 - No way to see media files with their subtitles
 - No bulk operations
 
 **New Implementation:**
+
 - **New Media Library Component**:
   - File browser interface for media directories
   - File type detection and icons
@@ -516,33 +536,50 @@ async downloadFile(url, filename) {
 #### Core Components Migrated:
 
 1. **Convert.jsx**
+
    ```javascript
    // Before
-   const response = await fetch('/api/convert', { method: 'POST', body: formData });
+   const response = await fetch('/api/convert', {
+     method: 'POST',
+     body: formData,
+   });
 
    // After
    const response = await apiService.subtitles.convert(file);
    ```
 
 2. **Extract.jsx**
+
    ```javascript
    // Before
-   const response = await fetch('/api/extract', { method: 'POST', body: JSON.stringify({path}) });
+   const response = await fetch('/api/extract', {
+     method: 'POST',
+     body: JSON.stringify({ path }),
+   });
 
    // After
    const response = await apiService.subtitles.extract(filePath);
    ```
 
 3. **Translate.jsx**
+
    ```javascript
    // Before
-   const response = await fetch('/api/translate', { method: 'POST', body: formData });
+   const response = await fetch('/api/translate', {
+     method: 'POST',
+     body: formData,
+   });
 
    // After
-   const response = await apiService.subtitles.translate(file, targetLanguage, options);
+   const response = await apiService.subtitles.translate(
+     file,
+     targetLanguage,
+     options
+   );
    ```
 
 4. **UserManagement.jsx**
+
    ```javascript
    // Before
    const response = await fetch('/api/users');
@@ -552,15 +589,20 @@ async downloadFile(url, filename) {
    ```
 
 5. **Setup.jsx**
+
    ```javascript
    // Before
-   const response = await fetch('/api/setup', { method: 'POST', body: JSON.stringify(setupData) });
+   const response = await fetch('/api/setup', {
+     method: 'POST',
+     body: JSON.stringify(setupData),
+   });
 
    // After
    const response = await apiService.setup.initialize(setupData);
    ```
 
 6. **DatabaseSettings.jsx**
+
    ```javascript
    // Before
    const response = await fetch('/api/database/backup', { method: 'POST' });

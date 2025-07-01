@@ -14,22 +14,24 @@
 
 [Detailed list of changes made. Use bullet points for clarity]
 
-- **Added**: 
-- **Modified**: 
-- **Removed**: 
-- **Fixed**: 
+- **Added**:
+- **Modified**:
+- **Removed**:
+- **Fixed**:
 
 ## Testing
 
 [Describe how the changes were tested]
 
 ### Test Coverage
+
 - [ ] Unit tests added/updated
-- [ ] Integration tests added/updated  
+- [ ] Integration tests added/updated
 - [ ] Manual testing completed
 - [ ] All existing tests pass
 
 ### Testing Checklist
+
 - [ ] Tested on multiple environments (if applicable)
 - [ ] Tested edge cases and error conditions
 - [ ] Verified backward compatibility
@@ -74,29 +76,34 @@
 
 ## Related Issues
 
-[Link to related issues, use "Fixes #123" or "Closes #123" for issues this PR resolves]
+[Link to related issues, use "Fixes #123" or "Closes #123" for issues this PR
+resolves]
 
 ## Checklist
 
 Please review and check all applicable items:
 
 ### Code Quality
+
 - [ ] Code follows project style guidelines
 - [ ] Self-review completed
 - [ ] Code is properly documented
 - [ ] No debugging/temporary code left in
 
 ### Dependencies
+
 - [ ] No unnecessary dependencies added
 - [ ] All dependencies are properly declared
 - [ ] License compatibility checked
 
-### Git Hygiene  
+### Git Hygiene
+
 - [ ] Commit messages follow conventional format
 - [ ] No merge commits (rebased if necessary)
 - [ ] Branch is up to date with target branch
 
 ### Review Readiness
+
 - [ ] PR description is complete and accurate
 - [ ] All required information provided
 - [ ] Ready for review
