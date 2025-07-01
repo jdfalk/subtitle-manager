@@ -20,22 +20,22 @@ import (
 
 // Service provides comprehensive backup and restore operations.
 type Service struct {
-	manager        *BackupManager
-	dbBackupper    *DatabaseBackupper
-	configBackupper *ConfigBackupper
+	manager           *BackupManager
+	dbBackupper       *DatabaseBackupper
+	configBackupper   *ConfigBackupper
 	subtitleBackupper *SubtitleBackupper
-	logger         *logrus.Entry
+	logger            *logrus.Entry
 }
 
 // ServiceConfig holds configuration for the backup service.
 type ServiceConfig struct {
-	BackupPath        string
-	EnableEncryption  bool
-	EncryptionKey     []byte
-	EnableCompression bool
-	DatabaseStore     database.SubtitleStore
+	BackupPath         string
+	EnableEncryption   bool
+	EncryptionKey      []byte
+	EnableCompression  bool
+	DatabaseStore      database.SubtitleStore
 	EnableCloudStorage bool
-	CloudStorageType  string // "s3", "gcs", "multi"
+	CloudStorageType   string // "s3", "gcs", "multi"
 }
 
 // NewService creates a new backup service with the provided configuration.
@@ -96,7 +96,7 @@ func NewService(config ServiceConfig) (*Service, error) {
 // CreateFullBackup creates a comprehensive backup of all system data.
 func (s *Service) CreateFullBackup(ctx context.Context) (*Backup, error) {
 	s.logger.Info("Starting full backup")
-	
+
 	backupData := make(map[string][]byte)
 	contents := []string{}
 
@@ -267,7 +267,7 @@ func (s *Service) RotateBackups(ctx context.Context, maxAge time.Duration, maxCo
 	s.logger.Info("Starting backup rotation")
 
 	backups := s.manager.ListBackups()
-	
+
 	// Sort backups by creation time (newest first)
 	for i := 0; i < len(backups)-1; i++ {
 		for j := i + 1; j < len(backups); j++ {

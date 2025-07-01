@@ -46,12 +46,12 @@ func (cs *CloudStorage) Store(ctx context.Context, data []byte, filename string)
 	// Create full path with timestamp and prefix
 	timestamp := time.Now().Format("20060102-150405")
 	fullPath := fmt.Sprintf("%s/%s-%s", cs.prefix, timestamp, filename)
-	
+
 	cloudPath, err := cs.provider.Upload(ctx, data, fullPath)
 	if err != nil {
 		return "", fmt.Errorf("failed to upload to cloud storage: %w", err)
 	}
-	
+
 	return cloudPath, nil
 }
 
@@ -61,7 +61,7 @@ func (cs *CloudStorage) Retrieve(ctx context.Context, path string) ([]byte, erro
 	if err != nil {
 		return nil, fmt.Errorf("failed to download from cloud storage: %w", err)
 	}
-	
+
 	return data, nil
 }
 
@@ -70,7 +70,7 @@ func (cs *CloudStorage) Delete(ctx context.Context, path string) error {
 	if err := cs.provider.Delete(ctx, path); err != nil {
 		return fmt.Errorf("failed to delete from cloud storage: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -80,7 +80,7 @@ func (cs *CloudStorage) List(ctx context.Context) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to list cloud storage: %w", err)
 	}
-	
+
 	return files, nil
 }
 
@@ -170,7 +170,7 @@ func (gcs *GCSProvider) List(ctx context.Context, prefix string) ([]string, erro
 // NewCloudStorageFromConfig creates cloud storage from configuration.
 func NewCloudStorageFromConfig() (Storage, error) {
 	cloudType := viper.GetString("backup_cloud_type")
-	
+
 	switch strings.ToLower(cloudType) {
 	case "s3":
 		return newS3StorageFromConfig()
@@ -188,11 +188,11 @@ func newS3StorageFromConfig() (Storage, error) {
 	endpoint := viper.GetString("backup_cloud_s3_endpoint")
 	bucket := viper.GetString("backup_cloud_s3_bucket")
 	prefix := viper.GetString("backup_cloud_s3_prefix")
-	
+
 	if region == "" || bucket == "" {
 		return nil, fmt.Errorf("S3 region and bucket are required")
 	}
-	
+
 	provider := NewS3Provider(region, accessKey, secretKey, endpoint)
 	return NewCloudStorage(provider, bucket, prefix), nil
 }
@@ -202,11 +202,11 @@ func newGCSStorageFromConfig() (Storage, error) {
 	keyFile := viper.GetString("backup_cloud_gcs_key_file")
 	bucket := viper.GetString("backup_cloud_gcs_bucket")
 	prefix := viper.GetString("backup_cloud_gcs_prefix")
-	
+
 	if projectID == "" || bucket == "" {
 		return nil, fmt.Errorf("GCS project ID and bucket are required")
 	}
-	
+
 	provider := NewGCSProvider(projectID, keyFile)
 	return NewCloudStorage(provider, bucket, prefix), nil
 }
@@ -232,7 +232,7 @@ func (ms *MultiStorage) Store(ctx context.Context, data []byte, filename string)
 	if err != nil {
 		return "", fmt.Errorf("failed to store to primary storage: %w", err)
 	}
-	
+
 	// Store to secondary storage (best effort)
 	if ms.secondary != nil {
 		if _, err := ms.secondary.Store(ctx, data, filename); err != nil {
@@ -241,7 +241,7 @@ func (ms *MultiStorage) Store(ctx context.Context, data []byte, filename string)
 			fmt.Printf("Warning: failed to store to secondary storage: %v\n", err)
 		}
 	}
-	
+
 	return primaryPath, nil
 }
 
@@ -252,7 +252,7 @@ func (ms *MultiStorage) Retrieve(ctx context.Context, path string) ([]byte, erro
 	if err == nil {
 		return data, nil
 	}
-	
+
 	// Fallback to secondary storage
 	if ms.secondary != nil {
 		data, err := ms.secondary.Retrieve(ctx, path)
@@ -260,7 +260,7 @@ func (ms *MultiStorage) Retrieve(ctx context.Context, path string) ([]byte, erro
 			return data, nil
 		}
 	}
-	
+
 	return nil, fmt.Errorf("failed to retrieve from both storages")
 }
 
@@ -268,18 +268,18 @@ func (ms *MultiStorage) Retrieve(ctx context.Context, path string) ([]byte, erro
 func (ms *MultiStorage) Delete(ctx context.Context, path string) error {
 	// Delete from primary storage
 	err1 := ms.primary.Delete(ctx, path)
-	
+
 	// Delete from secondary storage
 	var err2 error
 	if ms.secondary != nil {
 		err2 = ms.secondary.Delete(ctx, path)
 	}
-	
+
 	// Return error if both failed
 	if err1 != nil && err2 != nil {
 		return fmt.Errorf("failed to delete from both storages: primary=%v, secondary=%v", err1, err2)
 	}
-	
+
 	return nil
 }
 

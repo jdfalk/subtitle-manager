@@ -25,8 +25,8 @@ import (
 
 // Errors
 var (
-	ErrBackupNotFound    = errors.New("backup not found")
-	ErrChecksumMismatch  = errors.New("backup checksum mismatch")
+	ErrBackupNotFound   = errors.New("backup not found")
+	ErrChecksumMismatch = errors.New("backup checksum mismatch")
 )
 
 // BackupType represents the type of backup.
@@ -36,7 +36,7 @@ const (
 	BackupTypeDatabase      BackupType = "database"
 	BackupTypeConfiguration BackupType = "configuration"
 	BackupTypeSubtitles     BackupType = "subtitles"
-	BackupTypeFull         BackupType = "full"
+	BackupTypeFull          BackupType = "full"
 )
 
 // Backup represents a comprehensive backup with metadata.
@@ -156,7 +156,7 @@ func (bm *BackupManager) CreateBackup(ctx context.Context, backupType BackupType
 func (bm *BackupManager) ListBackups() []*Backup {
 	bm.mu.RLock()
 	defer bm.mu.RUnlock()
-	
+
 	backups := make([]*Backup, 0, len(bm.backups))
 	for _, backup := range bm.backups {
 		backups = append(backups, backup)
@@ -168,7 +168,7 @@ func (bm *BackupManager) ListBackups() []*Backup {
 func (bm *BackupManager) GetBackup(id string) (*Backup, bool) {
 	bm.mu.RLock()
 	defer bm.mu.RUnlock()
-	
+
 	backup, exists := bm.backups[id]
 	return backup, exists
 }
@@ -268,11 +268,11 @@ func Create() Backup {
 		Size:      0,
 		Contents:  []string{},
 	}
-	
+
 	defaultManager.mu.Lock()
 	defaultManager.backups[backup.ID] = &backup
 	defaultManager.mu.Unlock()
-	
+
 	return backup
 }
 

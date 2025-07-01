@@ -177,10 +177,10 @@ func (h *Handlers) RotateBackupsHandler() http.Handler {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"status":      "success",
-			"message":     "Backup rotation completed",
-			"maxAgeDays":  maxAgeDays,
-			"maxCount":    maxCount,
+			"status":     "success",
+			"message":    "Backup rotation completed",
+			"maxAgeDays": maxAgeDays,
+			"maxCount":   maxCount,
 		})
 	})
 }
