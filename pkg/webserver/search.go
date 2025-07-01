@@ -103,8 +103,18 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Define a safe directory for media files
+	const safeDir = "/path/to/safe/media/directory/"
+
+	// Resolve the media path to an absolute path
+	absMediaPath, err := filepath.Abs(req.MediaPath)
+	if err != nil || !strings.HasPrefix(absMediaPath, safeDir) {
+		http.Error(w, "Invalid media path", http.StatusBadRequest)
+		return
+	}
+
 	// Check if media file exists
-	if _, err := os.Stat(req.MediaPath); os.IsNotExist(err) {
+	if _, err := os.Stat(absMediaPath); os.IsNotExist(err) {
 		http.Error(w, "Media file not found", http.StatusNotFound)
 		return
 	}
