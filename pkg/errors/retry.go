@@ -37,7 +37,7 @@ func NewRetrier(config *RetryConfig) *Retrier {
 	if config == nil {
 		config = DefaultRetryConfig()
 	}
-	
+
 	return &Retrier{
 		config: config,
 		logger: logging.GetLogger("retry"),
@@ -49,7 +49,7 @@ func (r *Retrier) Retry(ctx context.Context, operation string, fn RetryFunc) *Re
 	startTime := time.Now()
 	var lastErr error
 	var result any
-	
+
 	for attempt := 1; attempt <= r.config.MaxAttempts; attempt++ {
 		// Check if context is cancelled
 		select {
@@ -63,7 +63,7 @@ func (r *Retrier) Retry(ctx context.Context, operation string, fn RetryFunc) *Re
 			}
 		default:
 		}
-		
+
 		// Execute the function
 		value, err := fn(ctx)
 		if err == nil {
@@ -73,7 +73,7 @@ func (r *Retrier) Retry(ctx context.Context, operation string, fn RetryFunc) *Re
 				"attempts":  attempt,
 				"duration":  time.Since(startTime),
 			}).Info("Operation succeeded after retry")
-			
+
 			return &RetryResult{
 				Value:     value,
 				Err:       nil,
@@ -82,9 +82,9 @@ func (r *Retrier) Retry(ctx context.Context, operation string, fn RetryFunc) *Re
 				Succeeded: true,
 			}
 		}
-		
+
 		lastErr = err
-		
+
 		// Check if error is retryable
 		if !r.shouldRetry(err) {
 			r.logger.WithFields(map[string]interface{}{
@@ -93,7 +93,7 @@ func (r *Retrier) Retry(ctx context.Context, operation string, fn RetryFunc) *Re
 				"error":     err.Error(),
 				"duration":  time.Since(startTime),
 			}).Warn("Operation failed with non-retryable error")
-			
+
 			return &RetryResult{
 				Value:     result,
 				Err:       err,
@@ -102,22 +102,22 @@ func (r *Retrier) Retry(ctx context.Context, operation string, fn RetryFunc) *Re
 				Succeeded: false,
 			}
 		}
-		
+
 		// If this was the last attempt, don't wait
 		if attempt == r.config.MaxAttempts {
 			break
 		}
-		
+
 		// Calculate backoff delay
 		delay := r.calculateDelay(attempt)
-		
+
 		r.logger.WithFields(map[string]interface{}{
 			"operation": operation,
 			"attempt":   attempt,
 			"error":     err.Error(),
 			"delay":     delay,
 		}).Warn("Operation failed, retrying")
-		
+
 		// Wait before retrying
 		select {
 		case <-ctx.Done():
@@ -131,15 +131,15 @@ func (r *Retrier) Retry(ctx context.Context, operation string, fn RetryFunc) *Re
 		case <-time.After(delay):
 		}
 	}
-	
+
 	// All attempts failed
 	r.logger.WithFields(map[string]interface{}{
-		"operation":     operation,
+		"operation":      operation,
 		"total_attempts": r.config.MaxAttempts,
-		"final_error":   lastErr.Error(),
-		"duration":      time.Since(startTime),
+		"final_error":    lastErr.Error(),
+		"duration":       time.Since(startTime),
 	}).Error("Operation failed after all retry attempts")
-	
+
 	return &RetryResult{
 		Value:     result,
 		Err:       fmt.Errorf("operation failed after %d attempts: %w", r.config.MaxAttempts, lastErr),
@@ -155,7 +155,7 @@ func (r *Retrier) shouldRetry(err error) bool {
 	if appErr, ok := err.(*AppError); ok {
 		return appErr.IsRetryable()
 	}
-	
+
 	// For non-AppErrors, be conservative and don't retry by default
 	return false
 }
@@ -164,23 +164,23 @@ func (r *Retrier) shouldRetry(err error) bool {
 func (r *Retrier) calculateDelay(attempt int) time.Duration {
 	// Calculate exponential backoff: initialDelay * (backoffFactor ^ (attempt - 1))
 	delay := float64(r.config.InitialDelay) * math.Pow(r.config.BackoffFactor, float64(attempt-1))
-	
+
 	// Cap at maximum delay
 	if delay > float64(r.config.MaxDelay) {
 		delay = float64(r.config.MaxDelay)
 	}
-	
+
 	return time.Duration(delay)
 }
 
 // CircuitBreaker provides circuit breaker functionality to prevent cascading failures.
 type CircuitBreaker struct {
-	maxFailures    int
-	resetTimeout   time.Duration
-	failureCount   int
+	maxFailures     int
+	resetTimeout    time.Duration
+	failureCount    int
 	lastFailureTime time.Time
-	state          CircuitState
-	logger         *logrus.Entry
+	state           CircuitState
+	logger          *logrus.Entry
 }
 
 // CircuitState represents the state of a circuit breaker.
@@ -240,22 +240,22 @@ func (cb *CircuitBreaker) Execute(ctx context.Context, operation string, fn Retr
 				nil,
 			)
 		}
-		
+
 	case CircuitHalfOpen:
 		// Allow one request through
-		
+
 	case CircuitClosed:
 		// Normal operation
 	}
-	
+
 	// Execute the function
 	result, err := fn(ctx)
-	
+
 	if err != nil {
 		cb.recordFailure(operation)
 		return nil, err
 	}
-	
+
 	cb.recordSuccess(operation)
 	return result, nil
 }
@@ -264,7 +264,7 @@ func (cb *CircuitBreaker) Execute(ctx context.Context, operation string, fn Retr
 func (cb *CircuitBreaker) recordFailure(operation string) {
 	cb.failureCount++
 	cb.lastFailureTime = time.Now()
-	
+
 	if cb.failureCount >= cb.maxFailures && cb.state == CircuitClosed {
 		cb.state = CircuitOpen
 		cb.logger.WithFields(map[string]interface{}{

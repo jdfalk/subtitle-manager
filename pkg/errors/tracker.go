@@ -27,11 +27,11 @@ type ErrorStats struct {
 
 // ErrorTracker tracks application errors for monitoring and alerting.
 type ErrorTracker struct {
-	mu     sync.RWMutex
-	stats  map[ErrorCode]*ErrorStats
-	recent []ErrorEvent
+	mu              sync.RWMutex
+	stats           map[ErrorCode]*ErrorStats
+	recent          []ErrorEvent
 	maxRecentEvents int
-	logger *logrus.Entry
+	logger          *logrus.Entry
 }
 
 // ErrorEvent represents a single error occurrence.
@@ -57,9 +57,9 @@ func NewErrorTracker(maxRecentEvents int) *ErrorTracker {
 func (et *ErrorTracker) TrackError(appErr *AppError) {
 	et.mu.Lock()
 	defer et.mu.Unlock()
-	
+
 	now := time.Now()
-	
+
 	// Update or create stats
 	stats, exists := et.stats[appErr.Code]
 	if !exists {
@@ -71,10 +71,10 @@ func (et *ErrorTracker) TrackError(appErr *AppError) {
 		}
 		et.stats[appErr.Code] = stats
 	}
-	
+
 	stats.Count++
 	stats.LastOccurred = now
-	
+
 	// Add to recent events
 	event := ErrorEvent{
 		Timestamp: now,
@@ -83,16 +83,16 @@ func (et *ErrorTracker) TrackError(appErr *AppError) {
 		UserMsg:   appErr.UserMsg,
 		Context:   appErr.Context,
 	}
-	
+
 	et.recent = append(et.recent, event)
-	
+
 	// Keep only the most recent events
 	if len(et.recent) > et.maxRecentEvents {
 		// Remove oldest events
 		copy(et.recent, et.recent[len(et.recent)-et.maxRecentEvents:])
 		et.recent = et.recent[:et.maxRecentEvents]
 	}
-	
+
 	// Log the tracking
 	et.logger.WithFields(map[string]interface{}{
 		"error_code":    appErr.Code,
@@ -105,14 +105,14 @@ func (et *ErrorTracker) TrackError(appErr *AppError) {
 func (et *ErrorTracker) GetStats() map[ErrorCode]*ErrorStats {
 	et.mu.RLock()
 	defer et.mu.RUnlock()
-	
+
 	// Create a copy to avoid race conditions
 	result := make(map[ErrorCode]*ErrorStats, len(et.stats))
 	for code, stats := range et.stats {
 		statsCopy := *stats
 		result[code] = &statsCopy
 	}
-	
+
 	return result
 }
 
@@ -120,25 +120,25 @@ func (et *ErrorTracker) GetStats() map[ErrorCode]*ErrorStats {
 func (et *ErrorTracker) GetRecentEvents(limit int) []ErrorEvent {
 	et.mu.RLock()
 	defer et.mu.RUnlock()
-	
+
 	if limit <= 0 || limit > len(et.recent) {
 		limit = len(et.recent)
 	}
-	
+
 	// Return the most recent events (from the end of the slice)
 	start := len(et.recent) - limit
 	if start < 0 {
 		start = 0
 	}
-	
+
 	result := make([]ErrorEvent, limit)
 	copy(result, et.recent[start:])
-	
+
 	// Reverse to get newest first
 	for i := 0; i < len(result)/2; i++ {
 		result[i], result[len(result)-1-i] = result[len(result)-1-i], result[i]
 	}
-	
+
 	return result
 }
 
@@ -146,22 +146,22 @@ func (et *ErrorTracker) GetRecentEvents(limit int) []ErrorEvent {
 func (et *ErrorTracker) GetTopErrors(limit int) []*ErrorStats {
 	et.mu.RLock()
 	defer et.mu.RUnlock()
-	
+
 	// Convert to slice and sort by count
 	statsList := make([]*ErrorStats, 0, len(et.stats))
 	for _, stats := range et.stats {
 		statsCopy := *stats
 		statsList = append(statsList, &statsCopy)
 	}
-	
+
 	sort.Slice(statsList, func(i, j int) bool {
 		return statsList[i].Count > statsList[j].Count
 	})
-	
+
 	if limit > 0 && limit < len(statsList) {
 		statsList = statsList[:limit]
 	}
-	
+
 	return statsList
 }
 
@@ -169,10 +169,10 @@ func (et *ErrorTracker) GetTopErrors(limit int) []*ErrorStats {
 func (et *ErrorTracker) Reset() {
 	et.mu.Lock()
 	defer et.mu.Unlock()
-	
+
 	et.stats = make(map[ErrorCode]*ErrorStats)
 	et.recent = et.recent[:0]
-	
+
 	et.logger.Info("Error tracker reset")
 }
 
@@ -192,9 +192,9 @@ func NewErrorDashboard(tracker *ErrorTracker) *ErrorDashboard {
 func (ed *ErrorDashboard) StatsHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		stats := ed.tracker.GetStats()
-		
+
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		if err := json.NewEncoder(w).Encode(stats); err != nil {
 			http.Error(w, "Failed to encode stats", http.StatusInternalServerError)
 			return
@@ -206,18 +206,18 @@ func (ed *ErrorDashboard) StatsHandler() http.Handler {
 func (ed *ErrorDashboard) RecentHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		limit := 50 // Default limit
-		
+
 		// Parse limit from query parameter if provided
 		if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
 			if parsed, err := time.ParseDuration(limitStr); err == nil {
 				limit = int(parsed)
 			}
 		}
-		
+
 		events := ed.tracker.GetRecentEvents(limit)
-		
+
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		if err := json.NewEncoder(w).Encode(events); err != nil {
 			http.Error(w, "Failed to encode events", http.StatusInternalServerError)
 			return
@@ -229,18 +229,18 @@ func (ed *ErrorDashboard) RecentHandler() http.Handler {
 func (ed *ErrorDashboard) TopErrorsHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		limit := 10 // Default limit
-		
+
 		// Parse limit from query parameter if provided
 		if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
 			if parsed, err := time.ParseDuration(limitStr); err == nil {
 				limit = int(parsed)
 			}
 		}
-		
+
 		topErrors := ed.tracker.GetTopErrors(limit)
-		
+
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		if err := json.NewEncoder(w).Encode(topErrors); err != nil {
 			http.Error(w, "Failed to encode top errors", http.StatusInternalServerError)
 			return
@@ -252,28 +252,28 @@ func (ed *ErrorDashboard) TopErrorsHandler() http.Handler {
 func (ed *ErrorDashboard) HealthHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		stats := ed.tracker.GetStats()
-		
+
 		// Calculate health metrics
 		var totalErrors int
 		var criticalErrors int
 		recentThreshold := time.Now().Add(-5 * time.Minute)
-		
+
 		for _, stat := range stats {
 			totalErrors += stat.Count
-			
+
 			// Count recent critical errors (5xx status codes)
 			if stat.LastOccurred.After(recentThreshold) && !stat.Retryable {
 				criticalErrors += stat.Count
 			}
 		}
-		
+
 		health := map[string]interface{}{
-			"total_errors":            totalErrors,
-			"critical_errors_recent":  criticalErrors,
-			"unique_error_types":      len(stats),
-			"timestamp":               time.Now(),
+			"total_errors":           totalErrors,
+			"critical_errors_recent": criticalErrors,
+			"unique_error_types":     len(stats),
+			"timestamp":              time.Now(),
 		}
-		
+
 		// Determine health status
 		status := "healthy"
 		if criticalErrors > 10 {
@@ -282,9 +282,9 @@ func (ed *ErrorDashboard) HealthHandler() http.Handler {
 			status = "warning"
 		}
 		health["status"] = status
-		
+
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		if err := json.NewEncoder(w).Encode(health); err != nil {
 			http.Error(w, "Failed to encode health", http.StatusInternalServerError)
 			return

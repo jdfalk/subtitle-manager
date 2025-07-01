@@ -16,80 +16,80 @@ func TestDefaultErrorHandler_Handle(t *testing.T) {
 	handler := NewDefaultErrorHandler("test")
 
 	tests := []struct {
-		name           string
-		err            error
-		expectCode     ErrorCode
-		expectStatus   int
+		name            string
+		err             error
+		expectCode      ErrorCode
+		expectStatus    int
 		expectRetryable bool
 	}{
 		{
-			name:           "nil error",
-			err:            nil,
-			expectCode:     "",
-			expectStatus:   200,
+			name:            "nil error",
+			err:             nil,
+			expectCode:      "",
+			expectStatus:    200,
 			expectRetryable: false,
 		},
 		{
-			name:           "existing AppError",
-			err:            NewAppError(CodeProviderTimeout, "Test", "User test", nil),
-			expectCode:     CodeProviderTimeout,
-			expectStatus:   503,
+			name:            "existing AppError",
+			err:             NewAppError(CodeProviderTimeout, "Test", "User test", nil),
+			expectCode:      CodeProviderTimeout,
+			expectStatus:    503,
 			expectRetryable: true,
 		},
 		{
-			name:           "timeout error",
-			err:            errors.New("connection timeout"),
-			expectCode:     CodeNetworkTimeout,
-			expectStatus:   503,
+			name:            "timeout error",
+			err:             errors.New("connection timeout"),
+			expectCode:      CodeNetworkTimeout,
+			expectStatus:    503,
 			expectRetryable: true,
 		},
 		{
-			name:           "connection refused error",
-			err:            errors.New("connection refused"),
-			expectCode:     CodeNetworkUnreachable,
-			expectStatus:   503,
+			name:            "connection refused error",
+			err:             errors.New("connection refused"),
+			expectCode:      CodeNetworkUnreachable,
+			expectStatus:    503,
 			expectRetryable: true,
 		},
 		{
-			name:           "dns error",
-			err:            errors.New("no such host"),
-			expectCode:     CodeNetworkDNS,
-			expectStatus:   503,
+			name:            "dns error",
+			err:             errors.New("no such host"),
+			expectCode:      CodeNetworkDNS,
+			expectStatus:    503,
 			expectRetryable: true,
 		},
 		{
-			name:           "database error",
-			err:            errors.New("database connection failed"),
-			expectCode:     CodeSystemDatabase,
-			expectStatus:   500,
+			name:            "database error",
+			err:             errors.New("database connection failed"),
+			expectCode:      CodeSystemDatabase,
+			expectStatus:    500,
 			expectRetryable: false,
 		},
 		{
-			name:           "file error",
-			err:            errors.New("no such file or directory"),
-			expectCode:     CodeSystemFileIO,
-			expectStatus:   500,
+			name:            "file error",
+			err:             errors.New("no such file or directory"),
+			expectCode:      CodeSystemFileIO,
+			expectStatus:    500,
 			expectRetryable: false,
 		},
 		{
-			name:           "unauthorized error",
-			err:            errors.New("unauthorized access"),
-			expectCode:     CodeAuthInvalid,
-			expectStatus:   401,
+			name:            "unauthorized error",
+			err:             errors.New("unauthorized access"),
+			expectCode:      CodeAuthInvalid,
+			expectStatus:    401,
 			expectRetryable: false,
 		},
 		{
-			name:           "rate limit error",
-			err:            errors.New("rate limit exceeded"),
-			expectCode:     CodeProviderRateLimit,
-			expectStatus:   503,
+			name:            "rate limit error",
+			err:             errors.New("rate limit exceeded"),
+			expectCode:      CodeProviderRateLimit,
+			expectStatus:    503,
 			expectRetryable: true,
 		},
 		{
-			name:           "unknown error",
-			err:            errors.New("some unknown error"),
-			expectCode:     CodeSystemInternal,
-			expectStatus:   500,
+			name:            "unknown error",
+			err:             errors.New("some unknown error"),
+			expectCode:      CodeSystemInternal,
+			expectStatus:    500,
 			expectRetryable: false,
 		},
 	}
@@ -255,23 +255,23 @@ func TestCategorizeError(t *testing.T) {
 func TestConvenienceFunctions(t *testing.T) {
 	// Test the global convenience functions
 	ctx := context.Background()
-	
+
 	// Test Handle function
 	err := errors.New("test error")
 	response := Handle(ctx, err)
-	
+
 	if response.Error == nil {
 		t.Fatal("Expected error in response")
 	}
-	
+
 	// Test Recover function
 	recovered := "test panic"
 	response = Recover(ctx, recovered)
-	
+
 	if response.Error == nil {
 		t.Fatal("Expected error in response")
 	}
-	
+
 	if response.Error.Code != CodeSystemInternal {
 		t.Errorf("Expected error code %s, got %s", CodeSystemInternal, response.Error.Code)
 	}
@@ -280,18 +280,18 @@ func TestConvenienceFunctions(t *testing.T) {
 func TestErrorHandlerInterface(t *testing.T) {
 	// Ensure DefaultErrorHandler implements ErrorHandler interface
 	var _ ErrorHandler = &DefaultErrorHandler{}
-	
+
 	// Test that the interface methods work
 	handler := NewDefaultErrorHandler("test")
 	ctx := context.Background()
-	
+
 	// Test Handle method through interface
 	var errorHandler ErrorHandler = handler
 	response := errorHandler.Handle(ctx, errors.New("test"))
 	if response.Error == nil {
 		t.Error("Expected error in response")
 	}
-	
+
 	// Test Recover method through interface
 	response = errorHandler.Recover(ctx, "test panic")
 	if response.Error == nil {
@@ -302,16 +302,16 @@ func TestErrorHandlerInterface(t *testing.T) {
 func TestErrorMessageBuilding(t *testing.T) {
 	// Test error message construction in categorizeError
 	handler := NewDefaultErrorHandler("test")
-	
+
 	originalErr := errors.New("original error message")
 	appErr := handler.categorizeError(originalErr)
-	
+
 	// Check that error message includes the original error
 	errorStr := appErr.Error()
 	if !strings.Contains(errorStr, "original error message") {
 		t.Errorf("Expected error string to contain original message, got: %s", errorStr)
 	}
-	
+
 	// Check that it follows the expected format
 	expectedFormat := fmt.Sprintf("%s:", appErr.Code)
 	if !strings.HasPrefix(errorStr, expectedFormat) {
