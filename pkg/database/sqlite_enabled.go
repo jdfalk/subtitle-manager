@@ -275,12 +275,50 @@ func initSchema(db *sql.DB) error {
 		return err
 	}
 
-	// Media profile assignments table
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_profile_assignments (
         media_id TEXT PRIMARY KEY,
         profile_id TEXT NOT NULL,
         created_at TIMESTAMP NOT NULL
     )`); err != nil {
+		return err
+	}
+
+	// Create indexes for language profiles
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_language_profiles_is_default ON language_profiles(is_default)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_language_profile_assignments_media_path ON language_profile_assignments(media_path)`); err != nil {
+		return err
+	}
+
+	// Subtitle scoring table
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS subtitle_scores (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subtitle_id TEXT NOT NULL,
+        provider_name TEXT NOT NULL,
+        language_match REAL NOT NULL DEFAULT 0.0,
+        provider_rank REAL NOT NULL DEFAULT 0.0,
+        release_match REAL NOT NULL DEFAULT 0.0,
+        format_match REAL NOT NULL DEFAULT 0.0,
+        user_rating REAL NOT NULL DEFAULT 0.0,
+        download_count INTEGER NOT NULL DEFAULT 0,
+        total_score REAL NOT NULL DEFAULT 0.0,
+        score_version TEXT NOT NULL DEFAULT '1.0',
+        metadata TEXT NOT NULL DEFAULT '{}',
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
+	// Create indexes for subtitle scores
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_subtitle_scores_subtitle_id ON subtitle_scores(subtitle_id)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_subtitle_scores_total_score ON subtitle_scores(total_score DESC)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_subtitle_scores_provider ON subtitle_scores(provider_name)`); err != nil {
 		return err
 	}
 
