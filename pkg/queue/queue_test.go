@@ -231,3 +231,43 @@ func TestQueueConcurrency(t *testing.T) {
 
 	assert.Equal(t, 5, finalCount, "all jobs should have been executed")
 }
+
+// TestQueueRestartCycle tests that the queue can be restarted after being stopped.
+func TestQueueRestartCycle(t *testing.T) {
+	q := NewQueue(1)
+
+	// First cycle: Start -> Stop
+	err := q.Start()
+	require.NoError(t, err)
+	assert.True(t, q.IsRunning())
+
+	err = q.Stop()
+	require.NoError(t, err)
+	assert.False(t, q.IsRunning())
+
+	// Second cycle: Start -> Stop (should work after previous stop)
+	err = q.Start()
+	require.NoError(t, err)
+	assert.True(t, q.IsRunning())
+
+	// Test that jobs can be processed in the restarted queue
+	job := &mockJob{
+		id:          "restart-test-job",
+		jobType:     JobTypeSingleFile,
+		description: "restart cycle test job",
+		executeFunc: func(ctx context.Context) error {
+			time.Sleep(50 * time.Millisecond)
+			return nil
+		},
+	}
+
+	_, err = q.Add(job)
+	require.NoError(t, err)
+
+	// Give time for job to process
+	time.Sleep(100 * time.Millisecond)
+
+	err = q.Stop()
+	require.NoError(t, err)
+	assert.False(t, q.IsRunning())
+}

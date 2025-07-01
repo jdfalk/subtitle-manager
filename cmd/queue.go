@@ -4,8 +4,12 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/spf13/cobra"
 
@@ -61,9 +65,24 @@ var queueStartCmd = &cobra.Command{
 		}
 		fmt.Println("Translation queue started (will stop when command exits)")
 
-		// Keep the process running to demonstrate the queue
+		// Set up signal handling for graceful shutdown
+		ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+		defer cancel()
+
 		fmt.Println("Press Ctrl+C to stop...")
-		select {} // Block forever until interrupt
+
+		// Wait for signal
+		<-ctx.Done()
+
+		// Gracefully stop the queue
+		fmt.Println("\nShutting down queue...")
+		if err := q.Stop(); err != nil {
+			fmt.Printf("Warning: Failed to stop queue cleanly: %v\n", err)
+		} else {
+			fmt.Println("Queue stopped successfully")
+		}
+
+		return nil
 	},
 }
 

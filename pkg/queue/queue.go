@@ -26,6 +26,7 @@ type Queue struct {
 	ctx     context.Context
 	cancel  context.CancelFunc
 	wg      sync.WaitGroup
+	stopped bool // Track if queue has been stopped
 }
 
 // NewQueue creates a new translation queue with the specified number of workers.
@@ -47,6 +48,13 @@ func (q *Queue) Start() error {
 
 	if q.running {
 		return fmt.Errorf("queue is already running")
+	}
+
+	// Reinitialize context and jobs channel if they were closed from a previous Stop()
+	if q.stopped {
+		q.ctx, q.cancel = context.WithCancel(context.Background())
+		q.jobs = make(chan Job, 100) // Buffer of 100 jobs
+		q.stopped = false
 	}
 
 	q.logger.Infof("Starting translation queue with %d workers", q.workers)
@@ -72,6 +80,7 @@ func (q *Queue) Stop() error {
 
 	q.logger.Info("Stopping translation queue")
 	q.running = false
+	q.stopped = true
 	q.cancel()
 	close(q.jobs)
 	q.wg.Wait()
