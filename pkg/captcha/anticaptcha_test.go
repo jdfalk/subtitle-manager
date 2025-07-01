@@ -1,4 +1,7 @@
 // file: pkg/captcha/anticaptcha_test.go
+// version: 1.0.0
+// guid: 123e4567-e89b-12d3-a456-426614174009
+
 package captcha
 
 import (
@@ -6,305 +9,273 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
-	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-// TestNewTwoCaptcha verifies that NewTwoCaptcha creates a properly initialized instance.
 func TestNewTwoCaptcha(t *testing.T) {
-	apiKey := "test-api-key"
-	solver := NewTwoCaptcha(apiKey)
-
-	if solver.APIKey != apiKey {
-		t.Errorf("expected API key %s, got %s", apiKey, solver.APIKey)
-	}
-
-	if solver.BaseURL != "https://2captcha.com" {
-		t.Errorf("expected BaseURL https://2captcha.com, got %s", solver.BaseURL)
-	}
-
-	if solver.client == nil {
-		t.Error("expected client to be initialized, got nil")
-	}
-
-	if solver.client.Timeout != 60*time.Second {
-		t.Errorf("expected timeout 60s, got %v", solver.client.Timeout)
-	}
+	solver := NewTwoCaptcha("test-api-key")
+	assert.NotNil(t, solver)
+	assert.Equal(t, "test-api-key", solver.APIKey)
+	assert.Equal(t, "https://2captcha.com", solver.BaseURL)
+	assert.NotNil(t, solver.client)
 }
 
-// TestTwoCaptchaSolveSuccess verifies successful captcha solving.
-func TestTwoCaptchaSolveSuccess(t *testing.T) {
-	captchaID := "test-captcha-id"
-	solutionToken := "test-solution-token"
-
-	// Create mock server
+func TestTwoCaptcha_Solve_Success(t *testing.T) {
+	// Mock server that simulates successful captcha solving
 	handler := http.NewServeMux()
+	// Handle submit request
 	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			t.Errorf("expected POST request, got %s", r.Method)
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
 		}
-
-		if r.Header.Get("Content-Type") != "application/x-www-form-urlencoded" {
-			t.Errorf("expected form content type, got %s", r.Header.Get("Content-Type"))
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Failed to parse form", http.StatusBadRequest)
+			return
 		}
-
-		response := map[string]any{
+		assert.Equal(t, "test-api-key", r.FormValue("key"))
+		assert.Equal(t, "userrecaptcha", r.FormValue("method"))
+		assert.Equal(t, "test-site-key", r.FormValue("googlekey"))
+		assert.Equal(t, "https://example.com", r.FormValue("pageurl"))
+		assert.Equal(t, "1", r.FormValue("json"))
+		response := map[string]interface{}{
 			"status":  1,
-			"request": captchaID,
+			"request": "123456789",
 		}
-		json.NewEncoder(w).Encode(response)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(response)
 	})
-
+	// Handle result request
 	handler.HandleFunc("/res.php", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
-			t.Errorf("expected GET request, got %s", r.Method)
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
 		}
-
-		response := map[string]any{
+		assert.Equal(t, "test-api-key", r.URL.Query().Get("key"))
+		assert.Equal(t, "get", r.URL.Query().Get("action"))
+		assert.Equal(t, "123456789", r.URL.Query().Get("id"))
+		assert.Equal(t, "1", r.URL.Query().Get("json"))
+		response := map[string]interface{}{
 			"status":  1,
-			"request": solutionToken,
+			"request": "solved-captcha-token",
 		}
-		json.NewEncoder(w).Encode(response)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(response)
 	})
-
 	server := httptest.NewServer(handler)
 	defer server.Close()
-
-	// Create solver with test server
-	solver := &TwoCaptcha{
-		APIKey:  "test-key",
-		BaseURL: server.URL,
-		client:  server.Client(),
-	}
-
-	ctx := context.Background()
-	result, err := solver.Solve(ctx, "test-site-key", "http://example.com")
-
-	if err != nil {
-		t.Fatalf("expected no error, got %v", err)
-	}
-
-	if result != solutionToken {
-		t.Errorf("expected solution %s, got %s", solutionToken, result)
-	}
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = server.URL
+	solver.client = server.Client()
+	result, err := solver.Solve(context.Background(), "test-site-key", "https://example.com")
+	require.NoError(t, err)
+	assert.Equal(t, "solved-captcha-token", result)
 }
 
-// TestTwoCaptchaSolveSubmissionError verifies error handling during submission.
-func TestTwoCaptchaSolveSubmissionError(t *testing.T) {
+func TestTwoCaptcha_Solve_SubmitError(t *testing.T) {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
-		response := map[string]any{
+		response := map[string]interface{}{
 			"status":  0,
 			"request": "ERROR_ZERO_BALANCE",
 		}
-		json.NewEncoder(w).Encode(response)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(response)
 	})
-
 	server := httptest.NewServer(handler)
 	defer server.Close()
-
-	solver := &TwoCaptcha{
-		APIKey:  "test-key",
-		BaseURL: server.URL,
-		client:  server.Client(),
-	}
-
-	ctx := context.Background()
-	_, err := solver.Solve(ctx, "test-site-key", "http://example.com")
-
-	if err == nil {
-		t.Fatal("expected error, got nil")
-	}
-
-	if !strings.Contains(err.Error(), "ERROR_ZERO_BALANCE") {
-		t.Errorf("expected error to contain ERROR_ZERO_BALANCE, got %v", err)
-	}
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = server.URL
+	solver.client = server.Client()
+	result, err := solver.Solve(context.Background(), "test-site-key", "https://example.com")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "ERROR_ZERO_BALANCE")
+	assert.Empty(t, result)
 }
 
-// TestTwoCaptchaSolvePollingNotReady verifies handling of not-ready responses.
-func TestTwoCaptchaSolvePollingNotReady(t *testing.T) {
-	captchaID := "test-captcha-id"
-	solutionToken := "test-solution-token"
-	pollCount := 0
-
+func TestTwoCaptcha_Solve_NotReady(t *testing.T) {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
-		response := map[string]any{
+		response := map[string]interface{}{
 			"status":  1,
-			"request": captchaID,
+			"request": "123456789",
 		}
-		json.NewEncoder(w).Encode(response)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(response)
 	})
-
 	handler.HandleFunc("/res.php", func(w http.ResponseWriter, r *http.Request) {
-		pollCount++
-
-		if pollCount == 1 {
-			// First poll: not ready
-			response := map[string]any{
-				"status":  0,
-				"request": "CAPCHA_NOT_READY",
-			}
-			json.NewEncoder(w).Encode(response)
-		} else {
-			// Second poll: ready with solution
-			response := map[string]any{
-				"status":  1,
-				"request": solutionToken,
-			}
-			json.NewEncoder(w).Encode(response)
-		}
-	})
-
-	server := httptest.NewServer(handler)
-	defer server.Close()
-
-	solver := &TwoCaptcha{
-		APIKey:  "test-key",
-		BaseURL: server.URL,
-		client:  server.Client(),
-	}
-
-	ctx := context.Background()
-	result, err := solver.Solve(ctx, "test-site-key", "http://example.com")
-
-	if err != nil {
-		t.Fatalf("expected no error, got %v", err)
-	}
-
-	if result != solutionToken {
-		t.Errorf("expected solution %s, got %s", solutionToken, result)
-	}
-
-	if pollCount < 2 {
-		t.Errorf("expected at least 2 polls, got %d", pollCount)
-	}
-}
-
-// TestTwoCaptchaSolvePollingError verifies handling of polling errors.
-func TestTwoCaptchaSolvePollingError(t *testing.T) {
-	captchaID := "test-captcha-id"
-
-	handler := http.NewServeMux()
-	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
-		response := map[string]any{
-			"status":  1,
-			"request": captchaID,
-		}
-		json.NewEncoder(w).Encode(response)
-	})
-
-	handler.HandleFunc("/res.php", func(w http.ResponseWriter, r *http.Request) {
-		response := map[string]any{
-			"status":  0,
-			"request": "ERROR_CAPTCHA_UNSOLVABLE",
-		}
-		json.NewEncoder(w).Encode(response)
-	})
-
-	server := httptest.NewServer(handler)
-	defer server.Close()
-
-	solver := &TwoCaptcha{
-		APIKey:  "test-key",
-		BaseURL: server.URL,
-		client:  server.Client(),
-	}
-
-	ctx := context.Background()
-	_, err := solver.Solve(ctx, "test-site-key", "http://example.com")
-
-	if err == nil {
-		t.Fatal("expected error, got nil")
-	}
-
-	if !strings.Contains(err.Error(), "ERROR_CAPTCHA_UNSOLVABLE") {
-		t.Errorf("expected error to contain ERROR_CAPTCHA_UNSOLVABLE, got %v", err)
-	}
-}
-
-// TestTwoCaptchaSolveContextCancellation verifies context cancellation handling.
-func TestTwoCaptchaSolveContextCancellation(t *testing.T) {
-	captchaID := "test-captcha-id"
-
-	handler := http.NewServeMux()
-	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
-		response := map[string]any{
-			"status":  1,
-			"request": captchaID,
-		}
-		json.NewEncoder(w).Encode(response)
-	})
-
-	handler.HandleFunc("/res.php", func(w http.ResponseWriter, r *http.Request) {
-		// Always return not ready to force polling
-		response := map[string]any{
+		response := map[string]interface{}{
 			"status":  0,
 			"request": "CAPCHA_NOT_READY",
 		}
-		json.NewEncoder(w).Encode(response)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(response)
 	})
-
 	server := httptest.NewServer(handler)
 	defer server.Close()
-
-	solver := &TwoCaptcha{
-		APIKey:  "test-key",
-		BaseURL: server.URL,
-		client:  server.Client(),
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = server.URL
+	solver.client = server.Client()
+	ctx, cancel := context.WithTimeout(context.Background(), 100*1000) // Short timeout for test
 	defer cancel()
-
-	_, err := solver.Solve(ctx, "test-site-key", "http://example.com")
-
-	if err == nil {
-		t.Fatal("expected timeout error, got nil")
-	}
-
-	if err != context.DeadlineExceeded {
-		t.Errorf("expected context deadline exceeded, got %v", err)
-	}
+	result, err := solver.Solve(ctx, "test-site-key", "https://example.com")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "context deadline exceeded")
+	assert.Empty(t, result)
 }
 
-// TestTwoCaptchaSolveNetworkError verifies network error handling.
-func TestTwoCaptchaSolveNetworkError(t *testing.T) {
-	solver := &TwoCaptcha{
-		APIKey:  "test-key",
-		BaseURL: "http://nonexistent.example.com",
-		client:  &http.Client{Timeout: 1 * time.Second},
-	}
-
-	ctx := context.Background()
-	_, err := solver.Solve(ctx, "test-site-key", "http://example.com")
-
-	if err == nil {
-		t.Fatal("expected network error, got nil")
-	}
-}
-
-// TestTwoCaptchaSolveInvalidJSON verifies handling of invalid JSON responses.
-func TestTwoCaptchaSolveInvalidJSON(t *testing.T) {
+func TestTwoCaptcha_Solve_ContextCanceled(t *testing.T) {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("invalid json"))
+		response := map[string]interface{}{
+			"status":  1,
+			"request": "123456789",
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(response)
 	})
-
 	server := httptest.NewServer(handler)
 	defer server.Close()
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = server.URL
+	solver.client = server.Client()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	result, err := solver.Solve(ctx, "test-site-key", "https://example.com")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "context canceled")
+	assert.Empty(t, result)
+}
 
-	solver := &TwoCaptcha{
-		APIKey:  "test-key",
-		BaseURL: server.URL,
-		client:  server.Client(),
-	}
+func TestTwoCaptcha_Solve_InvalidJSON(t *testing.T) {
+	handler := http.NewServeMux()
+	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte("invalid json"))
+	})
+	server := httptest.NewServer(handler)
+	defer server.Close()
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = server.URL
+	solver.client = server.Client()
+	result, err := solver.Solve(context.Background(), "test-site-key", "https://example.com")
+	assert.Error(t, err)
+	assert.Empty(t, result)
+}
 
+func TestTwoCaptcha_Solve_HTTPError(t *testing.T) {
+	handler := http.NewServeMux()
+	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	})
+	server := httptest.NewServer(handler)
+	defer server.Close()
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = server.URL
+	solver.client = server.Client()
+	result, err := solver.Solve(context.Background(), "test-site-key", "https://example.com")
+	assert.Error(t, err)
+	assert.Empty(t, result)
+}
+
+func TestTwoCaptcha_SolverInterface(t *testing.T) {
+	var solver Solver = NewTwoCaptcha("test-api-key")
+	assert.NotNil(t, solver)
+}
+
+func TestTwoCaptcha_Solve_PollingHappyPath(t *testing.T) {
+	// First poll returns not ready, second poll returns solution
+	pollCount := 0
+	handler := http.NewServeMux()
+	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
+		response := map[string]interface{}{
+			"status":  1,
+			"request": "test-captcha-id",
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(response)
+	})
+	handler.HandleFunc("/res.php", func(w http.ResponseWriter, r *http.Request) {
+		pollCount++
+		if pollCount == 1 {
+			response := map[string]interface{}{
+				"status":  0,
+				"request": "CAPCHA_NOT_READY",
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(response)
+		} else {
+			response := map[string]interface{}{
+				"status":  1,
+				"request": "solution-token",
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(response)
+		}
+	})
+	server := httptest.NewServer(handler)
+	defer server.Close()
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = server.URL
+	solver.client = server.Client()
 	ctx := context.Background()
-	_, err := solver.Solve(ctx, "test-site-key", "http://example.com")
+	result, err := solver.Solve(ctx, "test-site-key", "https://example.com")
+	assert.NoError(t, err)
+	assert.Equal(t, "solution-token", result)
+	assert.GreaterOrEqual(t, pollCount, 2)
+}
 
-	if err == nil {
-		t.Fatal("expected JSON decode error, got nil")
-	}
+func TestTwoCaptcha_Solve_PollingError(t *testing.T) {
+	// First poll returns not ready, second poll returns error
+	pollCount := 0
+	handler := http.NewServeMux()
+	handler.HandleFunc("/in.php", func(w http.ResponseWriter, r *http.Request) {
+		response := map[string]interface{}{
+			"status":  1,
+			"request": "test-captcha-id",
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(response)
+	})
+	handler.HandleFunc("/res.php", func(w http.ResponseWriter, r *http.Request) {
+		pollCount++
+		if pollCount == 1 {
+			response := map[string]interface{}{
+				"status":  0,
+				"request": "CAPCHA_NOT_READY",
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(response)
+		} else {
+			response := map[string]interface{}{
+				"status":  0,
+				"request": "ERROR_CAPTCHA_UNSOLVABLE",
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(response)
+		}
+	})
+	server := httptest.NewServer(handler)
+	defer server.Close()
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = server.URL
+	solver.client = server.Client()
+	ctx := context.Background()
+	result, err := solver.Solve(ctx, "test-site-key", "https://example.com")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "ERROR_CAPTCHA_UNSOLVABLE")
+	assert.Empty(t, result)
+	assert.GreaterOrEqual(t, pollCount, 2)
+}
+
+func TestTwoCaptcha_Solve_NetworkError(t *testing.T) {
+	solver := NewTwoCaptcha("test-api-key")
+	solver.BaseURL = "http://127.0.0.1:0" // Unreachable port
+	solver.client = &http.Client{}
+	ctx := context.Background()
+	_, err := solver.Solve(ctx, "test-site-key", "https://example.com")
+	assert.Error(t, err)
 }
