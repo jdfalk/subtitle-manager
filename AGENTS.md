@@ -8,9 +8,12 @@
 
 ## 0. Creating GitHub Issues via Script (v1.1.0)
 
-- **All new GitHub issues, comments, updates, and closes must be created by generating a JSON file using the `scripts/create-issue-update.sh` script.**
-- Do **not** create or edit `.github/issue-updates/*.json` files by hand. Always use the script to ensure GUID uniqueness and correct formatting.
-- The script generates a random GUID and legacy GUID, and places the JSON file in `.github/issue-updates/`.
+- **All new GitHub issues, comments, updates, and closes must be created by
+  generating a JSON file using the `scripts/create-issue-update.sh` script.**
+- Do **not** create or edit `.github/issue-updates/*.json` files by hand. Always
+  use the script to ensure GUID uniqueness and correct formatting.
+- The script generates a random GUID and legacy GUID, and places the JSON file
+  in `.github/issue-updates/`.
 - **Usage examples:**
 
   ```bash
@@ -31,53 +34,143 @@
   - Ensure the `.github/issue-updates/` directory exists
   - Generate a unique GUID and legacy GUID for each file
   - Check for GUID collisions
-  - Output a JSON file with the correct structure for the unified issue management workflow
+  - Output a JSON file with the correct structure for the unified issue
+    management workflow
 - **Best practices:**
   - Use clear, concise titles and bodies
   - Use comma-separated labels (no spaces)
   - Always check the script output for success and file path
   - Do not manually edit or move generated files
   - Let the workflow process and archive files as needed
-- For more details, see the script header in [`scripts/create-issue-update.sh`](scripts/create-issue-update.sh)
+- For more details, see the script header in
+  [`scripts/create-issue-update.sh`](scripts/create-issue-update.sh)
 
 ---
 
 ## 1. General Agent Workflow
 
 - The user will provide a task.
-- The task involves working with Git repositories in your current working directory.
-- Wait for all terminal commands to be completed (or terminate them) before finishing.
+- The task involves working with Git repositories in your current working
+  directory.
+- Wait for all terminal commands to be completed (or terminate them) before
+  finishing.
+
+### File Header Requirements
+
+Every file MUST begin with a standard header using the appropriate comment
+syntax for the file type:
+
+```bash
+# Shell scripts (.sh, .bash)
+#!/bin/bash
+# file: scripts/example.sh
+# version: 1.0.0
+# guid: unique-identifier
+```
+
+```go
+// Go files (.go)
+// file: cmd/example.go
+// version: 1.0.0
+// guid: unique-identifier
+```
+
+```python
+# Python files (.py)
+#!/usr/bin/env python3
+# file: scripts/example.py
+# version: 1.0.0
+# guid: unique-identifier
+```
+
+```html
+<!-- HTML/Markdown files (.html, .md) -->
+<!-- file: docs/example.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: unique-identifier -->
+```
+
+```css
+/* CSS files (.css) */
+/* file: styles/example.css */
+/* version: 1.0.0 */
+/* guid: unique-identifier */
+```
+
+```sql
+-- SQL files (.sql)
+-- file: database/example.sql
+-- version: 1.0.0
+-- guid: unique-identifier
+```
+
+**Important Notes:**
+
+- For shell scripts and Python files, the shebang line must be first, followed immediately by the file header
+- Use the appropriate comment syntax for each language (`#`, `//`, `/* */`, `<!-- -->`, `--`, etc.)
+- The header must include: file path, version, and GUID
+- This header helps with file identification and change tracking
 
 ### Git Instructions
 
-- Use git to commit your changes.
-- If pre-commit fails, fix issues and retry.
-- Check git status to confirm your commit. You must leave your worktree in a clean state.
+- Use git to commit your changes
+- If pre-commit fails, fix issues and retry
+- Check git status to confirm your commit. You must leave your worktree in a clean state
+
+### Commit Message Format (REQUIRED)
+
+```text
+<type>[scope]: <description>
+
+<body with motivation and changes>
+
+Files changed:
+- Summary of change: [file/path.ext](file/path.ext)
+- Another change: [other/file.go](other/file.go)
+```
+
+### Documentation Organization
+
+- **README.md**: Setup, usage, critical info
+- **TODO.md**: Roadmap, planning, architecture
+- **CHANGELOG.md**: Versions, releases, technical docs
+- **docs/**: Comprehensive guides (no scattered summaries)
+
+### Task Completion
+
+- Complete all terminal commands before finishing
+- Leave Git worktree in clean state
+- Run formatters and linters
+- Document all changes in commit body
 
 ---
 
 ## 2. AGENTS.md File Policy
 
-- AGENTS.md files may appear anywhere in the container or repo. Their scope is the entire directory tree rooted at their location.
-- For every file you touch, you must obey instructions in any AGENTS.md file whose scope includes that file.
+- AGENTS.md files may appear anywhere in the container or repo. Their scope is
+  the entire directory tree rooted at their location.
+- For every file you touch, you must obey instructions in any AGENTS.md file
+  whose scope includes that file.
 - More deeply nested AGENTS.md files take precedence in case of conflicts.
 - Direct user/system instructions always take precedence over AGENTS.md.
-- If AGENTS.md includes programmatic checks, you MUST run them and validate that they pass after all code changes.
+- If AGENTS.md includes programmatic checks, you MUST run them and validate that
+  they pass after all code changes.
 
 ---
 
 ## 3. Citations Policy
 
-- If you browse files or use terminal commands, you must add citations to the final response (not the PR body) where relevant.
+- If you browse files or use terminal commands, you must add citations to the
+  final response (not the PR body) where relevant.
 - **Citations reference file paths and terminal outputs:**
-
   1. `【F:<file_path>†L<line_start>(-L<line_end>)?】` for file paths
   2. `【<chunk_id>†L<line_start>(-L<line_end>)?】` for terminal output
 
 - Ensure line numbers are correct and directly relevant.
 - Do not cite empty lines or previous PR diffs/comments.
 - Prefer file citations unless terminal output is directly relevant.
-- For PR creation, use file citations in the summary and terminal citations in the testing section.
+- For PR creation, use file citations in the summary and terminal citations in
+  the testing section.
 
 ---
 
@@ -108,7 +201,8 @@
 - Max line length: 80
 - Import order: stdlib, third-party, app-specific
 - One import per line, no wildcards
-- Naming: `module_name`, `ClassName`, `method_name`, `CONSTANT_NAME`, `_private_attribute`
+- Naming: `module_name`, `ClassName`, `method_name`, `CONSTANT_NAME`,
+  `_private_attribute`
 - Use docstrings for all public modules, functions, classes, methods
 - Follow PEP 8
 - Use type hints where applicable
@@ -141,7 +235,8 @@
 - Use [Conventional Commits](https://www.conventionalcommits.org/)
 - Format: `<type>[optional scope]: <description>`
 - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
-- **REQUIRED:** Always include a "Files changed:" section in the commit body with summary and links:
+- **REQUIRED:** Always include a "Files changed:" section in the commit body
+  with summary and links:
 
   ```markdown
   Files changed:
@@ -199,7 +294,6 @@
 ## 7. Code Review Guidelines
 
 - Review focus areas (in order):
-
   1. Correctness
   2. Security
   3. Performance
@@ -224,14 +318,14 @@
 - Use Arrange-Act-Assert structure:
 
   ```markdown
-  [Setup] - Prepare the test environment and inputs
-  [Exercise] - Execute the functionality being tested
-  [Verify] - Check that the results match expectations
-  [Teardown] - Clean up any resources (if needed)
+  [Setup] - Prepare the test environment and inputs [Exercise] - Execute the
+  functionality being tested [Verify] - Check that the results match
+  expectations [Teardown] - Clean up any resources (if needed)
   ```
 
 - Test naming: `test[UnitOfWork_StateUnderTest_ExpectedBehavior]`
-- Test types: Unit, Integration, Functional, Performance, Security, Accessibility
+- Test types: Unit, Integration, Functional, Performance, Security,
+  Accessibility
 - Test one specific behavior per test case
 - Mock external dependencies
 - Cover happy paths and edge cases
@@ -245,7 +339,8 @@
 
 - **README.md**: Repo intro, setup, usage, critical info
 - **TODO.md**: Roadmap, planning, architecture, diagrams
-- **CHANGELOG.md**: Version info, release notes, breaking changes, features, bug fixes
+- **CHANGELOG.md**: Version info, release notes, breaking changes, features, bug
+  fixes
 
 ---
 
@@ -288,15 +383,19 @@
 
 ## 13. Codex Agent-Specific Instructions
 
-- All references to "copilot" in prior instructions are replaced with "codex" for this repository.
-- All code, documentation, and process instructions in this file are mandatory for codex agents.
-- If you find programmatic checks in AGENTS.md, you must run them and validate they pass after your changes.
+- All references to "copilot" in prior instructions are replaced with "codex"
+  for this repository.
+- All code, documentation, and process instructions in this file are mandatory
+  for codex agents.
+- If you find programmatic checks in AGENTS.md, you must run them and validate
+  they pass after your changes.
 
 ---
 
 ## 14. Includes
 
-This file contains a basic version of the more detailed following files, import them as needed:
+This file contains a basic version of the more detailed following files, import
+them as needed:
 
 - .github/commit-messages.md
 - .github/copilot-instructions.md (as codex-instructions)
