@@ -15,7 +15,6 @@ import (
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
-	"github.com/google/uuid"
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/tasks"
@@ -68,15 +67,10 @@ var (
 func NewWhisperContainer() (*WhisperContainer, error) {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return nil, fmt.Errorf("failed to create Docker client: %w", err)
+		return nil, err
 	}
-
 	config := loadContainerConfig()
-
-	return &WhisperContainer{
-		client: cli,
-		config: config,
-	}, nil
+	return &WhisperContainer{client: cli, config: config}, nil
 }
 
 // loadContainerConfig loads configuration from Viper with defaults.
@@ -252,12 +246,12 @@ func (w *WhisperContainer) GetContainerStatus(ctx context.Context) (string, erro
 			}
 		}
 	}
-	return "not found", nil
+	return "unknown", nil
 }
 
 // TranscribeFile transcribes a media file using the container or fallback to external API.
 func (w *WhisperContainer) TranscribeFile(ctx context.Context, filePath, language string) (*tasks.Task, error) {
-	taskID := fmt.Sprintf("transcribe_%d_%s", time.Now().Unix(), uuid.NewString()[:8])
+	taskID := fmt.Sprintf("transcribe_%d", time.Now().Unix())
 	task := tasks.Start(ctx, taskID, func(ctx context.Context) error {
 		// Check if container is running
 		running, err := w.IsContainerRunning(ctx)
@@ -334,5 +328,8 @@ func ValidateModel(model string) bool {
 
 // Close closes the Docker client connection.
 func (w *WhisperContainer) Close() error {
-	return w.client.Close()
+	if w.client != nil {
+		return w.client.Close()
+	}
+	return nil
 }
