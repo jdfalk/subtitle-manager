@@ -48,7 +48,7 @@ import {
 
 /**
  * Subtitle Manager API Client
- * 
+ *
  * Provides type-safe access to all API endpoints with automatic retry,
  * error handling, and modern async/await patterns.
  */
@@ -75,7 +75,7 @@ export class SubtitleManagerClient {
       timeout: this.config.timeout,
       headers: {
         'User-Agent': this.config.userAgent,
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
     });
 
@@ -85,12 +85,13 @@ export class SubtitleManagerClient {
     }
 
     if (this.config.sessionCookie) {
-      this.axios.defaults.headers.common['Cookie'] = `session=${this.config.sessionCookie}`;
+      this.axios.defaults.headers.common['Cookie'] =
+        `session=${this.config.sessionCookie}`;
     }
 
     // Setup request interceptor for logging
     if (this.config.debug) {
-      this.axios.interceptors.request.use((config) => {
+      this.axios.interceptors.request.use(config => {
         console.log(`[SDK] ${config.method?.toUpperCase()} ${config.url}`);
         return config;
       });
@@ -98,8 +99,8 @@ export class SubtitleManagerClient {
 
     // Setup response interceptor for error handling
     this.axios.interceptors.response.use(
-      (response) => response,
-      (error) => this.handleError(error)
+      response => response,
+      error => this.handleError(error)
     );
   }
 
@@ -122,8 +123,15 @@ export class SubtitleManagerClient {
           throw new NotFoundError(message, status, errorCode);
         case 429: {
           const retryAfter = error.response.headers['retry-after'];
-          const retryAfterSeconds = retryAfter ? parseInt(retryAfter, 10) : undefined;
-          throw new RateLimitError(message, retryAfterSeconds, status, errorCode);
+          const retryAfterSeconds = retryAfter
+            ? parseInt(retryAfter, 10)
+            : undefined;
+          throw new RateLimitError(
+            message,
+            retryAfterSeconds,
+            status,
+            errorCode
+          );
         }
         case 400:
           throw new ValidationError(message, status, errorCode);
@@ -156,7 +164,8 @@ export class SubtitleManagerClient {
     let lastError: any;
     for (let attempt = 1; attempt <= this.config.maxRetries; attempt++) {
       try {
-        const response: AxiosResponse<T> = await this.axios.request(axiosConfig);
+        const response: AxiosResponse<T> =
+          await this.axios.request(axiosConfig);
         return response.data;
       } catch (error: any) {
         lastError = error;
@@ -183,7 +192,7 @@ export class SubtitleManagerClient {
    * Utility method to add delay
    */
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   // Authentication methods
@@ -238,7 +247,7 @@ export class SubtitleManagerClient {
       params,
     });
 
-    return data.map((entry) => new LogEntry(entry));
+    return data.map(entry => new LogEntry(entry));
   }
 
   // Configuration methods
@@ -341,7 +350,10 @@ export class SubtitleManagerClient {
   /**
    * Start library scan
    */
-  async startLibraryScan(path?: string, force: boolean = false): Promise<ScanResult> {
+  async startLibraryScan(
+    path?: string,
+    force: boolean = false
+  ): Promise<ScanResult> {
     const data = await this.request<ScanResult>({
       method: 'POST',
       url: '/api/scan',
@@ -368,14 +380,16 @@ export class SubtitleManagerClient {
   /**
    * Get operation history
    */
-  async getHistory(params: HistoryQueryParams = {}): Promise<PaginatedResponse<HistoryItem>> {
+  async getHistory(
+    params: HistoryQueryParams = {}
+  ): Promise<PaginatedResponse<HistoryItem>> {
     const data = await this.request<PaginatedResponse<HistoryItem>>({
       method: 'GET',
       url: '/api/history',
       params,
     });
 
-    const items = data.items.map((item) => new HistoryItem(item));
+    const items = data.items.map(item => new HistoryItem(item));
     return new PaginatedResponse({ ...data, items });
   }
 
@@ -454,7 +468,11 @@ export class SubtitleManagerClient {
    */
   async *downloadMultipleSubtitles(
     requests: Array<{ path: string; language: string; providers?: string[] }>
-  ): AsyncGenerator<{ index: number; result?: DownloadResult; error?: Error }, void, unknown> {
+  ): AsyncGenerator<
+    { index: number; result?: DownloadResult; error?: Error },
+    void,
+    unknown
+  > {
     for (let i = 0; i < requests.length; i++) {
       try {
         const result = await this.downloadSubtitles(

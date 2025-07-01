@@ -4,7 +4,7 @@
 
 /**
  * Subtitle Manager JavaScript/TypeScript SDK
- * 
+ *
  * A comprehensive SDK for the Subtitle Manager API with full TypeScript support,
  * automatic retry, error handling, and modern async/await patterns.
  */

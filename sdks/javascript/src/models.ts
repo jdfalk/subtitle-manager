@@ -53,7 +53,7 @@ export class SystemInfo implements ISystemInfo {
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     if (bytes === 0) return '0 B';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i];
   }
 
   public get diskFreeFormatted(): string {
@@ -135,7 +135,9 @@ export class ScanStatus implements IScanStatus {
   }
 
   public get estimatedCompletionDate(): Date | undefined {
-    return this.estimated_completion ? new Date(this.estimated_completion) : undefined;
+    return this.estimated_completion
+      ? new Date(this.estimated_completion)
+      : undefined;
   }
 
   public get remainingFiles(): number | undefined {
@@ -194,7 +196,11 @@ export class LoginResponse implements ILoginResponse {
   }
 
   public get hasReadAccess(): boolean {
-    return this.role === UserRole.READ || this.role === UserRole.BASIC || this.role === UserRole.ADMIN;
+    return (
+      this.role === UserRole.READ ||
+      this.role === UserRole.BASIC ||
+      this.role === UserRole.ADMIN
+    );
   }
 }
 

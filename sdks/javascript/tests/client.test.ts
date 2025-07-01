@@ -82,7 +82,10 @@ describe('SubtitleManagerClient', () => {
     test('should handle authentication error', async () => {
       nock(baseURL)
         .get('/api/system')
-        .reply(401, { error: 'unauthorized', message: 'Authentication required' });
+        .reply(401, {
+          error: 'unauthorized',
+          message: 'Authentication required',
+        });
 
       await expect(client.getSystemInfo()).rejects.toThrow(AuthenticationError);
     });
@@ -92,17 +95,21 @@ describe('SubtitleManagerClient', () => {
         .post('/api/oauth/github/generate')
         .reply(403, { error: 'forbidden', message: 'Admin access required' });
 
-      await expect(client.generateGitHubOAuth()).rejects.toThrow(AuthorizationError);
+      await expect(client.generateGitHubOAuth()).rejects.toThrow(
+        AuthorizationError
+      );
     });
 
     test('should handle rate limit error', async () => {
-      nock(baseURL)
-        .get('/api/system')
-        .reply(429, { error: 'rate_limited', message: 'Rate limit exceeded' }, {
+      nock(baseURL).get('/api/system').reply(
+        429,
+        { error: 'rate_limited', message: 'Rate limit exceeded' },
+        {
           'Retry-After': '60',
-        });
+        }
+      );
 
-      const error = await client.getSystemInfo().catch((e) => e);
+      const error = await client.getSystemInfo().catch(e => e);
       expect(error).toBeInstanceOf(RateLimitError);
       expect(error.retryAfter).toBe(60);
     });
@@ -174,7 +181,10 @@ describe('SubtitleManagerClient', () => {
         .post('/api/convert')
         .reply(200, srtContent, { 'Content-Type': 'application/x-subrip' });
 
-      const inputFile = new File(['WEBVTT\n\n00:01.000 --> 00:03.000\nHello World'], 'test.vtt');
+      const inputFile = new File(
+        ['WEBVTT\n\n00:01.000 --> 00:03.000\nHello World'],
+        'test.vtt'
+      );
       const result = await client.convertSubtitle(inputFile);
       expect(result).toBeInstanceOf(Blob);
     });
@@ -194,10 +204,11 @@ describe('SubtitleManagerClient', () => {
         })
         .reply(200, downloadData);
 
-      const result = await client.downloadSubtitles('/movies/example.mkv', 'en', [
-        'opensubtitles',
-        'subscene',
-      ]);
+      const result = await client.downloadSubtitles(
+        '/movies/example.mkv',
+        'en',
+        ['opensubtitles', 'subscene']
+      );
 
       expect(result).toBeInstanceOf(DownloadResult);
       expect(result.success).toBe(true);
@@ -349,9 +360,14 @@ describe('SubtitleManagerClient', () => {
     test('should handle validation error', async () => {
       nock(baseURL)
         .post('/api/download')
-        .reply(400, { error: 'validation_error', message: 'Invalid request data' });
+        .reply(400, {
+          error: 'validation_error',
+          message: 'Invalid request data',
+        });
 
-      await expect(client.downloadSubtitles('', '')).rejects.toThrow(ValidationError);
+      await expect(client.downloadSubtitles('', '')).rejects.toThrow(
+        ValidationError
+      );
     });
   });
 

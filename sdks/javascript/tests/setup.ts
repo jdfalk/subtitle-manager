@@ -49,6 +49,9 @@ if (typeof File === 'undefined') {
 
 if (typeof Blob === 'undefined') {
   global.Blob = class Blob {
-    constructor(public content: any[], public options: any = {}) {}
+    constructor(
+      public content: any[],
+      public options: any = {}
+    ) {}
   } as any;
 }

@@ -31,21 +31,36 @@ export class SubtitleManagerError extends Error {
 }
 
 export class AuthenticationError extends SubtitleManagerError {
-  constructor(message: string, statusCode?: number, errorCode?: string, details?: Record<string, any>) {
+  constructor(
+    message: string,
+    statusCode?: number,
+    errorCode?: string,
+    details?: Record<string, any>
+  ) {
     super(message, statusCode, errorCode, details);
     this.name = 'AuthenticationError';
   }
 }
 
 export class AuthorizationError extends SubtitleManagerError {
-  constructor(message: string, statusCode?: number, errorCode?: string, details?: Record<string, any>) {
+  constructor(
+    message: string,
+    statusCode?: number,
+    errorCode?: string,
+    details?: Record<string, any>
+  ) {
     super(message, statusCode, errorCode, details);
     this.name = 'AuthorizationError';
   }
 }
 
 export class NotFoundError extends SubtitleManagerError {
-  constructor(message: string, statusCode?: number, errorCode?: string, details?: Record<string, any>) {
+  constructor(
+    message: string,
+    statusCode?: number,
+    errorCode?: string,
+    details?: Record<string, any>
+  ) {
     super(message, statusCode, errorCode, details);
     this.name = 'NotFoundError';
   }
@@ -68,7 +83,12 @@ export class RateLimitError extends SubtitleManagerError {
 }
 
 export class ValidationError extends SubtitleManagerError {
-  constructor(message: string, statusCode?: number, errorCode?: string, details?: Record<string, any>) {
+  constructor(
+    message: string,
+    statusCode?: number,
+    errorCode?: string,
+    details?: Record<string, any>
+  ) {
     super(message, statusCode, errorCode, details);
     this.name = 'ValidationError';
   }
@@ -78,7 +98,7 @@ export class NetworkError extends SubtitleManagerError {
   constructor(message: string, originalError?: Error) {
     super(message);
     this.name = 'NetworkError';
-    
+
     if (originalError) {
       this.details = { originalError: originalError.message };
       this.stack = originalError.stack;
@@ -94,7 +114,12 @@ export class TimeoutError extends SubtitleManagerError {
 }
 
 export class APIError extends SubtitleManagerError {
-  constructor(message: string, statusCode?: number, errorCode?: string, details?: Record<string, any>) {
+  constructor(
+    message: string,
+    statusCode?: number,
+    errorCode?: string,
+    details?: Record<string, any>
+  ) {
     super(message, statusCode, errorCode, details);
     this.name = 'APIError';
   }
