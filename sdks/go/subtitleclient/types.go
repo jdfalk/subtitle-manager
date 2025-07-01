@@ -217,13 +217,13 @@ type ScanResult struct {
 
 // ScanStatus represents the status of a library scan.
 type ScanStatus struct {
-	Scanning             bool       `json:"scanning"`
-	Progress             float64    `json:"progress"`
-	CurrentPath          *string    `json:"current_path,omitempty"`
-	FilesProcessed       *int       `json:"files_processed,omitempty"`
-	FilesTotal           *int       `json:"files_total,omitempty"`
-	StartTime            *time.Time `json:"start_time,omitempty"`
-	EstimatedCompletion  *time.Time `json:"estimated_completion,omitempty"`
+	Scanning            bool       `json:"scanning"`
+	Progress            float64    `json:"progress"`
+	CurrentPath         *string    `json:"current_path,omitempty"`
+	FilesProcessed      *int       `json:"files_processed,omitempty"`
+	FilesTotal          *int       `json:"files_total,omitempty"`
+	StartTime           *time.Time `json:"start_time,omitempty"`
+	EstimatedCompletion *time.Time `json:"estimated_completion,omitempty"`
 }
 
 // ProgressPercent returns the progress as a percentage (0-100).
