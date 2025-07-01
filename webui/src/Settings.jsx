@@ -461,9 +461,7 @@ export default function Settings({ backendAvailable = true }) {
       label: t('settings.language'),
       icon: <LanguageIcon />,
       component: () => (
-        <Suspense
-          fallback={<LoadingComponent message={t('common.loading')} />}
-        >
+        <Suspense fallback={<LoadingComponent message={t('common.loading')} />}>
           <Box sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               {t('settings.title')}
@@ -474,7 +472,11 @@ export default function Settings({ backendAvailable = true }) {
                   <Typography variant="h6" gutterBottom>
                     Interface Language
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                  >
                     Choose your preferred language for the user interface.
                   </Typography>
                   <LanguageSelector />

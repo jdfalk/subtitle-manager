@@ -14,13 +14,15 @@ const LanguageSelector = () => {
     { code: 'fr', name: 'Français' },
   ];
 
-  const handleLanguageChange = (event) => {
+  const handleLanguageChange = event => {
     i18n.changeLanguage(event.target.value);
   };
 
   return (
     <FormControl fullWidth>
-      <InputLabel id="language-select-label">{t('settings.language')}</InputLabel>
+      <InputLabel id="language-select-label">
+        {t('settings.language')}
+      </InputLabel>
       <Select
         labelId="language-select-label"
         id="language-select"
@@ -28,7 +30,7 @@ const LanguageSelector = () => {
         label={t('settings.language')}
         onChange={handleLanguageChange}
       >
-        {languages.map((language) => (
+        {languages.map(language => (
           <MenuItem key={language.code} value={language.code}>
             {language.name}
           </MenuItem>
