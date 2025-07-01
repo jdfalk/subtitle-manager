@@ -141,7 +141,10 @@ export default function Setup() {
     setBazarrError('');
 
     try {
-      const response = await apiService.setup.importBazarr(bazarrURL, bazarrAPIKey);
+      const response = await apiService.setup.importBazarr(
+        bazarrURL,
+        bazarrAPIKey
+      );
 
       if (response.ok) {
         const data = await response.json();

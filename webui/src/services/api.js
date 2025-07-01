@@ -120,7 +120,7 @@ export const apiService = {
     // Remove Content-Type header to let browser set it with boundary for FormData
     const cleanHeaders = { ...headers };
     delete cleanHeaders['Content-Type'];
-    
+
     return apiClient(url, {
       method: 'POST',
       body: formData,
@@ -391,7 +391,9 @@ export const apiService = {
      * @returns {Promise<Response>} - Download response
      */
     async download(downloadId) {
-      return apiService.get(`/api/download?id=${encodeURIComponent(downloadId)}`);
+      return apiService.get(
+        `/api/download?id=${encodeURIComponent(downloadId)}`
+      );
     },
   },
 
@@ -724,7 +726,7 @@ export const apiService = {
       if (!response.ok) {
         throw new Error(`Download failed: ${response.status}`);
       }
-      
+
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
