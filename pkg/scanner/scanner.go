@@ -154,8 +154,13 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		logger.Warnf("invalid output path before write: %v", err)
 		return err
 	}
-	if err := os.WriteFile(validatedOut, data, 0644); err != nil {
-		logger.Warnf("write %s: %v", validatedOut, err)
+	absValidatedOut, err := filepath.Abs(validatedOut)
+	if err != nil || !strings.HasPrefix(absValidatedOut, safeDir) {
+		logger.Warnf("output path is outside the safe directory: %v", absValidatedOut)
+		return fmt.Errorf("output path is outside the safe directory")
+	}
+	if err := os.WriteFile(absValidatedOut, data, 0644); err != nil {
+		logger.Warnf("write %s: %v", absValidatedOut, err)
 		// Send event for file write failure
 		events.PublishSubtitleFailed(ctx, events.SubtitleFailedData{
 			FilePath:  path,
@@ -166,11 +171,11 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 		})
 		return err
 	}
-	logger.Infof("downloaded subtitle %s", validatedOut)
+	logger.Infof("downloaded subtitle %s", absValidatedOut)
 
 	// Get file size for webhook event
 	var fileSize int64
-	if stat, err := os.Stat(validatedOut); err == nil {
+	if stat, err := os.Stat(absValidatedOut); err == nil {
 		fileSize = stat.Size()
 	}
 
@@ -178,7 +183,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	if wasUpgrade {
 		events.PublishSubtitleUpgraded(ctx, events.SubtitleUpgradedData{
 			FilePath:        path,
-			NewSubtitlePath: validatedOut,
+			NewSubtitlePath: absValidatedOut,
 			Language:        lang,
 			NewProvider:     providerName,
 			NewScore:        1.0, // Default score, could be enhanced
@@ -187,7 +192,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	} else {
 		events.PublishSubtitleDownloaded(ctx, events.SubtitleDownloadedData{
 			FilePath:     path,
-			SubtitlePath: validatedOut,
+			SubtitlePath: absValidatedOut,
 			Language:     lang,
 			Provider:     providerName,
 			Score:        1.0, // Default score, could be enhanced
@@ -197,7 +202,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 
 	if store != nil {
-		_ = store.InsertDownload(&database.DownloadRecord{File: validatedOut, VideoFile: path, Provider: providerName, Language: lang})
+		_ = store.InsertDownload(&database.DownloadRecord{File: absValidatedOut, VideoFile: path, Provider: providerName, Language: lang})
 	}
 	return nil
 }
