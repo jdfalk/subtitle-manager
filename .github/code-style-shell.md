@@ -5,8 +5,7 @@
 
 # Shell Style Guide (Google)
 
-This document summarizes Google's Shell scripting style guide for use in code
-generation and review.
+This document summarizes Google's Shell scripting style guide for use in code generation and review.
 
 ## Core Principles
 
@@ -20,8 +19,7 @@ generation and review.
 
 ### Bash
 
-- Use bash for scripts that need arrays, pattern substitution, or other advanced
-  features
+- Use bash for scripts that need arrays, pattern substitution, or other advanced features
 - Always include `#!/bin/bash` as the first line
 - Use bash 4.0+ features when available
 
@@ -669,5 +667,4 @@ function load_config() {
 }
 ```
 
-This style guide should be used as the foundation for all Shell script
-generation and formatting decisions.
+This style guide should be used as the foundation for all Shell script generation and formatting decisions.
