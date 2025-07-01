@@ -16,10 +16,15 @@ import (
 )
 
 var tags string
+var useProfile bool
 
 var fetchCmd = &cobra.Command{
 	Use:   "fetch [media] [lang] [output]",
 	Short: "Download subtitles using all providers",
+	Long: `Download subtitles using all providers.
+
+When --profile is specified, the language parameter is ignored and the system 
+uses language preferences from the media item's assigned language profile.`,
 	Args:  cobra.ExactArgs(3),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("fetch")
@@ -32,19 +37,35 @@ var fetchCmd = &cobra.Command{
 
 		var data []byte
 		var name string
+		var actualLang string
 		var err error
 
-		if len(tagNames) > 0 {
+		// Get database connection for profile-based fetching
+		if useProfile || len(tagNames) > 0 {
 			dbPath := database.GetDatabasePath()
 			store, errStore := database.OpenSQLStore(dbPath)
 			if errStore != nil {
 				return errStore
 			}
 			defer store.Close()
-			tm := tagging.NewTagManager(store.DB())
-			data, name, err = providers.FetchFromTagged(context.Background(), media, lang, key, tagNames, tm)
+
+			if useProfile && len(tagNames) > 0 {
+				// Use both profiles and tags
+				tm := tagging.NewTagManager(store.DB())
+				data, name, actualLang, err = providers.FetchWithProfileTagged(context.Background(), store.DB(), media, key, tagNames, tm)
+			} else if useProfile {
+				// Use profiles only
+				data, name, actualLang, err = providers.FetchWithProfile(context.Background(), store.DB(), media, key)
+			} else {
+				// Use tags only (existing behavior)
+				tm := tagging.NewTagManager(store.DB())
+				data, name, err = providers.FetchFromTagged(context.Background(), media, lang, key, tagNames, tm)
+				actualLang = lang
+			}
 		} else {
+			// Standard fetch without profiles or tags
 			data, name, err = providers.FetchFromAll(context.Background(), media, lang, key)
+			actualLang = lang
 		}
 		if err != nil {
 			return err
@@ -55,13 +76,17 @@ var fetchCmd = &cobra.Command{
 		if dbPath := viper.GetString("db_path"); dbPath != "" {
 			backend := viper.GetString("db_backend")
 			if store, err := database.OpenStore(dbPath, backend); err == nil {
-				_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: media, Provider: name, Language: lang})
+				_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: media, Provider: name, Language: actualLang})
 				store.Close()
 			} else {
 				logger.Warnf("db open: %v", err)
 			}
 		}
-		logger.Infof("downloaded subtitle to %s", out)
+		if useProfile {
+			logger.Infof("downloaded %s subtitle using profile-based search to %s", actualLang, out)
+		} else {
+			logger.Infof("downloaded subtitle to %s", out)
+		}
 		return nil
 	},
 }
@@ -69,4 +94,5 @@ var fetchCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(fetchCmd)
 	fetchCmd.Flags().StringVar(&tags, "tags", "", "comma separated provider tags")
+	fetchCmd.Flags().BoolVar(&useProfile, "profile", false, "use language profile preferences for the media item")
 }
