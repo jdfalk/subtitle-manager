@@ -1,0 +1,44 @@
+# file: systemd/subtitle-manager.service
+# version: 1.0.0
+# guid: 123e4567-e89b-12d3-a456-426614174000
+
+[Unit]
+Description=Subtitle Manager Web Server
+Documentation=https://github.com/jdfalk/subtitle-manager
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=subtitle-manager
+Group=subtitle-manager
+WorkingDirectory=/opt/subtitle-manager
+ExecStart=/usr/local/bin/subtitle-manager web --addr :8080
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/subtitle-manager /var/log/subtitle-manager
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Environment
+Environment=SM_CONFIG_FILE=/etc/subtitle-manager/subtitle-manager.yaml
+Environment=SM_DB_PATH=/var/lib/subtitle-manager/db
+Environment=SM_LOG_LEVEL=info
+EnvironmentFile=-/etc/subtitle-manager/subtitle-manager.env
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=2G
+
+[Install]
+WantedBy=multi-user.target

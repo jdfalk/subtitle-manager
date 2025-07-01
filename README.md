@@ -779,6 +779,43 @@ On first run, Subtitle Manager will start with the web interface where you can:
 
 All configuration will be persisted in the `/config` volume.
 
+### Linux Service (systemd)
+
+For Linux servers, Subtitle Manager can run as a native systemd service. This provides better system integration and resource management compared to Docker for production deployments.
+
+```bash
+# Quick start - see systemd/README.md for detailed instructions
+
+# 1. Create system user and directories
+sudo useradd --system --home-dir /var/lib/subtitle-manager --create-home --shell /bin/false subtitle-manager
+sudo mkdir -p /etc/subtitle-manager /var/log/subtitle-manager
+
+# 2. Install binary (from release or build from source)
+sudo cp subtitle-manager /usr/local/bin/
+sudo chmod +x /usr/local/bin/subtitle-manager
+
+# 3. Install service files
+sudo cp systemd/subtitle-manager.service /etc/systemd/system/
+sudo cp systemd/subtitle-manager.env /etc/subtitle-manager/
+
+# 4. Configure and start service
+sudo systemctl daemon-reload
+sudo systemctl enable --now subtitle-manager
+
+# 5. Check status and logs
+sudo systemctl status subtitle-manager
+sudo journalctl -u subtitle-manager -f
+```
+
+**Key Benefits:**
+- Native Linux service integration
+- Automatic startup on boot
+- System resource management
+- Security hardening with systemd features
+- Centralized logging with journald
+
+See [systemd/README.md](systemd/README.md) for complete installation instructions, configuration options, and troubleshooting guide.
+
 ## Development
 
 ### Quick Start with Dev Container
