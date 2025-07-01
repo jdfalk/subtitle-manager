@@ -11,11 +11,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/sirupsen/logrus"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
+	"github.com/sirupsen/logrus"
 )
 
 // SonarrWebhookHandler handles incoming webhooks from Sonarr.
@@ -45,10 +45,10 @@ type SonarrPayload struct {
 		Path  string `json:"path"`
 	} `json:"series"`
 	Episodes []struct {
-		ID           int    `json:"id"`
-		EpisodeTitle string `json:"title"`
-		SeasonNumber int    `json:"seasonNumber"`
-		EpisodeNumber int   `json:"episodeNumber"`
+		ID            int    `json:"id"`
+		EpisodeTitle  string `json:"title"`
+		SeasonNumber  int    `json:"seasonNumber"`
+		EpisodeNumber int    `json:"episodeNumber"`
 	} `json:"episodes"`
 	EpisodeFile struct {
 		ID           int    `json:"id"`
@@ -257,7 +257,7 @@ func (h *SonarrWebhookHandler) ValidateSignature(payload []byte, signature strin
 	if len(signature) != len(expectedSignature) {
 		return false
 	}
-	
+
 	for i := 0; i < len(signature); i++ {
 		if signature[i] != expectedSignature[i] {
 			return false
@@ -282,7 +282,7 @@ func (h *RadarrWebhookHandler) ValidateSignature(payload []byte, signature strin
 	if len(signature) != len(expectedSignature) {
 		return false
 	}
-	
+
 	for i := 0; i < len(signature); i++ {
 		if signature[i] != expectedSignature[i] {
 			return false
@@ -307,7 +307,7 @@ func (h *CustomWebhookHandler) ValidateSignature(payload []byte, signature strin
 	if len(signature) != len(expectedSignature) {
 		return false
 	}
-	
+
 	for i := 0; i < len(signature); i++ {
 		if signature[i] != expectedSignature[i] {
 			return false

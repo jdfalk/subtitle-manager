@@ -100,7 +100,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 	if err != nil {
 		logger.Warnf("fetch %s: %v", path, err)
-		
+
 		// Send event for subtitle fetch failure
 		events.PublishSubtitleFailed(ctx, events.SubtitleFailedData{
 			FilePath:  path,
@@ -109,7 +109,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 			Error:     err.Error(),
 			Timestamp: time.Now(),
 		})
-		
+
 		return err
 	}
 	var wasUpgrade bool
@@ -124,7 +124,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 	if err := os.WriteFile(out, data, 0644); err != nil {
 		logger.Warnf("write %s: %v", out, err)
-		
+
 		// Send event for file write failure
 		events.PublishSubtitleFailed(ctx, events.SubtitleFailedData{
 			FilePath:  path,
@@ -133,17 +133,17 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 			Error:     "Failed to write subtitle file: " + err.Error(),
 			Timestamp: time.Now(),
 		})
-		
+
 		return err
 	}
 	logger.Infof("downloaded subtitle %s", out)
-	
+
 	// Get file size for webhook event
 	var fileSize int64
 	if stat, err := os.Stat(out); err == nil {
 		fileSize = stat.Size()
 	}
-	
+
 	// Send appropriate event
 	if wasUpgrade {
 		events.PublishSubtitleUpgraded(ctx, events.SubtitleUpgradedData{
@@ -165,7 +165,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 			Timestamp:    time.Now(),
 		})
 	}
-	
+
 	if store != nil {
 		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
 	}

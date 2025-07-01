@@ -57,14 +57,14 @@ export default function WebhookSettings({ backendAvailable = true }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  
+
   // Dialog states
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openHistory, setOpenHistory] = useState(false);
   const [openTest, setOpenTest] = useState(false);
   const [selectedEndpoint, setSelectedEndpoint] = useState(null);
-  
+
   // Form state
   const [formData, setFormData] = useState({
     name: '',
@@ -88,7 +88,7 @@ export default function WebhookSettings({ backendAvailable = true }) {
         apiService.get('/api/webhooks/config'),
         apiService.get('/api/webhooks/event-types'),
       ]);
-      
+
       setEndpoints(endpointsRes.endpoints || []);
       setEventTypes(eventTypesRes.event_types || []);
       setError(null);
@@ -122,7 +122,7 @@ export default function WebhookSettings({ backendAvailable = true }) {
     setOpenCreate(true);
   };
 
-  const handleEdit = (endpoint) => {
+  const handleEdit = endpoint => {
     setSelectedEndpoint(endpoint);
     setFormData({
       name: endpoint.name,
@@ -143,7 +143,7 @@ export default function WebhookSettings({ backendAvailable = true }) {
         events: formData.events,
         headers: formData.headers,
       };
-      
+
       if (formData.secret) {
         payload.secret = formData.secret;
       }
@@ -161,7 +161,7 @@ export default function WebhookSettings({ backendAvailable = true }) {
         setSuccess('Webhook endpoint created successfully');
         setOpenCreate(false);
       }
-      
+
       loadData();
       setSelectedEndpoint(null);
     } catch (err) {
@@ -169,11 +169,15 @@ export default function WebhookSettings({ backendAvailable = true }) {
     }
   };
 
-  const handleDelete = async (endpoint) => {
-    if (!confirm(`Are you sure you want to delete the webhook "${endpoint.name}"?`)) {
+  const handleDelete = async endpoint => {
+    if (
+      !confirm(
+        `Are you sure you want to delete the webhook "${endpoint.name}"?`
+      )
+    ) {
       return;
     }
-    
+
     try {
       await apiService.delete(`/api/webhooks/config?id=${endpoint.id}`);
       setSuccess('Webhook endpoint deleted successfully');
@@ -183,14 +187,14 @@ export default function WebhookSettings({ backendAvailable = true }) {
     }
   };
 
-  const handleTest = async (endpoint) => {
+  const handleTest = async endpoint => {
     try {
       const payload = {
         url: endpoint.url,
         secret: endpoint.secret,
         headers: endpoint.headers,
       };
-      
+
       await apiService.post('/api/webhooks/test', payload);
       setSuccess('Test webhook sent successfully');
     } catch (err) {
@@ -209,7 +213,7 @@ export default function WebhookSettings({ backendAvailable = true }) {
         secret: formData.secret,
         headers: formData.headers,
       };
-      
+
       await apiService.post('/api/webhooks/test', payload);
       setSuccess('Test webhook sent successfully');
       setOpenTest(false);
@@ -218,7 +222,7 @@ export default function WebhookSettings({ backendAvailable = true }) {
     }
   };
 
-  const handleEventChange = (event) => {
+  const handleEventChange = event => {
     const value = event.target.value;
     setFormData(prev => ({
       ...prev,
@@ -226,7 +230,7 @@ export default function WebhookSettings({ backendAvailable = true }) {
     }));
   };
 
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = timestamp => {
     if (!timestamp) return 'N/A';
     return new Date(timestamp).toLocaleString();
   };
@@ -249,8 +253,17 @@ export default function WebhookSettings({ backendAvailable = true }) {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h5" component="h2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Typography
+          variant="h5"
+          component="h2"
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        >
           <WebhookIcon />
           Webhook Settings
         </Typography>
@@ -285,13 +298,14 @@ export default function WebhookSettings({ backendAvailable = true }) {
       </Box>
 
       <Typography variant="body2" color="text.secondary" mb={3}>
-        Configure webhook endpoints to receive real-time notifications about subtitle events.
-        Webhooks are sent as HTTP POST requests with JSON payloads.
+        Configure webhook endpoints to receive real-time notifications about
+        subtitle events. Webhooks are sent as HTTP POST requests with JSON
+        payloads.
       </Typography>
 
       {/* Webhook Endpoints Grid */}
       <Grid container spacing={3}>
-        {endpoints.map((endpoint) => (
+        {endpoints.map(endpoint => (
           <Grid item xs={12} md={6} lg={4} key={endpoint.id}>
             <Card>
               <CardHeader
@@ -300,8 +314,11 @@ export default function WebhookSettings({ backendAvailable = true }) {
                 action={
                   <Switch
                     checked={endpoint.enabled}
-                    onChange={(e) => {
-                      const updatedEndpoint = { ...endpoint, enabled: e.target.checked };
+                    onChange={e => {
+                      const updatedEndpoint = {
+                        ...endpoint,
+                        enabled: e.target.checked,
+                      };
                       handleEdit(updatedEndpoint);
                     }}
                   />
@@ -309,11 +326,15 @@ export default function WebhookSettings({ backendAvailable = true }) {
               />
               <CardContent>
                 <Box mb={2}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
                     Events:
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {endpoint.events.map((event) => (
+                    {endpoint.events.map(event => (
                       <Chip key={event} label={event} size="small" />
                     ))}
                   </Box>
@@ -332,7 +353,11 @@ export default function WebhookSettings({ backendAvailable = true }) {
                 <IconButton onClick={() => handleTest(endpoint)} title="Test">
                   <TestIcon />
                 </IconButton>
-                <IconButton onClick={() => handleDelete(endpoint)} title="Delete" color="error">
+                <IconButton
+                  onClick={() => handleDelete(endpoint)}
+                  title="Delete"
+                  color="error"
+                >
                   <DeleteIcon />
                 </IconButton>
               </CardActions>
@@ -347,22 +372,34 @@ export default function WebhookSettings({ backendAvailable = true }) {
             No webhook endpoints configured
           </Typography>
           <Typography variant="body2" color="text.secondary" mb={2}>
-            Add a webhook endpoint to receive notifications about subtitle events.
+            Add a webhook endpoint to receive notifications about subtitle
+            events.
           </Typography>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleCreate}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleCreate}
+          >
             Add Your First Webhook
           </Button>
         </Box>
       )}
 
       {/* Create/Edit Dialog */}
-      <Dialog open={openCreate || openEdit} onClose={() => {
-        setOpenCreate(false);
-        setOpenEdit(false);
-        setSelectedEndpoint(null);
-      }} maxWidth="md" fullWidth>
+      <Dialog
+        open={openCreate || openEdit}
+        onClose={() => {
+          setOpenCreate(false);
+          setOpenEdit(false);
+          setSelectedEndpoint(null);
+        }}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>
-          {selectedEndpoint ? 'Edit Webhook Endpoint' : 'Create Webhook Endpoint'}
+          {selectedEndpoint
+            ? 'Edit Webhook Endpoint'
+            : 'Create Webhook Endpoint'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -371,7 +408,9 @@ export default function WebhookSettings({ backendAvailable = true }) {
                 fullWidth
                 label="Name"
                 value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, name: e.target.value }))
+                }
                 placeholder="My Webhook"
               />
             </Grid>
@@ -380,7 +419,9 @@ export default function WebhookSettings({ backendAvailable = true }) {
                 fullWidth
                 label="URL"
                 value={formData.url}
-                onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, url: e.target.value }))
+                }
                 placeholder="https://example.com/webhook"
               />
             </Grid>
@@ -390,7 +431,9 @@ export default function WebhookSettings({ backendAvailable = true }) {
                 label="Secret (optional)"
                 type="password"
                 value={formData.secret}
-                onChange={(e) => setFormData(prev => ({ ...prev, secret: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, secret: e.target.value }))
+                }
                 placeholder="HMAC secret for signature validation"
                 helperText="Leave empty to disable signature validation"
               />
@@ -403,16 +446,16 @@ export default function WebhookSettings({ backendAvailable = true }) {
                   value={formData.events}
                   onChange={handleEventChange}
                   label="Event Types"
-                  renderValue={(selected) => (
+                  renderValue={selected => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => (
+                      {selected.map(value => (
                         <Chip key={value} label={value} size="small" />
                       ))}
                     </Box>
                   )}
                 >
                   <MenuItem value="*">All Events</MenuItem>
-                  {eventTypes.map((eventType) => (
+                  {eventTypes.map(eventType => (
                     <MenuItem key={eventType.type} value={eventType.type}>
                       {eventType.type} - {eventType.description}
                     </MenuItem>
@@ -426,7 +469,12 @@ export default function WebhookSettings({ backendAvailable = true }) {
                   control={
                     <Switch
                       checked={formData.enabled}
-                      onChange={(e) => setFormData(prev => ({ ...prev, enabled: e.target.checked }))}
+                      onChange={e =>
+                        setFormData(prev => ({
+                          ...prev,
+                          enabled: e.target.checked,
+                        }))
+                      }
                     />
                   }
                   label="Enabled"
@@ -436,11 +484,13 @@ export default function WebhookSettings({ backendAvailable = true }) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {
-            setOpenCreate(false);
-            setOpenEdit(false);
-            setSelectedEndpoint(null);
-          }}>
+          <Button
+            onClick={() => {
+              setOpenCreate(false);
+              setOpenEdit(false);
+              setSelectedEndpoint(null);
+            }}
+          >
             Cancel
           </Button>
           <Button onClick={handleSave} variant="contained">
@@ -450,7 +500,12 @@ export default function WebhookSettings({ backendAvailable = true }) {
       </Dialog>
 
       {/* Test Dialog */}
-      <Dialog open={openTest} onClose={() => setOpenTest(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openTest}
+        onClose={() => setOpenTest(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Test Webhook</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -459,7 +514,9 @@ export default function WebhookSettings({ backendAvailable = true }) {
                 fullWidth
                 label="URL"
                 value={formData.url}
-                onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, url: e.target.value }))
+                }
                 placeholder="https://example.com/webhook"
               />
             </Grid>
@@ -469,7 +526,9 @@ export default function WebhookSettings({ backendAvailable = true }) {
                 label="Secret (optional)"
                 type="password"
                 value={formData.secret}
-                onChange={(e) => setFormData(prev => ({ ...prev, secret: e.target.value }))}
+                onChange={e =>
+                  setFormData(prev => ({ ...prev, secret: e.target.value }))
+                }
                 placeholder="HMAC secret for signature validation"
               />
             </Grid>
@@ -484,7 +543,12 @@ export default function WebhookSettings({ backendAvailable = true }) {
       </Dialog>
 
       {/* History Dialog */}
-      <Dialog open={openHistory} onClose={() => setOpenHistory(false)} maxWidth="lg" fullWidth>
+      <Dialog
+        open={openHistory}
+        onClose={() => setOpenHistory(false)}
+        maxWidth="lg"
+        fullWidth
+      >
         <DialogTitle>Webhook Event History</DialogTitle>
         <DialogContent>
           <TableContainer>
@@ -506,8 +570,12 @@ export default function WebhookSettings({ backendAvailable = true }) {
                     </TableCell>
                     <TableCell>{event.source}</TableCell>
                     <TableCell>
-                      <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
-                        {JSON.stringify(event.data, null, 2).substring(0, 100)}...
+                      <Typography
+                        variant="body2"
+                        sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}
+                      >
+                        {JSON.stringify(event.data, null, 2).substring(0, 100)}
+                        ...
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -539,7 +607,7 @@ export default function WebhookSettings({ backendAvailable = true }) {
           {success}
         </Alert>
       </Snackbar>
-      
+
       <Snackbar
         open={!!error}
         autoHideDuration={6000}

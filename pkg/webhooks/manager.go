@@ -17,8 +17,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/sirupsen/logrus"
 )
 
 // IncomingHandler processes incoming webhook events from external services.
@@ -105,13 +105,13 @@ func (wm *WebhookManager) AddOutgoingEndpoint(endpoint OutgoingEndpoint) error {
 
 	wm.mu.Lock()
 	defer wm.mu.Unlock()
-	
+
 	endpoint.ID = generateID()
 	endpoint.CreatedAt = time.Now()
 	endpoint.UpdatedAt = time.Now()
 	endpoint.Enabled = true
 	endpoint.MaxRetries = 3
-	
+
 	wm.outgoing = append(wm.outgoing, endpoint)
 	wm.logger.Infof("Added outgoing webhook endpoint: %s (%s)", endpoint.Name, endpoint.URL)
 	return nil
