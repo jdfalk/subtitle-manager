@@ -3,6 +3,8 @@ package database
 import (
 	"testing"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 // getTestStore returns a test store, preferring Pebble when SQLite is not available
@@ -13,6 +15,114 @@ func getTestStore(t *testing.T) SubtitleStore {
 		t.Fatalf("Failed to open Pebble store: %v", err)
 	}
 	return store
+}
+
+// TestGetDatabasePath tests the GetDatabasePath function with different backends.
+func TestGetDatabasePath(t *testing.T) {
+	// Save original viper settings
+	originalBackend := viper.GetString("db_backend")
+	originalPath := viper.GetString("db_path")
+	originalFilename := viper.GetString("sqlite3_filename")
+	defer func() {
+		viper.Set("db_backend", originalBackend)
+		viper.Set("db_path", originalPath)
+		viper.Set("sqlite3_filename", originalFilename)
+	}()
+
+	tests := []struct {
+		name             string
+		backend          string
+		dbPath           string
+		sqlite3Filename  string
+		expectedPath     string
+	}{
+		{
+			name:            "SQLite backend with filename",
+			backend:         "sqlite",
+			dbPath:          "/var/data",
+			sqlite3Filename: "subtitles.db",
+			expectedPath:    "/var/data/subtitles.db",
+		},
+		{
+			name:            "SQLite backend with empty filename",
+			backend:         "sqlite",
+			dbPath:          "/tmp",
+			sqlite3Filename: "",
+			expectedPath:    "/tmp",
+		},
+		{
+			name:         "Pebble backend",
+			backend:      "pebble",
+			dbPath:       "/var/pebble",
+			expectedPath: "/var/pebble",
+		},
+		{
+			name:         "Postgres backend",
+			backend:      "postgres",
+			dbPath:       "postgresql://user:pass@localhost/db",
+			expectedPath: "postgresql://user:pass@localhost/db",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			viper.Set("db_backend", tt.backend)
+			viper.Set("db_path", tt.dbPath)
+			viper.Set("sqlite3_filename", tt.sqlite3Filename)
+
+			result := GetDatabasePath()
+			if result != tt.expectedPath {
+				t.Errorf("expected path %q, got %q", tt.expectedPath, result)
+			}
+		})
+	}
+}
+
+// TestGetDatabaseBackend tests the GetDatabaseBackend function.
+func TestGetDatabaseBackend(t *testing.T) {
+	// Save original viper setting
+	originalBackend := viper.GetString("db_backend")
+	defer func() {
+		viper.Set("db_backend", originalBackend)
+	}()
+
+	tests := []struct {
+		name     string
+		backend  string
+		expected string
+	}{
+		{
+			name:     "SQLite backend",
+			backend:  "sqlite",
+			expected: "sqlite",
+		},
+		{
+			name:     "Pebble backend",
+			backend:  "pebble",
+			expected: "pebble",
+		},
+		{
+			name:     "Postgres backend",
+			backend:  "postgres",
+			expected: "postgres",
+		},
+		{
+			name:     "Empty backend",
+			backend:  "",
+			expected: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			viper.Set("db_backend", tt.backend)
+
+			result := GetDatabaseBackend()
+			if result != tt.expected {
+				t.Errorf("expected backend %q, got %q", tt.expected, result)
+			}
+		})
+	}
 }
 
 func TestInsertAndList(t *testing.T) {
@@ -189,5 +299,206 @@ func TestMediaItems(t *testing.T) {
 	}
 	if len(items) != 0 {
 		t.Fatalf("expected 0 items, got %d", len(items))
+	}
+}
+
+// TestCountFunctions tests count operations for different entity types.
+func TestCountFunctions(t *testing.T) {
+	store := getTestStore(t)
+	defer store.Close()
+
+	// Test counting subtitles
+	initialSubCount, err := store.CountSubtitles()
+	if err != nil {
+		t.Fatalf("CountSubtitles failed: %v", err)
+	}
+
+	// Add a subtitle and check count
+	rec := &SubtitleRecord{
+		File:      "test.srt",
+		VideoFile: "test.mkv",
+		Language:  "en",
+		Service:   "test",
+		CreatedAt: time.Now(),
+	}
+	if err := store.InsertSubtitle(rec); err != nil {
+		t.Fatalf("InsertSubtitle failed: %v", err)
+	}
+
+	subCount, err := store.CountSubtitles()
+	if err != nil {
+		t.Fatalf("CountSubtitles failed: %v", err)
+	}
+	if subCount != initialSubCount+1 {
+		t.Errorf("expected subtitle count %d, got %d", initialSubCount+1, subCount)
+	}
+
+	// Test counting downloads
+	initialDownloadCount, err := store.CountDownloads()
+	if err != nil {
+		t.Fatalf("CountDownloads failed: %v", err)
+	}
+
+	// Add a download and check count
+	downloadRec := &DownloadRecord{
+		File:      "download.srt",
+		VideoFile: "download.mkv",
+		Provider:  "test-provider",
+		Language:  "es",
+		CreatedAt: time.Now(),
+	}
+	if err := store.InsertDownload(downloadRec); err != nil {
+		t.Fatalf("InsertDownload failed: %v", err)
+	}
+
+	downloadCount, err := store.CountDownloads()
+	if err != nil {
+		t.Fatalf("CountDownloads failed: %v", err)
+	}
+	if downloadCount != initialDownloadCount+1 {
+		t.Errorf("expected download count %d, got %d", initialDownloadCount+1, downloadCount)
+	}
+
+	// Test counting media items
+	initialMediaCount, err := store.CountMediaItems()
+	if err != nil {
+		t.Fatalf("CountMediaItems failed: %v", err)
+	}
+
+	// Add a media item and check count
+	mediaItem := &MediaItem{
+		Path:      "media.mkv",
+		Title:     "Test Movie",
+		Season:    1,
+		Episode:   1,
+		CreatedAt: time.Now(),
+	}
+	if err := store.InsertMediaItem(mediaItem); err != nil {
+		t.Fatalf("InsertMediaItem failed: %v", err)
+	}
+
+	mediaCount, err := store.CountMediaItems()
+	if err != nil {
+		t.Fatalf("CountMediaItems failed: %v", err)
+	}
+	if mediaCount != initialMediaCount+1 {
+		t.Errorf("expected media count %d, got %d", initialMediaCount+1, mediaCount)
+	}
+}
+
+// TestListSubtitlesByVideo tests filtering subtitles by video file.
+func TestListSubtitlesByVideo(t *testing.T) {
+	store := getTestStore(t)
+	defer store.Close()
+
+	// Insert subtitles for different videos
+	subtitles := []*SubtitleRecord{
+		{
+			File:      "video1_en.srt",
+			VideoFile: "video1.mkv",
+			Language:  "en",
+			Service:   "test",
+			CreatedAt: time.Now(),
+		},
+		{
+			File:      "video1_es.srt",
+			VideoFile: "video1.mkv",
+			Language:  "es",
+			Service:   "test",
+			CreatedAt: time.Now(),
+		},
+		{
+			File:      "video2_en.srt",
+			VideoFile: "video2.mkv",
+			Language:  "en",
+			Service:   "test",
+			CreatedAt: time.Now(),
+		},
+	}
+
+	for _, sub := range subtitles {
+		if err := store.InsertSubtitle(sub); err != nil {
+			t.Fatalf("InsertSubtitle failed: %v", err)
+		}
+	}
+
+	// Test filtering by video file
+	video1Subs, err := store.ListSubtitlesByVideo("video1.mkv")
+	if err != nil {
+		t.Fatalf("ListSubtitlesByVideo failed: %v", err)
+	}
+	if len(video1Subs) != 2 {
+		t.Errorf("expected 2 subtitles for video1.mkv, got %d", len(video1Subs))
+	}
+
+	video2Subs, err := store.ListSubtitlesByVideo("video2.mkv")
+	if err != nil {
+		t.Fatalf("ListSubtitlesByVideo failed: %v", err)
+	}
+	if len(video2Subs) != 1 {
+		t.Errorf("expected 1 subtitle for video2.mkv, got %d", len(video2Subs))
+	}
+
+	// Test with non-existent video
+	nonExistentSubs, err := store.ListSubtitlesByVideo("nonexistent.mkv")
+	if err != nil {
+		t.Fatalf("ListSubtitlesByVideo failed: %v", err)
+	}
+	if len(nonExistentSubs) != 0 {
+		t.Errorf("expected 0 subtitles for nonexistent video, got %d", len(nonExistentSubs))
+	}
+}
+
+// TestListDownloadsByVideo tests filtering downloads by video file.
+func TestListDownloadsByVideo(t *testing.T) {
+	store := getTestStore(t)
+	defer store.Close()
+
+	// Insert downloads for different videos
+	downloads := []*DownloadRecord{
+		{
+			File:      "video1_en.srt",
+			VideoFile: "video1.mkv",
+			Provider:  "provider1",
+			Language:  "en",
+			CreatedAt: time.Now(),
+		},
+		{
+			File:      "video1_es.srt",
+			VideoFile: "video1.mkv",
+			Provider:  "provider2",
+			Language:  "es",
+			CreatedAt: time.Now(),
+		},
+		{
+			File:      "video2_en.srt",
+			VideoFile: "video2.mkv",
+			Provider:  "provider1",
+			Language:  "en",
+			CreatedAt: time.Now(),
+		},
+	}
+
+	for _, download := range downloads {
+		if err := store.InsertDownload(download); err != nil {
+			t.Fatalf("InsertDownload failed: %v", err)
+		}
+	}
+
+	// Test filtering by video file
+	video1Downloads, err := store.ListDownloadsByVideo("video1.mkv")
+	if err != nil {
+		t.Fatalf("ListDownloadsByVideo failed: %v", err)
+	}
+	if len(video1Downloads) != 2 {
+		t.Errorf("expected 2 downloads for video1.mkv, got %d", len(video1Downloads))
+	}
+
+	video2Downloads, err := store.ListDownloadsByVideo("video2.mkv")
+	if err != nil {
+		t.Fatalf("ListDownloadsByVideo failed: %v", err)
+	}
+	if len(video2Downloads) != 1 {
+		t.Errorf("expected 1 download for video2.mkv, got %d", len(video2Downloads))
 	}
 }
