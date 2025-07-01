@@ -24,13 +24,13 @@ const (
 
 // BlacklistEntry represents a blacklisted item with metadata.
 type BlacklistEntry struct {
-	ItemID     string          `json:"item_id"`
-	Path       string          `json:"path"`
-	Language   string          `json:"language"`
-	Reason     BlacklistReason `json:"reason"`
-	Details    string          `json:"details"`
-	BlacklistedAt time.Time    `json:"blacklisted_at"`
-	ExpiresAt  *time.Time      `json:"expires_at,omitempty"`
+	ItemID        string          `json:"item_id"`
+	Path          string          `json:"path"`
+	Language      string          `json:"language"`
+	Reason        BlacklistReason `json:"reason"`
+	Details       string          `json:"details"`
+	BlacklistedAt time.Time       `json:"blacklisted_at"`
+	ExpiresAt     *time.Time      `json:"expires_at,omitempty"`
 }
 
 // BlacklistManager manages blacklisted items and providers.

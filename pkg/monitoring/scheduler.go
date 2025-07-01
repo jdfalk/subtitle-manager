@@ -44,11 +44,11 @@ func NewScheduledMonitor(
 // StartPeriodicMonitoring starts the monitoring daemon with a specified interval.
 func (s *ScheduledMonitor) StartPeriodicMonitoring(ctx context.Context, interval time.Duration) error {
 	s.monitor.interval = interval
-	
+
 	opts := scheduler.Options{
-		Interval: interval,
-		SkipFirst: false, // Run immediately on start
-		Jitter:   time.Minute, // Add some jitter to avoid spikes
+		Interval:  interval,
+		SkipFirst: false,       // Run immediately on start
+		Jitter:    time.Minute, // Add some jitter to avoid spikes
 	}
 
 	return scheduler.RunWithOptions(ctx, opts, s.monitor.checkForSubtitles)
@@ -72,11 +72,11 @@ func (s *ScheduledMonitor) RunSyncTask(ctx context.Context, opts SyncOptions) er
 // StartScheduledSync starts periodic synchronization with Sonarr/Radarr.
 func (s *ScheduledMonitor) StartScheduledSync(ctx context.Context, interval time.Duration, opts SyncOptions) error {
 	opts.ForceRefresh = false // Don't force refresh on scheduled syncs
-	
+
 	syncOpts := scheduler.Options{
-		Interval: interval,
+		Interval:  interval,
 		SkipFirst: false,
-		Jitter:   time.Minute * 5, // Longer jitter for sync tasks
+		Jitter:    time.Minute * 5, // Longer jitter for sync tasks
 	}
 
 	return scheduler.RunWithOptions(ctx, syncOpts, func(ctx context.Context) error {

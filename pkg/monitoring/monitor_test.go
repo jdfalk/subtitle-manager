@@ -193,7 +193,7 @@ func (m *MockSubtitleStore) Close() error {
 
 func TestEpisodeMonitor_NewEpisodeMonitor(t *testing.T) {
 	store := &MockSubtitleStore{}
-	
+
 	monitor := NewEpisodeMonitor(
 		time.Hour,
 		nil, // sonarr client
@@ -211,7 +211,7 @@ func TestEpisodeMonitor_NewEpisodeMonitor(t *testing.T) {
 
 func TestEpisodeMonitor_GetMonitoringStats(t *testing.T) {
 	store := &MockSubtitleStore{}
-	
+
 	// Mock data
 	mockItems := []database.MonitoredItem{
 		{ID: "1", Status: "pending"},
@@ -220,7 +220,7 @@ func TestEpisodeMonitor_GetMonitoringStats(t *testing.T) {
 		{ID: "4", Status: "failed"},
 		{ID: "5", Status: "blacklisted"},
 	}
-	
+
 	store.On("ListMonitoredItems").Return(mockItems, nil)
 
 	monitor := NewEpisodeMonitor(
@@ -231,7 +231,7 @@ func TestEpisodeMonitor_GetMonitoringStats(t *testing.T) {
 	)
 
 	stats, err := monitor.GetMonitoringStats()
-	
+
 	assert.NoError(t, err)
 	assert.NotNil(t, stats)
 	assert.Equal(t, 5, stats.Total)
@@ -240,13 +240,13 @@ func TestEpisodeMonitor_GetMonitoringStats(t *testing.T) {
 	assert.Equal(t, 1, stats.Found)
 	assert.Equal(t, 1, stats.Failed)
 	assert.Equal(t, 1, stats.Blacklisted)
-	
+
 	store.AssertExpectations(t)
 }
 
 func TestEpisodeMonitor_CheckForSubtitles(t *testing.T) {
 	store := &MockSubtitleStore{}
-	
+
 	// Mock empty items to check
 	store.On("GetMonitoredItemsToCheck", mock.Anything).Return([]database.MonitoredItem{}, nil)
 
@@ -258,7 +258,7 @@ func TestEpisodeMonitor_CheckForSubtitles(t *testing.T) {
 	)
 
 	err := monitor.checkForSubtitles(context.Background())
-	
+
 	assert.NoError(t, err)
 	store.AssertExpectations(t)
 }

@@ -15,9 +15,9 @@ import (
 
 // SyncOptions contains configuration for media library synchronization.
 type SyncOptions struct {
-	Languages   []string // Languages to monitor for
-	MaxRetries  int      // Maximum retry attempts per item
-	ForceRefresh bool    // Whether to refresh existing items
+	Languages    []string // Languages to monitor for
+	MaxRetries   int      // Maximum retry attempts per item
+	ForceRefresh bool     // Whether to refresh existing items
 }
 
 // SyncFromSonarr synchronizes TV episodes from Sonarr and adds them to monitoring.
@@ -27,7 +27,7 @@ func (m *EpisodeMonitor) SyncFromSonarr(ctx context.Context, opts SyncOptions) e
 	}
 
 	m.logger.Info("Syncing episodes from Sonarr")
-	
+
 	// Get episodes from Sonarr
 	episodes, err := m.sonarr.Episodes(ctx)
 	if err != nil {
@@ -53,7 +53,7 @@ func (m *EpisodeMonitor) SyncFromRadarr(ctx context.Context, opts SyncOptions) e
 	}
 
 	m.logger.Info("Syncing movies from Radarr")
-	
+
 	// Get movies from Radarr
 	movies, err := m.radarr.Movies(ctx)
 	if err != nil {
