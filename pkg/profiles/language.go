@@ -60,33 +60,27 @@ func (lp *LanguageProfile) SetTags(tags []string) {
 	// Future implementation for tag assignment
 }
 
-// Validate checks if the language profile has valid configuration.
-func (lp *LanguageProfile) Validate() error {
+// ValidateProfile checks if the language profile has valid configuration.
+func (lp *LanguageProfile) ValidateProfile() error {
 	if lp.Name == "" {
-		return &ValidationError{Field: "name", Message: "profile name is required"}
+		return &ValidationError{Field: "name", Message: "Name cannot be empty"}
 	}
 	if len(lp.Languages) == 0 {
-		return &ValidationError{Field: "languages", Message: "at least one language is required"}
+		return &ValidationError{Field: "languages", Message: "At least one language must be specified"}
 	}
 	if lp.CutoffScore < 0 || lp.CutoffScore > 100 {
-		return &ValidationError{Field: "cutoff_score", Message: "cutoff score must be between 0 and 100"}
+		return &ValidationError{Field: "cutoff_score", Message: "Cutoff score must be between 0 and 100"}
 	}
-
-	// Validate language configurations
 	priorities := make(map[int]bool)
 	for i, lang := range lp.Languages {
 		if lang.Language == "" {
-			return &ValidationError{Field: "languages", Message: "language code is required", Index: i}
-		}
-		if lang.Priority < 1 {
-			return &ValidationError{Field: "languages", Message: "priority must be greater than 0", Index: i}
+			return &ValidationError{Field: "languages", Message: "Language code cannot be empty", Index: i}
 		}
 		if priorities[lang.Priority] {
-			return &ValidationError{Field: "languages", Message: "duplicate priority values not allowed", Index: i}
+			return &ValidationError{Field: "languages", Message: "Duplicate priority", Index: i}
 		}
 		priorities[lang.Priority] = true
 	}
-
 	return nil
 }
 
@@ -95,7 +89,6 @@ func (lp *LanguageProfile) GetPrimaryLanguage() *LanguageConfig {
 	if len(lp.Languages) == 0 {
 		return nil
 	}
-
 	primary := &lp.Languages[0]
 	for i := 1; i < len(lp.Languages); i++ {
 		if lp.Languages[i].Priority < primary.Priority {
@@ -115,6 +108,30 @@ func (lp *LanguageProfile) UnmarshalConfig(data []byte) error {
 	return json.Unmarshal(data, &lp.Languages)
 }
 
+// ToJSON serializes the language profile to a JSON string.
+func (lp *LanguageProfile) ToJSON() (string, error) {
+	b, err := json.Marshal(lp)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+// FromJSON deserializes the language profile from a JSON string.
+func (lp *LanguageProfile) FromJSON(configJSON string) error {
+	return json.Unmarshal([]byte(configJSON), lp)
+}
+
+// GetLanguageConfig returns the configuration for a specific language if present.
+func (lp *LanguageProfile) GetLanguageConfig(languageCode string) *LanguageConfig {
+	for i := range lp.Languages {
+		if lp.Languages[i].Language == languageCode {
+			return &lp.Languages[i]
+		}
+	}
+	return nil
+}
+
 // ValidationError represents a validation error for language profiles.
 type ValidationError struct {
 	Field   string
@@ -125,18 +142,18 @@ type ValidationError struct {
 // Error implements the error interface.
 func (e *ValidationError) Error() string {
 	if e.Index >= 0 {
-		return fmt.Sprintf("validation error in %s[%d]: %s", e.Field, e.Index, e.Message)
+		return fmt.Sprintf("%s[%d]: %s", e.Field, e.Index, e.Message)
 	}
-	return fmt.Sprintf("validation error in %s: %s", e.Field, e.Message)
+	return fmt.Sprintf("%s: %s", e.Field, e.Message)
 }
 
-// DefaultLanguageProfile creates a default English language profile.
-func DefaultLanguageProfile() *LanguageProfile {
+// DefaultProfile creates a default English language profile.
+func DefaultProfile() *LanguageProfile {
 	return &LanguageProfile{
 		ID:          "default",
-		Name:        "Default English",
+		Name:        "Default",
 		Languages:   []LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
-		CutoffScore: 75,
+		CutoffScore: 80,
 		IsDefault:   true,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),

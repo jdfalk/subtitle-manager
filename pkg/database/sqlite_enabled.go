@@ -21,8 +21,7 @@ func OpenSQLStore(path string) (*SQLStore, error) {
 		return nil, fmt.Errorf("failed to open SQLite database at %s: %w", path, err)
 	}
 	if err := initSchema(db); err != nil {
-		db.Close()
-		return nil, fmt.Errorf("failed to initialize SQLite schema: %w", err)
+		return nil, err
 	}
 	return &SQLStore{db: db}, nil
 }
@@ -252,8 +251,8 @@ func initSchema(db *sql.DB) error {
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         config TEXT NOT NULL,
-        cutoff_score INTEGER NOT NULL DEFAULT 75,
-        is_default BOOLEAN DEFAULT FALSE,
+        cutoff_score INTEGER NOT NULL DEFAULT 80,
+        is_default INTEGER NOT NULL DEFAULT 0,
         created_at TIMESTAMP NOT NULL,
         updated_at TIMESTAMP NOT NULL
     )`); err != nil {
@@ -261,12 +260,10 @@ func initSchema(db *sql.DB) error {
 	}
 
 	// Media profile assignments table
-	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_profiles (
-        media_id TEXT NOT NULL,
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_profile_assignments (
+        media_id TEXT PRIMARY KEY,
         profile_id TEXT NOT NULL,
-        created_at TIMESTAMP NOT NULL,
-        PRIMARY KEY (media_id),
-        FOREIGN KEY (profile_id) REFERENCES language_profiles(id) ON DELETE CASCADE
+        created_at TIMESTAMP NOT NULL
     )`); err != nil {
 		return err
 	}

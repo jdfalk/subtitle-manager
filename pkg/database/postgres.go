@@ -69,13 +69,13 @@ func initPostgresSchema(db *sql.DB) error {
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             config TEXT NOT NULL,
-            cutoff_score INTEGER NOT NULL DEFAULT 75,
+            cutoff_score INTEGER DEFAULT 80,
             is_default BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP NOT NULL,
             updated_at TIMESTAMP NOT NULL
         )`,
 		`CREATE TABLE IF NOT EXISTS media_profiles (
-            media_id TEXT PRIMARY KEY,
+            media_id TEXT NOT NULL PRIMARY KEY,
             profile_id TEXT NOT NULL,
             created_at TIMESTAMP NOT NULL,
             FOREIGN KEY (profile_id) REFERENCES language_profiles(id) ON DELETE CASCADE
@@ -394,7 +394,7 @@ func (p *PostgresStore) CreateLanguageProfile(profile *LanguageProfile) error {
 		return fmt.Errorf("failed to marshal profile config: %w", err)
 	}
 
-	_, err = p.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at) 
+	_, err = p.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
 		profile.ID, profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
 		profile.CreatedAt, profile.UpdatedAt)
@@ -406,7 +406,7 @@ func (p *PostgresStore) GetLanguageProfile(id string) (*LanguageProfile, error) 
 	var profile LanguageProfile
 	var configStr string
 
-	row := p.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	row := p.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at
 FROM language_profiles WHERE id = $1`, id)
 
 	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
@@ -424,7 +424,7 @@ FROM language_profiles WHERE id = $1`, id)
 
 // ListLanguageProfiles retrieves all language profiles.
 func (p *PostgresStore) ListLanguageProfiles() ([]LanguageProfile, error) {
-	rows, err := p.db.Query(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	rows, err := p.db.Query(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at
 FROM language_profiles ORDER BY is_default DESC, name ASC`)
 	if err != nil {
 		return nil, err
@@ -459,7 +459,7 @@ func (p *PostgresStore) UpdateLanguageProfile(profile *LanguageProfile) error {
 		return fmt.Errorf("failed to marshal profile config: %w", err)
 	}
 
-	_, err = p.db.Exec(`UPDATE language_profiles 
+	_, err = p.db.Exec(`UPDATE language_profiles
 SET name = $1, config = $2, cutoff_score = $3, is_default = $4, updated_at = $5
 WHERE id = $6`,
 		profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
@@ -505,7 +505,7 @@ func (p *PostgresStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 	var profile LanguageProfile
 	var configStr string
 
-	row := p.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
+	row := p.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at
 FROM language_profiles WHERE is_default = TRUE LIMIT 1`)
 
 	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
@@ -523,7 +523,7 @@ FROM language_profiles WHERE is_default = TRUE LIMIT 1`)
 
 // AssignProfileToMedia assigns a language profile to a media item.
 func (p *PostgresStore) AssignProfileToMedia(mediaID, profileID string) error {
-	_, err := p.db.Exec(`INSERT INTO media_profiles (media_id, profile_id, created_at) 
+	_, err := p.db.Exec(`INSERT INTO media_profiles (media_id, profile_id, created_at)
 VALUES ($1, $2, $3) ON CONFLICT (media_id) DO UPDATE SET profile_id = EXCLUDED.profile_id, created_at = EXCLUDED.created_at`,
 		mediaID, profileID, time.Now())
 	return err
@@ -568,14 +568,14 @@ func (p *PostgresStore) GetSubtitleSource(sourceHash string) (*SubtitleSource, e
 	var title, releaseInfo, metadata sql.NullString
 	var fileSize sql.NullInt64
 	var avgRating sql.NullFloat64
-	
+
 	row := p.db.QueryRow(`SELECT id, source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at FROM subtitle_sources WHERE source_hash = $1`, sourceHash)
-	
+
 	err := row.Scan(&id, &src.SourceHash, &src.OriginalURL, &src.Provider, &title, &releaseInfo, &fileSize, &src.DownloadCount, &src.SuccessCount, &avgRating, &src.LastSeen, &metadata, &src.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	src.ID = strconv.FormatInt(id, 10)
 	if title.Valid {
 		src.Title = title.String
@@ -593,7 +593,7 @@ func (p *PostgresStore) GetSubtitleSource(sourceHash string) (*SubtitleSource, e
 	if metadata.Valid {
 		src.Metadata = metadata.String
 	}
-	
+
 	return &src, nil
 }
 
@@ -608,12 +608,12 @@ func (p *PostgresStore) UpdateSubtitleSourceStats(sourceHash string, downloadCou
 func (p *PostgresStore) ListSubtitleSources(provider string, limit int) ([]SubtitleSource, error) {
 	query := `SELECT id, source_hash, original_url, provider, title, release_info, file_size, download_count, success_count, avg_rating, last_seen, metadata, created_at FROM subtitle_sources`
 	args := []interface{}{}
-	
+
 	if provider != "" {
 		query += ` WHERE provider = $1`
 		args = append(args, provider)
 	}
-	
+
 	query += ` ORDER BY last_seen DESC`
 	if limit > 0 {
 		if provider != "" {
@@ -623,13 +623,13 @@ func (p *PostgresStore) ListSubtitleSources(provider string, limit int) ([]Subti
 		}
 		args = append(args, limit)
 	}
-	
+
 	rows, err := p.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	var sources []SubtitleSource
 	for rows.Next() {
 		var src SubtitleSource
@@ -637,11 +637,11 @@ func (p *PostgresStore) ListSubtitleSources(provider string, limit int) ([]Subti
 		var title, releaseInfo, metadata sql.NullString
 		var fileSize sql.NullInt64
 		var avgRating sql.NullFloat64
-		
+
 		if err := rows.Scan(&id, &src.SourceHash, &src.OriginalURL, &src.Provider, &title, &releaseInfo, &fileSize, &src.DownloadCount, &src.SuccessCount, &avgRating, &src.LastSeen, &metadata, &src.CreatedAt); err != nil {
 			return nil, err
 		}
-		
+
 		src.ID = strconv.FormatInt(id, 10)
 		if title.Valid {
 			src.Title = title.String
@@ -659,10 +659,10 @@ func (p *PostgresStore) ListSubtitleSources(provider string, limit int) ([]Subti
 		if metadata.Valid {
 			src.Metadata = metadata.String
 		}
-		
+
 		sources = append(sources, src)
 	}
-	
+
 	return sources, rows.Err()
 }
 
