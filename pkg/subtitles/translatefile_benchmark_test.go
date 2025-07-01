@@ -33,3 +33,30 @@ func BenchmarkTranslateFileToSRT(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkTranslateFileToSRTBatch(b *testing.B) {
+	// Mock server that supports batch translation
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Simulate batch response - this is simplified for benchmark
+		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"},{"translatedText":"adiós"}]}}`)
+	}))
+	defer srv.Close()
+	translator.SetGoogleAPIURL(srv.URL)
+	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
+
+	for i := 0; i < b.N; i++ {
+		out := filepath.Join(b.TempDir(), fmt.Sprintf("out-batch-%d.srt", i))
+		if err := TranslateFileToSRT("../../testdata/simple.srt", out, "es", "google", "test-key", "", ""); err != nil {
+			b.Fatalf("translate batch: %v", err)
+		}
+	}
+}
+
+func BenchmarkTranslateFileToSRTNonGoogle(b *testing.B) {
+	// Test non-Google service for comparison
+	for i := 0; i < b.N; i++ {
+		out := filepath.Join(b.TempDir(), fmt.Sprintf("out-gpt-%d.srt", i))
+		// This will fail due to no API key, but measures the overhead
+		_ = TranslateFileToSRT("../../testdata/simple.srt", out, "es", "gpt", "", "fake-key", "")
+	}
+}

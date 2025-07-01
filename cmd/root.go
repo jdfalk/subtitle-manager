@@ -242,6 +242,7 @@ func init() {
 	rootCmd.AddCommand(sonarrCmd)
 	rootCmd.AddCommand(radarrCmd)
 	rootCmd.AddCommand(renameCmd)
+	rootCmd.AddCommand(profileCmd)
 }
 
 func initConfig() {
