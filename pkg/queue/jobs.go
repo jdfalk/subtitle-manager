@@ -34,14 +34,14 @@ type Job interface {
 
 // SingleFileJob represents a job to translate a single subtitle file.
 type SingleFileJob struct {
-	JobID     string
-	InputPath string
+	JobID      string
+	InputPath  string
 	OutputPath string
-	Language  string
-	Service   string
-	GoogleKey string
-	GPTKey    string
-	GRPCAddr  string
+	Language   string
+	Service    string
+	GoogleKey  string
+	GPTKey     string
+	GRPCAddr   string
 }
 
 // ID returns the job identifier.
@@ -74,14 +74,14 @@ func (j *SingleFileJob) Description() string {
 
 // BatchFilesJob represents a job to translate multiple subtitle files.
 type BatchFilesJob struct {
-	JobID     string
+	JobID      string
 	InputPaths []string
-	Language  string
-	Service   string
-	GoogleKey string
-	GPTKey    string
-	GRPCAddr  string
-	Workers   int
+	Language   string
+	Service    string
+	GoogleKey  string
+	GPTKey     string
+	GRPCAddr   string
+	Workers    int
 }
 
 // ID returns the job identifier.

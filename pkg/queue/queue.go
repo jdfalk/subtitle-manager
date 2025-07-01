@@ -18,14 +18,14 @@ import (
 
 // Queue manages asynchronous translation jobs using a worker pool.
 type Queue struct {
-	mu       sync.RWMutex
-	jobs     chan Job
-	workers  int
-	running  bool
-	logger   *logrus.Entry
-	ctx      context.Context
-	cancel   context.CancelFunc
-	wg       sync.WaitGroup
+	mu      sync.RWMutex
+	jobs    chan Job
+	workers int
+	running bool
+	logger  *logrus.Entry
+	ctx     context.Context
+	cancel  context.CancelFunc
+	wg      sync.WaitGroup
 }
 
 // NewQueue creates a new translation queue with the specified number of workers.
