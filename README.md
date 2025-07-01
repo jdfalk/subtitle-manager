@@ -143,6 +143,85 @@ GET /api/tags?entity_type=user&name=premium
 POST /api/tags/bulk {"tag_id": "reliable", "entities": [{"type": "provider",
 "id": "opensubtitles"}, {"type": "provider", "id": "subscene"}]} \```
 
+### Language Profiles System
+
+Language Profiles provide Bazarr-compatible language preference management,
+allowing fine-grained control over subtitle language selection for different
+media items. This system replaces simple language strings with sophisticated
+profile-based configurations.
+
+#### Key Features
+
+- **Priority-Based Language Selection**: Define multiple languages with priority
+  ordering (lower numbers = higher priority)
+- **Profile Assignment**: Assign different language profiles to specific media
+  items or use global defaults
+- **Forced Subtitles Support**: Configure preference for forced/hearing-impaired
+  subtitles per language
+- **Quality Thresholds**: Set cutoff scores for subtitle quality acceptance
+- **Default Profile Management**: Automatic fallback to default profiles when
+  no specific assignment exists
+- **Database Integration**: Full CRUD operations with SQLite and PostgreSQL
+  support
+
+#### Profile Structure
+
+```json
+{
+  "id": "profile-uuid",
+  "name": "English + Spanish",
+  "languages": [
+    {
+      "language": "en",
+      "priority": 1,
+      "forced": false,
+      "hi": false
+    },
+    {
+      "language": "es", 
+      "priority": 2,
+      "forced": false,
+      "hi": true
+    }
+  ],
+  "cutoff_score": 80,
+  "is_default": false
+}
+```
+
+#### API Endpoints
+
+- `GET /api/language-profiles` - List all language profiles
+- `POST /api/language-profiles` - Create a new language profile
+- `GET /api/language-profiles/{id}` - Get specific language profile
+- `PUT /api/language-profiles/{id}` - Update language profile
+- `DELETE /api/language-profiles/{id}` - Delete language profile
+- `GET /api/language-profiles/default` - Get default language profile
+- `POST /api/media/{id}/profile` - Assign profile to media item
+- `GET /api/media/{id}/profile` - Get media's assigned profile
+
+#### CLI Integration
+
+```bash
+# Fetch subtitles using language profile preferences
+subtitle-manager fetch --profile /path/to/movie.mkv dummy output.srt
+
+# Scan directory with profile-based language selection
+subtitle-manager scan --profiles /media/movies
+```
+
+#### Automatic Profile Usage
+
+The system automatically uses language profiles in these scenarios:
+
+1. **Media Assignment**: When a media item has an assigned profile, that profile's
+   language preferences are used for subtitle searches
+2. **Default Fallback**: Media without assigned profiles use the default profile
+3. **Priority Processing**: Languages are tried in priority order until suitable
+   subtitles are found
+4. **Provider Integration**: All 40+ subtitle providers support profile-based
+   language selection
+
 ### Supported Subtitle Providers
 
 Subtitle Manager now supports the full provider list from Bazarr. The following

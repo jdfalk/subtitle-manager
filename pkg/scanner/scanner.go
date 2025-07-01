@@ -3,6 +3,7 @@ package scanner
 
 import (
 	"context"
+	"database/sql"
 	"os"
 	"path/filepath"
 	"strings"
@@ -128,4 +129,89 @@ func isVideoFile(path string) bool {
 		}
 	}
 	return false
+}
+
+// ScanDirectoryWithProfiles walks through the directory and downloads subtitles for video files
+// using language profiles. Each video file's profile is determined by its media_profiles assignment.
+func ScanDirectoryWithProfiles(ctx context.Context, dir string, db *sql.DB, upgrade bool, workers int, store database.SubtitleStore) error {
+	logger := logging.GetLogger("scanner")
+	sanitizedDir, err := security.ValidateAndSanitizePath(dir)
+	if err != nil {
+		logger.Warnf("invalid path: %v", err)
+		return err
+	}
+	work := pool.New().WithErrors().WithMaxGoroutines(workers)
+	err = filepath.WalkDir(sanitizedDir, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		if !isVideoFile(path) {
+			return nil
+		}
+		f := filepath.Clean(path)
+		work.Go(func() error {
+			logger.Debugf("process %s with profiles", f)
+			return ProcessFileWithProfile(ctx, f, db, upgrade, store)
+		})
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return work.Wait()
+}
+
+// ProcessFileWithProfile downloads subtitles using the language profile assigned to the media file.
+func ProcessFileWithProfile(ctx context.Context, path string, db *sql.DB, upgrade bool, store database.SubtitleStore) error {
+	logger := logging.GetLogger("scanner")
+
+	// Validate path
+	sanitizedPath, err := security.ValidateAndSanitizePath(path)
+	if err != nil {
+		logger.Warnf("invalid path: %v", err)
+		return err
+	}
+
+	// Use profile-based fetch to get subtitles
+	data, providerName, actualLang, err := providers.FetchWithProfile(ctx, db, sanitizedPath, "")
+	if err != nil {
+		logger.Warnf("fetch with profile %s: %v", sanitizedPath, err)
+		return err
+	}
+
+	// Construct and validate the output path securely using the actual language found
+	out, err := security.ValidateSubtitleOutputPath(sanitizedPath, actualLang)
+	if err != nil {
+		logger.Warnf("invalid subtitle output path: %v", err)
+		return err
+	}
+
+	if !upgrade {
+		if _, err := os.Stat(out); err == nil {
+			logger.Debugf("subtitle already exists: %s", out)
+			return nil
+		}
+	}
+
+	if upgrade {
+		if oldData, err := os.ReadFile(out); err == nil {
+			if len(data) <= len(oldData) {
+				logger.Debugf("existing subtitle %s is higher quality", out)
+				return nil
+			}
+		}
+	}
+
+	if err := os.WriteFile(out, data, 0644); err != nil {
+		logger.Warnf("write: %v", err)
+		return err
+	}
+	logger.Infof("downloaded %s subtitle %s using profile", actualLang, out)
+	if store != nil {
+		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: sanitizedPath, Provider: providerName, Language: actualLang})
+	}
+	return nil
 }
