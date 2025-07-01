@@ -15,6 +15,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/profiles"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/spf13/cobra"
 )
 
@@ -180,6 +181,13 @@ var assignProfileCmd = &cobra.Command{
 		mediaPath := args[0]
 		profileID := args[1]
 
+		// Validate and sanitize the media path to prevent path traversal attacks
+		validatedPath, err := security.ValidateAndSanitizePath(mediaPath)
+		if err != nil {
+			logger.Errorf("invalid media path: %v", err)
+			return fmt.Errorf("invalid media path: %w", err)
+		}
+
 		store, err := database.OpenStore(database.GetDatabasePath(), "pebble")
 		if err != nil {
 			logger.Errorf("failed to open database: %v", err)
@@ -194,13 +202,13 @@ var assignProfileCmd = &cobra.Command{
 			return fmt.Errorf("profile %s not found", profileID)
 		}
 
-		// Assign profile to media
-		if err := store.AssignProfileToMedia(mediaPath, profileID); err != nil {
+		// Assign profile to media using the validated path
+		if err := store.AssignProfileToMedia(validatedPath, profileID); err != nil {
 			logger.Errorf("failed to assign profile: %v", err)
 			return err
 		}
 
-		fmt.Printf("Assigned profile '%s' to media: %s\n", profile.Name, mediaPath)
+		fmt.Printf("Assigned profile '%s' to media: %s\n", profile.Name, validatedPath)
 		return nil
 	},
 }
@@ -214,6 +222,13 @@ var removeProfileCmd = &cobra.Command{
 		logger := logging.GetLogger("profiles")
 		mediaPath := args[0]
 
+		// Validate and sanitize the media path to prevent path traversal attacks
+		validatedPath, err := security.ValidateAndSanitizePath(mediaPath)
+		if err != nil {
+			logger.Errorf("invalid media path: %v", err)
+			return fmt.Errorf("invalid media path: %w", err)
+		}
+
 		store, err := database.OpenStore(database.GetDatabasePath(), "pebble")
 		if err != nil {
 			logger.Errorf("failed to open database: %v", err)
@@ -221,12 +236,12 @@ var removeProfileCmd = &cobra.Command{
 		}
 		defer store.Close()
 
-		if err := store.RemoveProfileFromMedia(mediaPath); err != nil {
+		if err := store.RemoveProfileFromMedia(validatedPath); err != nil {
 			logger.Errorf("failed to remove profile assignment: %v", err)
 			return err
 		}
 
-		fmt.Printf("Removed profile assignment from media: %s\n", mediaPath)
+		fmt.Printf("Removed profile assignment from media: %s\n", validatedPath)
 		return nil
 	},
 }
@@ -240,6 +255,13 @@ var showMediaProfileCmd = &cobra.Command{
 		logger := logging.GetLogger("profiles")
 		mediaPath := args[0]
 
+		// Validate and sanitize the media path to prevent path traversal attacks
+		validatedPath, err := security.ValidateAndSanitizePath(mediaPath)
+		if err != nil {
+			logger.Errorf("invalid media path: %v", err)
+			return fmt.Errorf("invalid media path: %w", err)
+		}
+
 		store, err := database.OpenStore(database.GetDatabasePath(), "pebble")
 		if err != nil {
 			logger.Errorf("failed to open database: %v", err)
@@ -247,13 +269,13 @@ var showMediaProfileCmd = &cobra.Command{
 		}
 		defer store.Close()
 
-		profile, err := store.GetMediaProfile(mediaPath)
+		profile, err := store.GetMediaProfile(validatedPath)
 		if err != nil {
 			logger.Errorf("failed to get media profile: %v", err)
 			return err
 		}
 
-		fmt.Printf("Media: %s\n", mediaPath)
+		fmt.Printf("Media: %s\n", validatedPath)
 		fmt.Printf("Profile: %s (ID: %s)\n", profile.Name, profile.ID)
 		if profile.IsDefault {
 			fmt.Printf("Type: Default Profile\n")
