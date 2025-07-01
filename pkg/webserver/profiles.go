@@ -80,36 +80,8 @@ func profilesHandler(db *sql.DB) http.Handler {
 	})
 }
 
-// mediaProfilesHandler handles media profile assignment endpoints.
-// Supports:
-// GET /api/media/profile/{id} - Get profile assigned to media
-// PUT /api/media/profile/{id} - Assign profile to media
-// DELETE /api/media/profile/{id} - Remove profile assignment
-func mediaProfilesHandler(db *sql.DB) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Parse URL path: /api/media/profile/{id}
-		path := strings.TrimPrefix(r.URL.Path, "/api/media/profile/")
-		if path == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		mediaID := strings.Split(path, "/")[0]
-
-		switch r.Method {
-		case http.MethodGet:
-			handleGetMediaProfile(w, r, db, mediaID)
-		case http.MethodPut:
-			handleAssignMediaProfile(w, r, db, mediaID)
-		case http.MethodDelete:
-			handleRemoveMediaProfile(w, r, db, mediaID)
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	})
-}
-
 // handleListProfiles returns all language profiles.
+// GET /api/profiles
 func handleListProfiles(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	store, err := database.OpenSQLStore(database.GetDatabasePath())
 	if err != nil {
@@ -129,6 +101,7 @@ func handleListProfiles(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 // handleCreateProfile creates a new language profile.
+// POST /api/profiles
 func handleCreateProfile(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var profile profiles.LanguageProfile
 	if err := json.NewDecoder(r.Body).Decode(&profile); err != nil {
@@ -169,6 +142,7 @@ func handleCreateProfile(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 // handleGetProfile returns a specific language profile.
+// GET /api/profiles/{id}
 func handleGetProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, profileID string) {
 	store, err := database.OpenSQLStore(database.GetDatabasePath())
 	if err != nil {
@@ -192,6 +166,7 @@ func handleGetProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, profil
 }
 
 // handleUpdateProfile updates an existing language profile.
+// PUT /api/profiles/{id}
 func handleUpdateProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, profileID string) {
 	var profile profiles.LanguageProfile
 	if err := json.NewDecoder(r.Body).Decode(&profile); err != nil {
@@ -226,6 +201,7 @@ func handleUpdateProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, pro
 }
 
 // handleDeleteProfile deletes a language profile.
+// DELETE /api/profiles/{id}
 func handleDeleteProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, profileID string) {
 	store, err := database.OpenSQLStore(database.GetDatabasePath())
 	if err != nil {
@@ -250,6 +226,7 @@ func handleDeleteProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, pro
 }
 
 // handleSetDefaultProfile sets a profile as the default.
+// POST /api/profiles/{id}/default
 func handleSetDefaultProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, profileID string) {
 	store, err := database.OpenSQLStore(database.GetDatabasePath())
 	if err != nil {
@@ -266,7 +243,37 @@ func handleSetDefaultProfile(w http.ResponseWriter, r *http.Request, db *sql.DB,
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// mediaProfilesHandler handles media profile assignment endpoints.
+// Supports:
+// GET /api/media/profile/{id} - Get profile assigned to media
+// PUT /api/media/profile/{id} - Assign profile to media
+// DELETE /api/media/profile/{id} - Remove profile assignment
+func mediaProfilesHandler(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Parse URL path: /api/media/profile/{id}
+		path := strings.TrimPrefix(r.URL.Path, "/api/media/profile/")
+		if path == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		mediaID := strings.Split(path, "/")[0]
+
+		switch r.Method {
+		case http.MethodGet:
+			handleGetMediaProfile(w, r, db, mediaID)
+		case http.MethodPut:
+			handleAssignMediaProfile(w, r, db, mediaID)
+		case http.MethodDelete:
+			handleRemoveMediaProfile(w, r, db, mediaID)
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
+}
+
 // handleGetMediaProfile returns the profile assigned to a media item.
+// GET /api/media/profile/{id}
 func handleGetMediaProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, mediaID string) {
 	store, err := database.OpenSQLStore(database.GetDatabasePath())
 	if err != nil {
@@ -286,6 +293,7 @@ func handleGetMediaProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, m
 }
 
 // handleAssignMediaProfile assigns a profile to a media item.
+// PUT /api/media/profile/{id}
 func handleAssignMediaProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, mediaID string) {
 	var request struct {
 		ProfileID string `json:"profile_id"`
@@ -328,6 +336,7 @@ func handleAssignMediaProfile(w http.ResponseWriter, r *http.Request, db *sql.DB
 }
 
 // handleRemoveMediaProfile removes profile assignment from a media item.
+// DELETE /api/media/profile/{id}
 func handleRemoveMediaProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, mediaID string) {
 	store, err := database.OpenSQLStore(database.GetDatabasePath())
 	if err != nil {
@@ -342,4 +351,46 @@ func handleRemoveMediaProfile(w http.ResponseWriter, r *http.Request, db *sql.DB
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// extractIDFromPath extracts the ID from a URL path.
+func extractIDFromPath(path, prefix string) string {
+	if len(path) <= len(prefix) {
+		return ""
+	}
+	id := path[len(prefix):]
+	// Handle paths with trailing slashes or additional segments
+	for i, c := range id {
+		if c == '/' {
+			return id[:i]
+		}
+	}
+	return id
+}
+
+// methodRouter routes requests based on HTTP method.
+func methodRouter(methods map[string]http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if handler, ok := methods[r.Method]; ok {
+			handler.ServeHTTP(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+}
+
+// languageProfilesRouter handles language profile sub-routes.
+func languageProfilesRouter(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetLanguageProfile(db).ServeHTTP(w, r)
+		case "PUT":
+			handleUpdateLanguageProfile(db).ServeHTTP(w, r)
+		case "DELETE":
+			handleDeleteLanguageProfile(db).ServeHTTP(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
 }
