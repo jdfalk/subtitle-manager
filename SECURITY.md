@@ -113,7 +113,7 @@ Subtitle Manager implements several security measures:
 
 - [Proposed Security Updates](docs/PROPOSED_SECURITY_UPDATES.md) - Comprehensive
   security enhancement plan
-- [Technical Design Security](docs/TECHNICAL_DESIGN.md#security-considerations) -
+- [Technical Design Security](docs/TECHNICAL_DESIGN.md#12-security-considerations) -
   Architecture security details
 - [GitHub Security Guidelines](.github/security-guidelines.md) - Development
   security practices
