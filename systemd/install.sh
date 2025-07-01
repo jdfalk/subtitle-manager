@@ -67,7 +67,9 @@ check_binary() {
         binary_source="./subtitle-manager"
     else
         print_error "Subtitle Manager binary not found."
-        print_error "Please build the binary with 'make build' or place it in the current directory."
+        print_error "Please build the binary first:"
+        print_error "  For SQLite support: CGO_ENABLED=1 go build -tags sqlite -o subtitle-manager ."
+        print_error "  For PebbleDB only:  CGO_ENABLED=0 go build -o subtitle-manager ."
         print_error "Alternatively, download from: https://github.com/jdfalk/subtitle-manager/releases"
         exit 1
     fi
