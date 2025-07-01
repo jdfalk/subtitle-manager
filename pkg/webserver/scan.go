@@ -124,7 +124,17 @@ func scanHandler() http.Handler {
 				}
 			}
 
-			return scanner.ScanDirectoryProgress(ctx, q.Directory, q.Lang, q.Provider, p, false, 2, nil, cb)
+			// Open database store for download tracking
+			var store database.SubtitleStore
+			if dbPath := viper.GetString("db_path"); dbPath != "" {
+				backend := viper.GetString("db_backend")
+				if s, err := database.OpenStore(dbPath, backend); err == nil {
+					store = s
+					defer s.Close()
+				}
+			}
+
+			return scanner.ScanDirectoryProgress(ctx, q.Directory, q.Lang, q.Provider, p, false, 2, store, cb)
 		})
 
 		go func() {
