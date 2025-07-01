@@ -37,11 +37,11 @@ func TestNewRetrier(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			retrier := NewRetrier(tt.config)
-			
+
 			assert.NotNil(t, retrier)
 			assert.NotNil(t, retrier.config)
 			assert.NotNil(t, retrier.logger)
-			
+
 			if tt.config == nil {
 				// Should use default config
 				assert.NotNil(t, retrier.config)
@@ -239,7 +239,7 @@ func TestRetrier_calculateDelay(t *testing.T) {
 
 func TestRetryConfig_DefaultValues(t *testing.T) {
 	config := DefaultRetryConfig()
-	
+
 	require.NotNil(t, config)
 	assert.Greater(t, config.MaxAttempts, 0)
 	assert.Greater(t, config.InitialDelay, time.Duration(0))

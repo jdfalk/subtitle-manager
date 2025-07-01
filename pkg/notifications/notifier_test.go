@@ -61,18 +61,18 @@ func TestFunc_Notify(t *testing.T) {
 func TestFunc_MessagePassing(t *testing.T) {
 	receivedMessage := ""
 	var receivedCtx context.Context
-	
+
 	fn := Func(func(ctx context.Context, msg string) error {
 		receivedCtx = ctx
 		receivedMessage = msg
 		return nil
 	})
-	
+
 	ctx := context.WithValue(context.Background(), "test", "value")
 	testMessage := "hello world"
-	
+
 	err := fn.Notify(ctx, testMessage)
-	
+
 	assert.NoError(t, err)
 	assert.Equal(t, testMessage, receivedMessage)
 	assert.Equal(t, ctx, receivedCtx)
@@ -80,7 +80,7 @@ func TestFunc_MessagePassing(t *testing.T) {
 
 func TestNop_Notify(t *testing.T) {
 	nop := Nop{}
-	
+
 	tests := []struct {
 		name string
 		msg  string
@@ -109,15 +109,15 @@ func TestNop_Notify(t *testing.T) {
 
 func TestNop_ContextHandling(t *testing.T) {
 	nop := Nop{}
-	
+
 	// Test with nil context (should not panic)
 	err := nop.Notify(nil, "test message")
 	assert.NoError(t, err)
-	
+
 	// Test with canceled context (should still succeed)
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	
+
 	err = nop.Notify(ctx, "test message")
 	assert.NoError(t, err)
 }
