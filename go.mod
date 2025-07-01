@@ -5,6 +5,7 @@ go 1.24
 require (
 	cloud.google.com/go/translate v1.12.6
 	github.com/asticode/go-astisub v0.34.0
+	github.com/aws/aws-sdk-go v1.55.7
 	github.com/cockroachdb/pebble v1.1.5
 	github.com/docker/docker v28.3.0+incompatible
 	github.com/docker/go-connections v0.5.0
@@ -46,7 +47,6 @@ require (
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/asticode/go-astikit v0.20.0 // indirect
 	github.com/asticode/go-astits v1.8.0 // indirect
-	github.com/aws/aws-sdk-go v1.55.7 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chigopher/pathlib v0.19.1 // indirect
