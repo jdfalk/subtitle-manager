@@ -72,7 +72,7 @@ func scanHandler() http.Handler {
 		}
 		status = scanStatus{Running: true, Files: []string{}}
 		scanMu.Unlock()
-		
+
 		// Start task with proper integration
 		taskID := fmt.Sprintf("scan-%s-%s", q.Directory, q.Lang)
 		task := tasks.Start(r.Context(), taskID, func(ctx context.Context) error {
@@ -84,7 +84,7 @@ func scanHandler() http.Handler {
 					return err
 				}
 			}
-			
+
 			// Count files for progress tracking
 			var fileCount int
 			videoExtensions := []string{".mkv", ".mp4", ".avi", ".mov"}
@@ -97,7 +97,7 @@ func scanHandler() http.Handler {
 				}
 				return false
 			}
-			
+
 			err = filepath.Walk(q.Directory, func(path string, info os.FileInfo, err error) error {
 				if err != nil {
 					return err
@@ -110,23 +110,23 @@ func scanHandler() http.Handler {
 			if err != nil {
 				return err
 			}
-			
+
 			processed := 0
 			cb := func(f string) {
 				scanMu.Lock()
 				status.Completed++
 				status.Files = append(status.Files, f)
 				scanMu.Unlock()
-				
+
 				processed++
 				if fileCount > 0 {
 					tasks.Update(taskID, (processed*100)/fileCount)
 				}
 			}
-			
+
 			return scanner.ScanDirectoryProgress(ctx, q.Directory, q.Lang, q.Provider, p, false, 2, nil, cb)
 		})
-		
+
 		go func() {
 			// Wait for task completion and clean up local status
 			<-time.After(100 * time.Millisecond)
@@ -137,7 +137,7 @@ func scanHandler() http.Handler {
 			status.Running = false
 			scanMu.Unlock()
 		}()
-		
+
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(map[string]string{"task_id": taskID})
 	})

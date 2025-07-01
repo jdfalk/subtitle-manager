@@ -52,7 +52,7 @@ var scanCmd = &cobra.Command{
 		}
 		workers := viper.GetInt("scan_workers")
 
-		// Count video files for progress tracking  
+		// Count video files for progress tracking
 		videoExtensions := []string{".mkv", ".mp4", ".avi", ".mov"}
 		isVideoFile := func(path string) bool {
 			ext := strings.ToLower(filepath.Ext(path))

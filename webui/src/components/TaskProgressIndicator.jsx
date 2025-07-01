@@ -13,7 +13,7 @@ import { Box, LinearProgress, Typography, Chip } from '@mui/material';
 export default function TaskProgressIndicator({ task, showDetails = true }) {
   if (!task) return null;
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
       case 'completed':
         return 'success';
@@ -35,7 +35,12 @@ export default function TaskProgressIndicator({ task, showDetails = true }) {
   return (
     <Box sx={{ width: '100%', mb: 2 }}>
       {showDetails && (
-        <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={1}
+        >
           <Typography variant="body2" color="text.primary">
             {task.id}
           </Typography>
@@ -47,7 +52,7 @@ export default function TaskProgressIndicator({ task, showDetails = true }) {
           />
         </Box>
       )}
-      
+
       <LinearProgress
         variant="determinate"
         value={getProgressValue()}
@@ -57,13 +62,19 @@ export default function TaskProgressIndicator({ task, showDetails = true }) {
           backgroundColor: 'grey.200',
           '& .MuiLinearProgress-bar': {
             borderRadius: 1,
-            backgroundColor: task.status === 'failed' ? 'error.main' : undefined,
+            backgroundColor:
+              task.status === 'failed' ? 'error.main' : undefined,
           },
         }}
       />
-      
+
       {showDetails && (
-        <Box display="flex" alignItems="center" justifyContent="space-between" mt={1}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={1}
+        >
           <Typography variant="caption" color="text.secondary">
             {getProgressValue().toFixed(0)}% complete
           </Typography>

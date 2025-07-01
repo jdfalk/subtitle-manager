@@ -201,7 +201,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
 
   useEffect(() => {
     loadCurrentDirectory();
-    
+
     // Set up task polling if backend is available
     if (backendAvailable) {
       const pollTasks = async () => {
@@ -215,7 +215,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
           console.error('Failed to poll tasks:', error);
         }
       };
-      
+
       pollTasks();
       const taskInterval = setInterval(pollTasks, 2000);
       return () => clearInterval(taskInterval);
@@ -496,7 +496,8 @@ export default function MediaLibrary({ backendAvailable = true }) {
       )}
 
       {/* Task-based Progress Indicators */}
-      {Object.values(tasks).filter(task => task.status === 'running').length > 0 && (
+      {Object.values(tasks).filter(task => task.status === 'running').length >
+        0 && (
         <Paper sx={{ p: 2, mb: 3 }}>
           <Typography variant="subtitle2" gutterBottom>
             Active Operations
