@@ -1573,12 +1573,12 @@ func (p *PebbleStore) GetSubtitleSource(sourceHash string) (*SubtitleSource, err
 		return nil, err
 	}
 	defer closer.Close()
-	
+
 	var src SubtitleSource
 	if err := json.Unmarshal(data, &src); err != nil {
 		return nil, err
 	}
-	
+
 	return &src, nil
 }
 
@@ -1588,12 +1588,12 @@ func (p *PebbleStore) UpdateSubtitleSourceStats(sourceHash string, downloadCount
 	if err != nil {
 		return err
 	}
-	
+
 	src.DownloadCount = downloadCount
 	src.SuccessCount = successCount
 	src.AvgRating = avgRating
 	src.LastSeen = time.Now()
-	
+
 	return p.InsertSubtitleSource(src)
 }
 
@@ -1607,26 +1607,26 @@ func (p *PebbleStore) ListSubtitleSources(provider string, limit int) ([]Subtitl
 		return nil, err
 	}
 	defer iter.Close()
-	
+
 	var sources []SubtitleSource
 	count := 0
-	
+
 	for iter.First(); iter.Valid(); iter.Next() {
 		if limit > 0 && count >= limit {
 			break
 		}
-		
+
 		var src SubtitleSource
 		if err := json.Unmarshal(iter.Value(), &src); err != nil {
 			continue
 		}
-		
+
 		if provider == "" || src.Provider == provider {
 			sources = append(sources, src)
 			count++
 		}
 	}
-	
+
 	return sources, iter.Error()
 }
 
