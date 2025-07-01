@@ -50,7 +50,7 @@ func FromOpenSubtitlesResult(result opensubtitles.SearchResult, providerName str
 func FromMediaPath(mediaPath string) MediaItem {
 	filename := filepath.Base(mediaPath)
 	filename = strings.TrimSuffix(filename, filepath.Ext(filename))
-	
+
 	media := MediaItem{
 		Title: filename,
 	}
@@ -59,7 +59,7 @@ func FromMediaPath(mediaPath string) MediaItem {
 	parts := strings.Split(filename, ".")
 	for _, part := range parts {
 		partLower := strings.ToLower(part)
-		
+
 		// Look for resolution indicators
 		if strings.Contains(partLower, "1080p") || strings.Contains(partLower, "1080i") {
 			media.Resolution = "1080p"
@@ -70,10 +70,10 @@ func FromMediaPath(mediaPath string) MediaItem {
 		} else if strings.Contains(partLower, "480p") {
 			media.Resolution = "480p"
 		}
-		
+
 		// Look for source indicators
-		if strings.Contains(partLower, "bluray") || strings.Contains(partLower, "blu-ray") || 
-		   strings.Contains(partLower, "brrip") || strings.Contains(partLower, "bdrip") {
+		if strings.Contains(partLower, "bluray") || strings.Contains(partLower, "blu-ray") ||
+			strings.Contains(partLower, "brrip") || strings.Contains(partLower, "bdrip") {
 			media.Source = "bluray"
 		} else if strings.Contains(partLower, "web-dl") || strings.Contains(partLower, "webdl") {
 			media.Source = "web-dl"
@@ -84,18 +84,18 @@ func FromMediaPath(mediaPath string) MediaItem {
 		} else if strings.Contains(partLower, "dvdrip") {
 			media.Source = "dvdrip"
 		}
-		
+
 		// Look for codec indicators
 		if strings.Contains(partLower, "x264") || strings.Contains(partLower, "h264") {
 			media.Codec = "x264"
 		} else if strings.Contains(partLower, "x265") || strings.Contains(partLower, "h265") ||
-				  strings.Contains(partLower, "hevc") {
+			strings.Contains(partLower, "hevc") {
 			media.Codec = "x265"
 		} else if strings.Contains(partLower, "xvid") {
 			media.Codec = "xvid"
 		}
 	}
-	
+
 	// Try to extract season/episode from filename
 	if season, episode := parseSeasonEpisode(filename); season > 0 {
 		media.Season = season
@@ -136,7 +136,7 @@ func FromMediaPath(mediaPath string) MediaItem {
 // getFormatFromURL tries to determine subtitle format from download URL or filename.
 func getFormatFromURL(url string) string {
 	url = strings.ToLower(url)
-	
+
 	if strings.Contains(url, ".srt") {
 		return "srt"
 	} else if strings.Contains(url, ".ass") {
@@ -150,7 +150,7 @@ func getFormatFromURL(url string) string {
 	} else if strings.Contains(url, ".idx") {
 		return "idx"
 	}
-	
+
 	return "srt" // Default assumption
 }
 
@@ -193,7 +193,7 @@ func isCodec(part string) bool {
 // parseSeasonEpisode attempts to extract season and episode numbers from filename.
 func parseSeasonEpisode(filename string) (season, episode int) {
 	filename = strings.ToLower(filename)
-	
+
 	// Pattern: S01E05, s01e05, etc.
 	// Look for 's' followed immediately by digits
 	for i := 0; i < len(filename)-1; i++ {
@@ -204,7 +204,7 @@ func parseSeasonEpisode(filename string) (season, episode int) {
 			for seasonEnd < len(filename) && filename[seasonEnd] >= '0' && filename[seasonEnd] <= '9' {
 				seasonEnd++
 			}
-			
+
 			if seasonEnd > seasonStart && seasonEnd < len(filename) && filename[seasonEnd] == 'e' {
 				seasonStr := filename[seasonStart:seasonEnd]
 				episodeStart := seasonEnd + 1
@@ -212,7 +212,7 @@ func parseSeasonEpisode(filename string) (season, episode int) {
 				for episodeEnd < len(filename) && filename[episodeEnd] >= '0' && filename[episodeEnd] <= '9' {
 					episodeEnd++
 				}
-				
+
 				if episodeEnd > episodeStart {
 					episodeStr := filename[episodeStart:episodeEnd]
 					season, _ = strconv.Atoi(seasonStr)
@@ -224,7 +224,7 @@ func parseSeasonEpisode(filename string) (season, episode int) {
 			}
 		}
 	}
-	
+
 	// Pattern: 1x05, 01x05, etc.
 	for i := 0; i < len(filename)-2; i++ {
 		if filename[i] == 'x' && i > 0 && i < len(filename)-2 {
@@ -237,10 +237,10 @@ func parseSeasonEpisode(filename string) (season, episode int) {
 			for episodeEnd < len(filename) && filename[episodeEnd] >= '0' && filename[episodeEnd] <= '9' {
 				episodeEnd++
 			}
-			
+
 			if seasonStart < i && episodeEnd > i+1 {
 				seasonStr := filename[seasonStart:i]
-				episodeStr := filename[i+1:episodeEnd]
+				episodeStr := filename[i+1 : episodeEnd]
 				season, _ = strconv.Atoi(seasonStr)
 				episode, _ = strconv.Atoi(episodeStr)
 				if season > 0 {
@@ -249,7 +249,7 @@ func parseSeasonEpisode(filename string) (season, episode int) {
 			}
 		}
 	}
-	
+
 	return 0, 0
 }
 

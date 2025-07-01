@@ -92,35 +92,35 @@ func TestFromOpenSubtitlesResult(t *testing.T) {
 	if subtitle.ProviderName != "opensubtitles" {
 		t.Errorf("Expected provider name 'opensubtitles', got '%s'", subtitle.ProviderName)
 	}
-	
+
 	if !subtitle.IsTrusted {
 		t.Error("Expected IsTrusted to be true")
 	}
-	
+
 	if subtitle.Release != "Movie.2023.1080p.BluRay.x264-GROUP" {
 		t.Errorf("Expected release 'Movie.2023.1080p.BluRay.x264-GROUP', got '%s'", subtitle.Release)
 	}
-	
+
 	if subtitle.Format != "srt" {
 		t.Errorf("Expected format 'srt', got '%s'", subtitle.Format)
 	}
-	
+
 	if subtitle.DownloadCount != 1000 {
 		t.Errorf("Expected download count 1000, got %d", subtitle.DownloadCount)
 	}
-	
+
 	if subtitle.Rating != 8.5 {
 		t.Errorf("Expected rating 8.5, got %f", subtitle.Rating)
 	}
-	
+
 	if subtitle.Votes != 50 {
 		t.Errorf("Expected votes 50, got %d", subtitle.Votes)
 	}
-	
+
 	if !subtitle.HD {
 		t.Error("Expected HD to be true")
 	}
-	
+
 	if subtitle.FileName != "movie.srt" {
 		t.Errorf("Expected filename 'movie.srt', got '%s'", subtitle.FileName)
 	}
@@ -166,11 +166,11 @@ func TestFromMediaPath(t *testing.T) {
 			name: "simple TV episode with 1x05 format",
 			path: "/tv/Show.1x05.HDTV.XviD.avi",
 			expected: MediaItem{
-				Title:      "Show.1x05.HDTV.XviD",
-				Season:     1,
-				Episode:    5,
-				Source:     "hdtv",
-				Codec:      "xvid",
+				Title:   "Show.1x05.HDTV.XviD",
+				Season:  1,
+				Episode: 5,
+				Source:  "hdtv",
+				Codec:   "xvid",
 			},
 		},
 		{
@@ -198,31 +198,31 @@ func TestFromMediaPath(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := FromMediaPath(tt.path)
-			
+
 			if result.Title != tt.expected.Title {
 				t.Errorf("Title: expected '%s', got '%s'", tt.expected.Title, result.Title)
 			}
-			
+
 			if result.Season != tt.expected.Season {
 				t.Errorf("Season: expected %d, got %d", tt.expected.Season, result.Season)
 			}
-			
+
 			if result.Episode != tt.expected.Episode {
 				t.Errorf("Episode: expected %d, got %d", tt.expected.Episode, result.Episode)
 			}
-			
+
 			if result.Resolution != tt.expected.Resolution {
 				t.Errorf("Resolution: expected '%s', got '%s'", tt.expected.Resolution, result.Resolution)
 			}
-			
+
 			if result.Source != tt.expected.Source {
 				t.Errorf("Source: expected '%s', got '%s'", tt.expected.Source, result.Source)
 			}
-			
+
 			if result.Codec != tt.expected.Codec {
 				t.Errorf("Codec: expected '%s', got '%s'", tt.expected.Codec, result.Codec)
 			}
-			
+
 			if result.ReleaseGroup != tt.expected.ReleaseGroup {
 				t.Errorf("ReleaseGroup: expected '%s', got '%s'", tt.expected.ReleaseGroup, result.ReleaseGroup)
 			}
