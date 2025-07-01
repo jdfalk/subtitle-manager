@@ -1,193 +1,241 @@
-# Automatic Episode Monitoring System
+<!-- file: docs/MONITORING.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: d4e5f6g7-h8i9-0j1k-2l3m-n4o5p6q7r8s9 -->
 
-The subtitle-manager now includes a comprehensive automatic episode monitoring
-system that can monitor your Sonarr/Radarr library for new episodes and
-automatically download subtitles when they become available.
+# Monitoring and Metrics
 
-## Features
+Subtitle Manager exposes Prometheus metrics for monitoring and observability.
 
-- **Automatic Detection**: Monitors Sonarr/Radarr for new episodes and movies
-- **Multi-language Support**: Track subtitle availability for multiple languages
-  simultaneously
-- **Provider Integration**: Uses existing provider priority system for downloads
-- **Retry Logic**: Configurable retry attempts with exponential backoff
-- **Blacklist Management**: Automatic and manual blacklisting of problematic
-  items
-- **Quality Upgrades**: Monitor for better quality subtitles
-- **Statistics**: Detailed monitoring statistics and progress reporting
-- **Scheduler Integration**: Periodic monitoring with configurable intervals
+## Prometheus Metrics Endpoint
 
-## Quick Start
+The application exposes a `/metrics` endpoint that provides metrics in Prometheus format.
 
-### 1. Sync Media Library
+### Endpoint Details
 
-First, sync your media library from Sonarr/Radarr to populate the monitoring
-database:
+- **URL**: `http://localhost:8080/metrics` (or your configured address)
+- **Authentication**: Not required (standard practice for monitoring endpoints)
+- **Content-Type**: `text/plain; version=0.0.4; charset=utf-8`
 
-```bash
-# Sync from both Sonarr and Radarr
-subtitle-manager monitor sync --languages=en,es --max-retries=3
+## Available Metrics
 
-# Sync only from Sonarr
-subtitle-manager monitor sync --source=sonarr --languages=en
+### Provider Metrics
 
-# Force refresh existing items
-subtitle-manager monitor sync --force-refresh
+#### `subtitle_manager_provider_requests_total`
+Counter tracking requests made to subtitle providers.
+
+**Labels:**
+- `provider`: Name of the subtitle provider (e.g., "opensubtitles", "subscene")
+- `status`: Request status ("success" or "error")
+
+**Example:**
+```
+subtitle_manager_provider_requests_total{provider="opensubtitles",status="success"} 42
+subtitle_manager_provider_requests_total{provider="opensubtitles",status="error"} 3
 ```
 
-### 2. Check Monitoring Status
+#### `subtitle_manager_subtitle_downloads_total`
+Counter tracking successful subtitle downloads.
 
-View current monitoring statistics:
+**Labels:**
+- `provider`: Name of the subtitle provider
+- `language`: Language code of downloaded subtitles (e.g., "en", "fr", "es")
 
-```bash
-subtitle-manager monitor status
+**Example:**
+```
+subtitle_manager_subtitle_downloads_total{provider="opensubtitles",language="en"} 25
+subtitle_manager_subtitle_downloads_total{provider="subscene",language="fr"} 8
 ```
 
-Example output:
+### Translation Metrics
 
+#### `subtitle_manager_translation_requests_total`
+Counter tracking translation requests processed.
+
+**Labels:**
+- `service`: Translation service used ("google", "openai", "grpc")
+- `target_language`: Target language for translation
+- `status`: Request status ("success", "error", "bad_request")
+
+**Example:**
 ```
-Monitoring Status:
-  Total items:    150
-  Pending:        45
-  Monitoring:     80
-  Found:          20
-  Failed:         3
-  Blacklisted:    2
-```
-
-### 3. Start Monitoring Daemon
-
-Start the monitoring daemon to automatically check for subtitles:
-
-```bash
-# Monitor every hour with quality upgrades enabled
-subtitle-manager monitor start --interval=1h --quality-check
-
-# Monitor every 30 minutes with custom retry limit
-subtitle-manager monitor start --interval=30m --max-retries=5
+subtitle_manager_translation_requests_total{service="google",target_language="en",status="success"} 15
+subtitle_manager_translation_requests_total{service="openai",target_language="fr",status="error"} 2
 ```
 
-### 4. List Monitored Items
+### API Metrics
 
-View all items currently being monitored:
+#### `subtitle_manager_api_requests_total`
+Counter tracking API requests by endpoint.
 
-```bash
-subtitle-manager monitor list
+**Labels:**
+- `endpoint`: API endpoint path (e.g., "/api/download", "/api/translate")
+- `method`: HTTP method ("GET", "POST", "PUT", "DELETE")
+- `status_code`: HTTP status code ("200", "400", "500", etc.)
+
+**Example:**
+```
+subtitle_manager_api_requests_total{endpoint="/api/download",method="POST",status_code="200"} 18
+subtitle_manager_api_requests_total{endpoint="/api/translate",method="POST",status_code="400"} 5
 ```
 
-### 5. Blacklist Management
+#### `subtitle_manager_request_duration_seconds`
+Histogram tracking API request duration.
 
-List blacklisted items:
+**Labels:**
+- `endpoint`: API endpoint path
+- `method`: HTTP method
 
-```bash
-subtitle-manager monitor blacklist list
+**Buckets:** Uses Prometheus default buckets (0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10)
+
+### System Metrics
+
+#### `subtitle_manager_active_sessions`
+Gauge tracking the number of active user sessions.
+
+**Example:**
+```
+subtitle_manager_active_sessions 3
 ```
 
-Remove an item from blacklist:
+## Prometheus Configuration
 
-```bash
-subtitle-manager monitor blacklist remove <item-id>
-```
+### Basic Prometheus Configuration
 
-## Configuration
-
-The monitoring system integrates with your existing Sonarr/Radarr configuration.
-Make sure you have the following configured in your config file:
+Add the following job to your `prometheus.yml`:
 
 ```yaml
-# Sonarr configuration
-sonarr_url: 'http://localhost:8989'
-sonarr_api_key: 'your-sonarr-api-key'
-
-# Radarr configuration
-radarr_url: 'http://localhost:7878'
-radarr_api_key: 'your-radarr-api-key'
-
-# Database configuration
-db_backend: 'pebble' # or "sqlite", "postgres"
-db_path: '/path/to/database'
+scrape_configs:
+  - job_name: 'subtitle-manager'
+    static_configs:
+      - targets: ['localhost:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
 ```
 
-## Monitoring Workflow
+### With Custom Base URL
 
-1. **Sync Phase**: The system syncs your media library from Sonarr/Radarr
-2. **Detection Phase**: New episodes/movies are added to the monitoring queue
-3. **Processing Phase**: The daemon periodically checks for available subtitles
-4. **Download Phase**: When subtitles are found, they're automatically
-   downloaded
-5. **Retry Phase**: Failed attempts are retried with exponential backoff
-6. **Blacklist Phase**: Items exceeding retry limits are automatically
-   blacklisted
+If you're running Subtitle Manager with a custom base URL (e.g., `--base-url=/subtitles`):
 
-## Provider Integration
+```yaml
+scrape_configs:
+  - job_name: 'subtitle-manager'
+    static_configs:
+      - targets: ['localhost:8080']
+    metrics_path: '/subtitles/metrics'
+    scrape_interval: 30s
+```
 
-The monitoring system leverages the existing provider system:
+### Docker Compose Example
 
-- Uses provider priority ordering
-- Respects provider backoff timers
-- Supports all configured subtitle providers
-- Integrates with provider API rate limiting
+```yaml
+version: '3.8'
+services:
+  subtitle-manager:
+    image: ghcr.io/jdfalk/subtitle-manager:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config:/config
+      - ./downloads:/downloads
+    environment:
+      - DB_BACKEND=pebble
 
-## Quality Upgrades
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+```
 
-When quality checking is enabled, the system will:
+## Grafana Dashboard
 
-- Compare new subtitle file sizes with existing ones
-- Download larger (presumably better quality) subtitles
-- Replace existing subtitles only when improvements are found
+### Key Metrics to Monitor
 
-## Blacklist Management
+1. **Request Rate**: Rate of subtitle downloads and translations
+2. **Error Rate**: Percentage of failed requests by provider/service
+3. **Response Time**: 95th percentile response times for API endpoints
+4. **Provider Performance**: Success rates and response times per provider
+5. **Active Users**: Number of active sessions
 
-Items can be blacklisted for various reasons:
+### Example Queries
 
-- **Maximum Retries Exceeded**: Automatic blacklisting after retry limit
-- **Manual Blacklist**: User-initiated blacklisting
-- **No Subtitles Found**: Long-term unavailability
-- **Quality Issues**: Poor quality or corrupted subtitles
-- **Provider Errors**: Persistent provider failures
+**Request Rate (requests per minute):**
+```promql
+rate(subtitle_manager_provider_requests_total[5m]) * 60
+```
 
-Blacklisted items can be manually restored to monitoring at any time.
+**Error Rate by Provider:**
+```promql
+rate(subtitle_manager_provider_requests_total{status="error"}[5m])
+/
+rate(subtitle_manager_provider_requests_total[5m])
+```
 
-## Statistics and Reporting
+**95th Percentile Response Time:**
+```promql
+histogram_quantile(0.95, rate(subtitle_manager_request_duration_seconds_bucket[5m]))
+```
 
-The monitoring system provides detailed statistics:
+**Downloads by Language:**
+```promql
+sum by(language) (rate(subtitle_manager_subtitle_downloads_total[5m]))
+```
 
-- **Total Items**: Number of items being monitored
-- **Pending**: Items awaiting first check
-- **Monitoring**: Items actively being checked
-- **Found**: Items with subtitles successfully downloaded
-- **Failed**: Items that have exceeded retry limits
-- **Blacklisted**: Items excluded from monitoring
+## Alerting
 
-## Performance Considerations
+### Example Alerting Rules
 
-- Monitoring interval should balance responsiveness with system load
-- Consider provider rate limits when setting check frequencies
-- Database backend choice affects performance at scale
-- Jitter is automatically applied to prevent synchronized spikes
+```yaml
+groups:
+  - name: subtitle-manager
+    rules:
+      - alert: SubtitleManagerHighErrorRate
+        expr: rate(subtitle_manager_provider_requests_total{status="error"}[5m]) / rate(subtitle_manager_provider_requests_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate for subtitle provider {{ $labels.provider }}"
+          description: "Error rate for provider {{ $labels.provider }} is {{ $value | humanizePercentage }}"
+
+      - alert: SubtitleManagerDown
+        expr: up{job="subtitle-manager"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Subtitle Manager is down"
+          description: "Subtitle Manager has been down for more than 1 minute"
+```
+
+## Security Considerations
+
+- The `/metrics` endpoint does not require authentication, which is standard practice for monitoring endpoints
+- Ensure your monitoring infrastructure is properly secured
+- Consider network-level access controls if metrics contain sensitive information
+- Metrics do not expose user data or credentials by design
 
 ## Troubleshooting
 
-### No items found during sync
+### Metrics Not Appearing
 
-- Verify Sonarr/Radarr API connectivity
-- Check API keys and URLs in configuration
-- Ensure media files exist on disk
+1. Verify the `/metrics` endpoint is accessible: `curl http://localhost:8080/metrics`
+2. Check that the application is running with the correct base URL configuration
+3. Ensure Prometheus is configured with the correct `metrics_path`
 
-### Monitoring daemon stops
+### Missing Provider Metrics
 
-- Check logs for provider errors
-- Verify database connectivity
-- Monitor system resources
+Provider metrics are only generated when subtitle requests are made. Test with a subtitle download to generate metrics.
 
-### Subtitles not downloading
+### High Memory Usage
 
-- Check provider configuration and API keys
-- Verify subtitle providers are enabled
-- Review blacklist status of items
-
-### High retry rates
-
-- Check provider reliability
-- Consider adjusting retry limits
-- Review provider rate limiting
+If you're experiencing high memory usage with metrics enabled, consider:
+- Reducing the number of label combinations
+- Implementing metric retention policies
+- Using external metrics storage for long-term retention

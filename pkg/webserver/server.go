@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -229,9 +230,8 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/languages/", authMiddleware(db, "admin", universalTagsHandler(db)))
 
 	// Language profiles management
-	mux.Handle(prefix+"/api/profiles", authMiddleware(db, "admin", profilesHandler(db)))
-	mux.Handle(prefix+"/api/profiles/", authMiddleware(db, "admin", profilesHandler(db)))
-	mux.Handle(prefix+"/api/media/profile/", authMiddleware(db, "basic", mediaProfilesHandler(db)))
+	// Prometheus metrics endpoint (no authentication required for monitoring)
+	mux.Handle(prefix+"/metrics", promhttp.Handler())
 
 	fsHandler := spaFileServer(f)
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))

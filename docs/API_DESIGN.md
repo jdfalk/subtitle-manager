@@ -28,6 +28,10 @@ by Subtitle Manager.
 - `GET /api/library/scan/status` – check progress for the last library scan.
 - `GET /api/wanted` – retrieve wanted subtitles list.
 
+### Monitoring
+
+- `GET /metrics` – Prometheus metrics endpoint (no authentication required).
+
 Example error response:
 
 \```json { "error": "invalid_request", "message": "missing language parameter" }
