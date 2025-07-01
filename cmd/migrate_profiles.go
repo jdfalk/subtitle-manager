@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/profiles"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // migrateProfilesCmd represents the migrate-profiles command
@@ -37,8 +37,8 @@ Examples:
 }
 
 var (
-	languagesList string
-	cutoffScore   int
+	languagesList  string
+	cutoffScore    int
 	forceMigration bool
 )
 
@@ -65,7 +65,7 @@ func migrateProfiles(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to check existing profiles: %w", err)
 		}
-		
+
 		if len(existingProfiles) > 0 {
 			fmt.Printf("Found %d existing language profiles. Use --force to migrate anyway.\n", len(existingProfiles))
 			fmt.Println("Existing profiles:")
@@ -136,7 +136,7 @@ func migrateProfiles(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to list existing profiles: %w", err)
 		}
-		
+
 		for _, profile := range existingProfiles {
 			if profile.IsDefault {
 				profile.IsDefault = false
@@ -173,7 +173,7 @@ func detectExistingLanguages() []string {
 	// Check common environment variables
 	envVars := []string{
 		"SUBTITLE_LANGUAGES",
-		"LANG_CODES", 
+		"LANG_CODES",
 		"LANGUAGES",
 		"DEFAULT_LANGUAGES",
 	}

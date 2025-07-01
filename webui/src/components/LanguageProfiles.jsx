@@ -49,7 +49,11 @@ export default function LanguageProfiles({ backendAvailable = true }) {
   const [error, setError] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProfile, setEditingProfile] = useState(null);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   // Form state for profile editing
   const [formData, setFormData] = useState({
@@ -124,7 +128,7 @@ export default function LanguageProfiles({ backendAvailable = true }) {
   /**
    * Open dialog for editing existing profile
    */
-  const handleEditProfile = (profile) => {
+  const handleEditProfile = profile => {
     setEditingProfile(profile);
     setFormData({
       name: profile.name,
@@ -149,7 +153,10 @@ export default function LanguageProfiles({ backendAvailable = true }) {
 
       let response;
       if (editingProfile) {
-        response = await apiService.put(`/api/profiles/${editingProfile.id}`, profileData);
+        response = await apiService.put(
+          `/api/profiles/${editingProfile.id}`,
+          profileData
+        );
       } else {
         response = await apiService.post('/api/profiles', profileData);
       }
@@ -164,7 +171,10 @@ export default function LanguageProfiles({ backendAvailable = true }) {
         loadProfiles();
       } else {
         const errorData = await response.text();
-        throw new Error(errorData || `Failed to ${editingProfile ? 'update' : 'create'} profile`);
+        throw new Error(
+          errorData ||
+            `Failed to ${editingProfile ? 'update' : 'create'} profile`
+        );
       }
     } catch (err) {
       setSnackbar({
@@ -178,7 +188,7 @@ export default function LanguageProfiles({ backendAvailable = true }) {
   /**
    * Delete a profile
    */
-  const handleDeleteProfile = async (profileId) => {
+  const handleDeleteProfile = async profileId => {
     if (!confirm('Are you sure you want to delete this profile?')) {
       return;
     }
@@ -208,9 +218,11 @@ export default function LanguageProfiles({ backendAvailable = true }) {
   /**
    * Set a profile as default
    */
-  const handleSetDefault = async (profileId) => {
+  const handleSetDefault = async profileId => {
     try {
-      const response = await apiService.post(`/api/profiles/${profileId}/default`);
+      const response = await apiService.post(
+        `/api/profiles/${profileId}/default`
+      );
       if (response.ok) {
         setSnackbar({
           open: true,
@@ -238,7 +250,12 @@ export default function LanguageProfiles({ backendAvailable = true }) {
       ...formData,
       languages: [
         ...formData.languages,
-        { language: 'en', priority: formData.languages.length + 1, forced: false, hi: false },
+        {
+          language: 'en',
+          priority: formData.languages.length + 1,
+          forced: false,
+          hi: false,
+        },
       ],
     });
   };
@@ -246,7 +263,7 @@ export default function LanguageProfiles({ backendAvailable = true }) {
   /**
    * Remove a language from the form
    */
-  const handleRemoveLanguage = (index) => {
+  const handleRemoveLanguage = index => {
     const newLanguages = formData.languages.filter((_, i) => i !== index);
     setFormData({ ...formData, languages: newLanguages });
   };
@@ -263,7 +280,7 @@ export default function LanguageProfiles({ backendAvailable = true }) {
   /**
    * Get language name from code
    */
-  const getLanguageName = (code) => {
+  const getLanguageName = code => {
     const lang = languageCodes.find(l => l.code === code);
     return lang ? lang.name : code.toUpperCase();
   };
@@ -271,7 +288,8 @@ export default function LanguageProfiles({ backendAvailable = true }) {
   if (!backendAvailable) {
     return (
       <Alert severity="warning">
-        Backend service is not available. Language profiles cannot be managed at this time.
+        Backend service is not available. Language profiles cannot be managed at
+        this time.
       </Alert>
     );
   }
@@ -286,7 +304,12 @@ export default function LanguageProfiles({ backendAvailable = true }) {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4" component="h1">
           Language Profiles
         </Typography>
@@ -301,12 +324,13 @@ export default function LanguageProfiles({ backendAvailable = true }) {
       </Box>
 
       <Typography variant="body1" color="text.secondary" mb={3}>
-        Language profiles allow you to define preferred languages and quality thresholds for subtitle downloads.
-        Each profile can contain multiple languages with priority ordering.
+        Language profiles allow you to define preferred languages and quality
+        thresholds for subtitle downloads. Each profile can contain multiple
+        languages with priority ordering.
       </Typography>
 
       <Grid container spacing={3}>
-        {profiles.map((profile) => (
+        {profiles.map(profile => (
           <Grid item xs={12} md={6} lg={4} key={profile.id}>
             <Card>
               <CardContent>
@@ -314,13 +338,23 @@ export default function LanguageProfiles({ backendAvailable = true }) {
                   <Typography variant="h6" component="h2" sx={{ flexGrow: 1 }}>
                     {profile.name}
                   </Typography>
-                  <Tooltip title={profile.is_default ? 'Default Profile' : 'Not Default'}>
+                  <Tooltip
+                    title={
+                      profile.is_default ? 'Default Profile' : 'Not Default'
+                    }
+                  >
                     <IconButton
-                      onClick={() => !profile.is_default && handleSetDefault(profile.id)}
+                      onClick={() =>
+                        !profile.is_default && handleSetDefault(profile.id)
+                      }
                       disabled={profile.is_default}
                       color={profile.is_default ? 'primary' : 'default'}
                     >
-                      {profile.is_default ? <DefaultIcon /> : <NotDefaultIcon />}
+                      {profile.is_default ? (
+                        <DefaultIcon />
+                      ) : (
+                        <NotDefaultIcon />
+                      )}
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -330,7 +364,9 @@ export default function LanguageProfiles({ backendAvailable = true }) {
                 </Typography>
 
                 <Box mb={2}>
-                  <Typography variant="subtitle2" mb={1}>Languages:</Typography>
+                  <Typography variant="subtitle2" mb={1}>
+                    Languages:
+                  </Typography>
                   <Box display="flex" flexWrap="wrap" gap={1}>
                     {(profile.languages || []).map((lang, index) => (
                       <Chip
@@ -370,14 +406,20 @@ export default function LanguageProfiles({ backendAvailable = true }) {
         {profiles.length === 0 && (
           <Grid item xs={12}>
             <Alert severity="info">
-              No language profiles found. Create your first profile to get started.
+              No language profiles found. Create your first profile to get
+              started.
             </Alert>
           </Grid>
         )}
       </Grid>
 
       {/* Profile Editor Dialog */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>
           {editingProfile ? 'Edit Language Profile' : 'Create Language Profile'}
         </DialogTitle>
@@ -387,7 +429,7 @@ export default function LanguageProfiles({ backendAvailable = true }) {
               fullWidth
               label="Profile Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               margin="normal"
               required
             />
@@ -397,7 +439,12 @@ export default function LanguageProfiles({ backendAvailable = true }) {
               label="Cutoff Score (%)"
               type="number"
               value={formData.cutoff_score}
-              onChange={(e) => setFormData({ ...formData, cutoff_score: parseInt(e.target.value) })}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  cutoff_score: parseInt(e.target.value),
+                })
+              }
               margin="normal"
               inputProps={{ min: 0, max: 100 }}
               helperText="Minimum score required for subtitle downloads"
@@ -408,7 +455,16 @@ export default function LanguageProfiles({ backendAvailable = true }) {
             </Typography>
 
             {formData.languages.map((lang, index) => (
-              <Box key={index} sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2, mb: 2 }}>
+              <Box
+                key={index}
+                sx={{
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  p: 2,
+                  mb: 2,
+                }}
+              >
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={12} sm={4}>
                     <FormControl fullWidth>
@@ -416,9 +472,15 @@ export default function LanguageProfiles({ backendAvailable = true }) {
                       <Select
                         value={lang.language}
                         label="Language"
-                        onChange={(e) => handleLanguageChange(index, 'language', e.target.value)}
+                        onChange={e =>
+                          handleLanguageChange(
+                            index,
+                            'language',
+                            e.target.value
+                          )
+                        }
                       >
-                        {languageCodes.map((langCode) => (
+                        {languageCodes.map(langCode => (
                           <MenuItem key={langCode.code} value={langCode.code}>
                             {langCode.name} ({langCode.code})
                           </MenuItem>
@@ -432,7 +494,13 @@ export default function LanguageProfiles({ backendAvailable = true }) {
                       control={
                         <Switch
                           checked={lang.forced}
-                          onChange={(e) => handleLanguageChange(index, 'forced', e.target.checked)}
+                          onChange={e =>
+                            handleLanguageChange(
+                              index,
+                              'forced',
+                              e.target.checked
+                            )
+                          }
                         />
                       }
                       label="Forced"
@@ -444,7 +512,9 @@ export default function LanguageProfiles({ backendAvailable = true }) {
                       control={
                         <Switch
                           checked={lang.hi}
-                          onChange={(e) => handleLanguageChange(index, 'hi', e.target.checked)}
+                          onChange={e =>
+                            handleLanguageChange(index, 'hi', e.target.checked)
+                          }
                         />
                       }
                       label="HI"

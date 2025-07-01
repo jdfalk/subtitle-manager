@@ -1,18 +1,18 @@
-// file: cmd/migrate_profiles_test.go  
+// file: cmd/migrate_profiles_test.go
 // version: 1.0.0
 // guid: 4e3f2a1b-0c9d-5e6f-8a7b-1c2d3e4f5a6b
 
 package cmd
 
 import (
-	"testing"
 	"strings"
+	"testing"
 )
 
 func TestDetectExistingLanguages(t *testing.T) {
 	// Test basic functionality without actual environment setup
 	languages := detectExistingLanguages()
-	
+
 	// Should return empty slice when no config is found
 	if languages == nil {
 		t.Error("detectExistingLanguages should return empty slice, not nil")
@@ -87,7 +87,7 @@ func TestFormatLanguages(t *testing.T) {
 			// But we can test the logic structure
 			var parts []string
 			for _, lang := range languageConfigs {
-				part := lang.Language + " (priority: " + string(rune(lang.Priority + '0')) + ")"
+				part := lang.Language + " (priority: " + string(rune(lang.Priority+'0')) + ")"
 				if lang.Forced {
 					part += " [forced]"
 				}
@@ -97,7 +97,7 @@ func TestFormatLanguages(t *testing.T) {
 				parts = append(parts, part)
 			}
 			result := strings.Join(parts, ", ")
-			
+
 			// Basic validation that formatting works
 			if !strings.Contains(result, tc.languages[0].Language) {
 				t.Errorf("Expected result to contain %s, got %s", tc.languages[0].Language, result)
@@ -128,7 +128,7 @@ func TestMigrateProfilesValidation(t *testing.T) {
 func TestMigrateProfilesFlags(t *testing.T) {
 	// Test that flags are properly defined
 	flags := migrateProfilesCmd.Flags()
-	
+
 	if !flags.Changed("languages") && flags.Lookup("languages") == nil {
 		t.Error("Should have --languages flag defined")
 	}

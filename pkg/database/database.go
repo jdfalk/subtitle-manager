@@ -1032,7 +1032,7 @@ func (s *SQLStore) GetLanguageProfile(id string) (*LanguageProfile, error) {
 	row := s.db.QueryRow(`SELECT id, name, config, cutoff_score, is_default, created_at, updated_at 
 		FROM language_profiles WHERE id = ?`, id)
 
-	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore, 
+	err := row.Scan(&profile.ID, &profile.Name, &configStr, &profile.CutoffScore,
 		&profile.IsDefault, &profile.CreatedAt, &profile.UpdatedAt)
 	if err != nil {
 		return nil, err
@@ -1085,7 +1085,7 @@ func (s *SQLStore) UpdateLanguageProfile(profile *LanguageProfile) error {
 	_, err = s.db.Exec(`UPDATE language_profiles 
 		SET name = ?, config = ?, cutoff_score = ?, is_default = ?, updated_at = ?
 		WHERE id = ?`,
-		profile.Name, string(config), profile.CutoffScore, profile.IsDefault, 
+		profile.Name, string(config), profile.CutoffScore, profile.IsDefault,
 		profile.UpdatedAt, profile.ID)
 	return err
 }
@@ -1096,7 +1096,7 @@ func (s *SQLStore) DeleteLanguageProfile(id string) error {
 	if _, err := s.db.Exec(`DELETE FROM media_profiles WHERE profile_id = ?`, id); err != nil {
 		return err
 	}
-	
+
 	// Then remove the profile itself
 	_, err := s.db.Exec(`DELETE FROM language_profiles WHERE id = ?`, id)
 	return err
@@ -1161,7 +1161,7 @@ func (s *SQLStore) RemoveProfileFromMedia(mediaID string) error {
 func (s *SQLStore) GetMediaProfile(mediaID string) (*LanguageProfile, error) {
 	var profileID string
 	row := s.db.QueryRow(`SELECT profile_id FROM media_profiles WHERE media_id = ?`, mediaID)
-	
+
 	err := row.Scan(&profileID)
 	if err != nil {
 		if err == sql.ErrNoRows {

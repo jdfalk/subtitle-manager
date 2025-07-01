@@ -29,7 +29,7 @@ func profilesHandler(db *sql.DB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Parse URL path: /api/profiles or /api/profiles/{id} or /api/profiles/{id}/default
 		path := strings.TrimPrefix(r.URL.Path, "/api/profiles")
-		
+
 		if path == "" || path == "/" {
 			// Handle collection operations
 			switch r.Method {
