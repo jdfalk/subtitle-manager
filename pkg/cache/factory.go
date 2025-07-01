@@ -197,3 +197,13 @@ func (m *Manager) Stats(ctx context.Context) (*Stats, error) {
 func (m *Manager) Close() error {
 	return m.cache.Close()
 }
+
+// Clear removes all entries from the cache.
+func (m *Manager) Clear(ctx context.Context) error {
+	return m.cache.Clear(ctx)
+}
+
+// Delete removes a key from the cache.
+func (m *Manager) Delete(ctx context.Context, key string) error {
+	return m.cache.Delete(ctx, key)
+}
