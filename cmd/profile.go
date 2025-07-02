@@ -32,7 +32,7 @@ var profileTranslateCmd = &cobra.Command{
 		gKey := viper.GetString("google_api_key")
 		gptKey := viper.GetString("openai_api_key")
 		grpcAddr := viper.GetString("grpc_addr")
-		
+
 		// Get profiling options
 		cpuProfile := viper.GetString("cpu_profile")
 		memProfile := viper.GetString("mem_profile")
@@ -102,7 +102,7 @@ var profileMergeCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("profile-merge")
 		sub1Path, sub2Path := args[0], args[1]
-		
+
 		// Get profiling options
 		cpuProfile := viper.GetString("cpu_profile")
 		memProfile := viper.GetString("mem_profile")
@@ -176,14 +176,14 @@ func init() {
 	// Add profile subcommands
 	profileCmd.AddCommand(profileTranslateCmd)
 	profileCmd.AddCommand(profileMergeCmd)
-	
+
 	// Add profiling flags
 	profileCmd.PersistentFlags().String("cpu-profile", "", "write CPU profile to file")
 	viper.BindPFlag("cpu_profile", profileCmd.PersistentFlags().Lookup("cpu-profile"))
-	
+
 	profileCmd.PersistentFlags().String("mem-profile", "", "write memory profile to file")
 	viper.BindPFlag("mem_profile", profileCmd.PersistentFlags().Lookup("mem-profile"))
-	
+
 	profileCmd.PersistentFlags().Int("iterations", 10, "number of iterations for benchmarking")
 	viper.BindPFlag("iterations", profileCmd.PersistentFlags().Lookup("iterations"))
 

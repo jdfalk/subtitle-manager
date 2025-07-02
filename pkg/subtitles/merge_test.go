@@ -38,13 +38,13 @@ func TestMergeTracksSorted(t *testing.T) {
 	}
 
 	result := MergeTracks(a, b)
-	
+
 	// Verify correct merge order
 	expected := []time.Duration{1, 2, 3, 4, 5, 6}
 	if len(result) != len(expected) {
 		t.Fatalf("expected %d items, got %d", len(expected), len(result))
 	}
-	
+
 	for i, item := range result {
 		if item.StartAt != expected[i]*time.Second {
 			t.Errorf("item %d: expected %v, got %v", i, expected[i]*time.Second, item.StartAt)
@@ -66,13 +66,13 @@ func TestMergeTracksUnsorted(t *testing.T) {
 	}
 
 	result := MergeTracks(a, b)
-	
+
 	// Verify correct sort order
 	expected := []time.Duration{1, 2, 3, 4, 5, 6}
 	if len(result) != len(expected) {
 		t.Fatalf("expected %d items, got %d", len(expected), len(result))
 	}
-	
+
 	for i, item := range result {
 		if item.StartAt != expected[i]*time.Second {
 			t.Errorf("item %d: expected %v, got %v", i, expected[i]*time.Second, item.StartAt)
@@ -148,13 +148,13 @@ func TestMergeSorted(t *testing.T) {
 	}
 
 	result := mergeSorted(a, b)
-	
+
 	// Verify correct merge
 	expected := []time.Duration{1, 2, 3, 4, 5, 6}
 	if len(result) != len(expected) {
 		t.Fatalf("expected %d items, got %d", len(expected), len(result))
 	}
-	
+
 	for i, item := range result {
 		if item.StartAt != expected[i]*time.Second {
 			t.Errorf("item %d: expected %v, got %v", i, expected[i]*time.Second, item.StartAt)
@@ -168,14 +168,14 @@ func TestMergeSortedEdgeCases(t *testing.T) {
 	if len(result) != 0 {
 		t.Errorf("expected empty result, got %d items", len(result))
 	}
-	
+
 	// Test one empty slice
 	a := []*astisub.Item{{StartAt: 1 * time.Second}}
 	result = mergeSorted(a, []*astisub.Item{})
 	if len(result) != 1 || result[0].StartAt != 1*time.Second {
 		t.Errorf("merge with empty slice failed")
 	}
-	
+
 	result = mergeSorted([]*astisub.Item{}, a)
 	if len(result) != 1 || result[0].StartAt != 1*time.Second {
 		t.Errorf("merge with empty slice failed")
