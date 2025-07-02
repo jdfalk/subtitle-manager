@@ -116,7 +116,7 @@ export default function LanguagesSettings({ backendAvailable = true }) {
     setOpenDialog(true);
   };
 
-  const handleEditProfile = (profile) => {
+  const handleEditProfile = profile => {
     setEditingProfile(profile);
     setFormData({
       name: profile.name || '',
@@ -127,7 +127,7 @@ export default function LanguagesSettings({ backendAvailable = true }) {
     setOpenDialog(true);
   };
 
-  const handleDeleteProfile = async (profileId) => {
+  const handleDeleteProfile = async profileId => {
     if (!confirm('Are you sure you want to delete this language profile?')) {
       return;
     }
@@ -159,8 +159,8 @@ export default function LanguagesSettings({ backendAvailable = true }) {
       };
 
       const isEditing = !!editingProfile;
-      const url = isEditing 
-        ? `/api/language-profiles/${editingProfile.id}` 
+      const url = isEditing
+        ? `/api/language-profiles/${editingProfile.id}`
         : '/api/language-profiles';
       const method = isEditing ? 'PUT' : 'POST';
 
@@ -190,12 +190,17 @@ export default function LanguagesSettings({ backendAvailable = true }) {
       ...formData,
       languages: [
         ...formData.languages,
-        { language: '', priority: formData.languages.length + 1, forced: false, hi: false },
+        {
+          language: '',
+          priority: formData.languages.length + 1,
+          forced: false,
+          hi: false,
+        },
       ],
     });
   };
 
-  const handleLanguageRemove = (index) => {
+  const handleLanguageRemove = index => {
     const newLanguages = formData.languages.filter((_, i) => i !== index);
     setFormData({
       ...formData,
@@ -215,7 +220,7 @@ export default function LanguagesSettings({ backendAvailable = true }) {
     });
   };
 
-  const getLanguageName = (code) => {
+  const getLanguageName = code => {
     const lang = COMMON_LANGUAGES.find(l => l.code === code);
     return lang ? lang.name : code;
   };
@@ -238,7 +243,12 @@ export default function LanguagesSettings({ backendAvailable = true }) {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h6" component="h2">
           Language Profiles
         </Typography>
@@ -258,7 +268,7 @@ export default function LanguagesSettings({ backendAvailable = true }) {
       )}
 
       <Grid container spacing={2}>
-        {profiles.map((profile) => (
+        {profiles.map(profile => (
           <Grid item xs={12} md={6} key={profile.id}>
             <Card>
               <CardHeader
@@ -307,8 +317,8 @@ export default function LanguagesSettings({ backendAvailable = true }) {
                         key={index}
                         size="small"
                         label={`${getLanguageName(lang.language)} (${lang.priority})`}
-                        variant={lang.forced ? "filled" : "outlined"}
-                        color={lang.hi ? "secondary" : "default"}
+                        variant={lang.forced ? 'filled' : 'outlined'}
+                        color={lang.hi ? 'secondary' : 'default'}
                       />
                     ))}
                   </Box>
@@ -320,7 +330,12 @@ export default function LanguagesSettings({ backendAvailable = true }) {
       </Grid>
 
       {/* Profile Editor Dialog */}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>
           {editingProfile ? 'Edit Language Profile' : 'Create Language Profile'}
         </DialogTitle>
@@ -330,7 +345,7 @@ export default function LanguagesSettings({ backendAvailable = true }) {
               fullWidth
               label="Profile Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g., Movies, TV Shows, Anime"
             />
 
@@ -339,7 +354,12 @@ export default function LanguagesSettings({ backendAvailable = true }) {
               type="number"
               label="Cutoff Score"
               value={formData.cutoff_score}
-              onChange={(e) => setFormData({ ...formData, cutoff_score: parseInt(e.target.value) || 80 })}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  cutoff_score: parseInt(e.target.value) || 80,
+                })
+              }
               helperText="Quality threshold for subtitle downloads (0-100)"
               inputProps={{ min: 0, max: 100 }}
             />
@@ -348,14 +368,21 @@ export default function LanguagesSettings({ backendAvailable = true }) {
               control={
                 <Switch
                   checked={formData.is_default}
-                  onChange={(e) => setFormData({ ...formData, is_default: e.target.checked })}
+                  onChange={e =>
+                    setFormData({ ...formData, is_default: e.target.checked })
+                  }
                 />
               }
               label="Set as Default Profile"
             />
 
             <Box>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
                 <Typography variant="subtitle1">Languages</Typography>
                 <Button
                   variant="outlined"
@@ -368,13 +395,25 @@ export default function LanguagesSettings({ backendAvailable = true }) {
               </Box>
 
               {formData.languages.map((lang, index) => (
-                <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
+                <Box
+                  key={index}
+                  sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}
+                >
                   <Autocomplete
                     options={COMMON_LANGUAGES}
-                    getOptionLabel={(option) => `${option.name} (${option.code})`}
-                    value={COMMON_LANGUAGES.find(l => l.code === lang.language) || null}
-                    onChange={(_, newValue) => handleLanguageChange(index, 'language', newValue?.code || '')}
-                    renderInput={(params) => (
+                    getOptionLabel={option => `${option.name} (${option.code})`}
+                    value={
+                      COMMON_LANGUAGES.find(l => l.code === lang.language) ||
+                      null
+                    }
+                    onChange={(_, newValue) =>
+                      handleLanguageChange(
+                        index,
+                        'language',
+                        newValue?.code || ''
+                      )
+                    }
+                    renderInput={params => (
                       <TextField {...params} label="Language" size="small" />
                     )}
                     sx={{ minWidth: 200 }}
@@ -384,7 +423,13 @@ export default function LanguagesSettings({ backendAvailable = true }) {
                     control={
                       <Switch
                         checked={lang.forced || false}
-                        onChange={(e) => handleLanguageChange(index, 'forced', e.target.checked)}
+                        onChange={e =>
+                          handleLanguageChange(
+                            index,
+                            'forced',
+                            e.target.checked
+                          )
+                        }
                         size="small"
                       />
                     }
@@ -395,7 +440,9 @@ export default function LanguagesSettings({ backendAvailable = true }) {
                     control={
                       <Switch
                         checked={lang.hi || false}
-                        onChange={(e) => handleLanguageChange(index, 'hi', e.target.checked)}
+                        onChange={e =>
+                          handleLanguageChange(index, 'hi', e.target.checked)
+                        }
                         size="small"
                       />
                     }
@@ -413,7 +460,11 @@ export default function LanguagesSettings({ backendAvailable = true }) {
               ))}
 
               {formData.languages.length === 0 && (
-                <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', py: 2 }}>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{ textAlign: 'center', py: 2 }}
+                >
                   No languages added. Click "Add Language" to get started.
                 </Typography>
               )}
