@@ -25,7 +25,7 @@ var fetchCmd = &cobra.Command{
 
 When --profile is specified, the language parameter is ignored and the system 
 uses language preferences from the media item's assigned language profile.`,
-	Args:  cobra.ExactArgs(3),
+	Args: cobra.ExactArgs(3),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("fetch")
 		media, lang, out := args[0], args[1], args[2]
