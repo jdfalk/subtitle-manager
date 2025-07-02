@@ -10,9 +10,9 @@ import (
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/profiles"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func initTestSchema(db *sql.DB) {
@@ -98,13 +98,13 @@ func TestGetLanguagesFromProfile_NoProfile(t *testing.T) {
 
 	// Test with non-existent media path - should use/create default profile
 	languages, err := GetLanguagesFromProfile(context.Background(), db, "/nonexistent/movie.mkv")
-	
+
 	// Should get languages from default profile (which will be created automatically)
-	assert.NoError(t, err) // No error because default profile gets created
-	assert.NotEmpty(t, languages) // Should have at least one language
+	assert.NoError(t, err)              // No error because default profile gets created
+	assert.NotEmpty(t, languages)       // Should have at least one language
 	assert.Contains(t, languages, "en") // Default profile should contain English
 }
 
-// Note: Full integration tests for FetchWithProfile and FetchWithProfileTagged 
+// Note: Full integration tests for FetchWithProfile and FetchWithProfileTagged
 // would require mock providers and are complex to set up. The core logic is tested
 // through the GetLanguagesFromProfile test and the existing profiles package tests.
