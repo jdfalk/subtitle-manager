@@ -17,7 +17,7 @@ import (
 // It tries languages in priority order from the profile associated with the media file.
 func FetchWithProfile(ctx context.Context, db *sql.DB, mediaPath, key string) ([]byte, string, string, error) {
 	service := profiles.NewService(db)
-	
+
 	// Get the language profile for this media file
 	profile, err := service.GetMediaProfileByPath(mediaPath)
 	if err != nil {
@@ -44,7 +44,7 @@ func FetchWithProfile(ctx context.Context, db *sql.DB, mediaPath, key string) ([
 			return data, provider, langConfig.Language, nil
 		}
 		lastErr = err
-		
+
 		// Check if context was cancelled
 		if ctx.Err() != nil {
 			return nil, "", "", ctx.Err()
@@ -59,7 +59,7 @@ func FetchWithProfileTagged(ctx context.Context, db *sql.DB, mediaPath, key stri
 	FilterByTags(string, []string) ([]string, error)
 }) ([]byte, string, string, error) {
 	service := profiles.NewService(db)
-	
+
 	// Get the language profile for this media file
 	profile, err := service.GetMediaProfileByPath(mediaPath)
 	if err != nil {
@@ -86,7 +86,7 @@ func FetchWithProfileTagged(ctx context.Context, db *sql.DB, mediaPath, key stri
 			return data, provider, langConfig.Language, nil
 		}
 		lastErr = err
-		
+
 		// Check if context was cancelled
 		if ctx.Err() != nil {
 			return nil, "", "", ctx.Err()
@@ -99,7 +99,7 @@ func FetchWithProfileTagged(ctx context.Context, db *sql.DB, mediaPath, key stri
 // GetLanguagesFromProfile extracts an ordered list of language codes from a profile.
 func GetLanguagesFromProfile(ctx context.Context, db *sql.DB, mediaPath string) ([]string, error) {
 	service := profiles.NewService(db)
-	
+
 	profile, err := service.GetMediaProfileByPath(mediaPath)
 	if err != nil {
 		return []string{"en"}, err // fallback to English
