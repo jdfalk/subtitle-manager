@@ -242,7 +242,14 @@ func (sb *SubtitleBackupper) extractSubtitleArchive(ctx context.Context, archive
 		}
 
 		// Create full path
-		fullPath := filepath.Join(restorePath, header.Name)
+		cleanName := filepath.Clean(header.Name)
+		if strings.Contains(cleanName, "..") || cleanName == "." || cleanName == "/" {
+			return fmt.Errorf("invalid file path in archive: %s", header.Name)
+		}
+		fullPath := filepath.Join(restorePath, cleanName)
+		if !strings.HasPrefix(fullPath, filepath.Clean(restorePath)+string(os.PathSeparator)) {
+			return fmt.Errorf("file path escapes restore directory: %s", fullPath)
+		}
 
 		// Create directory if needed
 		if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
