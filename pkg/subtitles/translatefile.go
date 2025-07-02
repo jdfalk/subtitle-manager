@@ -80,11 +80,11 @@ func translateFileToSRTBatch(sub *astisub.Subtitles, outPath, lang, googleKey st
 	// For now, fall back to individual translation calls but optimize by grouping
 	// This maintains compatibility with existing test infrastructure
 	// TODO: Implement proper batch API when we can handle real Google client
-	
+
 	// Extract unique dialogue texts and their positions
 	textToItems := make(map[string][]*astisub.Item)
 	uniqueTexts := make([]string, 0)
-	
+
 	for _, item := range sub.Items {
 		var dialogueText string
 		if len(item.Lines) > 0 && len(item.Lines[0].Items) > 0 {
@@ -128,7 +128,7 @@ func translateFileToSRTBatch(sub *astisub.Subtitles, outPath, lang, googleKey st
 		if !ok {
 			continue
 		}
-		
+
 		for _, item := range items {
 			item.Lines = []astisub.Line{{Items: []astisub.LineItem{{Text: translatedText}}}}
 		}
