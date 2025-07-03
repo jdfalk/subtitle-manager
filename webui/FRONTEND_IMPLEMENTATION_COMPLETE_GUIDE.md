@@ -283,10 +283,12 @@ This section outlines the comprehensive Material Design 3 improvements made to t
 #### Modified Files
 
 1. **`src/App.jsx`**
+
    - Complete theme system overhaul
    - Improved login page design
 
 2. **`src/System.jsx`**
+
    - Fixed dark mode visibility issues
    - Better status indicators and typography
 
@@ -375,10 +377,12 @@ This section outlines the comprehensive overhaul of the Subtitle Manager web UI 
 #### New Components Created
 
 1. **`ProviderCard.jsx`**
+
    - Reusable provider tile component
    - Add provider card for new providers
 
 2. **`ProviderConfigDialog.jsx`**
+
    - Dynamic configuration forms based on provider type
    - Password field handling
 
@@ -389,10 +393,12 @@ This section outlines the comprehensive overhaul of the Subtitle Manager web UI 
 #### Enhanced Components
 
 1. **`Settings.jsx`** - Complete rewrite
+
    - Tabbed interface for different setting categories
    - Modern Material Design 3 implementation
 
 2. **`Dashboard.jsx`** - Provider integration
+
    - Dynamic provider loading
    - Configuration status indicators
 

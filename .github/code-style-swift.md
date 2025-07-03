@@ -7,7 +7,8 @@
 
 # Swift Style Guide (Google)
 
-This document summarizes Google's Swift style guide for use in code generation and review.
+This document summarizes Google's Swift style guide for use in code generation
+and review.
 
 ## Core Principles
 
@@ -772,4 +773,5 @@ class UserValidatorTests: XCTestCase {
 }
 ```
 
-This style guide should be used as the foundation for all Swift code generation and formatting decisions.
+This style guide should be used as the foundation for all Swift code generation
+and formatting decisions.
