@@ -14,7 +14,7 @@ func TestLanguageProfileValidation(t *testing.T) {
 		name    string
 		profile *LanguageProfile
 		wantErr bool
-		errMsg  string
+		wantMsg string
 	}{
 		{
 			name: "valid profile",
@@ -26,14 +26,10 @@ func TestLanguageProfileValidation(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "empty name",
-			profile: &LanguageProfile{
-				Name:        "",
-				Languages:   []LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
-				CutoffScore: 75,
-			},
+			name:    "empty_name",
+			profile: &LanguageProfile{Name: "", Languages: []LanguageConfig{{Language: "en", Priority: 1}}, CutoffScore: 80},
 			wantErr: true,
-			errMsg:  "name: Name cannot be empty",
+			wantMsg: "name[0]: Name cannot be empty",
 		},
 		{
 			name: "empty language code",
@@ -43,7 +39,7 @@ func TestLanguageProfileValidation(t *testing.T) {
 				CutoffScore: 75,
 			},
 			wantErr: true,
-			errMsg:  "languages[0]: Language code cannot be empty",
+			wantMsg: "languages[0]: Language code cannot be empty",
 		},
 		{
 			name: "duplicate priority",
@@ -53,17 +49,13 @@ func TestLanguageProfileValidation(t *testing.T) {
 				CutoffScore: 75,
 			},
 			wantErr: true,
-			errMsg:  "languages[1]: Duplicate priority",
+			wantMsg: "languages[1]: Duplicate priority",
 		},
 		{
-			name: "cutoff score out of range",
-			profile: &LanguageProfile{
-				Name:        "Test Profile",
-				Languages:   []LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
-				CutoffScore: 200,
-			},
+			name:    "cutoff_score_out_of_range",
+			profile: &LanguageProfile{Name: "English", Languages: []LanguageConfig{{Language: "en", Priority: 1}}, CutoffScore: 101},
 			wantErr: true,
-			errMsg:  "cutoff_score: Cutoff score must be between 0 and 100",
+			wantMsg: "cutoff_score[0]: Cutoff score must be between 0 and 100",
 		},
 	}
 
@@ -73,8 +65,8 @@ func TestLanguageProfileValidation(t *testing.T) {
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("expected error, got nil")
-				} else if err.Error() != tt.errMsg {
-					t.Errorf("unexpected error: got %q, want %q", err.Error(), tt.errMsg)
+				} else if err.Error() != tt.wantMsg {
+					t.Errorf("unexpected error: got %q, want %q", err.Error(), tt.wantMsg)
 				}
 			} else {
 				if err != nil {

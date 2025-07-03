@@ -168,71 +168,11 @@ func migrateProfiles(cmd *cobra.Command, args []string) error {
 
 // detectExistingLanguages attempts to detect existing language settings from various sources.
 func detectExistingLanguages() []string {
-	var languages []string
-
-	// Check common environment variables
-	envVars := []string{
-		"SUBTITLE_LANGUAGES",
-		"LANG_CODES",
-		"LANGUAGES",
-		"DEFAULT_LANGUAGES",
+	config, err := loadConfig()
+	if err != nil {
+		return []string{}
 	}
-
-	for _, envVar := range envVars {
-		if val := viper.GetString(envVar); val != "" {
-			detected := strings.Split(val, ",")
-			for _, lang := range detected {
-				lang = strings.TrimSpace(lang)
-				if lang != "" && len(lang) == 2 { // Basic validation for 2-letter codes
-					languages = append(languages, lang)
-				}
-			}
-			if len(languages) > 0 {
-				fmt.Printf("Detected languages from %s: %s\n", envVar, strings.Join(languages, ", "))
-				break
-			}
-		}
-	}
-
-	// Check configuration file settings
-	if len(languages) == 0 {
-		configKeys := []string{
-			"subtitle.languages",
-			"languages",
-			"default_languages",
-		}
-
-		for _, key := range configKeys {
-			if viper.IsSet(key) {
-				val := viper.GetString(key)
-				if val != "" {
-					detected := strings.Split(val, ",")
-					for _, lang := range detected {
-						lang = strings.TrimSpace(lang)
-						if lang != "" && len(lang) == 2 {
-							languages = append(languages, lang)
-						}
-					}
-					if len(languages) > 0 {
-						fmt.Printf("Detected languages from config %s: %s\n", key, strings.Join(languages, ", "))
-						break
-					}
-				}
-			}
-		}
-	}
-
-	// Remove duplicates and validate
-	seen := make(map[string]bool)
-	var unique []string
-	for _, lang := range languages {
-		if !seen[lang] && len(lang) == 2 {
-			seen[lang] = true
-			unique = append(unique, lang)
-		}
-	}
-
-	return unique
+	return config
 }
 
 // formatLanguages formats language configurations for display.
@@ -249,4 +189,19 @@ func formatLanguages(languages []profiles.LanguageConfig) string {
 		parts = append(parts, part)
 	}
 	return strings.Join(parts, ", ")
+}
+
+// loadConfig loads the configuration and returns a slice of language keys.
+func loadConfig() ([]string, error) {
+	var cfg struct {
+		Languages map[string]interface{}
+	}
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return nil, err
+	}
+	var langs []string
+	for k := range cfg.Languages {
+		langs = append(langs, k)
+	}
+	return langs, nil
 }

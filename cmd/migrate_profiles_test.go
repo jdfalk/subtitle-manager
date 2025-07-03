@@ -17,6 +17,15 @@ func TestDetectExistingLanguages(t *testing.T) {
 	if languages == nil {
 		t.Error("detectExistingLanguages should return empty slice, not nil")
 	}
+	t.Run("no config", func(t *testing.T) {
+		got := detectExistingLanguages()
+		if got == nil {
+			t.Errorf("expected empty slice, got nil")
+		}
+		if len(got) != 0 {
+			t.Errorf("expected empty slice, got %v", got)
+		}
+	})
 }
 
 func TestFormatLanguages(t *testing.T) {
