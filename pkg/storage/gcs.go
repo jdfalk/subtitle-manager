@@ -22,7 +22,7 @@ func NewGCSProvider(config StorageConfig) (*GCSProvider, error) {
 	if config.GCSBucket == "" {
 		return nil, fmt.Errorf("%w: GCS bucket name is required", ErrConfigurationMissing)
 	}
-	
+
 	// TODO: Initialize Google Cloud Storage client
 	return &GCSProvider{
 		bucket: config.GCSBucket,

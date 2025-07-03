@@ -16,22 +16,22 @@ import (
 type StorageProvider interface {
 	// Store saves content to the storage backend with the given key/path.
 	Store(ctx context.Context, key string, content io.Reader, contentType string) error
-	
+
 	// Retrieve reads content from the storage backend for the given key/path.
 	Retrieve(ctx context.Context, key string) (io.ReadCloser, error)
-	
+
 	// Delete removes content from the storage backend for the given key/path.
 	Delete(ctx context.Context, key string) error
-	
+
 	// Exists checks if content exists at the given key/path.
 	Exists(ctx context.Context, key string) (bool, error)
-	
+
 	// List returns keys/paths matching the given prefix.
 	List(ctx context.Context, prefix string) ([]string, error)
-	
+
 	// GetURL returns a public or signed URL for the given key/path, if supported.
 	GetURL(ctx context.Context, key string, expiry time.Duration) (string, error)
-	
+
 	// Close closes any connections and cleans up resources.
 	Close() error
 }
@@ -40,37 +40,37 @@ type StorageProvider interface {
 type StorageConfig struct {
 	// Provider specifies the storage backend: "local", "s3", "azure", "gcs"
 	Provider string `yaml:"provider" json:"provider"`
-	
+
 	// Local storage configuration
 	LocalPath string `yaml:"local_path,omitempty" json:"local_path,omitempty"`
-	
+
 	// S3 configuration
 	S3Region    string `yaml:"s3_region,omitempty" json:"s3_region,omitempty"`
 	S3Bucket    string `yaml:"s3_bucket,omitempty" json:"s3_bucket,omitempty"`
 	S3Endpoint  string `yaml:"s3_endpoint,omitempty" json:"s3_endpoint,omitempty"`
 	S3AccessKey string `yaml:"s3_access_key,omitempty" json:"s3_access_key,omitempty"`
 	S3SecretKey string `yaml:"s3_secret_key,omitempty" json:"s3_secret_key,omitempty"`
-	
+
 	// Azure Blob Storage configuration
 	AzureAccount   string `yaml:"azure_account,omitempty" json:"azure_account,omitempty"`
 	AzureKey       string `yaml:"azure_key,omitempty" json:"azure_key,omitempty"`
 	AzureContainer string `yaml:"azure_container,omitempty" json:"azure_container,omitempty"`
-	
+
 	// Google Cloud Storage configuration
 	GCSBucket      string `yaml:"gcs_bucket,omitempty" json:"gcs_bucket,omitempty"`
 	GCSCredentials string `yaml:"gcs_credentials,omitempty" json:"gcs_credentials,omitempty"`
-	
+
 	// Additional options
-	EnableBackup    bool   `yaml:"enable_backup" json:"enable_backup"`         // Enable cloud backup of subtitle files
-	BackupHistory   bool   `yaml:"backup_history" json:"backup_history"`       // Enable cloud backup of history data
+	EnableBackup    bool   `yaml:"enable_backup" json:"enable_backup"`                 // Enable cloud backup of subtitle files
+	BackupHistory   bool   `yaml:"backup_history" json:"backup_history"`               // Enable cloud backup of history data
 	CompressionType string `yaml:"compression,omitempty" json:"compression,omitempty"` // gzip, none
 }
 
 // StorageManager manages both local and cloud storage providers.
 type StorageManager struct {
-	primary   StorageProvider
-	backup    StorageProvider
-	config    StorageConfig
+	primary StorageProvider
+	backup  StorageProvider
+	config  StorageConfig
 }
 
 // NewStorageManager creates a new storage manager with the given configuration.
@@ -79,12 +79,12 @@ func NewStorageManager(config StorageConfig) (*StorageManager, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	manager := &StorageManager{
 		primary: primary,
 		config:  config,
 	}
-	
+
 	// Set up backup provider if enabled
 	if config.EnableBackup && config.Provider != "local" {
 		// Create local backup provider
@@ -97,7 +97,7 @@ func NewStorageManager(config StorageConfig) (*StorageManager, error) {
 			manager.backup = backup
 		}
 	}
-	
+
 	return manager, nil
 }
 
@@ -107,13 +107,13 @@ func (sm *StorageManager) Store(ctx context.Context, key string, content io.Read
 	if err := sm.primary.Store(ctx, key, content, contentType); err != nil {
 		return err
 	}
-	
+
 	// Store backup if enabled
 	if sm.backup != nil && sm.config.EnableBackup {
 		// Need to re-read content for backup, so we'll need to handle this differently
 		// For now, just store in primary
 	}
-	
+
 	return nil
 }
 

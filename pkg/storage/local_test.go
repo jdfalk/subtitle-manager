@@ -14,28 +14,28 @@ import (
 func TestLocalProvider(t *testing.T) {
 	// Create temporary directory for testing
 	tempDir := t.TempDir()
-	
+
 	config := StorageConfig{
 		Provider:  "local",
 		LocalPath: tempDir,
 	}
-	
+
 	provider, err := NewLocalProvider(config)
 	if err != nil {
 		t.Fatalf("Failed to create local provider: %v", err)
 	}
 	defer provider.Close()
-	
+
 	ctx := context.Background()
 	testKey := "test/file.srt"
 	testContent := "Test subtitle content"
-	
+
 	// Test Store
 	err = provider.Store(ctx, testKey, strings.NewReader(testContent), "text/plain")
 	if err != nil {
 		t.Fatalf("Failed to store file: %v", err)
 	}
-	
+
 	// Test Exists
 	exists, err := provider.Exists(ctx, testKey)
 	if err != nil {
@@ -44,14 +44,14 @@ func TestLocalProvider(t *testing.T) {
 	if !exists {
 		t.Fatalf("File should exist")
 	}
-	
+
 	// Test Retrieve
 	reader, err := provider.Retrieve(ctx, testKey)
 	if err != nil {
 		t.Fatalf("Failed to retrieve file: %v", err)
 	}
 	defer reader.Close()
-	
+
 	// Verify content
 	buf := make([]byte, len(testContent))
 	n, err := reader.Read(buf)
@@ -61,7 +61,7 @@ func TestLocalProvider(t *testing.T) {
 	if string(buf[:n]) != testContent {
 		t.Fatalf("Content mismatch: got %s, want %s", string(buf[:n]), testContent)
 	}
-	
+
 	// Test List
 	keys, err := provider.List(ctx, "test/")
 	if err != nil {
@@ -70,7 +70,7 @@ func TestLocalProvider(t *testing.T) {
 	if len(keys) != 1 || keys[0] != testKey {
 		t.Fatalf("List result incorrect: got %v, want [%s]", keys, testKey)
 	}
-	
+
 	// Test GetURL
 	url, err := provider.GetURL(ctx, testKey, time.Hour)
 	if err != nil {
@@ -79,13 +79,13 @@ func TestLocalProvider(t *testing.T) {
 	if !strings.HasPrefix(url, "file://") {
 		t.Fatalf("URL should start with file://")
 	}
-	
+
 	// Test Delete
 	err = provider.Delete(ctx, testKey)
 	if err != nil {
 		t.Fatalf("Failed to delete file: %v", err)
 	}
-	
+
 	// Test file no longer exists
 	exists, err = provider.Exists(ctx, testKey)
 	if err != nil {
@@ -98,20 +98,20 @@ func TestLocalProvider(t *testing.T) {
 
 func TestLocalProvider_SecurityChecks(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	config := StorageConfig{
 		Provider:  "local",
 		LocalPath: tempDir,
 	}
-	
+
 	provider, err := NewLocalProvider(config)
 	if err != nil {
 		t.Fatalf("Failed to create local provider: %v", err)
 	}
 	defer provider.Close()
-	
+
 	ctx := context.Background()
-	
+
 	// Test directory traversal protection
 	maliciousKeys := []string{
 		"../../../etc/passwd",
@@ -119,7 +119,7 @@ func TestLocalProvider_SecurityChecks(t *testing.T) {
 		"/etc/passwd",
 		"\\windows\\system32\\config\\sam",
 	}
-	
+
 	for _, key := range maliciousKeys {
 		err := provider.Store(ctx, key, strings.NewReader("test"), "text/plain")
 		if err != ErrInvalidKey {
@@ -150,7 +150,7 @@ func TestNewProvider(t *testing.T) {
 			expectError: true,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			provider, err := NewProvider(tt.config)
