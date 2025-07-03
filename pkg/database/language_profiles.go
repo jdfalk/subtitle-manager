@@ -5,7 +5,6 @@
 package database
 
 import (
-	"database/sql"
 	"encoding/json"
 	"strconv"
 	"time"
@@ -15,31 +14,31 @@ import (
 // Language profiles define preferred languages, subtitle providers, and scoring criteria
 // for different types of media content.
 type LanguageProfile struct {
-	ID              string                 `json:"id"`
-	Name            string                 `json:"name"`
-	Description     string                 `json:"description"`
-	Languages       []string               `json:"languages"`        // Ordered list of preferred languages
-	Providers       []string               `json:"providers"`        // Ordered list of preferred providers
-	SubtitleTypes   []string               `json:"subtitle_types"`   // e.g., "forced", "sdh", "normal"
-	ScoreWeights    map[string]float64     `json:"score_weights"`    // Weights for scoring algorithm
-	MinScore        float64                `json:"min_score"`        // Minimum acceptable score
-	IsDefault       bool                   `json:"is_default"`       // Whether this is the default profile
-	MediaTypes      []string               `json:"media_types"`      // e.g., "movie", "series", "anime"
-	Metadata        map[string]interface{} `json:"metadata"`         // Additional profile metadata
-	CreatedAt       time.Time              `json:"created_at"`
-	UpdatedAt       time.Time              `json:"updated_at"`
+	ID            string                 `json:"id"`
+	Name          string                 `json:"name"`
+	Description   string                 `json:"description"`
+	Languages     []string               `json:"languages"`      // Ordered list of preferred languages
+	Providers     []string               `json:"providers"`      // Ordered list of preferred providers
+	SubtitleTypes []string               `json:"subtitle_types"` // e.g., "forced", "sdh", "normal"
+	ScoreWeights  map[string]float64     `json:"score_weights"`  // Weights for scoring algorithm
+	MinScore      float64                `json:"min_score"`      // Minimum acceptable score
+	IsDefault     bool                   `json:"is_default"`     // Whether this is the default profile
+	MediaTypes    []string               `json:"media_types"`    // e.g., "movie", "series", "anime"
+	Metadata      map[string]interface{} `json:"metadata"`       // Additional profile metadata
+	CreatedAt     time.Time              `json:"created_at"`
+	UpdatedAt     time.Time              `json:"updated_at"`
 }
 
 // LanguageProfileAssignment represents the assignment of a language profile to media.
 type LanguageProfileAssignment struct {
-	ID              string    `json:"id"`
-	ProfileID       string    `json:"profile_id"`
-	MediaID         string    `json:"media_id"`
-	MediaType       string    `json:"media_type"`       // "movie", "series", "episode"
-	MediaPath       string    `json:"media_path"`       // Path to media file
-	AssignmentType  string    `json:"assignment_type"`  // "manual", "automatic", "rule-based"
-	Priority        int       `json:"priority"`         // Higher priority assignments override lower ones
-	CreatedAt       time.Time `json:"created_at"`
+	ID             string    `json:"id"`
+	ProfileID      string    `json:"profile_id"`
+	MediaID        string    `json:"media_id"`
+	MediaType      string    `json:"media_type"`      // "movie", "series", "episode"
+	MediaPath      string    `json:"media_path"`      // Path to media file
+	AssignmentType string    `json:"assignment_type"` // "manual", "automatic", "rule-based"
+	Priority       int       `json:"priority"`        // Higher priority assignments override lower ones
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 // LanguageProfileRule represents automatic assignment rules for language profiles.
@@ -48,8 +47,8 @@ type LanguageProfileRule struct {
 	ProfileID   string                 `json:"profile_id"`
 	Name        string                 `json:"name"`
 	Description string                 `json:"description"`
-	Conditions  map[string]interface{} `json:"conditions"`  // JSON conditions for rule matching
-	Priority    int                    `json:"priority"`    // Rule evaluation priority
+	Conditions  map[string]interface{} `json:"conditions"` // JSON conditions for rule matching
+	Priority    int                    `json:"priority"`   // Rule evaluation priority
 	Enabled     bool                   `json:"enabled"`
 	CreatedAt   time.Time              `json:"created_at"`
 	UpdatedAt   time.Time              `json:"updated_at"`
@@ -58,10 +57,10 @@ type LanguageProfileRule struct {
 // DefaultLanguageProfile returns a sensible default language profile.
 func DefaultLanguageProfile() *LanguageProfile {
 	return &LanguageProfile{
-		Name:        "Default",
-		Description: "Default language profile for subtitle downloads",
-		Languages:   []string{"en", "eng"},
-		Providers:   []string{"opensubtitles", "subscene"},
+		Name:          "Default",
+		Description:   "Default language profile for subtitle downloads",
+		Languages:     []string{"en", "eng"},
+		Providers:     []string{"opensubtitles", "subscene"},
 		SubtitleTypes: []string{"normal", "sdh"},
 		ScoreWeights: map[string]float64{
 			"language_match": 0.4,
@@ -88,13 +87,13 @@ type LanguageProfileStore interface {
 	DeleteLanguageProfile(id string) error
 	GetDefaultLanguageProfile() (*LanguageProfile, error)
 	SetDefaultLanguageProfile(id string) error
-	
+
 	// Profile Assignment operations
 	AssignProfileToMedia(assignment *LanguageProfileAssignment) error
 	GetProfileAssignmentForMedia(mediaPath string) (*LanguageProfileAssignment, error)
 	ListProfileAssignments() ([]LanguageProfileAssignment, error)
 	RemoveProfileAssignment(id string) error
-	
+
 	// Profile Rule operations
 	InsertProfileRule(rule *LanguageProfileRule) error
 	GetProfileRule(id string) (*LanguageProfileRule, error)
@@ -149,7 +148,7 @@ func (s *SQLStore) GetLanguageProfile(id string) (*LanguageProfile, error) {
 	row := s.db.QueryRow(`
 		SELECT id, name, description, languages, providers, subtitle_types, score_weights, min_score, is_default, media_types, metadata, created_at, updated_at
 		FROM language_profiles WHERE id = ?`, id)
-	
+
 	return s.scanLanguageProfile(row)
 }
 
@@ -158,7 +157,7 @@ func (s *SQLStore) GetLanguageProfileByName(name string) (*LanguageProfile, erro
 	row := s.db.QueryRow(`
 		SELECT id, name, description, languages, providers, subtitle_types, score_weights, min_score, is_default, media_types, metadata, created_at, updated_at
 		FROM language_profiles WHERE name = ?`, name)
-	
+
 	return s.scanLanguageProfile(row)
 }
 
@@ -232,7 +231,7 @@ func (s *SQLStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 	row := s.db.QueryRow(`
 		SELECT id, name, description, languages, providers, subtitle_types, score_weights, min_score, is_default, media_types, metadata, created_at, updated_at
 		FROM language_profiles WHERE is_default = 1 LIMIT 1`)
-	
+
 	return s.scanLanguageProfile(row)
 }
 
@@ -319,7 +318,7 @@ func (s *SQLStore) GetProfileAssignmentForMedia(mediaPath string) (*LanguageProf
 	row := s.db.QueryRow(`
 		SELECT id, profile_id, media_id, media_type, media_path, assignment_type, priority, created_at
 		FROM language_profile_assignments WHERE media_path = ? ORDER BY priority DESC LIMIT 1`, mediaPath)
-	
+
 	var assignment LanguageProfileAssignment
 	var id int64
 	err := row.Scan(&id, &assignment.ProfileID, &assignment.MediaID, &assignment.MediaType,
@@ -386,7 +385,7 @@ func (s *SQLStore) GetProfileRule(id string) (*LanguageProfileRule, error) {
 	row := s.db.QueryRow(`
 		SELECT id, profile_id, name, description, conditions, priority, enabled, created_at, updated_at
 		FROM language_profile_rules WHERE id = ?`, id)
-	
+
 	return s.scanProfileRule(row)
 }
 
