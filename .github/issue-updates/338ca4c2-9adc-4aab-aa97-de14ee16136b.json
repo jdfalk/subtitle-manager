@@ -1,0 +1,7 @@
+{
+  "action": "comment",
+  "number": 1249,
+  "body": "The missing requirements file has been added to the ghcommon repository. This resolves the failure in the unified issue management workflow.",
+  "guid": "338ca4c2-9adc-4aab-aa97-de14ee16136b",
+  "legacy_guid": "comment-issue-1249-2025-07-03"
+}
