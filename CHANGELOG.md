@@ -45,12 +45,18 @@ All notable changes to this project will be documented in this file.
     [pkg/monitoring/blacklist.go](pkg/monitoring/blacklist.go),
     [pkg/monitoring/scheduler.go](pkg/monitoring/scheduler.go),
     [cmd/monitor.go](cmd/monitor.go)
-- **Performance Optimization**: Significant improvements to translation and merge operations
-  - Added batch translation support with deduplication for Google Translate service
-  - Optimized merge operations with O(n+m) merge algorithm for already-sorted inputs (11x performance improvement)
-  - Added performance profiling CLI commands: `subtitle-manager profile translate` and `subtitle-manager profile merge`
-  - Enhanced benchmarking infrastructure with multiple test scenarios (sorted/unsorted, various sizes)
-  - CPU and memory profiling support with `--cpu-profile` and `--mem-profile` flags
+- **Performance Optimization**: Significant improvements to translation and
+  merge operations
+  - Added batch translation support with deduplication for Google Translate
+    service
+  - Optimized merge operations with O(n+m) merge algorithm for already-sorted
+    inputs (11x performance improvement)
+  - Added performance profiling CLI commands:
+    `subtitle-manager profile translate` and `subtitle-manager profile merge`
+  - Enhanced benchmarking infrastructure with multiple test scenarios
+    (sorted/unsorted, various sizes)
+  - CPU and memory profiling support with `--cpu-profile` and `--mem-profile`
+    flags
 - **Universal Tagging System**: Complete unified tagging interface supporting
   all entity types
   - Enhanced Tag model with Type, EntityType, Color, and Description fields
