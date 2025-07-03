@@ -30,11 +30,11 @@ func TestGetDatabasePath(t *testing.T) {
 	}()
 
 	tests := []struct {
-		name             string
-		backend          string
-		dbPath           string
-		sqlite3Filename  string
-		expectedPath     string
+		name            string
+		backend         string
+		dbPath          string
+		sqlite3Filename string
+		expectedPath    string
 	}{
 		{
 			name:            "SQLite backend with filename",

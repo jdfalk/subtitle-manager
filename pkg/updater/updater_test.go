@@ -82,7 +82,7 @@ func TestFrequencyToDuration(t *testing.T) {
 		},
 		{
 			name:     "daily",
-			freq:     "daily", 
+			freq:     "daily",
 			expected: "24h0m0s",
 		},
 		{
