@@ -1,10 +1,14 @@
 # file: sdks/python/README.md
+
 # version: 1.0.0
+
 # guid: 550e8400-e29b-41d4-a716-446655440011
 
 # Subtitle Manager Python SDK
 
-A comprehensive Python SDK for the Subtitle Manager API. Provides type-safe access to all API endpoints with automatic retry, error handling, and pagination support.
+A comprehensive Python SDK for the Subtitle Manager API. Provides type-safe
+access to all API endpoints with automatic retry, error handling, and pagination
+support.
 
 ## Features
 
@@ -23,6 +27,7 @@ pip install subtitle-manager-sdk
 ```
 
 For development:
+
 ```bash
 pip install subtitle-manager-sdk[dev]
 ```
@@ -56,6 +61,7 @@ if result.success:
 ### Authentication
 
 #### API Key Authentication
+
 ```python
 client = SubtitleManagerClient(
     base_url="http://localhost:8080",
@@ -64,6 +70,7 @@ client = SubtitleManagerClient(
 ```
 
 #### Session Authentication
+
 ```python
 client = SubtitleManagerClient(base_url="http://localhost:8080")
 
@@ -76,6 +83,7 @@ system_info = client.get_system_info()
 ```
 
 #### Environment Variables
+
 ```python
 # Set SUBTITLE_MANAGER_API_KEY environment variable
 import os
@@ -88,6 +96,7 @@ client = SubtitleManagerClient("http://localhost:8080")
 ### File Operations
 
 #### Convert Subtitle Format
+
 ```python
 # Convert from file path
 srt_content = client.convert_subtitle("/path/to/subtitle.vtt")
@@ -101,6 +110,7 @@ srt_content = client.convert_subtitle(vtt_data, filename="input.vtt")
 ```
 
 #### Translate Subtitles
+
 ```python
 from subtitle_manager_sdk.models import TranslationProvider
 
@@ -116,6 +126,7 @@ with open("spanish.srt", "wb") as f:
 ```
 
 #### Extract Embedded Subtitles
+
 ```python
 # Extract first subtitle track
 subtitles = client.extract_subtitles("/path/to/video.mkv")
@@ -131,6 +142,7 @@ subtitles = client.extract_subtitles(
 ### Library Management
 
 #### Start Library Scan
+
 ```python
 # Scan entire library
 scan_result = client.start_library_scan()
@@ -144,6 +156,7 @@ scan_result = client.start_library_scan(
 ```
 
 #### Monitor Scan Progress
+
 ```python
 # Get current scan status
 status = client.get_scan_status()
@@ -162,6 +175,7 @@ print("Scan completed!")
 ### History and Monitoring
 
 #### View Operation History
+
 ```python
 from subtitle_manager_sdk.models import OperationType
 from datetime import datetime, timedelta
@@ -182,6 +196,7 @@ for item in history.items:
 ```
 
 #### View Application Logs
+
 ```python
 from subtitle_manager_sdk.models import LogLevel
 
@@ -219,6 +234,7 @@ except APIError as e:
 ### Advanced Usage
 
 #### Custom Configuration
+
 ```python
 client = SubtitleManagerClient(
     base_url="https://subtitles.example.com",
@@ -231,6 +247,7 @@ client = SubtitleManagerClient(
 ```
 
 #### Context Manager
+
 ```python
 # Automatically close session when done
 with SubtitleManagerClient("http://localhost:8080", api_key="key") as client:
@@ -239,6 +256,7 @@ with SubtitleManagerClient("http://localhost:8080", api_key="key") as client:
 ```
 
 #### Health Checks
+
 ```python
 # Check if API is accessible
 if client.health_check():
@@ -252,6 +270,7 @@ else:
 The SDK provides type-safe data models for all API responses:
 
 ### SystemInfo
+
 ```python
 @dataclass
 class SystemInfo:
@@ -267,6 +286,7 @@ class SystemInfo:
 ```
 
 ### HistoryItem
+
 ```python
 @dataclass
 class HistoryItem:
@@ -283,6 +303,7 @@ class HistoryItem:
 ```
 
 ### ScanStatus
+
 ```python
 @dataclass
 class ScanStatus:
@@ -372,10 +393,13 @@ See the [examples directory](examples/) for complete usage examples:
 
 ## Support
 
-- **Documentation**: [API Documentation](https://github.com/jdfalk/subtitle-manager/tree/main/docs/api)
+- **Documentation**:
+  [API Documentation](https://github.com/jdfalk/subtitle-manager/tree/main/docs/api)
 - **Issues**: [GitHub Issues](https://github.com/jdfalk/subtitle-manager/issues)
-- **Source Code**: [GitHub Repository](https://github.com/jdfalk/subtitle-manager)
+- **Source Code**:
+  [GitHub Repository](https://github.com/jdfalk/subtitle-manager)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+This project is licensed under the MIT License - see the
+[LICENSE](../../LICENSE) file for details.

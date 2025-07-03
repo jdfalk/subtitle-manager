@@ -64,14 +64,17 @@ All notable changes to this project will be documented in this file.
   - Integration with ghcommon unified issue management system
   - Support for sub-issues with parent-child linking and automatic labeling
 - **Issue Update File Management**: Comprehensive analysis and migration tools
-  - Created `analyze-issue-state.py` for detailed state analysis and duplicate detection
+  - Created `analyze-issue-state.py` for detailed state analysis and duplicate
+    detection
   - Created `manage-issue-state.sh` for automated migration and cleanup
   - Intelligent duplicate prevention when migrating from old to new formats
   - Automatic conversion of legacy filename formats to GUID-based naming
   - Fixed JSON syntax errors in corrupted issue update files
   - All 38 issue update files now follow standardized GUID naming convention
-  - Smart migration handled 55 actions from old format without creating duplicates
-  - Complete coverage verification for ughi-fixed.sh script (11/11 issues covered)
+  - Smart migration handled 55 actions from old format without creating
+    duplicates
+  - Complete coverage verification for ughi-fixed.sh script (11/11 issues
+    covered)
 
 ### Changed
 

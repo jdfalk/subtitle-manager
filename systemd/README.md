@@ -1,10 +1,13 @@
 # file: systemd/README.md
+
 # version: 1.0.0
+
 # guid: 789e1234-e89b-12d3-a456-426614174002
 
 # Systemd Service Installation Guide
 
-This guide provides instructions for running Subtitle Manager as a systemd service on Linux systems.
+This guide provides instructions for running Subtitle Manager as a systemd
+service on Linux systems.
 
 ## Prerequisites
 
@@ -24,6 +27,7 @@ sudo ./systemd/install.sh
 ```
 
 The script will:
+
 - Create system user and directories
 - Install the binary and service files
 - Configure systemd service
@@ -90,7 +94,9 @@ sudo cp bin/subtitle-manager /usr/local/bin/subtitle-manager
 sudo chmod +x /usr/local/bin/subtitle-manager
 ```
 
-**Note**: For production deployments, building with SQLite support is recommended for better database compatibility. The default systemd configuration supports both SQLite and PebbleDB backends.
+**Note**: For production deployments, building with SQLite support is
+recommended for better database compatibility. The default systemd configuration
+supports both SQLite and PebbleDB backends.
 
 #### 4. Install Service Files
 
@@ -120,6 +126,7 @@ sudo nano /etc/subtitle-manager/subtitle-manager.env
 ```
 
 Key settings to configure:
+
 - `SM_LOG_LEVEL`: Set logging level (debug, info, warn, error)
 - `SM_DB_BACKEND`: Choose database backend (sqlite, pebble, postgres)
 - API keys for translation and subtitle providers
@@ -146,12 +153,12 @@ log_file: /var/log/subtitle-manager/subtitle-manager.log
 # Provider settings
 providers:
   opensubtitles:
-    api_key: "your_api_key_here"
-  
+    api_key: 'your_api_key_here'
+
 # Translation settings
 translator: google
 translator_api_keys:
-  google: "your_google_api_key"
+  google: 'your_google_api_key'
 ```
 
 #### 7. Enable and Start Service
@@ -213,7 +220,8 @@ sudo journalctl -u subtitle-manager --since "2024-01-01 00:00:00"
 Logs are written to both systemd journal and file (if configured):
 
 - **Systemd journal**: `sudo journalctl -u subtitle-manager`
-- **Log file**: `/var/log/subtitle-manager/subtitle-manager.log` (if `SM_LOG_FILE` is set)
+- **Log file**: `/var/log/subtitle-manager/subtitle-manager.log` (if
+  `SM_LOG_FILE` is set)
 
 ## Accessing the Web Interface
 
@@ -278,10 +286,10 @@ For HTTPS, use a reverse proxy like nginx:
 server {
     listen 443 ssl;
     server_name your-domain.com;
-    
+
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;
-    
+
     location / {
         proxy_pass http://127.0.0.1:8080;
         proxy_set_header Host $host;
@@ -299,7 +307,8 @@ server {
 1. Check service status: `sudo systemctl status subtitle-manager`
 2. Check logs: `sudo journalctl -u subtitle-manager`
 3. Verify binary permissions: `ls -la /usr/local/bin/subtitle-manager`
-4. Check configuration: `sudo -u subtitle-manager /usr/local/bin/subtitle-manager --help`
+4. Check configuration:
+   `sudo -u subtitle-manager /usr/local/bin/subtitle-manager --help`
 
 ### Permission Issues
 
@@ -328,20 +337,25 @@ sudo chmod 755 /var/lib/subtitle-manager/db/
 ## Security Considerations
 
 - The service runs as a non-privileged user (`subtitle-manager`)
-- Sensitive configuration is stored in `/etc/subtitle-manager/` with restricted permissions
-- Database and logs are stored in `/var/lib/subtitle-manager/` and `/var/log/subtitle-manager/`
+- Sensitive configuration is stored in `/etc/subtitle-manager/` with restricted
+  permissions
+- Database and logs are stored in `/var/lib/subtitle-manager/` and
+  `/var/log/subtitle-manager/`
 - The service includes security hardening options in the systemd unit file
-- Consider using a reverse proxy for SSL termination and additional security features
+- Consider using a reverse proxy for SSL termination and additional security
+  features
 
 ## Upgrading
 
 To upgrade Subtitle Manager:
 
 1. Stop the service: `sudo systemctl stop subtitle-manager`
-2. Replace the binary: `sudo cp new-subtitle-manager /usr/local/bin/subtitle-manager`
+2. Replace the binary:
+   `sudo cp new-subtitle-manager /usr/local/bin/subtitle-manager`
 3. Start the service: `sudo systemctl start subtitle-manager`
 
-For major version upgrades, check the changelog for any required configuration changes.
+For major version upgrades, check the changelog for any required configuration
+changes.
 
 ## Uninstalling
 

@@ -1,14 +1,18 @@
 # Automatic Episode Monitoring System
 
-The subtitle-manager now includes a comprehensive automatic episode monitoring system that can monitor your Sonarr/Radarr library for new episodes and automatically download subtitles when they become available.
+The subtitle-manager now includes a comprehensive automatic episode monitoring
+system that can monitor your Sonarr/Radarr library for new episodes and
+automatically download subtitles when they become available.
 
 ## Features
 
 - **Automatic Detection**: Monitors Sonarr/Radarr for new episodes and movies
-- **Multi-language Support**: Track subtitle availability for multiple languages simultaneously
+- **Multi-language Support**: Track subtitle availability for multiple languages
+  simultaneously
 - **Provider Integration**: Uses existing provider priority system for downloads
 - **Retry Logic**: Configurable retry attempts with exponential backoff
-- **Blacklist Management**: Automatic and manual blacklisting of problematic items
+- **Blacklist Management**: Automatic and manual blacklisting of problematic
+  items
 - **Quality Upgrades**: Monitor for better quality subtitles
 - **Statistics**: Detailed monitoring statistics and progress reporting
 - **Scheduler Integration**: Periodic monitoring with configurable intervals
@@ -17,7 +21,8 @@ The subtitle-manager now includes a comprehensive automatic episode monitoring s
 
 ### 1. Sync Media Library
 
-First, sync your media library from Sonarr/Radarr to populate the monitoring database:
+First, sync your media library from Sonarr/Radarr to populate the monitoring
+database:
 
 ```bash
 # Sync from both Sonarr and Radarr
@@ -39,6 +44,7 @@ subtitle-manager monitor status
 ```
 
 Example output:
+
 ```
 Monitoring Status:
   Total items:    150
@@ -85,20 +91,21 @@ subtitle-manager monitor blacklist remove <item-id>
 
 ## Configuration
 
-The monitoring system integrates with your existing Sonarr/Radarr configuration. Make sure you have the following configured in your config file:
+The monitoring system integrates with your existing Sonarr/Radarr configuration.
+Make sure you have the following configured in your config file:
 
 ```yaml
 # Sonarr configuration
-sonarr_url: "http://localhost:8989"
-sonarr_api_key: "your-sonarr-api-key"
+sonarr_url: 'http://localhost:8989'
+sonarr_api_key: 'your-sonarr-api-key'
 
-# Radarr configuration  
-radarr_url: "http://localhost:7878"
-radarr_api_key: "your-radarr-api-key"
+# Radarr configuration
+radarr_url: 'http://localhost:7878'
+radarr_api_key: 'your-radarr-api-key'
 
 # Database configuration
-db_backend: "pebble"  # or "sqlite", "postgres"
-db_path: "/path/to/database"
+db_backend: 'pebble' # or "sqlite", "postgres"
+db_path: '/path/to/database'
 ```
 
 ## Monitoring Workflow
@@ -106,9 +113,11 @@ db_path: "/path/to/database"
 1. **Sync Phase**: The system syncs your media library from Sonarr/Radarr
 2. **Detection Phase**: New episodes/movies are added to the monitoring queue
 3. **Processing Phase**: The daemon periodically checks for available subtitles
-4. **Download Phase**: When subtitles are found, they're automatically downloaded
+4. **Download Phase**: When subtitles are found, they're automatically
+   downloaded
 5. **Retry Phase**: Failed attempts are retried with exponential backoff
-6. **Blacklist Phase**: Items exceeding retry limits are automatically blacklisted
+6. **Blacklist Phase**: Items exceeding retry limits are automatically
+   blacklisted
 
 ## Provider Integration
 
@@ -160,21 +169,25 @@ The monitoring system provides detailed statistics:
 ## Troubleshooting
 
 ### No items found during sync
+
 - Verify Sonarr/Radarr API connectivity
 - Check API keys and URLs in configuration
 - Ensure media files exist on disk
 
 ### Monitoring daemon stops
+
 - Check logs for provider errors
 - Verify database connectivity
 - Monitor system resources
 
 ### Subtitles not downloading
+
 - Check provider configuration and API keys
 - Verify subtitle providers are enabled
 - Review blacklist status of items
 
 ### High retry rates
+
 - Check provider reliability
 - Consider adjusting retry limits
 - Review provider rate limiting

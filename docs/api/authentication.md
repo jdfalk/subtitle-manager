@@ -1,10 +1,14 @@
 # file: docs/api/authentication.md
+
 # version: 1.0.0
+
 # guid: 550e8400-e29b-41d4-a716-446655440003
 
 # Authentication Guide
 
-Subtitle Manager API supports multiple authentication methods to accommodate different use cases. This guide covers all available authentication options and their appropriate usage scenarios.
+Subtitle Manager API supports multiple authentication methods to accommodate
+different use cases. This guide covers all available authentication options and
+their appropriate usage scenarios.
 
 ## Overview
 
@@ -12,15 +16,18 @@ The API implements a three-tier authorization system:
 
 - **`read`**: View-only access to resources (history, system info, logs)
 - **`basic`**: Standard user operations (download, convert, translate, scan)
-- **`admin`**: Administrative operations (user management, OAuth config, system settings)
+- **`admin`**: Administrative operations (user management, OAuth config, system
+  settings)
 
 ## Authentication Methods
 
 ### 1. Session Cookie Authentication
 
-Session authentication is primarily used by the web UI and is the most secure method for browser-based interactions.
+Session authentication is primarily used by the web UI and is the most secure
+method for browser-based interactions.
 
 #### How it works:
+
 1. User authenticates via `/api/login` endpoint
 2. Server creates a session and sets an HTTP-only cookie
 3. Subsequent requests include the session cookie automatically
@@ -54,11 +61,13 @@ curl -X POST http://localhost:8080/api/logout \
 
 ### 2. API Key Authentication
 
-API keys are ideal for programmatic access and automation. They don't expire and provide persistent access.
+API keys are ideal for programmatic access and automation. They don't expire and
+provide persistent access.
 
 #### Generating an API Key:
 
-API keys are generated through the web UI or can be created by administrators. Each user can have multiple API keys for different applications.
+API keys are generated through the web UI or can be created by administrators.
+Each user can have multiple API keys for different applications.
 
 #### Using API Keys:
 
@@ -90,11 +99,13 @@ curl -X POST http://localhost:8080/api/download \
 
 ### 3. OAuth2 Authentication (GitHub)
 
-OAuth2 provides secure authentication without sharing passwords. Currently supports GitHub as the OAuth2 provider.
+OAuth2 provides secure authentication without sharing passwords. Currently
+supports GitHub as the OAuth2 provider.
 
 #### Setting up GitHub OAuth2:
 
 1. **Admin Setup** (requires admin privileges):
+
    ```bash
    # Generate OAuth2 credentials
    curl -X POST http://localhost:8080/api/oauth/github/generate \
@@ -103,12 +114,14 @@ OAuth2 provides secure authentication without sharing passwords. Currently suppo
 
 2. **Configure GitHub App**:
    - Create a GitHub OAuth App in your GitHub settings
-   - Set the authorization callback URL to: `https://your-domain.com/api/oauth/github/callback`
+   - Set the authorization callback URL to:
+     `https://your-domain.com/api/oauth/github/callback`
    - Use the generated client_id and client_secret
 
 #### OAuth2 Flow:
 
 1. **Initiate OAuth2 Flow**:
+
    ```
    GET https://your-domain.com/api/oauth/github/login
    ```
@@ -116,6 +129,7 @@ OAuth2 provides secure authentication without sharing passwords. Currently suppo
 2. **User is redirected to GitHub for authorization**
 
 3. **GitHub redirects back with authorization code**:
+
    ```
    GET https://your-domain.com/api/oauth/github/callback?code=auth_code
    ```
@@ -137,13 +151,17 @@ curl -X POST http://localhost:8080/api/oauth/github/reset \
 ## Permission Levels
 
 ### Read Permission
+
 Allows access to:
+
 - View operation history (`/api/history`)
 - View system information (`/api/system`)
 - View application logs (`/api/logs`)
 
 ### Basic Permission
+
 Includes read permissions plus:
+
 - Download subtitles (`/api/download`)
 - Convert subtitle files (`/api/convert`)
 - Translate subtitles (`/api/translate`)
@@ -152,7 +170,9 @@ Includes read permissions plus:
 - View scan status (`/api/scan/status`)
 
 ### Admin Permission
+
 Includes basic permissions plus:
+
 - Manage OAuth2 configuration (`/api/oauth/github/*`)
 - Manage user accounts (`/api/users/*`)
 - System configuration (`/api/config`)
@@ -163,7 +183,9 @@ Includes basic permissions plus:
 Authentication errors are returned with appropriate HTTP status codes:
 
 ### 401 Unauthorized
+
 No valid authentication provided:
+
 ```json
 {
   "error": "unauthorized",
@@ -172,10 +194,12 @@ No valid authentication provided:
 ```
 
 ### 403 Forbidden
+
 Valid authentication but insufficient permissions:
+
 ```json
 {
-  "error": "forbidden", 
+  "error": "forbidden",
   "message": "Admin access required"
 }
 ```
@@ -183,17 +207,20 @@ Valid authentication but insufficient permissions:
 ## Security Best Practices
 
 ### For Web Applications:
+
 - Use session authentication with HTTPS
 - Implement proper CSRF protection
 - Set secure cookie attributes (HttpOnly, Secure, SameSite)
 
 ### For API Clients:
+
 - Use API keys stored securely
 - Implement exponential backoff for rate limiting
 - Validate SSL certificates
 - Use the minimum required permission level
 
 ### For Server Administrators:
+
 - Enable HTTPS in production
 - Regularly rotate API keys
 - Monitor authentication logs
@@ -202,13 +229,15 @@ Valid authentication but insufficient permissions:
 
 ## Rate Limiting
 
-API requests are subject to rate limiting based on authentication method and user role:
+API requests are subject to rate limiting based on authentication method and
+user role:
 
 - **Read operations**: 1000 requests/hour
-- **Basic operations**: 500 requests/hour  
+- **Basic operations**: 500 requests/hour
 - **Admin operations**: 200 requests/hour
 
 Rate limit headers are included in responses:
+
 ```
 X-RateLimit-Limit: 500
 X-RateLimit-Remaining: 487
@@ -239,8 +268,8 @@ response = session.get("http://localhost:8080/api/history")
 // Using fetch with API key
 const response = await fetch('http://localhost:8080/api/system', {
   headers: {
-    'X-API-Key': 'your_api_key'
-  }
+    'X-API-Key': 'your_api_key',
+  },
 });
 
 // Using session authentication
@@ -248,11 +277,11 @@ const loginResponse = await fetch('http://localhost:8080/api/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ username: 'admin', password: 'password' }),
-  credentials: 'include'
+  credentials: 'include',
 });
 
 const historyResponse = await fetch('http://localhost:8080/api/history', {
-  credentials: 'include'
+  credentials: 'include',
 });
 ```
 
@@ -275,7 +304,7 @@ func main() {
     req.Header.Set("X-API-Key", "your_api_key")
     resp, _ := client.Do(req)
     defer resp.Body.Close()
-    
+
     // Using session authentication
     loginData := map[string]string{
         "username": "admin",
@@ -308,6 +337,7 @@ func main() {
 ## Migration Guide
 
 ### From Basic Auth to API Keys:
+
 Replace HTTP Basic Authentication with API key headers:
 
 ```diff
@@ -316,6 +346,7 @@ Replace HTTP Basic Authentication with API key headers:
 ```
 
 ### From Cookie Auth to API Keys:
+
 For programmatic access, replace session cookies with API keys:
 
 ```diff

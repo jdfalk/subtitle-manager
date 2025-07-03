@@ -11,7 +11,7 @@ body:
     attributes:
       value: |
         Use this template for questions, discussions, or issues that don't fit the bug report or feature request templates.
-        
+
         **Before creating this issue, please consider:**
         - Is this a bug? Use the Bug Report template instead
         - Is this a feature request? Use the Feature Request template instead

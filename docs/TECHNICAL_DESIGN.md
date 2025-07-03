@@ -258,9 +258,9 @@ built into each provider implementation where required by the external service.
 
 ## 10.1 Asynchronous Translation Queue
 
-The `pkg/queue` package provides an asynchronous job queue for heavy translation 
-tasks. It leverages the existing `pkg/tasks` infrastructure for progress tracking
-and integrates with the established concurrency patterns.
+The `pkg/queue` package provides an asynchronous job queue for heavy translation
+tasks. It leverages the existing `pkg/tasks` infrastructure for progress
+tracking and integrates with the established concurrency patterns.
 
 ### Queue Architecture
 
@@ -271,50 +271,43 @@ The queue supports different job types:
 
 Jobs implement the `Job` interface:
 
-\```go
-type Job interface {
-    ID() string
-    Type() JobType
-    Execute(ctx context.Context) error
-    Description() string
-}
-\```
+\```go type Job interface { ID() string Type() JobType Execute(ctx
+context.Context) error Description() string } \```
 
 ### Queue Management
 
 The queue is managed through worker goroutines:
 
-\```go
-// Create and start queue with 3 workers
-q := queue.NewQueue(3)
-q.Start()
+\```go // Create and start queue with 3 workers q := queue.NewQueue(3) q.Start()
 
-// Add translation job
-job := queue.NewSingleFileJob(inPath, outPath, lang, service, apiKey, "", "")
-taskID, err := q.Add(job)
-\```
+// Add translation job job := queue.NewSingleFileJob(inPath, outPath, lang,
+service, apiKey, "", "") taskID, err := q.Add(job) \```
 
 ### CLI Integration
 
 Translation commands support asynchronous processing via the `--async` flag:
 
 \```bash
+
 # Synchronous translation (default)
+
 subtitle-manager translate input.srt output.srt en
 
 # Asynchronous translation
-subtitle-manager translate --async input.srt output.srt en
-\```
+
+subtitle-manager translate --async input.srt output.srt en \```
 
 Queue status and management:
 
 \```bash
+
 # Check queue status and active tasks
+
 subtitle-manager queue status
 
 # Start queue for testing (auto-managed in production)
-subtitle-manager queue start
-\```
+
+subtitle-manager queue start \```
 
 The queue integrates with the existing task tracking system, allowing progress
 monitoring through the `tasks` package and web interface.
@@ -510,9 +503,9 @@ The project follows the Go community style guide in addition to rules in
   `go generate` builds the frontend and embeds it using the `embed` package for
   serving via the `web` command. Run `go generate ./webui` before compiling the
   binary to ensure the latest assets are included.
-- **Asynchronous Queue** – ✅ **IMPLEMENTED** Use a worker queue for heavy translation tasks.
-  Available via `pkg/queue` with CLI support through `--async` flag on translate
-  commands and `queue` management commands.
+- **Asynchronous Queue** – ✅ **IMPLEMENTED** Use a worker queue for heavy
+  translation tasks. Available via `pkg/queue` with CLI support through
+  `--async` flag on translate commands and `queue` management commands.
 - **Cloud Storage** – Allow storing subtitles and history in cloud buckets.
 - **Internationalisation** – Localise CLI messages and documentation.
 
