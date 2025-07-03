@@ -394,3 +394,27 @@ func languageProfilesRouter(db *sql.DB) http.Handler {
 		}
 	})
 }
+
+// handleGetLanguageProfile wraps handleGetProfile for compatibility.
+func handleGetLanguageProfile(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id := extractIDFromPath(r.URL.Path, "/api/profiles/")
+		handleGetProfile(w, r, db, id)
+	})
+}
+
+// handleUpdateLanguageProfile wraps handleUpdateProfile for compatibility.
+func handleUpdateLanguageProfile(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id := extractIDFromPath(r.URL.Path, "/api/profiles/")
+		handleUpdateProfile(w, r, db, id)
+	})
+}
+
+// handleDeleteLanguageProfile wraps handleDeleteProfile for compatibility.
+func handleDeleteLanguageProfile(db *sql.DB) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id := extractIDFromPath(r.URL.Path, "/api/profiles/")
+		handleDeleteProfile(w, r, db, id)
+	})
+}

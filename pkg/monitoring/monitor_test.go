@@ -262,3 +262,37 @@ func TestEpisodeMonitor_CheckForSubtitles(t *testing.T) {
 	assert.NoError(t, err)
 	store.AssertExpectations(t)
 }
+
+func (m *MockSubtitleStore) AssignProfileToMedia(mediaID, profileID string) error { return nil }
+func (m *MockSubtitleStore) RemoveProfileFromMedia(mediaID string) error          { return nil }
+func (m *MockSubtitleStore) GetMediaProfile(mediaID string) (*database.LanguageProfile, error) {
+	return &database.LanguageProfile{}, nil
+}
+func (m *MockSubtitleStore) CreateLanguageProfile(profile *database.LanguageProfile) error {
+	return nil
+}
+func (m *MockSubtitleStore) GetLanguageProfile(id string) (*database.LanguageProfile, error) {
+	return &database.LanguageProfile{}, nil
+}
+func (m *MockSubtitleStore) ListLanguageProfiles() ([]database.LanguageProfile, error) {
+	return []database.LanguageProfile{}, nil
+}
+func (m *MockSubtitleStore) UpdateLanguageProfile(profile *database.LanguageProfile) error {
+	return nil
+}
+func (m *MockSubtitleStore) DeleteLanguageProfile(id string) error     { return nil }
+func (m *MockSubtitleStore) SetDefaultLanguageProfile(id string) error { return nil }
+func (m *MockSubtitleStore) GetDefaultLanguageProfile() (*database.LanguageProfile, error) {
+	return &database.LanguageProfile{}, nil
+}
+func (m *MockSubtitleStore) InsertSubtitleSource(src *database.SubtitleSource) error { return nil }
+func (m *MockSubtitleStore) GetSubtitleSource(sourceHash string) (*database.SubtitleSource, error) {
+	return &database.SubtitleSource{}, nil
+}
+func (m *MockSubtitleStore) UpdateSubtitleSourceStats(sourceHash string, downloadCount, successCount int, avgRating *float64) error {
+	return nil
+}
+func (m *MockSubtitleStore) ListSubtitleSources(provider string, limit int) ([]database.SubtitleSource, error) {
+	return []database.SubtitleSource{}, nil
+}
+func (m *MockSubtitleStore) DeleteSubtitleSource(sourceHash string) error { return nil }

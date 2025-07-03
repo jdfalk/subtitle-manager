@@ -662,12 +662,13 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 - `SM_OPENAI_API_URL` - Override OpenAI/Whisper API base URL (default `https://api.openai.com/v1`)
 
 #### Whisper Service Requirements
-When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper-asr-webservice`. Mount the Docker socket and install the NVIDIA Container Toolkit if GPU acceleration is desired. Customize the service with these optional variables:
+When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper-asr-webservice` with automatic retry logic and health checks for reliable startup. Mount the Docker socket and install the NVIDIA Container Toolkit if GPU acceleration is desired. Customize the service with these optional variables:
 - `WHISPER_CONTAINER_NAME` - Container name (default `whisper-asr-service`)
 - `WHISPER_IMAGE` - Docker image to use
 - `WHISPER_PORT` - Port to expose (default `9000`)
 - `WHISPER_MODEL` - Whisper model (base, small, medium, large)
 - `WHISPER_DEVICE` - `cuda` or `cpu` to toggle GPU usage
+- `WHISPER_HEALTH_TIMEOUT` - Health check timeout in seconds (default `10`, set to `0` to skip)
 
 **GitHub OAuth (Optional):**
 

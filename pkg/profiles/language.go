@@ -60,7 +60,7 @@ func (lp *LanguageProfile) SetTags(tags []string) {
 	// Future implementation for tag assignment
 }
 
-// ValidateProfile checks if the language profile has valid configuration.
+// ValidateProfile checks if the language profile configuration is valid.
 func (lp *LanguageProfile) ValidateProfile() error {
 	if lp.Name == "" {
 		return &ValidationError{Field: "name", Message: "Name cannot be empty"}
@@ -82,6 +82,11 @@ func (lp *LanguageProfile) ValidateProfile() error {
 		priorities[lang.Priority] = true
 	}
 	return nil
+}
+
+// Validate is a backward-compatible wrapper for ValidateProfile.
+func (lp *LanguageProfile) Validate() error {
+	return lp.ValidateProfile()
 }
 
 // GetPrimaryLanguage returns the language with the highest priority (lowest priority number).
@@ -158,4 +163,9 @@ func DefaultProfile() *LanguageProfile {
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
+}
+
+// DefaultLanguageProfile is an alias for DefaultProfile for backward compatibility.
+func DefaultLanguageProfile() *LanguageProfile {
+	return DefaultProfile()
 }

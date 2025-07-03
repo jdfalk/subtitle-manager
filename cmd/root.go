@@ -196,6 +196,12 @@ func initConfig() {
 	viper.SetDefault("providers.generic.password", "")
 	viper.SetDefault("providers.generic.api_key", "")
 	viper.SetDefault("providers.whisper.api_url", "http://localhost:9000")
+	viper.SetDefault("whisper.container_name", "whisper-asr-service")
+	viper.SetDefault("whisper.image", "onerahmet/openai-whisper-asr-webservice:latest")
+	viper.SetDefault("whisper.port", "9000")
+	viper.SetDefault("whisper.model", "base")
+	viper.SetDefault("whisper.device", "cuda")
+	viper.SetDefault("whisper.use_gpu", true)
 	viper.SetDefault("log_file", "/config/logs/subtitle-manager.log")
 	// Enable embedded subtitle provider by default so users can start
 	// extracting subtitles without additional configuration.
@@ -268,6 +274,8 @@ func initConfig() {
 	if u := viper.GetString("openai_api_url"); u != "" {
 		transcriber.SetBaseURL(u)
 	}
+	// Initialize Whisper container defaults
+	transcriber.SetDefaultConfig()
 	if u := viper.GetString("anticaptcha.api_url"); u != "" {
 		captcha.SetAPIURL(u)
 	}
