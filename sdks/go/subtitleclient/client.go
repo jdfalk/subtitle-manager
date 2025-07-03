@@ -38,7 +38,7 @@ type Client struct {
 // Config holds configuration options for the client.
 type Config struct {
 	BaseURL    string        // API base URL
-	APIKey     string        // API key for authentication  
+	APIKey     string        // API key for authentication
 	Timeout    time.Duration // HTTP request timeout
 	MaxRetries int           // Maximum retry attempts
 	UserAgent  string        // Custom user agent
@@ -102,7 +102,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body io.Rea
 		// Set default headers
 		req.Header.Set("User-Agent", c.userAgent)
 		req.Header.Set("Accept", "application/json")
-		
+
 		if c.apiKey != "" {
 			req.Header.Set("X-API-Key", c.apiKey)
 		}
