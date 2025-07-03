@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -16,6 +17,7 @@ import (
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
+	"github.com/spf13/viper"
 )
 
 // SearchRequest represents the request payload for subtitle search
@@ -68,6 +70,26 @@ type SearchHistoryItem struct {
 	Results   int           `json:"results"`
 }
 
+// isValidURL checks if the provided URL is a valid HTTP/HTTPS URL and not localhost or private IP
+func isValidURL(raw string) bool {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return false
+	}
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return false
+	}
+	// Prevent SSRF: block localhost and private IPs
+	host := u.Hostname()
+	if host == "localhost" || host == "127.0.0.1" || host == "::1" {
+		return false
+	}
+	if strings.HasPrefix(host, "10.") || strings.HasPrefix(host, "192.168.") || strings.HasPrefix(host, "172.") {
+		return false
+	}
+	return true
+}
+
 // searchHandler handles manual subtitle search requests
 func searchHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -103,11 +125,14 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Define a safe directory for media files
-	const safeDir = "/path/to/safe/media/directory/"
-
-	// Resolve the media path to an absolute path
-	absMediaPath, err := filepath.Abs(req.MediaPath)
+	// Use a configurable safe directory for media files
+	safeDir := viper.GetString("media.safe_dir")
+	if safeDir == "" {
+		safeDir = "/media/" // fallback default
+	}
+	// Clean and resolve the absolute path
+	joined := filepath.Join(safeDir, req.MediaPath)
+	absMediaPath, err := filepath.Abs(joined)
 	if err != nil || !strings.HasPrefix(absMediaPath, safeDir) {
 		http.Error(w, "Invalid media path", http.StatusBadRequest)
 		return
@@ -119,10 +144,12 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Perform parallel search across providers
-	results := performParallelSearch(r.Context(), req)
+	// TODO: Complete implementation for https://github.com/jdfalk/subtitle-manager/issues/36
+	// - Add more robust error handling, logging, and test coverage
+	// - Consider caching, rate limiting, and provider fallback logic
+	// - Optimize parallel search and scoring for large provider sets
 
-	// Calculate scores and sort results
+	results := performParallelSearch(r.Context(), req)
 	scoredResults := calculateScores(results, req)
 
 	response := SearchResponse{
@@ -381,14 +408,18 @@ func searchPreviewHandler() http.Handler {
 			return
 		}
 
-		url := r.URL.Query().Get("url")
-		if url == "" {
+		urlStr := r.URL.Query().Get("url")
+		if urlStr == "" {
 			http.Error(w, "URL parameter is required", http.StatusBadRequest)
 			return
 		}
+		if !isValidURL(urlStr) {
+			http.Error(w, "Invalid or unsafe URL", http.StatusBadRequest)
+			return
+		}
 
-		// Fetch subtitle content (simplified - should use appropriate provider)
-		resp, err := http.Get(url)
+		// Fetch subtitle content (should use appropriate provider, not direct user URL)
+		resp, err := http.Get(urlStr)
 		if err != nil {
 			http.Error(w, "Failed to fetch subtitle", http.StatusInternalServerError)
 			return
@@ -400,7 +431,6 @@ func searchPreviewHandler() http.Handler {
 			return
 		}
 
-		// Read content
 		content, err := io.ReadAll(resp.Body)
 		if err != nil {
 			http.Error(w, "Failed to read subtitle content", http.StatusInternalServerError)
@@ -416,7 +446,7 @@ func searchPreviewHandler() http.Handler {
 		preview := PreviewResponse{
 			Content:  previewContent,
 			Language: r.URL.Query().Get("lang"),
-			Name:     extractNameFromURL(url),
+			Name:     extractNameFromURL(urlStr),
 			Provider: r.URL.Query().Get("provider"),
 		}
 

@@ -4,7 +4,9 @@
 
 # Markdown Coding Style Guide
 
-This guide provides comprehensive guidelines for writing clean, consistent Markdown documents following industry best practices and accessibility standards.
+This guide provides comprehensive guidelines for writing clean, consistent
+Markdown documents following industry best practices and accessibility
+standards.
 
 ## File Structure and Organization
 
@@ -314,7 +316,7 @@ Before installing, ensure you have:
 To use the basic features:
 
 ```javascript
-const project = require("project");
+const project = require('project');
 project.init();
 ```
 
