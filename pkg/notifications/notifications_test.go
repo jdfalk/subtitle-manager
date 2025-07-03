@@ -82,29 +82,29 @@ func TestSMTPNotifier(t *testing.T) {
 // TestNew verifies that New creates a service with proper validation.
 func TestNew(t *testing.T) {
 	tests := []struct {
-		name            string
-		discordURL      string
-		telegramToken   string
-		telegramChatID  string
-		emailURL        string
-		expectError     bool
-		errorContains   string
+		name           string
+		discordURL     string
+		telegramToken  string
+		telegramChatID string
+		emailURL       string
+		expectError    bool
+		errorContains  string
 	}{
 		{
-			name:          "valid configuration",
-			discordURL:    "https://discord.com/api/webhooks/123/abc",
-			telegramToken: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz",
+			name:           "valid configuration",
+			discordURL:     "https://discord.com/api/webhooks/123/abc",
+			telegramToken:  "123456789:ABCdefGHIjklMNOpqrsTUVwxyz",
 			telegramChatID: "123456",
-			emailURL:      "https://hooks.slack.com/services/abc/def/ghi",
-			expectError:   false,
+			emailURL:       "https://hooks.slack.com/services/abc/def/ghi",
+			expectError:    false,
 		},
 		{
-			name:          "empty URLs allowed",
-			discordURL:    "",
-			telegramToken: "",
+			name:           "empty URLs allowed",
+			discordURL:     "",
+			telegramToken:  "",
 			telegramChatID: "",
-			emailURL:      "",
-			expectError:   false,
+			emailURL:       "",
+			expectError:    false,
 		},
 		{
 			name:          "invalid Discord URL - not HTTPS",
@@ -141,7 +141,7 @@ func TestNew(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			svc, err := New(tt.discordURL, tt.telegramToken, tt.telegramChatID, tt.emailURL)
-			
+
 			if tt.expectError {
 				if err == nil {
 					t.Fatal("expected error, got nil")
@@ -324,7 +324,7 @@ func TestValidateWebhookURL(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := validateWebhookURL(tt.url)
-			
+
 			if tt.expectError {
 				if err == nil {
 					t.Fatal("expected error, got nil")

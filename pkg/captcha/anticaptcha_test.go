@@ -139,7 +139,7 @@ func TestTwoCaptchaSolvePollingNotReady(t *testing.T) {
 
 	handler.HandleFunc("/res.php", func(w http.ResponseWriter, r *http.Request) {
 		pollCount++
-		
+
 		if pollCount == 1 {
 			// First poll: not ready
 			response := map[string]any{
