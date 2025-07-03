@@ -31,11 +31,7 @@ RUN apt-get update \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js 20 (latest LTS available in Debian bookworm)
-RUN apt-get update \
-    && apt-get install -y nodejs npm \
-    && node --version \
-    && npm --version
+
 
 # Note: Go tools will be installed automatically by VS Code Go extension when needed
 

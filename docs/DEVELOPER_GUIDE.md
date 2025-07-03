@@ -32,10 +32,10 @@ The easiest way to get started is using the provided development container:
 4. Wait for the container to build and the post-create script to run
 5. Start developing!
 
-The dev container includes:
+- The dev container includes:
 
 - Go 1.24+ with development tools
-- Node.js 18.19 for React development
+- Node.js 20 for React development
 - FFmpeg for subtitle processing
 - SQLite with CGO support enabled
 - Pre-configured VS Code extensions

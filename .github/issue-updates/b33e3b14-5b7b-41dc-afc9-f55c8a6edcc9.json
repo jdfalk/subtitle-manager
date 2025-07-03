@@ -1,0 +1,7 @@
+{
+  "action": "comment",
+  "number": 0,
+  "body": "Updated devcontainer to use Node 20 feature and updated docs. Ran pre-commit and go tests.",
+  "guid": "b33e3b14-5b7b-41dc-afc9-f55c8a6edcc9",
+  "legacy_guid": "comment-issue-0-2025-07-03"
+}
