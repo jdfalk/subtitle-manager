@@ -168,10 +168,7 @@ func migrateProfiles(cmd *cobra.Command, args []string) error {
 
 // detectExistingLanguages attempts to detect existing language settings from various sources.
 func detectExistingLanguages() []string {
-	config, err := loadConfig()
-	if err != nil {
-		return []string{}
-	}
+	config := loadConfig()
 	return config
 }
 
@@ -192,16 +189,20 @@ func formatLanguages(languages []profiles.LanguageConfig) string {
 }
 
 // loadConfig loads the configuration and returns a slice of language keys.
-func loadConfig() ([]string, error) {
-	var cfg struct {
-		Languages map[string]interface{}
+func loadConfig() []string {
+	// Use viper to unmarshal config, but always return a non-nil slice
+	var config struct {
+		Languages map[string]interface{} `mapstructure:"languages"`
 	}
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, err
+	if err := viper.Unmarshal(&config); err != nil {
+		return []string{}
 	}
-	var langs []string
-	for k := range cfg.Languages {
-		langs = append(langs, k)
+	if config.Languages == nil {
+		return []string{}
 	}
-	return langs, nil
+	keys := make([]string, 0, len(config.Languages))
+	for k := range config.Languages {
+		keys = append(keys, k)
+	}
+	return keys
 }
