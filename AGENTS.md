@@ -290,6 +290,11 @@
 
 - All references to "copilot" in prior instructions are replaced with "codex" for this repository.
 - All code, documentation, and process instructions in this file are mandatory for codex agents.
+- **For every file, bug, or problem you work on, you MUST ensure there is an associated GitHub issue describing the plan to fix or address it.**
+- If no such issue exists, you MUST use the `scripts/create-issue-update.sh` script to create a new issue before proceeding.
+- If an issue already exists, you MUST use the script to update it with your plan, progress, or resolution.
+- You MUST reference the relevant issue number in all pull requests, using the format `Closes #<issue_number>` or `Related to #<issue_number>` as appropriate.
+- You MUST NOT create or edit `.github/issue-updates/*.json` files by hand—always use the script to ensure GUID uniqueness and correct formatting.
 - If you find programmatic checks in AGENTS.md, you must run them and validate they pass after your changes.
 
 ---
