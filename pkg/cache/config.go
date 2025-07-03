@@ -18,6 +18,9 @@ func ConfigFromViper() (*Config, error) {
 
 	// Backend selection
 	config.Backend = viper.GetString("cache.backend")
+	if config.Backend == "" {
+		config.Backend = "memory"
+	}
 
 	// Memory cache configuration
 	config.Memory.MaxEntries = viper.GetInt("cache.memory.max_entries")

@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Fix default cache backend",
+  "body": "Set default cache backend to memory if not configured.",
+  "labels": ["bug", "codex"],
+  "guid": "e016cfa6-0ecf-4c5c-9876-fe015ceecc71",
+  "legacy_guid": "create-fix-default-cache-backend-2025-07-03"
+}
