@@ -1,0 +1,7 @@
+{
+  "action": "comment",
+  "number": 1259,
+  "body": "Implemented whisper container management and HTTP endpoints. Added tests but some fail.",
+  "guid": "88d42926-bef4-4737-99c7-cdf201d656cc",
+  "legacy_guid": "comment-issue-1259-2025-07-03"
+}

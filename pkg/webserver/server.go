@@ -202,6 +202,12 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/scoring/config", authMiddleware(db, "basic", scoringConfigHandler()))
 	mux.Handle(prefix+"/api/scoring/test", authMiddleware(db, "basic", scoringTestHandler()))
 	mux.Handle(prefix+"/api/scoring/defaults", authMiddleware(db, "basic", scoringDefaultsHandler()))
+	// Whisper ASR container management
+	mux.Handle(prefix+"/api/whisper/container/status", authMiddleware(db, "basic", whisperContainerStatusHandler()))
+	mux.Handle(prefix+"/api/whisper/container/start", authMiddleware(db, "basic", whisperContainerStartHandler()))
+	mux.Handle(prefix+"/api/whisper/container/stop", authMiddleware(db, "basic", whisperContainerStopHandler()))
+	mux.Handle(prefix+"/api/whisper/transcribe", authMiddleware(db, "basic", whisperTranscribeHandler()))
+	mux.Handle(prefix+"/api/whisper/models", authMiddleware(db, "basic", whisperModelsHandler()))
 
 	// Universal tagging system
 	mux.Handle(prefix+"/api/tags", authMiddleware(db, "admin", tagsHandler(db)))

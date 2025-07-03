@@ -278,3 +278,46 @@ func TestService_RotateBackups(t *testing.T) {
 		t.Errorf("expected 3 backups after rotation, got %d", len(backups))
 	}
 }
+
+func (m *mockSubtitleStore) AssignProfileToMedia(mediaID, profileID string) error { return nil }
+func (m *mockSubtitleStore) RemoveProfileFromMedia(mediaID string) error          { return nil }
+func (m *mockSubtitleStore) GetMediaProfile(mediaID string) (*database.LanguageProfile, error) {
+	return &database.LanguageProfile{}, nil
+}
+func (m *mockSubtitleStore) CreateLanguageProfile(profile *database.LanguageProfile) error {
+	return nil
+}
+func (m *mockSubtitleStore) GetLanguageProfile(id string) (*database.LanguageProfile, error) {
+	return &database.LanguageProfile{}, nil
+}
+func (m *mockSubtitleStore) ListLanguageProfiles() ([]database.LanguageProfile, error) {
+	return []database.LanguageProfile{}, nil
+}
+func (m *mockSubtitleStore) UpdateLanguageProfile(profile *database.LanguageProfile) error {
+	return nil
+}
+func (m *mockSubtitleStore) DeleteLanguageProfile(id string) error     { return nil }
+func (m *mockSubtitleStore) SetDefaultLanguageProfile(id string) error { return nil }
+func (m *mockSubtitleStore) GetDefaultLanguageProfile() (*database.LanguageProfile, error) {
+	return &database.LanguageProfile{}, nil
+}
+func (m *mockSubtitleStore) InsertSubtitleSource(src *database.SubtitleSource) error { return nil }
+func (m *mockSubtitleStore) GetSubtitleSource(sourceHash string) (*database.SubtitleSource, error) {
+	return &database.SubtitleSource{}, nil
+}
+func (m *mockSubtitleStore) UpdateSubtitleSourceStats(sourceHash string, downloadCount, successCount int, avgRating *float64) error {
+	return nil
+}
+func (m *mockSubtitleStore) ListSubtitleSources(provider string, limit int) ([]database.SubtitleSource, error) {
+	return []database.SubtitleSource{}, nil
+}
+func (m *mockSubtitleStore) DeleteSubtitleSource(sourceHash string) error          { return nil }
+func (m *mockSubtitleStore) InsertMonitoredItem(rec *database.MonitoredItem) error { return nil }
+func (m *mockSubtitleStore) ListMonitoredItems() ([]database.MonitoredItem, error) {
+	return []database.MonitoredItem{}, nil
+}
+func (m *mockSubtitleStore) UpdateMonitoredItem(rec *database.MonitoredItem) error { return nil }
+func (m *mockSubtitleStore) DeleteMonitoredItem(id string) error                   { return nil }
+func (m *mockSubtitleStore) GetMonitoredItemsToCheck(interval time.Duration) ([]database.MonitoredItem, error) {
+	return []database.MonitoredItem{}, nil
+}
