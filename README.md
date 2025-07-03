@@ -917,6 +917,8 @@ To bypass any hook temporarily, use `git commit --no-verify`.
 
 **Legacy Support**: Pushing an `issue_updates.json` file to the repository root still works for backward compatibility. The unified issue management workflow processes both formats.
 
+Note: If the unified issue management workflow fails due to a missing `requirements.txt` file, update to the latest version of [ghcommon](https://github.com/jdfalk/ghcommon) which now provides this file. This resolves issues #1249 and #1251.
+
 The new format uses individual files with this structure:
 \```json
 {
