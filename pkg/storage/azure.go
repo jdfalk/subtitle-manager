@@ -22,7 +22,7 @@ func NewAzureProvider(config StorageConfig) (*AzureProvider, error) {
 	if config.AzureAccount == "" || config.AzureKey == "" || config.AzureContainer == "" {
 		return nil, fmt.Errorf("%w: Azure account, key, and container are required", ErrConfigurationMissing)
 	}
-	
+
 	// TODO: Initialize Azure Blob Storage client
 	return &AzureProvider{
 		container: config.AzureContainer,
