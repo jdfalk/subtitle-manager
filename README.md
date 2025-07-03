@@ -178,7 +178,7 @@ profile-based configurations.
       "hi": false
     },
     {
-      "language": "es", 
+      "language": "es",
       "priority": 2,
       "forced": false,
       "hi": true
