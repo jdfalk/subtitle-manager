@@ -2,7 +2,10 @@
 
 ## Overview
 
-The subtitle manager database schema has been enhanced to provide richer tracking of subtitle sources, download history, and metadata. This enables better subtitle quality assessment, provider performance monitoring, and complete audit trails for subtitle operations.
+The subtitle manager database schema has been enhanced to provide richer
+tracking of subtitle sources, download history, and metadata. This enables
+better subtitle quality assessment, provider performance monitoring, and
+complete audit trails for subtitle operations.
 
 ## Enhanced Schema Features
 
@@ -11,10 +14,13 @@ The subtitle manager database schema has been enhanced to provide richer trackin
 The `subtitles` table now includes additional metadata fields:
 
 - **`source_url`** (TEXT): Original download URL for the subtitle
-- **`provider_metadata`** (TEXT): JSON-encoded metadata from the subtitle provider
+- **`provider_metadata`** (TEXT): JSON-encoded metadata from the subtitle
+  provider
 - **`confidence_score`** (REAL): Quality/match confidence score (0.0 to 1.0)
-- **`parent_id`** (INTEGER): References parent subtitle for tracking modifications
-- **`modification_type`** (TEXT): Type of modification applied (sync, translate, etc.)
+- **`parent_id`** (INTEGER): References parent subtitle for tracking
+  modifications
+- **`modification_type`** (TEXT): Type of modification applied (sync, translate,
+  etc.)
 
 ### Download Table Enhancements
 
@@ -65,24 +71,24 @@ func createEnhancedSubtitle() {
         Language:   "en",
         Release:    "BluRay.x264-GROUP",
     }
-    
+
     // Create subtitle record with enhanced metadata
     rec, err := database.CreateSubtitleRecord(
         "movie.en.srt",
-        "movie.mkv", 
-        "en", 
+        "movie.mkv",
+        "en",
         "opensubtitles",
         metadata,
     )
     if err != nil {
         log.Fatal(err)
     }
-    
+
     // Add source tracking information
     score := 0.95
     rec.SourceURL = "https://opensubtitles.org/download/123456"
     rec.ConfidenceScore = &score
-    
+
     // Store in database
     store.InsertSubtitle(rec)
 }
@@ -100,13 +106,13 @@ func trackDownloadPerformance() {
         "en",
         "The Matrix 1999 BluRay",
     )
-    
+
     // Add performance metrics
     matchScore := 0.92
     responseTime := 1200
     downloadRec.MatchScore = &matchScore
     downloadRec.ResponseTimeMs = &responseTime
-    
+
     store.InsertDownload(downloadRec)
 }
 ```
@@ -118,14 +124,14 @@ func manageSubtitleSources() {
     // Create subtitle source tracking
     content := []byte("subtitle content here...")
     sourceHash := database.CalculateSubtitleHash(content)
-    
+
     metadata := &database.ProviderMetadata{
         SourceName: "Movie Title",
         Release:    "BluRay.x264-GROUP",
         FileSize:   51200,
         Rating:     4.5,
     }
-    
+
     source, err := database.CreateSubtitleSource(
         sourceHash,
         "https://provider.com/subtitle/789",
@@ -135,9 +141,9 @@ func manageSubtitleSources() {
     if err != nil {
         log.Fatal(err)
     }
-    
+
     store.InsertSubtitleSource(source)
-    
+
     // Update statistics after downloads
     newRating := 4.7
     store.UpdateSubtitleSourceStats(sourceHash, 25, 22, &newRating)
@@ -152,7 +158,7 @@ func getProviderStats() {
     if err != nil {
         log.Fatal(err)
     }
-    
+
     fmt.Printf("Provider: %s\n", stats.Provider)
     fmt.Printf("Total Sources: %d\n", stats.TotalSources)
     fmt.Printf("Success Rate: %.2f%%\n", stats.SuccessRate*100)
@@ -185,14 +191,14 @@ func trackSubtitleModifications() {
         File: "original.srt",
         // ... other fields
     }
-    
+
     // Create synced version that references the original
     synced := database.TrackSubtitleRelationship(
         original,
         "synced.srt",
         database.ModificationTypeSync,
     )
-    
+
     store.InsertSubtitle(synced)
 }
 ```
@@ -208,9 +214,9 @@ func detectDuplicates() {
     if err != nil {
         log.Fatal(err)
     }
-    
+
     hash := database.CalculateSubtitleHash(content)
-    
+
     // Check if we've seen this subtitle before
     existing, err := store.GetSubtitleSource(hash)
     if err == nil {
@@ -226,12 +232,12 @@ Helper functions are provided to validate metadata:
 ```go
 func validateScores() {
     score := 0.85
-    
+
     // Validate confidence score (0-1 range)
     if err := database.ValidateConfidenceScore(&score); err != nil {
         log.Printf("Invalid confidence score: %v", err)
     }
-    
+
     // Validate match score (0-1 range)
     if err := database.ValidateMatchScore(&score); err != nil {
         log.Printf("Invalid match score: %v", err)
@@ -241,10 +247,16 @@ func validateScores() {
 
 ## Backward Compatibility
 
-All enhancements maintain full backward compatibility with existing subtitle and download records. Existing code will continue to work without modifications, while new features are available for enhanced tracking when needed.
+All enhancements maintain full backward compatibility with existing subtitle and
+download records. Existing code will continue to work without modifications,
+while new features are available for enhanced tracking when needed.
 
-Records created with the legacy schema will have default/empty values for new fields, and the system gracefully handles both old and new record formats.
+Records created with the legacy schema will have default/empty values for new
+fields, and the system gracefully handles both old and new record formats.
 
 ## Database Migration
 
-Schema changes are automatically applied using the `addColumnIfNotExists` helper function. When the application starts, it will detect missing columns and add them with appropriate default values, ensuring seamless upgrades from older database schemas.
+Schema changes are automatically applied using the `addColumnIfNotExists` helper
+function. When the application starts, it will detect missing columns and add
+them with appropriate default values, ensuring seamless upgrades from older
+database schemas.

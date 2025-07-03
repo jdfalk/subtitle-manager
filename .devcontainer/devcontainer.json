@@ -2,7 +2,7 @@
   "name": "Subtitle Manager Development",
   "dockerFile": "Dockerfile",
   "context": "..",
-  
+
   "customizations": {
     "vscode": {
       "settings": {
@@ -86,9 +86,9 @@
   "postCreateCommand": ".devcontainer/post-create.sh",
 
   "remoteUser": "vscode",
-  
+
   "settings": {},
-  
+
   "extensions": [],
 
   "mounts": [
@@ -98,7 +98,7 @@
   ],
 
   "containerUser": "vscode",
-  
+
   "containerEnv": {
     "CGO_ENABLED": "1",
     "GOOS": "linux",

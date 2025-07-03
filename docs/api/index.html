@@ -2,219 +2,234 @@
 <!-- version: 1.0.0 -->
 <!-- guid: 550e8400-e29b-41d4-a716-446655440002 -->
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Subtitle Manager API Documentation</title>
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui.css" />
-    <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.10.3/favicon-32x32.png" sizes="32x32" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui.css"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://unpkg.com/swagger-ui-dist@5.10.3/favicon-32x32.png"
+      sizes="32x32"
+    />
     <style>
-        html {
-            box-sizing: border-box;
-            overflow: -moz-scrollbars-vertical;
-            overflow-y: scroll;
-        }
-        
-        *, *:before, *:after {
-            box-sizing: inherit;
-        }
-        
-        body {
-            margin: 0;
-            background: #fafafa;
-        }
-        
-        .swagger-ui .topbar {
-            background-color: #2c3e50;
-        }
-        
-        .swagger-ui .topbar .link {
-            content: "Subtitle Manager API";
-        }
-        
-        .custom-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
+      html {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      body {
+        margin: 0;
+        background: #fafafa;
+      }
+
+      .swagger-ui .topbar {
+        background-color: #2c3e50;
+      }
+
+      .swagger-ui .topbar .link {
+        content: "Subtitle Manager API";
+      }
+
+      .custom-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .custom-header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 300;
+      }
+
+      .custom-header p {
+        margin: 0.5rem 0 0 0;
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .quick-links {
+        background: white;
+        padding: 1.5rem;
+        margin: 0 2rem 2rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .quick-links h3 {
+        margin-top: 0;
+        color: #2c3e50;
+      }
+
+      .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .link-card {
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 1rem;
+        text-decoration: none;
+        color: #495057;
+        transition: all 0.2s ease;
+      }
+
+      .link-card:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+        text-decoration: none;
+        color: #495057;
+      }
+
+      .link-card h4 {
+        margin: 0 0 0.5rem 0;
+        color: #2c3e50;
+        font-size: 1.1rem;
+      }
+
+      .link-card p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+
+      #swagger-ui {
+        margin: 0 2rem;
+      }
+
+      @media (max-width: 768px) {
         .custom-header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            font-weight: 300;
+          font-size: 2rem;
         }
-        
+
         .custom-header p {
-            margin: 0.5rem 0 0 0;
-            font-size: 1.2rem;
-            opacity: 0.9;
+          font-size: 1rem;
         }
-        
-        .quick-links {
-            background: white;
-            padding: 1.5rem;
-            margin: 0 2rem 2rem 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .quick-links h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        
-        .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .link-card {
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            padding: 1rem;
-            text-decoration: none;
-            color: #495057;
-            transition: all 0.2s ease;
-        }
-        
-        .link-card:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
-            text-decoration: none;
-            color: #495057;
-        }
-        
-        .link-card h4 {
-            margin: 0 0 0.5rem 0;
-            color: #2c3e50;
-            font-size: 1.1rem;
-        }
-        
-        .link-card p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        
+
+        .quick-links,
         #swagger-ui {
-            margin: 0 2rem;
+          margin: 0 1rem;
         }
-        
-        @media (max-width: 768px) {
-            .custom-header h1 {
-                font-size: 2rem;
-            }
-            
-            .custom-header p {
-                font-size: 1rem;
-            }
-            
-            .quick-links,
-            #swagger-ui {
-                margin: 0 1rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="custom-header">
-        <h1>Subtitle Manager API</h1>
-        <p>Complete REST API documentation with interactive examples</p>
+      <h1>Subtitle Manager API</h1>
+      <p>Complete REST API documentation with interactive examples</p>
     </div>
-    
+
     <div class="quick-links">
-        <h3>Quick Start Guide</h3>
-        <div class="links-grid">
-            <a href="#/Authentication" class="link-card">
-                <h4>🔐 Authentication</h4>
-                <p>Learn how to authenticate with the API using sessions, API keys, or OAuth2</p>
-            </a>
-            <a href="#/Subtitles" class="link-card">
-                <h4>📝 Subtitle Operations</h4>
-                <p>Convert, translate, and extract subtitle files</p>
-            </a>
-            <a href="#/Downloads" class="link-card">
-                <h4>⬇️ Download Subtitles</h4>
-                <p>Download subtitles from various providers</p>
-            </a>
-            <a href="#/Library" class="link-card">
-                <h4>📚 Library Management</h4>
-                <p>Scan and manage your media library</p>
-            </a>
-            <a href="#/System" class="link-card">
-                <h4>⚙️ System Monitoring</h4>
-                <p>Monitor system status and view logs</p>
-            </a>
-            <a href="../../" class="link-card">
-                <h4>📖 Documentation</h4>
-                <p>View comprehensive project documentation</p>
-            </a>
-        </div>
+      <h3>Quick Start Guide</h3>
+      <div class="links-grid">
+        <a href="#/Authentication" class="link-card">
+          <h4>🔐 Authentication</h4>
+          <p>
+            Learn how to authenticate with the API using sessions, API keys, or
+            OAuth2
+          </p>
+        </a>
+        <a href="#/Subtitles" class="link-card">
+          <h4>📝 Subtitle Operations</h4>
+          <p>Convert, translate, and extract subtitle files</p>
+        </a>
+        <a href="#/Downloads" class="link-card">
+          <h4>⬇️ Download Subtitles</h4>
+          <p>Download subtitles from various providers</p>
+        </a>
+        <a href="#/Library" class="link-card">
+          <h4>📚 Library Management</h4>
+          <p>Scan and manage your media library</p>
+        </a>
+        <a href="#/System" class="link-card">
+          <h4>⚙️ System Monitoring</h4>
+          <p>Monitor system status and view logs</p>
+        </a>
+        <a href="../../" class="link-card">
+          <h4>📖 Documentation</h4>
+          <p>View comprehensive project documentation</p>
+        </a>
+      </div>
     </div>
 
     <div id="swagger-ui"></div>
-    
+
     <script src="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-standalone-preset.js"></script>
     <script>
-        window.onload = function() {
-            // Begin Swagger UI call region
-            const ui = SwaggerUIBundle({
-                url: './openapi.yaml',
-                dom_id: '#swagger-ui',
-                deepLinking: true,
-                presets: [
-                    SwaggerUIBundle.presets.apis,
-                    SwaggerUIStandalonePreset
-                ],
-                plugins: [
-                    SwaggerUIBundle.plugins.DownloadUrl
-                ],
-                layout: "StandaloneLayout",
-                validatorUrl: null,
-                tryItOutEnabled: true,
-                filter: true,
-                supportedSubmitMethods: ['get', 'post', 'put', 'patch', 'delete'],
-                onComplete: function() {
-                    // Add custom authorization instructions
-                    setTimeout(function() {
-                        const authSection = document.querySelector('.auth-wrapper');
-                        if (authSection) {
-                            const instructionsDiv = document.createElement('div');
-                            instructionsDiv.style.cssText = 'background: #e8f4fd; border: 1px solid #bee5eb; border-radius: 4px; padding: 10px; margin: 10px 0; font-size: 14px;';
-                            instructionsDiv.innerHTML = `
+      window.onload = function () {
+        // Begin Swagger UI call region
+        const ui = SwaggerUIBundle({
+          url: "./openapi.yaml",
+          dom_id: "#swagger-ui",
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+          layout: "StandaloneLayout",
+          validatorUrl: null,
+          tryItOutEnabled: true,
+          filter: true,
+          supportedSubmitMethods: ["get", "post", "put", "patch", "delete"],
+          onComplete: function () {
+            // Add custom authorization instructions
+            setTimeout(function () {
+              const authSection = document.querySelector(".auth-wrapper");
+              if (authSection) {
+                const instructionsDiv = document.createElement("div");
+                instructionsDiv.style.cssText =
+                  "background: #e8f4fd; border: 1px solid #bee5eb; border-radius: 4px; padding: 10px; margin: 10px 0; font-size: 14px;";
+                instructionsDiv.innerHTML = `
                                 <strong>🔑 Authentication Instructions:</strong><br/>
                                 <strong>API Key:</strong> Use your API key in the X-API-Key header<br/>
                                 <strong>Session:</strong> Login through the web UI to use session authentication<br/>
                                 <strong>OAuth2:</strong> Use GitHub OAuth2 for user authentication
                             `;
-                            
-                            const authContainer = authSection.querySelector('.auth-container');
-                            if (authContainer) {
-                                authContainer.insertBefore(instructionsDiv, authContainer.firstChild);
-                            }
-                        }
-                    }, 1000);
-                },
-                requestInterceptor: function(request) {
-                    // Add base URL if not present
-                    if (request.url.startsWith('/api/')) {
-                        const baseUrl = window.location.protocol + '//' + window.location.host;
-                        request.url = baseUrl + request.url;
-                    }
-                    return request;
+
+                const authContainer =
+                  authSection.querySelector(".auth-container");
+                if (authContainer) {
+                  authContainer.insertBefore(
+                    instructionsDiv,
+                    authContainer.firstChild
+                  );
                 }
-            });
-            // End Swagger UI call region
-            
-            window.ui = ui;
-        };
+              }
+            }, 1000);
+          },
+          requestInterceptor: function (request) {
+            // Add base URL if not present
+            if (request.url.startsWith("/api/")) {
+              const baseUrl =
+                window.location.protocol + "//" + window.location.host;
+              request.url = baseUrl + request.url;
+            }
+            return request;
+          },
+        });
+        // End Swagger UI call region
+
+        window.ui = ui;
+      };
     </script>
-</body>
+  </body>
 </html>

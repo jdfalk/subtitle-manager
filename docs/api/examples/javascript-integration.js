@@ -4,16 +4,20 @@
 
 /**
  * Comprehensive JavaScript integration examples for Subtitle Manager API.
- * 
+ *
  * This script demonstrates various integration patterns including:
  * - Basic operations with error handling
- * - File processing workflows  
+ * - File processing workflows
  * - Real-time monitoring
  * - React.js integration patterns
  * - Node.js server integration
  */
 
-const { SubtitleManagerClient, OperationType, TranslationProvider } = require('subtitle-manager-sdk');
+const {
+  SubtitleManagerClient,
+  OperationType,
+  TranslationProvider,
+} = require('subtitle-manager-sdk');
 
 /**
  * Example integration class showing best practices for using the
@@ -27,10 +31,12 @@ class SubtitleManagerIntegration {
       timeout: 60000, // 60 seconds
       maxRetries: 3,
       retryDelay: 2000,
-      debug: process.env.NODE_ENV === 'development'
+      debug: process.env.NODE_ENV === 'development',
     });
-    
-    console.log(`Initialized Subtitle Manager integration with base URL: ${baseURL}`);
+
+    console.log(
+      `Initialized Subtitle Manager integration with base URL: ${baseURL}`
+    );
   }
 
   /**
@@ -39,8 +45,12 @@ class SubtitleManagerIntegration {
   async healthCheck() {
     try {
       const systemInfo = await this.client.getSystemInfo();
-      console.log(`Health check passed - System: ${systemInfo.os} ${systemInfo.arch}`);
-      console.log(`Disk usage: ${systemInfo.diskFreeFormatted}/${systemInfo.diskTotalFormatted}`);
+      console.log(
+        `Health check passed - System: ${systemInfo.os} ${systemInfo.arch}`
+      );
+      console.log(
+        `Disk usage: ${systemInfo.diskFreeFormatted}/${systemInfo.diskTotalFormatted}`
+      );
       return true;
     } catch (error) {
       console.error('Health check failed:', error.message);
@@ -54,7 +64,9 @@ class SubtitleManagerIntegration {
   async authenticateSession(username, password) {
     try {
       const loginResponse = await this.client.login(username, password);
-      console.log(`Authenticated as ${loginResponse.username} with role: ${loginResponse.role}`);
+      console.log(
+        `Authenticated as ${loginResponse.username} with role: ${loginResponse.role}`
+      );
       return true;
     } catch (error) {
       console.error('Authentication failed:', error.message);
@@ -68,11 +80,11 @@ class SubtitleManagerIntegration {
   async processSubtitleFile(file, targetLanguage = null) {
     try {
       console.log(`Processing subtitle file: ${file.name || 'unknown'}`);
-      
+
       // Step 1: Convert to SRT format
       const srtBlob = await this.client.convertSubtitle(file);
       console.log('Converted to SRT format');
-      
+
       // Step 2: Translate if requested
       if (targetLanguage) {
         console.log(`Translating to ${targetLanguage}`);
@@ -84,7 +96,7 @@ class SubtitleManagerIntegration {
         console.log(`Translation to ${targetLanguage} completed`);
         return translatedBlob;
       }
-      
+
       return srtBlob;
     } catch (error) {
       console.error(`Failed to process subtitle file:`, error.message);
@@ -98,18 +110,25 @@ class SubtitleManagerIntegration {
   async batchDownloadSubtitles(mediaFiles) {
     const results = {};
     const totalFiles = mediaFiles.length;
-    
+
     console.log(`Starting batch download for ${totalFiles} files`);
-    
+
     let completed = 0;
-    for await (const { index, result, error } of this.client.downloadMultipleSubtitles(mediaFiles)) {
+    for await (const {
+      index,
+      result,
+      error,
+    } of this.client.downloadMultipleSubtitles(mediaFiles)) {
       const mediaFile = mediaFiles[index];
       completed++;
-      
+
       console.log(`Processing ${completed}/${totalFiles}: ${mediaFile.path}`);
-      
+
       if (error) {
-        console.error(`Failed to download subtitles for ${mediaFile.path}:`, error.message);
+        console.error(
+          `Failed to download subtitles for ${mediaFile.path}:`,
+          error.message
+        );
         results[mediaFile.path] = { status: 'error', error: error.message };
       } else {
         if (result.success) {
@@ -117,7 +136,7 @@ class SubtitleManagerIntegration {
           results[mediaFile.path] = {
             status: 'success',
             subtitle_path: result.subtitle_path,
-            provider: result.provider
+            provider: result.provider,
           };
         } else {
           console.warn(`No subtitles found for ${mediaFile.path}`);
@@ -125,10 +144,14 @@ class SubtitleManagerIntegration {
         }
       }
     }
-    
-    const successCount = Object.values(results).filter(r => r.status === 'success').length;
-    console.log(`Batch download completed: ${successCount}/${totalFiles} successful`);
-    
+
+    const successCount = Object.values(results).filter(
+      r => r.status === 'success'
+    ).length;
+    console.log(
+      `Batch download completed: ${successCount}/${totalFiles} successful`
+    );
+
     return results;
   }
 
@@ -140,17 +163,18 @@ class SubtitleManagerIntegration {
       // Start the scan
       const scanResult = await this.client.startLibraryScan(path, true);
       console.log(`Started library scan with ID: ${scanResult.scan_id}`);
-      
+
       // Monitor progress
       while (true) {
         const status = await this.client.getScanStatus();
-        
+
         if (!status.scanning) {
           console.log('Library scan completed');
-          if (progressCallback) progressCallback({ ...status, completed: true });
+          if (progressCallback)
+            progressCallback({ ...status, completed: true });
           return true;
         }
-        
+
         console.log(`Scan progress: ${status.progressPercent}%`);
         if (status.current_path) {
           console.log(`Current path: ${status.current_path}`);
@@ -158,12 +182,12 @@ class SubtitleManagerIntegration {
         if (status.files_processed && status.files_total) {
           console.log(`Files: ${status.files_processed}/${status.files_total}`);
         }
-        
+
         // Call progress callback if provided
         if (progressCallback) {
           progressCallback({ ...status, completed: false });
         }
-        
+
         // Wait 5 seconds before checking again
         await new Promise(resolve => setTimeout(resolve, 5000));
       }
@@ -179,18 +203,20 @@ class SubtitleManagerIntegration {
   async analyzeDownloadHistory(days = 7) {
     try {
       const endDate = new Date();
-      const startDate = new Date(endDate.getTime() - (days * 24 * 60 * 60 * 1000));
-      
+      const startDate = new Date(
+        endDate.getTime() - days * 24 * 60 * 60 * 1000
+      );
+
       // Get all history items using pagination
       const allItems = [];
       for await (const historyPage of this.client.getHistoryPages({
         start_date: startDate.toISOString(),
         end_date: endDate.toISOString(),
-        limit: 100
+        limit: 100,
       })) {
         allItems.push(...historyPage);
       }
-      
+
       // Analyze the data
       const analysis = {
         total_operations: allItems.length,
@@ -199,45 +225,50 @@ class SubtitleManagerIntegration {
         by_provider: {},
         success_rate: 0,
         most_active_days: {},
-        failed_operations: []
+        failed_operations: [],
       };
-      
+
       allItems.forEach(item => {
         // Count by type
         analysis.by_type[item.type] = (analysis.by_type[item.type] || 0) + 1;
-        
+
         // Count by status
-        analysis.by_status[item.status] = (analysis.by_status[item.status] || 0) + 1;
-        
+        analysis.by_status[item.status] =
+          (analysis.by_status[item.status] || 0) + 1;
+
         // Count by provider (for successful downloads)
         if (item.provider && item.isSuccess) {
-          analysis.by_provider[item.provider] = (analysis.by_provider[item.provider] || 0) + 1;
+          analysis.by_provider[item.provider] =
+            (analysis.by_provider[item.provider] || 0) + 1;
         }
-        
+
         // Track failed operations
         if (item.isFailed) {
           analysis.failed_operations.push({
             file_path: item.file_path,
             type: item.type,
             error: item.error_message,
-            date: item.created_at
+            date: item.created_at,
           });
         }
-        
+
         // Count by day
         const dayKey = item.createdAtDate.toISOString().split('T')[0];
-        analysis.most_active_days[dayKey] = (analysis.most_active_days[dayKey] || 0) + 1;
+        analysis.most_active_days[dayKey] =
+          (analysis.most_active_days[dayKey] || 0) + 1;
       });
-      
+
       // Calculate success rate
       const successful = analysis.by_status.success || 0;
       if (analysis.total_operations > 0) {
         analysis.success_rate = (successful / analysis.total_operations) * 100;
       }
-      
-      console.log(`Analyzed ${analysis.total_operations} operations from last ${days} days`);
+
+      console.log(
+        `Analyzed ${analysis.total_operations} operations from last ${days} days`
+      );
       console.log(`Success rate: ${analysis.success_rate.toFixed(1)}%`);
-      
+
       return analysis;
     } catch (error) {
       console.error('Failed to analyze history:', error.message);
@@ -250,25 +281,27 @@ class SubtitleManagerIntegration {
    */
   async extractAndTranslatePipeline(videoFile, targetLanguages) {
     const results = {};
-    
+
     try {
-      console.log(`Starting extraction and translation pipeline for: ${videoFile.name || 'video file'}`);
-      
+      console.log(
+        `Starting extraction and translation pipeline for: ${videoFile.name || 'video file'}`
+      );
+
       // Step 1: Extract embedded subtitles
       const extractedSubs = await this.client.extractSubtitles(videoFile);
       console.log('Successfully extracted embedded subtitles');
-      
+
       // Step 2: Translate to each target language
       for (const language of targetLanguages) {
         try {
           console.log(`Translating to ${language}`);
-          
+
           const translated = await this.client.translateSubtitle(
             extractedSubs,
             language,
             TranslationProvider.GOOGLE
           );
-          
+
           results[language] = translated;
           console.log(`Translation to ${language} completed`);
         } catch (error) {
@@ -276,11 +309,14 @@ class SubtitleManagerIntegration {
           results[language] = null;
         }
       }
-      
+
       return results;
     } catch (error) {
       console.error('Extraction failed:', error.message);
-      return targetLanguages.reduce((acc, lang) => ({ ...acc, [lang]: null }), {});
+      return targetLanguages.reduce(
+        (acc, lang) => ({ ...acc, [lang]: null }),
+        {}
+      );
     }
   }
 
@@ -290,20 +326,20 @@ class SubtitleManagerIntegration {
   async createProcessingReport() {
     try {
       console.log('Generating processing report');
-      
+
       // Gather system information
       const systemInfo = await this.client.getSystemInfo();
-      
+
       // Get recent history
       const historyAnalysis = await this.analyzeDownloadHistory(30);
-      
+
       // Get current scan status
       const scanStatus = await this.client.getScanStatus();
-      
+
       // Get recent logs
       const recentLogs = await this.client.getLogs({ limit: 50 });
       const errorLogs = recentLogs.filter(log => log.isError);
-      
+
       // Create report
       const report = {
         generated: new Date().toISOString(),
@@ -313,28 +349,28 @@ class SubtitleManagerIntegration {
           version: systemInfo.version || 'Unknown',
           uptime: systemInfo.uptime || 'Unknown',
           memory_usage: systemInfo.memory_usage || 'Unknown',
-          disk_usage: `${systemInfo.diskFreeFormatted}/${systemInfo.diskTotalFormatted}`
+          disk_usage: `${systemInfo.diskFreeFormatted}/${systemInfo.diskTotalFormatted}`,
         },
         library: {
           currently_scanning: scanStatus.scanning,
           scan_progress: `${scanStatus.progressPercent}%`,
           files_processed: scanStatus.files_processed || 'N/A',
-          files_total: scanStatus.files_total || 'N/A'
+          files_total: scanStatus.files_total || 'N/A',
         },
         activity: {
           total_operations: historyAnalysis.total_operations || 0,
           success_rate: `${(historyAnalysis.success_rate || 0).toFixed(1)}%`,
           by_type: historyAnalysis.by_type || {},
           by_status: historyAnalysis.by_status || {},
-          by_provider: historyAnalysis.by_provider || {}
+          by_provider: historyAnalysis.by_provider || {},
         },
         recent_errors: errorLogs.slice(0, 10).map(log => ({
           timestamp: log.timestampDate.toISOString(),
           component: log.component,
-          message: log.message
-        }))
+          message: log.message,
+        })),
       };
-      
+
       console.log('Processing report generated:', report);
       return report;
     } catch (error) {
@@ -352,7 +388,7 @@ class ReactSubtitleManager {
     this.client = new SubtitleManagerClient({
       baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8080',
       apiKey: process.env.REACT_APP_API_KEY,
-      debug: process.env.NODE_ENV === 'development'
+      debug: process.env.NODE_ENV === 'development',
     });
   }
 
@@ -414,12 +450,12 @@ class ReactSubtitleManager {
       setIsLoading(true);
       try {
         await this.client.startLibraryScan(path, true);
-        
+
         // Start polling for status
         const interval = setInterval(async () => {
           const status = await this.client.getScanStatus();
           setScanStatus(status);
-          
+
           if (!status.scanning) {
             clearInterval(interval);
             setIsLoading(false);
@@ -445,9 +481,9 @@ class ExpressSubtitleAPI {
     this.app = app;
     this.client = new SubtitleManagerClient({
       baseURL: process.env.SUBTITLE_MANAGER_URL || 'http://localhost:8080',
-      apiKey: process.env.SUBTITLE_MANAGER_API_KEY
+      apiKey: process.env.SUBTITLE_MANAGER_API_KEY,
     });
-    
+
     this.setupRoutes();
   }
 
@@ -488,8 +524,10 @@ class ExpressSubtitleAPI {
         // Return the converted file
         const buffer = await result.arrayBuffer();
         res.setHeader('Content-Type', 'application/x-subrip');
-        res.setHeader('Content-Disposition', 
-          `attachment; filename="converted${targetLanguage ? `.${targetLanguage}` : ''}.srt"`);
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename="converted${targetLanguage ? `.${targetLanguage}` : ''}.srt"`
+        );
         res.send(Buffer.from(buffer));
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -502,10 +540,16 @@ class ExpressSubtitleAPI {
         const { path, language, providers } = req.body;
 
         if (!path || !language) {
-          return res.status(400).json({ error: 'Path and language are required' });
+          return res
+            .status(400)
+            .json({ error: 'Path and language are required' });
         }
 
-        const result = await this.client.downloadSubtitles(path, language, providers);
+        const result = await this.client.downloadSubtitles(
+          path,
+          language,
+          providers
+        );
         res.json(result);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -516,13 +560,13 @@ class ExpressSubtitleAPI {
     this.app.get('/api/subtitle-manager/history', async (req, res) => {
       try {
         const { page = 1, limit = 20, type, start_date, end_date } = req.query;
-        
+
         const history = await this.client.getHistory({
           page: parseInt(page),
           limit: parseInt(limit),
           type: type || undefined,
           start_date: start_date || undefined,
-          end_date: end_date || undefined
+          end_date: end_date || undefined,
         });
 
         res.json(history);
@@ -535,30 +579,37 @@ class ExpressSubtitleAPI {
     this.app.ws('/api/subtitle-manager/events', (ws, req) => {
       let scanInterval = null;
 
-      ws.on('message', async (message) => {
+      ws.on('message', async message => {
         try {
           const data = JSON.parse(message);
 
           if (data.action === 'start_scan') {
             // Start library scan and send updates
             await this.client.startLibraryScan(data.path, true);
-            
+
             scanInterval = setInterval(async () => {
               try {
                 const status = await this.client.getScanStatus();
                 ws.send(JSON.stringify({ type: 'scan_status', data: status }));
-                
+
                 if (!status.scanning) {
                   clearInterval(scanInterval);
                   scanInterval = null;
                 }
               } catch (error) {
-                ws.send(JSON.stringify({ type: 'error', data: { message: error.message } }));
+                ws.send(
+                  JSON.stringify({
+                    type: 'error',
+                    data: { message: error.message },
+                  })
+                );
               }
             }, 2000);
           }
         } catch (error) {
-          ws.send(JSON.stringify({ type: 'error', data: { message: error.message } }));
+          ws.send(
+            JSON.stringify({ type: 'error', data: { message: error.message } })
+          );
         }
       });
 
@@ -577,36 +628,40 @@ class ExpressSubtitleAPI {
 async function main() {
   // Initialize integration
   const integration = new SubtitleManagerIntegration();
-  
+
   // Example 1: Health check
   if (!(await integration.healthCheck())) {
     console.error('Subtitle Manager is not healthy, exiting');
     return;
   }
-  
+
   // Example 2: Batch download subtitles
   const mediaFiles = [
     { path: '/movies/example1.mkv', language: 'en' },
-    { path: '/movies/example2.mkv', language: 'en', providers: ['opensubtitles'] },
-    { path: '/tv/series/s01e01.mkv', language: 'es' }
+    {
+      path: '/movies/example2.mkv',
+      language: 'en',
+      providers: ['opensubtitles'],
+    },
+    { path: '/tv/series/s01e01.mkv', language: 'es' },
   ];
-  
+
   const downloadResults = await integration.batchDownloadSubtitles(mediaFiles);
   console.log('Download results:', downloadResults);
-  
+
   // Example 3: Monitor library scan with progress callback
-  await integration.monitorLibraryScan('/movies/new', (progress) => {
+  await integration.monitorLibraryScan('/movies/new', progress => {
     if (progress.completed) {
       console.log('Scan completed successfully!');
     } else {
       console.log(`Progress update: ${progress.progressPercent}%`);
     }
   });
-  
+
   // Example 4: Analyze history
   const analysis = await integration.analyzeDownloadHistory(7);
   console.log('History analysis:', analysis);
-  
+
   // Example 5: Generate report
   const report = await integration.createProcessingReport();
   console.log('Processing report:', report);
@@ -616,7 +671,7 @@ async function main() {
 module.exports = {
   SubtitleManagerIntegration,
   ReactSubtitleManager,
-  ExpressSubtitleAPI
+  ExpressSubtitleAPI,
 };
 
 // Run main function if this file is executed directly

@@ -1,14 +1,19 @@
 # file: sdks/javascript/README.md
+
 # version: 1.0.0
+
 # guid: 550e8400-e29b-41d4-a716-446655440020
 
 # Subtitle Manager JavaScript/TypeScript SDK
 
-A comprehensive JavaScript/TypeScript SDK for the Subtitle Manager API. Provides full type safety, automatic retry, error handling, and modern async/await patterns for both Node.js and browser environments.
+A comprehensive JavaScript/TypeScript SDK for the Subtitle Manager API. Provides
+full type safety, automatic retry, error handling, and modern async/await
+patterns for both Node.js and browser environments.
 
 ## Features
 
-- **Full TypeScript Support**: Complete type definitions and IntelliSense support
+- **Full TypeScript Support**: Complete type definitions and IntelliSense
+  support
 - **Cross-Platform**: Works in Node.js, browsers, and React Native
 - **Modern Async/Await**: Promise-based API with async generators for pagination
 - **Automatic Retry**: Configurable retry logic with exponential backoff
@@ -24,6 +29,7 @@ npm install subtitle-manager-sdk
 ```
 
 For TypeScript projects:
+
 ```bash
 npm install subtitle-manager-sdk
 npm install --save-dev @types/node  # For Node.js types
@@ -39,7 +45,7 @@ const { SubtitleManagerClient } = require('subtitle-manager-sdk');
 // Initialize client
 const client = new SubtitleManagerClient({
   baseURL: 'http://localhost:8080',
-  apiKey: 'your-api-key'
+  apiKey: 'your-api-key',
 });
 
 // Get system information
@@ -56,7 +62,11 @@ if (result.success) {
 ### TypeScript Usage
 
 ```typescript
-import { SubtitleManagerClient, OperationType, TranslationProvider } from 'subtitle-manager-sdk';
+import {
+  SubtitleManagerClient,
+  OperationType,
+  TranslationProvider,
+} from 'subtitle-manager-sdk';
 
 const client = new SubtitleManagerClient({
   baseURL: 'http://localhost:8080',
@@ -72,7 +82,7 @@ const history = await client.getHistory({
 });
 
 // Process each history item with full type safety
-history.items.forEach((item) => {
+history.items.forEach(item => {
   console.log(`${item.type}: ${item.file_path} - ${item.status}`);
 });
 ```
@@ -84,7 +94,7 @@ history.items.forEach((item) => {
 ```javascript
 const client = new SubtitleManagerClient({
   baseURL: 'http://localhost:8080',
-  apiKey: 'your-api-key'
+  apiKey: 'your-api-key',
 });
 ```
 
@@ -92,7 +102,7 @@ const client = new SubtitleManagerClient({
 
 ```javascript
 const client = new SubtitleManagerClient({
-  baseURL: 'http://localhost:8080'
+  baseURL: 'http://localhost:8080',
 });
 
 // Login with username/password
@@ -111,7 +121,7 @@ process.env.SUBTITLE_MANAGER_API_KEY = 'your-api-key';
 
 // Client automatically uses environment variable
 const client = new SubtitleManagerClient({
-  baseURL: 'http://localhost:8080'
+  baseURL: 'http://localhost:8080',
 });
 ```
 
@@ -119,7 +129,7 @@ const client = new SubtitleManagerClient({
 
 ```javascript
 const client = new SubtitleManagerClient({
-  baseURL: 'http://localhost:8080'
+  baseURL: 'http://localhost:8080',
 });
 
 // Set API key dynamically
@@ -178,8 +188,8 @@ const subtitles = await client.extractSubtitles(videoFile);
 // Extract specific language and track
 const subtitles = await client.extractSubtitles(
   videoFile,
-  'en',  // language
-  1      // track number
+  'en', // language
+  1 // track number
 );
 ```
 
@@ -222,7 +232,9 @@ const status = await client.getScanStatus();
 if (status.scanning) {
   console.log(`Progress: ${status.progressPercent}%`);
   console.log(`Current path: ${status.current_path}`);
-  console.log(`Files processed: ${status.files_processed}/${status.files_total}`);
+  console.log(
+    `Files processed: ${status.files_processed}/${status.files_total}`
+  );
 }
 
 // Wait for completion
@@ -240,11 +252,11 @@ try {
 // Monitor scan progress with real-time updates
 async function monitorScan() {
   const scanResult = await client.startLibraryScan();
-  
+
   const progressInterval = setInterval(async () => {
     try {
       const status = await client.getScanStatus();
-      
+
       if (status.scanning) {
         console.log(`Progress: ${status.progressPercent}%`);
         if (status.estimated_completion) {
@@ -273,7 +285,7 @@ import { OperationType } from 'subtitle-manager-sdk';
 // Iterate through all download history
 for await (const historyPage of client.getHistoryPages({
   type: OperationType.DOWNLOAD,
-  limit: 50
+  limit: 50,
 })) {
   historyPage.forEach(item => {
     console.log(`${item.createdAtDate}: ${item.file_path}`);
@@ -295,7 +307,7 @@ oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
 const recentHistory = await client.getHistory({
   start_date: oneWeekAgo.toISOString(),
-  limit: 100
+  limit: 100,
 });
 
 const failures = recentHistory.items.filter(item => item.isFailed);
@@ -317,13 +329,15 @@ console.log('Error breakdown:', errorGroups);
 import { LogLevel } from 'subtitle-manager-sdk';
 
 // Get recent error logs
-const errorLogs = await client.getLogs({ 
-  level: LogLevel.ERROR, 
-  limit: 100 
+const errorLogs = await client.getLogs({
+  level: LogLevel.ERROR,
+  limit: 100,
 });
 
 errorLogs.forEach(log => {
-  console.log(`${log.timestampDate.toISOString()} [${log.level}] ${log.component}: ${log.message}`);
+  console.log(
+    `${log.timestampDate.toISOString()} [${log.level}] ${log.component}: ${log.message}`
+  );
   if (Object.keys(log.fields).length > 0) {
     console.log('  Fields:', log.fields);
   }
@@ -343,7 +357,7 @@ import {
   ValidationError,
   NetworkError,
   TimeoutError,
-  APIError
+  APIError,
 } from 'subtitle-manager-sdk';
 
 try {
@@ -385,8 +399,12 @@ async function downloadWithRetry(path, language, maxRetries = 3) {
       return await client.downloadSubtitles(path, language);
     } catch (error) {
       if (error instanceof RateLimitError && attempt < maxRetries) {
-        const delay = error.retryAfter ? error.retryAfter * 1000 : Math.pow(2, attempt) * 1000;
-        console.log(`Rate limited, waiting ${delay}ms before retry ${attempt + 1}`);
+        const delay = error.retryAfter
+          ? error.retryAfter * 1000
+          : Math.pow(2, attempt) * 1000;
+        console.log(
+          `Rate limited, waiting ${delay}ms before retry ${attempt + 1}`
+        );
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
@@ -405,11 +423,14 @@ import React, { useState, useEffect } from 'react';
 import { SubtitleManagerClient } from 'subtitle-manager-sdk';
 
 const SubtitleUploader = () => {
-  const [client] = useState(() => new SubtitleManagerClient({
-    baseURL: process.env.REACT_APP_API_URL,
-    apiKey: process.env.REACT_APP_API_KEY
-  }));
-  
+  const [client] = useState(
+    () =>
+      new SubtitleManagerClient({
+        baseURL: process.env.REACT_APP_API_URL,
+        apiKey: process.env.REACT_APP_API_KEY,
+      })
+  );
+
   const [file, setFile] = useState(null);
   const [converting, setConverting] = useState(false);
 
@@ -419,7 +440,7 @@ const SubtitleUploader = () => {
     setConverting(true);
     try {
       const convertedBlob = await client.convertSubtitle(file);
-      
+
       // Download converted file
       const url = URL.createObjectURL(convertedBlob);
       const a = document.createElement('a');
@@ -439,7 +460,7 @@ const SubtitleUploader = () => {
       <input
         type="file"
         accept=".vtt,.ass,.ssa,.smi"
-        onChange={(e) => setFile(e.target.files[0])}
+        onChange={e => setFile(e.target.files[0])}
       />
       <button onClick={handleConvert} disabled={!file || converting}>
         {converting ? 'Converting...' : 'Convert to SRT'}
@@ -462,11 +483,11 @@ worker.postMessage({
   file: selectedFile,
   config: {
     baseURL: 'http://localhost:8080',
-    apiKey: 'your-api-key'
-  }
+    apiKey: 'your-api-key',
+  },
 });
 
-worker.onmessage = (event) => {
+worker.onmessage = event => {
   const { type, result, error } = event.data;
   if (type === 'convert-complete') {
     console.log('Conversion completed:', result);
@@ -480,22 +501,22 @@ worker.onmessage = (event) => {
 // subtitle-worker.js
 import { SubtitleManagerClient } from 'subtitle-manager-sdk';
 
-self.onmessage = async (event) => {
+self.onmessage = async event => {
   const { type, file, config } = event.data;
-  
+
   if (type === 'convert') {
     try {
       const client = new SubtitleManagerClient(config);
       const result = await client.convertSubtitle(file);
-      
+
       self.postMessage({
         type: 'convert-complete',
-        result: result
+        result: result,
       });
     } catch (error) {
       self.postMessage({
         type: 'error',
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -513,7 +534,7 @@ import { SubtitleManagerClient } from 'subtitle-manager-sdk';
 
 const client = new SubtitleManagerClient({
   baseURL: 'http://localhost:8080',
-  apiKey: process.env.SUBTITLE_MANAGER_API_KEY
+  apiKey: process.env.SUBTITLE_MANAGER_API_KEY,
 });
 
 // Convert local subtitle files
@@ -521,10 +542,10 @@ async function convertLocalFile(inputPath, outputPath) {
   const fileBuffer = fs.readFileSync(inputPath);
   const file = new Blob([fileBuffer], { type: 'application/octet-stream' });
   const filename = path.basename(inputPath);
-  
+
   const convertedBlob = await client.convertSubtitle(file, filename);
   const arrayBuffer = await convertedBlob.arrayBuffer();
-  
+
   fs.writeFileSync(outputPath, Buffer.from(arrayBuffer));
   console.log(`Converted ${inputPath} to ${outputPath}`);
 }
@@ -532,14 +553,17 @@ async function convertLocalFile(inputPath, outputPath) {
 // Batch convert all subtitle files in directory
 async function convertDirectory(inputDir, outputDir) {
   const files = fs.readdirSync(inputDir);
-  const subtitleFiles = files.filter(file => 
+  const subtitleFiles = files.filter(file =>
     ['.vtt', '.ass', '.ssa', '.smi'].includes(path.extname(file).toLowerCase())
   );
 
   for (const file of subtitleFiles) {
     const inputPath = path.join(inputDir, file);
-    const outputPath = path.join(outputDir, path.basename(file, path.extname(file)) + '.srt');
-    
+    const outputPath = path.join(
+      outputDir,
+      path.basename(file, path.extname(file)) + '.srt'
+    );
+
     try {
       await convertLocalFile(inputPath, outputPath);
     } catch (error) {
@@ -555,14 +579,14 @@ async function convertDirectory(inputDir, outputDir) {
 
 ```typescript
 interface ClientConfig {
-  baseURL: string;          // API base URL
-  apiKey?: string;          // API key for authentication
-  sessionCookie?: string;   // Session cookie value
-  timeout?: number;         // Request timeout in milliseconds (default: 30000)
-  maxRetries?: number;      // Maximum retry attempts (default: 3)
-  retryDelay?: number;      // Base retry delay in milliseconds (default: 1000)
-  userAgent?: string;       // Custom user agent string
-  debug?: boolean;          // Enable debug logging (default: false)
+  baseURL: string; // API base URL
+  apiKey?: string; // API key for authentication
+  sessionCookie?: string; // Session cookie value
+  timeout?: number; // Request timeout in milliseconds (default: 30000)
+  maxRetries?: number; // Maximum retry attempts (default: 3)
+  retryDelay?: number; // Base retry delay in milliseconds (default: 1000)
+  userAgent?: string; // Custom user agent string
+  debug?: boolean; // Enable debug logging (default: false)
 }
 ```
 
@@ -572,11 +596,11 @@ interface ClientConfig {
 const client = new SubtitleManagerClient({
   baseURL: 'https://subtitles.example.com',
   apiKey: process.env.API_KEY,
-  timeout: 120000,          // 2 minutes
-  maxRetries: 5,            // More aggressive retrying
-  retryDelay: 2000,         // 2 second base delay
+  timeout: 120000, // 2 minutes
+  maxRetries: 5, // More aggressive retrying
+  retryDelay: 2000, // 2 second base delay
   userAgent: 'MyApp/1.0.0', // Custom user agent
-  debug: true               // Enable request logging
+  debug: true, // Enable request logging
 });
 ```
 
@@ -670,14 +694,17 @@ npm run test:coverage
 ### Complete Subtitle Processing Pipeline
 
 ```javascript
-import { SubtitleManagerClient, TranslationProvider } from 'subtitle-manager-sdk';
+import {
+  SubtitleManagerClient,
+  TranslationProvider,
+} from 'subtitle-manager-sdk';
 
 class SubtitleProcessor {
   constructor(apiKey) {
     this.client = new SubtitleManagerClient({
       baseURL: 'http://localhost:8080',
       apiKey: apiKey,
-      debug: true
+      debug: true,
     });
   }
 
@@ -686,7 +713,7 @@ class SubtitleProcessor {
       // Step 1: Convert to SRT format
       console.log('Converting to SRT...');
       const srtBlob = await this.client.convertSubtitle(file);
-      
+
       // Step 2: Translate if needed
       if (targetLanguage) {
         console.log(`Translating to ${targetLanguage}...`);
@@ -697,7 +724,7 @@ class SubtitleProcessor {
         );
         return translatedBlob;
       }
-      
+
       return srtBlob;
     } catch (error) {
       console.error('Processing failed:', error);
@@ -707,7 +734,7 @@ class SubtitleProcessor {
 
   async downloadForMovie(moviePath, languages = ['en']) {
     const results = [];
-    
+
     for (const language of languages) {
       try {
         const result = await this.client.downloadSubtitles(moviePath, language);
@@ -716,7 +743,7 @@ class SubtitleProcessor {
         results.push({ language, error: error.message });
       }
     }
-    
+
     return results;
   }
 }
@@ -728,15 +755,21 @@ const processor = new SubtitleProcessor('your-api-key');
 const processedSubtitle = await processor.processSubtitle(uploadedFile, 'es');
 
 // Download subtitles for movie
-const downloadResults = await processor.downloadForMovie('/movies/example.mkv', ['en', 'es', 'fr']);
+const downloadResults = await processor.downloadForMovie(
+  '/movies/example.mkv',
+  ['en', 'es', 'fr']
+);
 ```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+This project is licensed under the MIT License - see the
+[LICENSE](../../LICENSE) file for details.
 
 ## Support
 
-- **Documentation**: [API Documentation](https://github.com/jdfalk/subtitle-manager/tree/main/docs/api)
+- **Documentation**:
+  [API Documentation](https://github.com/jdfalk/subtitle-manager/tree/main/docs/api)
 - **Issues**: [GitHub Issues](https://github.com/jdfalk/subtitle-manager/issues)
-- **Source Code**: [GitHub Repository](https://github.com/jdfalk/subtitle-manager)
+- **Source Code**:
+  [GitHub Repository](https://github.com/jdfalk/subtitle-manager)

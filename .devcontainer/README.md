@@ -1,6 +1,8 @@
 # Development Container
 
-This directory contains the development container configuration for Subtitle Manager. The dev container provides a consistent development environment with all necessary tools and dependencies pre-installed.
+This directory contains the development container configuration for Subtitle
+Manager. The dev container provides a consistent development environment with
+all necessary tools and dependencies pre-installed.
 
 ## Features
 
@@ -16,13 +18,15 @@ This directory contains the development container configuration for Subtitle Man
 
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) or Docker Engine
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) or Docker
+  Engine
 
 ## Getting Started
 
 1. Clone the repository
 2. Open the repository in VS Code
-3. When prompted, click "Reopen in Container" or run the command palette: `Dev Containers: Reopen in Container`
+3. When prompted, click "Reopen in Container" or run the command palette:
+   `Dev Containers: Reopen in Container`
 4. Wait for the container to build and the post-create script to run
 5. Start developing!
 
@@ -109,7 +113,8 @@ If the container fails to build:
 
 ### SQLite Test Failures
 
-If you see SQLite-related test failures, make sure you're using the SQLite variants:
+If you see SQLite-related test failures, make sure you're using the SQLite
+variants:
 
 ```bash
 make test-sqlite        # Instead of make test
@@ -138,13 +143,16 @@ sudo chown -R vscode:vscode /workspace
 
 You can customize the dev container by modifying:
 
-- `.devcontainer/devcontainer.json`: VS Code settings, extensions, port forwarding
-- `.devcontainer/Dockerfile`: Base image, installed packages, system configuration
+- `.devcontainer/devcontainer.json`: VS Code settings, extensions, port
+  forwarding
+- `.devcontainer/Dockerfile`: Base image, installed packages, system
+  configuration
 - `.devcontainer/post-create.sh`: Setup commands run after container creation
 
 ## Performance Tips
 
-- The first build may take several minutes as it downloads and installs all dependencies
+- The first build may take several minutes as it downloads and installs all
+  dependencies
 - Subsequent builds are much faster due to Docker layer caching
 - Go modules and npm packages are cached in volumes for faster rebuilds
 - Use the SQLite test variants for better performance in the dev container

@@ -117,6 +117,7 @@ directory. This eliminates merge conflicts and allows parallel development.
 The unified issue management workflow now:
 
 1. **Scans both locations**:
+
    - Legacy: `issue_updates.json`
    - New: `.github/issue-updates/*.json`
 

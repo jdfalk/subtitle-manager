@@ -1,15 +1,20 @@
 # file: sdks/go/README.md
+
 # version: 1.0.0
+
 # guid: 550e8400-e29b-41d4-a716-446655440028
 
 # Subtitle Manager Go SDK
 
-A comprehensive Go SDK for the Subtitle Manager API. Provides type-safe access to all API endpoints with automatic retry, error handling, rate limiting, and Go-idiomatic patterns.
+A comprehensive Go SDK for the Subtitle Manager API. Provides type-safe access
+to all API endpoints with automatic retry, error handling, rate limiting, and
+Go-idiomatic patterns.
 
 ## Features
 
 - **Type Safety**: Complete type definitions with Go struct tags
-- **Context Support**: All methods accept `context.Context` for cancellation and timeouts
+- **Context Support**: All methods accept `context.Context` for cancellation and
+  timeouts
 - **Automatic Retry**: Configurable retry logic with exponential backoff
 - **Rate Limiting**: Built-in rate limiting to respect API limits
 - **Error Handling**: Typed errors with helper methods for common status codes
@@ -180,10 +185,10 @@ func translateSubtitle(client *subtitleclient.Client, inputPath, outputPath, lan
 
     // Translate using Google Translate
     translatedData, err := client.TranslateSubtitle(
-        ctx, 
-        inputPath, 
-        file, 
-        language, 
+        ctx,
+        inputPath,
+        file,
+        language,
         subtitleclient.ProviderGoogle,
     )
     if err != nil {
@@ -252,7 +257,7 @@ func monitorLibraryScan(client *subtitleclient.Client) error {
             fmt.Printf("Current path: %s\n", *status.CurrentPath)
         }
         if status.FilesProcessed != nil && status.FilesTotal != nil {
-            fmt.Printf("Files: %d/%d (remaining: %d)\n", 
+            fmt.Printf("Files: %d/%d (remaining: %d)\n",
                 *status.FilesProcessed, *status.FilesTotal, status.RemainingFiles())
         }
 
@@ -306,15 +311,15 @@ func getRecentHistory(client *subtitleclient.Client) error {
         return err
     }
 
-    fmt.Printf("Found %d operations (page %d of %d)\n", 
+    fmt.Printf("Found %d operations (page %d of %d)\n",
         history.Total, history.Page, history.TotalPages())
 
     for _, item := range history.Items {
-        fmt.Printf("%s: %s - %s\n", 
-            item.CreatedAt.Format("2006-01-02 15:04"), 
-            item.Type, 
+        fmt.Printf("%s: %s - %s\n",
+            item.CreatedAt.Format("2006-01-02 15:04"),
+            item.Type,
             item.FilePath)
-        
+
         if item.IsSuccess() && item.SubtitlePath != nil {
             fmt.Printf("  Success: %s\n", *item.SubtitlePath)
         } else if item.IsFailed() && item.ErrorMessage != nil {
@@ -344,7 +349,7 @@ func iterateAllHistory(client *subtitleclient.Client) error {
     // Iterate through all pages
     for iterator.Next(ctx) {
         item := iterator.Item()
-        
+
         if item.IsSuccess() {
             successCount++
         } else if item.IsFailed() {
@@ -356,7 +361,7 @@ func iterateAllHistory(client *subtitleclient.Client) error {
         return err
     }
 
-    fmt.Printf("Total: %d, Success: %d, Failures: %d\n", 
+    fmt.Printf("Total: %d, Success: %d, Failures: %d\n",
         iterator.Total(), successCount, failureCount)
 
     return nil
@@ -379,12 +384,12 @@ func getErrorLogs(client *subtitleclient.Client) error {
 
     fmt.Printf("Found %d error logs:\n", len(logs))
     for _, log := range logs {
-        fmt.Printf("%s [%s] %s: %s\n", 
+        fmt.Printf("%s [%s] %s: %s\n",
             log.Timestamp.Format("2006-01-02 15:04:05"),
             log.Level,
             log.Component,
             log.Message)
-        
+
         if len(log.Fields) > 0 {
             fmt.Printf("  Fields: %+v\n", log.Fields)
         }
@@ -469,7 +474,7 @@ func downloadWithRetry(client *subtitleclient.Client, path, language string) (*s
 ```go
 func batchDownloadSubtitles(client *subtitleclient.Client, requests []subtitleclient.DownloadRequest) {
     const numWorkers = 5
-    
+
     // Create channels
     jobs := make(chan subtitleclient.DownloadRequest, len(requests))
     results := make(chan result, len(requests))
@@ -506,7 +511,7 @@ type result struct {
 
 func worker(client *subtitleclient.Client, jobs <-chan subtitleclient.DownloadRequest, results chan<- result) {
     ctx := context.Background()
-    
+
     for req := range jobs {
         downloadResult, err := client.DownloadSubtitles(ctx, req)
         results <- result{
@@ -540,7 +545,7 @@ func contextAwareOperations(client *subtitleclient.Client) {
 
     // Cancellable operation
     ctx, cancel = context.WithCancel(context.Background())
-    
+
     // Cancel after 10 seconds
     go func() {
         time.Sleep(10 * time.Second)
@@ -598,13 +603,13 @@ func healthMonitor(client *subtitleclient.Client) {
 
     for range ticker.C {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        
+
         if client.HealthCheck(ctx) {
             fmt.Println("API is healthy")
         } else {
             fmt.Println("API health check failed")
         }
-        
+
         cancel()
     }
 }
@@ -706,12 +711,15 @@ Complete examples can be found in the `examples/` directory:
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/jdfalk/subtitle-manager/issues)
-- **Documentation**: [API Documentation](https://github.com/jdfalk/subtitle-manager/tree/main/docs/api)
-- **Source Code**: [GitHub Repository](https://github.com/jdfalk/subtitle-manager)
+- **Documentation**:
+  [API Documentation](https://github.com/jdfalk/subtitle-manager/tree/main/docs/api)
+- **Source Code**:
+  [GitHub Repository](https://github.com/jdfalk/subtitle-manager)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+This project is licensed under the MIT License - see the
+[LICENSE](../../LICENSE) file for details.
 
 ## Helper Functions
 

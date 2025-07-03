@@ -1,14 +1,19 @@
 # file: docs/api/rate-limiting.md
+
 # version: 1.0.0
+
 # guid: 550e8400-e29b-41d4-a716-446655440030
 
 # Rate Limiting Guide
 
-Subtitle Manager implements comprehensive rate limiting to ensure fair usage and system stability. This guide covers rate limit policies, headers, and best practices for handling rate limits in your applications.
+Subtitle Manager implements comprehensive rate limiting to ensure fair usage and
+system stability. This guide covers rate limit policies, headers, and best
+practices for handling rate limits in your applications.
 
 ## Overview
 
 Rate limiting is enforced at multiple levels:
+
 - **Global limits**: Overall API usage limits
 - **User-based limits**: Limits based on user permission level
 - **Endpoint-specific limits**: Special limits for resource-intensive operations
@@ -19,12 +24,13 @@ Rate limiting is enforced at multiple levels:
 ### Standard Rate Limits (Per User)
 
 | Permission Level | Requests/Hour | Requests/Minute | Burst Limit |
-|-----------------|---------------|-----------------|-------------|
-| **Read** | 1,000 | 60 | 10 |
-| **Basic** | 500 | 30 | 5 |
-| **Admin** | 200 | 20 | 3 |
+| ---------------- | ------------- | --------------- | ----------- |
+| **Read**         | 1,000         | 60              | 10          |
+| **Basic**        | 500           | 30              | 5           |
+| **Admin**        | 200           | 20              | 3           |
 
 **Why different limits?**
+
 - Read operations are less resource-intensive
 - Basic operations include file processing which uses more resources
 - Admin operations often affect system-wide settings
@@ -33,33 +39,33 @@ Rate limiting is enforced at multiple levels:
 
 #### File Processing Operations
 
-| Endpoint | Limit | Window | Reason |
-|----------|-------|--------|---------|
-| `/api/convert` | 50/hour | 1 hour | CPU-intensive subtitle conversion |
+| Endpoint         | Limit   | Window | Reason                                 |
+| ---------------- | ------- | ------ | -------------------------------------- |
+| `/api/convert`   | 50/hour | 1 hour | CPU-intensive subtitle conversion      |
 | `/api/translate` | 30/hour | 1 hour | External API costs and processing time |
-| `/api/extract` | 20/hour | 1 hour | Memory-intensive video file processing |
+| `/api/extract`   | 20/hour | 1 hour | Memory-intensive video file processing |
 
 #### Provider Operations
 
-| Endpoint | Limit | Window | Reason |
-|----------|-------|--------|---------|
-| `/api/download` | 100/hour | 1 hour | External provider API limits |
-| `/api/scan` | 10/hour | 1 hour | Resource-intensive library scanning |
+| Endpoint        | Limit    | Window | Reason                              |
+| --------------- | -------- | ------ | ----------------------------------- |
+| `/api/download` | 100/hour | 1 hour | External provider API limits        |
+| `/api/scan`     | 10/hour  | 1 hour | Resource-intensive library scanning |
 
 #### System Operations
 
-| Endpoint | Limit | Window | Reason |
-|----------|-------|--------|---------|
+| Endpoint                     | Limit  | Window | Reason                       |
+| ---------------------------- | ------ | ------ | ---------------------------- |
 | `/api/oauth/github/generate` | 5/hour | 1 hour | Security-sensitive operation |
-| `/api/database/backup` | 3/hour | 1 hour | Heavy I/O operation |
+| `/api/database/backup`       | 3/hour | 1 hour | Heavy I/O operation          |
 
 ### IP-Based Rate Limits
 
-| Category | Limit | Window | Action |
-|----------|-------|--------|---------|
-| **Unauthenticated requests** | 100/hour | 1 hour | Block IP for 1 hour |
-| **Failed login attempts** | 10/hour | 1 hour | Block IP for 2 hours |
-| **Webhook requests** | 1000/hour | 1 hour | Return 429 status |
+| Category                     | Limit     | Window | Action               |
+| ---------------------------- | --------- | ------ | -------------------- |
+| **Unauthenticated requests** | 100/hour  | 1 hour | Block IP for 1 hour  |
+| **Failed login attempts**    | 10/hour   | 1 hour | Block IP for 2 hours |
+| **Webhook requests**         | 1000/hour | 1 hour | Return 429 status    |
 
 ## Rate Limit Headers
 
@@ -134,14 +140,14 @@ import requests
 def make_request_with_rate_limit_check(url, headers):
     # Check rate limit before making request
     response = requests.get(url, headers=headers)
-    
+
     remaining = int(response.headers.get('X-RateLimit-Remaining', 0))
     if remaining < 10:  # Buffer for safety
         reset_time = int(response.headers.get('X-RateLimit-Reset', 0))
         sleep_time = max(0, reset_time - time.time())
         print(f"Rate limit low, sleeping for {sleep_time} seconds")
         time.sleep(sleep_time)
-    
+
     return response
 ```
 
@@ -155,21 +161,25 @@ async function requestWithBackoff(url, options, maxRetries = 3) {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const response = await fetch(url, options);
-      
+
       if (response.status === 429) {
-        const retryAfter = parseInt(response.headers.get('Retry-After') || '60');
+        const retryAfter = parseInt(
+          response.headers.get('Retry-After') || '60'
+        );
         const jitter = Math.random() * 1000; // Add jitter
-        const delay = (retryAfter * 1000) + jitter;
-        
-        console.log(`Rate limited, waiting ${delay}ms before retry ${attempt + 1}`);
+        const delay = retryAfter * 1000 + jitter;
+
+        console.log(
+          `Rate limited, waiting ${delay}ms before retry ${attempt + 1}`
+        );
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
-      
+
       return response;
     } catch (error) {
       if (attempt === maxRetries - 1) throw error;
-      
+
       const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
       await new Promise(resolve => setTimeout(resolve, delay));
     }
@@ -209,7 +219,7 @@ func (c *RateLimitedClient) Do(ctx context.Context, req *http.Request) (*http.Re
     if err := c.limiter.Wait(ctx); err != nil {
         return nil, err
     }
-    
+
     return c.client.Do(req)
 }
 ```
@@ -225,7 +235,7 @@ for movie in movies:
 
 # Use batch operations
 batch_requests = [
-    {"path": movie.path, "language": "en"} 
+    {"path": movie.path, "language": "en"}
     for movie in movies
 ]
 results = client.batch_download_subtitles(batch_requests)
@@ -266,7 +276,7 @@ const client = new SubtitleManagerClient({
   apiKey: 'your-key',
   // Built-in rate limit handling
   maxRetries: 3,
-  retryDelay: 2000
+  retryDelay: 2000,
 });
 
 // SDK automatically handles rate limits with exponential backoff
@@ -316,6 +326,7 @@ curl -H "X-API-Key: your-key" \
 ```
 
 Response headers will show current usage:
+
 ```
 X-RateLimit-Limit: 500
 X-RateLimit-Remaining: 243
@@ -403,27 +414,27 @@ Self-hosted instances can customize rate limits:
 # config.yaml
 rate_limits:
   enabled: true
-  
+
   # User-based limits
   user_limits:
-    read: 2000    # requests per hour
+    read: 2000 # requests per hour
     basic: 1000
     admin: 500
-  
+
   # Endpoint-specific limits
   endpoint_limits:
-    "/api/convert": 100
-    "/api/translate": 60
-    "/api/extract": 40
-  
+    '/api/convert': 100
+    '/api/translate': 60
+    '/api/extract': 40
+
   # IP-based limits
   ip_limits:
     unauthenticated: 200
     failed_auth: 20
-  
+
   # Window settings
-  window_size: 3600  # 1 hour in seconds
-  burst_size: 10     # Burst allowance
+  window_size: 3600 # 1 hour in seconds
+  burst_size: 10 # Burst allowance
 ```
 
 ### Rate Limit Exemptions
@@ -441,39 +452,42 @@ Certain operations may be exempt from rate limits:
 
 #### Sudden Rate Limit Exceeded
 
-**Symptoms**: Unexpected 429 errors despite normal usage
-**Causes**:
+**Symptoms**: Unexpected 429 errors despite normal usage **Causes**:
+
 - Clock skew between client and server
 - Multiple API clients sharing the same API key
 - Background processes consuming rate limit quota
 
 **Solutions**:
+
 - Check system time synchronization
 - Use separate API keys for different applications
 - Monitor and audit API key usage
 
 #### Rate Limits Not Resetting
 
-**Symptoms**: Rate limits remain at 0 even after window expires
-**Causes**:
+**Symptoms**: Rate limits remain at 0 even after window expires **Causes**:
+
 - Server-side cache issues
 - Timezone configuration problems
 - Database connectivity issues
 
 **Solutions**:
+
 - Check server logs for errors
 - Verify timezone settings
 - Restart rate limiting service if self-hosted
 
 #### Inconsistent Rate Limits
 
-**Symptoms**: Different rate limits reported by different endpoints
-**Causes**:
+**Symptoms**: Different rate limits reported by different endpoints **Causes**:
+
 - Load balancer with sticky sessions disabled
 - Multiple server instances with different configurations
 - Cache inconsistency
 
 **Solutions**:
+
 - Enable session affinity in load balancer
 - Ensure consistent configuration across instances
 - Use centralized rate limiting store (Redis)
@@ -489,6 +503,7 @@ curl -H "X-API-Key: your-admin-key" \
 ```
 
 Example debug output:
+
 ```json
 [
   {
@@ -520,18 +535,18 @@ import requests
 def test_rate_limits():
     headers = {"X-API-Key": "test-api-key"}
     base_url = "http://localhost:8080"
-    
+
     for i in range(600):  # Test beyond limit
         response = requests.get(f"{base_url}/api/system", headers=headers)
-        
+
         print(f"Request {i+1}: {response.status_code}")
         print(f"Remaining: {response.headers.get('X-RateLimit-Remaining')}")
-        
+
         if response.status_code == 429:
             retry_after = int(response.headers.get('Retry-After', 60))
             print(f"Rate limited! Retry after {retry_after} seconds")
             break
-        
+
         time.sleep(0.1)  # Small delay between requests
 
 if __name__ == "__main__":
@@ -541,7 +556,7 @@ if __name__ == "__main__":
 ## Best Practices Summary
 
 1. **Always check rate limit headers** before making requests
-2. **Implement exponential backoff** with jitter for retries  
+2. **Implement exponential backoff** with jitter for retries
 3. **Use request queuing** to stay within limits
 4. **Batch operations** when possible to reduce request count
 5. **Monitor usage patterns** and adjust accordingly
@@ -553,7 +568,8 @@ if __name__ == "__main__":
 
 ## Related Documentation
 
-- [Authentication Guide](authentication.md) - API key management and authentication methods
+- [Authentication Guide](authentication.md) - API key management and
+  authentication methods
 - [SDK Documentation](../../sdks/) - Rate limit handling in each SDK
 - [Monitoring Guide](monitoring.md) - System monitoring and observability
 - [Troubleshooting Guide](troubleshooting.md) - Common issues and solutions

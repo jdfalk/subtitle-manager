@@ -1,11 +1,13 @@
 # Subtitle Quality Scoring System
 
-The subtitle quality scoring system evaluates and automatically selects the best subtitle matches based on multiple criteria.
+The subtitle quality scoring system evaluates and automatically selects the best
+subtitle matches based on multiple criteria.
 
 ## Features
 
 - **Provider Reliability**: Trusted providers and user reputation scoring
-- **Release Match Quality**: Perfect release group matches and source quality alignment  
+- **Release Match Quality**: Perfect release group matches and source quality
+  alignment
 - **Format Preferences**: SRT preferred, with configurable format priorities
 - **Metadata Quality**: Upload date, download popularity, and user ratings
 - **User Preferences**: Hearing impaired (HI) and forced subtitle preferences
@@ -58,20 +60,20 @@ scoring:
   release_weight: 0.35
   format_weight: 0.15
   metadata_weight: 0.25
-  
+
   # Format preferences (in order of preference)
   preferred_formats:
-    - "srt"
-    - "ass"
-    - "ssa"
-    - "vtt"
-  
+    - 'srt'
+    - 'ass'
+    - 'ssa'
+    - 'vtt'
+
   # Subtitle preferences
   allow_hi: true
   prefer_hi: false
   allow_forced: true
   prefer_forced: false
-  
+
   # Quality thresholds
   min_score: 50
   max_age_days: 365
@@ -135,7 +137,8 @@ curl -X GET http://localhost:8080/api/scoring/defaults
 ### Provider Score (25% weight by default)
 
 - **Trusted Providers**: +30 points for verified/trusted providers
-- **Provider Reputation**: OpenSubtitles (+20), Subscene/Addic7ed (+15), Others (+5-10)
+- **Provider Reputation**: OpenSubtitles (+20), Subscene/Addic7ed (+15), Others
+  (+5-10)
 - **Translation Quality**: -20 for machine translated, -10 for auto-translated
 
 ### Release Score (35% weight by default)
@@ -148,14 +151,16 @@ curl -X GET http://localhost:8080/api/scoring/defaults
 
 ### Format Score (15% weight by default)
 
-- **Preferred Formats**: Higher scores for preferred formats (SRT: +25, ASS/SSA: +20)
+- **Preferred Formats**: Higher scores for preferred formats (SRT: +25, ASS/SSA:
+  +20)
 - **Format Order**: Points decrease for later preferences in the list
 
 ### Metadata Score (25% weight by default)
 
-- **Upload Date**: Newer uploads get higher scores (1 week: +20, 1 month: +15, etc.)
+- **Upload Date**: Newer uploads get higher scores (1 week: +20, 1 month: +15,
+  etc.)
 - **Download Popularity**: Logarithmic scaling based on download count
-- **User Ratings**: Rating * 5, weighted by vote count
+- **User Ratings**: Rating \* 5, weighted by vote count
 - **HI Preferences**: +15 bonus if preferred, -25 penalty if not allowed
 - **Forced Preferences**: +10 bonus if preferred, -15 penalty if not allowed
 - **HD Quality**: +10 bonus for HD content
@@ -181,20 +186,20 @@ func main() {
     if err != nil {
         panic(err)
     }
-    
+
     // Convert to scoring format
     subtitles := make([]scoring.Subtitle, len(results))
     for i, result := range results {
         subtitles[i] = scoring.FromOpenSubtitlesResult(result, "opensubtitles")
     }
-    
+
     // Extract media info
     media := scoring.FromMediaPath("movie.mkv")
-    
+
     // Load profile and score
     profile := scoring.LoadProfileFromConfig()
     best, score := scoring.SelectBest(subtitles, media, profile)
-    
+
     fmt.Printf("Best subtitle score: %d\n", score.Total)
 }
 ```
@@ -207,7 +212,7 @@ scored := scoring.ScoreSubtitles(subtitles, media, profile)
 
 // Process results
 for _, result := range scored {
-    fmt.Printf("Subtitle: %s, Score: %d\n", 
+    fmt.Printf("Subtitle: %s, Score: %d\n",
         result.Subtitle.Release, result.Score.Total)
 }
 ```
@@ -215,19 +220,25 @@ for _, result := range scored {
 ## Best Practices
 
 1. **Weight Configuration**: Ensure scoring weights sum to approximately 1.0
-2. **Threshold Setting**: Start with min_score=50, adjust based on your quality requirements  
-3. **Format Preferences**: Order formats by your player compatibility and preference
-4. **Provider Weighting**: Increase provider_weight if you have strong provider preferences
-5. **Release Matching**: Increase release_weight for better source quality matching
+2. **Threshold Setting**: Start with min_score=50, adjust based on your quality
+   requirements
+3. **Format Preferences**: Order formats by your player compatibility and
+   preference
+4. **Provider Weighting**: Increase provider_weight if you have strong provider
+   preferences
+5. **Release Matching**: Increase release_weight for better source quality
+   matching
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **No Subtitles Meet Threshold**: Lower `min_score` or adjust weights
-2. **Poor Quality Selection**: Increase `release_weight` and ensure proper media path parsing
+2. **Poor Quality Selection**: Increase `release_weight` and ensure proper media
+   path parsing
 3. **Wrong Format Selected**: Check `preferred_formats` configuration order
-4. **HI/Forced Issues**: Verify `allow_hi`/`prefer_hi` and `allow_forced`/`prefer_forced` settings
+4. **HI/Forced Issues**: Verify `allow_hi`/`prefer_hi` and
+   `allow_forced`/`prefer_forced` settings
 
 ### Debug Information
 

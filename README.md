@@ -159,8 +159,8 @@ profile-based configurations.
 - **Forced Subtitles Support**: Configure preference for forced/hearing-impaired
   subtitles per language
 - **Quality Thresholds**: Set cutoff scores for subtitle quality acceptance
-- **Default Profile Management**: Automatic fallback to default profiles when
-  no specific assignment exists
+- **Default Profile Management**: Automatic fallback to default profiles when no
+  specific assignment exists
 - **Database Integration**: Full CRUD operations with SQLite and PostgreSQL
   support
 
@@ -214,8 +214,8 @@ subtitle-manager scan --profiles /media/movies
 
 The system automatically uses language profiles in these scenarios:
 
-1. **Media Assignment**: When a media item has an assigned profile, that profile's
-   language preferences are used for subtitle searches
+1. **Media Assignment**: When a media item has an assigned profile, that
+   profile's language preferences are used for subtitle searches
 2. **Default Fallback**: Media without assigned profiles use the default profile
 3. **Priority Processing**: Languages are tried in priority order until suitable
    subtitles are found

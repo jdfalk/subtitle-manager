@@ -1,19 +1,25 @@
 # file: docs/api/webhooks.md
+
 # version: 1.0.0
+
 # guid: 550e8400-e29b-41d4-a716-446655440021
 
 # Webhook Integration Guide
 
-Subtitle Manager supports webhook integrations with popular media management systems like Sonarr and Radarr, as well as custom webhook endpoints for automation and integration with external systems.
+Subtitle Manager supports webhook integrations with popular media management
+systems like Sonarr and Radarr, as well as custom webhook endpoints for
+automation and integration with external systems.
 
 ## Overview
 
-Webhooks allow external systems to notify Subtitle Manager about media events, triggering automatic subtitle downloads and processing. This enables seamless automation of subtitle management within your media pipeline.
+Webhooks allow external systems to notify Subtitle Manager about media events,
+triggering automatic subtitle downloads and processing. This enables seamless
+automation of subtitle management within your media pipeline.
 
 ### Supported Webhook Types
 
 - **Sonarr**: TV series management integration
-- **Radarr**: Movie management integration  
+- **Radarr**: Movie management integration
 - **Custom**: Generic webhook endpoint for custom integrations
 
 ## Webhook Endpoints
@@ -72,7 +78,8 @@ When a Sonarr webhook is received:
 
 1. **Extract Episode Information**: Parse series title, season, episode number
 2. **Locate Media File**: Use the episode file path to identify the media
-3. **Download Subtitles**: Attempt to download subtitles for configured languages
+3. **Download Subtitles**: Attempt to download subtitles for configured
+   languages
 4. **Store Results**: Log the operation in the history database
 
 ### Radarr Integration
@@ -122,7 +129,8 @@ When a Radarr webhook is received:
 
 1. **Extract Movie Information**: Parse movie title, year, and metadata
 2. **Locate Media File**: Use the movie file path to identify the media
-3. **Download Subtitles**: Attempt to download subtitles for configured languages
+3. **Download Subtitles**: Attempt to download subtitles for configured
+   languages
 4. **Store Results**: Log the operation in the history database
 
 ### Custom Webhooks
@@ -156,6 +164,7 @@ Accepts custom webhook payloads for integration with other systems.
 #### Custom Integration Examples
 
 **Plex Integration** (via custom script):
+
 ```bash
 #!/bin/bash
 # Plex post-processing script
@@ -178,6 +187,7 @@ curl -X POST http://subtitle-manager:8080/api/webhooks/custom \
 ```
 
 **Jellyfin Integration** (via plugin):
+
 ```javascript
 // Jellyfin webhook plugin
 const webhookUrl = 'http://subtitle-manager:8080/api/webhooks/custom';
@@ -193,15 +203,15 @@ function onMediaAdded(mediaItem) {
       languages: ['en', 'es'],
       metadata: {
         imdb_id: mediaItem.ProviderIds?.Imdb,
-        tmdb_id: mediaItem.ProviderIds?.Tmdb
-      }
-    }
+        tmdb_id: mediaItem.ProviderIds?.Tmdb,
+      },
+    },
   };
 
   fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 }
 ```
@@ -216,25 +226,25 @@ Configure webhook behavior in the application settings:
 # config.yaml
 webhooks:
   enabled: true
-  default_languages: ["en"]
+  default_languages: ['en']
   auto_download: true
-  provider_priority: ["opensubtitles", "subscene", "addic7ed"]
-  quality_filter: ["bluray", "web", "hdtv"]
-  
+  provider_priority: ['opensubtitles', 'subscene', 'addic7ed']
+  quality_filter: ['bluray', 'web', 'hdtv']
+
 sonarr:
   enabled: true
-  languages: ["en", "es"]
+  languages: ['en', 'es']
   series_mapping:
-    "Breaking Bad": ["en", "es", "fr"]
-    "Game of Thrones": ["en"]
+    'Breaking Bad': ['en', 'es', 'fr']
+    'Game of Thrones': ['en']
 
 radarr:
   enabled: true
-  languages: ["en"]
+  languages: ['en']
   quality_profiles:
-    "Ultra-HD": ["en", "es", "fr"]
-    "HD-1080p": ["en", "es"]
-    "HD-720p": ["en"]
+    'Ultra-HD': ['en', 'es', 'fr']
+    'HD-1080p': ['en', 'es']
+    'HD-720p': ['en']
 ```
 
 ### Environment Variables
@@ -258,6 +268,7 @@ MAX_DOWNLOAD_ATTEMPTS=3
 Webhooks support optional authentication for security:
 
 #### API Key Authentication
+
 ```bash
 curl -X POST http://subtitle-manager:8080/api/webhooks/sonarr \
   -H "X-API-Key: your-api-key" \
@@ -273,9 +284,9 @@ Configure allowed IP addresses in settings:
 webhooks:
   security:
     ip_whitelist:
-      - "192.168.1.100"    # Sonarr server
-      - "192.168.1.101"    # Radarr server
-      - "10.0.0.0/8"       # Local network
+      - '192.168.1.100' # Sonarr server
+      - '192.168.1.101' # Radarr server
+      - '10.0.0.0/8' # Local network
     require_api_key: false
 ```
 
@@ -299,6 +310,7 @@ curl -X POST http://subtitle-manager:8080/api/webhooks/custom \
 ### Input Validation
 
 All webhook payloads are validated for:
+
 - Required fields presence
 - Data type validation
 - Path traversal prevention
@@ -357,7 +369,7 @@ def send_webhook_with_retry(url, payload, max_retries=3):
             if attempt == max_retries - 1:
                 raise
             time.sleep(2 ** attempt)
-    
+
     raise Exception("Max retries exceeded")
 ```
 
@@ -426,16 +438,16 @@ def test_sonarr_webhook():
             }
         }]
     }
-    
+
     response = requests.post(
         "http://localhost:8080/api/webhooks/sonarr",
         json=payload,
         headers={"X-API-Key": "your-api-key"}
     )
-    
+
     print(f"Status: {response.status_code}")
     print(f"Response: {response.text}")
-    
+
     assert response.status_code == 200
 
 if __name__ == "__main__":
@@ -466,6 +478,7 @@ curl -X GET "http://localhost:8080/api/system/webhooks/stats" \
 ```
 
 Response:
+
 ```json
 {
   "total_webhooks": 1250,
@@ -495,13 +508,17 @@ Use WebSocket connections for real-time webhook monitoring:
 ```javascript
 const ws = new WebSocket('ws://localhost:8080/ws/webhooks');
 
-ws.onmessage = (event) => {
+ws.onmessage = event => {
   const data = JSON.parse(event.data);
   console.log('Webhook received:', data);
-  
+
   if (data.type === 'webhook_processed') {
-    console.log(`Processed ${data.webhook_type} webhook for ${data.media_title}`);
-    console.log(`Status: ${data.status}, Subtitles: ${data.subtitles_downloaded}`);
+    console.log(
+      `Processed ${data.webhook_type} webhook for ${data.media_title}`
+    );
+    console.log(
+      `Status: ${data.status}, Subtitles: ${data.subtitles_downloaded}`
+    );
   }
 };
 ```
@@ -515,27 +532,27 @@ Configure conditional subtitle downloads based on media properties:
 ```yaml
 webhooks:
   rules:
-    - name: "High quality movies only"
-      condition: 
-        media_type: "movie"
-        quality: ["Bluray-2160p", "Bluray-1080p"]
-      action:
-        languages: ["en", "es", "fr"]
-        providers: ["opensubtitles", "subscene"]
-    
-    - name: "Popular TV series"
+    - name: 'High quality movies only'
       condition:
-        media_type: "episode"
-        series_title: ["Breaking Bad", "Game of Thrones", "The Office"]
+        media_type: 'movie'
+        quality: ['Bluray-2160p', 'Bluray-1080p']
       action:
-        languages: ["en", "es", "fr", "de"]
-        providers: ["all"]
-    
-    - name: "Default rule"
+        languages: ['en', 'es', 'fr']
+        providers: ['opensubtitles', 'subscene']
+
+    - name: 'Popular TV series'
+      condition:
+        media_type: 'episode'
+        series_title: ['Breaking Bad', 'Game of Thrones', 'The Office']
+      action:
+        languages: ['en', 'es', 'fr', 'de']
+        providers: ['all']
+
+    - name: 'Default rule'
       condition: {}
       action:
-        languages: ["en"]
-        providers: ["opensubtitles"]
+        languages: ['en']
+        providers: ['opensubtitles']
 ```
 
 ### Batch Processing
@@ -552,7 +569,7 @@ Handle multiple media files in a single webhook:
       "file_path": "/movies/movie1.mkv"
     },
     {
-      "type": "movie", 
+      "type": "movie",
       "title": "Movie 2",
       "file_path": "/movies/movie2.mkv"
     }
@@ -576,17 +593,17 @@ class CustomWebhookProcessor:
         self.base_url = subtitle_manager_url
         self.api_key = api_key
         self.headers = {"X-API-Key": api_key}
-    
+
     def process_media_batch(self, media_files: List[Dict]) -> Dict:
         results = []
-        
+
         for media in media_files:
             # Step 1: Download subtitles
             download_result = self.download_subtitles(
-                media["file_path"], 
+                media["file_path"],
                 media.get("languages", ["en"])
             )
-            
+
             # Step 2: If download fails, try extraction
             if not download_result["success"]:
                 extract_result = self.extract_subtitles(media["file_path"])
@@ -601,17 +618,17 @@ class CustomWebhookProcessor:
                     results.append(extract_result)
             else:
                 results.append(download_result)
-        
+
         return {"processed": len(results), "results": results}
-    
+
     def download_subtitles(self, file_path: str, languages: List[str]) -> Dict:
         # Implementation using Subtitle Manager API
         pass
-    
+
     def extract_subtitles(self, file_path: str) -> Dict:
         # Implementation using Subtitle Manager API
         pass
-    
+
     def translate_subtitles(self, subtitle_path: str, target_language: str) -> Dict:
         # Implementation using Subtitle Manager API
         pass
@@ -622,16 +639,19 @@ class CustomWebhookProcessor:
 ### Common Issues
 
 1. **Webhook not triggered**
+
    - Check media server webhook configuration
    - Verify URL and network connectivity
    - Check firewall settings
 
 2. **Authentication failures**
+
    - Verify API key is correct
    - Check IP whitelist configuration
    - Ensure proper headers are sent
 
 3. **File not found errors**
+
    - Verify file paths are accessible to Subtitle Manager
    - Check file permissions
    - Ensure network mounts are properly configured
@@ -665,12 +685,13 @@ curl -X GET http://localhost:8080/api/webhooks/health \
 ```
 
 Response:
+
 ```json
 {
   "status": "healthy",
   "endpoints": {
     "sonarr": "active",
-    "radarr": "active", 
+    "radarr": "active",
     "custom": "active"
   },
   "recent_activity": {
@@ -689,9 +710,13 @@ Response:
 4. **Monitor Performance**: Track webhook processing times and success rates
 5. **Use Queues**: For high-volume environments, consider using message queues
 6. **Test Thoroughly**: Test webhook integrations with realistic payloads
-7. **Document Custom Integrations**: Maintain documentation for custom webhook implementations
+7. **Document Custom Integrations**: Maintain documentation for custom webhook
+   implementations
 8. **Regular Health Checks**: Implement health checks for webhook endpoints
 9. **Rate Limiting**: Implement rate limiting to prevent abuse
-10. **Security First**: Use authentication, IP whitelisting, and signature validation
+10. **Security First**: Use authentication, IP whitelisting, and signature
+    validation
 
-This comprehensive webhook integration enables seamless automation of subtitle management within your media infrastructure, ensuring subtitles are automatically downloaded and processed as new content becomes available.
+This comprehensive webhook integration enables seamless automation of subtitle
+management within your media infrastructure, ensuring subtitles are
+automatically downloaded and processed as new content becomes available.
