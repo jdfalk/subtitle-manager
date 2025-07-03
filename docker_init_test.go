@@ -124,7 +124,7 @@ fi`
 	if err != nil {
 		t.Fatalf("read docker log: %v", err)
 	}
-	
+
 	// Should have attempted 3 times
 	runCount := strings.Count(string(logData), "run -d --name test-whisper-retry")
 	if runCount != 3 {
@@ -172,7 +172,7 @@ fi`
 	if err != nil {
 		t.Fatalf("read docker log: %v", err)
 	}
-	
+
 	// Should have attempted exactly 3 times
 	runCount := strings.Count(string(logData), "run -d --name test-whisper-fail")
 	if runCount != 3 {
@@ -231,7 +231,7 @@ fi`
 	if err != nil {
 		t.Fatalf("read docker log: %v", err)
 	}
-	
+
 	// Should not have attempted to run a new container
 	runCount := strings.Count(string(logData), "run -d")
 	if runCount > 0 {
