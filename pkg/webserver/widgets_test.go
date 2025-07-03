@@ -14,6 +14,8 @@ import (
 
 // TestDashboardLayout verifies storing and retrieving layout preferences.
 func TestDashboardLayout(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	db := testutil.GetTestDB(t)
 	defer db.Close()
 
@@ -60,6 +62,8 @@ func TestDashboardLayout(t *testing.T) {
 
 // TestWidgetsList ensures the API returns available dashboard widgets.
 func TestWidgetsList(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	db := testutil.GetTestDB(t)
 	defer db.Close()
 
@@ -96,6 +100,8 @@ func TestWidgetsList(t *testing.T) {
 
 // TestWidgetsListMethodNotAllowed verifies the handler rejects unsupported methods.
 func TestWidgetsListMethodNotAllowed(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	db := testutil.GetTestDB(t)
 	defer db.Close()
 

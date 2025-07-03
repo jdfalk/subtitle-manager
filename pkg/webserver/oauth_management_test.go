@@ -18,6 +18,8 @@ import (
 
 // TestGitHubOAuthGenerate verifies POST /api/oauth/github/generate creates new credentials.
 func TestGitHubOAuthGenerate(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	db := testutil.GetTestDB(t)
 	defer db.Close()
 
@@ -64,6 +66,8 @@ func TestGitHubOAuthGenerate(t *testing.T) {
 
 // TestGitHubOAuthRegenerate verifies client secret regeneration and persistence.
 func TestGitHubOAuthRegenerate(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	db, err := database.Open(":memory:")
 	testutil.MustNoError(t, "open db", err)
 	defer db.Close()

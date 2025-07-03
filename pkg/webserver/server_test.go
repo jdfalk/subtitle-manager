@@ -28,8 +28,21 @@ import (
 	"github.com/spf13/viper"
 )
 
+// getTestDB returns a test database connection. Uses Pebble for pure Go builds.
+func getTestDB(t *testing.T) (*database.PebbleStore, error) {
+	return database.OpenPebble(t.TempDir())
+}
+
+// skipIfNoSQLite skips the test if SQLite support is not available (pure Go build).
+func skipIfNoSQLite(t *testing.T) {
+	if _, err := database.Open(":memory:"); err != nil {
+		t.Skip("SQLite support not available - skipping test that requires SQLite")
+	}
+}
+
 // TestHandler verifies that the handler serves index.html at root.
 func TestHandler(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
@@ -57,9 +70,7 @@ func TestHandler(t *testing.T) {
 // TestSPAIndexFallback verifies that unknown paths return index.html so client
 // side routing works on refresh.
 func TestSPAIndexFallback(t *testing.T) {
-	if _, err := os.Stat("../../webui/dist/index.html"); err != nil {
-		t.Skip("webui not built: index.html missing")
-	}
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
@@ -86,6 +97,7 @@ func TestSPAIndexFallback(t *testing.T) {
 
 // TestBaseURL verifies that the handler respects the configured base URL.
 func TestBaseURL(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
@@ -116,6 +128,7 @@ func TestBaseURL(t *testing.T) {
 
 // TestRBAC verifies that permissions are enforced for protected routes.
 func TestRBAC(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
@@ -158,6 +171,7 @@ func TestRBAC(t *testing.T) {
 
 // TestConfigUpdate verifies that POST /api/config updates and persists values.
 func TestConfigUpdate(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
@@ -199,6 +213,7 @@ func TestConfigUpdate(t *testing.T) {
 
 // TestScanHandlers verifies /api/scan and /api/scan/status.
 func TestScanHandlers(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -267,6 +282,7 @@ func TestScanHandlers(t *testing.T) {
 
 // TestExtract verifies that POST /api/extract returns subtitle items.
 func TestExtract(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -322,6 +338,7 @@ func TestExtract(t *testing.T) {
 
 // TestConvert verifies that POST /api/convert returns converted data.
 func TestConvert(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -374,6 +391,7 @@ func TestConvert(t *testing.T) {
 
 // TestTranslate verifies the subtitle translation API.
 func TestTranslate(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -437,6 +455,7 @@ func TestTranslate(t *testing.T) {
 
 // TestSetup verifies the initial setup workflow.
 func TestSetup(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -491,6 +510,7 @@ func TestSetup(t *testing.T) {
 
 // TestHistory verifies that /api/history returns history records and filters by language.
 func TestHistory(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -549,6 +569,7 @@ func TestHistory(t *testing.T) {
 
 // TestHistoryVideoFilter verifies the video file filter works.
 func TestHistoryVideoFilter(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -584,6 +605,7 @@ func TestHistoryVideoFilter(t *testing.T) {
 
 // TestDownload verifies that POST /api/download fetches a subtitle and records history.
 func TestDownload(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -656,6 +678,7 @@ func TestDownload(t *testing.T) {
 
 // TestWebhookSonarr verifies that Sonarr webhook triggers subtitle download.
 func TestWebhookSonarr(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -698,6 +721,7 @@ func TestWebhookSonarr(t *testing.T) {
 
 // TestConvertUpload verifies that /api/convert returns an SRT file.
 func TestConvertUpload(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -746,6 +770,7 @@ func TestConvertUpload(t *testing.T) {
 
 // TestTranslateUpload verifies that /api/translate performs translation using Google.
 func TestTranslateUpload(t *testing.T) {
+	skipIfNoSQLite(t)
 	// Mock the Google Translate API
 	srvTrans := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -756,9 +781,7 @@ func TestTranslateUpload(t *testing.T) {
 	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
 
 	db, err := database.Open(":memory:")
-	if err != nil {
-		t.Fatalf("open db: %v", err)
-	}
+	testutil.MustNoError(t, "open db", err)
 	defer db.Close()
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create admin: %v", err)
@@ -809,6 +832,7 @@ func TestTranslateUpload(t *testing.T) {
 // TestProvidersDefault verifies that the providers endpoint returns
 // all available providers for UI configuration, with only embedded enabled by default.
 func TestProvidersDefault(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
@@ -893,8 +917,11 @@ func setupTestUser(t *testing.T, db *sql.DB) string {
 
 // TestSecurityHeaders ensures that the server sets common security headers.
 func TestSecurityHeaders(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
-	testutil.MustNoError(t, "open db", err)
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
 	defer db.Close()
 
 	key := setupTestUser(t, db)
@@ -1031,8 +1058,11 @@ func TestBrowseDirectoryPathTraversalPrevention(t *testing.T) {
 // TestLibraryBrowsePathTraversal verifies that path traversal attacks are prevented
 // in the library browse endpoint.
 func TestLibraryBrowsePathTraversal(t *testing.T) {
+	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
-	testutil.MustNoError(t, "open db", err)
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
 	defer db.Close()
 
 	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))

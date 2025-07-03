@@ -7,14 +7,10 @@ import (
 
 // getTestStore returns a test store, preferring Pebble when SQLite is not available
 func getTestStore(t *testing.T) SubtitleStore {
-	// Try SQLite first (in-memory), fall back to Pebble (temp directory)
-	store, err := OpenStore(":memory:", "sqlite")
+	// Always use Pebble for pure Go builds (no SQLite/CGO)
+	store, err := OpenStore(t.TempDir(), "pebble")
 	if err != nil {
-		// SQLite not available, use Pebble with temp directory
-		store, err = OpenStore(t.TempDir(), "pebble")
-		if err != nil {
-			t.Fatalf("Failed to open both SQLite and Pebble stores: %v", err)
-		}
+		t.Fatalf("Failed to open Pebble store: %v", err)
 	}
 	return store
 }

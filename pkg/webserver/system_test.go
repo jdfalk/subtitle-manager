@@ -13,6 +13,8 @@ import (
 
 // TestSystemHandlers verifies /api/logs and /api/system endpoints.
 func TestSystemHandlers(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	db := testutil.GetTestDB(t)
 	defer db.Close()
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {

@@ -14,6 +14,8 @@ import (
 
 // TestDatabaseHandlers verifies the new database related endpoints.
 func TestDatabaseHandlers(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	dir := t.TempDir()
 	dbPath := filepath.Join(dir, "app.db")
 	db, err := database.Open(dbPath)

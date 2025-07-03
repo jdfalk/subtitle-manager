@@ -17,6 +17,8 @@ import (
 
 // TestGitHubCallbackHandler verifies OAuth2 callback creates a session cookie.
 func TestGitHubCallbackHandler(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	tokenResp := `{"access_token":"t","token_type":"bearer"}`
 	apiResp := `{"login":"tester","email":"tester@example.com"}`
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +64,8 @@ func TestGitHubCallbackHandler(t *testing.T) {
 
 // TestGitHubOAuthReset verifies that the reset endpoint clears configuration.
 func TestGitHubOAuthReset(t *testing.T) {
+	skipIfNoSQLite(t)
+
 	db, err := database.Open(":memory:")
 	if err != nil {
 		t.Fatalf("open db: %v", err)
