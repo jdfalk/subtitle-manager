@@ -31,7 +31,7 @@ var listProfilesCmd = &cobra.Command{
 	Long:  "Display all configured language profiles with their settings",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("profiles")
-		
+
 		store, err := database.OpenStore(database.GetDatabasePath(), "pebble")
 		if err != nil {
 			logger.Errorf("failed to open database: %v", err)

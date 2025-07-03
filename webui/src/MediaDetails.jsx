@@ -1,8 +1,8 @@
 // file: webui/src/MediaDetails.jsx
-import { 
-  Box, 
-  CircularProgress, 
-  Typography, 
+import {
+  Box,
+  CircularProgress,
+  Typography,
   FormControl,
   InputLabel,
   Select,
@@ -13,7 +13,7 @@ import {
   Card,
   CardContent,
   Chip,
-  Grid
+  Grid,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -31,7 +31,7 @@ export default function MediaDetails() {
   const [info, setInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   // Language profile management
   const [profiles, setProfiles] = useState([]);
   const [assignedProfile, setAssignedProfile] = useState(null);
@@ -58,12 +58,14 @@ export default function MediaDetails() {
   // Load assigned profile for media item
   const loadAssignedProfile = async () => {
     if (!mediaPath) return;
-    
+
     try {
       setProfileLoading(true);
       // URL encode the path to handle special characters and slashes
       const encodedPath = encodeURIComponent(mediaPath);
-      const response = await apiService.get(`/api/media/profile/${encodedPath}`);
+      const response = await apiService.get(
+        `/api/media/profile/${encodedPath}`
+      );
       if (response.ok) {
         const profile = await response.json();
         setAssignedProfile(profile);
@@ -76,17 +78,19 @@ export default function MediaDetails() {
   };
 
   // Assign profile to media item
-  const handleProfileChange = async (profileId) => {
+  const handleProfileChange = async profileId => {
     if (!mediaPath) return;
-    
+
     try {
       setProfileLoading(true);
       // URL encode the path to handle special characters and slashes
       const encodedPath = encodeURIComponent(mediaPath);
-      
+
       if (profileId === '') {
         // Remove profile assignment
-        const response = await apiService.delete(`/api/media/profile/${encodedPath}`);
+        const response = await apiService.delete(
+          `/api/media/profile/${encodedPath}`
+        );
         if (response.ok) {
           setSnackbar({
             open: true,
@@ -99,9 +103,12 @@ export default function MediaDetails() {
         }
       } else {
         // Assign new profile
-        const response = await apiService.put(`/api/media/profile/${encodedPath}`, {
-          profile_id: profileId
-        });
+        const response = await apiService.put(
+          `/api/media/profile/${encodedPath}`,
+          {
+            profile_id: profileId,
+          }
+        );
         if (response.ok) {
           setSnackbar({
             open: true,
@@ -173,28 +180,28 @@ export default function MediaDetails() {
   }
 
   // Get language name from code
-  const getLanguageName = (code) => {
+  const getLanguageName = code => {
     const languageCodes = {
-      'en': 'English',
-      'es': 'Spanish', 
-      'fr': 'French',
-      'de': 'German',
-      'it': 'Italian',
-      'pt': 'Portuguese',
-      'ru': 'Russian',
-      'ja': 'Japanese',
-      'ko': 'Korean',
-      'zh': 'Chinese',
-      'ar': 'Arabic',
-      'hi': 'Hindi',
-      'nl': 'Dutch',
-      'sv': 'Swedish',
-      'no': 'Norwegian',
-      'da': 'Danish',
-      'fi': 'Finnish',
-      'pl': 'Polish',
-      'cs': 'Czech',
-      'tr': 'Turkish'
+      en: 'English',
+      es: 'Spanish',
+      fr: 'French',
+      de: 'German',
+      it: 'Italian',
+      pt: 'Portuguese',
+      ru: 'Russian',
+      ja: 'Japanese',
+      ko: 'Korean',
+      zh: 'Chinese',
+      ar: 'Arabic',
+      hi: 'Hindi',
+      nl: 'Dutch',
+      sv: 'Swedish',
+      no: 'Norwegian',
+      da: 'Danish',
+      fi: 'Finnish',
+      pl: 'Polish',
+      cs: 'Czech',
+      tr: 'Turkish',
     };
     return languageCodes[code] || code.toUpperCase();
   };
@@ -221,7 +228,9 @@ export default function MediaDetails() {
                 {info.Plot}
               </Typography>
               {info.imdbRating && (
-                <Typography variant="body2">IMDB Rating: {info.imdbRating}</Typography>
+                <Typography variant="body2">
+                  IMDB Rating: {info.imdbRating}
+                </Typography>
               )}
             </>
           ) : title ? (
@@ -241,11 +250,11 @@ export default function MediaDetails() {
                 <Typography variant="h6" gutterBottom>
                   Language Preferences
                 </Typography>
-                
+
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   File: {mediaPath.split('/').pop()}
                 </Typography>
-                
+
                 {profileLoading ? (
                   <Box display="flex" justifyContent="center" p={2}>
                     <CircularProgress size={24} />
@@ -257,27 +266,35 @@ export default function MediaDetails() {
                         <Typography variant="subtitle2" gutterBottom>
                           Current Profile: {assignedProfile.name}
                           {assignedProfile.is_default && (
-                            <Chip 
-                              label="Default" 
-                              size="small" 
-                              color="primary" 
-                              sx={{ ml: 1 }} 
+                            <Chip
+                              label="Default"
+                              size="small"
+                              color="primary"
+                              sx={{ ml: 1 }}
                             />
                           )}
                         </Typography>
-                        
-                        <Typography variant="body2" color="text.secondary" gutterBottom>
+
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          gutterBottom
+                        >
                           Cutoff Score: {assignedProfile.cutoff_score}%
                         </Typography>
-                        
+
                         <Box display="flex" flexWrap="wrap" gap={0.5} mt={1}>
                           {assignedProfile.languages?.map((lang, index) => (
                             <Chip
                               key={index}
                               label={`${getLanguageName(lang.language)} (${lang.priority})`}
                               size="small"
-                              color={lang.forced || lang.hi ? 'secondary' : 'default'}
-                              variant={lang.forced || lang.hi ? 'filled' : 'outlined'}
+                              color={
+                                lang.forced || lang.hi ? 'secondary' : 'default'
+                              }
+                              variant={
+                                lang.forced || lang.hi ? 'filled' : 'outlined'
+                              }
                             />
                           ))}
                         </Box>
@@ -289,13 +306,13 @@ export default function MediaDetails() {
                       <Select
                         value={assignedProfile?.id || ''}
                         label="Language Profile"
-                        onChange={(e) => handleProfileChange(e.target.value)}
+                        onChange={e => handleProfileChange(e.target.value)}
                         disabled={profileLoading}
                       >
                         <MenuItem value="">
                           <em>Use Default Profile</em>
                         </MenuItem>
-                        {profiles.map((profile) => (
+                        {profiles.map(profile => (
                           <MenuItem key={profile.id} value={profile.id}>
                             {profile.name}
                             {profile.is_default && ' (Default)'}
@@ -304,8 +321,14 @@ export default function MediaDetails() {
                       </Select>
                     </FormControl>
 
-                    <Typography variant="caption" display="block" mt={1} color="text.secondary">
-                      Select a language profile to customize subtitle preferences for this title.
+                    <Typography
+                      variant="caption"
+                      display="block"
+                      mt={1}
+                      color="text.secondary"
+                    >
+                      Select a language profile to customize subtitle
+                      preferences for this title.
                     </Typography>
                   </>
                 )}
