@@ -7,19 +7,14 @@
 
 # C++ Style Guide (Google)
 
-This document summarizes Google's C++ style guide for use in code generation and
-review.
+This document summarizes Google's C++ style guide for use in code generation and review.
 
 ## Core Principles
 
-- **Optimize for the reader, not the writer**: Code should be clear and
-  maintainable
-- **Be consistent with existing code**: Follow established patterns within the
-  codebase
-- **Be consistent with the broader C++ community when appropriate**: Use
-  standard idioms
-- **Avoid surprising or dangerous constructs**: Prefer safe, well-understood
-  patterns
+- **Optimize for the reader, not the writer**: Code should be clear and maintainable
+- **Be consistent with existing code**: Follow established patterns within the codebase
+- **Be consistent with the broader C++ community when appropriate**: Use standard idioms
+- **Avoid surprising or dangerous constructs**: Prefer safe, well-understood patterns
 - **Be mindful of scale**: Consider the impact across large codebases
 
 ## C++ Version
@@ -459,5 +454,4 @@ class GargantuanTableIterator {
 - Use static analysis tools when available
 - Enable address sanitizer and other debugging tools during development
 
-This style guide should be used as the foundation for all C++ code generation
-and formatting decisions.
+This style guide should be used as the foundation for all C++ code generation and formatting decisions.

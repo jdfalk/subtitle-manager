@@ -4,8 +4,7 @@
 
 # Security Guidelines for Reusable Workflows
 
-This document provides security guidelines that GitHub Copilot should follow
-when recommending or implementing the reusable workflows in this repository.
+This document provides security guidelines that GitHub Copilot should follow when recommending or implementing the reusable workflows in this repository.
 
 ## General Security Principles
 
@@ -65,14 +64,14 @@ SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```yaml
 inputs:
   image-name:
-    description: 'Container image name'
+    description: "Container image name"
     required: true
     type: string
     # Validate format
   platforms:
-    description: 'Target platforms'
+    description: "Target platforms"
     required: false
-    default: 'linux/amd64,linux/arm64'
+    default: "linux/amd64,linux/arm64"
     type: string
     # Validate platform list
 ```
@@ -96,7 +95,7 @@ inputs:
 - name: Setup Node.js
   uses: actions/setup-node@v4
   with:
-    node-version: '20' # Specific version
+    node-version: "20" # Specific version
 ```
 
 ### 2. Software Bill of Materials (SBOM)
@@ -156,10 +155,10 @@ on:
   workflow_dispatch: # Manual trigger with approval
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: "Deployment environment"
         required: true
         type: choice
-        options: ['staging', 'production']
+        options: ["staging", "production"]
 ```
 
 **Avoid**:
