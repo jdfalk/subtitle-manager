@@ -19,7 +19,8 @@ Use these standardized types to categorize your changes:
 - `feat`: A new feature
 - `fix`: A bug fix
 - `docs`: Documentation changes
-- `style`: Changes that don't affect code meaning (formatting, white-space, etc.)
+- `style`: Changes that don't affect code meaning (formatting, white-space,
+  etc.)
 - `refactor`: Code changes that neither fix bugs nor add features
 - `perf`: Performance improvements
 - `test`: Adding or modifying tests
@@ -41,19 +42,24 @@ Use these standardized types to categorize your changes:
 ## File Changes Documentation (REQUIRED)
 
 - **ALWAYS list ALL files that were changed in the body of the commit message**
-- Format each file listing with a brief summary of what changed, followed by a markdown link
+- Format each file listing with a brief summary of what changed, followed by a
+  markdown link
 - Use bullet points for listing multiple files
 - Example:
 
   ```markdown
   Files changed:
 
-  - Added SSO provider implementation: [src/auth/SSOProvider.js](src/auth/SSOProvider.js)
-  - Updated auth context to support SSO flow: [src/auth/AuthContext.js](src/auth/AuthContext.js)
-  - Added SSO login button to form: [src/components/LoginForm.js](src/components/LoginForm.js)
+  - Added SSO provider implementation:
+    [src/auth/SSOProvider.js](src/auth/SSOProvider.js)
+  - Updated auth context to support SSO flow:
+    [src/auth/AuthContext.js](src/auth/AuthContext.js)
+  - Added SSO login button to form:
+    [src/components/LoginForm.js](src/components/LoginForm.js)
   ```
 
-- For repository links, use the full URL format: `Summary: [file.js](https://github.com/owner/repo/blob/branch/file.js)`
+- For repository links, use the full URL format:
+  `Summary: [file.js](https://github.com/owner/repo/blob/branch/file.js)`
 - Include a clear, concise summary of what changed in each file
 - No commit should be submitted without this file change documentation
 
@@ -65,13 +71,15 @@ Use these standardized types to categorize your changes:
 - Use blank line to separate from description
 - Wrap at 72 characters
 - Summarize the commits as the first line
-- **Always include a "Files changed:" section with a summary and markdown links for all modified files**
+- **Always include a "Files changed:" section with a summary and markdown links
+  for all modified files**
 - Organize file changes by type (added, modified, deleted) when appropriate
 
 ## Footer Guidelines
 
 - Use for referencing ACTUAL issues: `Fixes #123` or `Closes #456`
-- Never reference fictional issue numbers - only include references to real issues
+- Never reference fictional issue numbers - only include references to real
+  issues
 - Breaking changes must start with `BREAKING CHANGE:` followed by explanation
 - Reference ticket numbers as: `[#123]` or specific project format
 
@@ -80,7 +88,8 @@ Use these standardized types to categorize your changes:
 Indicate breaking changes either:
 
 - With `!` after type/scope: `feat(api)!: remove deprecated endpoints`
-- In footer: `BREAKING CHANGE: environment variables now use different naming convention`
+- In footer:
+  `BREAKING CHANGE: environment variables now use different naming convention`
 
 ## Scope Guidelines
 
@@ -91,12 +100,14 @@ Indicate breaking changes either:
 
 ## Special Instructions
 
-- For multi-line commit messages, ensure proper formatting with `-m` flag or by writing in commit editor
+- For multi-line commit messages, ensure proper formatting with `-m` flag or by
+  writing in commit editor
 - Never add issue references unless they're for actual issues in your project
 
 ## Examples
 
-> **Note:** The examples below show the format - replace issue numbers with actual issues from your project or omit the reference entirely.
+> **Note:** The examples below show the format - replace issue numbers with
+> actual issues from your project or omit the reference entirely.
 
 ```text
 feat(auth): add SSO login option

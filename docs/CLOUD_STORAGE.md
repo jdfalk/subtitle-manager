@@ -1,6 +1,8 @@
 # Cloud Storage for Subtitles
 
-Subtitle Manager now supports optional cloud storage for subtitle files and history data. This allows you to store subtitles in cloud providers such as Amazon S3, Azure Blob Storage, and Google Cloud Storage.
+Subtitle Manager now supports optional cloud storage for subtitle files and
+history data. This allows you to store subtitles in cloud providers such as
+Amazon S3, Azure Blob Storage, and Google Cloud Storage.
 
 ## Supported Providers
 
@@ -80,16 +82,19 @@ subtitle-manager storage test
 ### Managing Files
 
 Upload a subtitle file:
+
 ```bash
 subtitle-manager storage upload local-file.srt remote/path/file.srt
 ```
 
 Download a subtitle file:
+
 ```bash
 subtitle-manager storage download remote/path/file.srt local-file.srt
 ```
 
 List files in storage:
+
 ```bash
 subtitle-manager storage list
 subtitle-manager storage list movies/  # List files with prefix
@@ -134,7 +139,8 @@ subtitle-manager --storage-provider s3 \
 
 ## Security Considerations
 
-- Store credentials securely using environment variables or configuration files with proper permissions
+- Store credentials securely using environment variables or configuration files
+  with proper permissions
 - Use IAM roles and least-privilege access when possible
 - Consider encryption at rest and in transit
 - Regularly rotate access keys
@@ -186,4 +192,5 @@ Enable debug logging to troubleshoot issues:
 subtitle-manager --log-level debug storage test
 ```
 
-This will show detailed information about the storage operations and any errors encountered.
+This will show detailed information about the storage operations and any errors
+encountered.
