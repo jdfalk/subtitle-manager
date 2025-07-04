@@ -11,6 +11,7 @@ import (
 
 	"github.com/cockroachdb/pebble"
 	"github.com/google/uuid"
+	"github.com/jdfalk/subtitle-manager/pkg/profiles"
 )
 
 // PebbleStore wraps a Pebble database and implements basic CRUD operations
@@ -1432,7 +1433,7 @@ func (p *PebbleStore) DeleteLanguageProfile(id string) error {
 		if !strings.HasPrefix(string(iter.Key()), "media_profile:") {
 			continue
 		}
-		var assignment MediaProfileAssignment
+		var assignment profiles.MediaProfileAssignment
 		if err := json.Unmarshal(iter.Value(), &assignment); err != nil {
 			continue
 		}
@@ -1456,13 +1457,13 @@ func (p *PebbleStore) DeleteLanguageProfile(id string) error {
 // SetDefaultLanguageProfile marks a profile as the default.
 func (p *PebbleStore) SetDefaultLanguageProfile(id string) error {
 	// First get all profiles and clear default flags
-	profiles, err := p.ListLanguageProfiles()
+	profilesList, err := p.ListLanguageProfiles()
 	if err != nil {
 		return err
 	}
 
 	batch := p.db.NewBatch()
-	for _, profile := range profiles {
+	for _, profile := range profilesList {
 		profile.IsDefault = (profile.ID == id)
 		profile.UpdatedAt = time.Now()
 		profileData, err := json.Marshal(profile)
@@ -1481,20 +1482,20 @@ func (p *PebbleStore) SetDefaultLanguageProfile(id string) error {
 
 // GetDefaultLanguageProfile retrieves the default language profile.
 func (p *PebbleStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
-	profiles, err := p.ListLanguageProfiles()
+	profilesList, err := p.ListLanguageProfiles()
 	if err != nil {
 		return nil, err
 	}
 
-	for _, profile := range profiles {
+	for _, profile := range profilesList {
 		if profile.IsDefault {
 			return &profile, nil
 		}
 	}
 
 	// No default found, return the first profile or create one
-	if len(profiles) > 0 {
-		return &profiles[0], nil
+	if len(profilesList) > 0 {
+		return &profilesList[0], nil
 	}
 
 	// Create and return a default profile
@@ -1515,7 +1516,7 @@ func (p *PebbleStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 
 // AssignProfileToMedia assigns a language profile to a media item.
 func (p *PebbleStore) AssignProfileToMedia(mediaID, profileID string) error {
-	assignment := MediaProfileAssignment{
+	assignment := profiles.MediaProfileAssignment{
 		MediaID:   mediaID,
 		ProfileID: profileID,
 		CreatedAt: time.Now(),
@@ -1546,7 +1547,7 @@ func (p *PebbleStore) GetMediaProfile(mediaID string) (*LanguageProfile, error) 
 	}
 	defer closer.Close()
 
-	var assignment MediaProfileAssignment
+	var assignment profiles.MediaProfileAssignment
 	if err := json.Unmarshal(assignmentData, &assignment); err != nil {
 		return nil, err
 	}
