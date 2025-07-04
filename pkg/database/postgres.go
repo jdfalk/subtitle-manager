@@ -86,6 +86,24 @@ func initPostgresSchema(db *sql.DB) error {
 			return err
 		}
 	}
+
+	// Indexes for improved query performance
+	idxStmts := []string{
+		`CREATE INDEX IF NOT EXISTS idx_subtitles_file ON subtitles(file)`,
+		`CREATE INDEX IF NOT EXISTS idx_subtitles_video ON subtitles(video_file)`,
+		`CREATE INDEX IF NOT EXISTS idx_downloads_video_lang ON downloads(video_file, language)`,
+		`CREATE INDEX IF NOT EXISTS idx_media_items_path ON media_items(path)`,
+		`CREATE INDEX IF NOT EXISTS idx_downloads_file ON downloads(file)`,
+		`CREATE INDEX IF NOT EXISTS idx_subtitle_sources_hash ON subtitle_sources(source_hash)`,
+		`CREATE INDEX IF NOT EXISTS idx_media_profiles_media ON media_profiles(media_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_media_profiles_profile ON media_profiles(profile_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_monitored_items_status_checked ON monitored_items(status, last_checked)`,
+	}
+	for _, s := range idxStmts {
+		if _, err := db.Exec(s); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

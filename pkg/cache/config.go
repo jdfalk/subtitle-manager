@@ -14,14 +14,36 @@ import (
 // This allows the cache to be configured via command-line flags, environment
 // variables, or configuration files.
 func ConfigFromViper() (*Config, error) {
-	config := &Config{}
+	config := DefaultConfig()
 
-	// Backend selection
-	config.Backend = viper.GetString("cache.backend")
-
-	// Memory cache configuration
-	config.Memory.MaxEntries = viper.GetInt("cache.memory.max_entries")
-	config.Memory.MaxMemory = viper.GetInt64("cache.memory.max_memory")
+	// Override defaults only when values are set in viper
+	if viper.IsSet("cache.backend") {
+		config.Backend = viper.GetString("cache.backend")
+	}
+	if viper.IsSet("cache.memory.max_entries") {
+		config.Memory.MaxEntries = viper.GetInt("cache.memory.max_entries")
+	}
+	if viper.IsSet("cache.memory.max_memory") {
+		config.Memory.MaxMemory = viper.GetInt64("cache.memory.max_memory")
+	}
+	if viper.IsSet("cache.redis.address") {
+		config.Redis.Address = viper.GetString("cache.redis.address")
+	}
+	if viper.IsSet("cache.redis.password") {
+		config.Redis.Password = viper.GetString("cache.redis.password")
+	}
+	if viper.IsSet("cache.redis.database") {
+		config.Redis.Database = viper.GetInt("cache.redis.database")
+	}
+	if viper.IsSet("cache.redis.pool_size") {
+		config.Redis.PoolSize = viper.GetInt("cache.redis.pool_size")
+	}
+	if viper.IsSet("cache.redis.min_idle_conns") {
+		config.Redis.MinIdleConns = viper.GetInt("cache.redis.min_idle_conns")
+	}
+	if viper.IsSet("cache.redis.key_prefix") {
+		config.Redis.KeyPrefix = viper.GetString("cache.redis.key_prefix")
+	}
 
 	// Parse duration strings for memory config
 	if defaultTTLStr := viper.GetString("cache.memory.default_ttl"); defaultTTLStr != "" {
@@ -41,12 +63,6 @@ func ConfigFromViper() (*Config, error) {
 	}
 
 	// Redis cache configuration
-	config.Redis.Address = viper.GetString("cache.redis.address")
-	config.Redis.Password = viper.GetString("cache.redis.password")
-	config.Redis.Database = viper.GetInt("cache.redis.database")
-	config.Redis.PoolSize = viper.GetInt("cache.redis.pool_size")
-	config.Redis.MinIdleConns = viper.GetInt("cache.redis.min_idle_conns")
-	config.Redis.KeyPrefix = viper.GetString("cache.redis.key_prefix")
 
 	// Parse duration strings for Redis config
 	if dialTimeoutStr := viper.GetString("cache.redis.dial_timeout"); dialTimeoutStr != "" {
