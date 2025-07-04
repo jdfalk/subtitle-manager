@@ -135,6 +135,8 @@ func init() {
 		viper.BindPFlag("anticaptcha.api_url", rootCmd.PersistentFlags().Lookup("anticaptcha-api-url"))
 
 		// Cache configuration flags
+		// These are kept as persistent flags so all subcommands
+		// share the same cache settings.
 		rootCmd.PersistentFlags().String("cache-backend", "memory", "cache backend: memory or redis")
 		viper.BindPFlag("cache.backend", rootCmd.PersistentFlags().Lookup("cache-backend"))
 		rootCmd.PersistentFlags().String("cache-redis-address", "localhost:6379", "Redis server address")
