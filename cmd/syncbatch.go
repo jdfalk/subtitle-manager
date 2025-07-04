@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/syncer"
 )
 
@@ -23,7 +24,11 @@ var syncBatchCmd = &cobra.Command{
 	Short: "Synchronize multiple subtitles via configuration file",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("syncbatch")
-		f, err := os.Open(syncBatchConfig)
+		cfgPath, err := security.SanitizePath(syncBatchConfig)
+		if err != nil {
+			return err
+		}
+		f, err := os.Open(string(cfgPath))
 		if err != nil {
 			return err
 		}

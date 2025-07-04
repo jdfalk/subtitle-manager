@@ -217,8 +217,13 @@ func (sb *SubtitleBackupper) createSubtitleArchive(ctx context.Context, includeP
 
 // extractSubtitleArchive extracts a tar.gz archive of subtitle files.
 func (sb *SubtitleBackupper) extractSubtitleArchive(ctx context.Context, archiveData []byte, restorePath string) error {
+	sanitizedRestore, err := security.ValidateAndSanitizePath(restorePath)
+	if err != nil {
+		return fmt.Errorf("invalid restore path: %w", err)
+	}
+
 	// Create restore directory
-	if err := os.MkdirAll(restorePath, 0755); err != nil {
+	if err := os.MkdirAll(sanitizedRestore, 0755); err != nil {
 		return fmt.Errorf("failed to create restore directory: %w", err)
 	}
 
@@ -241,14 +246,10 @@ func (sb *SubtitleBackupper) extractSubtitleArchive(ctx context.Context, archive
 			return fmt.Errorf("failed to read tar header: %w", err)
 		}
 
-		// Create full path
-		cleanName := filepath.Clean(header.Name)
-		if strings.Contains(cleanName, "..") || cleanName == "." || cleanName == "/" {
+		// Create sanitized full path and ensure it stays within the restore directory
+		fullPath, err := security.ValidateAndSanitizePath(filepath.Join(sanitizedRestore, header.Name))
+		if err != nil || !strings.HasPrefix(fullPath, sanitizedRestore+string(os.PathSeparator)) {
 			return fmt.Errorf("invalid file path in archive: %s", header.Name)
-		}
-		fullPath := filepath.Join(restorePath, cleanName)
-		if !strings.HasPrefix(fullPath, filepath.Clean(restorePath)+string(os.PathSeparator)) {
-			return fmt.Errorf("file path escapes restore directory: %s", fullPath)
 		}
 
 		// Create directory if needed

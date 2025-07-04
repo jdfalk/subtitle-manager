@@ -12,6 +12,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 var videoExtensions = []string{".mkv", ".mp4", ".avi", ".mov"}
@@ -31,13 +32,19 @@ func isVideoFile(path string) bool {
 // file with the language code appended before the extension.
 func WatchDirectory(ctx context.Context, dir, lang, providerName string, p providers.Provider, store database.SubtitleStore) error {
 	logger := logging.GetLogger("watcher")
+
+	sanitizedDir, err := security.ValidateAndSanitizePath(dir)
+	if err != nil {
+		return err
+	}
+
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
 		return err
 	}
 	defer w.Close()
 
-	if err := w.Add(dir); err != nil {
+	if err := w.Add(sanitizedDir); err != nil {
 		return err
 	}
 
@@ -62,13 +69,19 @@ func WatchDirectory(ctx context.Context, dir, lang, providerName string, p provi
 // automatically.
 func WatchDirectoryRecursive(ctx context.Context, dir, lang, providerName string, p providers.Provider, store database.SubtitleStore) error {
 	logger := logging.GetLogger("watcher")
+
+	sanitizedDir, err := security.ValidateAndSanitizePath(dir)
+	if err != nil {
+		return err
+	}
+
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
 		return err
 	}
 	defer w.Close()
 
-	if err := filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
+	if err := filepath.WalkDir(sanitizedDir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}

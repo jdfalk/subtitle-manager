@@ -14,6 +14,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/i18n"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 )
 
@@ -26,12 +27,19 @@ var convertCmd = &cobra.Command{
 		cmd.Short = i18n.T("cli.convert.short")
 
 		logger := logging.GetLogger("convert")
-		in, out := args[0], args[1]
-		data, err := subtitles.ConvertToSRT(in)
+		in, err := security.SanitizePath(args[0])
 		if err != nil {
 			return err
 		}
-		f, err := os.Create(out)
+		out, err := security.SanitizePath(args[1])
+		if err != nil {
+			return err
+		}
+		data, err := subtitles.ConvertToSRT(string(in))
+		if err != nil {
+			return err
+		}
+		f, err := os.Create(string(out))
 		if err != nil {
 			return err
 		}

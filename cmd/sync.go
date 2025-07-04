@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/syncer"
 )
 
@@ -49,7 +50,18 @@ Examples:
 	Args: cobra.ExactArgs(3),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("sync")
-		media, subPath, out := args[0], args[1], args[2]
+		media, err := security.SanitizePath(args[0])
+		if err != nil {
+			return err
+		}
+		subPath, err := security.SanitizePath(args[1])
+		if err != nil {
+			return err
+		}
+		out, err := security.SanitizePath(args[2])
+		if err != nil {
+			return err
+		}
 
 		// Log configuration details
 		logger.Infof("starting subtitle synchronization")
@@ -96,7 +108,7 @@ Examples:
 		}
 
 		start := time.Now()
-		items, err := syncer.Sync(media, subPath, opts)
+		items, err := syncer.Sync(string(media), string(subPath), opts)
 		if err != nil {
 			logger.Errorf("synchronization failed: %v", err)
 			return err
@@ -107,7 +119,7 @@ Examples:
 		logger.Infof("processed %d subtitle items", len(items))
 
 		tmpSub := astisub.Subtitles{Items: items}
-		f, err := os.Create(out)
+		f, err := os.Create(string(out))
 		if err != nil {
 			logger.Errorf("failed to create output file: %v", err)
 			return err

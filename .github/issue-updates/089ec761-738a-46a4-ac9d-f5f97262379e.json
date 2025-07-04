@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Leverage security package for path validation",
+  "body": "Replace manual path checks with security.ValidateAndSanitizePath in watchers and backup extraction",
+  "labels": ["codex"],
+  "guid": "089ec761-738a-46a4-ac9d-f5f97262379e",
+  "legacy_guid": "create-leverage-security-package-for-path-validation-2025-07-03"
+}

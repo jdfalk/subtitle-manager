@@ -15,6 +15,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
+	"github.com/jdfalk/subtitle-manager/pkg/security"
+
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/storage"
 )
@@ -149,7 +151,11 @@ var storageUploadCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		logger := logging.GetLogger("storage")
 
-		localFile := args[0]
+		localFilePath, err := security.SanitizePath(args[0])
+		if err != nil {
+			logger.WithError(err).Fatal("invalid local file path")
+		}
+		localFile := string(localFilePath)
 		storageKey := args[1]
 
 		config := storage.GetConfigFromViper()
@@ -197,7 +203,11 @@ var storageDownloadCmd = &cobra.Command{
 		logger := logging.GetLogger("storage")
 
 		storageKey := args[0]
-		localFile := args[1]
+		localFilePath, err := security.SanitizePath(args[1])
+		if err != nil {
+			logger.WithError(err).Fatal("invalid local file path")
+		}
+		localFile := string(localFilePath)
 
 		config := storage.GetConfigFromViper()
 		if config.Provider == "" {
