@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/spf13/viper"
 )
 
