@@ -312,6 +312,35 @@ func initSchema(db *sql.DB) error {
 		}
 	}
 
+	// Indexes for common query patterns
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_subtitles_file ON subtitles(file)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_subtitles_video ON subtitles(video_file)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_downloads_video_lang ON downloads(video_file, language)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_media_items_path ON media_items(path)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_downloads_file ON downloads(file)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_subtitle_sources_hash ON subtitle_sources(source_hash)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_media_profiles_media ON media_profiles(media_id)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_media_profiles_profile ON media_profiles(profile_id)`); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`CREATE INDEX IF NOT EXISTS idx_monitored_items_status_checked ON monitored_items(status, last_checked)`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
