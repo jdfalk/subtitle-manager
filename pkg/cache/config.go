@@ -10,6 +10,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+func init() {
+	// Ensure a default backend is set for tests and dev
+	if viper.GetString("cache.backend") == "" {
+		viper.SetDefault("cache.backend", "memory")
+	}
+}
+
 // ConfigFromViper creates a cache configuration from viper settings.
 // This allows the cache to be configured via command-line flags, environment
 // variables, or configuration files.
