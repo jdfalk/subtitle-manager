@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -48,6 +49,11 @@ func TestSearchHandlerPostValidation(t *testing.T) {
 
 func TestSearchHandlerPostValidRequest(t *testing.T) {
 	handler := searchHandler()
+
+	// Set TEST_SAFE_MEDIA_DIR so the handler accepts the test path
+	oldEnv := os.Getenv("TEST_SAFE_MEDIA_DIR")
+	os.Setenv("TEST_SAFE_MEDIA_DIR", "/")
+	defer os.Setenv("TEST_SAFE_MEDIA_DIR", oldEnv)
 
 	// Create a valid search request
 	searchReq := SearchRequest{

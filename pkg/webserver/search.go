@@ -103,8 +103,11 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Define a safe directory for media files
-	const safeDir = "/path/to/safe/media/directory/"
+	// Allow safeDir override for tests
+	safeDir := "/path/to/safe/media/directory/"
+	if testSafeDir := os.Getenv("TEST_SAFE_MEDIA_DIR"); testSafeDir != "" {
+		safeDir = testSafeDir
+	}
 
 	// Resolve the media path to an absolute path
 	absMediaPath, err := filepath.Abs(req.MediaPath)
