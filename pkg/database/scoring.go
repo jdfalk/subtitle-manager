@@ -77,6 +77,9 @@ func NewScoreCalculator(weights ScoringWeights) *ScoreCalculator {
 
 // CalculateLanguageMatch calculates language matching score.
 func (sc *ScoreCalculator) CalculateLanguageMatch(requested, provided string) float64 {
+	if requested == "" || provided == "" {
+		return 0.0
+	}
 	if requested == provided {
 		return 1.0
 	}
@@ -227,8 +230,8 @@ func (s *SQLStore) InsertSubtitleScore(score *SubtitleScore) error {
 
 	now := time.Now()
 	_, err = s.db.Exec(`
-		INSERT INTO subtitle_scores 
-		(subtitle_id, provider_name, language_match, provider_rank, release_match, format_match, 
+		INSERT INTO subtitle_scores
+		(subtitle_id, provider_name, language_match, provider_rank, release_match, format_match,
 		 user_rating, download_count, total_score, score_version, metadata, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		score.SubtitleID, score.ProviderName, score.LanguageMatch, score.ProviderRank,
@@ -240,8 +243,8 @@ func (s *SQLStore) InsertSubtitleScore(score *SubtitleScore) error {
 // GetSubtitleScore retrieves a subtitle score by ID.
 func (s *SQLStore) GetSubtitleScore(id string) (*SubtitleScore, error) {
 	row := s.db.QueryRow(`
-		SELECT id, subtitle_id, provider_name, language_match, provider_rank, release_match, 
-		       format_match, user_rating, download_count, total_score, score_version, metadata, 
+		SELECT id, subtitle_id, provider_name, language_match, provider_rank, release_match,
+		       format_match, user_rating, download_count, total_score, score_version, metadata,
 		       created_at, updated_at
 		FROM subtitle_scores WHERE id = ?`, id)
 
@@ -251,8 +254,8 @@ func (s *SQLStore) GetSubtitleScore(id string) (*SubtitleScore, error) {
 // GetSubtitleScoreBySubtitleID retrieves the score for a subtitle.
 func (s *SQLStore) GetSubtitleScoreBySubtitleID(subtitleID string) (*SubtitleScore, error) {
 	row := s.db.QueryRow(`
-		SELECT id, subtitle_id, provider_name, language_match, provider_rank, release_match, 
-		       format_match, user_rating, download_count, total_score, score_version, metadata, 
+		SELECT id, subtitle_id, provider_name, language_match, provider_rank, release_match,
+		       format_match, user_rating, download_count, total_score, score_version, metadata,
 		       created_at, updated_at
 		FROM subtitle_scores WHERE subtitle_id = ?`, subtitleID)
 
@@ -262,8 +265,8 @@ func (s *SQLStore) GetSubtitleScoreBySubtitleID(subtitleID string) (*SubtitleSco
 // ListSubtitleScores retrieves all subtitle scores, ordered by total score descending.
 func (s *SQLStore) ListSubtitleScores() ([]SubtitleScore, error) {
 	rows, err := s.db.Query(`
-		SELECT id, subtitle_id, provider_name, language_match, provider_rank, release_match, 
-		       format_match, user_rating, download_count, total_score, score_version, metadata, 
+		SELECT id, subtitle_id, provider_name, language_match, provider_rank, release_match,
+		       format_match, user_rating, download_count, total_score, score_version, metadata,
 		       created_at, updated_at
 		FROM subtitle_scores ORDER BY total_score DESC`)
 	if err != nil {
@@ -290,9 +293,9 @@ func (s *SQLStore) UpdateSubtitleScore(score *SubtitleScore) error {
 	}
 
 	_, err = s.db.Exec(`
-		UPDATE subtitle_scores SET 
-		provider_name = ?, language_match = ?, provider_rank = ?, release_match = ?, 
-		format_match = ?, user_rating = ?, download_count = ?, total_score = ?, 
+		UPDATE subtitle_scores SET
+		provider_name = ?, language_match = ?, provider_rank = ?, release_match = ?,
+		format_match = ?, user_rating = ?, download_count = ?, total_score = ?,
 		score_version = ?, metadata = ?, updated_at = ?
 		WHERE id = ?`,
 		score.ProviderName, score.LanguageMatch, score.ProviderRank, score.ReleaseMatch,
@@ -310,8 +313,8 @@ func (s *SQLStore) DeleteSubtitleScore(id string) error {
 // GetTopScoredSubtitles retrieves the highest-scored subtitles for a video file.
 func (s *SQLStore) GetTopScoredSubtitles(videoFile string, limit int) ([]SubtitleScore, error) {
 	rows, err := s.db.Query(`
-		SELECT ss.id, ss.subtitle_id, ss.provider_name, ss.language_match, ss.provider_rank, 
-		       ss.release_match, ss.format_match, ss.user_rating, ss.download_count, 
+		SELECT ss.id, ss.subtitle_id, ss.provider_name, ss.language_match, ss.provider_rank,
+		       ss.release_match, ss.format_match, ss.user_rating, ss.download_count,
 		       ss.total_score, ss.score_version, ss.metadata, ss.created_at, ss.updated_at
 		FROM subtitle_scores ss
 		JOIN subtitles s ON ss.subtitle_id = s.id
