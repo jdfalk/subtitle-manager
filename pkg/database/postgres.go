@@ -391,7 +391,7 @@ func (p *PostgresStore) ListTagsForMedia(mediaID int64) ([]Tag, error) {
 func (p *PostgresStore) CreateLanguageProfile(profile *LanguageProfile) error {
 	config, err := profile.MarshalConfig()
 	if err != nil {
-		return fmt.Errorf("failed to marshal profile config: %w", err)
+		return err
 	}
 
 	_, err = p.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at)
