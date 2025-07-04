@@ -12,6 +12,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/jdfalk/subtitle-manager/pkg/security"
+
 	"github.com/spf13/viper"
 )
 
@@ -59,14 +61,19 @@ func (cb *ConfigBackupper) BackupConfigFile(ctx context.Context, configFilePath 
 		return []byte{}, nil
 	}
 
+	sanitizedPath, err := security.ValidateAndSanitizePath(configFilePath)
+	if err != nil {
+		return nil, fmt.Errorf("invalid config path: %w", err)
+	}
+
 	// Check if config file exists
-	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
+	if _, err := os.Stat(sanitizedPath); os.IsNotExist(err) {
 		// Config file doesn't exist, return empty backup
 		return []byte{}, nil
 	}
 
 	// Read the config file
-	file, err := os.Open(configFilePath)
+	file, err := os.Open(sanitizedPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open config file: %w", err)
 	}
@@ -86,15 +93,20 @@ func (cb *ConfigBackupper) RestoreConfigFile(ctx context.Context, configFilePath
 		return fmt.Errorf("config file path not provided")
 	}
 
+	sanitizedPath, err := security.SanitizePath(configFilePath)
+	if err != nil {
+		return fmt.Errorf("invalid config path: %w", err)
+	}
+
 	// Create directory if it doesn't exist
-	if dir := filepath.Dir(configFilePath); dir != "" {
+	if dir := filepath.Dir(string(sanitizedPath)); dir != "" {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return fmt.Errorf("failed to create config directory: %w", err)
 		}
 	}
 
 	// Write the config file
-	file, err := os.Create(configFilePath)
+	file, err := os.Create(string(sanitizedPath))
 	if err != nil {
 		return fmt.Errorf("failed to create config file: %w", err)
 	}

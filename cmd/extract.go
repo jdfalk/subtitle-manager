@@ -9,6 +9,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 )
 
@@ -18,17 +19,24 @@ var extractCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("extract")
-		media, out := args[0], args[1]
+		media, err := security.SanitizePath(args[0])
+		if err != nil {
+			return err
+		}
+		out, err := security.SanitizePath(args[1])
+		if err != nil {
+			return err
+		}
 		if ff := viper.GetString("ffmpeg_path"); ff != "" {
 			subtitles.SetFFmpegPath(ff)
 		}
-		items, err := subtitles.ExtractFromMedia(media)
+		items, err := subtitles.ExtractFromMedia(string(media))
 		if err != nil {
 			return err
 		}
 		sub := astisub.NewSubtitles()
 		sub.Items = items
-		f, err := os.Create(out)
+		f, err := os.Create(string(out))
 		if err != nil {
 			return err
 		}
@@ -40,8 +48,8 @@ var extractCmd = &cobra.Command{
 			backend := viper.GetString("db_backend")
 			if store, err := database.OpenStore(dbPath, backend); err == nil {
 				_ = store.InsertSubtitle(&database.SubtitleRecord{
-					File:      out,
-					VideoFile: media,
+					File:      string(out),
+					VideoFile: string(media),
 					Service:   "extract",
 					Embedded:  true,
 				})

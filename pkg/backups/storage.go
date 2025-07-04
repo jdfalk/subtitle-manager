@@ -11,6 +11,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 // LocalStorage implements the Storage interface for local file system.
@@ -20,8 +22,12 @@ type LocalStorage struct {
 
 // NewLocalStorage creates a new local storage instance.
 func NewLocalStorage(basePath string) *LocalStorage {
+	sanitized, err := security.SanitizePath(basePath)
+	if err != nil {
+		sanitized = "./backups"
+	}
 	return &LocalStorage{
-		basePath: basePath,
+		basePath: string(sanitized),
 	}
 }
 
@@ -53,7 +59,11 @@ func (ls *LocalStorage) Store(ctx context.Context, data []byte, filename string)
 
 // Retrieve loads backup data from the local file system.
 func (ls *LocalStorage) Retrieve(ctx context.Context, path string) ([]byte, error) {
-	file, err := os.Open(path)
+	sanitized, err := security.SanitizePath(path)
+	if err != nil {
+		return nil, fmt.Errorf("invalid backup path: %w", err)
+	}
+	file, err := os.Open(string(sanitized))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open backup file: %w", err)
 	}
@@ -69,7 +79,11 @@ func (ls *LocalStorage) Retrieve(ctx context.Context, path string) ([]byte, erro
 
 // Delete removes backup data from the local file system.
 func (ls *LocalStorage) Delete(ctx context.Context, path string) error {
-	if err := os.Remove(path); err != nil {
+	sanitized, err := security.SanitizePath(path)
+	if err != nil {
+		return fmt.Errorf("invalid backup path: %w", err)
+	}
+	if err := os.Remove(string(sanitized)); err != nil {
 		return fmt.Errorf("failed to delete backup file: %w", err)
 	}
 	return nil

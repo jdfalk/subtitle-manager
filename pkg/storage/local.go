@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 // LocalProvider implements StorageProvider for local filesystem storage.
@@ -26,13 +28,17 @@ func NewLocalProvider(config StorageConfig) (*LocalProvider, error) {
 		basePath = "subtitles"
 	}
 
-	// Create directory if it doesn't exist
-	if err := os.MkdirAll(basePath, 0755); err != nil {
+	sanitizedBase, err := security.SanitizePath(basePath)
+	if err != nil {
+		return nil, fmt.Errorf("invalid base path: %w", err)
+	}
+
+	if err := os.MkdirAll(string(sanitizedBase), 0755); err != nil {
 		return nil, fmt.Errorf("failed to create storage directory: %w", err)
 	}
 
 	return &LocalProvider{
-		basePath: basePath,
+		basePath: string(sanitizedBase),
 	}, nil
 }
 
@@ -43,10 +49,11 @@ func (lp *LocalProvider) Store(ctx context.Context, key string, content io.Reade
 	}
 
 	// Sanitize the key to prevent directory traversal
-	key = filepath.Clean(key)
-	if strings.Contains(key, "..") || filepath.IsAbs(key) || strings.ContainsAny(key, "\\") {
+	sanitized, err := security.SanitizePath(key)
+	if err != nil {
 		return ErrInvalidKey
 	}
+	key = string(sanitized)
 
 	fullPath := filepath.Join(lp.basePath, key)
 
@@ -78,10 +85,11 @@ func (lp *LocalProvider) Retrieve(ctx context.Context, key string) (io.ReadClose
 	}
 
 	// Sanitize the key to prevent directory traversal
-	key = filepath.Clean(key)
-	if strings.Contains(key, "..") || filepath.IsAbs(key) || strings.ContainsAny(key, "\\") {
+	sanitized, err := security.SanitizePath(key)
+	if err != nil {
 		return nil, ErrInvalidKey
 	}
+	key = string(sanitized)
 
 	fullPath := filepath.Join(lp.basePath, key)
 
@@ -103,10 +111,11 @@ func (lp *LocalProvider) Delete(ctx context.Context, key string) error {
 	}
 
 	// Sanitize the key to prevent directory traversal
-	key = filepath.Clean(key)
-	if strings.Contains(key, "..") || filepath.IsAbs(key) || strings.ContainsAny(key, "\\") {
+	sanitized, err := security.SanitizePath(key)
+	if err != nil {
 		return ErrInvalidKey
 	}
+	key = string(sanitized)
 
 	fullPath := filepath.Join(lp.basePath, key)
 
@@ -125,10 +134,11 @@ func (lp *LocalProvider) Exists(ctx context.Context, key string) (bool, error) {
 	}
 
 	// Sanitize the key to prevent directory traversal
-	key = filepath.Clean(key)
-	if strings.Contains(key, "..") || filepath.IsAbs(key) || strings.ContainsAny(key, "\\") {
+	sanitized, err := security.SanitizePath(key)
+	if err != nil {
 		return false, ErrInvalidKey
 	}
+	key = string(sanitized)
 
 	fullPath := filepath.Join(lp.basePath, key)
 
@@ -187,10 +197,11 @@ func (lp *LocalProvider) GetURL(ctx context.Context, key string, expiry time.Dur
 	}
 
 	// Sanitize the key to prevent directory traversal
-	key = filepath.Clean(key)
-	if strings.Contains(key, "..") || filepath.IsAbs(key) || strings.ContainsAny(key, "\\") {
+	sanitized, err := security.SanitizePath(key)
+	if err != nil {
 		return "", ErrInvalidKey
 	}
+	key = string(sanitized)
 
 	fullPath := filepath.Join(lp.basePath, key)
 	absPath, err := filepath.Abs(fullPath)

@@ -131,6 +131,18 @@ func ValidateAndSanitizePath(userPath string) (string, error) {
 	return "", fmt.Errorf("path not in allowed directories: %s", cleanPath)
 }
 
+// SanitizePath validates and sanitizes a path while preserving the input type.
+// This is a small generic wrapper around ValidateAndSanitizePath so that code
+// working with custom string types can easily sanitize path values without
+// additional conversions.
+func SanitizePath[T ~string](p T) (T, error) {
+	sanitized, err := ValidateAndSanitizePath(string(p))
+	if err != nil {
+		return p, err
+	}
+	return T(sanitized), nil
+}
+
 // ValidateWebSocketOrigin validates the Origin header for WebSocket connections
 // to prevent cross-site WebSocket hijacking attacks. It allows connections from:
 // - Same origin (localhost with various ports for development)

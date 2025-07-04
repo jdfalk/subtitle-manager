@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 )
 
@@ -16,16 +17,28 @@ var mergeCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(3),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := logging.GetLogger("merge")
-		sub1, err := astisub.OpenFile(args[0])
+		sub1Path, err := security.SanitizePath(args[0])
 		if err != nil {
 			return err
 		}
-		sub2, err := astisub.OpenFile(args[1])
+		sub1, err := astisub.OpenFile(string(sub1Path))
+		if err != nil {
+			return err
+		}
+		sub2Path, err := security.SanitizePath(args[1])
+		if err != nil {
+			return err
+		}
+		sub2, err := astisub.OpenFile(string(sub2Path))
 		if err != nil {
 			return err
 		}
 		sub1.Items = subtitles.MergeTracks(sub1.Items, sub2.Items)
-		f, err := os.Create(args[2])
+		outPath, err := security.SanitizePath(args[2])
+		if err != nil {
+			return err
+		}
+		f, err := os.Create(string(outPath))
 		if err != nil {
 			return err
 		}

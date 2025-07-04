@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/jdfalk/subtitle-manager/pkg/security"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -56,12 +58,18 @@ func Configure() {
 		logrus.SetOutput(output)
 		return
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+	sanitizedPath, err := security.ValidateAndSanitizePath(path)
+	if err != nil {
 		output = os.Stdout
 		logrus.SetOutput(output)
 		return
 	}
-	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err := os.MkdirAll(filepath.Dir(sanitizedPath), 0o755); err != nil {
+		output = os.Stdout
+		logrus.SetOutput(output)
+		return
+	}
+	f, err := os.OpenFile(sanitizedPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
 	if err != nil {
 		output = os.Stdout
 		logrus.SetOutput(output)

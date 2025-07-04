@@ -3,11 +3,10 @@ package opensubtitles
 
 import (
 	"encoding/binary"
-	"fmt"
 	"io"
 	"os"
-	"path/filepath"
-	"strings"
+
+	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
 // fileHash calculates the OpenSubtitles file hash.
@@ -18,21 +17,12 @@ var fileHashFunc = realFileHash
 // realFileHash calculates the OpenSubtitles file hash.
 // The provided path is validated to ensure it doesn't contain path traversal attempts.
 func realFileHash(path string) (uint64, int64, error) {
-	// Clean the path to resolve .. and . elements
-	cleanPath := filepath.Clean(path)
-
-	// Security check: ensure no path traversal components remain
-	if strings.Contains(cleanPath, "..") {
-		return 0, 0, fmt.Errorf("path traversal detected: %s", path)
-	}
-
-	// Convert to absolute path for consistent checking
-	absPath, err := filepath.Abs(cleanPath)
+	sanitizedPath, err := security.ValidateAndSanitizePath(path)
 	if err != nil {
-		return 0, 0, fmt.Errorf("invalid file path: %s", path)
+		return 0, 0, err
 	}
 
-	f, err := os.Open(absPath)
+	f, err := os.Open(sanitizedPath)
 	if err != nil {
 		return 0, 0, err
 	}
