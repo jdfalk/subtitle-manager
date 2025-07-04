@@ -159,23 +159,21 @@ func TestConfigFromViper_Defaults(t *testing.T) {
 		t.Fatalf("failed to create config from viper: %v", err)
 	}
 
-	// Backend should be empty string when not set
-	if config.Backend != "" {
-		t.Errorf("expected empty backend, got %s", config.Backend)
+	// Expect default configuration values when none are set
+	if config.Backend != "memory" {
+		t.Errorf("expected backend 'memory', got %s", config.Backend)
 	}
 
-	// Memory values should be zero when not set
-	if config.Memory.MaxEntries != 0 {
-		t.Errorf("expected max entries 0, got %d", config.Memory.MaxEntries)
+	if config.Memory.MaxEntries != 10000 {
+		t.Errorf("expected max entries 10000, got %d", config.Memory.MaxEntries)
 	}
 
-	if config.Memory.MaxMemory != 0 {
-		t.Errorf("expected max memory 0, got %d", config.Memory.MaxMemory)
+	if config.Memory.MaxMemory != 100*1024*1024 {
+		t.Errorf("expected max memory 100MB, got %d", config.Memory.MaxMemory)
 	}
 
-	// Redis values should be defaults when not set
-	if config.Redis.Address != "" {
-		t.Errorf("expected empty address, got %s", config.Redis.Address)
+	if config.Redis.Address != "localhost:6379" {
+		t.Errorf("expected address 'localhost:6379', got %s", config.Redis.Address)
 	}
 }
 
