@@ -1278,7 +1278,7 @@ func GetDashboardLayout(db *sql.DB, userID int64) (string, error) {
 func (s *SQLStore) CreateLanguageProfile(profile *LanguageProfile) error {
 	config, err := profile.MarshalConfig()
 	if err != nil {
-		return fmt.Errorf("failed to marshal profile config: %w", err)
+		return err
 	}
 
 	_, err = s.db.Exec(`INSERT INTO language_profiles (id, name, config, cutoff_score, is_default, created_at, updated_at)
