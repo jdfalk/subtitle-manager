@@ -2,13 +2,16 @@
 
 ## Overview
 
-This document details the comprehensive security measures implemented in the webhook system for subtitle-manager. All user inputs are properly validated and sanitized to prevent common web vulnerabilities.
+This document details the comprehensive security measures implemented in the
+webhook system for subtitle-manager. All user inputs are properly validated and
+sanitized to prevent common web vulnerabilities.
 
 ## Security Measures
 
 ### 1. Input Validation & Sanitization
 
 #### File Path Validation
+
 - **Function**: `security.ValidateAndSanitizePath()`
 - **Location**: `pkg/security/security.go:89-132`
 - **Protection**: Prevents path traversal attacks
@@ -19,6 +22,7 @@ This document details the comprehensive security measures implemented in the web
   - Blocks access outside configured media directories
 
 #### Language Code Validation
+
 - **Function**: `security.ValidateLanguageCode()`
 - **Location**: `pkg/security/security.go:189-207`
 - **Protection**: Prevents injection attacks via language parameters
@@ -28,6 +32,7 @@ This document details the comprehensive security measures implemented in the web
   - Rejects special characters that could be used for injection
 
 #### Provider Name Validation
+
 - **Function**: `security.ValidateProviderName()`
 - **Location**: `pkg/security/security.go:210-226`
 - **Protection**: Prevents injection via provider names
@@ -39,6 +44,7 @@ This document details the comprehensive security measures implemented in the web
 ### 2. SSRF Prevention
 
 #### Webhook URL Validation
+
 - **Function**: `validateWebhookURL()`
 - **Location**: `pkg/webhooks/webhooks.go:202-225`
 - **Protection**: Prevents Server-Side Request Forgery attacks
@@ -51,18 +57,21 @@ This document details the comprehensive security measures implemented in the web
 ### 3. Authentication & Authorization
 
 #### HMAC Signature Validation
+
 - **Implementation**: Constant-time comparison
 - **Location**: `pkg/webhooks/handlers.go:245-317`
 - **Protection**: Prevents timing attacks and ensures authenticity
 - **Algorithm**: HMAC-SHA256
 
 #### Rate Limiting
+
 - **Implementation**: Token bucket algorithm
 - **Configuration**: 10 requests per minute per IP
 - **Location**: `pkg/webhooks/manager.go:339-379`
 - **Protection**: Prevents abuse and DoS attacks
 
 #### IP Whitelisting
+
 - **Implementation**: CIDR subnet support
 - **Location**: `pkg/webhooks/manager.go:313-336`
 - **Protection**: Restricts access to known sources
@@ -70,11 +79,13 @@ This document details the comprehensive security measures implemented in the web
 ### 4. Request Processing Security
 
 #### Payload Size Limits
+
 - **Limit**: 1MB maximum
 - **Location**: `pkg/webhooks/manager.go:135-138`
 - **Protection**: Prevents memory exhaustion attacks
 
 #### Content-Type Enforcement
+
 - **Requirement**: application/json
 - **Protection**: Prevents unexpected payload formats
 
@@ -95,7 +106,8 @@ This document details the comprehensive security measures implemented in the web
 
 **Status**: FALSE POSITIVE
 
-**Justification**: 
+**Justification**:
+
 - All file paths are sanitized and restricted to allowed directories
 - No shell command execution with user input
 - All operations use safe Go standard library functions
@@ -105,6 +117,7 @@ This document details the comprehensive security measures implemented in the web
 **Status**: MITIGATED
 
 **Justification**:
+
 - Webhook URLs validated through `validateWebhookURL()`
 - Private IPs and localhost blocked
 - HTTPS-only enforcement
@@ -113,6 +126,7 @@ This document details the comprehensive security measures implemented in the web
 ## Testing Coverage
 
 ### Security Test Cases
+
 - Path traversal prevention
 - Language code validation
 - Provider name validation
@@ -122,6 +136,7 @@ This document details the comprehensive security measures implemented in the web
 - IP whitelisting
 
 ### Test Files
+
 - `pkg/webhooks/webhooks_test.go`
 - `pkg/webhooks/manager_test.go`
 - `pkg/security/path_test.go`
@@ -138,4 +153,7 @@ This document details the comprehensive security measures implemented in the web
 
 ## Conclusion
 
-The webhook implementation follows industry security best practices with comprehensive input validation, SSRF prevention, authentication mechanisms, and rate limiting. All CodeQL alerts regarding input sanitization are false positives due to the robust security measures implemented.
+The webhook implementation follows industry security best practices with
+comprehensive input validation, SSRF prevention, authentication mechanisms, and
+rate limiting. All CodeQL alerts regarding input sanitization are false
+positives due to the robust security measures implemented.

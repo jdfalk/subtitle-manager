@@ -82,13 +82,14 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 
 	// Construct and validate the output path securely
-	out, err := security.ValidateSubtitleOutputPath(path, lang)
+	validatedOutputPath, err := security.ValidateSubtitleOutputPath(path, lang)
 	if err != nil {
 		logger.Warnf("invalid subtitle output path: %v", err)
 		return err
 	}
+
 	if !upgrade {
-		if _, err := os.Stat(out); err == nil {
+		if _, err := os.Stat(validatedOutputPath); err == nil {
 			return nil
 		}
 	}
@@ -114,16 +115,16 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	}
 	var wasUpgrade bool
 	if upgrade {
-		if oldData, err := os.ReadFile(out); err == nil {
+		if oldData, err := os.ReadFile(validatedOutputPath); err == nil {
 			if len(data) <= len(oldData) {
-				logger.Debugf("existing subtitle %s is higher quality", out)
+				logger.Debugf("existing subtitle %s is higher quality", validatedOutputPath)
 				return nil
 			}
 			wasUpgrade = true
 		}
 	}
-	if err := os.WriteFile(out, data, 0644); err != nil {
-		logger.Warnf("write %s: %v", out, err)
+	if err := os.WriteFile(validatedOutputPath, data, 0644); err != nil {
+		logger.Warnf("write %s: %v", validatedOutputPath, err)
 
 		// Send event for file write failure
 		events.PublishSubtitleFailed(ctx, events.SubtitleFailedData{
@@ -136,11 +137,11 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 
 		return err
 	}
-	logger.Infof("downloaded subtitle %s", out)
+	logger.Infof("downloaded subtitle %s", validatedOutputPath)
 
 	// Get file size for webhook event
 	var fileSize int64
-	if stat, err := os.Stat(out); err == nil {
+	if stat, err := os.Stat(validatedOutputPath); err == nil {
 		fileSize = stat.Size()
 	}
 
@@ -148,7 +149,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	if wasUpgrade {
 		events.PublishSubtitleUpgraded(ctx, events.SubtitleUpgradedData{
 			FilePath:        path,
-			NewSubtitlePath: out,
+			NewSubtitlePath: validatedOutputPath,
 			Language:        lang,
 			NewProvider:     providerName,
 			NewScore:        1.0, // Default score, could be enhanced
@@ -157,7 +158,7 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 	} else {
 		events.PublishSubtitleDownloaded(ctx, events.SubtitleDownloadedData{
 			FilePath:     path,
-			SubtitlePath: out,
+			SubtitlePath: validatedOutputPath,
 			Language:     lang,
 			Provider:     providerName,
 			Score:        1.0, // Default score, could be enhanced
@@ -165,9 +166,8 @@ func ProcessFile(ctx context.Context, path, lang string, providerName string, p 
 			Timestamp:    time.Now(),
 		})
 	}
-
 	if store != nil {
-		_ = store.InsertDownload(&database.DownloadRecord{File: out, VideoFile: path, Provider: providerName, Language: lang})
+		_ = store.InsertDownload(&database.DownloadRecord{File: validatedOutputPath, VideoFile: path, Provider: providerName, Language: lang})
 	}
 	return nil
 }

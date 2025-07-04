@@ -6,13 +6,15 @@
 
 # Repository Setup Guide
 
-This guide provides step-by-step instructions for setting up a repository to use the reusable workflows from this common repository.
+This guide provides step-by-step instructions for setting up a repository to use
+the reusable workflows from this common repository.
 
 ## Quick Setup
 
 ### 1. Add Workflow File
 
-Copy one of the template workflows from `templates/workflows/` to your repository's `.github/workflows/` directory:
+Copy one of the template workflows from `templates/workflows/` to your
+repository's `.github/workflows/` directory:
 
 ```bash
 # For a complete CI/CD pipeline
@@ -55,7 +57,8 @@ For the main branch (Settings → Branches):
 
 #### For Container Workflows
 
-No additional secrets required when using GitHub Container Registry (ghcr.io). The `GITHUB_TOKEN` is automatically available.
+No additional secrets required when using GitHub Container Registry (ghcr.io).
+The `GITHUB_TOKEN` is automatically available.
 
 #### For External Registries
 
@@ -269,7 +272,9 @@ container-web:
 
 ```yaml
 container:
-  if: contains(github.event.head_commit.message, '[build-container]') || github.ref == 'refs/heads/main'
+  if:
+    contains(github.event.head_commit.message, '[build-container]') ||
+    github.ref == 'refs/heads/main'
   uses: jdfalk/ghcommon/.github/workflows/buildah-multiarch.yml@main
 ```
 

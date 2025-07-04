@@ -54,7 +54,8 @@ Use this template for your pull request descriptions:
 
 ## Testing Section Guidelines
 
-- Describe how changes were tested (unit tests, integration tests, manual testing)
+- Describe how changes were tested (unit tests, integration tests, manual
+  testing)
 - Include test coverage information if available
 - Note edge cases that were specifically tested
 - Mention any testing tools or environments used
@@ -74,7 +75,8 @@ Use this template for your pull request descriptions:
 
 ## Special Cases
 
-- For breaking changes, include a "Breaking Changes" section with migration instructions
+- For breaking changes, include a "Breaking Changes" section with migration
+  instructions
 - For performance improvements, include benchmark results
 - For security fixes, note the severity and impact
 - For dependency updates, include rationale and any potential impacts
@@ -97,7 +99,8 @@ Add JWT authentication to the API endpoints
 
 ## Motivation
 
-Our API currently uses basic authentication which doesn't meet security requirements for the new client portal.
+Our API currently uses basic authentication which doesn't meet security
+requirements for the new client portal.
 
 ## Changes
 
@@ -114,6 +117,5 @@ Our API currently uses basic authentication which doesn't meet security requirem
 
 ## Related Issues
 
-Closes #234
-Related to #156
+Closes #234 Related to #156
 ```
