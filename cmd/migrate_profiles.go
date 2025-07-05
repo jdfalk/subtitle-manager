@@ -149,7 +149,7 @@ func migrateProfiles(cmd *cobra.Command, args []string) error {
 	}
 
 	// Create the profile
-	if err := store.CreateLanguageProfile(migrationProfile); err != nil {
+	if err := store.CreateLanguageProfile(ConvertProfilesToDatabase(migrationProfile)); err != nil {
 		return fmt.Errorf("failed to create migration profile: %w", err)
 	}
 
@@ -164,6 +164,36 @@ func migrateProfiles(cmd *cobra.Command, args []string) error {
 	fmt.Println("  - API: /api/profiles endpoints")
 
 	return nil
+}
+
+// ConvertProfilesToDatabase converts a profiles.LanguageProfile to a database.LanguageProfile.
+func ConvertProfilesToDatabase(p *profiles.LanguageProfile) *database.LanguageProfile {
+	if p == nil {
+		return nil
+	}
+	return &database.LanguageProfile{
+		ID:          p.ID,
+		Name:        p.Name,
+		Languages:   convertLanguages(p.Languages),
+		Providers:   p.Providers,
+		CutoffScore: p.CutoffScore,
+		IsDefault:   p.IsDefault,
+		CreatedAt:   p.CreatedAt,
+		UpdatedAt:   p.UpdatedAt,
+	}
+}
+
+func convertLanguages(src []profiles.LanguageConfig) []database.LanguageConfig {
+	out := make([]database.LanguageConfig, len(src))
+	for i, l := range src {
+		out[i] = database.LanguageConfig{
+			Language: l.Language,
+			Priority: l.Priority,
+			Forced:   l.Forced,
+			HI:       l.HI,
+		}
+	}
+	return out
 }
 
 // detectExistingLanguages attempts to detect existing language settings from various sources.
