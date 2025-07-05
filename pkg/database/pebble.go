@@ -11,13 +11,7 @@ import (
 
 	"github.com/cockroachdb/pebble"
 	"github.com/google/uuid"
-	"github.com/jdfalk/subtitle-manager/pkg/profiles"
 )
-
-// DefaultLanguageProfile returns a default profile
-func DefaultLanguageProfile() *LanguageProfile {
-	return profiles.DefaultLanguageProfile()
-}
 
 // PebbleStore wraps a Pebble database and implements basic CRUD operations
 // for SubtitleRecord documents.
@@ -1504,7 +1498,15 @@ func (p *PebbleStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 	}
 
 	// Create and return a default profile
-	defaultProfile := DefaultLanguageProfile()
+	defaultProfile := &LanguageProfile{
+		ID:          "default",
+		Name:        "Default",
+		Languages:   []LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
+		CutoffScore: 80,
+		IsDefault:   true,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
 	if err := p.CreateLanguageProfile(defaultProfile); err != nil {
 		return nil, err
 	}

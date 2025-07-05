@@ -2,15 +2,7 @@ package database
 
 import (
 	"time"
-
-	"github.com/jdfalk/subtitle-manager/pkg/profiles"
 )
-
-// LanguageProfile alias for convenience
-type LanguageProfile = profiles.LanguageProfile
-
-// MediaProfileAssignment alias for convenience
-type MediaProfileAssignment = profiles.MediaProfileAssignment
 
 // SubtitleStore abstracts subtitle history storage backends.
 type SubtitleStore interface {
