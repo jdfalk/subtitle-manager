@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Document queue config",
+  "body": "Add README section for configuring gcommon queue",
+  "labels": ["codex", "docs"],
+  "guid": "21553fc5-8c51-4d7c-9d33-f1c507900551",
+  "legacy_guid": "create-document-queue-config-2025-07-05"
+}

@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Example gcommon config",
+  "body": "Provide sample config file showing gcommon settings",
+  "labels": ["codex", "docs"],
+  "guid": "e578f4ea-cb2a-4c5e-999a-8af38a7217b1",
+  "legacy_guid": "create-example-gcommon-config-2025-07-05"
+}

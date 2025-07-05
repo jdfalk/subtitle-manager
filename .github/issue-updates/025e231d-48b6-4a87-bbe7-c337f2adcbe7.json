@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Use gcommon config",
+  "body": "Replace local config loader with gcommon/config and migrate environment variables.",
+  "labels": ["codex", "refactor"],
+  "guid": "025e231d-48b6-4a87-bbe7-c337f2adcbe7",
+  "legacy_guid": "create-use-gcommon-config-2025-07-05"
+}

@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Use gcommon health",
+  "body": "Replace existing health endpoints with gcommon/health handlers",
+  "labels": ["codex", "refactor"],
+  "guid": "29be2de4-a7e4-4080-892b-d279149d5dc6",
+  "legacy_guid": "create-use-gcommon-health-2025-07-05"
+}

@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Config migration script",
+  "body": "Write script converting existing configs to gcommon format.",
+  "labels": ["codex", "refactor"],
+  "guid": "2d89a77d-1a9d-460f-8fe8-e3fa12b50850",
+  "legacy_guid": "create-config-migration-script-2025-07-05"
+}

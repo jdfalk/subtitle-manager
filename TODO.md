@@ -669,6 +669,50 @@ into the binary and served by the `web` command.
 
 ## Additional Documentation
 
+## GCommon Refactor Plan
+
+This refactor will replace several internal packages with the shared modules provided by [gcommon](https://github.com/jdfalk/gcommon). The migration follows the hybrid Docker build approach defined in `Dockerfile.hybrid` which installs Node.js in the Go builder stage so `go generate` can embed the pre-built React UI.
+
+### Planned Steps
+
+#### Phase 1: Dependency Setup
+- Add `github.com/jdfalk/gcommon` to `go.mod` and run `go mod tidy`.
+- Vendor the module to ensure consistent builds.
+- Confirm CI passes with the new dependency.
+
+#### Phase 2: Configuration Service
+- Replace the local config loader with `gcommon/config`.
+- Write a migration script to convert existing configs to the new format.
+- Update CLI flags to pass configuration values through `gcommon`.
+- Provide an example configuration file documenting new options.
+
+#### Phase 3: Auth & Sessions
+- Swap authentication middleware to `gcommon/auth` for JWT and OAuth2 flows.
+- Configure session storage using the shared session manager.
+- Add unit tests covering token validation and session creation.
+- Remove deprecated local auth code.
+
+#### Phase 4: Metrics & Health
+- Integrate `gcommon/metrics` for Prometheus instrumentation.
+- Replace existing health endpoints with `gcommon/health` handlers.
+- Document Prometheus scraping configuration.
+
+#### Phase 5: Queue System
+- Replace the internal queue with `gcommon/queue`.
+- Migrate all job types to the new system.
+- Document queue configuration in the README.
+
+#### Phase 6: Proto Updates
+- Adopt gcommon protobuf messages for shared types.
+- Run `protoc` to generate updated Go bindings.
+- Refactor gRPC and REST handlers to use the new messages.
+
+#### Phase 7: Docker Hybrid Build
+- Standardize on `Dockerfile.hybrid` for development and CI.
+- Update build scripts and documentation for the hybrid workflow.
+
+Each step should be tracked with a dedicated issue so multiple teams can work in parallel. The issues are organized to let developers tackle setup, auth, metrics, and other areas independently.
+
 For detailed architecture and design decisions, see `docs/TECHNICAL_DESIGN.md`.
 The file `docs/BAZARR_FEATURES.md` enumerates all Bazarr features - parity has
 been achieved for providers and core functionality.

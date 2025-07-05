@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Use gcommon protos",
+  "body": "Adopt shared proto messages from gcommon",
+  "labels": ["codex", "refactor"],
+  "guid": "772a64ad-846b-4cf3-a036-7014ff785261",
+  "legacy_guid": "create-use-gcommon-protos-2025-07-05"
+}

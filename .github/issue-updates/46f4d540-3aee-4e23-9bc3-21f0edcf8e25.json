@@ -1,0 +1,12 @@
+{
+  "action": "create",
+  "title": "gcommon proto enhancements",
+  "body": "Request provider and subtitle service protos in gcommon.
+
+<!-- GCOMMON ISSUE JSON
+{"action": "create", "title": "Add provider and subtitle service protos", "body": "Add proto definitions for provider management and subtitle operations for use by Subtitle Manager.", "labels": ["enhancement"]}
+-->",
+  "labels": ["gcommon", "enhancement"],
+  "guid": "46f4d540-3aee-4e23-9bc3-21f0edcf8e25",
+  "legacy_guid": "create-gcommon-proto-enhancements-2025-07-05"
+}
