@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add gcommon module",
+  "body": "Add github.com/jdfalk/gcommon to go.mod and run go mod tidy.",
+  "labels": ["codex", "refactor"],
+  "guid": "934df791-41f8-4c7f-90bb-c3f1a89d7b75",
+  "legacy_guid": "create-add-gcommon-module-2025-07-05"
+}

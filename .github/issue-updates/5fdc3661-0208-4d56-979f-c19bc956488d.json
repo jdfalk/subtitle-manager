@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Align CLI flags",
+  "body": "Update CLI flags to pass configuration options through gcommon",
+  "labels": ["codex", "refactor"],
+  "guid": "5fdc3661-0208-4d56-979f-c19bc956488d",
+  "legacy_guid": "create-align-cli-flags-2025-07-05"
+}

@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Update dev scripts",
+  "body": "Modify helper scripts to use gcommon tools",
+  "labels": ["codex", "refactor"],
+  "guid": "67fbaefb-fc90-47a2-a455-d17fbced9c72",
+  "legacy_guid": "create-update-dev-scripts-2025-07-05"
+}

@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Integrate gcommon modules",
+  "body": "Refactor codebase to use gcommon packages for config, auth, metrics, queue, and health. Replace local implementations and update imports.",
+  "labels": ["refactor"],
+  "guid": "0ce398d3-7d4b-4e2e-847e-a59655059141",
+  "legacy_guid": "create-integrate-gcommon-modules-2025-07-05"
+}

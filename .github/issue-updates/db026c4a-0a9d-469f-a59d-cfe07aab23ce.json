@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Configure session store",
+  "body": "Initialize session storage through gcommon/auth packages",
+  "labels": ["codex", "refactor"],
+  "guid": "db026c4a-0a9d-469f-a59d-cfe07aab23ce",
+  "legacy_guid": "create-configure-session-store-2025-07-05"
+}

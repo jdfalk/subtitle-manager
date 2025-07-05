@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Adopt gcommon queue",
+  "body": "Replace local queue with gcommon/queue implementation",
+  "labels": ["codex", "refactor"],
+  "guid": "425eced9-6176-4b6c-a512-a2b684da7501",
+  "legacy_guid": "create-adopt-gcommon-queue-2025-07-05"
+}

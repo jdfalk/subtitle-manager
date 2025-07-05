@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Generate proto bindings",
+  "body": "Run protoc to generate Go code for gcommon protos",
+  "labels": ["codex", "refactor"],
+  "guid": "96b54b64-7f7f-4491-815a-59a00ef9ad87",
+  "legacy_guid": "create-generate-proto-bindings-2025-07-05"
+}

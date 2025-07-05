@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Plan gcommon refactor",
+  "body": "Investigate gcommon repo and outline integration steps in TODO.md. Create follow-up issues for implementation.",
+  "labels": ["planning"],
+  "guid": "fe8d8c81-bb85-42a4-a700-92e89276d79d",
+  "legacy_guid": "create-plan-gcommon-refactor-2025-07-05"
+}

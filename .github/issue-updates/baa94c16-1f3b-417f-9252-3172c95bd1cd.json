@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Record migration",
+  "body": "Add CHANGELOG entry describing gcommon migration",
+  "labels": ["codex", "docs"],
+  "guid": "baa94c16-1f3b-417f-9252-3172c95bd1cd",
+  "legacy_guid": "create-record-migration-2025-07-05"
+}

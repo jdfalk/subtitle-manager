@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Replace auth middleware",
+  "body": "Use gcommon/auth for token validation and OAuth2",
+  "labels": ["codex", "refactor"],
+  "guid": "5e1e4312-0d29-4a69-996a-9013179429fa",
+  "legacy_guid": "create-replace-auth-middleware-2025-07-05"
+}
