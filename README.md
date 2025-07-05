@@ -965,6 +965,24 @@ make proto-gen
 The generated files live in `pkg/translatorpb` and should be committed with your
 changes.
 
+## 🚀 Upcoming Refactor: Hybrid Protobuf + Go Types + gcommon
+
+We are migrating to a hybrid model for all shared types and business logic:
+
+- **Protobufs** will define the canonical data models (e.g., LanguageProfile, MediaItem, etc.)
+- **Go types** will be generated from Protobufs for use in all Go projects
+- **gcommon** will contain all shared business logic, helpers, and interface implementations, importing the generated types
+- **Other languages** (Python, JS, etc.) can generate types from the same Protobufs as needed
+- **All work for this migration will be done on the `gcommon-refactor` branch**
+- **Main branches** will continue using Go types and type packages until the migration is complete
+
+This approach will:
+
+- Eliminate duplication and type drift
+- Enable cross-language compatibility
+- Centralize business logic and validation
+- Allow for incremental migration and testing
+
 The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work focuses on Sonarr/Radarr sync improvements and the metadata editor. See `TODO.md` for details.
 Extensive architectural details and design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New contributors should review these documents to understand package responsibilities and completed features.
 For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
@@ -982,4 +1000,3 @@ For security vulnerability reporting and our complete security policy, see [SECU
 ## License
 
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
-````
