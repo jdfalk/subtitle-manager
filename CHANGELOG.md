@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Planned: Hybrid Protobuf + Go Types + gcommon Migration
+
+- We are migrating to a hybrid model for all shared types and business logic:
+
+  - **Protobufs** will define the canonical data models (e.g., LanguageProfile, MediaItem, etc.)
+  - **Go types** will be generated from Protobufs for use in all Go projects
+  - **gcommon** will contain all shared business logic, helpers, and interface implementations, importing the generated types
+  - **Other languages** (Python, JS, etc.) can generate types from the same Protobufs as needed
+  - **All work for this migration will be done on the `gcommon-refactor` branch**
+  - **Main branches** will continue using Go types and type packages until the migration is complete
+
+- This approach will:
+
+  - Eliminate duplication and type drift
+  - Enable cross-language compatibility
+  - Centralize business logic and validation
+  - Allow for incremental migration and testing
+
 ### Added
 
 - **Automatic Episode Monitoring System**: Complete subtitle monitoring solution
