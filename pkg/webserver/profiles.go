@@ -131,7 +131,7 @@ func handleCreateProfile(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 	defer store.Close()
 
-	if err := store.CreateLanguageProfile(&profile); err != nil {
+	if err := store.CreateLanguageProfile(ConvertProfilesToDatabase(&profile)); err != nil {
 		http.Error(w, "Failed to create profile", http.StatusInternalServerError)
 		return
 	}
@@ -191,7 +191,7 @@ func handleUpdateProfile(w http.ResponseWriter, r *http.Request, db *sql.DB, pro
 	}
 	defer store.Close()
 
-	if err := store.UpdateLanguageProfile(&profile); err != nil {
+	if err := store.UpdateLanguageProfile(ConvertProfilesToDatabase(&profile)); err != nil {
 		http.Error(w, "Failed to update profile", http.StatusInternalServerError)
 		return
 	}
@@ -351,6 +351,35 @@ func handleRemoveMediaProfile(w http.ResponseWriter, r *http.Request, db *sql.DB
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// ConvertProfilesToDatabase converts a profiles.LanguageProfile to a database.LanguageProfile.
+func ConvertProfilesToDatabase(p *profiles.LanguageProfile) *database.LanguageProfile {
+	if p == nil {
+		return nil
+	}
+	return &database.LanguageProfile{
+		ID:          p.ID,
+		Name:        p.Name,
+		Languages:   convertLanguages(p.Languages),
+		CutoffScore: p.CutoffScore,
+		IsDefault:   p.IsDefault,
+		CreatedAt:   p.CreatedAt,
+		UpdatedAt:   p.UpdatedAt,
+	}
+}
+
+func convertLanguages(src []profiles.LanguageConfig) []database.LanguageConfig {
+	out := make([]database.LanguageConfig, len(src))
+	for i, l := range src {
+		out[i] = database.LanguageConfig{
+			Language: l.Language,
+			Priority: l.Priority,
+			Forced:   l.Forced,
+			HI:       l.HI,
+		}
+	}
+	return out
 }
 
 // extractIDFromPath extracts the ID from a URL path.

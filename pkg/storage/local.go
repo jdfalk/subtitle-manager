@@ -119,7 +119,7 @@ func (lp *LocalProvider) Delete(ctx context.Context, key string) error {
 
 	fullPath := filepath.Join(lp.basePath, key)
 
-	err := os.Remove(fullPath)
+	err = os.Remove(fullPath)
 	if err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to delete file: %w", err)
 	}
@@ -142,7 +142,7 @@ func (lp *LocalProvider) Exists(ctx context.Context, key string) (bool, error) {
 
 	fullPath := filepath.Join(lp.basePath, key)
 
-	_, err := os.Stat(fullPath)
+	_, err = os.Stat(fullPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
