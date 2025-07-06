@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"sort"
 	"time"
 )
 
@@ -220,10 +221,43 @@ func GetSubtitleHistory(store SubtitleStore, videoFile string) ([]SubtitleRecord
 		return nil, fmt.Errorf("failed to list subtitles for video: %w", err)
 	}
 
-	// TODO: Sort records to show modification hierarchy
-	// This would require additional logic to build a tree structure from parent-child relationships
+	// Organize records by parent/child relationships to show
+	// modification hierarchy in chronological order.
+	byID := make(map[string]SubtitleRecord)
+	children := make(map[string][]SubtitleRecord)
+	var roots []SubtitleRecord
 
-	return records, nil
+	for _, r := range records {
+		byID[r.ID] = r
+		if r.ParentID == nil || *r.ParentID == "" {
+			roots = append(roots, r)
+			continue
+		}
+		parent := *r.ParentID
+		children[parent] = append(children[parent], r)
+	}
+
+	sort.Slice(roots, func(i, j int) bool { return roots[i].CreatedAt.Before(roots[j].CreatedAt) })
+	for id := range children {
+		sort.Slice(children[id], func(i, j int) bool {
+			return children[id][i].CreatedAt.Before(children[id][j].CreatedAt)
+		})
+	}
+
+	var ordered []SubtitleRecord
+	var walk func(SubtitleRecord)
+	walk = func(rec SubtitleRecord) {
+		ordered = append(ordered, rec)
+		for _, child := range children[rec.ID] {
+			walk(child)
+		}
+	}
+
+	for _, r := range roots {
+		walk(r)
+	}
+
+	return ordered, nil
 }
 
 // ValidateConfidenceScore ensures confidence scores are within valid range (0-1).

@@ -313,3 +313,67 @@ func TestGetProviderPerformanceStats(t *testing.T) {
 		t.Errorf("expected avg rating 4.25, got %v", stats.AvgRating)
 	}
 }
+
+func TestGetSubtitleHistoryHierarchy(t *testing.T) {
+	store := getTestStore(t)
+	defer store.Close()
+
+	// Insert base subtitle
+	base := &SubtitleRecord{
+		File:      "base.srt",
+		VideoFile: "video.mkv",
+		Language:  "en",
+		Service:   "test",
+	}
+	if err := store.InsertSubtitle(base); err != nil {
+		t.Fatalf("insert base subtitle: %v", err)
+	}
+
+	recs, err := store.ListSubtitles()
+	if err != nil {
+		t.Fatalf("list subtitles: %v", err)
+	}
+	if len(recs) == 0 {
+		t.Fatal("no subtitles returned")
+	}
+	baseStored := recs[0]
+
+	// Create a synced subtitle linked to the base
+	syncRec := TrackSubtitleRelationship(&baseStored, "sync.srt", ModificationTypeSync)
+	if err := store.InsertSubtitle(syncRec); err != nil {
+		t.Fatalf("insert sync subtitle: %v", err)
+	}
+
+	syncStored, err := store.ListSubtitlesByVideo("video.mkv")
+	if err != nil {
+		t.Fatalf("list subtitles by video: %v", err)
+	}
+	// syncStored[0] will be newest due to DESC ordering, so baseStored at end
+	// Determine ID of the sync subtitle
+	var storedSync SubtitleRecord
+	for _, r := range syncStored {
+		if r.File == "sync.srt" {
+			storedSync = r
+			break
+		}
+	}
+
+	// Add a translated subtitle linked to the synced subtitle
+	transRec := TrackSubtitleRelationship(&storedSync, "trans.srt", ModificationTypeTranslate)
+	if err := store.InsertSubtitle(transRec); err != nil {
+		t.Fatalf("insert translated subtitle: %v", err)
+	}
+
+	history, err := GetSubtitleHistory(store, "video.mkv")
+	if err != nil {
+		t.Fatalf("GetSubtitleHistory failed: %v", err)
+	}
+
+	if len(history) != 3 {
+		t.Fatalf("expected 3 records, got %d", len(history))
+	}
+
+	if history[0].File != "base.srt" || history[1].File != "sync.srt" || history[2].File != "trans.srt" {
+		t.Fatalf("unexpected order: %+v", history)
+	}
+}
