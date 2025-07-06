@@ -312,7 +312,7 @@ func TestAPIError(t *testing.T) {
 	apiErr, ok := err.(*APIError)
 	require.True(t, ok)
 	assert.Equal(t, 401, apiErr.StatusCode)
-	assert.Equal(t, "unauthorized", apiErr.Error)
+	assert.Equal(t, "unauthorized", apiErr.Code)
 	assert.Equal(t, "Authentication required", apiErr.Message)
 	assert.True(t, apiErr.IsAuthenticationError())
 	assert.False(t, apiErr.IsAuthorizationError())

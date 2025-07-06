@@ -25,18 +25,21 @@ func TestTranslateFileToSRT(t *testing.T) {
 	if err != nil {
 		t.Fatalf("getwd: %v", err)
 	}
-	inPath := filepath.Join(wd, "../../testdata/simple.srt")
+	src := filepath.Join(wd, "../../testdata/simple.srt")
+	inPath := filepath.Join(t.TempDir(), "in.srt")
+	inData, _ := os.ReadFile(src)
+	os.WriteFile(inPath, inData, 0644)
 	out := filepath.Join(t.TempDir(), "out.srt")
 	err = TranslateFileToSRT(inPath, out, "es", "google", "k", "", "")
 	if err != nil {
 		t.Fatalf("translate: %v", err)
 	}
-	data, err := os.ReadFile(out)
+	outData, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatalf("read: %v", err)
 	}
-	if !strings.Contains(string(data), "hola") {
-		t.Fatalf("expected translated text, got %s", data)
+	if !strings.Contains(string(outData), "hola") {
+		t.Fatalf("expected translated text, got %s", outData)
 	}
 }
 

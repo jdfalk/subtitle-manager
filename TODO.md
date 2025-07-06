@@ -147,7 +147,7 @@ Current tag implementations will be migrated to the unified system:
       operations
 - [x] **Add provider configuration tests**: Test subtitle provider setup and
       validation
-- [ ] **Add bulk operations tests**: Test batch subtitle download and processing
+- [x] **Add bulk operations tests**: Test batch subtitle download and processing
 
 ## 🚨 High Priority UI/UX Improvements
 
