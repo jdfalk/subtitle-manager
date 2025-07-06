@@ -10,6 +10,8 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
+var historyVideo string
+
 var historyCmd = &cobra.Command{
 	Use:   "history",
 	Short: "Show translation history",
@@ -23,7 +25,12 @@ var historyCmd = &cobra.Command{
 		}
 		defer store.Close()
 
-		recs, err := store.ListSubtitles()
+		var recs []database.SubtitleRecord
+		if historyVideo != "" {
+			recs, err = store.ListSubtitlesByVideo(historyVideo)
+		} else {
+			recs, err = store.ListSubtitles()
+		}
 		if err != nil {
 			return err
 		}
@@ -36,5 +43,6 @@ var historyCmd = &cobra.Command{
 }
 
 func init() {
+	historyCmd.Flags().StringVar(&historyVideo, "video", "", "filter by video file")
 	rootCmd.AddCommand(historyCmd)
 }
