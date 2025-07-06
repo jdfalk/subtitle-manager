@@ -175,7 +175,6 @@ func ConvertProfilesToDatabase(p *profiles.LanguageProfile) *database.LanguagePr
 		ID:          p.ID,
 		Name:        p.Name,
 		Languages:   convertLanguages(p.Languages),
-		Providers:   p.Providers,
 		CutoffScore: p.CutoffScore,
 		IsDefault:   p.IsDefault,
 		CreatedAt:   p.CreatedAt,
@@ -183,10 +182,10 @@ func ConvertProfilesToDatabase(p *profiles.LanguageProfile) *database.LanguagePr
 	}
 }
 
-func convertLanguages(src []profiles.LanguageConfig) []database.LanguageConfig {
-	out := make([]database.LanguageConfig, len(src))
+func convertLanguages(src []profiles.LanguageConfig) []profiles.LanguageConfig {
+	out := make([]profiles.LanguageConfig, len(src))
 	for i, l := range src {
-		out[i] = database.LanguageConfig{
+		out[i] = profiles.LanguageConfig{
 			Language: l.Language,
 			Priority: l.Priority,
 			Forced:   l.Forced,
