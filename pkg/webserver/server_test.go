@@ -965,6 +965,76 @@ func TestProvidersUpdateInvalid(t *testing.T) {
 	}
 }
 
+// TestProvidersListAfterUpdate ensures that provider changes persist
+// when fetching the provider list via GET /api/providers.
+func TestProvidersListAfterUpdate(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	key := setupTestUser(t, db)
+
+	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
+	viper.SetConfigFile(tmp)
+	viper.Set("providers.generic.enabled", false)
+	viper.Set("providers.generic.config", map[string]interface{}{"api_url": ""})
+	testutil.MustNoError(t, "write config", viper.WriteConfig())
+	defer viper.Reset()
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	body := strings.NewReader(`{"name":"generic","enabled":true,"config":{"api_url":"http://example.com"}}`)
+	req, _ := http.NewRequest("POST", srv.URL+"/api/providers", body)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusNoContent {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+
+	req2, _ := http.NewRequest("GET", srv.URL+"/api/providers", nil)
+	req2.Header.Set("X-API-Key", key)
+	resp2, err := srv.Client().Do(req2)
+	if err != nil {
+		t.Fatalf("get providers: %v", err)
+	}
+	defer resp2.Body.Close()
+	var list []struct {
+		Name    string                 `json:"name"`
+		Enabled bool                   `json:"enabled"`
+		Config  map[string]interface{} `json:"config"`
+	}
+	if err := json.NewDecoder(resp2.Body).Decode(&list); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	found := false
+	for _, p := range list {
+		if p.Name == "generic" {
+			found = true
+			if !p.Enabled {
+				t.Fatalf("provider should be enabled")
+			}
+			if p.Config["api_url"] != "http://example.com" {
+				t.Fatalf("config not returned: %v", p.Config["api_url"])
+			}
+		}
+	}
+	if !found {
+		t.Fatalf("generic provider missing in list")
+	}
+}
+
 // TestExtractLanguageFromFilename verifies default detection and pattern overrides.
 func TestExtractLanguageFromFilename(t *testing.T) {
 	ResetLanguagePatterns()

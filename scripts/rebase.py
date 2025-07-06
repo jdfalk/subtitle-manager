@@ -210,6 +210,16 @@ class SmartRebase:
         except GitRebaseError:
             return False
 
+    def remote_exists(self, remote_name: str) -> bool:
+        """Check if a Git remote exists"""
+        try:
+            result = self.run_command(
+                ["git", "remote", "get-url", remote_name], check=False
+            )
+            return result.returncode == 0
+        except GitRebaseError:
+            return False
+
     def create_backup_branch(self, source_branch: str) -> str:
         """
         Create a backup branch before starting rebase.
@@ -601,9 +611,12 @@ class SmartRebase:
             # Create backup branch
             self.create_backup_branch(source_branch)
 
-            # Fetch latest changes
-            self.log_info("Fetching latest changes from remote")
-            self.run_command(["git", "fetch", "origin"])
+            # Fetch latest changes if remote exists
+            if self.remote_exists("origin"):
+                self.log_info("Fetching latest changes from remote")
+                self.run_command(["git", "fetch", "origin"])
+            else:
+                self.log_warning("Remote 'origin' not found, skipping fetch")
 
             # Perform the rebase
             result = self.perform_rebase(target_branch, mode)

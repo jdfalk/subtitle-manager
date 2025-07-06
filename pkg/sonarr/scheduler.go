@@ -22,3 +22,13 @@ func StartSync(ctx context.Context, interval time.Duration, c *Client, store dat
 		return Sync(ctx, c, store)
 	})
 }
+
+// StartContinuousSync runs Sync on a fixed interval with optional jitter.
+// It leverages scheduler.RunWithOptions so multiple sync jobs can stagger their
+// execution and avoid conflicts.
+func StartContinuousSync(ctx context.Context, interval, jitter time.Duration, c *Client, store database.SubtitleStore) {
+	opts := scheduler.Options{Interval: interval, Jitter: jitter}
+	go scheduler.RunWithOptions(ctx, opts, func(ctx context.Context) error {
+		return Sync(ctx, c, store)
+	})
+}
