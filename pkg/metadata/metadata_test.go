@@ -128,6 +128,58 @@ func TestFetchEpisodeMetadata(t *testing.T) {
 	}
 }
 
+func TestFetchMovieMetadataByID(t *testing.T) {
+	tmdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/movie/5" {
+			fmt.Fprint(w, `{"id":5,"title":"ByID","release_date":"2021-05-01"}`)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer tmdbSrv.Close()
+	omdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, `{"Response":"True","Language":"German","imdbRating":"6.5"}`)
+	}))
+	defer omdbSrv.Close()
+
+	SetTMDBAPIBase(tmdbSrv.URL)
+	SetOMDBAPIBase(omdbSrv.URL)
+
+	m, err := FetchMovieMetadataByID(context.Background(), 5, "k", "o")
+	if err != nil {
+		t.Fatalf("fetch by id: %v", err)
+	}
+	if m.Title != "ByID" || m.Year != 2021 || m.Rating != 6.5 || len(m.Languages) != 1 {
+		t.Fatalf("unexpected movie %+v", m)
+	}
+}
+
+func TestFetchEpisodeMetadataByID(t *testing.T) {
+	tmdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/tv/3/season/2/episode/4" {
+			fmt.Fprint(w, `{"id":7,"name":"ID Episode","show_name":"Show"}`)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer tmdbSrv.Close()
+	omdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, `{"Response":"True","Language":"Italian","imdbRating":"7.0"}`)
+	}))
+	defer omdbSrv.Close()
+
+	SetTMDBAPIBase(tmdbSrv.URL)
+	SetOMDBAPIBase(omdbSrv.URL)
+
+	m, err := FetchEpisodeMetadataByID(context.Background(), 3, 2, 4, "k", "o")
+	if err != nil {
+		t.Fatalf("fetch by id: %v", err)
+	}
+	if m.TMDBID != 7 || m.EpisodeTitle != "ID Episode" || m.Rating != 7.0 || len(m.Languages) != 1 {
+		t.Fatalf("unexpected ep %+v", m)
+	}
+}
+
 func TestScanLibraryProgress(t *testing.T) {
 	// This test uses SQLite file database, skip if not available
 	if err := testutil.CheckSQLiteSupport(); err != nil {
