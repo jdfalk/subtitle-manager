@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Improve GetAudioTracks parsing",
+  "body": "Implement proper ffprobe JSON parsing to return accurate track info",
+  "labels": ["codex", "enhancement"],
+  "guid": "b28d80de-7992-4cdd-9a45-eda228ebb320",
+  "legacy_guid": "create-improve-getaudiotracks-parsing-2025-07-06"
+}

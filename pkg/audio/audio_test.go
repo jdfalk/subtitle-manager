@@ -4,6 +4,7 @@ package audio
 import (
 	"os"
 	"os/exec"
+	"path/filepath"
 	"testing"
 	"time"
 )
@@ -195,23 +196,27 @@ func TestGetAudioTracksErrorHandling(t *testing.T) {
 
 // TestGetAudioTracksWithMockData tests GetAudioTracks with predictable data.
 func TestGetAudioTracksWithMockData(t *testing.T) {
-	if !isFFmpegAvailable() {
-		t.Skip("ffprobe not available, skipping audio track parsing test")
+	dir := t.TempDir()
+	script := filepath.Join(dir, "ffprobe")
+	data := `#!/bin/sh
+echo '{"streams":[{"index":0,"codec_name":"aac","channels":2,"tags":{"language":"eng"}},{"index":1,"codec_name":"aac","channels":6,"tags":{"language":"spa"}}]}'
+`
+	if err := os.WriteFile(script, []byte(data), 0755); err != nil {
+		t.Fatalf("write script: %v", err)
 	}
+	old := os.Getenv("PATH")
+	os.Setenv("PATH", dir+":"+old)
+	defer os.Setenv("PATH", old)
 
-	// Create a temporary empty file for testing
-	tmpFile, err := os.CreateTemp("", "test-*.mp4")
+	tracks, err := GetAudioTracks("dummy.mkv")
 	if err != nil {
-		t.Fatalf("failed to create temp file: %v", err)
+		t.Fatalf("GetAudioTracks returned error: %v", err)
 	}
-	defer os.Remove(tmpFile.Name())
-	tmpFile.Close()
-
-	// This will fail with ffprobe, but we can test the error handling
-	tracks, err := GetAudioTracks(tmpFile.Name())
-	// The function should return an error for an invalid file
-	if err == nil && len(tracks) > 0 {
-		t.Logf("unexpected success with empty file, got %d tracks", len(tracks))
+	if len(tracks) != 2 {
+		t.Fatalf("expected 2 tracks, got %d", len(tracks))
+	}
+	if tracks[0]["language"] != "eng" || tracks[1]["language"] != "spa" {
+		t.Errorf("unexpected languages: %v", tracks)
 	}
 }
 

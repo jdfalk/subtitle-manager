@@ -30,9 +30,11 @@ package audio
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
@@ -118,7 +120,7 @@ func ExtractTrackWithDuration(mediaPath string, track int, offset, duration time
 func GetAudioTracks(mediaPath string) ([]map[string]string, error) {
 	cmd := exec.CommandContext(context.Background(), "ffprobe",
 		"-v", "quiet",
-		"-print_format", "csv",
+		"-print_format", "json",
 		"-show_streams",
 		"-select_streams", "a", // Audio streams only
 		mediaPath)
@@ -128,20 +130,31 @@ func GetAudioTracks(mediaPath string) ([]map[string]string, error) {
 		return nil, fmt.Errorf("ffprobe failed: %v: %s", err, out)
 	}
 
-	// Parse ffprobe CSV output
-	lines := splitLines(string(out))
+	type ffprobeOutput struct {
+		Streams []struct {
+			Index     int    `json:"index"`
+			CodecName string `json:"codec_name"`
+			Channels  int    `json:"channels"`
+			Tags      struct {
+				Language string `json:"language"`
+			} `json:"tags"`
+		} `json:"streams"`
+	}
+
+	var result ffprobeOutput
+	if err := json.Unmarshal(out, &result); err != nil {
+		return nil, fmt.Errorf("failed to parse ffprobe output: %w", err)
+	}
+
 	var tracks []map[string]string
-
-	for _, line := range lines {
-		if line == "" {
-			continue
-		}
-
-		// Basic track info - in a real implementation you'd parse the CSV properly
+	for _, s := range result.Streams {
 		track := map[string]string{
-			"index":    fmt.Sprintf("%d", len(tracks)),
-			"codec":    "unknown",
-			"language": "unknown",
+			"index":    fmt.Sprintf("%d", s.Index),
+			"codec":    s.CodecName,
+			"channels": fmt.Sprintf("%d", s.Channels),
+		}
+		if s.Tags.Language != "" {
+			track["language"] = s.Tags.Language
 		}
 		tracks = append(tracks, track)
 	}
@@ -152,7 +165,8 @@ func GetAudioTracks(mediaPath string) ([]map[string]string, error) {
 // splitLines splits a string by newlines and filters empty lines
 func splitLines(s string) []string {
 	var lines []string
-	for _, line := range []string{s} { // Simplified - should use strings.Split
+	s = strings.ReplaceAll(s, "\r\n", "\n")
+	for _, line := range strings.Split(s, "\n") {
 		if line != "" {
 			lines = append(lines, line)
 		}
