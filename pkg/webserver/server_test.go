@@ -885,8 +885,8 @@ func TestProvidersDefault(t *testing.T) {
 	}
 }
 
-// TestProviderConfigUpdate verifies that provider configuration updates via POST
-// /api/providers are persisted in viper and the config file.
+// TestProviderConfigUpdate verifies that POST /api/providers updates provider configuration
+// and persists the change to the config file.
 func TestProviderConfigUpdate(t *testing.T) {
 	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
@@ -900,20 +900,21 @@ func TestProviderConfigUpdate(t *testing.T) {
 	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
 	viper.SetConfigFile(tmp)
 	viper.Set("providers.generic.enabled", false)
-	viper.Set("providers.generic.config", map[string]interface{}{"api_url": ""})
-	testutil.MustNoError(t, "write config", viper.WriteConfig())
+	viper.Set("providers.generic.config", map[string]any{"api_url": "old"})
+	if err := viper.WriteConfig(); err != nil {
+		t.Fatalf("write config: %v", err)
+	}
 	defer viper.Reset()
 
 	h, err := Handler(db)
 	if err != nil {
-		t.Fatalf("handler error: %v", err)
+		t.Fatalf("handler: %v", err)
 	}
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 
-	body := strings.NewReader(`{"name":"generic","enabled":true,"config":{"api_url":"http://example.com"}}`)
+	body := strings.NewReader(`{"name":"generic","enabled":true,"config":{"api_url":"new"}}`)
 	req, _ := http.NewRequest("POST", srv.URL+"/api/providers", body)
-	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-API-Key", key)
 	resp, err := srv.Client().Do(req)
 	if err != nil {
@@ -922,17 +923,21 @@ func TestProviderConfigUpdate(t *testing.T) {
 	if resp.StatusCode != http.StatusNoContent {
 		t.Fatalf("status %d", resp.StatusCode)
 	}
+	resp.Body.Close()
 
 	if !viper.GetBool("providers.generic.enabled") {
-		t.Fatalf("provider not enabled")
+		t.Fatalf("config not updated: enabled")
 	}
-	cfg := viper.GetStringMap("providers.generic.config")
-	if cfg["api_url"] != "http://example.com" {
-		t.Fatalf("api_url not updated: %v", cfg["api_url"])
+	cfg := viper.GetStringMapString("providers.generic.config")
+	if cfg["api_url"] != "new" {
+		t.Fatalf("config not updated: %v", cfg)
 	}
-	data := testutil.MustGet(t, "read config", func() ([]byte, error) { return os.ReadFile(tmp) })
-	if !strings.Contains(string(data), "api_url: http://example.com") {
-		t.Fatalf("config file not updated: %s", string(data))
+	data, err := os.ReadFile(tmp)
+	if err != nil {
+		t.Fatalf("read cfg: %v", err)
+	}
+	if !strings.Contains(string(data), "api_url: new") {
+		t.Fatalf("file not written")
 	}
 }
 
