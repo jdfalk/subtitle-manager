@@ -19,7 +19,12 @@ describe('ProviderConfigDialog', () => {
     });
 
     render(
-      <ProviderConfigDialog open provider={null} onClose={() => {}} onSave={() => {}} />
+      <ProviderConfigDialog
+        open
+        provider={null}
+        onClose={() => {}}
+        onSave={() => {}}
+      />
     );
 
     await waitFor(() => {
@@ -40,7 +45,12 @@ describe('ProviderConfigDialog', () => {
 
     const onSave = vi.fn();
     render(
-      <ProviderConfigDialog open provider={null} onClose={() => {}} onSave={onSave} />
+      <ProviderConfigDialog
+        open
+        provider={null}
+        onClose={() => {}}
+        onSave={onSave}
+      />
     );
 
     // select provider
@@ -48,8 +58,12 @@ describe('ProviderConfigDialog', () => {
     fireEvent.click(await screen.findByText('OpenSubtitles.org'));
 
     // fill required fields
-    fireEvent.change(screen.getByLabelText('API Key *'), { target: { value: 'k' } });
-    fireEvent.change(screen.getByLabelText('User Agent *'), { target: { value: 'ua' } });
+    fireEvent.change(screen.getByLabelText('API Key *'), {
+      target: { value: 'k' },
+    });
+    fireEvent.change(screen.getByLabelText('User Agent *'), {
+      target: { value: 'ua' },
+    });
 
     fireEvent.click(screen.getByRole('button', { name: 'Save Configuration' }));
 
