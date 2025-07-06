@@ -885,6 +885,86 @@ func TestProvidersDefault(t *testing.T) {
 	}
 }
 
+// TestProvidersUpdate verifies that provider configuration updates via POST
+// /api/providers are persisted in viper and the config file.
+func TestProvidersUpdate(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	key := setupTestUser(t, db)
+
+	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
+	viper.SetConfigFile(tmp)
+	viper.Set("providers.generic.enabled", false)
+	viper.Set("providers.generic.config", map[string]interface{}{"api_url": ""})
+	testutil.MustNoError(t, "write config", viper.WriteConfig())
+	defer viper.Reset()
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	body := strings.NewReader(`{"name":"generic","enabled":true,"config":{"api_url":"http://example.com"}}`)
+	req, _ := http.NewRequest("POST", srv.URL+"/api/providers", body)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusNoContent {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+
+	if !viper.GetBool("providers.generic.enabled") {
+		t.Fatalf("provider not enabled")
+	}
+	cfg := viper.GetStringMap("providers.generic.config")
+	if cfg["api_url"] != "http://example.com" {
+		t.Fatalf("api_url not updated: %v", cfg["api_url"])
+	}
+	data := testutil.MustGet(t, "read config", func() ([]byte, error) { return os.ReadFile(tmp) })
+	if !strings.Contains(string(data), "api_url: http://example.com") {
+		t.Fatalf("config file not updated: %s", string(data))
+	}
+}
+
+// TestProvidersUpdateInvalid verifies that invalid JSON results in 400 Bad Request.
+func TestProvidersUpdateInvalid(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	key := setupTestUser(t, db)
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler error: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest("POST", srv.URL+"/api/providers", strings.NewReader("{invalid"))
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusBadRequest {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+}
+
 // TestExtractLanguageFromFilename verifies default detection and pattern overrides.
 func TestExtractLanguageFromFilename(t *testing.T) {
 	ResetLanguagePatterns()
