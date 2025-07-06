@@ -791,6 +791,5 @@ development before the project can be considered feature complete.
 - Dual-subtitle mode for languages with different grammar.
 - Experimental minimum display time mode with catch-up logic for HI subtitles.
 
-**Note**: `pkg/audio.GetAudioTracks` uses simplified CSV parsing and the
-`splitLines` helper is a placeholder. Proper ffprobe output parsing is still
-needed.
+**Note**: `pkg/audio.GetAudioTracks` now parses ffprobe JSON output for accurate
+audio track details. The `splitLines` helper has been updated accordingly.
