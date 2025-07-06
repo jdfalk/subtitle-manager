@@ -208,7 +208,7 @@ func TestSubtitleScoreCalculateScore(t *testing.T) {
 
 // TestSubtitleScoringSQLiteIntegration tests score operations with SQLite.
 func TestSubtitleScoringSQLiteIntegration(t *testing.T) {
-	if !hasSQLite() {
+	if !HasSQLite() {
 		t.Skip("SQLite not available")
 	}
 

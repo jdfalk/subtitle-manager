@@ -143,17 +143,22 @@ func SanitizePath[T ~string](p T) (T, error) {
 	return T(sanitized), nil
 }
 
-// SanitizeRelativePath cleans a relative path and checks for traversal.
-// It returns a cleaned path using forward slashes.
+// SanitizeRelativePath cleans a relative path, preventing path traversal.
 func SanitizeRelativePath(p string) (string, error) {
-	if filepath.IsAbs(p) || strings.HasPrefix(p, "\\") || strings.HasPrefix(p, "/") {
+	if p == "" {
+		return "", fmt.Errorf("path cannot be empty")
+	}
+	if filepath.IsAbs(p) {
 		return "", fmt.Errorf("path must be relative")
 	}
-	if strings.Contains(p, "..") {
+	if strings.HasPrefix(p, "\\") || strings.HasPrefix(p, "/") || strings.Contains(p, ":") {
+		return "", fmt.Errorf("invalid path")
+	}
+	clean := filepath.Clean(p)
+	if strings.Contains(clean, "..") || strings.HasPrefix(clean, "..") {
 		return "", fmt.Errorf("path traversal detected: %s", p)
 	}
-	clean := filepath.ToSlash(filepath.Clean(p))
-	return clean, nil
+	return filepath.ToSlash(clean), nil
 }
 
 // ValidateWebSocketOrigin validates the Origin header for WebSocket connections

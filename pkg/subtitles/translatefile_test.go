@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
+	"github.com/spf13/viper"
 )
 
 func TestTranslateFileToSRT(t *testing.T) {
@@ -25,10 +26,13 @@ func TestTranslateFileToSRT(t *testing.T) {
 	if err != nil {
 		t.Fatalf("getwd: %v", err)
 	}
+	// Use the secure approach: copy test data to temp directory and set media_directory
 	src := filepath.Join(wd, "../../testdata/simple.srt")
 	inPath := filepath.Join(t.TempDir(), "in.srt")
 	inData, _ := os.ReadFile(src)
 	os.WriteFile(inPath, inData, 0644)
+	viper.Set("media_directory", filepath.Dir(inPath))
+	t.Cleanup(viper.Reset)
 	out := filepath.Join(t.TempDir(), "out.srt")
 	err = TranslateFileToSRT(inPath, out, "es", "google", "k", "", "")
 	if err != nil {
@@ -85,6 +89,8 @@ func TestTranslateFileToSRTCache(t *testing.T) {
 	defer translator.SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
 
 	dir := t.TempDir()
+	viper.Set("media_directory", dir)
+	t.Cleanup(viper.Reset)
 	in := filepath.Join(dir, "in.srt")
 	data := "1\n00:00:01,000 --> 00:00:02,000\nHello\n\n2\n00:00:02,500 --> 00:00:03,500\nHello\n"
 	if err := os.WriteFile(in, []byte(data), 0644); err != nil {

@@ -35,7 +35,7 @@ func TestDefaultLanguageProfile(t *testing.T) {
 
 // TestLanguageProfileSQLiteIntegration tests language profile operations with SQLite.
 func TestLanguageProfileSQLiteIntegration(t *testing.T) {
-	if !hasSQLite() {
+	if !HasSQLite() {
 		t.Skip("SQLite not available")
 	}
 
@@ -75,10 +75,4 @@ func TestLanguageProfileSQLiteIntegration(t *testing.T) {
 	// Remove GetLanguageProfileByName test (not implemented)
 
 	// Remove profile assignment and rule tests (not implemented)
-}
-
-// hasSQLite checks if SQLite support is available
-func hasSQLite() bool {
-	_, err := OpenSQLStore(":memory:")
-	return err == nil
 }
