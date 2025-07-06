@@ -12,6 +12,8 @@ import (
 )
 
 // downloadsCmd shows subtitle download history.
+var downloadsVideo string
+
 var downloadsCmd = &cobra.Command{
 	Use:   "downloads",
 	Short: "Show subtitle download history",
@@ -25,7 +27,12 @@ var downloadsCmd = &cobra.Command{
 		}
 		defer store.Close()
 
-		recs, err := store.ListDownloads()
+		var recs []database.DownloadRecord
+		if downloadsVideo != "" {
+			recs, err = store.ListDownloadsByVideo(downloadsVideo)
+		} else {
+			recs, err = store.ListDownloads()
+		}
 		if err != nil {
 			return err
 		}
@@ -38,5 +45,6 @@ var downloadsCmd = &cobra.Command{
 }
 
 func init() {
+	downloadsCmd.Flags().StringVar(&downloadsVideo, "video", "", "filter by video file")
 	rootCmd.AddCommand(downloadsCmd)
 }

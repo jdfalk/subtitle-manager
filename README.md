@@ -415,7 +415,7 @@ tags, permissions, and subtitle history.
 \``` subtitle-manager convert [input] [output] subtitle-manager merge [sub1]
 [sub2] [output] subtitle-manager translate [input] [output] [lang]
 subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded]
-[--translate] subtitle-manager history subtitle-manager extract [media] [output]
+[--translate] subtitle-manager history [--video file] subtitle-manager extract [media] [output]
 subtitle-manager transcribe [media] [output] [lang] subtitle-manager fetch
 [media] [lang] [output] subtitle-manager fetch --tags tag1,tag2 [media] [lang]
 [output] subtitle-manager search [media] [lang] subtitle-manager batch [lang]
