@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Sanitize paths in findSubtitles",
+  "body": "Use security.ValidateAndSanitizePath to validate media paths in webserver findSubtitles function",
+  "labels": ["codex"],
+  "guid": "f5ce2006-19d8-47ab-b413-14908c10da07",
+  "legacy_guid": "create-sanitize-paths-in-findsubtitles-2025-07-06"
+}
