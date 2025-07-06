@@ -71,6 +71,15 @@ func initSchema(db *sql.DB) error {
 		return err
 	}
 
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS search_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        query TEXT NOT NULL,
+        results INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL
+    )`); err != nil {
+		return err
+	}
+
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         path TEXT NOT NULL,

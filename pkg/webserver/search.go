@@ -476,23 +476,57 @@ func searchHistoryHandler(db *sql.DB) http.Handler {
 
 // handleGetSearchHistory retrieves search history
 func handleGetSearchHistory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	// For now, return empty array - can be implemented later with proper DB schema
-	history := []SearchHistoryItem{}
+	rows, err := db.Query(`SELECT id, query, results, created_at FROM search_history ORDER BY id DESC LIMIT 10`)
+	if err != nil {
+		http.Error(w, "Failed to query history", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
 
+	var history []SearchHistoryItem
+	for rows.Next() {
+		var item SearchHistoryItem
+		var queryStr string
+		if err := rows.Scan(&item.ID, &queryStr, &item.Results, &item.Timestamp); err != nil {
+			http.Error(w, "Failed to scan history", http.StatusInternalServerError)
+			return
+		}
+		if err := json.Unmarshal([]byte(queryStr), &item.Query); err != nil {
+			continue
+		}
+		history = append(history, item)
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(history)
 }
 
 // handleSaveSearchHistory saves a search to history
 func handleSaveSearchHistory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	// For now, just return success - can be implemented later
+	var item SearchHistoryItem
+	if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	data, err := json.Marshal(item.Query)
+	if err != nil {
+		http.Error(w, "Failed to encode query", http.StatusInternalServerError)
+		return
+	}
+	_, err = db.Exec(`INSERT INTO search_history (query, results, created_at) VALUES (?, ?, ?)`, string(data), item.Results, time.Now())
+	if err != nil {
+		http.Error(w, "Failed to save history", http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]bool{"success": true})
 }
 
 // handleDeleteSearchHistory removes search history
 func handleDeleteSearchHistory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	// For now, just return success - can be implemented later
+	if _, err := db.Exec(`DELETE FROM search_history`); err != nil {
+		http.Error(w, "Failed to clear history", http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]bool{"success": true})
 }

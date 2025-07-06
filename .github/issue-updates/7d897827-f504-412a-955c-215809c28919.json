@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Implement search history persistence",
+  "body": "Add search_history table and API handlers for storing and retrieving search queries",
+  "labels": ["codex", "feat"],
+  "guid": "7d897827-f504-412a-955c-215809c28919",
+  "legacy_guid": "create-implement-search-history-persistence-2025-07-06"
+}

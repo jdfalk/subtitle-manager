@@ -49,6 +49,12 @@ func initPostgresSchema(db *sql.DB) error {
             language TEXT NOT NULL,
             created_at TIMESTAMP NOT NULL
         )`,
+		`CREATE TABLE IF NOT EXISTS search_history (
+            id SERIAL PRIMARY KEY,
+            query TEXT NOT NULL,
+            results INTEGER NOT NULL,
+            created_at TIMESTAMP NOT NULL
+        )`,
 		`CREATE TABLE IF NOT EXISTS media_items (
             id SERIAL PRIMARY KEY,
             path TEXT NOT NULL,
