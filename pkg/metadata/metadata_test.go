@@ -14,18 +14,18 @@ import (
 )
 
 func TestParseFileName(t *testing.T) {
-	m, err := ParseFileName("Show.Name.S01E02.mkv")
+	m, err := ParseFileName("Show.Name.S01E02-GRP!.mkv")
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
-	if m.Type != TypeEpisode || m.Title != "Show Name" || m.Season != 1 || m.Episode != 2 {
+	if m.Type != TypeEpisode || m.Title != "Show Name" || m.Season != 1 || m.Episode != 2 || m.ReleaseGroup != "GRP" {
 		t.Fatalf("unexpected result: %+v", m)
 	}
-	m, err = ParseFileName("Movie Title (2020).mp4")
+	m, err = ParseFileName("Movie Title (2020)-TEAM!.mp4")
 	if err != nil {
 		t.Fatalf("parse movie: %v", err)
 	}
-	if m.Type != TypeMovie || m.Title != "Movie Title" || m.Year != 2020 {
+	if m.Type != TypeMovie || m.Title != "Movie Title" || m.Year != 2020 || m.ReleaseGroup != "TEAM" {
 		t.Fatalf("unexpected movie: %+v", m)
 	}
 }
@@ -135,7 +135,7 @@ func TestScanLibraryProgress(t *testing.T) {
 	}
 
 	dir := t.TempDir()
-	video := filepath.Join(dir, "movie.mkv")
+	video := filepath.Join(dir, "movie-GRP.mkv")
 	if err := os.WriteFile(video, []byte("x"), 0644); err != nil {
 		t.Fatalf("create video: %v", err)
 	}
@@ -156,7 +156,7 @@ func TestScanLibraryProgress(t *testing.T) {
 	if err != nil {
 		t.Fatalf("list: %v", err)
 	}
-	if len(items) != 1 || items[0].Path != video {
+	if len(items) != 1 || items[0].Path != video || items[0].ReleaseGroup != "GRP" {
 		t.Fatalf("items %+v", items)
 	}
 }

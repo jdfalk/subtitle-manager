@@ -136,3 +136,20 @@ func TestValidateSubtitleOutputPath(t *testing.T) {
 		t.Error("expected error for path traversal in video path")
 	}
 }
+
+func TestSanitizeLabel(t *testing.T) {
+	cases := []struct {
+		in  string
+		out string
+	}{
+		{"Group", "Group"},
+		{"Bad!Group", "BadGroup"},
+		{" spaced name ", "spacedname"},
+		{"A_B-C", "A_B-C"},
+	}
+	for _, c := range cases {
+		if got := SanitizeLabel(c.in); got != c.out {
+			t.Errorf("SanitizeLabel(%q)=%q, want %q", c.in, got, c.out)
+		}
+	}
+}

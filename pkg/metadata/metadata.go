@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/scoring"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
 
@@ -57,6 +58,7 @@ type MediaInfo struct {
 	EpisodeTitle string    // title of the episode (if any)
 	Season       int       // season number for episodes
 	Episode      int       // episode number for episodes
+	ReleaseGroup string    // release group parsed from filename
 	Languages    []string  // spoken languages
 	Rating       float64   // IMDB rating
 }
@@ -70,19 +72,22 @@ var (
 // It recognises common patterns such as "Show.Name.S01E02" for episodes
 // and "Movie Title (2020)" for movies.
 func ParseFileName(path string) (*MediaInfo, error) {
-	name := filepath.Base(path)
-	name = strings.TrimSuffix(name, filepath.Ext(name))
+	base := filepath.Base(path)
+	name := strings.TrimSuffix(base, filepath.Ext(base))
+	sanitized := strings.ReplaceAll(base, " ", ".")
+	grp := scoring.FromMediaPath(sanitized).ReleaseGroup
+	grp = security.SanitizeLabel(grp)
 
 	if m := tvRegex.FindStringSubmatch(name); m != nil {
 		season, _ := strconv.Atoi(m[2])
 		episode, _ := strconv.Atoi(m[3])
 		title := cleanTitle(m[1])
-		return &MediaInfo{Type: TypeEpisode, Title: title, Season: season, Episode: episode}, nil
+		return &MediaInfo{Type: TypeEpisode, Title: title, Season: season, Episode: episode, ReleaseGroup: grp}, nil
 	}
 	if m := movieRegex.FindStringSubmatch(name); m != nil {
 		year, _ := strconv.Atoi(m[2])
 		title := cleanTitle(m[1])
-		return &MediaInfo{Type: TypeMovie, Title: title, Year: year}, nil
+		return &MediaInfo{Type: TypeMovie, Title: title, Year: year, ReleaseGroup: grp}, nil
 	}
 	return nil, fmt.Errorf("unrecognised file name")
 }
@@ -318,10 +323,11 @@ func scanLibrary(ctx context.Context, dir string, store database.SubtitleStore, 
 
 		// Create database record
 		item := &database.MediaItem{
-			Path:    path,
-			Title:   mediaInfo.Title,
-			Season:  mediaInfo.Season,
-			Episode: mediaInfo.Episode,
+			Path:         path,
+			Title:        mediaInfo.Title,
+			Season:       mediaInfo.Season,
+			Episode:      mediaInfo.Episode,
+			ReleaseGroup: mediaInfo.ReleaseGroup,
 		}
 
 		// Insert into database
