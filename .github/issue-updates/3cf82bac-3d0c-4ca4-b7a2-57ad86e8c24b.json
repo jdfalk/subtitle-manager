@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Document Node.js 20 requirement",
+  "body": "Add Node.js version requirement to README for development",
+  "labels": ["documentation", "devcontainer"],
+  "guid": "3cf82bac-3d0c-4ca4-b7a2-57ad86e8c24b",
+  "legacy_guid": "create-document-node-js-20-requirement-2025-07-06"
+}

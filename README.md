@@ -828,11 +828,13 @@ The easiest way to start developing is using the provided VS Code development co
 1. Install [VS Code](https://code.visualstudio.com/) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 2. Clone the repository and open it in VS Code
 3. When prompted, click "Reopen in Container"
-4. The container will automatically set up Go, Node.js, FFmpeg, SQLite, and all development tools
+4. The container will automatically set up Go, **Node.js 20**, FFmpeg, SQLite, and all development tools
 
 See [.devcontainer/README.md](.devcontainer/README.md) for detailed dev container documentation.
 
 ### Local Development
+
+Node.js 20 is required for building the React web UI.
 
 Tests can be run with `go test ./...`.
 PostgreSQL tests require a local PostgreSQL installation and will skip gracefully if unavailable.
