@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add provider config tests",
+  "body": "Implement tests for the providers API to verify listing and updating configuration",
+  "labels": ["codex", "test"],
+  "guid": "2c25d2e5-3408-4209-8610-8fbb39cb8b2a",
+  "legacy_guid": "create-add-provider-config-tests-2025-07-06"
+}
