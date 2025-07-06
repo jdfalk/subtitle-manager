@@ -145,7 +145,7 @@ Current tag implementations will be migrated to the unified system:
   - Enhanced login test robustness in `app.spec.js`
 - [ ] **Add media library E2E tests**: Test file upload, scanning, and subtitle
       operations
-- [ ] **Add provider configuration tests**: Test subtitle provider setup and
+- [x] **Add provider configuration tests**: Test subtitle provider setup and
       validation
 - [ ] **Add bulk operations tests**: Test batch subtitle download and processing
 
