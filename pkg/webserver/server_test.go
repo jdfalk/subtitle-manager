@@ -211,6 +211,48 @@ func TestConfigUpdate(t *testing.T) {
 	}
 }
 
+// TestProviderConfigUpdate verifies that POST /api/providers persists provider settings.
+func TestProviderConfigUpdate(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	testutil.MustNoError(t, "open db", err)
+	defer db.Close()
+
+	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
+	key, err := auth.GenerateAPIKey(db, 1)
+	testutil.MustNoError(t, "api key", err)
+
+	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
+	viper.SetConfigFile(tmp)
+	viper.Set("providers.generic", map[string]interface{}{"enabled": false, "config": map[string]interface{}{"api_url": "http://old"}})
+	testutil.MustNoError(t, "write config", viper.WriteConfig())
+	defer viper.Reset()
+
+	h, err := Handler(db)
+	testutil.MustNoError(t, "handler", err)
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	body := strings.NewReader(`{"name":"generic","enabled":true,"config":{"api_url":"http://new"}}`)
+	req, _ := http.NewRequest("POST", srv.URL+"/api/providers", body)
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusNoContent {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+
+	if !viper.GetBool("providers.generic.enabled") {
+		t.Fatalf("viper not updated")
+	}
+	data := testutil.MustGet(t, "read config", func() ([]byte, error) { return os.ReadFile(tmp) })
+	if !strings.Contains(string(data), "enabled: true") || !strings.Contains(string(data), "http://new") {
+		t.Fatalf("config not written: %s", string(data))
+	}
+}
+
 // TestScanHandlers verifies /api/scan and /api/scan/status.
 func TestScanHandlers(t *testing.T) {
 	skipIfNoSQLite(t)

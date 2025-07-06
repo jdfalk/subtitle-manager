@@ -116,12 +116,10 @@ def get_issue(self, issue_number: int) -> Optional[Dict[str, Any]]
 #### Core Implementation Files:
 
 1. **`/Users/jdfalk/repos/github.com/jdfalk/ghcommon/scripts/issue_manager.py`**
-
    - Added `OperationSummary` class (lines 45-195)
    - Added comprehensive error handling and logging
 
 2. **`/Users/jdfalk/repos/github.com/jdfalk/ghcommon/.github/workflows/reusable-unified-issue-management.yml`**
-
    - Added timestamp generation step
    - Modified branch management for persistence
 
@@ -223,7 +221,6 @@ The resolved `issue_updates.json` now contains:
 The resolved file now properly captures work from both development streams:
 
 1. **Security and Performance Work (HEAD):**
-
    - OMDB API hostname validation security fixes (#930)
    - Performance benchmarking completion (#532)
    - Provider SDK migration completion (#531)

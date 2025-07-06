@@ -223,9 +223,10 @@ All notable changes to this project will be documented in this file.
 - Security header `Referrer-Policy: no-referrer` to reduce referrer leakage.
 - History API now filters by video file path via `video` query parameter.
 - Self-test system verifies startup components and exits on failure.
-- **Azure Blob Storage provider**: Initial support for Microsoft Azure cloud
-  storage.
+- **Azure Blob Storage provider**: Initial support for Microsoft Azure cloud storage.
 - Command-line `tag` management with list, add, and remove operations.
+- Provider configuration persistence test ensures POST `/api/providers` updates
+  the config file.
 - **Enhanced Issue Management Workflow**: Updated GitHub workflow configuration
   - Automatic triggering on merges to main branch when issue files change
   - Weekly scheduled maintenance on Sundays at 2 AM UTC
@@ -302,29 +303,7 @@ installations.
 - Optional containerized Whisper ASR service with NVIDIA runtime
 - Automated database cleanup and metadata refresh tasks
 
-### Added
 
-- **PostgreSQL database backend** with full enterprise support and graceful test
-  skipping
-- **Advanced webhook system** with `/api/webhooks/sonarr`,
-  `/api/webhooks/radarr`, and `/api/webhooks/custom` endpoints
-- **Anti-captcha integration** supporting Anti-Captcha.com and 2captcha.com
-  services
-- **Notification services** with Discord, Telegram, and SMTP providers
-- **Advanced cron-based scheduler** with full expression support and granular
-  controls
-- **Bazarr configuration import** command for seamless migration from existing
-  Bazarr installations
-- REST endpoint `/api/convert` for subtitle file conversion
-- REST endpoint `/api/translate` for translating uploaded subtitle files
-- REST endpoint `/api/download` for on-demand subtitle fetching
-- Build process now runs `go generate ./webui` to embed the latest web assets in
-  the binary and container image.
-- Automated workflow closes duplicate issues by title
-- Embedded provider now enabled by default. Other providers remain hidden until
-  explicitly added or imported.
-- Enhanced General Settings page with Bazarr-compatible host, proxy, update,
-  logging, backup and analytics options.
 
 ## [0.4.0] - 2025-06-12
 
