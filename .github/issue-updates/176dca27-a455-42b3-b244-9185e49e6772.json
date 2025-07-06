@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Fix rebase script when no remote",
+  "body": "The rebase script fails because 'git fetch origin' fails if no remote is configured. Implement a check to skip fetch when the remote doesn't exist.",
+  "labels": ["codex"],
+  "guid": "176dca27-a455-42b3-b244-9185e49e6772",
+  "legacy_guid": "create-fix-rebase-script-when-no-remote-2025-07-06"
+}
