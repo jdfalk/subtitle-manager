@@ -55,9 +55,14 @@ func WatchDirectory(ctx context.Context, dir, lang, providerName string, p provi
 		case err := <-w.Errors:
 			logger.Warnf("watch error: %v", err)
 		case ev := <-w.Events:
-			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(ev.Name) {
-				if err := scanner.ProcessFile(ctx, ev.Name, lang, providerName, p, false, store); err != nil {
-					logger.Warnf("process %s: %v", ev.Name, err)
+			sanitizedName, err := security.ValidateAndSanitizePath(ev.Name)
+			if err != nil {
+				logger.Warnf("ignore invalid path %s: %v", ev.Name, err)
+				continue
+			}
+			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(sanitizedName) {
+				if err := scanner.ProcessFile(ctx, sanitizedName, lang, providerName, p, false, store); err != nil {
+					logger.Warnf("process %s: %v", sanitizedName, err)
 				}
 			}
 		}
@@ -100,14 +105,19 @@ func WatchDirectoryRecursive(ctx context.Context, dir, lang, providerName string
 		case err := <-w.Errors:
 			logger.Warnf("watch error: %v", err)
 		case ev := <-w.Events:
+			sanitizedName, err := security.ValidateAndSanitizePath(ev.Name)
+			if err != nil {
+				logger.Warnf("ignore invalid path %s: %v", ev.Name, err)
+				continue
+			}
 			if ev.Op&fsnotify.Create != 0 {
-				if info, err := os.Stat(ev.Name); err == nil && info.IsDir() {
-					_ = w.Add(ev.Name)
+				if info, err := os.Stat(sanitizedName); err == nil && info.IsDir() {
+					_ = w.Add(sanitizedName)
 				}
 			}
-			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(ev.Name) {
-				if err := scanner.ProcessFile(ctx, ev.Name, lang, providerName, p, false, store); err != nil {
-					logger.Warnf("process %s: %v", ev.Name, err)
+			if ev.Op&(fsnotify.Create|fsnotify.Rename|fsnotify.Write) != 0 && isVideoFile(sanitizedName) {
+				if err := scanner.ProcessFile(ctx, sanitizedName, lang, providerName, p, false, store); err != nil {
+					logger.Warnf("process %s: %v", sanitizedName, err)
 				}
 			}
 		}
