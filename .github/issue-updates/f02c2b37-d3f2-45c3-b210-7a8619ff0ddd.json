@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add sonarr-sync command",
+  "body": "Implement CLI command to run a single Sonarr library sync for initial or manual use.",
+  "labels": ["codex", "enhancement"],
+  "guid": "f02c2b37-d3f2-45c3-b210-7a8619ff0ddd",
+  "legacy_guid": "create-add-sonarr-sync-command-2025-07-06"
+}
