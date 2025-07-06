@@ -976,6 +976,7 @@ Additional references include [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)
 ## Security
 
 Subtitle Manager applies strict security headers, including `Referrer-Policy: no-referrer`, and sanitizes HTML content in the web interface using DOMPurify. When contributing UI or API code, ensure all user-provided data is properly validated and sanitized.
+- Watch commands sanitize event paths with `security.ValidateAndSanitizePath` to prevent path traversal when monitoring directories.
 
 For security vulnerability reporting and our complete security policy, see [SECURITY.md](SECURITY.md).
 

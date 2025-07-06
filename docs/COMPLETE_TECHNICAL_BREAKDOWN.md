@@ -71,6 +71,7 @@
 - File system monitoring with fsnotify
 - Automatic subtitle download on new files
 - Recursive directory support
+- Event paths sanitized with `security.ValidateAndSanitizePath`
 
 ### Subtitle Processing Commands
 
