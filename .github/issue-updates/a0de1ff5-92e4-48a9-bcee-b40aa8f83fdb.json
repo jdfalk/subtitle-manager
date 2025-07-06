@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Metadata fetch command",
+  "body": "Add CLI command to fetch metadata from TMDB/OMDb and display languages and rating.",
+  "labels": ["codex", "enhancement"],
+  "guid": "a0de1ff5-92e4-48a9-bcee-b40aa8f83fdb",
+  "legacy_guid": "create-metadata-fetch-command-2025-07-06"
+}

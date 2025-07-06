@@ -45,8 +45,8 @@ This approach will:
 - [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict
       resolution.
       ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
-- [ ] **Online Metadata Sources**: Fetch languages, ratings, and episode data
-      from external APIs.
+- [x] **Online Metadata Sources**: Fetch languages, ratings, and episode data
+      from external APIs. `metadata fetch` command now supports `--id` for direct TMDB lookup.
       ([#351](https://github.com/jdfalk/subtitle-manager/issues/351),
       [#890](https://github.com/jdfalk/subtitle-manager/issues/890))
 - [ ] **Media Metadata Editor**: Provide manual editing interface.

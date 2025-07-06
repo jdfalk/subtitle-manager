@@ -404,3 +404,9 @@ achieved.
 ### Added
 
 - Documentation update verifying PR workflow.
+
+## [0.3.11] - 2025-07-06
+
+### Added
+
+- `metadata fetch` supports `--id` for TMDB lookups.

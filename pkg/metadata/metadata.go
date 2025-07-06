@@ -240,6 +240,99 @@ func FetchEpisodeMetadata(ctx context.Context, show string, season, episode int,
 	return info, nil
 }
 
+// GetMovieByID retrieves movie details from TMDB using a numeric ID.
+func GetMovieByID(ctx context.Context, id int, apiKey string) (*MediaInfo, error) {
+	u := fmt.Sprintf("%s/movie/%d?api_key=%s", tmdbAPIBase, id, url.QueryEscape(apiKey))
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status %d", resp.StatusCode)
+	}
+	var r struct {
+		ID          int    `json:"id"`
+		Title       string `json:"title"`
+		ReleaseDate string `json:"release_date"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+		return nil, err
+	}
+	year := 0
+	if len(r.ReleaseDate) >= 4 {
+		year, _ = strconv.Atoi(r.ReleaseDate[:4])
+	}
+	return &MediaInfo{Type: TypeMovie, Title: r.Title, Year: year, TMDBID: r.ID}, nil
+}
+
+// GetEpisodeByID retrieves episode details from TMDB given show ID, season and episode.
+func GetEpisodeByID(ctx context.Context, showID, season, episode int, apiKey string) (*MediaInfo, error) {
+	u := fmt.Sprintf("%s/tv/%d/season/%d/episode/%d?api_key=%s", tmdbAPIBase, showID, season, episode, url.QueryEscape(apiKey))
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status %d", resp.StatusCode)
+	}
+	var r struct {
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+		Show string `json:"show_name"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+		return nil, err
+	}
+	return &MediaInfo{Type: TypeEpisode, Title: r.Show, Season: season, Episode: episode, EpisodeTitle: r.Name, TMDBID: r.ID}, nil
+}
+
+// FetchMovieMetadataByID retrieves movie info from TMDB using id and enriches it with OMDb data.
+func FetchMovieMetadataByID(ctx context.Context, id int, tmdbKey, omdbKey string) (*MediaInfo, error) {
+	info, err := GetMovieByID(ctx, id, tmdbKey)
+	if err != nil {
+		return nil, err
+	}
+	langs, rating, err := fetchOMDBInfo(ctx, url.Values{
+		"t":      []string{info.Title},
+		"apikey": []string{omdbKey},
+		"y":      []string{strconv.Itoa(info.Year)},
+	})
+	if err == nil {
+		info.Languages = langs
+		info.Rating = rating
+	}
+	return info, nil
+}
+
+// FetchEpisodeMetadataByID retrieves episode info from TMDB using show ID and enriches it with OMDb data.
+func FetchEpisodeMetadataByID(ctx context.Context, showID, season, episode int, tmdbKey, omdbKey string) (*MediaInfo, error) {
+	info, err := GetEpisodeByID(ctx, showID, season, episode, tmdbKey)
+	if err != nil {
+		return nil, err
+	}
+	langs, rating, err := fetchOMDBInfo(ctx, url.Values{
+		"t":       []string{info.Title},
+		"Season":  []string{strconv.Itoa(season)},
+		"Episode": []string{strconv.Itoa(episode)},
+		"apikey":  []string{omdbKey},
+	})
+	if err == nil {
+		info.Languages = langs
+		info.Rating = rating
+	}
+	return info, nil
+}
+
 // fetchOMDBInfo queries the OMDb API and returns language and rating fields. It
 // returns an error only if the HTTP request fails or the response cannot be
 // decoded. API errors are ignored.

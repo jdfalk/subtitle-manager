@@ -34,10 +34,14 @@ var metadataSearchCmd = &cobra.Command{
 }
 
 var (
-	setTitle string
-	setGroup string
-	setAlt   string
-	setLocks string
+	setTitle     string
+	setGroup     string
+	setAlt       string
+	setLocks     string
+	fetchID      int
+	fetchYear    int
+	fetchSeason  int
+	fetchEpisode int
 )
 
 var metadataUpdateCmd = &cobra.Command{
@@ -81,12 +85,58 @@ var metadataUpdateCmd = &cobra.Command{
 	},
 }
 
+var metadataFetchCmd = &cobra.Command{
+	Use:   "fetch [title]",
+	Short: "Fetch metadata with languages and rating",
+	Args:  cobra.MaximumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		tmdbKey := viper.GetString("tmdb_api_key")
+		omdbKey := viper.GetString("omdb_api_key")
+		ctx := context.Background()
+		var info *metadata.MediaInfo
+		var err error
+		if fetchID > 0 {
+			if fetchSeason > 0 {
+				info, err = metadata.FetchEpisodeMetadataByID(ctx, fetchID, fetchSeason, fetchEpisode, tmdbKey, omdbKey)
+			} else {
+				info, err = metadata.FetchMovieMetadataByID(ctx, fetchID, tmdbKey, omdbKey)
+			}
+		} else {
+			if len(args) == 0 {
+				return fmt.Errorf("title or --id required")
+			}
+			title := args[0]
+			if fetchSeason > 0 {
+				info, err = metadata.FetchEpisodeMetadata(ctx, title, fetchSeason, fetchEpisode, tmdbKey, omdbKey)
+			} else {
+				info, err = metadata.FetchMovieMetadata(ctx, title, fetchYear, tmdbKey, omdbKey)
+			}
+		}
+		if err != nil {
+			return err
+		}
+		fmt.Printf("%s (%d) id=%d\n", info.Title, info.Year, info.TMDBID)
+		if len(info.Languages) > 0 {
+			fmt.Printf("Languages: %s\n", strings.Join(info.Languages, ", "))
+		}
+		if info.Rating > 0 {
+			fmt.Printf("Rating: %.1f\n", info.Rating)
+		}
+		return nil
+	},
+}
+
 func init() {
 	metadataUpdateCmd.Flags().StringVar(&setTitle, "title", "", "new title")
 	metadataUpdateCmd.Flags().StringVar(&setGroup, "release-group", "", "release group")
 	metadataUpdateCmd.Flags().StringVar(&setAlt, "alt", "", "comma separated alternate titles")
 	metadataUpdateCmd.Flags().StringVar(&setLocks, "lock", "", "comma separated locked fields")
+	metadataFetchCmd.Flags().IntVar(&fetchID, "id", 0, "TMDB identifier")
+	metadataFetchCmd.Flags().IntVar(&fetchYear, "year", 0, "release year for movie")
+	metadataFetchCmd.Flags().IntVar(&fetchSeason, "season", 0, "season number for episode")
+	metadataFetchCmd.Flags().IntVar(&fetchEpisode, "episode", 0, "episode number")
 	metadataCmd.AddCommand(metadataSearchCmd)
 	metadataCmd.AddCommand(metadataUpdateCmd)
+	metadataCmd.AddCommand(metadataFetchCmd)
 	rootCmd.AddCommand(metadataCmd)
 }
