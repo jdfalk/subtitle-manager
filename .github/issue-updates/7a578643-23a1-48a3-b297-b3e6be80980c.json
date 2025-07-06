@@ -1,0 +1,8 @@
+{
+  "action": "update",
+  "number": 1132,
+  "body": "Plan to integrate Whisper service via container with optional startup",
+  "labels": ["codex"],
+  "guid": "7a578643-23a1-48a3-b297-b3e6be80980c",
+  "legacy_guid": "update-issue-1132-2025-07-06"
+}
