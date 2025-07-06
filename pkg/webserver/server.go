@@ -1188,8 +1188,12 @@ func isMediaFile(filename string) bool {
 
 // findSubtitles looks for subtitle files associated with a media file
 func findSubtitles(mediaPath string) []Subtitle {
-	dir := filepath.Clean(filepath.Dir(mediaPath))
-	baseName := strings.TrimSuffix(filepath.Base(mediaPath), filepath.Ext(mediaPath))
+	sanitized, err := security.ValidateAndSanitizePath(mediaPath)
+	if err != nil {
+		return nil
+	}
+	dir := filepath.Dir(sanitized)
+	baseName := strings.TrimSuffix(filepath.Base(sanitized), filepath.Ext(sanitized))
 
 	var subtitles []Subtitle
 
