@@ -127,7 +127,7 @@ Current tag implementations will be migrated to the unified system:
   - Enhanced login test robustness in `app.spec.js`
 - [ ] **Add media library E2E tests**: Test file upload, scanning, and subtitle
       operations
-- [ ] **Add provider configuration tests**: Test subtitle provider setup and
+- [x] **Add provider configuration tests**: Test subtitle provider setup and
       validation
 - [ ] **Add bulk operations tests**: Test batch subtitle download and processing
 
@@ -403,20 +403,17 @@ vs [Our Registry](pkg/providers/registry.go)
 #### High Priority Missing (1% of project)
 
 1. **PostgreSQL Backend** - Enterprise database support
-
    - Status: ✅ Complete for large deployments
    - Current: SQLite, PebbleDB and PostgreSQL fully functional
    - Reference:
      [PostgreSQL Database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
 
 2. **Advanced Webhook System** - Enhanced event notifications
-
    - Status: ✅ Complete with Sonarr/Radarr/custom webhook endpoints implemented
    - Reference:
      [Webhooks](https://wiki.bazarr.media/Additional-Configuration/Webhooks/)
 
 3. **Notification Services** - Discord, Telegram, Email alerts
-
    - Status: ✅ Complete implementation with Discord, Telegram and SMTP
      notifiers
    - Current: Full multi-provider notification system available
@@ -424,7 +421,6 @@ vs [Our Registry](pkg/providers/registry.go)
      [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)
 
 4. **Anti-Captcha Integration** - For challenging providers
-
    - Status: ✅ Complete with Anti-Captcha.com and 2captcha.com support
    - Current: Multi-service captcha solving available
    - Reference:
@@ -439,13 +435,11 @@ vs [Our Registry](pkg/providers/registry.go)
 #### Medium Priority Missing (Convenience Features)
 
 1. **Bazarr Settings Import** - Automated migration
-
    - Status: 🔶 Partial implementation
    - Current: Manual configuration transfer works
    - Reference: [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md)
 
 2. **Advanced Scheduling** - Granular scan controls
-
    - Status: ✅ Cron-based scheduler implemented
    - Current: Supports interval or cron expression
    - Reference:
