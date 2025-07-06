@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Provider configuration tests",
+  "body": "Add tests for provider configuration dialog to ensure proper validation and API calls.",
+  "labels": ["codex", "test"],
+  "guid": "4564c967-942a-41a5-8902-f98587572830",
+  "legacy_guid": "create-provider-configuration-tests-2025-07-06"
+}
