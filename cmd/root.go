@@ -165,7 +165,6 @@ func InitFlags() {
 	rootCmd.PersistentFlags().Bool("storage-backup-history", false, "enable cloud backup of history data")
 	viper.BindPFlag("storage.backup_history", rootCmd.PersistentFlags().Lookup("storage-backup-history"))
 
-	// Add language support
 	rootCmd.PersistentFlags().String("language", "en", "language for user interface (en, es, fr)")
 	viper.BindPFlag("language", rootCmd.PersistentFlags().Lookup("language"))
 
