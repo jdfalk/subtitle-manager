@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add logging to download handler",
+  "body": "Download API lacks logging for debugging. Integrate structured logging to record errors and successes.",
+  "labels": ["codex", "enhancement"],
+  "guid": "0520e357-05a8-4b0b-b702-742180f5d9e0",
+  "legacy_guid": "create-add-logging-to-download-handler-2025-07-06"
+}

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/metrics"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
@@ -24,7 +25,7 @@ import (
 // - Consistent JSON error responses
 // - Robust validation and error handling
 // - Comments for maintainability
-// - TODO: Add logging for observability
+// - Detailed logging for observability
 func downloadHandler(db *sql.DB) http.Handler {
 	type req struct {
 		Provider string `json:"provider"`
@@ -38,7 +39,9 @@ func downloadHandler(db *sql.DB) http.Handler {
 		Error string `json:"error"`
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger := logging.GetLogger("webserver.download")
 		if r.Method != http.MethodPost {
+			logger.Debugf("method %s not allowed", r.Method)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Method not allowed"})
@@ -47,6 +50,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 
 		var q req
 		if err := json.NewDecoder(r.Body).Decode(&q); err != nil || q.Path == "" || q.Lang == "" {
+			logger.Warnf("invalid request body: %v", err)
 			metrics.APIRequests.WithLabelValues("/api/download", "POST", "400").Inc()
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
@@ -57,6 +61,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 		// Validate and sanitize the file path to prevent path injection
 		validatedPath, err := security.ValidateAndSanitizePath(q.Path)
 		if err != nil {
+			logger.Warnf("invalid file path: %v", err)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Invalid file path: " + err.Error()})
@@ -65,6 +70,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 
 		// Validate the language code to ensure it conforms to expected patterns
 		if err := security.ValidateLanguageCode(q.Lang); err != nil {
+			logger.Warnf("invalid language code: %v", err)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Invalid language code: " + err.Error()})
@@ -74,6 +80,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 		// Validate provider name if provided
 		if q.Provider != "" {
 			if err := security.ValidateProviderName(q.Provider); err != nil {
+				logger.Warnf("invalid provider name: %v", err)
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
 				_ = json.NewEncoder(w).Encode(apiError{Error: "Invalid provider name: " + err.Error()})
@@ -94,6 +101,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 				name = q.Provider
 			}
 			if providerErr != nil {
+				logger.Warnf("provider resolution failed: %v", providerErr)
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
 				_ = json.NewEncoder(w).Encode(apiError{Error: "Provider not found or error: " + providerErr.Error()})
@@ -103,7 +111,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 
 		// Process the file using the scanner
 		if err := scanner.ProcessFile(r.Context(), validatedPath, q.Lang, name, p, false, nil); err != nil {
-			// TODO: Log error for observability
+			logger.Errorf("failed to process file %s: %v", validatedPath, err)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Failed to process file: " + err.Error()})
@@ -113,7 +121,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 		// Construct output path using validated inputs
 		out, outErr := security.ValidateSubtitleOutputPath(validatedPath, q.Lang)
 		if outErr != nil {
-			// TODO: Log error for observability
+			logger.Errorf("failed to construct output path for %s: %v", validatedPath, outErr)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Failed to construct output path: " + outErr.Error()})
@@ -122,11 +130,14 @@ func downloadHandler(db *sql.DB) http.Handler {
 
 		// Insert download record into database if available
 		if db != nil {
-			_ = database.InsertDownload(db, out, validatedPath, name, q.Lang)
+			if err := database.InsertDownload(db, out, validatedPath, name, q.Lang); err != nil {
+				logger.Warnf("failed to record download: %v", err)
+			}
 		}
 
 		metrics.APIRequests.WithLabelValues("/api/download", "POST", "200").Inc()
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(resp{File: out})
+		logger.Infof("downloaded subtitle %s for %s", out, validatedPath)
 	})
 }

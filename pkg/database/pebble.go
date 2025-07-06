@@ -1502,7 +1502,7 @@ func (p *PebbleStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 	defaultProfile := &LanguageProfile{
 		ID:          "default",
 		Name:        "Default",
-		Languages:   []LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
+		Languages:   []profiles.LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
 		CutoffScore: 80,
 		IsDefault:   true,
 		CreatedAt:   time.Now(),
