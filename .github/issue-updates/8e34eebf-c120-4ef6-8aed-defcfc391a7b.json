@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add provider config update test",
+  "body": "Implement tests covering POST /api/providers to verify configuration persistence",
+  "labels": ["codex"],
+  "guid": "8e34eebf-c120-4ef6-8aed-defcfc391a7b",
+  "legacy_guid": "create-add-provider-config-update-test-2025-07-06"
+}
