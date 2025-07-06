@@ -14,12 +14,12 @@ import (
 // APIError represents an error response from the API.
 type APIError struct {
 	StatusCode int    `json:"-"`
-	Error      string `json:"error"`
+	Code       string `json:"error"`
 	Message    string `json:"message"`
 }
 
 func (e *APIError) Error() string {
-	return fmt.Sprintf("API error (%d): %s - %s", e.StatusCode, e.Error, e.Message)
+	return fmt.Sprintf("API error (%d): %s - %s", e.StatusCode, e.Code, e.Message)
 }
 
 // IsAuthenticationError returns true if the error is an authentication error (401).

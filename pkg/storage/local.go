@@ -49,11 +49,11 @@ func (lp *LocalProvider) Store(ctx context.Context, key string, content io.Reade
 	}
 
 	// Sanitize the key to prevent directory traversal
-	sanitized, err := security.SanitizePath(key)
+	sanitized, err := security.SanitizeRelativePath(key)
 	if err != nil {
 		return ErrInvalidKey
 	}
-	key = string(sanitized)
+	key = sanitized
 
 	fullPath := filepath.Join(lp.basePath, key)
 
@@ -85,11 +85,11 @@ func (lp *LocalProvider) Retrieve(ctx context.Context, key string) (io.ReadClose
 	}
 
 	// Sanitize the key to prevent directory traversal
-	sanitized, err := security.SanitizePath(key)
+	sanitized, err := security.SanitizeRelativePath(key)
 	if err != nil {
 		return nil, ErrInvalidKey
 	}
-	key = string(sanitized)
+	key = sanitized
 
 	fullPath := filepath.Join(lp.basePath, key)
 
@@ -111,11 +111,11 @@ func (lp *LocalProvider) Delete(ctx context.Context, key string) error {
 	}
 
 	// Sanitize the key to prevent directory traversal
-	sanitized, err := security.SanitizePath(key)
+	sanitized, err := security.SanitizeRelativePath(key)
 	if err != nil {
 		return ErrInvalidKey
 	}
-	key = string(sanitized)
+	key = sanitized
 
 	fullPath := filepath.Join(lp.basePath, key)
 
@@ -134,11 +134,11 @@ func (lp *LocalProvider) Exists(ctx context.Context, key string) (bool, error) {
 	}
 
 	// Sanitize the key to prevent directory traversal
-	sanitized, err := security.SanitizePath(key)
+	sanitized, err := security.SanitizeRelativePath(key)
 	if err != nil {
 		return false, ErrInvalidKey
 	}
-	key = string(sanitized)
+	key = sanitized
 
 	fullPath := filepath.Join(lp.basePath, key)
 
@@ -197,11 +197,11 @@ func (lp *LocalProvider) GetURL(ctx context.Context, key string, expiry time.Dur
 	}
 
 	// Sanitize the key to prevent directory traversal
-	sanitized, err := security.SanitizePath(key)
+	sanitized, err := security.SanitizeRelativePath(key)
 	if err != nil {
 		return "", ErrInvalidKey
 	}
-	key = string(sanitized)
+	key = sanitized
 
 	fullPath := filepath.Join(lp.basePath, key)
 	absPath, err := filepath.Abs(fullPath)

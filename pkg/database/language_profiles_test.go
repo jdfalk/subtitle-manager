@@ -79,5 +79,6 @@ func TestLanguageProfileSQLiteIntegration(t *testing.T) {
 
 // hasSQLite checks if SQLite support is available
 func hasSQLite() bool {
-	return true // Assume SQLite is available for this test
+	_, err := OpenSQLStore(":memory:")
+	return err == nil
 }
