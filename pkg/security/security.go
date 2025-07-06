@@ -269,3 +269,11 @@ func ValidateSubtitleOutputPath(videoPath, lang string) (string, error) {
 
 	return subtitlePath, nil
 }
+
+var labelSanitizer = regexp.MustCompile(`[^a-zA-Z0-9_-]+`)
+
+// SanitizeLabel removes potentially dangerous characters from a short
+// identifier. Only letters, numbers, underscores and hyphens are retained.
+func SanitizeLabel(label string) string {
+	return labelSanitizer.ReplaceAllString(label, "")
+}
