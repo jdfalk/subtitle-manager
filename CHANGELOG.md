@@ -515,8 +515,9 @@ achieved.
 
 - `metadata fetch` supports `--id` for TMDB lookups.
 
-## [0.3.12] - 2025-07-07
+## [0.3.12] - 2025-07-06
 
 ### Added
 
 - `metadata pick` command for interactive TMDB selection.
+- `metadata show` prints release group, alternate titles and locks.

@@ -452,6 +452,52 @@ func (s *SQLStore) SetMediaFieldLocks(path string, locks string) error {
 	return err
 }
 
+// GetMediaReleaseGroup retrieves the release group for a media item.
+func (s *SQLStore) GetMediaReleaseGroup(path string) (string, error) {
+	row := s.db.QueryRow(`SELECT release_group FROM media_items WHERE path = ?`, path)
+	var group string
+	if err := row.Scan(&group); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+		return "", err
+	}
+	return group, nil
+}
+
+// GetMediaAltTitles retrieves alternate titles for a media item.
+func (s *SQLStore) GetMediaAltTitles(path string) ([]string, error) {
+	row := s.db.QueryRow(`SELECT alt_titles FROM media_items WHERE path = ?`, path)
+	var data string
+	if err := row.Scan(&data); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	if data == "" {
+		return nil, nil
+	}
+	var titles []string
+	if err := json.Unmarshal([]byte(data), &titles); err != nil {
+		return nil, err
+	}
+	return titles, nil
+}
+
+// GetMediaFieldLocks retrieves locked fields for a media item.
+func (s *SQLStore) GetMediaFieldLocks(path string) (string, error) {
+	row := s.db.QueryRow(`SELECT field_locks FROM media_items WHERE path = ?`, path)
+	var locks string
+	if err := row.Scan(&locks); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+		return "", err
+	}
+	return locks, nil
+}
+
 // SetMediaTitle updates the title for a media item.
 func (s *SQLStore) SetMediaTitle(path, title string) error {
 	_, err := s.db.Exec(`UPDATE media_items SET title = ? WHERE path = ?`, title, path)

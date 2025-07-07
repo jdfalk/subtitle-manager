@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -281,6 +282,52 @@ func (p *PostgresStore) SetMediaAltTitles(path string, titles []string) error {
 func (p *PostgresStore) SetMediaFieldLocks(path, locks string) error {
 	_, err := p.db.Exec(`UPDATE media_items SET field_locks = $1 WHERE path = $2`, locks, path)
 	return err
+}
+
+// GetMediaReleaseGroup retrieves the release group for a media item.
+func (p *PostgresStore) GetMediaReleaseGroup(path string) (string, error) {
+	row := p.db.QueryRow(`SELECT release_group FROM media_items WHERE path = $1`, path)
+	var group string
+	if err := row.Scan(&group); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+		return "", err
+	}
+	return group, nil
+}
+
+// GetMediaAltTitles retrieves alternate titles for a media item.
+func (p *PostgresStore) GetMediaAltTitles(path string) ([]string, error) {
+	row := p.db.QueryRow(`SELECT alt_titles FROM media_items WHERE path = $1`, path)
+	var data string
+	if err := row.Scan(&data); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	if data == "" {
+		return nil, nil
+	}
+	var titles []string
+	if err := json.Unmarshal([]byte(data), &titles); err != nil {
+		return nil, err
+	}
+	return titles, nil
+}
+
+// GetMediaFieldLocks retrieves locked fields for a media item.
+func (p *PostgresStore) GetMediaFieldLocks(path string) (string, error) {
+	row := p.db.QueryRow(`SELECT field_locks FROM media_items WHERE path = $1`, path)
+	var locks string
+	if err := row.Scan(&locks); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+		return "", err
+	}
+	return locks, nil
 }
 
 // SetMediaTitle updates the title for a media item.

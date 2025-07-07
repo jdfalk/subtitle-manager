@@ -389,6 +389,40 @@ func (p *PebbleStore) SetMediaFieldLocks(path, locks string) error {
 	return p.InsertMediaItem(item)
 }
 
+// GetMediaReleaseGroup retrieves the release group for a media item.
+func (p *PebbleStore) GetMediaReleaseGroup(path string) (string, error) {
+	item, _, err := p.getMediaByPath(path)
+	if err != nil || item == nil {
+		return "", err
+	}
+	return item.ReleaseGroup, nil
+}
+
+// GetMediaAltTitles retrieves alternate titles for a media item.
+func (p *PebbleStore) GetMediaAltTitles(path string) ([]string, error) {
+	item, _, err := p.getMediaByPath(path)
+	if err != nil || item == nil {
+		return nil, err
+	}
+	if item.AltTitles == "" {
+		return nil, nil
+	}
+	var titles []string
+	if err := json.Unmarshal([]byte(item.AltTitles), &titles); err != nil {
+		return nil, err
+	}
+	return titles, nil
+}
+
+// GetMediaFieldLocks retrieves locked fields for a media item.
+func (p *PebbleStore) GetMediaFieldLocks(path string) (string, error) {
+	item, _, err := p.getMediaByPath(path)
+	if err != nil || item == nil {
+		return "", err
+	}
+	return item.FieldLocks, nil
+}
+
 // SetMediaTitle updates the title in the media item record.
 func (p *PebbleStore) SetMediaTitle(path, title string) error {
 	item, _, err := p.getMediaByPath(path)

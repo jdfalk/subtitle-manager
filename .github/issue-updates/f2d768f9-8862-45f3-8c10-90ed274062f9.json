@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add metadata show command",
+  "body": "Implement CLI subcommand to display metadata including release group, alternate titles, and field locks.",
+  "labels": ["codex", "enhancement"],
+  "guid": "f2d768f9-8862-45f3-8c10-90ed274062f9",
+  "legacy_guid": "create-add-metadata-show-command-2025-07-06"
+}

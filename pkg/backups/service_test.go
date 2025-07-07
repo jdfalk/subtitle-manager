@@ -137,6 +137,9 @@ func (m *mockSubtitleStore) SetMediaReleaseGroup(path, group string) error      
 func (m *mockSubtitleStore) SetMediaAltTitles(path string, titles []string) error { return nil }
 func (m *mockSubtitleStore) SetMediaFieldLocks(path, locks string) error          { return nil }
 func (m *mockSubtitleStore) SetMediaTitle(path, title string) error               { return nil }
+func (m *mockSubtitleStore) GetMediaReleaseGroup(path string) (string, error)     { return "", nil }
+func (m *mockSubtitleStore) GetMediaAltTitles(path string) ([]string, error)      { return []string{}, nil }
+func (m *mockSubtitleStore) GetMediaFieldLocks(path string) (string, error)       { return "", nil }
 func (m *mockSubtitleStore) Close() error                                         { return nil }
 
 func TestService_CreateDatabaseBackup(t *testing.T) {

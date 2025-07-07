@@ -33,6 +33,7 @@ anti-captcha integration, and a polished React web interface.**
 - Store translation history in SQLite, PebbleDB or PostgreSQL databases.
   Retrieve history via the `history` command or `/api/history` endpoint with
   optional `lang` and `video` filters.
+- Display stored metadata with `metadata show` including locks and alternate titles.
 - **Optional cloud storage for subtitles and history** in Amazon S3, Azure Blob
   Storage (now supported), or Google Cloud Storage with local backup support.
 - Per component logging with adjustable levels.
@@ -433,6 +434,7 @@ google_api_key --value NEWKEY subtitle-manager metadata search [query]
 subtitle-manager metadata fetch [title] [--id I] [--year Y] [--season S] [--episode E]
 subtitle-manager metadata pick [query] [--year Y] [--season S] [--episode E] [--limit N]
 subtitle-manager metadata update [file] [--title T] [--release-group G] [--alt "A,B"] [--lock fields]
+subtitle-manager metadata show [file]
 subtitle-manager delete [file]
 subtitle-manager rename [video] [lang]
 subtitle-manager downloads
