@@ -82,7 +82,6 @@
 - If you browse files or use terminal commands, you must add citations to the
   final response (not the PR body) where relevant.
 - **Citations reference file paths and terminal outputs:**
-
   1. `【F:<file_path>†L<line_start>(-L<line_end>)?】` for file paths
   2. `【<chunk_id>†L<line_start>(-L<line_end>)?】` for terminal output
 
@@ -214,7 +213,6 @@
 ## 7. Code Review Guidelines
 
 - Review focus areas (in order):
-
   1. Correctness
   2. Security
   3. Performance
