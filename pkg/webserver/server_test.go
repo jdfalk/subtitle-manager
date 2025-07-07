@@ -1186,6 +1186,46 @@ func TestLibraryBrowsePathTraversal(t *testing.T) {
 	}
 }
 
+// TestLibraryBrowseJSONStructure verifies the handler returns items in a wrapper object.
+func TestLibraryBrowseJSONStructure(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
+	key, err := auth.GenerateAPIKey(db, 1)
+	testutil.MustNoError(t, "generate key", err)
+
+	h, err := Handler(db)
+	testutil.MustNoError(t, "handler", err)
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest("GET", srv.URL+"/api/library/browse?path=/", nil)
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	var out struct {
+		Items []MediaItem `json:"items"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if out.Items == nil {
+		t.Fatalf("items missing")
+	}
+}
+
 // sanitizeSubtestName removes problematic characters from test names to make them valid.
 func sanitizeSubtestName(name string) string {
 	// Replace path separators and other problematic characters with underscores

@@ -953,7 +953,8 @@ func libraryBrowseHandler() http.Handler {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(items); err != nil {
+		out := map[string]interface{}{"items": items}
+		if err := json.NewEncoder(w).Encode(out); err != nil {
 			http.Error(w, "Failed to encode directory listing", http.StatusInternalServerError)
 			return
 		}

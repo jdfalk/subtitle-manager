@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "File browser not showing folders",
+  "body": "Fix UI file picker so folders display and can be added to library.",
+  "labels": ["bug"],
+  "guid": "100edb3c-8bf6-4d62-b2f7-7bdcee524284",
+  "legacy_guid": "create-file-browser-not-showing-folders-2025-07-06"
+}
