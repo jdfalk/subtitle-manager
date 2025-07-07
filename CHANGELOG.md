@@ -48,6 +48,47 @@ All notable changes to this project will be documented in this file.
     [pkg/monitoring/blacklist.go](pkg/monitoring/blacklist.go),
     [pkg/monitoring/scheduler.go](pkg/monitoring/scheduler.go),
     [cmd/monitor.go](cmd/monitor.go)
+
+- **Comprehensive Smart Rebase Tool**: Complete Python-based Git rebase automation
+  with intelligent conflict resolution and persistent state management
+  - **Intelligent Conflict Resolution**: Automatically resolves conflicts based on
+    file patterns and types (documentation, source code, tests, configuration)
+  - **Persistent State Management**: Saves progress to `.rebase-state/` directory
+    and can resume from any interruption or failure
+  - **Backup Management**: Creates timestamped backup branches and individual
+    file backups with automatic recovery capabilities
+  - **Comprehensive Logging**: Detailed logging with progress tracking, conflict
+    resolution logs, and operation summaries
+  - **Multiple Operation Modes**: Supports dry-run, verbose, interactive, and
+    smart modes for different use cases
+  - **Recovery Instructions**: Generates detailed recovery guides for manual
+    intervention when automatic resolution fails
+  - **VS Code Integration**: Predefined tasks for common rebase operations
+    (run, dry-run, resume, status, abort, cleanup, force-push)
+  - **Pattern-Based Resolution**: Smart strategies for different file types:
+    - Documentation files (prefer incoming changes)
+    - Build/CI files (prefer incoming changes)
+    - Package management files (smart merge)
+    - Source code files (auto-resolve with pattern matching)
+    - Test files (prefer current/local changes)
+    - Configuration files (manual review required)
+  - **State Persistence Features**:
+    - JSON-based state files with complete operation context
+    - Progress tracking with commit counts and percentages
+    - Conflict resolution tracking with detailed metadata
+    - Session management with unique IDs and timestamps
+    - Backup restoration with multiple recovery points
+  - **Command-Line Interface**: Comprehensive CLI with operations for:
+    - Standard rebase operations with target branch specification
+    - Resume interrupted operations from saved state
+    - Status checking with detailed progress information
+    - Abort operations with backup restoration
+    - State cleanup and maintenance
+    - Force push after successful completion
+  - Files created: [scripts/smart-rebase.py](scripts/smart-rebase.py),
+    [scripts/rebase](scripts/rebase), [scripts/SMART_REBASE_GUIDE.md](scripts/SMART_REBASE_GUIDE.md)
+  - Files modified: [.vscode/tasks.json](.vscode/tasks.json)
+
 - **Performance Optimization**: Significant improvements to translation and
   merge operations
   - Added batch translation support with deduplication for Google Translate
