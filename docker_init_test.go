@@ -1,4 +1,6 @@
-package main
+//go:build docker
+
+package main_test
 
 import (
 	"os"

@@ -27,6 +27,13 @@ Calculates disk usage under the configured `db_path`.
 
 Configuration key: `disk_scan_frequency`
 
+### Self Test
+
+Periodically verifies core components are operational. Currently checks database
+connectivity and exits on failure so containers can restart.
+
+Configuration key: `selftest_frequency`
+
 Set the desired frequency in `config.yaml` or via the `/api/config` endpoint.
 The web UI scheduling page provides a convenient interface to adjust these
 values.

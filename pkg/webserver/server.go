@@ -25,6 +25,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/maintenance"
 	"github.com/jdfalk/subtitle-manager/pkg/radarr"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
+	"github.com/jdfalk/subtitle-manager/pkg/selftest"
 	"github.com/jdfalk/subtitle-manager/pkg/sonarr"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/updater"
@@ -394,6 +395,9 @@ func StartServer(addr string) error {
 
 	go maintenance.StartDiskScan(context.Background(), viper.GetString("db_path"),
 		viper.GetString("disk_scan_frequency"))
+	logger.Info("starting self test task")
+	selftest.StartPeriodic(context.Background(), db,
+		viper.GetString("selftest_frequency"))
 
 	logger.Infof("listening on %s", addr)
 	return http.ListenAndServe(addr, h)

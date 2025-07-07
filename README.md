@@ -654,6 +654,7 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 - `SM_BATCH_WORKERS` - Number of concurrent translation workers - Default: `4`
 - `SM_SCAN_WORKERS` - Number of concurrent scanning workers - Default: `4`
 - `SM_FFMPEG_PATH` - Path to ffmpeg binary - Default: `/usr/bin/ffmpeg`
+- `SM_SELFTEST_FREQUENCY` - Self-test interval - Default: `5m`
 
 **Provider Configuration:**
 
