@@ -1,0 +1,73 @@
+{
+  "subtitles": [
+    {
+      "ID": "",
+      "File": "test1.srt",
+      "VideoFile": "test1.mp4",
+      "Release": "",
+      "Language": "en",
+      "Service": "",
+      "Embedded": false,
+      "SourceURL": "",
+      "ProviderMetadata": "",
+      "ConfidenceScore": null,
+      "ParentID": null,
+      "ModificationType": "",
+      "CreatedAt": "0001-01-01T00:00:00Z"
+    },
+    {
+      "ID": "",
+      "File": "test2.srt",
+      "VideoFile": "test2.mp4",
+      "Release": "",
+      "Language": "es",
+      "Service": "",
+      "Embedded": false,
+      "SourceURL": "",
+      "ProviderMetadata": "",
+      "ConfidenceScore": null,
+      "ParentID": null,
+      "ModificationType": "",
+      "CreatedAt": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "downloads": [
+    {
+      "ID": "",
+      "File": "test1.srt",
+      "VideoFile": "",
+      "Provider": "opensubtitles",
+      "Language": "",
+      "SearchQuery": "",
+      "MatchScore": null,
+      "DownloadAttempts": 0,
+      "ErrorMessage": "",
+      "ResponseTimeMs": null,
+      "CreatedAt": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "media_items": [
+    {
+      "ID": "",
+      "Path": "test1.mp4",
+      "Title": "Test Movie 1",
+      "Season": 0,
+      "Episode": 0,
+      "ReleaseGroup": "",
+      "AltTitles": "",
+      "FieldLocks": "",
+      "CreatedAt": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "tags": [
+    {
+      "id": "1",
+      "name": "action",
+      "type": "",
+      "entity_type": "",
+      "color": "",
+      "description": "",
+      "created_at": "0001-01-01T00:00:00Z"
+    }
+  ]
+}
