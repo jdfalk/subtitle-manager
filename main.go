@@ -11,7 +11,6 @@ var BuildTime = "unknown" // Build timestamp
 var GitCommit = "unknown" // Git commit hash
 
 func main() {
-	cmd.InitFlags()
 	// Pass version information to cmd package
 	cmd.SetVersionInfo(Version, BuildTime, GitCommit)
 	cmd.Execute()
