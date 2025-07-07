@@ -1,0 +1,8 @@
+{
+  "action": "update",
+  "number": 889,
+  "body": "Implemented initial continuous sync jobs",
+  "labels": ["codex"],
+  "guid": "c580d197-e0d5-4cf1-8269-d819b2ed66b1",
+  "legacy_guid": "update-issue-889-2025-07-06"
+}

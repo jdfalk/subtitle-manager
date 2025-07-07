@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Finalize GCS provider",
+  "body": "Implement missing Google Cloud Storage features",
+  "labels": ["enhancement", "codex"],
+  "guid": "b9da037e-45f8-4bb7-b753-e1536ec6325a",
+  "legacy_guid": "create-finalize-gcs-provider-2025-07-06"
+}

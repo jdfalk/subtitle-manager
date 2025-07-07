@@ -8,7 +8,7 @@ Amazon S3, Azure Blob Storage, and Google Cloud Storage.
 
 - **Local filesystem** (default) - Store files locally
 - **Amazon S3** - Store files in Amazon S3 or S3-compatible services
-- **Azure Blob Storage** - Store files in Microsoft Azure (coming soon)
+- **Azure Blob Storage** - Store files in Microsoft Azure
 - **Google Cloud Storage** - Store files in Google Cloud (coming soon)
 
 ## Configuration
@@ -27,7 +27,7 @@ Amazon S3, Azure Blob Storage, and Google Cloud Storage.
 --s3-access-key string              # S3 access key
 --s3-secret-key string              # S3 secret key
 
-# Azure configuration (coming soon)
+# Azure configuration
 --azure-account string              # Azure storage account name
 --azure-key string                  # Azure storage account key
 --azure-container string            # Azure blob container name
@@ -168,7 +168,7 @@ The storage system includes robust error handling:
 
 Planned features include:
 
-- Full Azure Blob Storage implementation
+- Enhanced Azure Blob Storage features
 - Full Google Cloud Storage implementation
 - Compression support for stored files
 - Automatic synchronization between local and cloud storage

@@ -1,0 +1,8 @@
+{
+  "action": "update",
+  "number": 1132,
+  "body": "Documented Whisper container integration and added tests",
+  "labels": ["codex"],
+  "guid": "c8622306-2b9e-4181-b012-f30edc474e59",
+  "legacy_guid": "update-issue-1132-2025-07-06"
+}

@@ -41,7 +41,8 @@ This approach will:
         manage the service lifecycle.
 - [x] **Automated Maintenance Tasks**: Periodic database cleanup, metadata
       refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md).
-      ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
+-      ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
+- [x] **Azure Blob Storage Support**: Initial Azure cloud storage provider.
 - [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict
       resolution.
       ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
