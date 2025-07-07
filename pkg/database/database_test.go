@@ -278,8 +278,21 @@ func TestMediaItems(t *testing.T) {
 	if err := store.SetMediaAltTitles("video.mkv", []string{"Alt"}); err != nil {
 		t.Fatalf("set alt titles: %v", err)
 	}
-	if err := store.SetMediaFieldLocks("video.mkv", "title"); err != nil {
+	if err := store.SetMediaFieldLocks("video.mkv", "title,year"); err != nil {
 		t.Fatalf("set locks: %v", err)
+	}
+
+	group, err := store.GetMediaReleaseGroup("video.mkv")
+	if err != nil || group != "GROUP" {
+		t.Fatalf("get release group: %v %s", err, group)
+	}
+	titles, err := store.GetMediaAltTitles("video.mkv")
+	if err != nil || len(titles) != 1 || titles[0] != "Alt" {
+		t.Fatalf("get alt titles: %v %v", err, titles)
+	}
+	locks, err := store.GetMediaFieldLocks("video.mkv")
+	if err != nil || locks != "title,year" {
+		t.Fatalf("get locks: %v %s", err, locks)
 	}
 
 	items, err := store.ListMediaItems()

@@ -180,6 +180,33 @@ var metadataPickCmd = &cobra.Command{
 	},
 }
 
+var metadataShowCmd = &cobra.Command{
+	Use:   "show [file]",
+	Short: "Show stored metadata for a media item",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		store, err := database.OpenStoreWithConfig()
+		if err != nil {
+			return err
+		}
+		defer store.Close()
+
+		path := args[0]
+		group, _ := store.GetMediaReleaseGroup(path)
+		titles, _ := store.GetMediaAltTitles(path)
+		locks, _ := store.GetMediaFieldLocks(path)
+
+		fmt.Printf("Release group: %s\n", group)
+		if len(titles) > 0 {
+			fmt.Printf("Alt titles: %s\n", strings.Join(titles, ", "))
+		}
+		if locks != "" {
+			fmt.Printf("Locks: %s\n", locks)
+		}
+		return nil
+	},
+}
+
 func init() {
 	metadataUpdateCmd.Flags().StringVar(&setTitle, "title", "", "new title")
 	metadataUpdateCmd.Flags().StringVar(&setGroup, "release-group", "", "release group")
@@ -197,5 +224,6 @@ func init() {
 	metadataCmd.AddCommand(metadataUpdateCmd)
 	metadataCmd.AddCommand(metadataFetchCmd)
 	metadataCmd.AddCommand(metadataPickCmd)
+	metadataCmd.AddCommand(metadataShowCmd)
 	rootCmd.AddCommand(metadataCmd)
 }

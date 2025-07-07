@@ -160,6 +160,9 @@ func (m *MockSubtitleStore) SetMediaTitle(path, title string) error {
 	args := m.Called(path, title)
 	return args.Error(0)
 }
+func (m *MockSubtitleStore) GetMediaReleaseGroup(path string) (string, error) { return "", nil }
+func (m *MockSubtitleStore) GetMediaAltTitles(path string) ([]string, error)  { return []string{}, nil }
+func (m *MockSubtitleStore) GetMediaFieldLocks(path string) (string, error)   { return "", nil }
 
 func (m *MockSubtitleStore) InsertMonitoredItem(rec *database.MonitoredItem) error {
 	args := m.Called(rec)

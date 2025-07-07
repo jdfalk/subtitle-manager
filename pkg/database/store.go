@@ -66,6 +66,12 @@ type SubtitleStore interface {
 	SetMediaAltTitles(path string, titles []string) error
 	// SetMediaFieldLocks updates locked fields for a media item.
 	SetMediaFieldLocks(path, locks string) error
+	// GetMediaReleaseGroup retrieves the release group for a media item.
+	GetMediaReleaseGroup(path string) (string, error)
+	// GetMediaAltTitles retrieves alternate titles for a media item.
+	GetMediaAltTitles(path string) ([]string, error)
+	// GetMediaFieldLocks retrieves locked fields for a media item.
+	GetMediaFieldLocks(path string) (string, error)
 	// SetMediaTitle updates the title for a media item.
 	SetMediaTitle(path, title string) error
 	// CreateLanguageProfile stores a new language profile.
