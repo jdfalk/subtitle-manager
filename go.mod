@@ -9,7 +9,7 @@ require (
 	github.com/asticode/go-astisub v0.34.0
 	github.com/aws/aws-sdk-go v1.55.7
 	github.com/cockroachdb/pebble v1.1.5
-	github.com/docker/docker v28.3.0+incompatible
+	github.com/docker/docker v28.3.1+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
