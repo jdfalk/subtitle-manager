@@ -1,0 +1,20 @@
+# file: .github/workflows/pr-labeler.yml
+# version: 1.0.0
+# guid: e5f6a7b8-c9d0-41e2-f3a4-b5c6d7e8f9a0
+
+name: Pull Request Labeler
+
+# Automatically label pull requests based on changed files and branch names
+# Uses the reusable labeler workflow from ghcommon repository
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  labeler:
+    uses: jdfalk/ghcommon/.github/workflows/reusable-labeler.yml@main
+    with:
+      configuration-path: ".github/labeler.yml"
+      sync-labels: true
+      dot: true

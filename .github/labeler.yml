@@ -1,0 +1,121 @@
+# file: .github/labeler.yml
+# version: 1.0.0
+# guid: a7b8c9d0-e1f2-43a4-b5c6-d7e8f9a0b1c2
+#
+# Pull Request Labeler Configuration for subtitle-manager repository
+# Automatically label pull requests based on changed files or branch names
+
+# Documentation changes
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "README.md"
+          - "CHANGELOG.md"
+          - "TODO.md"
+          - "SECURITY.md"
+          - "docs/**"
+          - "**/*.md"
+
+# Go backend changes
+go:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.go"
+          - "go.mod"
+          - "go.sum"
+          - "cmd/**"
+          - "pkg/**"
+          - "internal/**"
+          - "main.go"
+
+# Subtitle processing (subtitle-manager specific)
+subtitle-processing:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "pkg/subtitle/**"
+          - "pkg/format/**"
+          - "cmd/convert/**"
+          - "**/*subtitle*"
+          - "**/*convert*"
+
+# Web UI changes
+webui:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "pkg/webui/**"
+          - "templates/**"
+          - "static/**"
+          - "**/*.html"
+          - "**/*.css"
+          - "**/*.js"
+
+# Configuration files
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "*.yaml"
+          - "*.yml"
+          - "*.json"
+          - "*.toml"
+          - ".gitignore"
+          - ".env*"
+          - "Makefile"
+          - "docker-compose.yml"
+          - "Dockerfile*"
+
+# Docker and deployment
+docker:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "Dockerfile*"
+          - "docker-compose*.yml"
+          - "docker-stack*.yml"
+          - "docker-init.sh"
+          - ".dockerignore"
+
+# Scripts and automation
+scripts:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "scripts/**"
+          - "**/*.sh"
+          - "**/*.py"
+
+# Testing files
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*_test.go"
+          - "test/**"
+          - "tests/**"
+          - "test-*.html"
+
+# Dependencies and package management
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "go.mod"
+          - "go.sum"
+
+# Security-related changes
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "SECURITY.md"
+          - "**/*security*"
+          - "**/*auth*"
+
+# Feature branches
+feature:
+  - head-branch:
+      - any-glob-to-any-file: ["feature/*", "feat/*"]
+
+# Bug fix branches
+bugfix:
+  - head-branch:
+      - any-glob-to-any-file: ["fix/*", "bugfix/*", "hotfix/*"]
+
+# Breaking changes
+breaking-change:
+  - head-branch:
+      - any-glob-to-any-file: ["breaking/*"]
