@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Test Issue",
+  "body": "body",
+  "labels": ["codex"],
+  "guid": "69165c01-a533-49bf-b2c9-9a07b55259ab",
+  "legacy_guid": "create-test-issue-2025-07-06"
+}

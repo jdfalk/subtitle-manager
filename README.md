@@ -34,7 +34,7 @@ anti-captcha integration, and a polished React web interface.**
   Retrieve history via the `history` command or `/api/history` endpoint with
   optional `lang` and `video` filters.
 - **Optional cloud storage for subtitles and history** in Amazon S3, Azure Blob
-  Storage, or Google Cloud Storage with local backup support.
+  Storage (now supported), or Google Cloud Storage with local backup support.
 - Per component logging with adjustable levels.
 - Extract subtitles from media containers using ffmpeg.
 - Convert uploaded subtitle files to SRT via `/api/convert`.
