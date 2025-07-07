@@ -89,6 +89,60 @@ All notable changes to this project will be documented in this file.
     [scripts/rebase](scripts/rebase), [scripts/SMART_REBASE_GUIDE.md](scripts/SMART_REBASE_GUIDE.md)
   - Files modified: [.vscode/tasks.json](.vscode/tasks.json)
 
+- **Database Backend Migration - Complete**: Full migration to support multiple database backends
+  - **Pure Go Build Support**: Complete PebbleDB implementation for CGO-free deployments
+    - All SQLite features migrated to PebbleDB (authentication, sessions, tags, permissions, history)
+    - No CGO dependencies required for pure Go builds (`-tags nosqlite`)
+    - High-performance embedded key-value store with smaller binary size
+  - **SQLite Build Compatibility**: Maintained full SQLite support with CGO (`-tags sqlite`)
+    - Traditional SQL database with full querying capabilities
+    - Migration support from existing databases
+    - Backward compatibility for existing deployments
+  - **Interface Unification**: Fixed ID type mapping (int64 ↔ UUID) for seamless operation
+    - Unified interface for both database backends
+    - Transparent operation switching between backends
+    - Consistent API behavior regardless of backend choice
+  - **Migration Tools**: Enhanced migration between database types
+    - `subtitle-manager migrate old.db newdir` for SQLite to PebbleDB migration
+    - Automatic data validation and integrity checking
+    - Backup creation before migration operations
+  - **Comprehensive Testing**: All tests pass in both build modes
+    - Unit tests for both database backends with identical behavior
+    - Integration tests ensuring feature parity
+    - Performance benchmarks for optimization validation
+  - Files modified: [pkg/database/pebble.go](pkg/database/pebble.go),
+    [pkg/database/sqlite.go](pkg/database/sqlite.go), [cmd/migrate.go](cmd/migrate.go)
+
+- **Subtitle Quality Scoring System - Complete**: Advanced subtitle evaluation and selection
+  - **Multi-Criteria Scoring**: Provider reliability, release matching, format preferences, metadata quality
+  - **Intelligent Selection**: Automatic best-match selection based on weighted scoring algorithms
+  - **Configurable Preferences**: User-defined provider preferences and quality thresholds
+  - **CLI Integration**: `fetch-scored` command with scoring options and verbose output
+  - **Configuration Support**: Full YAML configuration with weighted criteria and provider hierarchies
+  - Files added: [pkg/scoring/scorer.go](pkg/scoring/scorer.go), [cmd/fetch-scored.go](cmd/fetch-scored.go)
+
+- **Automatic Subtitle Synchronization - Complete**: Advanced synchronization using multiple methods
+  - **Audio Transcription Sync**: Whisper API integration with local service support
+  - **Embedded Subtitle Sync**: Advanced track selection with format preservation
+  - **Hybrid Synchronization**: Configurable weighted averaging between methods
+  - **Translation Integration**: Sync and translate in single operation with language profiles
+  - **Performance Optimization**: Multi-threaded processing with intelligent caching
+  - **CLI Enhancement**: Enhanced `sync` command with advanced options and batch processing
+  - **Web UI Integration**: Complete synchronization interface with progress tracking
+  - Files enhanced: [cmd/sync.go](cmd/sync.go), [cmd/syncbatch.go](cmd/syncbatch.go),
+    [pkg/sync/audio.go](pkg/sync/audio.go), [pkg/sync/embedded.go](pkg/sync/embedded.go)
+
+- **Manual Subtitle Search Interface - Complete**: Comprehensive search interface with advanced features
+  - **Multi-Provider Search**: Parallel searching with provider status indicators
+  - **Advanced Filtering**: Season/episode, year, release group specification
+  - **Enhanced Results Display**: Sortable tables, rating systems, provider badges
+  - **Subtitle Preview**: Content preview with provider information
+  - **Batch Operations**: Multi-select downloads with visual feedback
+  - **Search History**: Persistent history with quick replay capabilities
+  - **API Integration**: Complete REST endpoints for search operations
+  - Files enhanced: [webui/src/Wanted.jsx](webui/src/Wanted.jsx),
+    [pkg/webserver/search.go](pkg/webserver/search.go)
+
 - **Performance Optimization**: Significant improvements to translation and
   merge operations
   - Added batch translation support with deduplication for Google Translate
