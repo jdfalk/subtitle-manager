@@ -885,9 +885,9 @@ func TestProvidersDefault(t *testing.T) {
 	}
 }
 
-// TestProvidersUpdate verifies that provider configuration updates via POST
+// TestProviderConfigUpdate verifies that provider configuration updates via POST
 // /api/providers are persisted in viper and the config file.
-func TestProvidersUpdate(t *testing.T) {
+func TestProviderConfigUpdate(t *testing.T) {
 	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
