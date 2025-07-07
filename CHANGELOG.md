@@ -94,6 +94,7 @@ All notable changes to this project will be documented in this file.
 - History API now filters by video file path via `video` query parameter.
 - Self-test system verifies startup components and exits on failure.
 - **Azure Blob Storage provider**: Initial support for Microsoft Azure cloud storage.
+- Command-line `tag` management with list, add, and remove operations.
 - **Enhanced Issue Management Workflow**: Updated GitHub workflow configuration
   - Automatic triggering on merges to main branch when issue files change
   - Weekly scheduled maintenance on Sundays at 2 AM UTC

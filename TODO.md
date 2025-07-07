@@ -38,6 +38,8 @@ This approach will:
   - [x] Add tags table to the database and expose tag management in settings.
   - [x] Apply tags to media and users to drive language selection and provider
         behavior.
+  - [x] **Tag Management CLI**: List, add, and remove tags from the command
+        line. ([#1288](https://github.com/jdfalk/subtitle-manager/issues/1288))
 - [ ] **Whisper Container Integration**: Optional embedded Whisper service.
       ([#1132](https://github.com/jdfalk/subtitle-manager/issues/1132))
   - [x] Launch
