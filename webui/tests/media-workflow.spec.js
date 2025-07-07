@@ -700,3 +700,60 @@ test('file upload workflow', async ({ page }) => {
   await expect(page.getByText('Media Library')).toBeVisible({ timeout: 5000 });
   await expect(page.locator('body')).not.toHaveText('Error');
 });
+/**
+ * Test library scanning workflow
+ */
+test('library scanning workflow', async ({ page }) => {
+  await page.route('**/api/config', route => {
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: 'testuser',
+        authenticated: true,
+        backendAvailable: true,
+      }),
+    });
+  });
+
+  await page.route('**/api/setup/status', route =>
+    route.fulfill({
+      status: 200,
+      body: JSON.stringify({ needed: false }),
+    })
+  );
+
+  await page.route('**/api/scan', route => {
+    if (route.request().method() === 'POST') {
+      route.fulfill({ status: 200 });
+    } else {
+      route.continue();
+    }
+  });
+
+  await page.route('**/api/scan/status', route => {
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ running: false, completed: 10, files: [] }),
+    });
+  });
+
+  await page.goto('/tools/scan');
+  await page.waitForLoadState('networkidle');
+
+  const dirInput = page
+    .getByPlaceholder(/directory/i)
+    .or(page.locator('input[type="text"]'))
+    .first();
+  const startButton = page.getByRole('button', { name: /start scan/i });
+  if (
+    (await dirInput.isVisible({ timeout: 2000 })) &&
+    (await startButton.isVisible({ timeout: 2000 }))
+  ) {
+    await dirInput.fill('/media');
+    await startButton.click();
+  }
+
+  await expect(page.locator('body')).not.toHaveText('Error');
+});

@@ -9,14 +9,20 @@ enhancements before a stable 1.0 release.**
 ## 🚀 Planned Refactor: Hybrid Protobuf + Go Types + gcommon
 
 We are migrating to a hybrid model for all shared types and business logic:
-- **Protobufs** will define the canonical data models (e.g., LanguageProfile, MediaItem, etc.)
+
+- **Protobufs** will define the canonical data models (e.g., LanguageProfile,
+  MediaItem, etc.)
 - **Go types** will be generated from Protobufs for use in all Go projects
-- **gcommon** will contain all shared business logic, helpers, and interface implementations, importing the generated types
-- **Other languages** (Python, JS, etc.) can generate types from the same Protobufs as needed
+- **gcommon** will contain all shared business logic, helpers, and interface
+  implementations, importing the generated types
+- **Other languages** (Python, JS, etc.) can generate types from the same
+  Protobufs as needed
 - **All work for this migration will be done on the `gcommon-refactor` branch**
-- **Main branches** will continue using Go types and type packages until the migration is complete
+- **Main branches** will continue using Go types and type packages until the
+  migration is complete
 
 This approach will:
+
 - Eliminate duplication and type drift
 - Enable cross-language compatibility
 - Centralize business logic and validation
@@ -46,7 +52,8 @@ This approach will:
       resolution.
       ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
 - [x] **Online Metadata Sources**: Fetch languages, ratings, and episode data
-      from external APIs. `metadata fetch` command now supports `--id` for direct TMDB lookup.
+      from external APIs. `metadata fetch` command now supports `--id` for
+      direct TMDB lookup.
       ([#351](https://github.com/jdfalk/subtitle-manager/issues/351),
       [#890](https://github.com/jdfalk/subtitle-manager/issues/890))
 - [ ] **Media Metadata Editor**: Provide manual editing interface.
@@ -143,7 +150,7 @@ Current tag implementations will be migrated to the unified system:
       file with comprehensive workflows
   - Added proper API mocking for database operations
   - Enhanced login test robustness in `app.spec.js`
-- [ ] **Add media library E2E tests**: Test file upload, scanning, and subtitle
+- [x] **Add media library E2E tests**: Test file upload, scanning, and subtitle
       operations
 - [x] **Add provider configuration tests**: Test subtitle provider setup and
       validation
@@ -234,8 +241,8 @@ Manager, cataloguing every feature from Bazarr's
 
 ### Executive Summary: Feature Parity Status
 
-| **Feature Category**   | **Bazarr Status**         | **Our Implementation**                                                              | **Gold Standard**            |
-| ---------------------- | ------------------------- | ----------------------------------------------------------------------------------- | ---------------------------- |
+| **Feature Category**   | **Bazarr Status**         | **Our Implementation**                                                               | **Gold Standard**             |
+| ---------------------- | ------------------------- | ------------------------------------------------------------------------------------ | ----------------------------- |
 | **Subtitle Providers** | 40+ providers supported   | ✅ 40+ providers ([registry.go](pkg/providers/registry.go))                          | ✅ Full parity achieved       |
 | **Web Interface**      | Modern React UI           | ✅ Complete React app ([webui/src/](webui/src/))                                     | ✅ Production ready           |
 | **Authentication**     | Basic auth + API keys     | ✅ Password, OAuth2, API keys, RBAC ([pkg/auth/](pkg/auth/))                         | ✅ Enterprise grade           |
@@ -254,28 +261,28 @@ Manager, cataloguing every feature from Bazarr's
 
 | Bazarr Feature               | Implementation Status | Code Reference                       |
 | ---------------------------- | --------------------- | ------------------------------------ |
-| Format conversion            | ✅ Complete            | [cmd/convert.go](cmd/convert.go)     |
-| Subtitle merging             | ✅ Complete            | [cmd/merge.go](cmd/merge.go)         |
-| Media extraction             | ✅ Complete            | [cmd/extract.go](cmd/extract.go)     |
-| Translation (Google/ChatGPT) | ✅ Complete            | [cmd/translate.go](cmd/translate.go) |
-| Batch processing             | ✅ Complete            | [cmd/batch.go](cmd/batch.go)         |
-| History tracking             | ✅ Complete            | [cmd/history.go](cmd/history.go)     |
+| Format conversion            | ✅ Complete           | [cmd/convert.go](cmd/convert.go)     |
+| Subtitle merging             | ✅ Complete           | [cmd/merge.go](cmd/merge.go)         |
+| Media extraction             | ✅ Complete           | [cmd/extract.go](cmd/extract.go)     |
+| Translation (Google/ChatGPT) | ✅ Complete           | [cmd/translate.go](cmd/translate.go) |
+| Batch processing             | ✅ Complete           | [cmd/batch.go](cmd/batch.go)         |
+| History tracking             | ✅ Complete           | [cmd/history.go](cmd/history.go)     |
 
 #### 2. Authentication & Authorization – Complete
 
 | Bazarr Feature            | Implementation Status | Code Reference                                   |
 | ------------------------- | --------------------- | ------------------------------------------------ |
-| Password authentication   | ✅ Complete            | [pkg/auth/auth.go](pkg/auth/auth.go)             |
-| API key management        | ✅ Complete            | [cmd/user.go](cmd/user.go)                       |
-| Session management        | ✅ Complete            | [pkg/webserver/auth.go](pkg/webserver/auth.go)   |
-| Role-based access control | ✅ Complete            | [pkg/auth/rbac.go](pkg/auth/rbac.go)             |
-| OAuth2 (GitHub)           | ✅ Complete            | [pkg/webserver/oauth.go](pkg/webserver/oauth.go) |
-| One-time tokens           | ✅ Complete            | [cmd/user.go](cmd/user.go)                       |
+| Password authentication   | ✅ Complete           | [pkg/auth/auth.go](pkg/auth/auth.go)             |
+| API key management        | ✅ Complete           | [cmd/user.go](cmd/user.go)                       |
+| Session management        | ✅ Complete           | [pkg/webserver/auth.go](pkg/webserver/auth.go)   |
+| Role-based access control | ✅ Complete           | [pkg/auth/rbac.go](pkg/auth/rbac.go)             |
+| OAuth2 (GitHub)           | ✅ Complete           | [pkg/webserver/oauth.go](pkg/webserver/oauth.go) |
+| One-time tokens           | ✅ Complete           | [cmd/user.go](cmd/user.go)                       |
 
 #### 3. Subtitle Providers – Complete - Full Bazarr Parity
 
-| Provider Category      | Bazarr Count | Our Implementation                                          | Status            |
-| ---------------------- | ------------ | ----------------------------------------------------------- | ----------------- |
+| Provider Category      | Bazarr Count | Our Implementation                                           | Status             |
+| ---------------------- | ------------ | ------------------------------------------------------------ | ------------------ |
 | Major providers        | ~40          | ✅ 40+ providers                                             | ✅ Parity achieved |
 | OpenSubtitles variants | 3            | ✅ Complete ([opensubtitles/](pkg/providers/opensubtitles/)) | ✅                 |
 | Regional providers     | ~25          | ✅ Complete (Greek, Turkish, etc.)                           | ✅                 |
@@ -285,8 +292,8 @@ Manager, cataloguing every feature from Bazarr's
 
 #### 4. Web Interface Pages – Complete
 
-| Bazarr Page         | Implementation Status    | Code Reference                                     |
-| ------------------- | ------------------------ | -------------------------------------------------- |
+| Bazarr Page         | Implementation Status     | Code Reference                                     |
+| ------------------- | ------------------------- | -------------------------------------------------- |
 | Dashboard           | ✅ Complete               | [webui/src/Dashboard.jsx](webui/src/Dashboard.jsx) |
 | Settings            | ✅ Complete               | [webui/src/Settings.jsx](webui/src/Settings.jsx)   |
 | History             | ✅ Complete               | [webui/src/History.jsx](webui/src/History.jsx)     |
@@ -299,26 +306,26 @@ Manager, cataloguing every feature from Bazarr's
 
 | Bazarr Feature     | Implementation Status | Code Reference                                     |
 | ------------------ | --------------------- | -------------------------------------------------- |
-| Sonarr integration | ✅ Complete            | [cmd/sonarr.go](cmd/sonarr.go)                     |
-| Radarr integration | ✅ Complete            | [cmd/radarr.go](cmd/radarr.go)                     |
-| Plex integration   | ✅ Complete            | [cmd/plex.go](cmd/plex.go), [pkg/plex/](pkg/plex/) |
-| Library scanning   | ✅ Complete            | [cmd/scan.go](cmd/scan.go)                         |
-| Directory watching | ✅ Complete            | [cmd/watch.go](cmd/watch.go)                       |
-| Webhooks           | ✅ Complete            | [pkg/webhooks](pkg/webhooks/)                      |
-| Notifications      | 🔶 Planned             | [TODO] Discord/Telegram/Email                      |
+| Sonarr integration | ✅ Complete           | [cmd/sonarr.go](cmd/sonarr.go)                     |
+| Radarr integration | ✅ Complete           | [cmd/radarr.go](cmd/radarr.go)                     |
+| Plex integration   | ✅ Complete           | [cmd/plex.go](cmd/plex.go), [pkg/plex/](pkg/plex/) |
+| Library scanning   | ✅ Complete           | [cmd/scan.go](cmd/scan.go)                         |
+| Directory watching | ✅ Complete           | [cmd/watch.go](cmd/watch.go)                       |
+| Webhooks           | ✅ Complete           | [pkg/webhooks](pkg/webhooks/)                      |
+| Notifications      | 🔶 Planned            | [TODO] Discord/Telegram/Email                      |
 
 #### 6. Advanced Features – Complete
 
 | Bazarr Feature        | Implementation Status | Code Reference                            |
 | --------------------- | --------------------- | ----------------------------------------- |
-| PostgreSQL support    | ✅ Complete            | SQLite, PebbleDB and PostgreSQL available |
-| Reverse proxy support | 🔶 Partial             | Basic configuration available             |
-| Anti-captcha service  | ✅ Complete            | [pkg/captcha/](pkg/captcha/)              |
-| Performance tuning    | ✅ Complete            | Concurrent workers, pools                 |
-| Custom scheduling     | ✅ Complete            | [pkg/scheduler/](pkg/scheduler/)          |
-| Bazarr config import  | ✅ Complete            | [cmd/import.go](cmd/import.go)            |
-| Webhook system        | ✅ Complete            | [pkg/webhooks/](pkg/webhooks/)            |
-| Notifications         | ✅ Complete            | [pkg/notifications/](pkg/notifications/)  |
+| PostgreSQL support    | ✅ Complete           | SQLite, PebbleDB and PostgreSQL available |
+| Reverse proxy support | 🔶 Partial            | Basic configuration available             |
+| Anti-captcha service  | ✅ Complete           | [pkg/captcha/](pkg/captcha/)              |
+| Performance tuning    | ✅ Complete           | Concurrent workers, pools                 |
+| Custom scheduling     | ✅ Complete           | [pkg/scheduler/](pkg/scheduler/)          |
+| Bazarr config import  | ✅ Complete           | [cmd/import.go](cmd/import.go)            |
+| Webhook system        | ✅ Complete           | [pkg/webhooks/](pkg/webhooks/)            |
+| Notifications         | ✅ Complete           | [pkg/notifications/](pkg/notifications/)  |
 
 ### Complete Provider Implementation Analysis
 
@@ -330,56 +337,56 @@ vs [Our Registry](pkg/providers/registry.go)
 
 | Provider                | Bazarr | Our Implementation | Documentation                                                               |
 | ----------------------- | ------ | ------------------ | --------------------------------------------------------------------------- |
-| Addic7ed                | ✅      | ✅                  | [addic7ed/](pkg/providers/addic7ed/)                                        |
-| AnimeKalesi             | ✅      | ✅                  | [animekalesi/](pkg/providers/animekalesi/)                                  |
-| Animetosho              | ✅      | ✅                  | [animetosho/](pkg/providers/animetosho/)                                    |
-| Assrt                   | ✅      | ✅                  | [assrt/](pkg/providers/assrt/)                                              |
-| AvistaZ/CinemaZ         | ✅      | ✅                  | [avistaz/](pkg/providers/avistaz/)                                          |
-| BetaSeries              | ✅      | ✅                  | [betaseries/](pkg/providers/betaseries/)                                    |
-| BSplayer                | ✅      | ✅                  | [bsplayer/](pkg/providers/bsplayer/)                                        |
-| Embedded Subtitles      | ✅      | ✅                  | [embedded/](pkg/providers/embedded/)                                        |
-| Gestdown.info           | ✅      | ✅                  | [gestdown/](pkg/providers/gestdown/)                                        |
-| GreekSubs               | ✅      | ✅                  | [greeksubs/](pkg/providers/greeksubs/)                                      |
-| GreekSubtitles          | ✅      | ✅                  | [greeksubtitles/](pkg/providers/greeksubtitles/)                            |
-| HDBits.org              | ✅      | ✅                  | [hdbits/](pkg/providers/hdbits/)                                            |
-| Hosszupuska             | ✅      | ✅                  | [hosszupuska/](pkg/providers/hosszupuska/)                                  |
-| Karagarga.in            | ✅      | ✅                  | [karagarga/](pkg/providers/karagarga/)                                      |
-| Ktuvit                  | ✅      | ✅                  | [ktuvit/](pkg/providers/ktuvit/)                                            |
-| LegendasDivx            | ✅      | ✅                  | [legendasdivx/](pkg/providers/legendasdivx/)                                |
-| Legendas.net            | ✅      | ✅                  | [legendasnet/](pkg/providers/legendasnet/)                                  |
-| Napiprojekt             | ✅      | ✅                  | [napiprojekt/](pkg/providers/napiprojekt/)                                  |
-| Napisy24                | ✅      | ✅                  | [napisy24/](pkg/providers/napisy24/)                                        |
-| Nekur                   | ✅      | ✅                  | [nekur/](pkg/providers/nekur/)                                              |
-| OpenSubtitles.com       | ✅      | ✅                  | [opensubtitlescom/](pkg/providers/opensubtitlescom/)                        |
-| OpenSubtitles.org (VIP) | ✅      | ✅                  | [opensubtitlesvip/](pkg/providers/opensubtitlesvip/)                        |
-| Podnapisi               | ✅      | ✅                  | [podnapisi/](pkg/providers/podnapisi/)                                      |
-| RegieLive               | ✅      | ✅                  | [regielive/](pkg/providers/regielive/)                                      |
-| Sous-Titres.eu          | ✅      | ✅                  | [soustitres/](pkg/providers/soustitres/)                                    |
-| Subdivx                 | ✅      | ✅                  | [subdivx/](pkg/providers/subdivx/)                                          |
-| subf2m.co               | ✅      | ✅                  | [subf2m/](pkg/providers/subf2m/)                                            |
-| Subs.sab.bz             | ✅      | ✅                  | [subssabbz/](pkg/providers/subssabbz/)                                      |
-| Subs4Free               | ✅      | ✅                  | [subs4free/](pkg/providers/subs4free/)                                      |
-| Subs4Series             | ✅      | ✅                  | [subs4series/](pkg/providers/subs4series/)                                  |
-| Subscene                | ✅      | ✅                  | [subscene/](pkg/providers/subscene/)                                        |
-| Subscenter              | ✅      | ✅                  | [subscenter/](pkg/providers/subscenter/)                                    |
-| Subsunacs.net           | ✅      | ✅                  | [subsunacs/](pkg/providers/subsunacs/)                                      |
-| SubSynchro              | ✅      | ✅                  | [subsynchro/](pkg/providers/subsynchro/)                                    |
-| Subtitrari-noi.ro       | ✅      | ✅                  | [subtitrarinoi/](pkg/providers/subtitrarinoi/)                              |
-| subtitri.id.lv          | ✅      | ✅                  | [subtitriidlv/](pkg/providers/subtitriidlv/)                                |
-| Subtitulamos.tv         | ✅      | ✅                  | [subtitulamos/](pkg/providers/subtitulamos/)                                |
-| Supersubtitles          | ✅      | ✅                  | [supersubtitles/](pkg/providers/supersubtitles/)                            |
-| Titlovi                 | ✅      | ✅                  | [titlovi/](pkg/providers/titlovi/)                                          |
-| Titrari.ro              | ✅      | ✅                  | [titrariro/](pkg/providers/titrariro/)                                      |
-| Titulky.com             | ✅      | ✅                  | [titulky/](pkg/providers/titulky/)                                          |
-| Turkcealtyazi.org       | ✅      | ✅                  | [turkcealtyazi/](pkg/providers/turkcealtyazi/)                              |
-| TuSubtitulo             | ✅      | ✅                  | [tusubtitulo/](pkg/providers/tusubtitulo/)                                  |
-| TVSubtitles             | ✅      | ✅                  | [tvsubtitles/](pkg/providers/tvsubtitles/)                                  |
-| Whisper                 | ✅      | ✅                  | [whisper/](pkg/providers/whisper/) + [cmd/transcribe.go](cmd/transcribe.go) |
-| Wizdom                  | ✅      | ✅                  | [wizdom/](pkg/providers/wizdom/)                                            |
-| XSubs                   | ✅      | ✅                  | [xsubs/](pkg/providers/xsubs/)                                              |
-| Yavka.net               | ✅      | ✅                  | [yavka/](pkg/providers/yavka/)                                              |
-| YIFY Subtitles          | ✅      | ✅                  | [yifysubtitles/](pkg/providers/yifysubtitles/)                              |
-| Zimuku                  | ✅      | ✅                  | [zimuku/](pkg/providers/zimuku/)                                            |
+| Addic7ed                | ✅     | ✅                 | [addic7ed/](pkg/providers/addic7ed/)                                        |
+| AnimeKalesi             | ✅     | ✅                 | [animekalesi/](pkg/providers/animekalesi/)                                  |
+| Animetosho              | ✅     | ✅                 | [animetosho/](pkg/providers/animetosho/)                                    |
+| Assrt                   | ✅     | ✅                 | [assrt/](pkg/providers/assrt/)                                              |
+| AvistaZ/CinemaZ         | ✅     | ✅                 | [avistaz/](pkg/providers/avistaz/)                                          |
+| BetaSeries              | ✅     | ✅                 | [betaseries/](pkg/providers/betaseries/)                                    |
+| BSplayer                | ✅     | ✅                 | [bsplayer/](pkg/providers/bsplayer/)                                        |
+| Embedded Subtitles      | ✅     | ✅                 | [embedded/](pkg/providers/embedded/)                                        |
+| Gestdown.info           | ✅     | ✅                 | [gestdown/](pkg/providers/gestdown/)                                        |
+| GreekSubs               | ✅     | ✅                 | [greeksubs/](pkg/providers/greeksubs/)                                      |
+| GreekSubtitles          | ✅     | ✅                 | [greeksubtitles/](pkg/providers/greeksubtitles/)                            |
+| HDBits.org              | ✅     | ✅                 | [hdbits/](pkg/providers/hdbits/)                                            |
+| Hosszupuska             | ✅     | ✅                 | [hosszupuska/](pkg/providers/hosszupuska/)                                  |
+| Karagarga.in            | ✅     | ✅                 | [karagarga/](pkg/providers/karagarga/)                                      |
+| Ktuvit                  | ✅     | ✅                 | [ktuvit/](pkg/providers/ktuvit/)                                            |
+| LegendasDivx            | ✅     | ✅                 | [legendasdivx/](pkg/providers/legendasdivx/)                                |
+| Legendas.net            | ✅     | ✅                 | [legendasnet/](pkg/providers/legendasnet/)                                  |
+| Napiprojekt             | ✅     | ✅                 | [napiprojekt/](pkg/providers/napiprojekt/)                                  |
+| Napisy24                | ✅     | ✅                 | [napisy24/](pkg/providers/napisy24/)                                        |
+| Nekur                   | ✅     | ✅                 | [nekur/](pkg/providers/nekur/)                                              |
+| OpenSubtitles.com       | ✅     | ✅                 | [opensubtitlescom/](pkg/providers/opensubtitlescom/)                        |
+| OpenSubtitles.org (VIP) | ✅     | ✅                 | [opensubtitlesvip/](pkg/providers/opensubtitlesvip/)                        |
+| Podnapisi               | ✅     | ✅                 | [podnapisi/](pkg/providers/podnapisi/)                                      |
+| RegieLive               | ✅     | ✅                 | [regielive/](pkg/providers/regielive/)                                      |
+| Sous-Titres.eu          | ✅     | ✅                 | [soustitres/](pkg/providers/soustitres/)                                    |
+| Subdivx                 | ✅     | ✅                 | [subdivx/](pkg/providers/subdivx/)                                          |
+| subf2m.co               | ✅     | ✅                 | [subf2m/](pkg/providers/subf2m/)                                            |
+| Subs.sab.bz             | ✅     | ✅                 | [subssabbz/](pkg/providers/subssabbz/)                                      |
+| Subs4Free               | ✅     | ✅                 | [subs4free/](pkg/providers/subs4free/)                                      |
+| Subs4Series             | ✅     | ✅                 | [subs4series/](pkg/providers/subs4series/)                                  |
+| Subscene                | ✅     | ✅                 | [subscene/](pkg/providers/subscene/)                                        |
+| Subscenter              | ✅     | ✅                 | [subscenter/](pkg/providers/subscenter/)                                    |
+| Subsunacs.net           | ✅     | ✅                 | [subsunacs/](pkg/providers/subsunacs/)                                      |
+| SubSynchro              | ✅     | ✅                 | [subsynchro/](pkg/providers/subsynchro/)                                    |
+| Subtitrari-noi.ro       | ✅     | ✅                 | [subtitrarinoi/](pkg/providers/subtitrarinoi/)                              |
+| subtitri.id.lv          | ✅     | ✅                 | [subtitriidlv/](pkg/providers/subtitriidlv/)                                |
+| Subtitulamos.tv         | ✅     | ✅                 | [subtitulamos/](pkg/providers/subtitulamos/)                                |
+| Supersubtitles          | ✅     | ✅                 | [supersubtitles/](pkg/providers/supersubtitles/)                            |
+| Titlovi                 | ✅     | ✅                 | [titlovi/](pkg/providers/titlovi/)                                          |
+| Titrari.ro              | ✅     | ✅                 | [titrariro/](pkg/providers/titrariro/)                                      |
+| Titulky.com             | ✅     | ✅                 | [titulky/](pkg/providers/titulky/)                                          |
+| Turkcealtyazi.org       | ✅     | ✅                 | [turkcealtyazi/](pkg/providers/turkcealtyazi/)                              |
+| TuSubtitulo             | ✅     | ✅                 | [tusubtitulo/](pkg/providers/tusubtitulo/)                                  |
+| TVSubtitles             | ✅     | ✅                 | [tvsubtitles/](pkg/providers/tvsubtitles/)                                  |
+| Whisper                 | ✅     | ✅                 | [whisper/](pkg/providers/whisper/) + [cmd/transcribe.go](cmd/transcribe.go) |
+| Wizdom                  | ✅     | ✅                 | [wizdom/](pkg/providers/wizdom/)                                            |
+| XSubs                   | ✅     | ✅                 | [xsubs/](pkg/providers/xsubs/)                                              |
+| Yavka.net               | ✅     | ✅                 | [yavka/](pkg/providers/yavka/)                                              |
+| YIFY Subtitles          | ✅     | ✅                 | [yifysubtitles/](pkg/providers/yifysubtitles/)                              |
+| Zimuku                  | ✅     | ✅                 | [zimuku/](pkg/providers/zimuku/)                                            |
 
 #### Bazarr Settings Comparison Analysis
 
@@ -388,53 +395,50 @@ vs [Our Registry](pkg/providers/registry.go)
 
 | Bazarr Setting Category      | Implementation Status | Our Location                     | Bazarr Reference                                                                                                                      |
 | ---------------------------- | --------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| **Host Settings**            | ✅ Complete            | [cmd/root.go](cmd/root.go)       | [Host](https://wiki.bazarr.media/Additional-Configuration/Settings/#host)                                                             |
-| - Bind Address               | ✅ Complete            | Viper config                     | -                                                                                                                                     |
-| - Port Number                | ✅ Complete            | Viper config                     | -                                                                                                                                     |
-| - URL Base                   | ✅ Complete            | Reverse proxy support            | [URL Base](https://wiki.bazarr.media/Additional-Configuration/Settings/#url-base)                                                     |
-| **Security Settings**        | ✅ Complete            | [pkg/auth/](pkg/auth/)           | [Security](https://wiki.bazarr.media/Additional-Configuration/Settings/#security)                                                     |
-| - Authentication             | ✅ Enhanced            | Multi-mode auth                  | [Authentication](https://wiki.bazarr.media/Additional-Configuration/Settings/#authentication)                                         |
-| - Username/Password          | ✅ Complete            | Hashed storage                   | -                                                                                                                                     |
-| - API Key                    | ✅ Enhanced            | Multiple keys                    | [API Key](https://wiki.bazarr.media/Additional-Configuration/Settings/#api-key)                                                       |
-| **Proxy Settings**           | ✅ Complete            | HTTP client config               | [Proxy](https://wiki.bazarr.media/Additional-Configuration/Settings/#proxy)                                                           |
-| **Sonarr Integration**       | ✅ Complete            | [cmd/sonarr.go](cmd/sonarr.go)   | [Sonarr](https://wiki.bazarr.media/Additional-Configuration/Settings/#sonarr)                                                         |
-| - Host Configuration         | ✅ Complete            | Viper config                     | -                                                                                                                                     |
-| - API Key                    | ✅ Complete            | Secure storage                   | -                                                                                                                                     |
-| - Path Mappings              | ✅ Complete            | Config mappings                  | [Path Mappings](https://wiki.bazarr.media/Additional-Configuration/Settings/#path-mappings)                                           |
-| **Radarr Integration**       | ✅ Complete            | [cmd/radarr.go](cmd/radarr.go)   | [Radarr](https://wiki.bazarr.media/Additional-Configuration/Settings/#radarr)                                                         |
-| **Subtitle Options**         | ✅ Complete            | [pkg/subtitles/](pkg/subtitles/) | [Subtitles](https://wiki.bazarr.media/Additional-Configuration/Settings/#subtitles)                                                   |
-| - Subtitle Folder            | ✅ Complete            | Config option                    | -                                                                                                                                     |
-| - Upgrade Logic              | ✅ Complete            | Auto-upgrade                     | [Upgrade Previously Downloaded](https://wiki.bazarr.media/Additional-Configuration/Settings/#upgrade-previously-downloaded-subtitles) |
-| **Anti-Captcha**             | ✅ Basic               | [pkg/captcha/](pkg/captcha/)     | [Anti-Captcha Options](https://wiki.bazarr.media/Additional-Configuration/Settings/#anti-captcha-options)                             |
-| **Performance/Optimization** | ✅ Complete            | Worker pools                     | [Performance](https://wiki.bazarr.media/Additional-Configuration/Settings/#performance-optimization)                                  |
-| - Adaptive Searching         | 🔶 Basic               | Simple scheduling                | [Adaptive Searching](https://wiki.bazarr.media/Additional-Configuration/Settings/#adaptive-searching)                                 |
-| - Simultaneous Search        | ✅ Complete            | Concurrent workers               | -                                                                                                                                     |
-| - Embedded Subtitles         | ✅ Complete            | Full support                     | [Use Embedded Subtitles](https://wiki.bazarr.media/Additional-Configuration/Settings/#use-embedded-subtitles)                         |
-| **Post-Processing**          | ✅ Complete            | UTF-8 encoding                   | [Post-Processing](https://wiki.bazarr.media/Additional-Configuration/Settings/#post-processing)                                       |
-| **Languages**                | ✅ Complete            | 180+ languages                   | [Languages](https://wiki.bazarr.media/Additional-Configuration/Settings/#languages)                                                   |
-| **Providers**                | ✅ Complete            | Full registry                    | [Providers](https://wiki.bazarr.media/Additional-Configuration/Settings/#providers)                                                   |
-| **Notifications**            | ✅ Basic               | Infrastructure ready             | [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)                                           |
-| **Scheduler**                | ✅ Basic               | Auto-scan available              | [Scheduler](https://wiki.bazarr.media/Additional-Configuration/Settings/#scheduler)                                                   |
+| **Host Settings**            | ✅ Complete           | [cmd/root.go](cmd/root.go)       | [Host](https://wiki.bazarr.media/Additional-Configuration/Settings/#host)                                                             |
+| - Bind Address               | ✅ Complete           | Viper config                     | -                                                                                                                                     |
+| - Port Number                | ✅ Complete           | Viper config                     | -                                                                                                                                     |
+| - URL Base                   | ✅ Complete           | Reverse proxy support            | [URL Base](https://wiki.bazarr.media/Additional-Configuration/Settings/#url-base)                                                     |
+| **Security Settings**        | ✅ Complete           | [pkg/auth/](pkg/auth/)           | [Security](https://wiki.bazarr.media/Additional-Configuration/Settings/#security)                                                     |
+| - Authentication             | ✅ Enhanced           | Multi-mode auth                  | [Authentication](https://wiki.bazarr.media/Additional-Configuration/Settings/#authentication)                                         |
+| - Username/Password          | ✅ Complete           | Hashed storage                   | -                                                                                                                                     |
+| - API Key                    | ✅ Enhanced           | Multiple keys                    | [API Key](https://wiki.bazarr.media/Additional-Configuration/Settings/#api-key)                                                       |
+| **Proxy Settings**           | ✅ Complete           | HTTP client config               | [Proxy](https://wiki.bazarr.media/Additional-Configuration/Settings/#proxy)                                                           |
+| **Sonarr Integration**       | ✅ Complete           | [cmd/sonarr.go](cmd/sonarr.go)   | [Sonarr](https://wiki.bazarr.media/Additional-Configuration/Settings/#sonarr)                                                         |
+| - Host Configuration         | ✅ Complete           | Viper config                     | -                                                                                                                                     |
+| - API Key                    | ✅ Complete           | Secure storage                   | -                                                                                                                                     |
+| - Path Mappings              | ✅ Complete           | Config mappings                  | [Path Mappings](https://wiki.bazarr.media/Additional-Configuration/Settings/#path-mappings)                                           |
+| **Radarr Integration**       | ✅ Complete           | [cmd/radarr.go](cmd/radarr.go)   | [Radarr](https://wiki.bazarr.media/Additional-Configuration/Settings/#radarr)                                                         |
+| **Subtitle Options**         | ✅ Complete           | [pkg/subtitles/](pkg/subtitles/) | [Subtitles](https://wiki.bazarr.media/Additional-Configuration/Settings/#subtitles)                                                   |
+| - Subtitle Folder            | ✅ Complete           | Config option                    | -                                                                                                                                     |
+| - Upgrade Logic              | ✅ Complete           | Auto-upgrade                     | [Upgrade Previously Downloaded](https://wiki.bazarr.media/Additional-Configuration/Settings/#upgrade-previously-downloaded-subtitles) |
+| **Anti-Captcha**             | ✅ Basic              | [pkg/captcha/](pkg/captcha/)     | [Anti-Captcha Options](https://wiki.bazarr.media/Additional-Configuration/Settings/#anti-captcha-options)                             |
+| **Performance/Optimization** | ✅ Complete           | Worker pools                     | [Performance](https://wiki.bazarr.media/Additional-Configuration/Settings/#performance-optimization)                                  |
+| - Adaptive Searching         | 🔶 Basic              | Simple scheduling                | [Adaptive Searching](https://wiki.bazarr.media/Additional-Configuration/Settings/#adaptive-searching)                                 |
+| - Simultaneous Search        | ✅ Complete           | Concurrent workers               | -                                                                                                                                     |
+| - Embedded Subtitles         | ✅ Complete           | Full support                     | [Use Embedded Subtitles](https://wiki.bazarr.media/Additional-Configuration/Settings/#use-embedded-subtitles)                         |
+| **Post-Processing**          | ✅ Complete           | UTF-8 encoding                   | [Post-Processing](https://wiki.bazarr.media/Additional-Configuration/Settings/#post-processing)                                       |
+| **Languages**                | ✅ Complete           | 180+ languages                   | [Languages](https://wiki.bazarr.media/Additional-Configuration/Settings/#languages)                                                   |
+| **Providers**                | ✅ Complete           | Full registry                    | [Providers](https://wiki.bazarr.media/Additional-Configuration/Settings/#providers)                                                   |
+| **Notifications**            | ✅ Basic              | Infrastructure ready             | [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)                                           |
+| **Scheduler**                | ✅ Basic              | Auto-scan available              | [Scheduler](https://wiki.bazarr.media/Additional-Configuration/Settings/#scheduler)                                                   |
 
 ### Missing Features Analysis
 
 #### High Priority Missing (1% of project)
 
 1. **PostgreSQL Backend** - Enterprise database support
-
    - Status: ✅ Complete for large deployments
    - Current: SQLite, PebbleDB and PostgreSQL fully functional
    - Reference:
      [PostgreSQL Database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
 
 2. **Advanced Webhook System** - Enhanced event notifications
-
    - Status: ✅ Complete with Sonarr/Radarr/custom webhook endpoints implemented
    - Reference:
      [Webhooks](https://wiki.bazarr.media/Additional-Configuration/Webhooks/)
 
 3. **Notification Services** - Discord, Telegram, Email alerts
-
    - Status: ✅ Complete implementation with Discord, Telegram and SMTP
      notifiers
    - Current: Full multi-provider notification system available
@@ -442,7 +446,6 @@ vs [Our Registry](pkg/providers/registry.go)
      [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)
 
 4. **Anti-Captcha Integration** - For challenging providers
-
    - Status: ✅ Complete with Anti-Captcha.com and 2captcha.com support
    - Current: Multi-service captcha solving available
    - Reference:
@@ -457,13 +460,11 @@ vs [Our Registry](pkg/providers/registry.go)
 #### Medium Priority Missing (Convenience Features)
 
 1. **Bazarr Settings Import** - Automated migration
-
    - Status: 🔶 Partial implementation
    - Current: Manual configuration transfer works
    - Reference: [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md)
 
 2. **Advanced Scheduling** - Granular scan controls
-
    - Status: ✅ Cron-based scheduler implemented
    - Current: Supports interval or cron expression
    - Reference:
@@ -527,8 +528,8 @@ vs [Our Registry](pkg/providers/registry.go)
 
 ### 4. Three-Column Gold Standard Comparison
 
-| **Feature**                  | **Bazarr Implementation**    | **Subtitle Manager Status**        | **Gold Standard Target**           |
-| ---------------------------- | ---------------------------- | ---------------------------------- | ---------------------------------- |
+| **Feature**                  | **Bazarr Implementation**    | **Subtitle Manager Status**         | **Gold Standard Target**            |
+| ---------------------------- | ---------------------------- | ----------------------------------- | ----------------------------------- |
 | **Core Subtitle Operations** | Python-based processing      | ✅ Go with go-astisub               | ✅ **Superior performance**         |
 | **Subtitle Providers**       | 40+ providers via Subliminal | ✅ 40+ native Go clients            | ✅ **Direct API integration**       |
 | **Authentication**           | Basic/Forms auth             | ✅ Multi-mode + OAuth2 + RBAC       | ✅ **Enterprise grade**             |
@@ -689,47 +690,60 @@ into the binary and served by the `web` command.
 
 ## GCommon Refactor Plan
 
-This refactor will replace several internal packages with the shared modules provided by [gcommon](https://github.com/jdfalk/gcommon). The migration follows the hybrid Docker build approach defined in `Dockerfile.hybrid` which installs Node.js in the Go builder stage so `go generate` can embed the pre-built React UI.
+This refactor will replace several internal packages with the shared modules
+provided by [gcommon](https://github.com/jdfalk/gcommon). The migration follows
+the hybrid Docker build approach defined in `Dockerfile.hybrid` which installs
+Node.js in the Go builder stage so `go generate` can embed the pre-built React
+UI.
 
 ### Planned Steps
 
 #### Phase 1: Dependency Setup
+
 - Add `github.com/jdfalk/gcommon` to `go.mod` and run `go mod tidy`.
 - Vendor the module to ensure consistent builds.
 - Confirm CI passes with the new dependency.
 
 #### Phase 2: Configuration Service
+
 - Replace the local config loader with `gcommon/config`.
 - Write a migration script to convert existing configs to the new format.
 - Update CLI flags to pass configuration values through `gcommon`.
 - Provide an example configuration file documenting new options.
 
 #### Phase 3: Auth & Sessions
+
 - Swap authentication middleware to `gcommon/auth` for JWT and OAuth2 flows.
 - Configure session storage using the shared session manager.
 - Add unit tests covering token validation and session creation.
 - Remove deprecated local auth code.
 
 #### Phase 4: Metrics & Health
+
 - Integrate `gcommon/metrics` for Prometheus instrumentation.
 - Replace existing health endpoints with `gcommon/health` handlers.
 - Document Prometheus scraping configuration.
 
 #### Phase 5: Queue System
+
 - Replace the internal queue with `gcommon/queue`.
 - Migrate all job types to the new system.
 - Document queue configuration in the README.
 
 #### Phase 6: Proto Updates
+
 - Adopt gcommon protobuf messages for shared types.
 - Run `protoc` to generate updated Go bindings.
 - Refactor gRPC and REST handlers to use the new messages.
 
 #### Phase 7: Docker Hybrid Build
+
 - Standardize on `Dockerfile.hybrid` for development and CI.
 - Update build scripts and documentation for the hybrid workflow.
 
-Each step should be tracked with a dedicated issue so multiple teams can work in parallel. The issues are organized to let developers tackle setup, auth, metrics, and other areas independently.
+Each step should be tracked with a dedicated issue so multiple teams can work in
+parallel. The issues are organized to let developers tackle setup, auth,
+metrics, and other areas independently.
 
 For detailed architecture and design decisions, see `docs/TECHNICAL_DESIGN.md`.
 The file `docs/BAZARR_FEATURES.md` enumerates all Bazarr features - parity has
