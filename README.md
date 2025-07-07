@@ -62,6 +62,7 @@ anti-captcha integration, and a polished React web interface.**
 - Download individual subtitles through the web API at `/api/download`.
 - Schedule scans with the `autoscan` command using intervals or cron
   expressions.
+- Continuously sync libraries with the `monitor autosync` command.
 - Parse file names and retrieve movie or episode details from TheMovieDB with
   language and rating data from OMDb.
 - High performance scanning using concurrent workers.
@@ -427,7 +428,7 @@ file.json
 # syncbatch expects a JSON file describing media and subtitle pairs
 
 subtitle-manager scan [directory] [lang] [-u] subtitle-manager autoscan
-[directory] [lang] [-i duration] [-s cron] [-u] subtitle-manager scanlib
+[directory] [lang] [-i duration] [-s cron] [-u] subtitle-manager monitor autosync [-interval D] [-languages L] subtitle-manager scanlib
 [directory] subtitle-manager watch [directory] [lang] [-r] subtitle-manager
 grpc-server --addr :50051 subtitle-manager grpc-set-config --addr :50051 --key
 google_api_key --value NEWKEY subtitle-manager metadata search [query]

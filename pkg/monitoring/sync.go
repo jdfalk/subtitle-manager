@@ -80,17 +80,36 @@ func (m *EpisodeMonitor) addToMonitoring(mediaItem database.MediaItem, opts Sync
 		return nil
 	}
 
-	// Check if already being monitored (unless force refresh)
-	if !opts.ForceRefresh {
-		existing, err := m.store.ListMonitoredItems()
-		if err != nil {
-			return err
-		}
-		for _, item := range existing {
-			if item.Path == mediaItem.Path {
-				m.logger.Debugf("Already monitoring: %s", mediaItem.Path)
-				return nil
+	// Check if already being monitored
+	existing, err := m.store.ListMonitoredItems()
+	if err != nil {
+		return err
+	}
+	for _, item := range existing {
+		if item.Path == mediaItem.Path {
+			// Merge languages if needed
+			var langs []string
+			if err := json.Unmarshal([]byte(item.Languages), &langs); err == nil {
+				updated := false
+				for _, lang := range opts.Languages {
+					if !containsString(langs, lang) {
+						langs = append(langs, lang)
+						updated = true
+					}
+				}
+				if updated || item.MaxRetries != opts.MaxRetries || opts.ForceRefresh {
+					b, _ := json.Marshal(langs)
+					item.Languages = string(b)
+					item.MaxRetries = opts.MaxRetries
+					if err := m.store.UpdateMonitoredItem(&item); err != nil {
+						return err
+					}
+					m.logger.Debugf("Updated monitored item: %s", item.Path)
+				} else {
+					m.logger.Debugf("Already monitoring: %s", mediaItem.Path)
+				}
 			}
+			return nil
 		}
 	}
 
@@ -184,4 +203,14 @@ type MonitoringStats struct {
 	Found       int `json:"found"`
 	Failed      int `json:"failed"`
 	Blacklisted int `json:"blacklisted"`
+}
+
+// containsString checks if a slice contains a string.
+func containsString(slice []string, s string) bool {
+	for _, v := range slice {
+		if v == s {
+			return true
+		}
+	}
+	return false
 }
