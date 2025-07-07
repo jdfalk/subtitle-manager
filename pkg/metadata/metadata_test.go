@@ -73,6 +73,46 @@ func TestQueryEpisode(t *testing.T) {
 	}
 }
 
+func TestSearchMovies(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/search/movie" {
+			fmt.Fprint(w, `{"results":[{"id":1,"title":"A","release_date":"2020-01-01"},{"id":2,"title":"B","release_date":"2021-01-01"}]}`)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+	SetTMDBAPIBase(srv.URL)
+
+	res, err := SearchMovies(context.Background(), "t", 0, 2, "k")
+	if err != nil {
+		t.Fatalf("search movies: %v", err)
+	}
+	if len(res) != 2 || res[1].TMDBID != 2 {
+		t.Fatalf("unexpected results %+v", res)
+	}
+}
+
+func TestSearchShows(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/search/tv" {
+			fmt.Fprint(w, `{"results":[{"id":3,"name":"Show"}]}`)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+	SetTMDBAPIBase(srv.URL)
+
+	res, err := SearchShows(context.Background(), "show", 5, "k")
+	if err != nil {
+		t.Fatalf("search shows: %v", err)
+	}
+	if len(res) != 1 || res[0].TMDBID != 3 {
+		t.Fatalf("unexpected results %+v", res)
+	}
+}
+
 func TestFetchMovieMetadata(t *testing.T) {
 	tmdbSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/search/movie" {

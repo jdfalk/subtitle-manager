@@ -181,7 +181,7 @@ subtitle-manager syncbatch --config sync-config.json
       [#890](https://github.com/jdfalk/subtitle-manager/issues/890))
 - [ ] **Media Metadata Editor**: Provide manual editing interface.
       ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
-  - [ ] Allow manual metadata search and selection during import.
+  - [x] Allow manual metadata search and selection during import via `metadata pick` command.
   - [ ] Support field-level locks to prevent unwanted updates.
 
 ### Universal Tagging System Implementation

@@ -142,6 +142,100 @@ func QueryMovie(ctx context.Context, title string, year int, apiKey string) (*Me
 	return &MediaInfo{Type: TypeMovie, Title: r.Title, Year: y, TMDBID: r.ID}, nil
 }
 
+// SearchMovies returns up to limit results matching the title and optional year.
+func SearchMovies(ctx context.Context, title string, year, limit int, apiKey string) ([]MediaInfo, error) {
+	if limit <= 0 {
+		limit = 5
+	}
+	q := url.Values{}
+	q.Set("api_key", apiKey)
+	q.Set("query", title)
+	if year > 0 {
+		q.Set("year", strconv.Itoa(year))
+	}
+	u := fmt.Sprintf("%s/search/movie?%s", tmdbAPIBase, q.Encode())
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status %d", resp.StatusCode)
+	}
+	var mr struct {
+		Results []struct {
+			ID          int    `json:"id"`
+			Title       string `json:"title"`
+			ReleaseDate string `json:"release_date"`
+		} `json:"results"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&mr); err != nil {
+		return nil, err
+	}
+	if len(mr.Results) == 0 {
+		return nil, fmt.Errorf("movie not found")
+	}
+	if len(mr.Results) > limit {
+		mr.Results = mr.Results[:limit]
+	}
+	infos := make([]MediaInfo, 0, len(mr.Results))
+	for _, r := range mr.Results {
+		y := year
+		if y == 0 && len(r.ReleaseDate) >= 4 {
+			y, _ = strconv.Atoi(r.ReleaseDate[:4])
+		}
+		infos = append(infos, MediaInfo{Type: TypeMovie, Title: r.Title, Year: y, TMDBID: r.ID})
+	}
+	return infos, nil
+}
+
+// SearchShows returns up to limit TV show results matching the title.
+func SearchShows(ctx context.Context, title string, limit int, apiKey string) ([]MediaInfo, error) {
+	if limit <= 0 {
+		limit = 5
+	}
+	q := url.Values{}
+	q.Set("api_key", apiKey)
+	q.Set("query", title)
+	u := fmt.Sprintf("%s/search/tv?%s", tmdbAPIBase, q.Encode())
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status %d", resp.StatusCode)
+	}
+	var sr struct {
+		Results []struct {
+			ID   int    `json:"id"`
+			Name string `json:"name"`
+		} `json:"results"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&sr); err != nil {
+		return nil, err
+	}
+	if len(sr.Results) == 0 {
+		return nil, fmt.Errorf("show not found")
+	}
+	if len(sr.Results) > limit {
+		sr.Results = sr.Results[:limit]
+	}
+	infos := make([]MediaInfo, 0, len(sr.Results))
+	for _, r := range sr.Results {
+		infos = append(infos, MediaInfo{Type: TypeEpisode, Title: r.Name, TMDBID: r.ID})
+	}
+	return infos, nil
+}
+
 // QueryEpisode retrieves episode details from TMDB. The function searches for
 // the show by title then requests the specific season and episode metadata.
 func QueryEpisode(ctx context.Context, show string, season, episode int, apiKey string) (*MediaInfo, error) {

@@ -514,3 +514,9 @@ achieved.
 ### Added
 
 - `metadata fetch` supports `--id` for TMDB lookups.
+
+## [0.3.12] - 2025-07-07
+
+### Added
+
+- `metadata pick` command for interactive TMDB selection.

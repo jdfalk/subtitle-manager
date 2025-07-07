@@ -42,6 +42,7 @@ var (
 	fetchYear    int
 	fetchSeason  int
 	fetchEpisode int
+	pickLimit    int
 )
 
 var metadataUpdateCmd = &cobra.Command{
@@ -126,6 +127,59 @@ var metadataFetchCmd = &cobra.Command{
 	},
 }
 
+var metadataPickCmd = &cobra.Command{
+	Use:   "pick [query]",
+	Short: "Interactively choose metadata from TMDB",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		tmdbKey := viper.GetString("tmdb_api_key")
+		ctx := context.Background()
+		title := args[0]
+		if fetchSeason > 0 {
+			shows, err := metadata.SearchShows(ctx, title, pickLimit, tmdbKey)
+			if err != nil {
+				return err
+			}
+			for i, s := range shows {
+				fmt.Printf("%d) %s id=%d\n", i+1, s.Title, s.TMDBID)
+			}
+			fmt.Print("Select show: ")
+			var choice int
+			if _, err := fmt.Scanln(&choice); err != nil {
+				return err
+			}
+			if choice < 1 || choice > len(shows) {
+				return fmt.Errorf("invalid choice")
+			}
+			info, err := metadata.GetEpisodeByID(ctx, shows[choice-1].TMDBID, fetchSeason, fetchEpisode, tmdbKey)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("Selected %s S%02dE%02d - %s id=%d\n", info.Title, info.Season, info.Episode, info.EpisodeTitle, info.TMDBID)
+			return nil
+		}
+
+		movies, err := metadata.SearchMovies(ctx, title, fetchYear, pickLimit, tmdbKey)
+		if err != nil {
+			return err
+		}
+		for i, m := range movies {
+			fmt.Printf("%d) %s (%d) id=%d\n", i+1, m.Title, m.Year, m.TMDBID)
+		}
+		fmt.Print("Select movie: ")
+		var choice int
+		if _, err := fmt.Scanln(&choice); err != nil {
+			return err
+		}
+		if choice < 1 || choice > len(movies) {
+			return fmt.Errorf("invalid choice")
+		}
+		m := movies[choice-1]
+		fmt.Printf("Selected %s (%d) id=%d\n", m.Title, m.Year, m.TMDBID)
+		return nil
+	},
+}
+
 func init() {
 	metadataUpdateCmd.Flags().StringVar(&setTitle, "title", "", "new title")
 	metadataUpdateCmd.Flags().StringVar(&setGroup, "release-group", "", "release group")
@@ -135,8 +189,13 @@ func init() {
 	metadataFetchCmd.Flags().IntVar(&fetchYear, "year", 0, "release year for movie")
 	metadataFetchCmd.Flags().IntVar(&fetchSeason, "season", 0, "season number for episode")
 	metadataFetchCmd.Flags().IntVar(&fetchEpisode, "episode", 0, "episode number")
+	metadataPickCmd.Flags().IntVar(&fetchYear, "year", 0, "release year for movie")
+	metadataPickCmd.Flags().IntVar(&fetchSeason, "season", 0, "season number for episode")
+	metadataPickCmd.Flags().IntVar(&fetchEpisode, "episode", 0, "episode number")
+	metadataPickCmd.Flags().IntVar(&pickLimit, "limit", 5, "number of results to show")
 	metadataCmd.AddCommand(metadataSearchCmd)
 	metadataCmd.AddCommand(metadataUpdateCmd)
 	metadataCmd.AddCommand(metadataFetchCmd)
+	metadataCmd.AddCommand(metadataPickCmd)
 	rootCmd.AddCommand(metadataCmd)
 }
