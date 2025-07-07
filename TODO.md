@@ -158,6 +158,10 @@ subtitle-manager syncbatch --config sync-config.json
         behavior.
   - [x] **Tag Management CLI**: List, add, and remove tags from the command
         line. ([#1288](https://github.com/jdfalk/subtitle-manager/issues/1288))
+- [x] **Automated Maintenance Tasks**: Periodic database cleanup, metadata
+      refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md).
+      ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
+- [x] **Azure Blob Storage Support**: Initial Azure cloud storage provider.
 - [ ] **Whisper Container Integration**: Optional embedded Whisper service.
       ([#1132](https://github.com/jdfalk/subtitle-manager/issues/1132))
   - [x] Launch
@@ -183,6 +187,8 @@ subtitle-manager syncbatch --config sync-config.json
       ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
   - [x] Allow manual metadata search and selection during import via `metadata pick` command.
   - [x] Support field-level locks to prevent unwanted updates via `metadata show` command.
+  - [ ] **Manual Metadata Search**: Allow users to manually search and assign metadata (e.g., title, year, episode info) for media items, independent of automated lookups.
+      ([#NEW](https://github.com/jdfalk/subtitle-manager/issues/new?title=Manual%20Metadata%20Search))
 
 ### Universal Tagging System Implementation
 
@@ -271,7 +277,6 @@ Current tag implementations will be migrated to the unified system:
 
 - [x] **Fixed E2E test timeout issues**: Created proper `workflow.spec.js` test
       file with comprehensive workflows
-  - Added proper API mocking for database operations
   - Enhanced login test robustness in `app.spec.js`
 - [x] **Add media library E2E tests**: Test file upload, scanning, and subtitle
       operations
@@ -338,7 +343,6 @@ Current tag implementations will be migrated to the unified system:
 
 - [x] **Mock PostgreSQL tests**: Mock out PostgreSQL logic as much as possible
       to reduce dependency on local PostgreSQL installation for test coverage
-  - Current: Tests skip gracefully if PostgreSQL unavailable
   - Priority: Low (current approach works well)
 
 ### Security Enhancements
@@ -350,7 +354,6 @@ Current tag implementations will be migrated to the unified system:
 
 - [x] **Comprehensive Pre-commit Hooks**: Consolidated duplicate hook scripts
       into a single comprehensive pre-commit hook
-  - Removed redundant `install-hooks.sh` script
   - Prevents CI failures by catching issues locally before push
 
 ---
