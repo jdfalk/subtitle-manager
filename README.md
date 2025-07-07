@@ -415,11 +415,12 @@ tags, permissions, and subtitle history.
 \``` subtitle-manager convert [input] [output] subtitle-manager merge [sub1]
 [sub2] [output] subtitle-manager translate [input] [output] [lang]
 subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded]
-[--translate] subtitle-manager history [--video file] subtitle-manager extract [media] [output]
-subtitle-manager transcribe [media] [output] [lang] subtitle-manager fetch
-[media] [lang] [output] subtitle-manager fetch --tags tag1,tag2 [media] [lang]
-[output] subtitle-manager search [media] [lang] subtitle-manager batch [lang]
-[files...] subtitle-manager syncbatch -config file.json
+[--translate] subtitle-manager history [--video file] subtitle-manager extract
+[media] [output] subtitle-manager transcribe [media] [output] [lang]
+subtitle-manager fetch [media] [lang] [output] subtitle-manager fetch --tags
+tag1,tag2 [media] [lang] [output] subtitle-manager search [media] [lang]
+subtitle-manager batch [lang] [files...] subtitle-manager syncbatch -config
+file.json
 
 # syncbatch expects a JSON file describing media and subtitle pairs
 
@@ -428,12 +429,14 @@ subtitle-manager scan [directory] [lang] [-u] subtitle-manager autoscan
 [directory] subtitle-manager watch [directory] [lang] [-r] subtitle-manager
 grpc-server --addr :50051 subtitle-manager grpc-set-config --addr :50051 --key
 google_api_key --value NEWKEY subtitle-manager metadata search [query]
-subtitle-manager metadata fetch [title] [--id I] [--year Y] [--season S] [--episode E] subtitle-manager metadata update [file] [--title T] [--release-group G] [--alt "A,B"] [--lock fields] subtitle-manager delete [file] subtitle-manager rename
-[video] [lang] subtitle-manager downloads subtitle-manager login [username]
-[password] subtitle-manager login-token [token] subtitle-manager user add
-[username] [email] [password] subtitle-manager user apikey [username]
-subtitle-manager user token [email] subtitle-manager user role [username] [role]
-subtitle-manager user list \```
+subtitle-manager metadata fetch [title] [--id I] [--year Y] [--season S]
+[--episode E] subtitle-manager metadata update [file] [--title T]
+[--release-group G] [--alt "A,B"] [--lock fields] subtitle-manager delete [file]
+subtitle-manager rename [video] [lang] subtitle-manager downloads
+subtitle-manager login [username] [password] subtitle-manager login-token
+[token] subtitle-manager user add [username] [email] [password] subtitle-manager
+user apikey [username] subtitle-manager user token [email] subtitle-manager user
+role [username] [role] subtitle-manager user list \```
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
@@ -836,7 +839,7 @@ See [.devcontainer/README.md](.devcontainer/README.md) for detailed dev containe
 Tests can be run with `go test ./...`.
 PostgreSQL tests require a local PostgreSQL installation and will skip gracefully if unavailable.
 Web UI unit tests live in `webui/src/__tests__` and are executed with `npm test` from the `webui` directory.
-End-to-end tests use Playwright and run with `npm run test:e2e` once browsers are installed via `npx playwright install`.
+End-to-end tests use Playwright and run with `npm run test:e2e` once browsers are installed via `npx playwright install`. Media library scanning is now covered by a dedicated Playwright test.
 Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
 
 ### Git Hooks and Code Formatting
@@ -999,3 +1002,4 @@ For security vulnerability reporting and our complete security policy, see [SECU
 ## License
 
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
+````
