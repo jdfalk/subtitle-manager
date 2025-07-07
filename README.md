@@ -86,6 +86,7 @@ anti-captcha integration, and a polished React web interface.**
   database.
 - Manage accounts with `user add`, `user role`, `user token` and `user list`
   commands.
+- Manage tags with `tag list`, `tag add` and `tag remove` commands.
 - **Universal Tagging System**: Unified tagging interface supporting all entity
   types (media, users, providers, language profiles) with consistent API and
   advanced filtering capabilities.
