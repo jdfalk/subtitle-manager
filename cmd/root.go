@@ -23,6 +23,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -41,6 +42,7 @@ var dbPath string
 var dbBackend string
 var sqliteFilename string
 var showVersion bool
+var flagsOnce sync.Once
 var rootCmd = &cobra.Command{
 	Use:   "subtitle-manager",
 	Short: "Subtitle Manager CLI",
@@ -73,7 +75,12 @@ func GetDatabaseBackend() string {
 	return database.GetDatabaseBackend()
 }
 
-func init() {
+// InitFlags registers all CLI flags. Call this once before executing
+// commands.
+func InitFlags() {
+	if rootCmd.PersistentFlags().Lookup("cache-backend") != nil {
+		return
+	}
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.subtitle-manager.yaml)")
 	rootCmd.Flags().BoolVar(&showVersion, "version", false, "show version information")
