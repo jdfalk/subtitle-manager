@@ -169,8 +169,8 @@ subtitle-manager syncbatch --config sync-config.json
       refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md).
       ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
 - [x] **Azure Blob Storage Support**: Initial Azure cloud storage provider.
-- [ ] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict
-      resolution.
+- [x] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict
+      resolution via new `monitor autosync` command.
       ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
   - [ ] Added `StartContinuousSync` helpers in radarr/sonarr packages for
         scheduled background syncing.

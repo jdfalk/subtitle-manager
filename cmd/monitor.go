@@ -38,6 +38,13 @@ var monitorSyncCmd = &cobra.Command{
 	RunE:  runMonitorSync,
 }
 
+var monitorAutoSyncCmd = &cobra.Command{
+	Use:   "autosync",
+	Short: "Run continuous Sonarr/Radarr sync",
+	Long:  `Periodically synchronize media libraries from Sonarr/Radarr`,
+	RunE:  runMonitorAutoSync,
+}
+
 var monitorStatusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show monitoring status",
@@ -87,6 +94,7 @@ func init() {
 	// Add subcommands
 	monitorCmd.AddCommand(monitorStartCmd)
 	monitorCmd.AddCommand(monitorSyncCmd)
+	monitorCmd.AddCommand(monitorAutoSyncCmd)
 	monitorCmd.AddCommand(monitorStatusCmd)
 	monitorCmd.AddCommand(monitorListCmd)
 	monitorCmd.AddCommand(monitorBlacklistCmd)
@@ -105,6 +113,12 @@ func init() {
 	monitorSyncCmd.Flags().IntVar(&monitorMaxRetries, "max-retries", 3, "Maximum retry attempts per item")
 	monitorSyncCmd.Flags().BoolVar(&monitorForceRefresh, "force-refresh", false, "Refresh existing monitored items")
 	monitorSyncCmd.Flags().StringVar(&monitorSource, "source", "both", "Source to sync from: sonarr, radarr, or both")
+
+	// Autosync command flags
+	monitorAutoSyncCmd.Flags().StringVar(&monitorInterval, "interval", "6h", "Sync interval (e.g. 6h, 24h)")
+	monitorAutoSyncCmd.Flags().StringSliceVar(&monitorLanguages, "languages", []string{"en"}, "Languages to monitor (comma-separated)")
+	monitorAutoSyncCmd.Flags().IntVar(&monitorMaxRetries, "max-retries", 3, "Maximum retry attempts per item")
+	monitorAutoSyncCmd.Flags().BoolVar(&monitorForceRefresh, "force-refresh", false, "Refresh existing monitored items")
 
 	rootCmd.AddCommand(monitorCmd)
 }
@@ -210,6 +224,47 @@ func runMonitorSync(cmd *cobra.Command, args []string) error {
 	}
 
 	return nil
+}
+
+func runMonitorAutoSync(cmd *cobra.Command, args []string) error {
+	interval, err := time.ParseDuration(monitorInterval)
+	if err != nil {
+		return fmt.Errorf("invalid interval: %v", err)
+	}
+
+	store, err := database.OpenStoreWithConfig()
+	if err != nil {
+		return fmt.Errorf("failed to open database: %v", err)
+	}
+	defer store.Close()
+
+	var sonarrClient *sonarr.Client
+	if sonarrURL := viper.GetString("sonarr_url"); sonarrURL != "" {
+		sonarrClient = sonarr.NewClient(sonarrURL, viper.GetString("sonarr_api_key"))
+	}
+
+	var radarrClient *radarr.Client
+	if radarrURL := viper.GetString("radarr_url"); radarrURL != "" {
+		radarrClient = radarr.NewClient(radarrURL, viper.GetString("radarr_api_key"))
+	}
+
+	sched := monitoring.NewScheduledMonitor(
+		sonarrClient,
+		radarrClient,
+		store,
+		monitorMaxRetries,
+		false,
+	)
+
+	opts := monitoring.SyncOptions{
+		Languages:    monitorLanguages,
+		MaxRetries:   monitorMaxRetries,
+		ForceRefresh: monitorForceRefresh,
+	}
+
+	fmt.Printf("Starting autosync every %s\n", interval)
+	ctx := context.Background()
+	return sched.StartScheduledSync(ctx, interval, opts)
 }
 
 func runMonitorStatus(cmd *cobra.Command, args []string) error {
