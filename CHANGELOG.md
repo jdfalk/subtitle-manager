@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Planned: Hybrid Protobuf + Go Types + gcommon Migration
 
 - We are migrating to a hybrid model for all shared types and business logic:
+
   - **Protobufs** will define the canonical data models (e.g., LanguageProfile,
     MediaItem, etc.)
   - **Go types** will be generated from Protobufs for use in all Go projects
@@ -29,6 +30,7 @@ All notable changes to this project will be documented in this file.
 
 - **Automatic Episode Monitoring System**: Complete subtitle monitoring solution
   for TV episodes and movies
+
   - Sonarr/Radarr integration for automatic media library synchronization
   - Multi-language subtitle monitoring with configurable retry logic
   - Intelligent blacklist management with automatic and manual controls
@@ -49,12 +51,15 @@ All notable changes to this project will be documented in this file.
     [pkg/monitoring/scheduler.go](pkg/monitoring/scheduler.go),
     [cmd/monitor.go](cmd/monitor.go)
 
-- **Comprehensive Smart Rebase Tool**: Complete Python-based Git rebase automation
-  with intelligent conflict resolution and persistent state management
-  - **Intelligent Conflict Resolution**: Automatically resolves conflicts based on
-    file patterns and types (documentation, source code, tests, configuration)
-  - **Persistent State Management**: Saves progress to `.rebase-state/` directory
-    and can resume from any interruption or failure
+- **Comprehensive Smart Rebase Tool**: Complete Python-based Git rebase
+  automation with intelligent conflict resolution and persistent state
+  management
+
+  - **Intelligent Conflict Resolution**: Automatically resolves conflicts based
+    on file patterns and types (documentation, source code, tests,
+    configuration)
+  - **Persistent State Management**: Saves progress to `.rebase-state/`
+    directory and can resume from any interruption or failure
   - **Backup Management**: Creates timestamped backup branches and individual
     file backups with automatic recovery capabilities
   - **Comprehensive Logging**: Detailed logging with progress tracking, conflict
@@ -63,8 +68,8 @@ All notable changes to this project will be documented in this file.
     smart modes for different use cases
   - **Recovery Instructions**: Generates detailed recovery guides for manual
     intervention when automatic resolution fails
-  - **VS Code Integration**: Predefined tasks for common rebase operations
-    (run, dry-run, resume, status, abort, cleanup, force-push)
+  - **VS Code Integration**: Predefined tasks for common rebase operations (run,
+    dry-run, resume, status, abort, cleanup, force-push)
   - **Pattern-Based Resolution**: Smart strategies for different file types:
     - Documentation files (prefer incoming changes)
     - Build/CI files (prefer incoming changes)
@@ -86,19 +91,26 @@ All notable changes to this project will be documented in this file.
     - State cleanup and maintenance
     - Force push after successful completion
   - Files created: [scripts/smart-rebase.py](scripts/smart-rebase.py),
-    [scripts/rebase](scripts/rebase), [scripts/SMART_REBASE_GUIDE.md](scripts/SMART_REBASE_GUIDE.md)
+    [scripts/rebase](scripts/rebase),
+    [scripts/SMART_REBASE_GUIDE.md](scripts/SMART_REBASE_GUIDE.md)
   - Files modified: [.vscode/tasks.json](.vscode/tasks.json)
 
-- **Database Backend Migration - Complete**: Full migration to support multiple database backends
-  - **Pure Go Build Support**: Complete PebbleDB implementation for CGO-free deployments
-    - All SQLite features migrated to PebbleDB (authentication, sessions, tags, permissions, history)
+- **Database Backend Migration - Complete**: Full migration to support multiple
+  database backends
+
+  - **Pure Go Build Support**: Complete PebbleDB implementation for CGO-free
+    deployments
+    - All SQLite features migrated to PebbleDB (authentication, sessions, tags,
+      permissions, history)
     - No CGO dependencies required for pure Go builds (`-tags nosqlite`)
     - High-performance embedded key-value store with smaller binary size
-  - **SQLite Build Compatibility**: Maintained full SQLite support with CGO (`-tags sqlite`)
+  - **SQLite Build Compatibility**: Maintained full SQLite support with CGO
+    (`-tags sqlite`)
     - Traditional SQL database with full querying capabilities
     - Migration support from existing databases
     - Backward compatibility for existing deployments
-  - **Interface Unification**: Fixed ID type mapping (int64 ↔ UUID) for seamless operation
+  - **Interface Unification**: Fixed ID type mapping (int64 ↔ UUID) for
+    seamless operation
     - Unified interface for both database backends
     - Transparent operation switching between backends
     - Consistent API behavior regardless of backend choice
@@ -111,31 +123,54 @@ All notable changes to this project will be documented in this file.
     - Integration tests ensuring feature parity
     - Performance benchmarks for optimization validation
   - Files modified: [pkg/database/pebble.go](pkg/database/pebble.go),
-    [pkg/database/sqlite.go](pkg/database/sqlite.go), [cmd/migrate.go](cmd/migrate.go)
+    [pkg/database/sqlite.go](pkg/database/sqlite.go),
+    [cmd/migrate.go](cmd/migrate.go)
 
-- **Subtitle Quality Scoring System - Complete**: Advanced subtitle evaluation and selection
-  - **Multi-Criteria Scoring**: Provider reliability, release matching, format preferences, metadata quality
-  - **Intelligent Selection**: Automatic best-match selection based on weighted scoring algorithms
-  - **Configurable Preferences**: User-defined provider preferences and quality thresholds
-  - **CLI Integration**: `fetch-scored` command with scoring options and verbose output
-  - **Configuration Support**: Full YAML configuration with weighted criteria and provider hierarchies
-  - Files added: [pkg/scoring/scorer.go](pkg/scoring/scorer.go), [cmd/fetch-scored.go](cmd/fetch-scored.go)
+- **Subtitle Quality Scoring System - Complete**: Advanced subtitle evaluation
+  and selection
 
-- **Automatic Subtitle Synchronization - Complete**: Advanced synchronization using multiple methods
-  - **Audio Transcription Sync**: Whisper API integration with local service support
-  - **Embedded Subtitle Sync**: Advanced track selection with format preservation
+  - **Multi-Criteria Scoring**: Provider reliability, release matching, format
+    preferences, metadata quality
+  - **Intelligent Selection**: Automatic best-match selection based on weighted
+    scoring algorithms
+  - **Configurable Preferences**: User-defined provider preferences and quality
+    thresholds
+  - **CLI Integration**: `fetch-scored` command with scoring options and verbose
+    output
+  - **Configuration Support**: Full YAML configuration with weighted criteria
+    and provider hierarchies
+  - Files added: [pkg/scoring/scorer.go](pkg/scoring/scorer.go),
+    [cmd/fetch-scored.go](cmd/fetch-scored.go)
+
+- **Automatic Subtitle Synchronization - Complete**: Advanced synchronization
+  using multiple methods
+
+  - **Audio Transcription Sync**: Whisper API integration with local service
+    support
+  - **Embedded Subtitle Sync**: Advanced track selection with format
+    preservation
   - **Hybrid Synchronization**: Configurable weighted averaging between methods
-  - **Translation Integration**: Sync and translate in single operation with language profiles
-  - **Performance Optimization**: Multi-threaded processing with intelligent caching
-  - **CLI Enhancement**: Enhanced `sync` command with advanced options and batch processing
-  - **Web UI Integration**: Complete synchronization interface with progress tracking
-  - Files enhanced: [cmd/sync.go](cmd/sync.go), [cmd/syncbatch.go](cmd/syncbatch.go),
-    [pkg/sync/audio.go](pkg/sync/audio.go), [pkg/sync/embedded.go](pkg/sync/embedded.go)
+  - **Translation Integration**: Sync and translate in single operation with
+    language profiles
+  - **Performance Optimization**: Multi-threaded processing with intelligent
+    caching
+  - **CLI Enhancement**: Enhanced `sync` command with advanced options and batch
+    processing
+  - **Web UI Integration**: Complete synchronization interface with progress
+    tracking
+  - Files enhanced: [cmd/sync.go](cmd/sync.go),
+    [cmd/syncbatch.go](cmd/syncbatch.go),
+    [pkg/sync/audio.go](pkg/sync/audio.go),
+    [pkg/sync/embedded.go](pkg/sync/embedded.go)
 
-- **Manual Subtitle Search Interface - Complete**: Comprehensive search interface with advanced features
-  - **Multi-Provider Search**: Parallel searching with provider status indicators
+- **Manual Subtitle Search Interface - Complete**: Comprehensive search
+  interface with advanced features
+
+  - **Multi-Provider Search**: Parallel searching with provider status
+    indicators
   - **Advanced Filtering**: Season/episode, year, release group specification
-  - **Enhanced Results Display**: Sortable tables, rating systems, provider badges
+  - **Enhanced Results Display**: Sortable tables, rating systems, provider
+    badges
   - **Subtitle Preview**: Content preview with provider information
   - **Batch Operations**: Multi-select downloads with visual feedback
   - **Search History**: Persistent history with quick replay capabilities

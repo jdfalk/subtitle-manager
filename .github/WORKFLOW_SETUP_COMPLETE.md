@@ -5,12 +5,14 @@
 ### New Workflow Architecture
 
 1. **Main CI Pipeline** (`ci.yml`)
+
    - Orchestrates frontend and backend testing
    - Smart path-based triggering
    - Independent failure handling
    - Unified status reporting
 
 2. **Backend Workflow** (`backend.yml`)
+
    - Go formatting, vetting, and testing
    - Database testing (PostgreSQL skipped if unavailable)
    - Static analysis with staticcheck

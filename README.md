@@ -33,7 +33,8 @@ anti-captcha integration, and a polished React web interface.**
 - Store translation history in SQLite, PebbleDB or PostgreSQL databases.
   Retrieve history via the `history` command or `/api/history` endpoint with
   optional `lang` and `video` filters.
-- Display stored metadata with `metadata show` including locks and alternate titles.
+- Display stored metadata with `metadata show` including locks and alternate
+  titles.
 - **Optional cloud storage for subtitles and history** in Amazon S3, Azure Blob
   Storage (now supported), or Google Cloud Storage with local backup support.
 - Per component logging with adjustable levels.
@@ -428,25 +429,23 @@ file.json
 # syncbatch expects a JSON file describing media and subtitle pairs
 
 subtitle-manager scan [directory] [lang] [-u] subtitle-manager autoscan
-[directory] [lang] [-i duration] [-s cron] [-u] subtitle-manager monitor autosync [-interval D] [-languages L] subtitle-manager scanlib
-[directory] subtitle-manager watch [directory] [lang] [-r] subtitle-manager
-grpc-server --addr :50051 subtitle-manager grpc-set-config --addr :50051 --key
+[directory] [lang] [-i duration] [-s cron] [-u] subtitle-manager monitor
+autosync [-interval D] [-languages L] subtitle-manager scanlib [directory]
+subtitle-manager watch [directory] [lang] [-r] subtitle-manager grpc-server
+--addr :50051 subtitle-manager grpc-set-config --addr :50051 --key
 google_api_key --value NEWKEY subtitle-manager metadata search [query]
-subtitle-manager metadata fetch [title] [--id I] [--year Y] [--season S] [--episode E]
-subtitle-manager metadata pick [query] [--year Y] [--season S] [--episode E] [--limit N]
-subtitle-manager metadata update [file] [--title T] [--release-group G] [--alt "A,B"] [--lock fields]
-subtitle-manager metadata show [file]
-subtitle-manager delete [file]
-subtitle-manager rename [video] [lang]
-subtitle-manager downloads
-subtitle-manager login [username] [password]
-subtitle-manager login-token [token]
-subtitle-manager user add [username] [email] [password]
-subtitle-manager user apikey [username]
-subtitle-manager user token [email]
-subtitle-manager user role [username] [role]
-subtitle-manager user list
-```
+subtitle-manager metadata fetch [title] [--id I] [--year Y] [--season S]
+[--episode E] subtitle-manager metadata pick [query] [--year Y] [--season S]
+[--episode E] [--limit N] subtitle-manager metadata update [file] [--title T]
+[--release-group G] [--alt "A,B"] [--lock fields] subtitle-manager metadata show
+[file] subtitle-manager delete [file] subtitle-manager rename [video] [lang]
+subtitle-manager downloads subtitle-manager login [username] [password]
+subtitle-manager login-token [token] subtitle-manager user add [username]
+[email] [password] subtitle-manager user apikey [username] subtitle-manager user
+token [email] subtitle-manager user role [username] [role] subtitle-manager user
+list
+
+````
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
@@ -646,10 +645,13 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 **Basic Configuration:**
 
 - `SM_LOG_LEVEL` - Log level (debug, info, warn, error) - Default: `info`
-- `SM_LOG_FILE` - Path to log file - Default: `/config/logs/subtitle-manager.log`
-- `SM_CONFIG_FILE` - Path to configuration file - Default: `/config/subtitle-manager.yaml`
+- `SM_LOG_FILE` - Path to log file - Default:
+  `/config/logs/subtitle-manager.log`
+- `SM_CONFIG_FILE` - Path to configuration file - Default:
+  `/config/subtitle-manager.yaml`
 - `SM_DB_PATH` - Database file path - Default: `/config/subtitle-manager.db`
-- `SM_DB_BACKEND` - Database backend (sqlite, pebble, postgres) - Default: `sqlite`
+- `SM_DB_BACKEND` - Database backend (sqlite, pebble, postgres) - Default:
+  `sqlite`
 
 **API Keys:**
 
@@ -673,17 +675,26 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 - `SM_PROVIDERS_GENERIC_PASSWORD` - Generic provider password
 - `SM_PROVIDERS_GENERIC_API_KEY` - Generic provider API key
 - `ENABLE_WHISPER` - Launch local Whisper service when set to `1`
-- `SM_PROVIDERS_WHISPER_API_URL` - Override Whisper service URL (default `http://localhost:9000`)
-- `SM_OPENAI_API_URL` - Override OpenAI/Whisper API base URL (default `https://api.openai.com/v1`)
+- `SM_PROVIDERS_WHISPER_API_URL` - Override Whisper service URL (default
+  `http://localhost:9000`)
+- `SM_OPENAI_API_URL` - Override OpenAI/Whisper API base URL (default
+  `https://api.openai.com/v1`)
 
 #### Whisper Service Requirements
-When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper-asr-webservice` with automatic retry logic and health checks for reliable startup. Mount the Docker socket and install the NVIDIA Container Toolkit if GPU acceleration is desired. Customize the service with these optional variables:
+
+When `ENABLE_WHISPER=1` is set, the container launches
+`onerahmet/openai-whisper-asr-webservice` with automatic retry logic and health
+checks for reliable startup. Mount the Docker socket and install the NVIDIA
+Container Toolkit if GPU acceleration is desired. Customize the service with
+these optional variables:
+
 - `WHISPER_CONTAINER_NAME` - Container name (default `whisper-asr-service`)
 - `WHISPER_IMAGE` - Docker image to use
 - `WHISPER_PORT` - Port to expose (default `9000`)
 - `WHISPER_MODEL` - Whisper model (base, small, medium, large)
 - `WHISPER_DEVICE` - `cuda` or `cpu` to toggle GPU usage
-- `WHISPER_HEALTH_TIMEOUT` - Health check timeout in seconds (default `10`, set to `0` to skip)
+- `WHISPER_HEALTH_TIMEOUT` - Health check timeout in seconds (default `10`, set
+  to `0` to skip)
 
 **GitHub OAuth (Optional):**
 
@@ -707,82 +718,85 @@ When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper
 For easier management, use the provided Docker Compose configuration:
 
 \```bash
+
 # Download the compose file
-curl -O https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-compose.yml
+
+curl -O
+https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-compose.yml
 
 # Edit the volume paths in docker-compose.yml to match your setup
+
 # Update /path/to/your/movies and /path/to/your/tv
 
 # Start the service
+
 docker-compose up -d
 
 # View logs
+
 docker-compose logs -f
+
 # Log file stored in ./config/logs/subtitle-manager.log
 
 # Stop the service
-docker-compose down
-\```
+
+docker-compose down \```
 
 **Sample docker-compose.yml:**
 
-\```yaml
-version: "3.8"
-services:
-  subtitle-manager:
-    image: ghcr.io/jdfalk/subtitle-manager:latest
-    container_name: subtitle-manager
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./config:/config
-      - /path/to/your/movies:/media/movies:ro
-      - /path/to/your/tv:/media/tv:ro
-    environment:
-      - SM_LOG_LEVEL=info
-      - SM_GOOGLE_API_KEY=your_api_key_here
-\```
+\```yaml version: "3.8" services: subtitle-manager: image:
+ghcr.io/jdfalk/subtitle-manager:latest container_name: subtitle-manager restart:
+unless-stopped ports: - "8080:8080" volumes: - ./config:/config -
+/path/to/your/movies:/media/movies:ro - /path/to/your/tv:/media/tv:ro
+environment: - SM_LOG_LEVEL=info - SM_GOOGLE_API_KEY=your_api_key_here \```
 
 #### Production Deployment (Docker Swarm)
 
 For production deployments with Docker Swarm:
 
 \```bash
+
 # Download the stack file
-curl -O https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-stack.yml
+
+curl -O
+https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-stack.yml
 
 # Edit volume paths and resource limits as needed
 
 # Deploy the stack
+
 docker stack deploy -c docker-stack.yml subtitle-manager
 
 # Check service status
-docker service ls
-docker service logs subtitle-manager_subtitle-manager
+
+docker service ls docker service logs subtitle-manager_subtitle-manager
 
 # Update the service
-docker service update --image ghcr.io/jdfalk/subtitle-manager:latest subtitle-manager_subtitle-manager
+
+docker service update --image ghcr.io/jdfalk/subtitle-manager:latest
+subtitle-manager_subtitle-manager
 
 # Remove the stack
-docker stack rm subtitle-manager
-\```
+
+docker stack rm subtitle-manager \```
 
 #### Building Custom Images
 
 Build a container image with your customizations:
 
 \```bash
+
 # Clone the repository
-git clone https://github.com/jdfalk/subtitle-manager.git
-cd subtitle-manager
+
+git clone https://github.com/jdfalk/subtitle-manager.git cd subtitle-manager
 
 # Build the image
+
 docker build -t subtitle-manager-custom .
 
 # Run your custom image
-docker run -d -p 8080:8080 subtitle-manager-custom
-\```
+
+docker run -d -p 8080:8080 subtitle-manager-custom \```
 
 #### Initial Setup
 
@@ -797,7 +811,9 @@ All configuration will be persisted in the `/config` volume.
 
 ### Linux Service (systemd)
 
-For Linux servers, Subtitle Manager can run as a native systemd service. This provides better system integration and resource management compared to Docker for production deployments.
+For Linux servers, Subtitle Manager can run as a native systemd service. This
+provides better system integration and resource management compared to Docker
+for production deployments.
 
 ```bash
 # Quick start - see systemd/README.md for detailed instructions
@@ -824,40 +840,50 @@ sudo journalctl -u subtitle-manager -f
 ```
 
 **Key Benefits:**
+
 - Native Linux service integration
 - Automatic startup on boot
 - System resource management
 - Security hardening with systemd features
 - Centralized logging with journald
 
-See [systemd/README.md](systemd/README.md) for complete installation instructions, configuration options, and troubleshooting guide.
+See [systemd/README.md](systemd/README.md) for complete installation
+instructions, configuration options, and troubleshooting guide.
 
 ## Development
 
 ### Quick Start with Dev Container
 
-The easiest way to start developing is using the provided VS Code development container:
+The easiest way to start developing is using the provided VS Code development
+container:
 
-1. Install [VS Code](https://code.visualstudio.com/) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+1. Install [VS Code](https://code.visualstudio.com/) and the
+   [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 2. Clone the repository and open it in VS Code
 3. When prompted, click "Reopen in Container"
-4. The container will automatically set up Go, Node.js, FFmpeg, SQLite, and all development tools
+4. The container will automatically set up Go, Node.js, FFmpeg, SQLite, and all
+   development tools
 
-See [.devcontainer/README.md](.devcontainer/README.md) for detailed dev container documentation.
+See [.devcontainer/README.md](.devcontainer/README.md) for detailed dev
+container documentation.
 
 ### Local Development
 
-Tests can be run with `go test ./...`.
-PostgreSQL tests require a local PostgreSQL installation and will skip gracefully if unavailable.
-Web UI unit tests live in `webui/src/__tests__` and are executed with `npm test` from the `webui` directory.
-End-to-end tests use Playwright and run with `npm run test:e2e` once browsers are installed via `npx playwright install`. Media library scanning is now covered by a dedicated Playwright test.
-Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
+Tests can be run with `go test ./...`. PostgreSQL tests require a local
+PostgreSQL installation and will skip gracefully if unavailable. Web UI unit
+tests live in `webui/src/__tests__` and are executed with `npm test` from the
+`webui` directory. End-to-end tests use Playwright and run with
+`npm run test:e2e` once browsers are installed via `npx playwright install`.
+Media library scanning is now covered by a dedicated Playwright test. Continuous
+integration is provided via a GitHub Actions workflow that verifies formatting,
+vets code and runs the test suite on each push.
 
 ### Git Hooks and Code Formatting
 
 #### Automatic Formatting on GitHub
 
-The repository includes an **automatic code formatting system** that runs on all pull requests:
+The repository includes an **automatic code formatting system** that runs on all
+pull requests:
 
 - **Go code**: Automatically formatted with `gofmt -s -w .` and `goimports`
 - **Frontend code**: Automatically formatted with `prettier --write`
@@ -869,30 +895,39 @@ When you open or update a pull request, GitHub Actions will:
 3. Commit the changes back to your PR branch
 4. Add a comment explaining what was formatted
 
-This means **you don't need to worry about code formatting** - just focus on your code logic and let the automation handle the style!
+This means **you don't need to worry about code formatting** - just focus on
+your code logic and let the automation handle the style!
 
 #### Optional Local Pre-commit Hooks
 
-For developers who prefer to format code locally before pushing, you have several options:
+For developers who prefer to format code locally before pushing, you have
+several options:
 
 ##### Modern Pre-commit Framework (Recommended)
 
-The repository includes a `.pre-commit-config.yaml` configuration with Ruff for Python and Prettier for JavaScript/Markdown:
+The repository includes a `.pre-commit-config.yaml` configuration with Ruff for
+Python and Prettier for JavaScript/Markdown:
 
 \```bash
+
 # Install pre-commit and tools
+
 pip install pre-commit ruff
 
 # Install the pre-commit hooks
+
 pre-commit install
 
 # Run on all files (one-time setup)
-pre-commit run --all-files
-\```
+
+pre-commit run --all-files \```
 
 This will automatically:
-- **Python files**: Lint and format with Ruff (fast, modern replacement for flake8/black)
-- **JS/MD/CSS files**: Format with Prettier using the existing webui configuration
+
+- **Python files**: Lint and format with Ruff (fast, modern replacement for
+  flake8/black)
+- **JS/MD/CSS files**: Format with Prettier using the existing webui
+  configuration
 - **All files**: Check for trailing whitespace, file endings, YAML/JSON syntax
 
 ##### Shell-based Pre-commit Hooks (Legacy)
@@ -900,12 +935,14 @@ This will automatically:
 You can also use the existing shell-based hooks:
 
 \```bash
+
 # Install the auto-formatting pre-commit hook
+
 ./scripts/install-pre-commit-hooks.sh
 
 # Or install the legacy quality-check pre-commit hook
-./scripts/install-hooks.sh
-\```
+
+./scripts/install-hooks.sh \```
 
 The **auto-formatting hook** (`install-pre-commit-hooks.sh`) will:
 
@@ -920,7 +957,9 @@ The **legacy quality-check hook** (`install-hooks.sh`) will:
 - Prevent commits that don't pass these checks
 
 **Benefits of the modern pre-commit framework:**
-- ✅ **Ruff for Python**: Much faster than traditional tools (10-100x faster than flake8)
+
+- ✅ **Ruff for Python**: Much faster than traditional tools (10-100x faster
+  than flake8)
 - ✅ **Consistent formatting**: Uses the same Prettier configuration as CI
 - ✅ **Extensible**: Easy to add new languages and tools
 - ✅ **Smart**: Only runs on changed files by default
@@ -929,29 +968,33 @@ To bypass any hook temporarily, use `git commit --no-verify`.
 
 ### Issue updates
 
-🚀 **New Distributed System**: We now use individual UUID-named files in `.github/issue-updates/` to eliminate merge conflicts! Use the helper script: `./scripts/create-issue-update.sh create "Title" "Body" "labels"`. See [Quick Start Guide](.github/ISSUE_UPDATES_QUICK_START.md) for details.
+🚀 **New Distributed System**: We now use individual UUID-named files in
+`.github/issue-updates/` to eliminate merge conflicts! Use the helper script:
+`./scripts/create-issue-update.sh create "Title" "Body" "labels"`. See
+[Quick Start Guide](.github/ISSUE_UPDATES_QUICK_START.md) for details.
 
-**Legacy Support**: Pushing an `issue_updates.json` file to the repository root still works for backward compatibility. The unified issue management workflow processes both formats.
+**Legacy Support**: Pushing an `issue_updates.json` file to the repository root
+still works for backward compatibility. The unified issue management workflow
+processes both formats.
 
-Note: If the unified issue management workflow fails due to a missing `requirements.txt` file, update to the latest version of [ghcommon](https://github.com/jdfalk/ghcommon) which now provides this file. This resolves issues #1249 and #1251.
+Note: If the unified issue management workflow fails due to a missing
+`requirements.txt` file, update to the latest version of
+[ghcommon](https://github.com/jdfalk/ghcommon) which now provides this file.
+This resolves issues #1249 and #1251.
 
-The new format uses individual files with this structure:
-\```json
-{
-  "action": "create",
-  "title": "Issue title",
-  "body": "Issue description",
-  "labels": ["enhancement"]
-}
-\```
+The new format uses individual files with this structure: \```json { "action":
+"create", "title": "Issue title", "body": "Issue description", "labels":
+["enhancement"] } \```
 
 Benefits of the new system:
+
 - ✅ No merge conflicts - each update is in its own file
 - ✅ Parallel development - multiple people can create updates simultaneously
 - ✅ Atomic operations - each file represents a single issue action
 - ✅ Better git history - changes are tracked individually
 
-The workflow runs on every push to `main` and processes all updates from both the legacy file and the new directory structure.
+The workflow runs on every push to `main` and processes all updates from both
+the legacy file and the new directory structure.
 
 ### Duplicate ticket cleanup
 
@@ -967,13 +1010,15 @@ The gRPC service definitions are located in `proto/translator.proto`. If you
 modify this file, regenerate the Go bindings before committing:
 
 \```bash
+
 # Install protobuf tools if missing
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest go install
+google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 # Generate updated gRPC code
-make proto-gen
-\```
+
+make proto-gen \```
 
 The generated files live in `pkg/translatorpb` and should be committed with your
 changes.
@@ -982,12 +1027,16 @@ changes.
 
 We are migrating to a hybrid model for all shared types and business logic:
 
-- **Protobufs** will define the canonical data models (e.g., LanguageProfile, MediaItem, etc.)
+- **Protobufs** will define the canonical data models (e.g., LanguageProfile,
+  MediaItem, etc.)
 - **Go types** will be generated from Protobufs for use in all Go projects
-- **gcommon** will contain all shared business logic, helpers, and interface implementations, importing the generated types
-- **Other languages** (Python, JS, etc.) can generate types from the same Protobufs as needed
+- **gcommon** will contain all shared business logic, helpers, and interface
+  implementations, importing the generated types
+- **Other languages** (Python, JS, etc.) can generate types from the same
+  Protobufs as needed
 - **All work for this migration will be done on the `gcommon-refactor` branch**
-- **Main branches** will continue using Go types and type packages until the migration is complete
+- **Main branches** will continue using Go types and type packages until the
+  migration is complete
 
 This approach will:
 
@@ -996,25 +1045,43 @@ This approach will:
 - Centralize business logic and validation
 - Allow for incremental migration and testing
 
-The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work focuses on Sonarr/Radarr sync improvements and the metadata editor. See `TODO.md` for details.
-Extensive architectural details and design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New contributors should review these documents to understand package responsibilities and completed features.
-For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
-Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).
-A high-level code overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).
-Protobuf regeneration steps are documented in [docs/PROTOBUF_REGEN.md](docs/PROTOBUF_REGEN.md).
-Additional references include [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) for environment setup and [docs/API_DESIGN.md](docs/API_DESIGN.md) for REST and gRPC design notes.
+The project is **mostly feature complete** with full Bazarr parity as the
+target. Remaining work focuses on Sonarr/Radarr sync improvements and the
+metadata editor. See `TODO.md` for details. Extensive architectural details and
+design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a
+package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New
+contributors should review these documents to understand package
+responsibilities and completed features. For a detailed list of Bazarr features
+used as the parity target, see
+[docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md). Instructions for importing
+an existing Bazarr configuration are documented in
+[docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md). A high-level code
+overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).
+Protobuf regeneration steps are documented in
+[docs/PROTOBUF_REGEN.md](docs/PROTOBUF_REGEN.md). Additional references include
+[docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) for environment setup and
+[docs/API_DESIGN.md](docs/API_DESIGN.md) for REST and gRPC design notes.
 
 ## Security
 
-Subtitle Manager applies strict security headers, including `Referrer-Policy: no-referrer`, and sanitizes HTML content in the web interface using DOMPurify. When contributing UI or API code, ensure all user-provided data is properly validated and sanitized.
+Subtitle Manager applies strict security headers, including
+`Referrer-Policy: no-referrer`, and sanitizes HTML content in the web interface
+using DOMPurify. When contributing UI or API code, ensure all user-provided data
+is properly validated and sanitized.
 
 ### Security Policy
 
-**Reporting Vulnerabilities**: Please do not report security vulnerabilities through public GitHub issues. Instead, use GitHub's private vulnerability reporting feature or contact directly through the repository's communication channels.
+**Reporting Vulnerabilities**: Please do not report security vulnerabilities
+through public GitHub issues. Instead, use GitHub's private vulnerability
+reporting feature or contact directly through the repository's communication
+channels.
 
-**Supported Versions**: Security updates are provided for the latest version of Subtitle Manager. Please use the latest version to ensure you have the most recent security fixes.
+**Supported Versions**: Security updates are provided for the latest version of
+Subtitle Manager. Please use the latest version to ensure you have the most
+recent security fixes.
 
 **When reporting a vulnerability, please include:**
+
 - **Description**: A clear description of the vulnerability
 - **Impact**: What could an attacker accomplish by exploiting this?
 - **Reproduction**: Steps to reproduce the vulnerability
@@ -1024,6 +1091,7 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 ### Security Best Practices
 
 **For Users:**
+
 - Keep Subtitle Manager updated to the latest version
 - Use strong, unique passwords for user accounts
 - Enable OAuth2 authentication when available
@@ -1031,6 +1099,7 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 - Monitor logs for suspicious activity
 
 **For Developers:**
+
 - Follow secure coding practices
 - Validate all inputs and sanitize outputs
 - Regularly update dependencies and monitor for vulnerabilities
@@ -1048,27 +1117,34 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 
 ## License
 
-This project is licensed under the terms of the MIT license. See `LICENSE` for details.
+This project is licensed under the terms of the MIT license. See `LICENSE` for
+details.
 
 ### Manual Subtitle Search Interface
 
-Subtitle Manager provides a comprehensive manual subtitle search interface similar to Bazarr's implementation, enhancing the existing search capabilities with advanced filtering, multi-provider support, and modern UI design.
+Subtitle Manager provides a comprehensive manual subtitle search interface
+similar to Bazarr's implementation, enhancing the existing search capabilities
+with advanced filtering, multi-provider support, and modern UI design.
 
 #### Features
 
 **Multi-Provider Search**
+
 - **Provider Selection**: Checkbox-based multi-provider selection interface
 - **Parallel Search**: Concurrent searching across multiple subtitle providers
-- **Provider Status**: Visual indicators for configured vs unconfigured providers
+- **Provider Status**: Visual indicators for configured vs unconfigured
+  providers
 - **Select All/None**: Convenient bulk provider selection controls
 
 **Advanced Search Filters**
+
 - **Season/Episode**: Numeric filters for TV show episodes
 - **Year**: Release year filtering for better matching
 - **Release Group**: Custom release group specification
 - **Collapsible Interface**: Space-efficient filter organization
 
 **Enhanced Results Display**
+
 - **Sortable Table**: Score-based and download-count-based sorting
 - **Rating System**: Visual score representation with star ratings
 - **Provider Badges**: Clear provider identification with trust indicators
@@ -1076,17 +1152,20 @@ Subtitle Manager provides a comprehensive manual subtitle search interface simil
 - **Hearing Impaired (HI) Indicators**: Accessibility subtitle identification
 
 **Subtitle Preview**
+
 - **Content Preview**: Modal dialog with subtitle content preview
 - **Provider Information**: Context about subtitle source
 - **Safe Content Display**: Properly formatted and sanitized text
 
 **Batch Operations**
+
 - **Multi-Select**: Checkbox-based result selection
 - **Batch Download**: One-click download of multiple subtitles
 - **Select All/None**: Convenient bulk selection controls
 - **Visual Feedback**: Clear indication of selected items
 
 **Search History**
+
 - **Persistent History**: Remembers recent search queries
 - **Quick Replay**: One-click to repeat previous searches
 - **Metadata Display**: Shows result counts and timestamps
@@ -1100,16 +1179,21 @@ Subtitle Manager provides a comprehensive manual subtitle search interface simil
 
 #### Usage
 
-The manual search interface is available in the web UI under the "Wanted" section, providing an intuitive interface for finding and downloading subtitles with advanced filtering and preview capabilities.
+The manual search interface is available in the web UI under the "Wanted"
+section, providing an intuitive interface for finding and downloading subtitles
+with advanced filtering and preview capabilities.
 
 ### Subtitle Quality Scoring System
 
-The subtitle quality scoring system evaluates and automatically selects the best subtitle matches based on multiple criteria, ensuring high-quality subtitle selection for all media.
+The subtitle quality scoring system evaluates and automatically selects the best
+subtitle matches based on multiple criteria, ensuring high-quality subtitle
+selection for all media.
 
 #### Features
 
 - **Provider Reliability**: Trusted providers and user reputation scoring
-- **Release Match Quality**: Perfect release group matches and source quality alignment
+- **Release Match Quality**: Perfect release group matches and source quality
+  alignment
 - **Format Preferences**: SRT preferred, with configurable format priorities
 - **Metadata Quality**: Upload date, download popularity, and user ratings
 - **User Preferences**: Hearing impaired (HI) and forced subtitle preferences
@@ -1118,22 +1202,26 @@ The subtitle quality scoring system evaluates and automatically selects the best
 #### Scoring Criteria
 
 **Release Group Matching (40% weight)**
+
 - Perfect release group match: +40 points
 - Partial release group match: +20 points
 - Source quality alignment (BluRay, WEB-DL, etc.): +15 points
 - Resolution matching (1080p, 720p, etc.): +10 points
 
 **Provider Trust (25% weight)**
+
 - Established providers (OpenSubtitles, Subscene): +25 points
 - Community providers with good reputation: +15 points
 - New or unverified providers: +5 points
 
 **Format and Quality (20% weight)**
+
 - SRT format (preferred): +20 points
 - Other supported formats: +10 points
 - Proper encoding detection: +5 points
 
 **Metadata Indicators (15% weight)**
+
 - Recent upload date: +15 points
 - High download count: +10 points
 - Positive user ratings: +10 points
@@ -1176,42 +1264,63 @@ scoring:
 
 ### Automatic Subtitle Synchronization
 
-Subtitle Manager provides advanced automatic subtitle synchronization capabilities that merge audio transcription and embedded subtitle tracks for precise timing alignment.
+Subtitle Manager provides advanced automatic subtitle synchronization
+capabilities that merge audio transcription and embedded subtitle tracks for
+precise timing alignment.
 
 #### Core Implementation Features
 
 **Audio Transcription Synchronization**
-- **Whisper API Integration**: Uses OpenAI Whisper for precise speech-to-text timing
-- **Local Whisper Support**: Optional local Whisper service for offline processing
-- **Configurable Models**: Support for base, small, medium, and large Whisper models
+
+- **Whisper API Integration**: Uses OpenAI Whisper for precise speech-to-text
+  timing
+- **Local Whisper Support**: Optional local Whisper service for offline
+  processing
+- **Configurable Models**: Support for base, small, medium, and large Whisper
+  models
 - **Language Detection**: Automatic language detection for optimal transcription
 
 **Embedded Subtitle Synchronization**
-- **Track Selection**: Advanced track selection with audio and subtitle stream indices
-- **Multi-Track Support**: Process multiple embedded subtitle tracks simultaneously
-- **Format Compatibility**: Works with all major subtitle formats (SRT, VTT, ASS, SSA)
+
+- **Track Selection**: Advanced track selection with audio and subtitle stream
+  indices
+- **Multi-Track Support**: Process multiple embedded subtitle tracks
+  simultaneously
+- **Format Compatibility**: Works with all major subtitle formats (SRT, VTT,
+  ASS, SSA)
 - **Metadata Preservation**: Maintains original subtitle styling and formatting
 
 **Hybrid Synchronization**
-- **Weighted Averaging**: Configurable weighting between audio and embedded methods (0-1 scale)
+
+- **Weighted Averaging**: Configurable weighting between audio and embedded
+  methods (0-1 scale)
 - **Intelligent Fallback**: Automatically switches methods if one fails
-- **Precision Control**: Adjustable CPU vs accuracy slider for performance tuning
-- **Quality Validation**: Automatic quality checking and validation of sync results
+- **Precision Control**: Adjustable CPU vs accuracy slider for performance
+  tuning
+- **Quality Validation**: Automatic quality checking and validation of sync
+  results
 
 #### Advanced Features
 
 **Audio Package and Track Selection**
-- **Stream Analysis**: Automatic detection of available audio and subtitle streams
+
+- **Stream Analysis**: Automatic detection of available audio and subtitle
+  streams
 - **Language Matching**: Intelligent selection of matching language streams
-- **Quality Preference**: Prioritizes higher quality audio streams for better sync
+- **Quality Preference**: Prioritizes higher quality audio streams for better
+  sync
 - **Custom Selection**: Manual override for specific stream selection
 
 **Translation Integration**
-- **Sync and Translate**: Synchronize and translate subtitles in a single operation
+
+- **Sync and Translate**: Synchronize and translate subtitles in a single
+  operation
 - **Dual-Language Support**: Advanced alignment for different grammar structures
-- **Language Profile Integration**: Uses language profiles for automatic language selection
+- **Language Profile Integration**: Uses language profiles for automatic
+  language selection
 
 **Performance Optimization**
+
 - **Concurrent Processing**: Multi-threaded synchronization for faster results
 - **Memory Management**: Efficient memory usage for large subtitle files
 - **Caching**: Intelligent caching of transcription results for reuse
@@ -2031,3 +2140,4 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 ## License
 
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
+````
