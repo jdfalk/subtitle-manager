@@ -14,7 +14,6 @@ This script demonstrates various integration patterns including:
 - Async operations
 """
 
-import asyncio
 import os
 import logging
 from pathlib import Path
@@ -24,7 +23,6 @@ from datetime import datetime, timedelta
 # Import the SDK (install with: pip install subtitle-manager-sdk)
 from subtitle_manager_sdk import SubtitleManagerClient
 from subtitle_manager_sdk.models import (
-    SystemInfo, HistoryItem, ScanStatus, OperationType, 
     OperationStatus, TranslationProvider
 )
 from subtitle_manager_sdk.exceptions import (

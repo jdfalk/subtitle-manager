@@ -17,14 +17,12 @@ from subtitle_manager_sdk.exceptions import (
     AuthorizationError,
     NotFoundError,
     RateLimitError,
-    APIError,
 )
 from subtitle_manager_sdk.models import (
     SystemInfo,
     HistoryItem,
     ScanStatus,
     LogEntry,
-    LoginResponse,
     DownloadResult,
     OperationType,
     OperationStatus,

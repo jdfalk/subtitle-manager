@@ -7,7 +7,7 @@ Data models for the Subtitle Manager SDK.
 """
 
 from datetime import datetime
-from typing import Optional, Dict, Any, List, Union
+from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 from enum import Enum
 

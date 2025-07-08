@@ -10,9 +10,9 @@ import os
 import time
 import json
 import logging
-from typing import Optional, Dict, Any, List, Union, BinaryIO, Tuple
-from urllib.parse import urljoin, urlparse
-from datetime import datetime, timedelta
+from typing import Optional, Dict, Any, List, Union, BinaryIO
+from urllib.parse import urljoin
+from datetime import datetime
 
 try:
     import requests
@@ -22,7 +22,6 @@ except ImportError:
     raise ImportError("requests library is required. Install with: pip install requests")
 
 from .exceptions import (
-    SubtitleManagerError,
     AuthenticationError,
     AuthorizationError,
     NotFoundError,
@@ -101,7 +100,7 @@ class SubtitleManagerClient:
         
         # Set default headers
         headers = {
-            "User-Agent": user_agent or f"subtitle-manager-python-sdk/1.0.0",
+            "User-Agent": user_agent or "subtitle-manager-python-sdk/1.0.0",
             "Accept": "application/json",
         }
         
