@@ -11,6 +11,14 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+  checks: write
+  security-events: write
+  id-token: write
+
 jobs:
   ci:
     uses: jdfalk/ghcommon/.github/workflows/reusable-ci.yml@main
@@ -19,5 +27,7 @@ jobs:
       run-lint: true
       run-test: true
       run-build: true
+      enable-dependency-submission: true
       enable-backend-frontend: true
       frontend-path: "webui"
+    secrets: inherit
