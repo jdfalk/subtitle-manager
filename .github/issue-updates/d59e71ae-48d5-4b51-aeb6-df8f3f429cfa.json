@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Respect field-level metadata locks",
+  "body": "Implement logic in metadata refresh to skip updating locked fields",
+  "labels": ["codex", "enhancement"],
+  "guid": "d59e71ae-48d5-4b51-aeb6-df8f3f429cfa",
+  "legacy_guid": "create-respect-field-level-metadata-locks-2025-07-09"
+}

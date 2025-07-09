@@ -206,22 +206,12 @@ and `/api/search/history`.
       from external APIs. `metadata fetch` command now supports `--id` for
       direct TMDB lookup.
       ([#351](https://github.com/jdfalk/subtitle-manager/issues/351),
-      [#890](https://github.com/jdfalk/subtitle-manager/issues/890)) <<<<<<<
-      HEAD
-  - [ ] **Media Metadata Editor**: Provide manual editing interface.
-        ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
-  - [x] **Media Metadata Editor**: Provide manual editing interface.
-        ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
-  - [x] Allow manual metadata search and selection during import via
-        `metadata pick` command.
-  - [x] Support field-level locks to prevent unwanted updates via
-        `metadata show` command.
-  - [x] Added `metadata apply` command to write selected metadata to the
-        database while honoring field locks.
-  - [ ] **Manual Metadata Search**: Allow users to manually search and assign
-        metadata (e.g., title, year, episode info) for media items, independent
-        of automated lookups.
-        ([#NEW](https://github.com/jdfalk/subtitle-manager/issues/new?title=Manual%20Metadata%20Search))
+      [#890](https://github.com/jdfalk/subtitle-manager/issues/890))
+- [x] **Media Metadata Editor**: Provide manual editing interface.
+      ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
+  - [x] Allow manual metadata search and selection during import via `metadata pick` command.
+  - [x] Support field-level locks to prevent unwanted updates.
+  - [x] Added `metadata apply` command to write selected metadata to the database while honoring field locks.
 - [ ] **Search Result Caching**: Cache manual search results for faster
       responses.
       ([#1330](https://github.com/jdfalk/subtitle-manager/issues/1330))

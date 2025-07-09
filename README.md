@@ -1548,7 +1548,8 @@ subtitle-manager scan [directory] [lang] [-u] subtitle-manager autoscan
 grpc-server --addr :50051 subtitle-manager grpc-set-config --addr :50051 --key
 google_api_key --value NEWKEY subtitle-manager metadata search [query]
 subtitle-manager metadata fetch [title] [--id I] [--year Y] [--season S]
-[--episode E] subtitle-manager metadata update [file] [--title T]
+[--episode E] subtitle-manager metadata pick [query] [--year Y] [--season S]
+[--episode E] [--limit N] subtitle-manager metadata update [file] [--title T]
 [--release-group G] [--alt "A,B"] [--lock fields] subtitle-manager metadata
 apply --file PATH --id ID subtitle-manager metadata show [file] subtitle-manager
 delete [file] subtitle-manager rename [video] [lang] subtitle-manager downloads
@@ -1556,7 +1557,9 @@ subtitle-manager login [username] [password] subtitle-manager login-token
 [token] subtitle-manager user add [username] [email] [password] subtitle-manager
 user apikey [username] subtitle-manager user token [email] subtitle-manager user
 role [username] [role] subtitle-manager user list subtitle-manager radarr-sync
-\```
+```
+
+Locked fields prevent automatic refresh from overwriting manual edits. Specify them with `--lock title,release_group` when using `metadata update`.
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 

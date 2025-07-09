@@ -39,6 +39,12 @@ var videoExts = map[string]bool{
 	".wmv": true, ".flv": true, ".webm": true, ".m4v": true,
 }
 
+// FetchMovieMetadataFunc allows tests to override FetchMovieMetadata.
+var FetchMovieMetadataFunc = FetchMovieMetadata
+
+// FetchEpisodeMetadataFunc allows tests to override FetchEpisodeMetadata.
+var FetchEpisodeMetadataFunc = FetchEpisodeMetadata
+
 // MediaType differentiates between movie and TV episode metadata.
 type MediaType int
 
