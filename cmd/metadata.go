@@ -34,6 +34,8 @@ var metadataSearchCmd = &cobra.Command{
 }
 
 var (
+	fetchInteractive bool
+
 	setTitle     string
 	setGroup     string
 	setAlt       string
@@ -113,6 +115,24 @@ var metadataFetchCmd = &cobra.Command{
 			title := args[0]
 			if fetchSeason > 0 {
 				info, err = metadata.FetchEpisodeMetadata(ctx, title, fetchSeason, fetchEpisode, tmdbKey, omdbKey)
+			} else if fetchInteractive {
+				results, err := metadata.SearchMovies(ctx, title, fetchYear, 10, tmdbKey)
+				if err != nil {
+					return err
+				}
+				if len(results) == 0 {
+					return fmt.Errorf("no results found")
+				}
+				for i, r := range results {
+					fmt.Printf("%d) %s (%d) id=%d\n", i+1, r.Title, r.Year, r.TMDBID)
+				}
+				fmt.Print("Select number: ")
+				var choice int
+				if _, err := fmt.Scanf("%d", &choice); err != nil || choice < 1 || choice > len(results) {
+					return fmt.Errorf("invalid selection")
+				}
+				sel := results[choice-1]
+				info, err = metadata.FetchMovieMetadataByID(ctx, sel.TMDBID, tmdbKey, omdbKey)
 			} else {
 				info, err = metadata.FetchMovieMetadata(ctx, title, fetchYear, tmdbKey, omdbKey)
 			}
@@ -274,6 +294,7 @@ func init() {
 	metadataFetchCmd.Flags().IntVar(&fetchYear, "year", 0, "release year for movie")
 	metadataFetchCmd.Flags().IntVar(&fetchSeason, "season", 0, "season number for episode")
 	metadataFetchCmd.Flags().IntVar(&fetchEpisode, "episode", 0, "episode number")
+	metadataFetchCmd.Flags().BoolVar(&fetchInteractive, "interactive", false, "select result interactively")
 	metadataPickCmd.Flags().IntVar(&fetchYear, "year", 0, "release year for movie")
 	metadataPickCmd.Flags().IntVar(&fetchSeason, "season", 0, "season number for episode")
 	metadataPickCmd.Flags().IntVar(&fetchEpisode, "episode", 0, "episode number")

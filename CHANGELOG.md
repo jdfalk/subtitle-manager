@@ -223,6 +223,7 @@ All notable changes to this project will be documented in this file.
 - Search results are cached to reduce repeated provider queries.
 - Added `metadata apply` command to write selected metadata to library items
   while respecting field locks.
+- `metadata fetch` supports interactive result selection.
 - **Enhanced Issue Management Workflow**: Updated GitHub workflow configuration
   - Automatic triggering on merges to main branch when issue files change
   - Weekly scheduled maintenance on Sundays at 2 AM UTC

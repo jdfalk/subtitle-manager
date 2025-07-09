@@ -2110,7 +2110,7 @@ This approach will:
 - Centralize business logic and validation
 - Allow for incremental migration and testing
 
-The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work focuses on Sonarr/Radarr sync improvements and the metadata editor. See `TODO.md` for details.
+The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work focuses on Sonarr/Radarr sync improvements and the metadata editor. See `TODO.md` for details. The `metadata fetch` command now supports an interactive mode to select the correct TMDB result.
 Extensive architectural details and design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New contributors should review these documents to understand package responsibilities and completed features.
 For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
 Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).
