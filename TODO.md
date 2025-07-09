@@ -208,13 +208,14 @@ and `/api/search/history`.
       detection implemented.
       ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
   - [x] Added `monitor autosync` command to run scheduled library syncs.
+  - [x] Add `radarr-sync` command for one-time library sync.
 - [x] **Online Metadata Sources**: Fetch languages, ratings, and episode data
       from external APIs. `metadata fetch` command now supports `--id` for
       direct TMDB lookup.
       ([#351](https://github.com/jdfalk/subtitle-manager/issues/351),
       [#890](https://github.com/jdfalk/subtitle-manager/issues/890))
-- [ ] **Media Metadata Editor**: Provide manual editing interface.
-      ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
+  - [ ] **Media Metadata Editor**: Provide manual editing interface.
+        ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
   - [x] Allow manual metadata search and selection during import via
         `metadata pick` command.
   - [x] Support field-level locks to prevent unwanted updates via

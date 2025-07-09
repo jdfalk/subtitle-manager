@@ -562,3 +562,9 @@ achieved.
 - `metadata pick` command for interactive TMDB selection.
 - `metadata show` prints release group, alternate titles and locks.
 - `monitor autosync` command for scheduled Sonarr/Radarr synchronization.
+
+## [0.3.13] - 2025-07-09
+
+### Added
+
+- `radarr-sync` command for one-time library synchronization.
