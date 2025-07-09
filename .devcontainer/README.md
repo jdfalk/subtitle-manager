@@ -7,7 +7,7 @@ all necessary tools and dependencies pre-installed.
 ## Features
 
 - **Go 1.24+** with development tools (golangci-lint, goimports, dlv, etc.)
-- **Node.js 20** for React frontend development
+- **Node.js 20** for React frontend development (installed via apt-get)
 - **FFmpeg** for subtitle processing
 - **SQLite** with CGO support enabled
 - **VS Code extensions** for Go and React development
