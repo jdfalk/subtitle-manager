@@ -197,8 +197,8 @@ and `/api/search/history`.
       ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
 - [x] **Azure Blob Storage Support**: Initial Azure cloud storage provider.
 - [x] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict
-      resolution via new `monitor autosync` command. Continuous sync jobs and
-      conflict detection implemented.
+      resolution via new `monitor autosync` command, with conflict detection
+      implemented.
       ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
   - [x] Added `monitor autosync` command to run scheduled library syncs.
   - [x] Add `radarr-sync` command for one-time library sync.
