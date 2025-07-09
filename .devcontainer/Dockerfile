@@ -55,9 +55,14 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Create workspace directory before switching to non-root user
-RUN mkdir -p /workspace
+RUN mkdir -p /workspace && chmod 755 /workspace
 
 # Set the default user
+USER $USERNAME
+
+# Change ownership of workspace to vscode user
+USER root
+RUN chown -R $USERNAME:$USERNAME /workspace
 USER $USERNAME
 
 WORKDIR /workspace
