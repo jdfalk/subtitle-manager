@@ -204,7 +204,8 @@ and `/api/search/history`.
       ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
 - [x] **Azure Blob Storage Support**: Initial Azure cloud storage provider.
 - [x] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict
-      resolution via new `monitor autosync` command.
+      resolution via new `monitor autosync` command. Continuous sync jobs and conflict
+      detection implemented.
       ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
   - [x] Added `monitor autosync` command to run scheduled library syncs.
 - [x] **Online Metadata Sources**: Fetch languages, ratings, and episode data
@@ -314,7 +315,7 @@ Current tag implementations will be migrated to the unified system:
       file with comprehensive workflows
   - Enhanced login test robustness in `app.spec.js`
 - [x] **Add media library E2E tests**: Test file upload, scanning, and subtitle
-      operations
+      operations. Added scan workflow test to verify progress display.
 - [x] **Add provider configuration tests**: Test subtitle provider setup and
       validation
 - [x] **Add bulk operations tests**: Test batch subtitle download and processing
@@ -589,20 +590,17 @@ vs [Our Registry](pkg/providers/registry.go)
 #### High Priority Missing (1% of project)
 
 1. **PostgreSQL Backend** - Enterprise database support
-
    - Status: ✅ Complete for large deployments
    - Current: SQLite, PebbleDB and PostgreSQL fully functional
    - Reference:
      [PostgreSQL Database](https://wiki.bazarr.media/Additional-Configuration/PostgreSQL-Database/)
 
 2. **Advanced Webhook System** - Enhanced event notifications
-
    - Status: ✅ Complete with Sonarr/Radarr/custom webhook endpoints implemented
    - Reference:
      [Webhooks](https://wiki.bazarr.media/Additional-Configuration/Webhooks/)
 
 3. **Notification Services** - Discord, Telegram, Email alerts
-
    - Status: ✅ Complete implementation with Discord, Telegram and SMTP
      notifiers
    - Current: Full multi-provider notification system available
@@ -610,7 +608,6 @@ vs [Our Registry](pkg/providers/registry.go)
      [Notifications](https://wiki.bazarr.media/Additional-Configuration/Settings/#notifications)
 
 4. **Anti-Captcha Integration** - For challenging providers
-
    - Status: ✅ Complete with Anti-Captcha.com and 2captcha.com support
    - Current: Multi-service captcha solving available
    - Reference:
@@ -625,13 +622,11 @@ vs [Our Registry](pkg/providers/registry.go)
 #### Medium Priority Missing (Convenience Features)
 
 1. **Bazarr Settings Import** - Automated migration
-
    - Status: 🔶 Partial implementation
    - Current: Manual configuration transfer works
    - Reference: [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md)
 
 2. **Advanced Scheduling** - Granular scan controls
-
    - Status: ✅ Cron-based scheduler implemented
    - Current: Supports interval or cron expression
    - Reference:
