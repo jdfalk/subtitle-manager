@@ -226,6 +226,7 @@ All notable changes to this project will be documented in this file.
 - **Azure Blob Storage provider**: Initial support for Microsoft Azure cloud
   storage.
 - Command-line `tag` management with list, add, and remove operations.
+- Search results are cached to reduce repeated provider queries.
 - **Enhanced Issue Management Workflow**: Updated GitHub workflow configuration
   - Automatic triggering on merges to main branch when issue files change
   - Weekly scheduled maintenance on Sundays at 2 AM UTC

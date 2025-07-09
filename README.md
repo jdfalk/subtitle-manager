@@ -77,6 +77,7 @@ anti-captcha integration, and a polished React web interface.**
 - GitHub OAuth2 login enabled via `/api/oauth/github` endpoints.
 - Manually search for subtitles with `search` command.
 - Provider registry simplifies adding new sources.
+- Search results are cached to speed up repeated queries.
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
 - Integrated authentication system with password, token, OAuth2 and API key
