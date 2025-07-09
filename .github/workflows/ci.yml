@@ -12,7 +12,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # Required for auto-committing fixes from super-linter
+  statuses: write # Required for status updates
   pull-requests: write
   actions: read
   checks: write
