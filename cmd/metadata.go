@@ -43,6 +43,10 @@ var (
 	fetchSeason  int
 	fetchEpisode int
 	pickLimit    int
+	applyFile    string
+	applyID      int
+	applySeason  int
+	applyEpisode int
 )
 
 var metadataUpdateCmd = &cobra.Command{
@@ -180,6 +184,60 @@ var metadataPickCmd = &cobra.Command{
 	},
 }
 
+var metadataApplyCmd = &cobra.Command{
+	Use:   "apply",
+	Short: "Apply fetched metadata to a library item",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if applyFile == "" || applyID == 0 {
+			return cmd.Usage()
+		}
+		tmdbKey := viper.GetString("tmdb_api_key")
+		omdbKey := viper.GetString("omdb_api_key")
+		ctx := context.Background()
+
+		var info *metadata.MediaInfo
+		var err error
+		if applySeason > 0 {
+			info, err = metadata.FetchEpisodeMetadataByID(ctx, applyID, applySeason, applyEpisode, tmdbKey, omdbKey)
+		} else {
+			info, err = metadata.FetchMovieMetadataByID(ctx, applyID, tmdbKey, omdbKey)
+		}
+		if err != nil {
+			return err
+		}
+
+		store, err := database.OpenStoreWithConfig()
+		if err != nil {
+			return err
+		}
+		defer store.Close()
+
+		item, err := store.GetMediaItem(applyFile)
+		if err != nil {
+			return err
+		}
+		if item == nil {
+			return fmt.Errorf("media item not found")
+		}
+
+		locks := make(map[string]bool)
+		if item.FieldLocks != "" {
+			for _, f := range strings.Split(item.FieldLocks, ",") {
+				locks[strings.TrimSpace(f)] = true
+			}
+		}
+
+		if !locks["title"] && info.Title != "" {
+			if err := store.SetMediaTitle(applyFile, info.Title); err != nil {
+				return err
+			}
+			fmt.Printf("Applied title: %s\n", info.Title)
+		}
+
+		return nil
+	},
+}
+
 var metadataShowCmd = &cobra.Command{
 	Use:   "show [file]",
 	Short: "Show stored metadata for a media item",
@@ -220,10 +278,15 @@ func init() {
 	metadataPickCmd.Flags().IntVar(&fetchSeason, "season", 0, "season number for episode")
 	metadataPickCmd.Flags().IntVar(&fetchEpisode, "episode", 0, "episode number")
 	metadataPickCmd.Flags().IntVar(&pickLimit, "limit", 5, "number of results to show")
+	metadataApplyCmd.Flags().StringVar(&applyFile, "file", "", "media file path")
+	metadataApplyCmd.Flags().IntVar(&applyID, "id", 0, "TMDB identifier")
+	metadataApplyCmd.Flags().IntVar(&applySeason, "season", 0, "season number")
+	metadataApplyCmd.Flags().IntVar(&applyEpisode, "episode", 0, "episode number")
 	metadataCmd.AddCommand(metadataSearchCmd)
 	metadataCmd.AddCommand(metadataUpdateCmd)
 	metadataCmd.AddCommand(metadataFetchCmd)
 	metadataCmd.AddCommand(metadataPickCmd)
+	metadataCmd.AddCommand(metadataApplyCmd)
 	metadataCmd.AddCommand(metadataShowCmd)
 	rootCmd.AddCommand(metadataCmd)
 }

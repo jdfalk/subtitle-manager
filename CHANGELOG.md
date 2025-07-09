@@ -29,7 +29,6 @@ All notable changes to this project will be documented in this file.
 
 - **Automatic Episode Monitoring System**: Complete subtitle monitoring solution
   for TV episodes and movies
-
   - Sonarr/Radarr integration for automatic media library synchronization
   - Multi-language subtitle monitoring with configurable retry logic
   - Intelligent blacklist management with automatic and manual controls
@@ -54,7 +53,6 @@ All notable changes to this project will be documented in this file.
 - **Comprehensive Smart Rebase Tool**: Complete Python-based Git rebase
   automation with intelligent conflict resolution and persistent state
   management
-
   - **Intelligent Conflict Resolution**: Automatically resolves conflicts based
     on file patterns and types (documentation, source code, tests,
     configuration)
@@ -97,7 +95,6 @@ All notable changes to this project will be documented in this file.
 
 - **Database Backend Migration - Complete**: Full migration to support multiple
   database backends
-
   - **Pure Go Build Support**: Complete PebbleDB implementation for CGO-free
     deployments
     - All SQLite features migrated to PebbleDB (authentication, sessions, tags,
@@ -128,7 +125,6 @@ All notable changes to this project will be documented in this file.
 
 - **Subtitle Quality Scoring System - Complete**: Advanced subtitle evaluation
   and selection
-
   - **Multi-Criteria Scoring**: Provider reliability, release matching, format
     preferences, metadata quality
   - **Intelligent Selection**: Automatic best-match selection based on weighted
@@ -144,7 +140,6 @@ All notable changes to this project will be documented in this file.
 
 - **Automatic Subtitle Synchronization - Complete**: Advanced synchronization
   using multiple methods
-
   - **Audio Transcription Sync**: Whisper API integration with local service
     support
   - **Embedded Subtitle Sync**: Advanced track selection with format
@@ -165,7 +160,6 @@ All notable changes to this project will be documented in this file.
 
 - **Manual Subtitle Search Interface - Complete**: Comprehensive search
   interface with advanced features
-
   - **Multi-Provider Search**: Parallel searching with provider status
     indicators
   - **Advanced Filtering**: Season/episode, year, release group specification
@@ -227,6 +221,8 @@ All notable changes to this project will be documented in this file.
   storage.
 - Command-line `tag` management with list, add, and remove operations.
 - Search results are cached to reduce repeated provider queries.
+- Added `metadata apply` command to write selected metadata to library items
+  while respecting field locks.
 - **Enhanced Issue Management Workflow**: Updated GitHub workflow configuration
   - Automatic triggering on merges to main branch when issue files change
   - Weekly scheduled maintenance on Sundays at 2 AM UTC

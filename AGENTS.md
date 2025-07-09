@@ -8,7 +8,8 @@
 
 For all agent, Copilot, or workflow tasks, refer to:
 
-- **System Overview**: [`.github/copilot-instructions.md`](.github/copilot-instructions.md)
+- **System Overview**:
+  [`.github/copilot-instructions.md`](.github/copilot-instructions.md)
 - **General & Language Rules**: [`.github/instructions/`](.github/instructions/)
 - **Prompts**: [`.github/prompts/`](.github/prompts/)
 

@@ -354,6 +354,21 @@ func (p *PostgresStore) SetMediaTitle(path, title string) error {
 	return err
 }
 
+// GetMediaItem retrieves a media item by path. Returns nil if not found.
+func (p *PostgresStore) GetMediaItem(path string) (*MediaItem, error) {
+	row := p.db.QueryRow(`SELECT id, path, title, season, episode, release_group, alt_titles, field_locks, created_at FROM media_items WHERE path = $1`, path)
+	var it MediaItem
+	var id int64
+	if err := row.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode, &it.ReleaseGroup, &it.AltTitles, &it.FieldLocks, &it.CreatedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	it.ID = strconv.FormatInt(id, 10)
+	return &it, nil
+}
+
 // InsertTag adds a tag to the database.
 func (p *PostgresStore) InsertTag(name string) error {
 	_, err := p.db.Exec(`INSERT INTO tags (name, created_at) VALUES ($1, $2)`, name, time.Now())

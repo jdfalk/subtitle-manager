@@ -639,19 +639,16 @@ class CustomWebhookProcessor:
 ### Common Issues
 
 1. **Webhook not triggered**
-
    - Check media server webhook configuration
    - Verify URL and network connectivity
    - Check firewall settings
 
 2. **Authentication failures**
-
    - Verify API key is correct
    - Check IP whitelist configuration
    - Ensure proper headers are sent
 
 3. **File not found errors**
-
    - Verify file paths are accessible to Subtitle Manager
    - Check file permissions
    - Ensure network mounts are properly configured

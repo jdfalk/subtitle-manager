@@ -433,6 +433,15 @@ func (p *PebbleStore) SetMediaTitle(path, title string) error {
 	return p.InsertMediaItem(item)
 }
 
+// GetMediaItem retrieves a media item by path. Returns nil if not found.
+func (p *PebbleStore) GetMediaItem(path string) (*MediaItem, error) {
+	item, _, err := p.getMediaByPath(path)
+	if err != nil {
+		return nil, err
+	}
+	return item, nil
+}
+
 // ==================== USER AUTHENTICATION FUNCTIONS ====================
 
 // User represents an account in the system for Pebble storage.

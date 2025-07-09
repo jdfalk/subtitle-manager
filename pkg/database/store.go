@@ -40,6 +40,8 @@ type SubtitleStore interface {
 	CountMediaItems() (int, error)
 	// DeleteMediaItem removes a record for the specified media path.
 	DeleteMediaItem(path string) error
+	// GetMediaItem retrieves a media item by path. Returns nil if not found.
+	GetMediaItem(path string) (*MediaItem, error)
 	// InsertTag stores a new tag value.
 	InsertTag(name string) error
 	// ListTags retrieves all tags.
