@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
 // Client provides minimal access to the Sonarr API.
@@ -69,6 +70,7 @@ func (c *Client) Episodes(ctx context.Context) ([]database.MediaItem, error) {
 
 // Sync fetches episodes and stores new items in store.
 func Sync(ctx context.Context, c *Client, store database.SubtitleStore) error {
+	logger := logging.GetLogger("sonarr")
 	eps, err := c.Episodes(ctx)
 	if err != nil {
 		return err
@@ -77,15 +79,19 @@ func Sync(ctx context.Context, c *Client, store database.SubtitleStore) error {
 	if err != nil {
 		return err
 	}
-	paths := make(map[string]bool, len(existing))
+	existingMap := make(map[string]database.MediaItem, len(existing))
 	for _, it := range existing {
-		paths[it.Path] = true
+		existingMap[it.Path] = it
 	}
 	for _, it := range eps {
-		if !paths[it.Path] {
-			if err := store.InsertMediaItem(&it); err != nil {
-				return err
+		if rec, ok := existingMap[it.Path]; ok {
+			if rec.Title != it.Title || rec.Season != it.Season || rec.Episode != it.Episode {
+				logger.Warnf("media conflict for %s: stored %q S%dE%d vs remote %q S%dE%d", it.Path, rec.Title, rec.Season, rec.Episode, it.Title, it.Season, it.Episode)
 			}
+			continue
+		}
+		if err := store.InsertMediaItem(&it); err != nil {
+			return err
 		}
 	}
 	return nil

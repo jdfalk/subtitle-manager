@@ -89,11 +89,9 @@
     "source=subtitle-manager-node-modules,target=/workspace/webui/node_modules,type=volume"
   ],
   "workspaceFolder": "/workspace",
-  "remoteEnv": {
+  "containerEnv": {
     "CGO_ENABLED": "1",
     "GOOS": "linux",
     "GOARCH": "amd64"
-  },
-  "updateContentCommand": "go mod download",
-  "shutdownAction": "stopContainer"
+  }
 }

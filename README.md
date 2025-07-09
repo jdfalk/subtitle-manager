@@ -64,11 +64,13 @@ anti-captcha integration, and a polished React web interface.**
 - Schedule scans with the `autoscan` command using intervals or cron
   expressions.
 - Continuously sync libraries with the `monitor autosync` command.
+- End-to-end tests verify library scanning workflows.
 - Parse file names and retrieve movie or episode details from TheMovieDB with
   language and rating data from OMDb.
 - High performance scanning using concurrent workers.
 - Recursive directory watching with -r flag.
 - Integrate with Sonarr, Radarr and Plex using dedicated commands.
+- Continuous sync tasks detect library conflicts and log them.
 - Run a translation gRPC server.
 - Translate uploaded subtitles through `/api/translate` endpoint.
 - Delete subtitle files and remove history records.

@@ -7,7 +7,6 @@ All notable changes to this project will be documented in this file.
 ### Planned: Hybrid Protobuf + Go Types + gcommon Migration
 
 - We are migrating to a hybrid model for all shared types and business logic:
-
   - **Protobufs** will define the canonical data models (e.g., LanguageProfile,
     MediaItem, etc.)
   - **Go types** will be generated from Protobufs for use in all Go projects
@@ -246,6 +245,8 @@ All notable changes to this project will be documented in this file.
     duplicates
   - Complete coverage verification for ughi-fixed.sh script (11/11 issues
     covered)
+- **Media library scanning tests**: Added Playwright E2E test verifying scan
+  progress.
 
 ### Changed
 
@@ -552,6 +553,7 @@ achieved.
 ### Added
 
 - `metadata fetch` supports `--id` for TMDB lookups.
+- Sonarr/Radarr sync detects library conflicts and logs them.
 
 ## [0.3.12] - 2025-07-06
 

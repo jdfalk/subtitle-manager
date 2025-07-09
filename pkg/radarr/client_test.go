@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 
@@ -79,5 +81,45 @@ func TestSync(t *testing.T) {
 	}
 	if !found {
 		t.Fatal("new item not stored")
+	}
+}
+
+// TestSyncLogsConflicts verifies that Sync logs conflicts when metadata differs.
+func TestSyncLogsConflicts(t *testing.T) {
+	if err := testutil.CheckSQLiteSupport(); err != nil {
+		t.Skipf("SQLite support not available: %v", err)
+	}
+
+	store, err := database.OpenSQLStore(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+
+	// Existing item with different title should trigger conflict log.
+	if err := store.InsertMediaItem(&database.MediaItem{Path: "/c.mkv", Title: "Old"}); err != nil {
+		t.Fatalf("insert: %v", err)
+	}
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, `[{"title":"New","movieFile":{"path":"/c.mkv"}}]`)
+	}))
+	defer srv.Close()
+
+	logging.Hook = logging.NewMemoryHook(10)
+	c := NewClient(srv.URL, "")
+	if err := Sync(context.Background(), c, store); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+
+	found := false
+	for _, line := range logging.Hook.Logs() {
+		if strings.Contains(line, "media conflict for /c.mkv") {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("conflict not logged")
 	}
 }

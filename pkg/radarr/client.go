@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
 // Client provides minimal access to the Radarr API.
@@ -65,6 +66,7 @@ func (c *Client) Movies(ctx context.Context) ([]database.MediaItem, error) {
 
 // Sync fetches the movie library and stores new items in store.
 func Sync(ctx context.Context, c *Client, store database.SubtitleStore) error {
+	logger := logging.GetLogger("radarr")
 	movies, err := c.Movies(ctx)
 	if err != nil {
 		return err
@@ -73,15 +75,19 @@ func Sync(ctx context.Context, c *Client, store database.SubtitleStore) error {
 	if err != nil {
 		return err
 	}
-	paths := make(map[string]bool, len(existing))
+	existingMap := make(map[string]database.MediaItem, len(existing))
 	for _, it := range existing {
-		paths[it.Path] = true
+		existingMap[it.Path] = it
 	}
 	for _, it := range movies {
-		if !paths[it.Path] {
-			if err := store.InsertMediaItem(&it); err != nil {
-				return err
+		if rec, ok := existingMap[it.Path]; ok {
+			if rec.Title != it.Title {
+				logger.Warnf("media conflict for %s: stored %q vs remote %q", it.Path, rec.Title, it.Title)
 			}
+			continue
+		}
+		if err := store.InsertMediaItem(&it); err != nil {
+			return err
 		}
 	}
 	return nil
