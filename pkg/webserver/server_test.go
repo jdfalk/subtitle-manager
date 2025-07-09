@@ -941,6 +941,70 @@ func TestProviderConfigUpdate(t *testing.T) {
 	}
 }
 
+// TestSyncBatchEndpoint verifies that POST /api/sync/batch processes multiple
+// subtitle sync requests and writes the outputs.
+func TestSyncBatchEndpoint(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	key := setupTestUser(t, db)
+
+	dir := t.TempDir()
+	data, err := os.ReadFile("../../testdata/simple.srt")
+	if err != nil {
+		t.Fatalf("read testdata: %v", err)
+	}
+	in1 := filepath.Join(dir, "a.srt")
+	os.WriteFile(in1, data, 0644)
+	in2 := filepath.Join(dir, "b.srt")
+	os.WriteFile(in2, data, 0644)
+	out1 := filepath.Join(dir, "out1.srt")
+	out2 := filepath.Join(dir, "out2.srt")
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	body := strings.NewReader(fmt.Sprintf(`{"items":[{"media":"m1.mkv","subtitle":"%s","output":"%s"},{"media":"m2.mkv","subtitle":"%s","output":"%s"}],"options":{}}`, in1, out1, in2, out2))
+	req, _ := http.NewRequest("POST", srv.URL+"/api/sync/batch", body)
+	req.Header.Set("X-API-Key", key)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("post: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d", resp.StatusCode)
+	}
+	var out struct {
+		Results []struct {
+			Output string `json:"output"`
+			Error  string `json:"error"`
+		} `json:"results"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	resp.Body.Close()
+	if len(out.Results) != 2 {
+		t.Fatalf("expected 2 results, got %d", len(out.Results))
+	}
+	for i, p := range []string{out1, out2} {
+		if out.Results[i].Error != "" {
+			t.Fatalf("result %d error: %s", i, out.Results[i].Error)
+		}
+		if fi, err := os.Stat(p); err != nil || fi.Size() == 0 {
+			t.Fatalf("output %d not written", i)
+		}
+	}
+}
+
 // TestProvidersUpdateInvalid verifies that invalid JSON results in 400 Bad Request.
 func TestProvidersUpdateInvalid(t *testing.T) {
 	skipIfNoSQLite(t)
