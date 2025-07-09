@@ -8,6 +8,8 @@ name: Documentation Updates
 permissions:
   contents: write # For creating commits and PRs
   pull-requests: write # For creating PRs
+  issues: write # For creating issues and managing labels
+  repository-projects: write # For adding items to projects
   actions: read # For workflow access
   checks: write # For workflow status
 
