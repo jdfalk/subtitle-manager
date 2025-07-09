@@ -1747,6 +1747,7 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 - `SM_CONFIG_FILE` - Path to configuration file - Default: `/config/subtitle-manager.yaml`
 - `SM_DB_PATH` - Database file path - Default: `/config/subtitle-manager.db`
 - `SM_DB_BACKEND` - Database backend (sqlite, pebble, postgres) - Default: `sqlite`
+- `SM_BASE_URL` - Base URL path when behind a reverse proxy
 
 **API Keys:**
 

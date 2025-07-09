@@ -156,6 +156,10 @@ func init() {
 		rootCmd.PersistentFlags().String("language", "en", "language for user interface (en, es, fr)")
 		viper.BindPFlag("language", rootCmd.PersistentFlags().Lookup("language"))
 
+		// Base URL configuration for reverse proxy support
+		rootCmd.PersistentFlags().String("base-url", "", "base URL path when behind a reverse proxy")
+		viper.BindPFlag("base_url", rootCmd.PersistentFlags().Lookup("base-url"))
+
 		// Cloud storage configuration
 		rootCmd.PersistentFlags().String("storage-provider", "local", "storage provider: local, s3, azure, gcs")
 		viper.BindPFlag("storage.provider", rootCmd.PersistentFlags().Lookup("storage-provider"))
