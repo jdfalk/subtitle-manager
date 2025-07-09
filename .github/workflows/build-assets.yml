@@ -17,8 +17,10 @@ jobs:
   build-assets:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: read # Required for repository checkout
+      packages: write # Required for pushing to container registry
+      id-token: write # Required for signing and attestations
+      attestations: write # Required for build attestations
     steps:
       - uses: actions/checkout@v4
 
