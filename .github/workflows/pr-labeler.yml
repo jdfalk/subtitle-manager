@@ -20,10 +20,14 @@ on:
 jobs:
   labeler:
     uses: jdfalk/ghcommon/.github/workflows/reusable-labeler.yml@main
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
     with:
       configuration-path: ".github/labeler.yml"
       sync-labels: true
       dot: true
       pr-numbers: ${{ github.event.inputs.pr_numbers || '' }}
     secrets:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+      github-token: ${{ secrets.JF_CI_GH_PAT || secrets.GITHUB_TOKEN }}
