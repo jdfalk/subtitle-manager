@@ -33,8 +33,7 @@ anti-captcha integration, and a polished React web interface.**
 - Store translation history in SQLite, PebbleDB or PostgreSQL databases.
   Retrieve history via the `history` command or `/api/history` endpoint with
   optional `lang` and `video` filters.
-- Display stored metadata with `metadata show` including locks and alternate
-  titles.
+- Display stored metadata with `metadata show` including locks and alternate titles.
 - **Optional cloud storage for subtitles and history** in Amazon S3, Azure Blob
   Storage (now supported), or Google Cloud Storage with local backup support.
 - Per component logging with adjustable levels.
@@ -1536,14 +1535,7 @@ subtitle-manager scan [directory] [lang] [-u] subtitle-manager autoscan
 [directory] subtitle-manager watch [directory] [lang] [-r] subtitle-manager
 grpc-server --addr :50051 subtitle-manager grpc-set-config --addr :50051 --key
 google_api_key --value NEWKEY subtitle-manager metadata search [query]
-subtitle-manager metadata fetch [title] [--id I] [--year Y] [--season S]
-[--episode E] subtitle-manager metadata update [file] [--title T]
-[--release-group G] [--alt "A,B"] [--lock fields] subtitle-manager delete [file]
-subtitle-manager rename [video] [lang] subtitle-manager downloads
-subtitle-manager login [username] [password] subtitle-manager login-token
-[token] subtitle-manager user add [username] [email] [password] subtitle-manager
-user apikey [username] subtitle-manager user token [email] subtitle-manager user
-role [username] [role] subtitle-manager user list \```
+subtitle-manager metadata fetch [title] [--id I] [--year Y] [--season S] [--episode E] subtitle-manager metadata update [file] [--title T] [--release-group G] [--alt "A,B"] [--lock fields] subtitle-manager metadata show [file] subtitle-manager delete [file] subtitle-manager rename [video] [lang] subtitle-manager downloads subtitle-manager login [username] [password] subtitle-manager login-token [token] subtitle-manager user add [username] [email] [password] subtitle-manager user apikey [username] subtitle-manager user token [email] subtitle-manager user role [username] [role] subtitle-manager user list subtitle-manager radarr-sync \```
 
 The `extract` command accepts `--ffmpeg` to specify a custom ffmpeg binary.
 
