@@ -3,6 +3,7 @@ package webserver
 
 import (
 	"context"
+	"crypto/sha1"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -68,6 +69,13 @@ type SearchHistoryItem struct {
 	Query     SearchRequest `json:"query"`
 	Timestamp time.Time     `json:"timestamp"`
 	Results   int           `json:"results"`
+}
+
+// searchCacheKey generates a cache key for the given search request.
+func searchCacheKey(req SearchRequest) string {
+	data, _ := json.Marshal(req)
+	sum := sha1.Sum(data)
+	return fmt.Sprintf("%x", sum)
 }
 
 // isValidURL checks if the provided URL is a valid HTTP/HTTPS URL and not localhost or private IP
@@ -152,8 +160,11 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	// - Consider caching, rate limiting, and provider fallback logic
 	// - Optimize parallel search and scoring for large provider sets
 
-	results := performParallelSearch(r.Context(), req)
-	scoredResults := calculateScores(results, req)
+	scoredResults, err := fetchSearchResults(r.Context(), req)
+	if err != nil {
+		http.Error(w, "Failed to perform search", http.StatusInternalServerError)
+		return
+	}
 
 	response := SearchResponse{
 		Results: scoredResults,
@@ -215,9 +226,11 @@ func handleSearchQuery(w http.ResponseWriter, r *http.Request) {
 		req.ReleaseGroup = releaseGroup
 	}
 
-	// Perform search and return results
-	results := performParallelSearch(r.Context(), req)
-	scoredResults := calculateScores(results, req)
+	scoredResults, err := fetchSearchResults(r.Context(), req)
+	if err != nil {
+		http.Error(w, "Failed to perform search", http.StatusInternalServerError)
+		return
+	}
 
 	// For backward compatibility with existing UI, return simple URL array if single provider
 	if len(providers) == 1 {
@@ -401,6 +414,31 @@ func extractNameFromURL(url string) string {
 		}
 	}
 	return "Subtitle"
+}
+
+// fetchSearchResults returns scored search results, using cache when available.
+func fetchSearchResults(ctx context.Context, req SearchRequest) ([]SearchResult, error) {
+	mgr := GetCacheManager()
+	key := searchCacheKey(req)
+	if mgr != nil {
+		if data, err := mgr.GetProviderSearchResults(ctx, key); err == nil && data != nil {
+			var cached []SearchResult
+			if err := json.Unmarshal(data, &cached); err == nil {
+				return cached, nil
+			}
+		}
+	}
+
+	results := performParallelSearch(ctx, req)
+	scored := calculateScores(results, req)
+
+	if mgr != nil {
+		if data, err := json.Marshal(scored); err == nil {
+			mgr.SetProviderSearchResults(ctx, key, data)
+		}
+	}
+
+	return scored, nil
 }
 
 // searchPreviewHandler handles subtitle content preview requests
