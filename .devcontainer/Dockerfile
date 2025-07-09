@@ -26,6 +26,10 @@ RUN apt-get update \
     # Install additional development tools
     && apt-get install -y curl wget unzip zip jq \
     #
+    # Install Node.js 20 for devcontainer
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    #
     # Clean up
     && apt-get autoremove -y \
     && apt-get clean -y \
