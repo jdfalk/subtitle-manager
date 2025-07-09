@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
@@ -64,6 +65,18 @@ func StartDatabaseCleanup(ctx context.Context, db *sql.DB, frequency string) {
 	})
 }
 
+// parseLocks converts a comma separated lock string into a set map.
+func parseLocks(locks string) map[string]bool {
+	m := make(map[string]bool)
+	for _, f := range strings.Split(locks, ",") {
+		f = strings.TrimSpace(f)
+		if f != "" {
+			m[f] = true
+		}
+	}
+	return m
+}
+
 // RefreshMetadata updates stored media items with data from TMDB.
 // It fetches metadata for each item in the store using the provided
 // TMDB API key. Errors during individual lookups are ignored.
@@ -90,10 +103,19 @@ func RefreshMetadata(ctx context.Context, store database.SubtitleStore, tmdbKey,
 			return ctx.Err()
 		default:
 		}
+
+		var info *metadata.MediaInfo
 		if it.Season > 0 {
-			_, _ = metadata.FetchEpisodeMetadata(ctx, it.Title, it.Season, it.Episode, tmdbKey, omdbKey)
+			info, _ = metadata.FetchEpisodeMetadataFunc(ctx, it.Title, it.Season, it.Episode, tmdbKey, omdbKey)
 		} else {
-			_, _ = metadata.FetchMovieMetadata(ctx, it.Title, 0, tmdbKey, omdbKey)
+			info, _ = metadata.FetchMovieMetadataFunc(ctx, it.Title, 0, tmdbKey, omdbKey)
+		}
+		if info == nil {
+			continue
+		}
+		locks := parseLocks(it.FieldLocks)
+		if info.Title != "" && !locks["title"] {
+			_ = store.SetMediaTitle(it.Path, info.Title)
 		}
 	}
 	return nil

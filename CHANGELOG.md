@@ -551,7 +551,7 @@ achieved.
 - `metadata fetch` supports `--id` for TMDB lookups.
 - Sonarr/Radarr sync detects library conflicts and logs them.
 
-## [0.3.12] - 2025-07-06
+## [0.3.12] - 2025-07-07
 
 ### Added
 
@@ -564,3 +564,5 @@ achieved.
 ### Added
 
 - `radarr-sync` command for one-time library synchronization.
+- Metadata refresh respects field locks set via `metadata update`.
+- `metadata apply` command to write selected metadata to library items while respecting field locks.

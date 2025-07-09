@@ -7,6 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jdfalk/subtitle-manager/pkg/database"
+	"github.com/jdfalk/subtitle-manager/pkg/metadata"
+
 	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
@@ -65,5 +68,36 @@ func TestDiskScan(t *testing.T) {
 	}
 	if size != int64(len("hello")+len("world")) {
 		t.Fatalf("unexpected size %d", size)
+	}
+}
+
+// TestRefreshMetadata_RespectsFieldLocks ensures locked fields are not updated.
+func TestRefreshMetadata_RespectsFieldLocks(t *testing.T) {
+	store, err := database.OpenSQLStore(":memory:")
+	if err != nil {
+		t.Skip("SQLite support not available")
+	}
+	defer store.Close()
+
+	item := &database.MediaItem{Path: "video.mkv", Title: "Old", FieldLocks: "title"}
+	if err := store.InsertMediaItem(item); err != nil {
+		t.Fatalf("insert: %v", err)
+	}
+
+	metadata.FetchMovieMetadataFunc = func(ctx context.Context, title string, year int, tmdb, omdb string) (*metadata.MediaInfo, error) {
+		return &metadata.MediaInfo{Title: "New"}, nil
+	}
+	defer func() { metadata.FetchMovieMetadataFunc = metadata.FetchMovieMetadata }()
+
+	if err := RefreshMetadata(context.Background(), store, "k", "o"); err != nil {
+		t.Fatalf("refresh: %v", err)
+	}
+
+	items, err := store.ListMediaItems()
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if items[0].Title != "Old" {
+		t.Fatalf("title changed: %s", items[0].Title)
 	}
 }
