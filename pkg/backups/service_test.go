@@ -112,6 +112,15 @@ func (m *mockSubtitleStore) DeleteMediaItem(path string) error {
 	return nil
 }
 
+func (m *mockSubtitleStore) GetMediaItem(path string) (*database.MediaItem, error) {
+	for i := range m.mediaItems {
+		if m.mediaItems[i].Path == path {
+			return &m.mediaItems[i], nil
+		}
+	}
+	return nil, nil
+}
+
 func (m *mockSubtitleStore) InsertTag(name string) error {
 	m.tags = append(m.tags, database.Tag{ID: fmt.Sprintf("%d", len(m.tags)+1), Name: name})
 	return nil

@@ -91,6 +91,14 @@ func (m *MockSubtitleStore) DeleteMediaItem(path string) error {
 	return args.Error(0)
 }
 
+func (m *MockSubtitleStore) GetMediaItem(path string) (*database.MediaItem, error) {
+	args := m.Called(path)
+	if rec, ok := args.Get(0).(*database.MediaItem); ok {
+		return rec, args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 func (m *MockSubtitleStore) InsertTag(name string) error {
 	args := m.Called(name)
 	return args.Error(0)

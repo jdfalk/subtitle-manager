@@ -406,6 +406,21 @@ func (s *SQLStore) DeleteMediaItem(path string) error {
 	return err
 }
 
+// GetMediaItem retrieves a media item by path. Returns nil if not found.
+func (s *SQLStore) GetMediaItem(path string) (*MediaItem, error) {
+	row := s.db.QueryRow(`SELECT id, path, title, season, episode, release_group, alt_titles, field_locks, created_at FROM media_items WHERE path = ?`, path)
+	var it MediaItem
+	var id int64
+	if err := row.Scan(&id, &it.Path, &it.Title, &it.Season, &it.Episode, &it.ReleaseGroup, &it.AltTitles, &it.FieldLocks, &it.CreatedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	it.ID = strconv.FormatInt(id, 10)
+	return &it, nil
+}
+
 // CountSubtitles returns the number of subtitle records.
 func (s *SQLStore) CountSubtitles() (int, error) {
 	row := s.db.QueryRow(`SELECT COUNT(*) FROM subtitles`)
