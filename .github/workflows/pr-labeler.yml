@@ -10,6 +10,12 @@ name: Pull Request Labeler
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:
+    inputs:
+      pr_numbers:
+        description: "Comma-separated list of PR numbers to reprocess (e.g., 123,456,789)"
+        required: false
+        type: string
 
 jobs:
   labeler:
@@ -18,3 +24,6 @@ jobs:
       configuration-path: ".github/labeler.yml"
       sync-labels: true
       dot: true
+      pr-numbers: ${{ github.event.inputs.pr_numbers || '' }}
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
