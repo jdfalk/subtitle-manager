@@ -149,6 +149,7 @@ func QueryMovie(ctx context.Context, title string, year int, apiKey string) (*Me
 }
 
 // SearchMovies returns up to limit results matching the title and optional year.
+// If limit is 0 or negative, defaults to 5 results.
 func SearchMovies(ctx context.Context, title string, year, limit int, apiKey string) ([]MediaInfo, error) {
 	if limit <= 0 {
 		limit = 5

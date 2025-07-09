@@ -209,11 +209,13 @@ and `/api/search/history`.
       [#890](https://github.com/jdfalk/subtitle-manager/issues/890))
 - [x] **Media Metadata Editor**: Provide manual editing interface.
       ([#1135](https://github.com/jdfalk/subtitle-manager/issues/1135))
-  - [x] Allow manual metadata search and selection during import via `metadata pick` command.
-  - [x] Support field-level locks to prevent unwanted updates.
+  - [x] Allow manual metadata search and selection during import via
+        `metadata pick` command.
+  - [x] Support field-level locks to prevent unwanted updates via
+        `metadata show` command.
   - [x] Added `metadata apply` command to write selected metadata to the database while honoring field locks.
-- [ ] **Search Result Caching**: Cache manual search results for faster
-      responses.
+  - [x] CLI interactive search and selection when fetching metadata.
+- [ ] **Search Result Caching**: Cache manual search results for faster responses.
       ([#1330](https://github.com/jdfalk/subtitle-manager/issues/1330))
 
 ### Universal Tagging System Implementation
