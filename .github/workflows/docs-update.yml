@@ -1,15 +1,15 @@
 # file: .github/workflows/docs-update.yml
-# version: 1.0.0  
+# version: 1.0.0
 # guid: 1a2b3c4d-5e6f-7890-abcd-ef1234567890
 
 name: Documentation Updates
 
 # Required permissions for the reusable workflow
 permissions:
-  contents: write        # For creating commits and PRs
-  pull-requests: write   # For creating PRs
-  actions: read          # For workflow access
-  checks: write          # For workflow status
+  contents: write # For creating commits and PRs
+  pull-requests: write # For creating PRs
+  actions: read # For workflow access
+  checks: write # For workflow status
 
 on:
   # Trigger on documentation update files
@@ -19,7 +19,7 @@ on:
       - ".github/doc-updates/**"
       - "scripts/create-doc-update.sh"
       - ".github/workflows/docs-update.yml"
-  
+
   # Manual trigger with options
   workflow_dispatch:
     inputs:
