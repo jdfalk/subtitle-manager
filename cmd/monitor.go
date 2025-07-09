@@ -83,6 +83,7 @@ var monitorBlacklistRemoveCmd = &cobra.Command{
 // Flags for monitoring commands
 var (
 	monitorInterval     string
+	monitorSyncInterval string
 	monitorLanguages    []string
 	monitorMaxRetries   int
 	monitorQualityCheck bool
@@ -114,11 +115,11 @@ func init() {
 	monitorSyncCmd.Flags().BoolVar(&monitorForceRefresh, "force-refresh", false, "Refresh existing monitored items")
 	monitorSyncCmd.Flags().StringVar(&monitorSource, "source", "both", "Source to sync from: sonarr, radarr, or both")
 
-	// Autosync command flags
-	monitorAutoSyncCmd.Flags().StringVar(&monitorInterval, "interval", "6h", "Sync interval (e.g. 6h, 24h)")
+	// AutoSync command flags
+	monitorAutoSyncCmd.Flags().StringVar(&monitorSyncInterval, "interval", "24h", "Sync interval (e.g. 12h, 24h)")
 	monitorAutoSyncCmd.Flags().StringSliceVar(&monitorLanguages, "languages", []string{"en"}, "Languages to monitor (comma-separated)")
 	monitorAutoSyncCmd.Flags().IntVar(&monitorMaxRetries, "max-retries", 3, "Maximum retry attempts per item")
-	monitorAutoSyncCmd.Flags().BoolVar(&monitorForceRefresh, "force-refresh", false, "Refresh existing monitored items")
+	monitorAutoSyncCmd.Flags().StringVar(&monitorSource, "source", "both", "Source to sync from: sonarr, radarr, or both")
 
 	rootCmd.AddCommand(monitorCmd)
 }
@@ -227,7 +228,7 @@ func runMonitorSync(cmd *cobra.Command, args []string) error {
 }
 
 func runMonitorAutoSync(cmd *cobra.Command, args []string) error {
-	interval, err := time.ParseDuration(monitorInterval)
+	interval, err := time.ParseDuration(monitorSyncInterval)
 	if err != nil {
 		return fmt.Errorf("invalid interval: %v", err)
 	}
@@ -257,13 +258,12 @@ func runMonitorAutoSync(cmd *cobra.Command, args []string) error {
 	)
 
 	opts := monitoring.SyncOptions{
-		Languages:    monitorLanguages,
-		MaxRetries:   monitorMaxRetries,
-		ForceRefresh: monitorForceRefresh,
+		Languages:  monitorLanguages,
+		MaxRetries: monitorMaxRetries,
 	}
 
-	fmt.Printf("Starting autosync every %s\n", interval)
 	ctx := context.Background()
+	fmt.Printf("Starting scheduled sync every %v\n", interval)
 	return sched.StartScheduledSync(ctx, interval, opts)
 }
 

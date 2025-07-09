@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Scheduled sync command",
+  "body": "Add 'monitor autosync' to run periodic Sonarr/Radarr sync using scheduler. Related to #889.",
+  "labels": ["codex", "enhancement"],
+  "guid": "df593bc0-4d20-44a4-ba1a-52673dc84ee5",
+  "legacy_guid": "create-scheduled-sync-command-2025-07-06"
+}

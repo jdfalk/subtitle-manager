@@ -215,6 +215,9 @@ subtitle-manager fetch --profile /path/to/movie.mkv dummy output.srt
 
 # Scan directory with profile-based language selection
 subtitle-manager scan --profiles /media/movies
+
+# Continuously sync libraries from Sonarr and Radarr every 12 hours
+subtitle-manager monitor autosync --interval 12h
 ```
 
 #### Automatic Profile Usage
@@ -421,7 +424,7 @@ tags, permissions, and subtitle history.
 [sub2] [output] subtitle-manager translate [input] [output] [lang]
 subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded]
 [--translate] subtitle-manager history [--video file] subtitle-manager extract
-[media] [output] subtitle-manager transcribe [media] [output] [lang]
+[media] [output] subtitle-manager transcribe [media] [output] [lang] subtitle-manager whisper status
 subtitle-manager fetch [media] [lang] [output] subtitle-manager fetch --tags
 tag1,tag2 [media] [lang] [output] subtitle-manager search [media] [lang]
 subtitle-manager batch [lang] [files...] subtitle-manager syncbatch -config
@@ -1518,7 +1521,7 @@ tags, permissions, and subtitle history.
 [sub2] [output] subtitle-manager translate [input] [output] [lang]
 subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded]
 [--translate] subtitle-manager history [--video file] subtitle-manager extract
-[media] [output] subtitle-manager transcribe [media] [output] [lang]
+[media] [output] subtitle-manager transcribe [media] [output] [lang] subtitle-manager whisper status
 subtitle-manager fetch [media] [lang] [output] subtitle-manager fetch --tags
 tag1,tag2 [media] [lang] [output] subtitle-manager search [media] [lang]
 subtitle-manager batch [lang] [files...] subtitle-manager syncbatch -config

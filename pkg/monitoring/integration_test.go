@@ -138,3 +138,20 @@ func TestScheduledMonitor(t *testing.T) {
 	err := scheduledMonitor.RunSyncTask(ctx, opts)
 	assert.NoError(t, err) // Should not error even with nil clients
 }
+
+func TestStartScheduledSync(t *testing.T) {
+	store := &MockSubtitleStore{}
+
+	scheduledMonitor := NewScheduledMonitor(nil, nil, store, 3, false)
+
+	opts := SyncOptions{
+		Languages:  []string{"en"},
+		MaxRetries: 3,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*50)
+	defer cancel()
+
+	err := scheduledMonitor.StartScheduledSync(ctx, time.Millisecond*10, opts)
+	assert.ErrorIs(t, err, context.DeadlineExceeded)
+}

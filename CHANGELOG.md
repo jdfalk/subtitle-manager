@@ -39,6 +39,7 @@ All notable changes to this project will be documented in this file.
   - Comprehensive CLI commands for monitoring management:
     - `subtitle-manager monitor sync` - Sync media from Sonarr/Radarr
     - `subtitle-manager monitor start` - Start monitoring daemon
+    - `subtitle-manager monitor autosync` - Run scheduled library syncs
     - `subtitle-manager monitor status` - View monitoring statistics
     - `subtitle-manager monitor list` - List all monitored items
     - `subtitle-manager monitor blacklist` - Manage blacklisted items
@@ -301,6 +302,7 @@ installations.
 - Advanced reverse proxy base URL support for complex network setups
 - Tagging system for language preferences
 - Optional containerized Whisper ASR service with NVIDIA runtime
+- `whisper status` command for checking local Whisper container health
 - Automated database cleanup and metadata refresh tasks
 
 ### Added

@@ -198,6 +198,7 @@ and `/api/search/history`.
         when `ENABLE_WHISPER=1` is set.
   - [x] Document requirement for NVIDIA Container Toolkit and add Docker init to
         manage the service lifecycle.
+  - [x] Add `whisper status` command for checking container health.
 - [x] **Automated Maintenance Tasks**: Periodic database cleanup, metadata
       refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md).
       ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
@@ -205,8 +206,7 @@ and `/api/search/history`.
 - [x] **Sonarr/Radarr Sync Enhancements**: Continuous sync jobs and conflict
       resolution via new `monitor autosync` command.
       ([#889](https://github.com/jdfalk/subtitle-manager/issues/889))
-  - [ ] Added `StartContinuousSync` helpers in radarr/sonarr packages for
-        scheduled background syncing.
+  - [x] Added `monitor autosync` command to run scheduled library syncs.
 - [x] **Online Metadata Sources**: Fetch languages, ratings, and episode data
       from external APIs. `metadata fetch` command now supports `--id` for
       direct TMDB lookup.
