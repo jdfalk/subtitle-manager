@@ -2,7 +2,6 @@
   "name": "Subtitle Manager Development",
   "dockerFile": "Dockerfile",
   "context": "..",
-
   "customizations": {
     "vscode": {
       "settings": {
@@ -13,7 +12,6 @@
         "go.lintOnSave": "package",
         "go.formatTool": "goimports",
         "go.enableCodeLens": {
-          "references": true,
           "runtest": true
         },
         "go.buildTags": "sqlite",
@@ -65,13 +63,14 @@
       ]
     }
   },
-
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-
-  "forwardPorts": [8080, 3000],
+  "forwardPorts": [
+    8080,
+    3000
+  ],
   "portsAttributes": {
     "8080": {
       "label": "Application",
@@ -82,26 +81,19 @@
       "onAutoForward": "notify"
     }
   },
-
   "postCreateCommand": ".devcontainer/post-create.sh",
-
   "remoteUser": "vscode",
-
-  "settings": {},
-
-  "extensions": [],
-
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "source=subtitle-manager-go-mod-cache,target=/go/pkg/mod,type=volume",
     "source=subtitle-manager-node-modules,target=/workspace/webui/node_modules,type=volume"
   ],
-
-  "containerUser": "vscode",
-
-  "containerEnv": {
+  "workspaceFolder": "/workspace",
+  "remoteEnv": {
     "CGO_ENABLED": "1",
     "GOOS": "linux",
     "GOARCH": "amd64"
-  }
+  },
+  "updateContentCommand": "go mod download",
+  "shutdownAction": "stopContainer"
 }
