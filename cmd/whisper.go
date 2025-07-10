@@ -59,7 +59,11 @@ var whisperStartCmd = &cobra.Command{
 		}
 		defer wc.Close()
 
-		return wc.StartContainer(context.Background())
+		if err := wc.StartContainer(context.Background()); err != nil {
+			return err
+		}
+		fmt.Println("Whisper container started")
+		return nil
 	},
 }
 
@@ -73,7 +77,11 @@ var whisperStopCmd = &cobra.Command{
 		}
 		defer wc.Close()
 
-		return wc.StopContainer(context.Background())
+		if err := wc.StopContainer(context.Background()); err != nil {
+			return err
+		}
+		fmt.Println("Whisper container stopped")
+		return nil
 	},
 }
 
