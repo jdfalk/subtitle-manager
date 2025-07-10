@@ -16,4 +16,4 @@ jobs:
       base-branch: 'main'
       model: 'openai/gpt-4o'
     secrets:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+      github-token: ${{ secrets.JF_CI_GH_PAT }}

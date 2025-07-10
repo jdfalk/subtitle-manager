@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "Our fix-merge-conflicts workflow now uses the JF_CI_GH_PAT secret instead of the default GITHUB_TOKEN for better permissions.",
+  "guid": "1896fe55-de9a-48cc-a9c5-0c2f43d7f6be",
+  "created_at": "2025-07-10T16:54:36Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
