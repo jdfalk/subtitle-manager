@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Improve sync accuracy",
+  "body": "Implement median-based offset calculation in syncer",
+  "labels": ["enhancement"],
+  "guid": "beb3d080-0996-4a92-8c4e-39c8d033b870",
+  "legacy_guid": "create-improve-sync-accuracy-2025-07-10"
+}
