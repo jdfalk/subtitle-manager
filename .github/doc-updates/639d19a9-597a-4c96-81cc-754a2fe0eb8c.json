@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Improved provider order normalization for search result caching",
+  "guid": "639d19a9-597a-4c96-81cc-754a2fe0eb8c",
+  "created_at": "2025-07-10T01:23:30Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
