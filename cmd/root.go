@@ -27,6 +27,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/captcha"
@@ -78,6 +79,9 @@ func GetDatabaseBackend() string {
 var rootInit sync.Once
 
 func init() {
+	if pflag.CommandLine.Lookup("s3-region") != nil {
+		return
+	}
 	rootInit.Do(func() {
 		cobra.OnInitialize(initConfig)
 		rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.subtitle-manager.yaml)")
@@ -156,44 +160,6 @@ func init() {
 		rootCmd.PersistentFlags().String("language", "en", "language for user interface (en, es, fr)")
 		viper.BindPFlag("language", rootCmd.PersistentFlags().Lookup("language"))
 
-		// S3 configuration
-		rootCmd.PersistentFlags().String("s3-region", "", "S3 region")
-		viper.BindPFlag("storage.s3_region", rootCmd.PersistentFlags().Lookup("s3-region"))
-		rootCmd.PersistentFlags().String("s3-bucket", "", "S3 bucket name")
-		viper.BindPFlag("storage.s3_bucket", rootCmd.PersistentFlags().Lookup("s3-bucket"))
-		rootCmd.PersistentFlags().String("s3-endpoint", "", "S3 endpoint URL (for S3-compatible services)")
-		viper.BindPFlag("storage.s3_endpoint", rootCmd.PersistentFlags().Lookup("s3-endpoint"))
-		rootCmd.PersistentFlags().String("s3-access-key", "", "S3 access key")
-		viper.BindPFlag("storage.s3_access_key", rootCmd.PersistentFlags().Lookup("s3-access-key"))
-		rootCmd.PersistentFlags().String("s3-secret-key", "", "S3 secret key")
-		viper.BindPFlag("storage.s3_secret_key", rootCmd.PersistentFlags().Lookup("s3-secret-key"))
-		// Azure configuration
-		rootCmd.PersistentFlags().String("azure-account", "", "Azure storage account name")
-		viper.BindPFlag("storage.azure_account", rootCmd.PersistentFlags().Lookup("azure-account"))
-		rootCmd.PersistentFlags().String("azure-key", "", "Azure storage account key")
-		viper.BindPFlag("storage.azure_key", rootCmd.PersistentFlags().Lookup("azure-key"))
-		rootCmd.PersistentFlags().String("azure-container", "", "Azure blob container name")
-		viper.BindPFlag("storage.azure_container", rootCmd.PersistentFlags().Lookup("azure-container"))
-		// GCS configuration
-		rootCmd.PersistentFlags().String("gcs-bucket", "", "Google Cloud Storage bucket name")
-		viper.BindPFlag("storage.gcs_bucket", rootCmd.PersistentFlags().Lookup("gcs-bucket"))
-		rootCmd.PersistentFlags().String("gcs-credentials", "", "Google Cloud credentials JSON file path")
-		viper.BindPFlag("storage.gcs_credentials", rootCmd.PersistentFlags().Lookup("gcs-credentials"))
-		// Storage options
-		rootCmd.PersistentFlags().Bool("storage-enable-backup", false, "enable cloud backup of subtitle files")
-		viper.BindPFlag("storage.enable_backup", rootCmd.PersistentFlags().Lookup("storage-enable-backup"))
-		rootCmd.PersistentFlags().Bool("storage-backup-history", false, "enable cloud backup of history data")
-		viper.BindPFlag("storage.backup_history", rootCmd.PersistentFlags().Lookup("storage-backup-history"))
-
-		// Base URL configuration for reverse proxy support
-		rootCmd.PersistentFlags().String("base-url", "", "base URL path when behind a reverse proxy")
-		viper.BindPFlag("base_url", rootCmd.PersistentFlags().Lookup("base-url"))
-
-		// Cloud storage configuration
-		rootCmd.PersistentFlags().String("storage-provider", "local", "storage provider: local, s3, azure, gcs")
-		viper.BindPFlag("storage.provider", rootCmd.PersistentFlags().Lookup("storage-provider"))
-		rootCmd.PersistentFlags().String("storage-local-path", "subtitles", "local storage path")
-		viper.BindPFlag("storage.local_path", rootCmd.PersistentFlags().Lookup("storage-local-path"))
 		// S3 configuration
 		rootCmd.PersistentFlags().String("s3-region", "", "S3 region")
 		viper.BindPFlag("storage.s3_region", rootCmd.PersistentFlags().Lookup("s3-region"))

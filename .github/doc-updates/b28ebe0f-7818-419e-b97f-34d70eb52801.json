@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "subtitle-manager whisper start subtitle-manager whisper stop",
+  "guid": "b28ebe0f-7818-419e-b97f-34d70eb52801",
+  "created_at": "2025-07-10T01:26:48Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
