@@ -164,3 +164,54 @@ of direct edits:
 
 **Always use this system for documentation updates instead of direct file
 edits.**
+
+## Script Idempotency Requirements
+
+**All scripts and automation tools MUST be idempotent** - they should produce
+the same result when run multiple times without creating duplicates or causing
+conflicts.
+
+### Idempotency Guidelines:
+
+- **Check before create**: Always verify if resources (files, projects, issues,
+  etc.) already exist before attempting to create them
+- **Use unique identifiers**: When possible, use unique identifiers (names, IDs,
+  etc.) to detect existing resources
+- **Graceful handling**: Handle existing resources gracefully - either skip
+  creation with a message or update if needed
+- **Atomic operations**: Group related operations so they can be safely retried
+  as a unit
+- **State validation**: Include validation steps to verify the system is in the
+  expected state before proceeding
+- **Clear feedback**: Provide clear output indicating whether resources were
+  created, found existing, or updated
+
+### Examples of Idempotent Patterns:
+
+```bash
+# Good: Check before create
+if ! gh project list --owner "$ORG" --format json | jq -e ".projects[] | select(.title == \"$title\")" >/dev/null; then
+    gh project create --owner "$ORG" --title "$title"
+    echo "✅ Created project: $title"
+else
+    echo "✅ Found existing project: $title"
+fi
+
+# Good: Use conditional logic
+mkdir -p directory_name  # -p flag makes it idempotent
+
+# Good: Check file existence
+if [[ ! -f "config.json" ]]; then
+    create_config_file
+fi
+```
+
+### Anti-patterns to Avoid:
+
+- Creating resources without checking if they exist
+- Assuming clean state on every run
+- Failing when encountering existing resources
+- Not providing status feedback about what was created vs. found
+
+**This requirement applies to all scripts, GitHub Actions, and automation
+tools.**

@@ -1,6 +1,6 @@
 #!/bin/bash
 # file: scripts/create-github-projects.sh
-# version: 2.0.1
+# version: 2.0.3
 # guid: 81edeeb0-a3d2-4393-9ace-8da101bb8f7d
 
 set -euo pipefail
@@ -30,7 +30,9 @@ done
 _git_remote_url=$(git config --get remote.origin.url 2>/dev/null || echo "")
 if [[ "$_git_remote_url" =~ github\.com[:/]([^/]+)/([^/]+)(\.git)?$ ]]; then
     ORG="${ORG:-${BASH_REMATCH[1]}}"
-    REPO="${REPO:-${BASH_REMATCH[2]}}"
+    REPO_RAW="${BASH_REMATCH[2]}"
+    # Remove .git suffix if present
+    REPO="${REPO:-${REPO_RAW%.git}}"
 else
     ORG="${ORG:-jdfalk}"
     REPO="${REPO:-subtitle-manager}"
@@ -93,7 +95,7 @@ get_project_number() {
 link_repository() {
     local project_number="$1"
     echo "Linking repository $REPO to project #$project_number..." >&2
-    if gh project link "$project_number" --owner "$ORG" --repo "$ORG/$REPO" >/dev/null 2>&1; then
+    if gh project link "$project_number" --owner "$ORG" --repo "$REPO" >/dev/null 2>&1; then
         echo "✅ Successfully linked repository" >&2
     else
         echo "⚠️ Failed to link repository $REPO to project #${project_number}" >&2
@@ -104,11 +106,20 @@ link_repository() {
 add_issue() {
     local project_number="$1"
     local issue_number="$2"
+
+    # First check if the issue exists
+    echo "Checking if issue #$issue_number exists..." >&2
+    if ! gh issue view "$issue_number" --repo "$ORG/$REPO" >/dev/null 2>&1; then
+        echo "⚠️ Issue #$issue_number does not exist, skipping..." >&2
+        return 0
+    fi
+
     echo "Adding issue #$issue_number to project #$project_number..." >&2
     if gh project item-add "$project_number" --owner "$ORG" --url "https://github.com/$ORG/$REPO/issues/$issue_number" >/dev/null 2>&1; then
         echo "✅ Added issue #$issue_number" >&2
     else
         echo "⚠️ Failed to add issue #$issue_number to project $project_number" >&2
+        echo "   Debug: trying to add https://github.com/$ORG/$REPO/issues/$issue_number" >&2
     fi
 }
 
@@ -123,25 +134,34 @@ main() {
     echo ""
     echo "Creating projects..."
 
-    if project_num=$(create_project "gcommon Refactor" "Track migration to gcommon modules and protobuf types"); then
-        project_numbers+=("$project_num")
-        echo "✅ Created project: gcommon Refactor (#$project_num)"
-    fi
+    # Check for existing projects first, create only if they don't exist
+    project_titles=("gcommon Refactor" "Metadata Editor" "Whisper Container Integration" "Security & Logging")
+    project_descriptions=(
+        "Track migration to gcommon modules and protobuf types"
+        "Manual metadata editing and search improvements"
+        "Container-based Whisper ASR service"
+        "Security enhancements and logging improvements"
+    )
 
-    if project_num=$(create_project "Metadata Editor" "Manual metadata editing and search improvements"); then
-        project_numbers+=("$project_num")
-        echo "✅ Created project: Metadata Editor (#$project_num)"
-    fi
+    for i in "${!project_titles[@]}"; do
+        title="${project_titles[$i]}"
+        description="${project_descriptions[$i]}"
 
-    if project_num=$(create_project "Whisper Container Integration" "Container-based Whisper ASR service"); then
-        project_numbers+=("$project_num")
-        echo "✅ Created project: Whisper Container Integration (#$project_num)"
-    fi
-
-    if project_num=$(create_project "Security & Logging" "Security enhancements and logging improvements"); then
-        project_numbers+=("$project_num")
-        echo "✅ Created project: Security & Logging (#$project_num)"
-    fi
+        # Check if project already exists
+        existing_num=$(get_project_number "$title")
+        if [[ -n "$existing_num" && "$existing_num" != "null" ]]; then
+            project_numbers+=("$existing_num")
+            echo "✅ Found existing project: $title (#$existing_num)"
+        else
+            # Create new project
+            if project_num=$(create_project "$title" "$description"); then
+                project_numbers+=("$project_num")
+                echo "✅ Created new project: $title (#$project_num)"
+            else
+                echo "❌ Failed to create project: $title"
+            fi
+        fi
+    done
 
     echo ""
     echo "Linking repositories and adding issues..."
@@ -150,21 +170,32 @@ main() {
         link_repository "${project_numbers[0]}"
     fi
 
-    # Add issues to projects (check if they exist first)
-    local -A issue_assignments=(
-        ["${project_numbers[0]:-}"]="1255 891"
-        ["${project_numbers[1]:-}"]="1135 1330"
-        ["${project_numbers[2]:-}"]="1132"
-        ["${project_numbers[3]:-}"]="545"
-    )
+    # Add issues to projects - using direct array indexing
+    echo "Adding issues to projects..."
 
-    for project_num in "${!issue_assignments[@]}"; do
-        if [[ -n "$project_num" ]]; then
-            for issue_num in ${issue_assignments[$project_num]}; do
-                add_issue "$project_num" "$issue_num"
-            done
-        fi
-    done
+    # Project 0: gcommon Refactor
+    if [[ ${#project_numbers[@]} -gt 0 ]]; then
+        for issue_num in 1255 891; do
+            add_issue "${project_numbers[0]}" "$issue_num"
+        done
+    fi
+
+    # Project 1: Metadata Editor
+    if [[ ${#project_numbers[@]} -gt 1 ]]; then
+        for issue_num in 1135 1330; do
+            add_issue "${project_numbers[1]}" "$issue_num"
+        done
+    fi
+
+    # Project 2: Whisper Container Integration
+    if [[ ${#project_numbers[@]} -gt 2 ]]; then
+        add_issue "${project_numbers[2]}" "1132"
+    fi
+
+    # Project 3: Security & Logging
+    if [[ ${#project_numbers[@]} -gt 3 ]]; then
+        add_issue "${project_numbers[3]}" "545"
+    fi
 
     echo ""
     echo "🎉 Project creation completed!"
