@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add context timeouts to gRPC translation",
+  "body": "Implement timeouts for GRPCTranslate and GRPCSetConfig to avoid hanging connections.",
+  "labels": ["enhancement"],
+  "guid": "02aa6c46-37da-4aab-98e1-cea07fc05e8e",
+  "legacy_guid": "create-add-context-timeouts-to-grpc-translation-2025-07-10"
+}
