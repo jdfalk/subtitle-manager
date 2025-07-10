@@ -2,12 +2,15 @@ package cmd
 
 import (
 	"context"
+	"crypto/sha1"
+	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/jdfalk/subtitle-manager/pkg/cache"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 )
@@ -22,6 +25,36 @@ var searchCmd = &cobra.Command{
 		media, lang := args[0], args[1]
 		key := viper.GetString("opensubtitles.api_key")
 		names := providers.All()
+
+		type cacheReq struct {
+			Providers []string `json:"providers"`
+			MediaPath string   `json:"mediaPath"`
+			Language  string   `json:"language"`
+		}
+
+		req := cacheReq{Providers: names, MediaPath: media, Language: lang}
+		reqData, _ := json.Marshal(req)
+		sum := sha1.Sum(reqData)
+		cacheKey := fmt.Sprintf("%x", sum)
+
+		var mgr *cache.Manager
+		if c, err := cache.NewManagerFromViper(); err == nil {
+			mgr = c
+			defer mgr.Close()
+			if data, err := mgr.GetProviderSearchResults(cmd.Context(), cacheKey); err == nil && data != nil {
+				var cached []string
+				if err := json.Unmarshal(data, &cached); err == nil {
+					for _, u := range cached {
+						fmt.Println(u)
+					}
+					logger.Infof("found %d results (cached)", len(cached))
+					return nil
+				}
+			}
+		} else {
+			logger.Warnf("cache disabled: %v", err)
+		}
+
 		var all []string
 		for i, name := range names {
 			p, err := providers.Get(name, key)
@@ -38,6 +71,13 @@ var searchCmd = &cobra.Command{
 			}
 			time.Sleep(time.Duration(i+1) * time.Second)
 		}
+
+		if mgr != nil && len(all) > 0 {
+			if data, err := json.Marshal(all); err == nil {
+				mgr.SetProviderSearchResults(cmd.Context(), cacheKey, data)
+			}
+		}
+
 		for _, u := range all {
 			fmt.Println(u)
 		}
