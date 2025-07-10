@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Search cache key order",
+  "body": "Normalize provider order when caching search results",
+  "labels": ["bug"],
+  "guid": "89ab9ba6-69eb-450c-9f05-319b6dbd8b23",
+  "legacy_guid": "create-search-cache-key-order-2025-07-10"
+}

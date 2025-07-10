@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "insert-after",
+  "content": "- **Search result caching**: Manual search results cached for faster repeated queries",
+  "guid": "fa4e6c96-5dcb-4d0e-96e7-3d999bf85887",
+  "created_at": "2025-07-10T01:19:52Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
