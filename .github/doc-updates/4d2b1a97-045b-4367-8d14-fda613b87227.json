@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Investigate cross-correlation method to achieve near-perfect subtitle alignment",
+  "guid": "4d2b1a97-045b-4367-8d14-fda613b87227",
+  "created_at": "2025-07-10T01:24:56Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
