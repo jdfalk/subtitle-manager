@@ -1,0 +1,19 @@
+# file: .github/workflows/fix-merge-conflicts.yml
+# version: 1.0.0
+# guid: c080af7a-7ddb-48a6-85e3-5618de971d08
+
+name: Fix Merge Conflicts
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  ai-rebase:
+    uses: jdfalk/ghcommon/.github/workflows/reusable-ai-rebase.yml@main
+    with:
+      base-branch: 'main'
+      model: 'openai/gpt-4o'
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
