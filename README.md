@@ -2163,10 +2163,17 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 ## License
 
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
-````
 
-## Project Management\n\nNew script `create-github-projects.sh` sets up GitHub Projects and assigns issues.
-Script `create-github-projects.sh` now checks authentication and links repository
-## Project Management\n\nNew script `create-github-projects.sh` sets up GitHub Projects and assigns issues.
-Script `create-github-projects.sh` now checks authentication and links repository
-CLI search command now caches results for faster repeats
+## Project Management
+
+GitHub Projects are now managed by the unified project manager located in the `ghcommon` repository.
+
+Use the unified script to create and manage all GitHub Projects:
+
+```bash
+python3 /path/to/ghcommon/scripts/unified_github_project_manager_v2.py
+```
+
+See `scripts/MIGRATION-NOTICE.md` for migration details.
+
+CLI search command now caches results for faster repeats.
