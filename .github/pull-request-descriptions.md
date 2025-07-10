@@ -1,121 +1,148 @@
+<!-- file: .github/pull-request-descriptions.md -->
+<!-- version: 3.0.0 -->
+<!-- guid: 2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e -->
+
 # Pull Request Description Guidelines
 
-## Structure
+## Template Structure
 
 Use this template for your pull request descriptions:
 
 ```markdown
-## Description
+## Summary
+Brief overview of the entire PR and its purpose
 
-[Concise overview of the changes]
+## Issues Addressed
 
-## Motivation
+### type(scope): description (#issue-number)
 
-[Why these changes were necessary]
+**Description:** Detailed explanation of what was done for this specific issue
 
-## Changes
+**Files Modified:**
+- [`path/to/file1.ext`](./path/to/file1.ext) - Description of changes | [[diff]](../../pull/PR_NUMBER/files#diff-hash) [[repo]](../../blob/main/path/to/file1.ext)
+- [`path/to/file2.ext`](./path/to/file2.ext) - Description of changes | [[diff]](../../pull/PR_NUMBER/files#diff-hash) [[repo]](../../blob/main/path/to/file2.ext)
 
-[Detailed list of changes made]
+### type(scope): description (#issue-number)
+
+**Description:** Detailed explanation of what was done for this specific issue
+
+**Files Modified:**
+- [`path/to/file3.ext`](./path/to/file3.ext) - Description of changes | [[diff]](../../pull/PR_NUMBER/files#diff-hash) [[repo]](../../blob/main/path/to/file3.ext)
 
 ## Testing
+How the changes were tested (unit tests, integration tests, manual testing)
 
-[How the changes were tested]
+## Breaking Changes
+(If applicable) List any breaking changes and migration steps
 
-## Screenshots
-
-[If applicable]
+## Additional Notes
+Any additional context, screenshots, or important information
 
 ## Related Issues
-
-[Links to related tickets/issues]
+Closes #123, #456, #789
 ```
 
-## Description Guidelines
+## Guidelines
 
-- Keep it concise but informative (1-3 sentences)
-- Focus on the "what" and "why" not just the "how"
+### Summary Section
+- Keep it concise but comprehensive (2-4 sentences)
+- Explain the overall purpose and impact of the PR
 - Use present tense ("add feature" not "added feature")
-- Avoid jargon unless necessary for technical clarity
 
-## Motivation Section Guidelines
+### Issues Addressed Section
+- **Group changes by issue/feature**, not by file
+- Use conventional commit format: `type(scope): description (#issue-number)`
+- Each issue gets its own subsection with:
+  - Conventional commit header
+  - Detailed description of what was implemented
+  - List of all files modified for that specific issue
 
-- Explain why changes were needed
-- Reference business goals or user needs when appropriate
-- Link to design documents or specifications when available
-- Provide context for reviewers who may not be familiar with the problem
+### Conventional Commit Types
+- `feat`: New features
+- `fix`: Bug fixes
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, no logic changes)
+- `refactor`: Code refactoring (no functional changes)
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks, build changes, etc.
+- `perf`: Performance improvements
+- `ci`: CI/CD changes
 
-## Changes Section Guidelines
+### File Links Format
+Each file entry should include:
+- **File path link**: `[path/to/file.ext](./path/to/file.ext)` - Links to the file in the PR
+- **Description**: What was changed in this file
+- **Additional links**:
+  - `[[diff]]` - Link to the diff view for this specific file
+  - `[[repo]]` - Link to the file in the repository
 
-- Use bullet points for multiple changes
-- Be specific about what was changed
-- Group related changes together
-- Include both code changes and any workflow/process changes
-- Highlight architectural decisions or tradeoffs made
+### Testing Section
+- Describe testing approach for each issue/feature
+- Include test coverage information
+- Note any manual testing performed
+- Mention edge cases tested
 
-## Testing Section Guidelines
+### Related Issues
+- Use GitHub's automatic closing keywords: `Closes #123`, `Fixes #456`, `Resolves #789`
+- Link related but not closed issues with: `Related to #999`
 
-- Describe how changes were tested (unit tests, integration tests, manual
-  testing)
-- Include test coverage information if available
-- Note edge cases that were specifically tested
-- Mention any testing tools or environments used
+## Example
 
-## Screenshots Guidelines
+```markdown
+## Summary
+This PR implements user authentication, adds profile management, and updates documentation to support the new auth system.
 
-- Include before/after screenshots for UI changes
-- Use annotations or highlights to point out specific changes
-- Include mobile/responsive views if applicable
-- Use GIFs or videos for demonstrating interactions or animations
+## Issues Addressed
 
-## Related Issues Guidelines
+### feat(auth): implement JWT token validation (#123)
 
-- Use the format: `Closes #123`, `Fixes #456`, or `Related to #789`
-- Link to all relevant issues/tickets
-- If applicable, link to design documents or specifications
+**Description:** Added JWT middleware to secure API endpoints and protect user data. Implemented token generation, validation, and refresh functionality.
 
-## Special Cases
+**Files Modified:**
+- [`src/middleware/auth.js`](./src/middleware/auth.js) - JWT validation logic and middleware | [[diff]](../../pull/456/files#diff-abc123) [[repo]](../../blob/main/src/middleware/auth.js)
+- [`src/routes/api.js`](./src/routes/api.js) - Applied auth middleware to protected routes | [[diff]](../../pull/456/files#diff-def456) [[repo]](../../blob/main/src/routes/api.js)
+- [`tests/auth.test.js`](./tests/auth.test.js) - Comprehensive test coverage for auth flow | [[diff]](../../pull/456/files#diff-ghi789) [[repo]](../../blob/main/tests/auth.test.js)
 
-- For breaking changes, include a "Breaking Changes" section with migration
-  instructions
-- For performance improvements, include benchmark results
-- For security fixes, note the severity and impact
-- For dependency updates, include rationale and any potential impacts
+### feat(ui): add user profile page (#456)
+
+**Description:** Created new user profile interface with edit capabilities, avatar upload, and preference management.
+
+**Files Modified:**
+- [`src/components/UserProfile.jsx`](./src/components/UserProfile.jsx) - Main profile component with edit functionality | [[diff]](../../pull/456/files#diff-jkl012) [[repo]](../../blob/main/src/components/UserProfile.jsx)
+- [`src/styles/profile.css`](./src/styles/profile.css) - Responsive styling for profile page | [[diff]](../../pull/456/files#diff-mno345) [[repo]](../../blob/main/src/styles/profile.css)
+
+### docs(readme): update installation instructions (#789)
+
+**Description:** Updated README with current installation steps and added troubleshooting section for auth setup.
+
+**Files Modified:**
+- [`README.md`](./README.md) - Updated installation and auth setup documentation | [[diff]](../../pull/456/files#diff-pqr678) [[repo]](../../blob/main/README.md)
+
+## Testing
+- **Unit Tests**: Added 15 new tests for auth middleware and profile components (95% coverage)
+- **Integration Tests**: Tested complete auth flow from login to protected resource access
+- **Manual Testing**: Verified UI functionality across Chrome, Firefox, and Safari
+- **Edge Cases**: Tested token expiration, invalid tokens, and network failures
+
+## Breaking Changes
+- API endpoints now require authentication headers
+- Migration: Users need to log in again after deployment
+
+## Additional Notes
+- JWT tokens expire after 24 hours with automatic refresh
+- Profile images are stored in AWS S3 with CDN caching
+- Added rate limiting to auth endpoints (10 requests/minute)
+
+## Related Issues
+Closes #123, #456, #789
+Related to #999 (future OAuth implementation)
+```
 
 ## Best Practices
 
-- Keep the PR focused on a single feature or fix
-- Avoid mixing unrelated changes
-- Respond to review comments promptly
-- Update the description if significant changes occur during review
-- Tag appropriate reviewers based on areas of expertise
-- Use the PR template provided by the repository when available
-
-## Examples
-
-```markdown
-## Description
-
-Add JWT authentication to the API endpoints
-
-## Motivation
-
-Our API currently uses basic authentication which doesn't meet security
-requirements for the new client portal.
-
-## Changes
-
-- Added JWT middleware to authenticate API requests
-- Created token generation endpoint at `/api/auth/token`
-- Updated user model to store refresh tokens
-- Added environment variables for JWT secret and expiration
-
-## Testing
-
-- Added unit tests for token generation and validation
-- Tested integration with frontend using Postman collection
-- Verified token expiration and refresh flow
-
-## Related Issues
-
-Closes #234 Related to #156
-```
+1. **One issue per section** - Don't mix unrelated changes
+2. **Accurate file descriptions** - Explain what changed, not just what the file does
+3. **Complete file coverage** - List every modified file with its purpose
+4. **Proper linking** - Ensure all links work and point to correct locations
+5. **Clear testing** - Explain how each feature/fix was verified
+6. **Conventional commits** - Follow the established format consistently
