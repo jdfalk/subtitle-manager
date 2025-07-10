@@ -1,4 +1,6 @@
 // file: pkg/webserver/search.go
+// version: 1.0.0
+// guid: e4c6a249-55ab-4a44-9de5-b43592c5a955
 package webserver
 
 import (
@@ -12,6 +14,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -73,7 +76,14 @@ type SearchHistoryItem struct {
 
 // searchCacheKey generates a cache key for the given search request.
 func searchCacheKey(req SearchRequest) string {
-	data, _ := json.Marshal(req)
+	// Sort providers for stable key generation regardless of order
+	sortedProviders := make([]string, len(req.Providers))
+	copy(sortedProviders, req.Providers)
+	sort.Strings(sortedProviders)
+
+	reqCopy := req
+	reqCopy.Providers = sortedProviders
+	data, _ := json.Marshal(reqCopy)
 	sum := sha1.Sum(data)
 	return fmt.Sprintf("%x", sum)
 }
