@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	translate "cloud.google.com/go/translate"
 	"golang.org/x/text/language"
@@ -168,13 +169,16 @@ func GPTTranslate(text, targetLang, apiKey string) (string, error) {
 // The addr parameter specifies the server address (host:port).
 // It returns the translated text provided by the service.
 func GRPCTranslate(text, targetLang, addr string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return "", err
 	}
 	defer conn.Close()
 	client := pb.NewTranslatorClient(conn)
-	resp, err := client.Translate(context.Background(), &pb.TranslateRequest{
+	resp, err := client.Translate(ctx, &pb.TranslateRequest{
 		Text:     text,
 		Language: targetLang,
 	})
@@ -187,13 +191,16 @@ func GRPCTranslate(text, targetLang, addr string) (string, error) {
 // GRPCSetConfig sends configuration key/value pairs to a remote gRPC server.
 // The addr parameter specifies the server address (host:port).
 func GRPCSetConfig(settings map[string]string, addr string) error {
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 	client := pb.NewTranslatorClient(conn)
-	_, err = client.SetConfig(context.Background(), &pb.ConfigRequest{Settings: settings})
+	_, err = client.SetConfig(ctx, &pb.ConfigRequest{Settings: settings})
 	return err
 }
 

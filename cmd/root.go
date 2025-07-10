@@ -171,6 +171,17 @@ func init() {
 		viper.BindPFlag("storage.s3_access_key", rootCmd.PersistentFlags().Lookup("s3-access-key"))
 		rootCmd.PersistentFlags().String("s3-secret-key", "", "S3 secret key")
 		viper.BindPFlag("storage.s3_secret_key", rootCmd.PersistentFlags().Lookup("s3-secret-key"))
+		// Azure configuration and others defined above; duplicates removed
+
+		// Base URL configuration for reverse proxy support
+		rootCmd.PersistentFlags().String("base-url", "", "base URL path when behind a reverse proxy")
+		viper.BindPFlag("base_url", rootCmd.PersistentFlags().Lookup("base-url"))
+
+		// Cloud storage configuration
+		rootCmd.PersistentFlags().String("storage-provider", "local", "storage provider: local, s3, azure, gcs")
+		viper.BindPFlag("storage.provider", rootCmd.PersistentFlags().Lookup("storage-provider"))
+		rootCmd.PersistentFlags().String("storage-local-path", "subtitles", "local storage path")
+		viper.BindPFlag("storage.local_path", rootCmd.PersistentFlags().Lookup("storage-local-path"))
 		// Azure configuration
 		rootCmd.PersistentFlags().String("azure-account", "", "Azure storage account name")
 		viper.BindPFlag("storage.azure_account", rootCmd.PersistentFlags().Lookup("azure-account"))
@@ -188,10 +199,6 @@ func init() {
 		viper.BindPFlag("storage.enable_backup", rootCmd.PersistentFlags().Lookup("storage-enable-backup"))
 		rootCmd.PersistentFlags().Bool("storage-backup-history", false, "enable cloud backup of history data")
 		viper.BindPFlag("storage.backup_history", rootCmd.PersistentFlags().Lookup("storage-backup-history"))
-
-		// Base URL configuration for reverse proxy support
-		rootCmd.PersistentFlags().String("base-url", "", "base URL path when behind a reverse proxy")
-		viper.BindPFlag("base_url", rootCmd.PersistentFlags().Lookup("base-url"))
 
 		rootCmd.AddCommand(convertCmd)
 		rootCmd.AddCommand(mergeCmd)
