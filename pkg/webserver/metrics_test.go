@@ -85,6 +85,6 @@ func TestMetricsEndpointContentType(t *testing.T) {
 	expectedPrefix := "text/plain; version=0.0.4; charset=utf-8"
 
 	if !strings.HasPrefix(contentType, expectedPrefix) {
-		t.Errorf("expected content type prefix %s, got %s", expectedPrefix, contentType)
+		t.Errorf("expected content type starting with %s, got %s", expectedPrefix, contentType)
 	}
 }
