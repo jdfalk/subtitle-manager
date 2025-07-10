@@ -1,4 +1,7 @@
 // file: pkg/webserver/search.go
+// version: 1.0.0
+// guid: 7e49aff0-0057-49b4-b507-1a57a5f8a923
+
 package webserver
 
 import (
@@ -8,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,6 +21,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/spf13/viper"
 )
@@ -71,6 +76,59 @@ type SearchHistoryItem struct {
 	Results   int           `json:"results"`
 }
 
+// rateLimiter implements a simple token bucket for search requests.
+type rateLimiter struct {
+	tokens    int
+	maxTokens int
+	refillAt  time.Time
+	interval  time.Duration
+	mu        sync.Mutex
+}
+
+func (rl *rateLimiter) allow() bool {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	now := time.Now()
+	if now.After(rl.refillAt) {
+		rl.tokens = rl.maxTokens
+		rl.refillAt = now.Add(rl.interval)
+	}
+
+	if rl.tokens > 0 {
+		rl.tokens--
+		return true
+	}
+	return false
+}
+
+var (
+	searchLimiters  = make(map[string]*rateLimiter)
+	searchLimiterMu sync.Mutex
+)
+
+func checkSearchRateLimit(remoteAddr string) bool {
+	ip, _, err := net.SplitHostPort(remoteAddr)
+	if err != nil {
+		ip = remoteAddr
+	}
+
+	searchLimiterMu.Lock()
+	limiter, exists := searchLimiters[ip]
+	if !exists {
+		limiter = &rateLimiter{
+			tokens:    5,
+			maxTokens: 5,
+			refillAt:  time.Now().Add(time.Minute),
+			interval:  time.Minute,
+		}
+		searchLimiters[ip] = limiter
+	}
+	searchLimiterMu.Unlock()
+
+	return limiter.allow()
+}
+
 // searchCacheKey generates a cache key for the given search request.
 func searchCacheKey(req SearchRequest) string {
 	data, _ := json.Marshal(req)
@@ -114,6 +172,14 @@ func searchHandler() http.Handler {
 
 // handleSearch processes POST requests for new searches
 func handleSearch(w http.ResponseWriter, r *http.Request) {
+	logger := logging.GetLogger("webserver.search")
+
+	if !checkSearchRateLimit(r.RemoteAddr) {
+		logger.Warnf("rate limit exceeded for IP: %s", r.RemoteAddr)
+		http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
+		return
+	}
+
 	var req SearchRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -162,6 +228,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 
 	scoredResults, err := fetchSearchResults(r.Context(), req)
 	if err != nil {
+		logger.Errorf("search failed: %v", err)
 		http.Error(w, "Failed to perform search", http.StatusInternalServerError)
 		return
 	}
@@ -178,6 +245,14 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 
 // handleSearchQuery processes GET requests for simple searches
 func handleSearchQuery(w http.ResponseWriter, r *http.Request) {
+	logger := logging.GetLogger("webserver.search")
+
+	if !checkSearchRateLimit(r.RemoteAddr) {
+		logger.Warnf("rate limit exceeded for IP: %s", r.RemoteAddr)
+		http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
+		return
+	}
+
 	// Extract query parameters
 	mediaPath := r.URL.Query().Get("path")
 	language := r.URL.Query().Get("lang")
@@ -228,6 +303,7 @@ func handleSearchQuery(w http.ResponseWriter, r *http.Request) {
 
 	scoredResults, err := fetchSearchResults(r.Context(), req)
 	if err != nil {
+		logger.Errorf("search failed: %v", err)
 		http.Error(w, "Failed to perform search", http.StatusInternalServerError)
 		return
 	}
