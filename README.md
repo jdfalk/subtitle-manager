@@ -2167,3 +2167,6 @@ This project is licensed under the terms of the MIT license. See `LICENSE` for d
 
 ## Project Management\n\nNew script `create-github-projects.sh` sets up GitHub Projects and assigns issues.
 Script `create-github-projects.sh` now checks authentication and links repository
+## Project Management\n\nNew script `create-github-projects.sh` sets up GitHub Projects and assigns issues.
+Script `create-github-projects.sh` now checks authentication and links repository
+CLI search command now caches results for faster repeats

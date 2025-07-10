@@ -8,6 +8,16 @@ All notable changes to this project will be documented in this file.
 
 - Added GitHub project setup script
 
+### Added
+
+- Added caching to CLI search command
+
+### Changed\n\n- Improved GitHub project setup script with auth checks
+
+### Added
+
+- Added GitHub project setup script
+
 ### Changed\n\n- Improved GitHub project setup script with auth checks
 
 ### Planned: Hybrid Protobuf + Go Types + gcommon Migration
