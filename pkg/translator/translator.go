@@ -1,9 +1,14 @@
+// file: pkg/translator/translator.go
+// version: 1.0.0
+// guid: 3bf0f8c4-18e8-4d30-a0f6-8e4a4f3f0f62
+
 package translator
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 
 	translate "cloud.google.com/go/translate"
@@ -166,7 +171,7 @@ func GRPCTranslate(text, targetLang, addr string) (string, error) {
 // GRPCSetConfig sends configuration key/value pairs to a remote gRPC server.
 // The addr parameter specifies the server address (host:port).
 func GRPCSetConfig(settings map[string]string, addr string) error {
-	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}
@@ -181,6 +186,16 @@ var providers = map[string]TranslateFunc{
 	"gpt":     GPTTranslate,
 	"chatgpt": GPTTranslate,
 	"grpc":    GRPCTranslate,
+}
+
+// SupportedServices returns the list of available translation providers.
+func SupportedServices() []string {
+	names := make([]string, 0, len(providers))
+	for name := range providers {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	return names
 }
 
 // Translate selects a provider and performs translation.

@@ -1,3 +1,7 @@
+// file: pkg/translator/translator_test.go
+// version: 1.0.0
+// guid: 8ae1f81d-0b31-49e8-bc2f-22e6b0a058d4
+
 package translator
 
 import (
@@ -167,4 +171,18 @@ func TestSetOpenAIModel(t *testing.T) {
 		t.Fatalf("expected test-model, got %s", openAIModel)
 	}
 	SetOpenAIModel(orig)
+}
+
+// TestSupportedServices ensures the provider list is returned alphabetically.
+func TestSupportedServices(t *testing.T) {
+	expected := []string{"chatgpt", "google", "gpt", "grpc"}
+	got := SupportedServices()
+	if len(got) != len(expected) {
+		t.Fatalf("expected %d services, got %d", len(expected), len(got))
+	}
+	for i, name := range expected {
+		if got[i] != name {
+			t.Fatalf("expected %s at index %d, got %s", name, i, got[i])
+		}
+	}
 }
