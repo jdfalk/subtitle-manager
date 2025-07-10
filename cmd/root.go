@@ -27,6 +27,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/captcha"
@@ -78,6 +79,9 @@ func GetDatabaseBackend() string {
 var rootInit sync.Once
 
 func init() {
+	if pflag.CommandLine.Lookup("s3-region") != nil {
+		return
+	}
 	rootInit.Do(func() {
 		cobra.OnInitialize(initConfig)
 		rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.subtitle-manager.yaml)")
