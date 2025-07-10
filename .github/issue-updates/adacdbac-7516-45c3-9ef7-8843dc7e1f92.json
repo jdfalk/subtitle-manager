@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add CLI commands for Whisper container control",
+  "body": "Implemented start and stop commands for managing the local Whisper ASR container",
+  "labels": ["enhancement", "cli"],
+  "guid": "adacdbac-7516-45c3-9ef7-8843dc7e1f92",
+  "legacy_guid": "create-add-cli-commands-for-whisper-container-control-2025-07-10"
+}
