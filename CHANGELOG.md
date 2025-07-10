@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Added GitHub project setup script
+
+### Changed\n\n- Improved GitHub project setup script with auth checks
+
 ### Planned: Hybrid Protobuf + Go Types + gcommon Migration
 
 - We are migrating to a hybrid model for all shared types and business logic:

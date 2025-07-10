@@ -961,3 +961,7 @@ development before the project can be considered feature complete.
 
 **Note**: `pkg/audio.GetAudioTracks` now parses ffprobe JSON output for accurate
 audio track details. The `splitLines` helper has been updated accordingly.
+
+- [ ] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
+
+- [ ] 🟡 **General**: Create GitHub projects for open features

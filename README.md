@@ -2164,3 +2164,6 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
 ````
+
+## Project Management\n\nNew script `create-github-projects.sh` sets up GitHub Projects and assigns issues.
+Script `create-github-projects.sh` now checks authentication and links repository
