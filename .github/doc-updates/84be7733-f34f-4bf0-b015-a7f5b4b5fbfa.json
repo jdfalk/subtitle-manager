@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Deduplicated S3 and storage flags in root command",
+  "guid": "84be7733-f34f-4bf0-b015-a7f5b4b5fbfa",
+  "created_at": "2025-07-10T01:24:23Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
