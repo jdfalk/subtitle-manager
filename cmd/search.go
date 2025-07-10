@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
@@ -13,7 +12,6 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/cache"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
-	web "github.com/jdfalk/subtitle-manager/pkg/webserver"
 )
 
 // searchCmd lists available subtitles from a provider.
@@ -27,32 +25,33 @@ var searchCmd = &cobra.Command{
 		key := viper.GetString("opensubtitles.api_key")
 		names := providers.All()
 
-		mgr, err := cache.NewManagerFromViper()
-		if err != nil {
-			logger.Warnf("cache disabled: %v", err)
-			mgr = nil
+		type cacheReq struct {
+			Providers []string `json:"providers"`
+			MediaPath string   `json:"mediaPath"`
+			Language  string   `json:"language"`
 		}
 
-		req := web.SearchRequest{
-			Providers: names,
-			MediaPath: media,
-			Language:  lang,
-		}
-		data, _ := json.Marshal(req)
-		cacheKey := fmt.Sprintf("%x", sha1.Sum(data))
+		req := cacheReq{Providers: names, MediaPath: media, Language: lang}
+		reqData, _ := json.Marshal(req)
+		sum := sha1.Sum(reqData)
+		cacheKey := fmt.Sprintf("%x", sum)
 
-		ctx := context.Background()
-		if mgr != nil {
-			if cached, err := mgr.GetProviderSearchResults(ctx, cacheKey); err == nil && cached != nil {
-				var urls []string
-				if err := json.Unmarshal(cached, &urls); err == nil {
-					for _, u := range urls {
+		var mgr *cache.Manager
+		if c, err := cache.NewManagerFromViper(); err == nil {
+			mgr = c
+			defer mgr.Close()
+			if data, err := mgr.GetProviderSearchResults(cmd.Context(), cacheKey); err == nil && data != nil {
+				var cached []string
+				if err := json.Unmarshal(data, &cached); err == nil {
+					for _, u := range cached {
 						fmt.Println(u)
 					}
-					logger.Infof("found %d results (cached)", len(urls))
+					logger.Infof("found %d results (cached)", len(cached))
 					return nil
 				}
 			}
+		} else {
+			logger.Warnf("cache disabled: %v", err)
 		}
 
 		var all []string
@@ -65,7 +64,7 @@ var searchCmd = &cobra.Command{
 			if !ok {
 				continue
 			}
-			urls, err := s.Search(ctx, media, lang)
+			urls, err := s.Search(cmd.Context(), media, lang)
 			if err == nil {
 				all = append(all, urls...)
 			}
@@ -73,8 +72,8 @@ var searchCmd = &cobra.Command{
 		}
 
 		if mgr != nil && len(all) > 0 {
-			if encoded, err := json.Marshal(all); err == nil {
-				mgr.SetProviderSearchResults(ctx, cacheKey, encoded)
+			if data, err := json.Marshal(all); err == nil {
+				mgr.SetProviderSearchResults(cmd.Context(), cacheKey, data)
 			}
 		}
 

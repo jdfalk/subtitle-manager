@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Cache CLI search results",
+  "body": "Implement caching for CLI search command",
+  "labels": ["enhancement", "codex"],
+  "guid": "4580a2d8-400b-46f1-a540-997691a9c457",
+  "legacy_guid": "create-cache-cli-search-results-2025-07-10"
+}
