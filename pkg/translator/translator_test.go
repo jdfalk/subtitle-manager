@@ -6,7 +6,10 @@ package translator
 
 import (
 	"context"
+	"fmt"
 	"net"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	translate "cloud.google.com/go/translate"
@@ -16,6 +19,7 @@ import (
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
 
+	"github.com/jdfalk/subtitle-manager/pkg/cache"
 	"github.com/jdfalk/subtitle-manager/pkg/translator/mocks"
 )
 
@@ -184,5 +188,40 @@ func TestSupportedServices(t *testing.T) {
 		if got[i] != name {
 			t.Fatalf("expected %s at index %d, got %s", name, i, got[i])
 		}
+	}
+}
+
+// TestTranslateCacheManager verifies that Translate uses the configured cache
+// manager to avoid duplicate API calls.
+func TestTranslateCacheManager(t *testing.T) {
+	count := 0
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		count++
+		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
+	}))
+	defer srv.Close()
+
+	SetGoogleAPIURL(srv.URL)
+	defer SetGoogleAPIURL("https://translation.googleapis.com/language/translate/v2")
+
+	manager, err := cache.NewManager(cache.DefaultConfig())
+	if err != nil {
+		t.Fatalf("cache init: %v", err)
+	}
+	defer manager.Close()
+	SetCacheManager(manager)
+	defer SetCacheManager(nil)
+
+	got, err := Translate("google", "hello", "es", "k", "", "")
+	if err != nil || got != "hola" {
+		t.Fatalf("first translate failed: %v %s", err, got)
+	}
+
+	got, err = Translate("google", "hello", "es", "k", "", "")
+	if err != nil || got != "hola" {
+		t.Fatalf("second translate failed: %v %s", err, got)
+	}
+	if count != 1 {
+		t.Fatalf("expected 1 API call, got %d", count)
 	}
 }

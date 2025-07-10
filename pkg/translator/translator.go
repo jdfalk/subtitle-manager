@@ -6,6 +6,7 @@ package translator
 
 import (
 	"context"
+	"crypto/sha1"
 	"errors"
 	"fmt"
 	"sort"
@@ -19,6 +20,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
+	"github.com/jdfalk/subtitle-manager/pkg/cache"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
 )
 
@@ -26,6 +28,10 @@ var ErrUnsupportedService = errors.New("unsupported translation service")
 
 var googleAPIURL = "https://translation.googleapis.com/language/translate/v2"
 var openAIModel = openai.GPT3Dot5Turbo
+
+// translationCache stores a cache manager for translation results.
+// It is nil by default and can be set via SetCacheManager.
+var translationCache *cache.Manager
 
 // SetGoogleAPIURL overrides the Google Translate API URL (useful for testing).
 func SetGoogleAPIURL(u string) {
@@ -101,6 +107,16 @@ func SetOpenAIClientFactory(fn func(apiKey string) OpenAIClient) {
 // real OpenAI client is used again.
 func ResetOpenAIClientFactory() {
 	newOpenAIClient = defaultOpenAIClient
+}
+
+// SetCacheManager configures a cache manager for storing translation results.
+func SetCacheManager(m *cache.Manager) {
+	translationCache = m
+}
+
+// GetCacheManager returns the currently configured translation cache manager.
+func GetCacheManager() *cache.Manager {
+	return translationCache
 }
 
 // GoogleTranslate translates text using Google Translate API.
@@ -214,5 +230,19 @@ func Translate(service, text, targetLang, googleKey, gptKey, grpcAddr string) (s
 	} else if service == "grpc" {
 		key = grpcAddr
 	}
-	return fn(text, targetLang, key)
+	cacheKey := fmt.Sprintf("%s:%x:%s", service, sha1.Sum([]byte(text)), targetLang)
+	if translationCache != nil {
+		if data, err := translationCache.GetTranslationResult(context.Background(), cacheKey); err == nil && data != nil {
+			return string(data), nil
+		}
+	}
+
+	result, err := fn(text, targetLang, key)
+	if err != nil {
+		return "", err
+	}
+	if translationCache != nil {
+		_ = translationCache.SetTranslationResult(context.Background(), cacheKey, []byte(result))
+	}
+	return result, nil
 }
