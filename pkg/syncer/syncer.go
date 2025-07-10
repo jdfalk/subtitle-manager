@@ -7,6 +7,7 @@ package syncer
 import (
 	"bytes"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/asticode/go-astisub"
@@ -235,24 +236,25 @@ func Shift(items []*astisub.Item, offset time.Duration) []*astisub.Item {
 	return out
 }
 
-// computeOffset returns the average difference between the start times of ref
-// and target. Up to the first five items are compared.
+// computeOffset returns the median difference between the start times of ref
+// and target. Up to the first ten items are compared for stability.
 func computeOffset(ref, target []*astisub.Item) time.Duration {
 	n := len(ref)
 	if len(target) < n {
 		n = len(target)
 	}
-	if n > 5 {
-		n = 5
+	if n > 10 {
+		n = 10
 	}
 	if n == 0 {
 		return 0
 	}
-	var sum time.Duration
+	diffs := make([]time.Duration, n)
 	for i := 0; i < n; i++ {
-		sum += ref[i].StartAt - target[i].StartAt
+		diffs[i] = ref[i].StartAt - target[i].StartAt
 	}
-	return sum / time.Duration(n)
+	sort.Slice(diffs, func(i, j int) bool { return diffs[i] < diffs[j] })
+	return diffs[n/2]
 }
 
 // Translate converts each subtitle item to lang using the selected service.

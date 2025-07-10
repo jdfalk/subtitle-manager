@@ -51,6 +51,26 @@ func TestComputeOffset(t *testing.T) {
 	}
 }
 
+func TestComputeOffsetMedian(t *testing.T) {
+	ref := []*astisub.Item{
+		{StartAt: time.Second},
+		{StartAt: 2 * time.Second},
+		{StartAt: 3 * time.Second},
+		{StartAt: 4 * time.Second},
+		{StartAt: 100 * time.Second},
+	}
+	target := []*astisub.Item{
+		{StartAt: 0},
+		{StartAt: time.Second},
+		{StartAt: 2 * time.Second},
+		{StartAt: 3 * time.Second},
+		{StartAt: 97 * time.Second},
+	}
+	if d := computeOffset(ref, target); d != time.Second {
+		t.Fatalf("unexpected offset %v", d)
+	}
+}
+
 // mockServer returns "hola" for any translation request.
 type mockServer struct {
 	pb.UnimplementedTranslatorServer
