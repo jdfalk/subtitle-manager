@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add translation caching",
+  "body": "Translator now caches results via global cache manager",
+  "labels": ["enhancement"],
+  "guid": "d040a70d-11cf-4888-8578-4df6afca69dc",
+  "legacy_guid": "create-add-translation-caching-2025-07-10"
+}
