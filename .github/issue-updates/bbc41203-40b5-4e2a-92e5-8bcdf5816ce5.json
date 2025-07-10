@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add search API rate limiting",
+  "body": "Implement per-IP token bucket in search handler",
+  "labels": ["enhancement"],
+  "guid": "bbc41203-40b5-4e2a-92e5-8bcdf5816ce5",
+  "legacy_guid": "create-add-search-api-rate-limiting-2025-07-10"
+}

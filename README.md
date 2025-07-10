@@ -80,6 +80,7 @@ anti-captcha integration, and a polished React web interface.**
 - Manually search for subtitles with `search` command.
 - Provider registry simplifies adding new sources.
 - Search results are cached to speed up repeated queries.
+- Rate limiting on search API prevents abuse
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
 - Integrated authentication system with password, token, OAuth2 and API key
@@ -2176,4 +2177,4 @@ python3 /path/to/ghcommon/scripts/unified_github_project_manager_v2.py
 
 See `scripts/MIGRATION-NOTICE.md` for migration details.
 
-CLI search command now caches results for faster repeats.
+CLI search command now caches results for faster repeats with per-IP rate limiting to prevent abuse.

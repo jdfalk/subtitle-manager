@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Added per-IP rate limiting to search API
+
+### Added
+
+- Added GitHub project setup script
+
+### Changed\n\n- Improved GitHub project setup script with auth checks
+
+### Added
+
 - Added GitHub project setup script
 
 ### Added
