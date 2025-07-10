@@ -965,3 +965,8 @@ audio track details. The `splitLines` helper has been updated accordingly.
 - [ ] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
 
 - [ ] 🟡 **General**: Create GitHub projects for open features
+
+- [x] **Search rate limiting**: Per-IP token bucket to prevent abuse\n  - Location: `pkg/webserver/search.go`
+- [ ] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
+
+- [ ] 🟡 **General**: Create GitHub projects for open features

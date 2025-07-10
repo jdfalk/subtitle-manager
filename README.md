@@ -80,6 +80,7 @@ anti-captcha integration, and a polished React web interface.**
 - Manually search for subtitles with `search` command.
 - Provider registry simplifies adding new sources.
 - Search results are cached to speed up repeated queries.
+- Rate limiting on search API prevents abuse
 - Dockerfile and workflow for container builds.
 - Prebuilt images published to GitHub Container Registry.
 - Integrated authentication system with password, token, OAuth2 and API key
@@ -2165,5 +2166,7 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 This project is licensed under the terms of the MIT license. See `LICENSE` for details.
 ````
 
+## Project Management\n\nNew script `create-github-projects.sh` sets up GitHub Projects and assigns issues.
+Script `create-github-projects.sh` now checks authentication and links repository
 ## Project Management\n\nNew script `create-github-projects.sh` sets up GitHub Projects and assigns issues.
 Script `create-github-projects.sh` now checks authentication and links repository

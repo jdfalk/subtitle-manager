@@ -185,3 +185,38 @@ func TestExtractNameFromURL(t *testing.T) {
 		}
 	}
 }
+
+func TestSearchRateLimit(t *testing.T) {
+	searchLimiterMu.Lock()
+	searchLimiters = make(map[string]*rateLimiter)
+	searchLimiterMu.Unlock()
+
+	handler := searchHandler()
+
+	os.Setenv("TEST_SAFE_MEDIA_DIR", "/tmp")
+	defer os.Unsetenv("TEST_SAFE_MEDIA_DIR")
+
+	mediaPath := "testfile.mkv"
+	file := "/tmp/" + mediaPath
+	if err := os.WriteFile(file, []byte(""), 0644); err != nil {
+		t.Fatalf("write file: %v", err)
+	}
+	defer os.Remove(file)
+
+	reqBody := SearchRequest{Providers: []string{"embedded"}, MediaPath: mediaPath, Language: "en"}
+	data, _ := json.Marshal(reqBody)
+	req := httptest.NewRequest(http.MethodPost, "/api/search", bytes.NewBuffer(data))
+	req.Header.Set("Content-Type", "application/json")
+	req.RemoteAddr = "1.2.3.4:12345"
+
+	for i := 0; i < 5; i++ {
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+	}
+
+	rr := httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+	if rr.Code != http.StatusTooManyRequests {
+		t.Fatalf("expected 429, got %d", rr.Code)
+	}
+}
