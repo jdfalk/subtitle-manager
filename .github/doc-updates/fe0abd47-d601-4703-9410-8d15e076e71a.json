@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Normalize provider order when generating search cache keys",
+  "guid": "fe0abd47-d601-4703-9410-8d15e076e71a",
+  "created_at": "2025-07-10T01:23:36Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

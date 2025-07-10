@@ -1,4 +1,7 @@
 // file: pkg/webserver/search_test.go
+// version: 1.0.0
+// guid: d280fb2e-6941-4d64-b4c8-dc0bc3537680
+
 package webserver
 
 import (
@@ -183,5 +186,25 @@ func TestExtractNameFromURL(t *testing.T) {
 			t.Errorf("extractNameFromURL(%q) = %q; want %q",
 				test.url, result, test.expected)
 		}
+	}
+}
+
+func TestSearchCacheKeyOrderIndependence(t *testing.T) {
+	req1 := SearchRequest{
+		Providers: []string{"opensubtitles", "subscene"},
+		MediaPath: "movie.mkv",
+		Language:  "en",
+	}
+	req2 := SearchRequest{
+		Providers: []string{"subscene", "opensubtitles"},
+		MediaPath: "movie.mkv",
+		Language:  "en",
+	}
+
+	key1 := searchCacheKey(req1)
+	key2 := searchCacheKey(req2)
+
+	if key1 != key2 {
+		t.Errorf("cache key should be provider order independent: %s vs %s", key1, key2)
 	}
 }
