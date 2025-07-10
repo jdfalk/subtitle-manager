@@ -185,3 +185,22 @@ func TestExtractNameFromURL(t *testing.T) {
 		}
 	}
 }
+
+func TestSearchCacheKeyIgnoresProviderOrder(t *testing.T) {
+	req1 := SearchRequest{
+		Providers: []string{"opensubtitles", "subscene"},
+		MediaPath: "movie.mkv",
+		Language:  "en",
+	}
+	req2 := SearchRequest{
+		Providers: []string{"subscene", "opensubtitles"},
+		MediaPath: "movie.mkv",
+		Language:  "en",
+	}
+
+	key1 := searchCacheKey(req1)
+	key2 := searchCacheKey(req2)
+	if key1 != key2 {
+		t.Errorf("expected cache keys to match, got %s and %s", key1, key2)
+	}
+}

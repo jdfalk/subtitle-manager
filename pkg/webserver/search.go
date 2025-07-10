@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -73,7 +74,14 @@ type SearchHistoryItem struct {
 
 // searchCacheKey generates a cache key for the given search request.
 func searchCacheKey(req SearchRequest) string {
-	data, _ := json.Marshal(req)
+	sorted := make([]string, len(req.Providers))
+	copy(sorted, req.Providers)
+	sort.Strings(sorted)
+
+	normalized := req
+	normalized.Providers = sorted
+
+	data, _ := json.Marshal(normalized)
 	sum := sha1.Sum(data)
 	return fmt.Sprintf("%x", sum)
 }
