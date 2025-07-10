@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Remove add-to-project workflow",
+  "body": "Remove the dedicated add-to-project workflow file since GitHub Projects automation now handles this.",
+  "labels": ["maintenance"],
+  "guid": "3728c0e9-471c-4eea-b6bd-8de4319a3228",
+  "legacy_guid": "create-remove-add-to-project-workflow-2025-07-10"
+}
