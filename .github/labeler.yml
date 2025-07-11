@@ -1,5 +1,5 @@
 # file: .github/labeler.yml
-# version: 2.0.0  
+# version: 2.0.0
 # guid: 2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e
 #
 # Standardized Pull Request Labeler Configuration for subtitle-manager repositorye: .github/labeler-standardized.yml
@@ -12,180 +12,180 @@
 
 # TYPE LABELS
 type:documentation:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "**/*.md"
-          - "docs/**/*"
-          - "README*"
-          - "CHANGELOG*"
-          - "TODO*"
-          - "SECURITY*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "**/*.md"
+                - "docs/**/*"
+                - "README*"
+                - "CHANGELOG*"
+                - "TODO*"
+                - "SECURITY*"
 
 type:testing:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "**/*test*"
-          - "test/**"
-          - "testdata/**"
-          - "**/test_*"
-          - "**/*_test.go"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "**/*test*"
+                - "test/**"
+                - "testdata/**"
+                - "**/test_*"
+                - "**/*_test.go"
 
 type:maintenance:
-  - changed-files:
-      - any-glob-to-any-file:
-          - ".gitignore"
-          - "go.mod"
-          - "go.sum"
-          - "Makefile"
-          - "tools.go"
+    - changed-files:
+          - any-glob-to-any-file:
+                - ".gitignore"
+                - "go.mod"
+                - "go.sum"
+                - "Makefile"
+                - "tools.go"
 
 # TECHNOLOGY LABELS
 tech:go:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "**/*.go"
-          - "go.mod"
-          - "go.sum"
-          - "cmd/**"
-          - "pkg/**"
-          - "internal/**"
-          - "main.go"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "**/*.go"
+                - "go.mod"
+                - "go.sum"
+                - "cmd/**"
+                - "pkg/**"
+                - "internal/**"
+                - "main.go"
 
 tech:javascript:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "**/*.js"
-          - "**/*.jsx"
-          - "**/*.html"
-          - "**/*.css"
-          - "webui/**"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "**/*.js"
+                - "**/*.jsx"
+                - "**/*.html"
+                - "**/*.css"
+                - "webui/**"
 
 tech:docker:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "Dockerfile*"
-          - "docker-compose*"
-          - "docker-stack*"
-          - "docker-init*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "Dockerfile*"
+                - "docker-compose*"
+                - "docker-stack*"
+                - "docker-init*"
 
 # MODULE LABELS
 module:frontend:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "webui/**"
-          - "pkg/webui/**"
-          - "**/*.html"
-          - "**/*.css"
-          - "**/*.js"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "webui/**"
+                - "pkg/webui/**"
+                - "**/*.html"
+                - "**/*.css"
+                - "**/*.js"
 
 module:backend:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "pkg/**"
-          - "internal/**"
-          - "cmd/**"
-          - "main.go"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "pkg/**"
+                - "internal/**"
+                - "cmd/**"
+                - "main.go"
 
 module:database:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "pkg/database/**"
-          - "pkg/storage/**"
-          - "**/migration*"
-          - "**/db*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "pkg/database/**"
+                - "pkg/storage/**"
+                - "**/migration*"
+                - "**/db*"
 
 module:api:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "pkg/api/**"
-          - "pkg/handlers/**"
-          - "pkg/routes/**"
-          - "**/api*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "pkg/api/**"
+                - "pkg/handlers/**"
+                - "pkg/routes/**"
+                - "**/api*"
 
 module:auth:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "pkg/auth/**"
-          - "**/auth*"
-          - "**/security*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "pkg/auth/**"
+                - "**/auth*"
+                - "**/security*"
 
 # PROJECT-SPECIFIC LABELS
 project:subtitles:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "pkg/subtitle/**"
-          - "pkg/format/**"
-          - "cmd/convert/**"
-          - "**/*subtitle*"
-          - "**/*convert*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "pkg/subtitle/**"
+                - "pkg/format/**"
+                - "cmd/convert/**"
+                - "**/*subtitle*"
+                - "**/*convert*"
 
 project:transcription:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "pkg/transcription/**"
-          - "pkg/whisper/**"
-          - "**/transcription*"
-          - "**/transcribe*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "pkg/transcription/**"
+                - "pkg/whisper/**"
+                - "**/transcription*"
+                - "**/transcribe*"
 
 project:whisper:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "pkg/whisper/**"
-          - "**/whisper*"
-          - "**/asr*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "pkg/whisper/**"
+                - "**/whisper*"
+                - "**/asr*"
 
 project:media:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "pkg/media/**"
-          - "pkg/audio/**"
-          - "pkg/video/**"
-          - "**/media*"
-          - "**/audio*"
-          - "**/video*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "pkg/media/**"
+                - "pkg/audio/**"
+                - "pkg/video/**"
+                - "**/media*"
+                - "**/audio*"
+                - "**/video*"
 
 # WORKFLOW LABELS
 workflow:github-actions:
-  - changed-files:
-      - any-glob-to-any-file:
-          - ".github/workflows/**"
-          - ".github/actions/**"
+    - changed-files:
+          - any-glob-to-any-file:
+                - ".github/workflows/**"
+                - ".github/actions/**"
 
 workflow:automation:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "scripts/**"
-          - "**/automation/**"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "scripts/**"
+                - "**/automation/**"
 
 workflow:deployment:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "docker*"
-          - "Dockerfile*"
-          - "systemd/**"
-          - ".github/workflows/deploy*"
+    - changed-files:
+          - any-glob-to-any-file:
+                - "docker*"
+                - "Dockerfile*"
+                - "systemd/**"
+                - ".github/workflows/deploy*"
 
 # SIZE LABELS (based on file count/complexity)
 size:small:
-  - changed-files:
-      - all-globs-to-all-files:
-          - "**/*"
-      - count: 1-3
+    - changed-files:
+          - all-globs-to-all-files:
+                - "**/*"
+          - count: 1-3
 
 size:medium:
-  - changed-files:
-      - all-globs-to-all-files:
-          - "**/*"
-      - count: 4-10
+    - changed-files:
+          - all-globs-to-all-files:
+                - "**/*"
+          - count: 4-10
 
 size:large:
-  - changed-files:
-      - all-globs-to-all-files:
-          - "**/*"
-      - count: 11-25
+    - changed-files:
+          - all-globs-to-all-files:
+                - "**/*"
+          - count: 11-25
 
 size:epic:
-  - changed-files:
-      - all-globs-to-all-files:
-          - "**/*"
-      - count: 26+
+    - changed-files:
+          - all-globs-to-all-files:
+                - "**/*"
+          - count: 26+
