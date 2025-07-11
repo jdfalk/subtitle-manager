@@ -165,7 +165,19 @@ workflow:github-actions:
                       - ".github/workflows/**"
                       - ".github/actions/**"
 
+github-actions:
+      - changed-files:
+              - any-glob-to-any-file:
+                      - ".github/workflows/**"
+                      - ".github/actions/**"
+
 workflow:automation:
+      - changed-files:
+              - any-glob-to-any-file:
+                      - "scripts/**"
+                      - "**/automation/**"
+
+automation:
       - changed-files:
               - any-glob-to-any-file:
                       - "scripts/**"
