@@ -33,60 +33,66 @@ func OpenPostgresStore(dsn string) (*PostgresStore, error) {
 func initPostgresSchema(db *sql.DB) error {
 	stmts := []string{
 		`CREATE TABLE IF NOT EXISTS subtitles (
-            id SERIAL PRIMARY KEY,
-            file TEXT NOT NULL,
-            video_file TEXT,
-            release TEXT,
-            language TEXT NOT NULL,
-            service TEXT NOT NULL,
-            embedded BOOLEAN NOT NULL DEFAULT FALSE,
-            created_at TIMESTAMP NOT NULL
-        )`,
+			id SERIAL PRIMARY KEY,
+			file TEXT NOT NULL,
+			video_file TEXT,
+			release TEXT,
+			language TEXT NOT NULL,
+			service TEXT NOT NULL,
+			embedded BOOLEAN NOT NULL DEFAULT FALSE,
+			created_at TIMESTAMP NOT NULL
+		)`,
 		`CREATE TABLE IF NOT EXISTS downloads (
-            id SERIAL PRIMARY KEY,
-            file TEXT NOT NULL,
-            video_file TEXT NOT NULL,
-            provider TEXT NOT NULL,
-            language TEXT NOT NULL,
-            created_at TIMESTAMP NOT NULL
-        )`,
+			id SERIAL PRIMARY KEY,
+			file TEXT NOT NULL,
+			video_file TEXT NOT NULL,
+			provider TEXT NOT NULL,
+			language TEXT NOT NULL,
+			created_at TIMESTAMP NOT NULL
+		)`,
 		`CREATE TABLE IF NOT EXISTS search_history (
-            id SERIAL PRIMARY KEY,
-            query TEXT NOT NULL,
-            results INTEGER NOT NULL,
-            created_at TIMESTAMP NOT NULL
-        )`,
+			id SERIAL PRIMARY KEY,
+			query TEXT NOT NULL,
+			results INTEGER NOT NULL,
+			created_at TIMESTAMP NOT NULL
+		)`,
 		`CREATE TABLE IF NOT EXISTS media_items (
-            id SERIAL PRIMARY KEY,
-            path TEXT NOT NULL,
-            title TEXT NOT NULL,
-            season INTEGER,
-            episode INTEGER,
-            release_group TEXT,
-            alt_titles TEXT,
-            field_locks TEXT,
-            created_at TIMESTAMP NOT NULL
-        )`,
+			id SERIAL PRIMARY KEY,
+			path TEXT NOT NULL,
+			title TEXT NOT NULL,
+			season INTEGER,
+			episode INTEGER,
+			release_group TEXT,
+			alt_titles TEXT,
+			field_locks TEXT,
+			created_at TIMESTAMP NOT NULL
+		)`,
 		`CREATE TABLE IF NOT EXISTS dashboard_prefs (
-            user_id INTEGER PRIMARY KEY,
-            layout TEXT NOT NULL,
-            updated_at TIMESTAMP NOT NULL
-        )`,
+			user_id INTEGER PRIMARY KEY,
+			layout TEXT NOT NULL,
+			updated_at TIMESTAMP NOT NULL
+		)`,
 		`CREATE TABLE IF NOT EXISTS language_profiles (
-            id TEXT PRIMARY KEY,
-            name TEXT NOT NULL,
-            config TEXT NOT NULL,
-            cutoff_score INTEGER DEFAULT 80,
-            is_default BOOLEAN DEFAULT FALSE,
-            created_at TIMESTAMP NOT NULL,
-            updated_at TIMESTAMP NOT NULL
-        )`,
+			id TEXT PRIMARY KEY,
+			name TEXT NOT NULL,
+			config TEXT NOT NULL,
+			cutoff_score INTEGER DEFAULT 80,
+			is_default BOOLEAN DEFAULT FALSE,
+			created_at TIMESTAMP NOT NULL,
+			updated_at TIMESTAMP NOT NULL
+		)`,
 		`CREATE TABLE IF NOT EXISTS media_profiles (
-            media_id TEXT NOT NULL PRIMARY KEY,
-            profile_id TEXT NOT NULL,
-            created_at TIMESTAMP NOT NULL,
-            FOREIGN KEY (profile_id) REFERENCES language_profiles(id) ON DELETE CASCADE
-        )`,
+			media_id TEXT NOT NULL PRIMARY KEY,
+			profile_id TEXT NOT NULL,
+			created_at TIMESTAMP NOT NULL,
+			FOREIGN KEY (profile_id) REFERENCES language_profiles(id) ON DELETE CASCADE
+		)`,
+		// Add missing language_profile_assignments table for Bazarr-style language management
+		`CREATE TABLE IF NOT EXISTS language_profile_assignments (
+			media_path TEXT PRIMARY KEY,
+			profile_id TEXT NOT NULL,
+			created_at TIMESTAMP NOT NULL
+		)`,
 	}
 	for _, s := range stmts {
 		if _, err := db.Exec(s); err != nil {
