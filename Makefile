@@ -327,18 +327,21 @@ docker-multiarch-push: ## Build and push multi-architecture Docker image
 	--build-arg GIT_COMMIT=$(GIT_COMMIT) \
 	-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest --push .
 	@echo "$(COLOR_GREEN)✓ Multi-architecture Docker image built and pushed$(COLOR_RESET)"
-	
+
 .PHONY: docker-local
 docker-local: ## Build and push image locally with custom platforms
-	@echo "$(COLOR_BLUE)Building Docker image locally...$(COLOR_RESET)"
+	@echo "$(COLOR_BLUE)Building Docker image locally (single platform, no push)...$(COLOR_RESET)"
 	docker buildx build \
-	--platform $(PLATFORMS) \
-	--build-arg VERSION=$(VERSION) \
-	--build-arg BUILD_TIME=$(BUILD_TIME) \
-	--build-arg GIT_COMMIT=$(GIT_COMMIT) \
-	-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest \
-	--pull --push .
-	@echo "$(COLOR_GREEN)✓ Local Docker image built and pushed$(COLOR_RESET)"
+		--platform linux/amd64 \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest \
+		--load .
+	@echo "$(COLOR_GREEN)✓ Local Docker image built and loaded locally$(COLOR_RESET)"
+
+# For multi-platform builds and push, you must use the docker-container driver:
+# docker buildx build --platform $(PLATFORMS) --push ...
 
 .PHONY: docker-setup-buildx
 docker-setup-buildx: ## Setup Docker buildx for multi-architecture builds
