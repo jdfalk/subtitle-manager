@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Test docker-local make target",
+  "guid": "be9e6e63-00cb-4d08-8bee-5bd9d049f6f3",
+  "created_at": "2025-07-13T19:04:50Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
