@@ -12,7 +12,8 @@ COPY webui/package*.json ./
 RUN npm cache clean --force && \
     rm -rf node_modules package-lock.json && \
     npm install --legacy-peer-deps --production=false && \
-    npm rebuild esbuild
+    npm uninstall esbuild && \
+    npm install esbuild@latest
 
 # Copy source and build
 COPY webui/ ./
