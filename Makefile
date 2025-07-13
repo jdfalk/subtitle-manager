@@ -14,6 +14,7 @@ BINARY_PATH := ./bin/$(BINARY_NAME)
 DOCKER_IMAGE := ghcr.io/jdfalk/$(APP_NAME)
 DOCKER_TAG := $(VERSION)
 
+PLATFORMS := linux/amd64,linux/arm64
 # Go Build Flags
 LDFLAGS := -ldflags="-s -w -X 'main.Version=$(VERSION)' -X 'main.BuildTime=$(BUILD_TIME)' -X 'main.GitCommit=$(GIT_COMMIT)'"
 GO_BUILD_FLAGS := -v $(LDFLAGS)
@@ -320,12 +321,24 @@ docker-multiarch: ## Build Docker image for multiple architectures using buildx
 docker-multiarch-push: ## Build and push multi-architecture Docker image
 	@echo "$(COLOR_BLUE)Building and pushing multi-architecture Docker image...$(COLOR_RESET)"
 	docker buildx build \
-		--platform linux/amd64,linux/arm64 \
-		--build-arg VERSION=$(VERSION) \
-		--build-arg BUILD_TIME=$(BUILD_TIME) \
-		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
-		-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest --push .
+	--platform linux/amd64,linux/arm64 \
+	--build-arg VERSION=$(VERSION) \
+	--build-arg BUILD_TIME=$(BUILD_TIME) \
+	--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+	-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest --push .
 	@echo "$(COLOR_GREEN)✓ Multi-architecture Docker image built and pushed$(COLOR_RESET)"
+	
+.PHONY: docker-local
+docker-local: ## Build and push image locally with custom platforms
+	@echo "$(COLOR_BLUE)Building Docker image locally...$(COLOR_RESET)"
+	docker buildx build \
+	--platform $(PLATFORMS) \
+	--build-arg VERSION=$(VERSION) \
+	--build-arg BUILD_TIME=$(BUILD_TIME) \
+	--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+	-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest \
+	--pull --push .
+	@echo "$(COLOR_GREEN)✓ Local Docker image built and pushed$(COLOR_RESET)"
 
 .PHONY: docker-setup-buildx
 docker-setup-buildx: ## Setup Docker buildx for multi-architecture builds
