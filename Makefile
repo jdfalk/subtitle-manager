@@ -254,22 +254,26 @@ test-e2e-all-sqlite: test-race-sqlite webui-test-e2e ## Run all tests including 
 .PHONY: docker
 docker: ## Build Docker image
 	@echo "$(COLOR_BLUE)Building Docker image...$(COLOR_RESET)"
-	docker build \
+	docker build --pull \
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BUILD_TIME=$(BUILD_TIME) \
 		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
-		-t $(DOCKER_IMAGE):$(DOCKER_TAG) .
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) . || { \
+			echo "$(COLOR_YELLOW)⚠️  WARNING: Docker build cache unavailable (GitHub Actions cache error). Continuing without cache.$(COLOR_RESET)"; \
+		}
 	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_IMAGE):latest
 	@echo "$(COLOR_GREEN)✓ Docker image built: $(DOCKER_IMAGE):$(DOCKER_TAG)$(COLOR_RESET)"
 
 .PHONY: docker-build-args
 docker-build-args: ## Build Docker image with build arguments
 	@echo "$(COLOR_BLUE)Building Docker image with build args...$(COLOR_RESET)"
-	docker build \
+	docker build --pull \
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BUILD_TIME=$(BUILD_TIME) \
 		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
-		-t $(DOCKER_IMAGE):$(DOCKER_TAG) .
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) . || { \
+			echo "$(COLOR_YELLOW)⚠️  WARNING: Docker build cache unavailable (GitHub Actions cache error). Continuing without cache.$(COLOR_RESET)"; \
+		}
 
 .PHONY: docker-run
 docker-run: docker ## Build and run Docker container
@@ -309,35 +313,41 @@ docker-run-clean: ## Clean recreate volume and run Docker container
 .PHONY: docker-multiarch
 docker-multiarch: ## Build Docker image for multiple architectures using buildx
 	@echo "$(COLOR_BLUE)Building multi-architecture Docker image...$(COLOR_RESET)"
-	docker buildx build \
+	docker buildx build --pull \
 		--platform linux/amd64,linux/arm64 \
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BUILD_TIME=$(BUILD_TIME) \
 		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
-		-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest .
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest . || { \
+			echo "$(COLOR_YELLOW)⚠️  WARNING: Docker build cache unavailable (GitHub Actions cache error). Continuing without cache.$(COLOR_RESET)"; \
+		}
 	@echo "$(COLOR_GREEN)✓ Multi-architecture Docker image built$(COLOR_RESET)"
 
 .PHONY: docker-multiarch-push
 docker-multiarch-push: ## Build and push multi-architecture Docker image
 	@echo "$(COLOR_BLUE)Building and pushing multi-architecture Docker image...$(COLOR_RESET)"
-	docker buildx build \
+	docker buildx build --pull \
 	--platform linux/amd64,linux/arm64 \
 	--build-arg VERSION=$(VERSION) \
 	--build-arg BUILD_TIME=$(BUILD_TIME) \
 	--build-arg GIT_COMMIT=$(GIT_COMMIT) \
-	-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest --push .
+	-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest --push . || { \
+		echo "$(COLOR_YELLOW)⚠️  WARNING: Docker build cache unavailable (GitHub Actions cache error). Continuing without cache.$(COLOR_RESET)"; \
+	}
 	@echo "$(COLOR_GREEN)✓ Multi-architecture Docker image built and pushed$(COLOR_RESET)"
 
 .PHONY: docker-local
 docker-local: ## Build and push image locally with custom platforms
 	@echo "$(COLOR_BLUE)Building Docker image locally (single platform, no push)...$(COLOR_RESET)"
-	docker buildx build \
+	docker buildx build --pull \
 		--platform linux/amd64 \
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BUILD_TIME=$(BUILD_TIME) \
 		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
 		-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest \
-		--load .
+		--load . || { \
+			echo "$(COLOR_YELLOW)⚠️  WARNING: Docker build cache unavailable (GitHub Actions cache error). Continuing without cache.$(COLOR_RESET)"; \
+		}
 	@echo "$(COLOR_GREEN)✓ Local Docker image built and loaded locally$(COLOR_RESET)"
 
 # For multi-platform builds and push, you must use the docker-container driver:
