@@ -7,7 +7,12 @@ WORKDIR /src/webui
 
 # Copy package files first for better caching
 COPY webui/package*.json ./
-RUN npm ci --legacy-peer-deps --production=false
+
+# Clear npm cache and ensure clean install to avoid esbuild version conflicts
+RUN npm cache clean --force && \
+    rm -rf node_modules package-lock.json && \
+    npm install --legacy-peer-deps --production=false && \
+    npm rebuild esbuild
 
 # Copy source and build
 COPY webui/ ./
