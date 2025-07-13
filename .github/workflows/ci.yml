@@ -1,5 +1,5 @@
 # file: .github/workflows/ci.yml
-# version: 3.0.0
+# version: 3.1.0
 # guid: 7e2b1c4d-5f6a-4b7c-8d9e-0a1b2c3d4e5f
 
 name: CI
@@ -15,7 +15,7 @@ permissions:
   contents: write # Required for auto-committing fixes from super-linter
   statuses: write # Required for status updates
   pull-requests: write
-  actions: read
+  actions: write # Required for uploading artifacts
   checks: write
   security-events: write
   id-token: write
