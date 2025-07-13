@@ -350,6 +350,23 @@ docker-local: ## Build and push image locally with custom platforms
 		}
 	@echo "$(COLOR_GREEN)✓ Local Docker image built and loaded locally$(COLOR_RESET)"
 
+.PHONY: docker-local-push
+docker-local-push: ## Build Docker image locally and push to registry
+	@echo "$(COLOR_BLUE)Building Docker image locally (single platform, then pushing)...$(COLOR_RESET)"
+	docker buildx build --pull \
+		--platform linux/amd64 \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		--build-arg GIT_COMMIT=$(GIT_COMMIT) \
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) -t $(DOCKER_IMAGE):latest \
+		--load . || { \
+			echo "$(COLOR_YELLOW)⚠️  WARNING: Docker build cache unavailable (GitHub Actions cache error). Continuing without cache.$(COLOR_RESET)"; \
+		}
+	@echo "$(COLOR_BLUE)Pushing Docker image to registry...$(COLOR_RESET)"
+	docker push $(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker push $(DOCKER_IMAGE):latest
+	@echo "$(COLOR_GREEN)✓ Local Docker image built and pushed$(COLOR_RESET)"
+
 # For multi-platform builds and push, you must use the docker-container driver:
 # docker buildx build --platform $(PLATFORMS) --push ...
 
