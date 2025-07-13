@@ -11,7 +11,7 @@ import (
 
 	"github.com/cockroachdb/pebble"
 	"github.com/google/uuid"
-	"github.com/jdfalk/subtitle-manager/pkg/profiles"
+	profilesPkg "github.com/jdfalk/subtitle-manager/pkg/profiles"
 )
 
 // PebbleStore wraps a Pebble database and implements basic CRUD operations
@@ -20,6 +20,35 @@ import (
 // Values are stored as JSON encoded SubtitleRecord structures.
 type PebbleStore struct {
 	db *pebble.DB
+}
+
+// InitPebbleStore seeds default permissions and language profile if missing.
+func (p *PebbleStore) InitPebbleStore() error {
+	// Seed default permissions if missing
+	if err := p.InitializeDefaultPermissions(); err != nil {
+		return err
+	}
+
+	// Seed default language profile if missing
+	profiles, err := p.ListLanguageProfiles()
+	if err != nil {
+		return err
+	}
+	if len(profiles) == 0 {
+		defaultProfile := &LanguageProfile{
+			ID:          "default",
+			Name:        "Default English",
+			Languages:   []profilesPkg.LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
+			CutoffScore: 75,
+			IsDefault:   true,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		}
+		if err := p.CreateLanguageProfile(defaultProfile); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func mediaPathKey(path string) []byte {
@@ -733,7 +762,10 @@ func (p *PebbleStore) ValidateSession(token string) (string, error) {
 
 	if time.Now().After(session.ExpiresAt) {
 		// Session expired, clean it up
-		p.InvalidateSession(token)
+		if err := p.InvalidateSession(token); err != nil {
+			// Optionally log or handle the error
+			return "", err
+		}
 		return "", nil
 	}
 
@@ -1476,7 +1508,7 @@ func (p *PebbleStore) DeleteLanguageProfile(id string) error {
 		if !strings.HasPrefix(string(iter.Key()), "media_profile:") {
 			continue
 		}
-		var assignment profiles.MediaProfileAssignment
+		var assignment profilesPkg.MediaProfileAssignment
 		if err := json.Unmarshal(iter.Value(), &assignment); err != nil {
 			continue
 		}
@@ -1545,7 +1577,7 @@ func (p *PebbleStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 	defaultProfile := &LanguageProfile{
 		ID:          "default",
 		Name:        "Default",
-		Languages:   []profiles.LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
+		Languages:   []profilesPkg.LanguageConfig{{Language: "en", Priority: 1, Forced: false, HI: false}},
 		CutoffScore: 80,
 		IsDefault:   true,
 		CreatedAt:   time.Now(),
@@ -1559,7 +1591,7 @@ func (p *PebbleStore) GetDefaultLanguageProfile() (*LanguageProfile, error) {
 
 // AssignProfileToMedia assigns a language profile to a media item.
 func (p *PebbleStore) AssignProfileToMedia(mediaID, profileID string) error {
-	assignment := profiles.MediaProfileAssignment{
+	assignment := profilesPkg.MediaProfileAssignment{
 		MediaID:   mediaID,
 		ProfileID: profileID,
 		CreatedAt: time.Now(),
@@ -1590,7 +1622,7 @@ func (p *PebbleStore) GetMediaProfile(mediaID string) (*LanguageProfile, error) 
 	}
 	defer closer.Close()
 
-	var assignment profiles.MediaProfileAssignment
+	var assignment profilesPkg.MediaProfileAssignment
 	if err := json.Unmarshal(assignmentData, &assignment); err != nil {
 		return nil, err
 	}
