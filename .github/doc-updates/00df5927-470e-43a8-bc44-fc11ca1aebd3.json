@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Ensure SQLite integration tests run in CI with sqlite build tag",
+  "guid": "00df5927-470e-43a8-bc44-fc11ca1aebd3",
+  "created_at": "2025-07-13T23:28:27Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

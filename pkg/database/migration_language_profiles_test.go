@@ -13,6 +13,10 @@ import (
 )
 
 func TestMigration_LanguageProfileAssignments_SQLite(t *testing.T) {
+	if !HasSQLite() {
+		t.Skip("SQLite not available")
+	}
+
 	path := "test_migration_sqlite.db"
 	_ = os.Remove(path)
 	store, err := OpenSQLStore(path)
