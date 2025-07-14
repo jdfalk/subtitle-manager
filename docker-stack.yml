@@ -6,7 +6,8 @@ services:
   subtitle-manager:
     image: ghcr.io/jdfalk/subtitle-manager:latest
     ports:
-      - "78080:8080"
+      # Map port 9555 on the host to the application's default port 8080
+      - "9555:8080"
     volumes:
       # Configuration and database storage (use named volumes in production)
       - subtitle-manager-config:/config

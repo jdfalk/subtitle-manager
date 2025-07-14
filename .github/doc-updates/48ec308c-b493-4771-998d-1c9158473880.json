@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Fixed\n\n- Corrected Docker stack port mapping",
+  "guid": "48ec308c-b493-4771-998d-1c9158473880",
+  "created_at": "2025-07-13T23:22:40Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

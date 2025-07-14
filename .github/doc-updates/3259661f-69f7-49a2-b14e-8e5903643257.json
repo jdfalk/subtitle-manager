@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "### Custom Port\\nUse '-p HOSTPORT:8080' to expose a different port. Example:\\n```bash\\ndocker run -p 9555:8080 ghcr.io/jdfalk/subtitle-manager:latest\\n```",
+  "guid": "3259661f-69f7-49a2-b14e-8e5903643257",
+  "created_at": "2025-07-13T23:22:36Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
