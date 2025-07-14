@@ -6,11 +6,24 @@ name: Unified Issue & Docs Automation
 
 on:
   workflow_dispatch:
+    inputs:
+      operation:
+        description: "Which operation(s) to run (all, issues, docs, label, lint, rebase)"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - issues
+          - docs
+          - label
+          - lint
+          - rebase
 
 jobs:
   orchestrate:
     uses: jdfalk/ghcommon/.github/workflows/reusable-unified-automation.yml@main
     with:
-      operation: all
+      operation: ${{ github.event.inputs.operation || 'all' }}
     secrets:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+      github-token: ${{ secrets.JF_CI_GH_PAT || secrets.GITHUB_TOKEN }}
