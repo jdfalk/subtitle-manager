@@ -971,3 +971,4 @@ audio track details. The `splitLines` helper has been updated accordingly.
 - [ ] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
 
 - [ ] 🟡 **General**: Create GitHub projects for open features
+- [ ] 🟡 **DevOps**: Validate codex-rebase.sh AI conflict resolution

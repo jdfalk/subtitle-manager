@@ -78,6 +78,21 @@ if ! git fetch origin; then
     exit 1
 fi
 
+# Resolve a single conflict using Codex or ChatGPT CLI if available
+resolve_conflict_ai() {
+    local file="$1"
+
+    if command -v codex >/dev/null 2>&1; then
+        log "Using Codex CLI to resolve $file"
+        git diff --ours --theirs "$file" | codex patch --stdin --filename "$file" && git add "$file" && return 0
+    elif command -v chatgpt >/dev/null 2>&1; then
+        log "Using ChatGPT CLI to resolve $file"
+        git diff --ours --theirs "$file" | chatgpt patch --stdin --filename "$file" && git add "$file" && return 0
+    fi
+
+    return 1
+}
+
 # Function to auto-resolve conflicts with Codex-friendly strategies
 auto_resolve_conflicts() {
     local conflicted_files
@@ -91,6 +106,11 @@ auto_resolve_conflicts() {
 
     echo "$conflicted_files" | while read -r file; do
         if [[ -n "$file" ]]; then
+            if resolve_conflict_ai "$file"; then
+                log "Resolved $file using AI CLI"
+                continue
+            fi
+
             # Save incoming version with .main.incoming suffix
             local base_name="${file%.*}"
             local extension="${file##*.}"
@@ -139,6 +159,13 @@ while true; do
     fi
 done
 
+# Commit any remaining changes (e.g., resolved files)
+if ! git diff-index --quiet HEAD --; then
+    log "Committing remaining changes"
+    git add -A
+    git commit -m "chore: finalize auto-rebase" || true
+fi
+
 # Force push the rebased branch
 log "Force pushing rebased branch"
 if git push --force-with-lease origin "$CURRENT_BRANCH"; then
@@ -164,7 +191,7 @@ cat > "$SUMMARY_FILE" << EOF
 
 ## Changes Made
 - Rebased $CURRENT_BRANCH onto $TARGET_BRANCH
-- Auto-resolved conflicts using "keep current, save incoming" strategy
+- Auto-resolved conflicts using AI CLI when available
 - Force pushed rebased branch to origin
 
 ## Conflict Resolution

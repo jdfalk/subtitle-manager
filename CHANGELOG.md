@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- codex-rebase.sh now uses Codex or ChatGPT CLI for conflict resolution and automatically commits before force pushing
+
 ### Added
 
 - Added per-IP rate limiting to search API

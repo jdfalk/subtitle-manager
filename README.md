@@ -2178,3 +2178,5 @@ python3 /path/to/ghcommon/scripts/unified_github_project_manager_v2.py
 See `scripts/MIGRATION-NOTICE.md` for migration details.
 
 CLI search command now caches results for faster repeats with per-IP rate limiting to prevent abuse.
+
+The `codex-rebase.sh` script now uses Codex or ChatGPT CLI to resolve merge conflicts, commits the results, and force pushes for a clean working tree.
