@@ -18,7 +18,7 @@ jobs:
     with:
       image-name: subtitle-manager
       registry: ghcr.io
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.hybrid
       context: .
       platforms: linux/amd64,linux/arm64
       build-args: |

@@ -1,0 +1,16 @@
+{
+  "file": "docs/ISSUE_MANAGEMENT_AND_DEVELOPMENT_SUMMARY.md",
+  "mode": "replace-section",
+  "content": "#### File Type Based Resolution\n\n| File Type                                | Strategy    | Reasoning |\n| ---------------------------------------- | ----------- | ---------- |\n| Documentation (`.md`, `docs/`)           | Incoming    | Main branch docs are usually current |\n| Build files (`.github/`, `Dockerfile.hybrid`)   | Incoming    | Build config should match main |\n| Package files (`go.mod`, `package.json`) | Incoming    | Dependencies should match main |\n| Configuration (`.json`, `.yml`)          | Smart Merge | Configs need careful merging |\n| Source code (`.go`, `.js`, `.py`)        | Save Both   | Code needs manual review |\n| Test files (`*_test.go`, `test/`)        | Save Both   | Tests need careful review |\n| Data files (`.sql`, `data/`)             | Current     | Data is often environment-specific |",
+  "guid": "17387c82-0c47-43e8-aef0-e686a1fc9676",
+  "created_at": "2025-07-15T04:08:47Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

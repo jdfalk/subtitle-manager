@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "- Dockerfile.hybrid and workflow for container builds.",
+  "guid": "a3c996d4-d008-43f5-8ae5-781508be4fc1",
+  "created_at": "2025-07-15T04:08:06Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

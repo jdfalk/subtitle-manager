@@ -8,16 +8,16 @@ echo "🚀 Starting optimized Docker build..."
 
 # Check if we should use pre-built assets
 USE_PREBUILT=${USE_PREBUILT:-false}
-DOCKERFILE=${DOCKERFILE:-Dockerfile.optimized}
+DOCKERFILE=${DOCKERFILE:-Dockerfile.hybrid}
 
 if [ "$USE_PREBUILT" = "true" ]; then
     echo "📦 Using pre-built assets from GitHub Packages..."
-    DOCKERFILE="Dockerfile.fast"
+    DOCKERFILE="Dockerfile.hybrid"
 
     # Pull latest assets image
     docker pull ghcr.io/jdfalk/subtitle-manager/assets:latest || {
-        echo "⚠️  Failed to pull pre-built assets, falling back to local build"
-        DOCKERFILE="Dockerfile.optimized"
+        echo "⚠️  Failed to pull pre-built assets, falling back to standard build"
+        DOCKERFILE="Dockerfile.hybrid"
     }
 fi
 

@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Standardized on Dockerfile.hybrid for all builds",
+  "guid": "406e54bc-b5df-426c-8eeb-380423dd7472",
+  "created_at": "2025-07-15T04:08:14Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
