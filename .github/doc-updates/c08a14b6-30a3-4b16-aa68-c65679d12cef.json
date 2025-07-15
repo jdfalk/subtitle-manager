@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Improved DirectoryChooser supports custom folder input",
+  "guid": "c08a14b6-30a3-4b16-aa68-c65679d12cef",
+  "created_at": "2025-07-15T04:08:39Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

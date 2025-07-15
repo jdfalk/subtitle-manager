@@ -1,4 +1,6 @@
 // file: webui/src/components/DirectoryChooser.jsx
+// version: 1.0.2
+// guid: d1836bb0-aa02-4af1-ad3d-9f5bb2948975
 import {
   ArrowBack as BackIcon,
   Folder as FolderIcon,
@@ -14,6 +16,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { apiService } from '../services/api.js';
@@ -29,12 +32,14 @@ import { apiService } from '../services/api.js';
 export default function DirectoryChooser({ open, onClose, onSelect }) {
   const [currentPath, setCurrentPath] = useState('/');
   const [dirs, setDirs] = useState([]);
+  const [customPath, setCustomPath] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (open) {
       setCurrentPath('/');
+      setCustomPath('');
     }
   }, [open]);
 
@@ -49,11 +54,9 @@ export default function DirectoryChooser({ open, onClose, onSelect }) {
         if (resp.ok) {
           const data = await resp.json();
           const directories =
-            data.items
-              ?.filter(
-                item => item.isDirectory || item.type === 'directory'
-              )
-              .map(item => item.path) || [];
+            data.items?.filter(
+              item => item.isDirectory || item.type === 'directory'
+            ) || [];
           setDirs(directories);
         } else {
           setDirs([]);
@@ -96,21 +99,34 @@ export default function DirectoryChooser({ open, onClose, onSelect }) {
           )}
           {dirs.map(dir => (
             <ListItemButton
-              key={dir}
-              onClick={() => setCurrentPath(dir)}
-              onDoubleClick={() => handleSelect(dir)}
+              key={dir.path}
+              onClick={() => setCurrentPath(dir.path)}
+              onDoubleClick={() => handleSelect(dir.path)}
             >
               <ListItemIcon>
                 <FolderIcon />
               </ListItemIcon>
-              <ListItemText primary={dir.split('/').pop()} />
+              <ListItemText
+                primary={dir.name || dir.path.replace(/\\/g, '/').split('/').pop()}
+              />
             </ListItemButton>
           ))}
         </List>
+        <TextField
+          fullWidth
+          label="Directory Path"
+          value={customPath}
+          onChange={e => setCustomPath(e.target.value)}
+          margin="normal"
+          placeholder="Enter path manually"
+        />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => handleSelect(currentPath)} variant="contained">
-          Select
+        <Button
+          onClick={() => handleSelect(customPath || currentPath)}
+          variant="contained"
+        >
+          {customPath ? 'Add' : 'Select'}
         </Button>
       </DialogActions>
     </Dialog>

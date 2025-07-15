@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Fixed\n\n- Added @testing-library/dom to resolve missing module errors",
+  "guid": "825bc9e6-2dd0-4fe7-b3ba-10fb223b7be8",
+  "created_at": "2025-07-15T13:05:10Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
