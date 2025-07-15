@@ -1,5 +1,5 @@
 // file: pkg/translator/translator_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 8ae1f81d-0b31-49e8-bc2f-22e6b0a058d4
 
 package translator
@@ -39,6 +39,26 @@ func TestGoogleTranslate(t *testing.T) {
 	}
 	if got != "hola" {
 		t.Fatalf("expected hola, got %s", got)
+	}
+}
+
+// TestGoogleTranslateBatch verifies that multiple strings can be translated in one call.
+func TestGoogleTranslateBatch(t *testing.T) {
+	m := mocks.NewGoogleClient(t)
+	SetGoogleClientFactory(func(ctx context.Context, apiKey string) (GoogleClient, error) { return m, nil })
+	defer ResetGoogleClientFactory()
+
+	src := []string{"hello", "world"}
+	expected := []translate.Translation{{Text: "hola"}, {Text: "mundo"}}
+	m.On("Translate", mock.Anything, src, language.Make("es"), (*translate.Options)(nil)).Return(expected, nil)
+	m.On("Close").Return(nil)
+
+	got, err := GoogleTranslateBatch(src, "es", "k")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(got) != 2 || got[0] != "hola" || got[1] != "mundo" {
+		t.Fatalf("unexpected result: %v", got)
 	}
 }
 

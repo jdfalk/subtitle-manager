@@ -1,5 +1,5 @@
 // file: pkg/translator/translator.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 3bf0f8c4-18e8-4d30-a0f6-8e4a4f3f0f62
 
 package translator
@@ -137,6 +137,33 @@ func GoogleTranslate(text, targetLang, apiKey string) (string, error) {
 		return "", fmt.Errorf("no translations")
 	}
 	return ts[0].Text, nil
+}
+
+// GoogleTranslateBatch translates a slice of strings using the Google
+// Translate API and returns the translated texts in the same order.
+func GoogleTranslateBatch(texts []string, targetLang, apiKey string) ([]string, error) {
+	if len(texts) == 0 {
+		return nil, nil
+	}
+	ctx := context.Background()
+	client, err := newGoogleClient(ctx, apiKey)
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	ts, err := client.Translate(ctx, texts, language.Make(targetLang), nil)
+	if err != nil {
+		return nil, err
+	}
+	if len(ts) != len(texts) {
+		return nil, fmt.Errorf("expected %d translations, got %d", len(texts), len(ts))
+	}
+	results := make([]string, len(texts))
+	for i, t := range ts {
+		results[i] = t.Text
+	}
+	return results, nil
 }
 
 // GPTTranslate translates text using the ChatGPT API.
