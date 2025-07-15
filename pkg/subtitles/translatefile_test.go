@@ -15,7 +15,15 @@ import (
 
 func TestTranslateFileToSRT(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
+		qs := r.URL.Query()["q"]
+		if len(qs) == 0 {
+			qs = []string{""}
+		}
+		parts := make([]string, len(qs))
+		for i := range qs {
+			parts[i] = `{"translatedText":"hola"}`
+		}
+		fmt.Fprintf(w, `{"data":{"translations":[%s]}}`, strings.Join(parts, ","))
 	}))
 	defer srv.Close()
 	translator.SetGoogleAPIURL(srv.URL)
@@ -49,7 +57,15 @@ func TestTranslateFileToSRT(t *testing.T) {
 
 func TestTranslateFilesToSRT(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
+		qs := r.URL.Query()["q"]
+		if len(qs) == 0 {
+			qs = []string{""}
+		}
+		parts := make([]string, len(qs))
+		for i := range qs {
+			parts[i] = `{"translatedText":"hola"}`
+		}
+		fmt.Fprintf(w, `{"data":{"translations":[%s]}}`, strings.Join(parts, ","))
 	}))
 	defer srv.Close()
 	translator.SetGoogleAPIURL(srv.URL)
@@ -82,7 +98,15 @@ func TestTranslateFileToSRTCache(t *testing.T) {
 	count := 0
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		count++
-		fmt.Fprint(w, `{"data":{"translations":[{"translatedText":"hola"}]}}`)
+		qs := r.URL.Query()["q"]
+		if len(qs) == 0 {
+			qs = []string{""}
+		}
+		parts := make([]string, len(qs))
+		for i := range qs {
+			parts[i] = `{"translatedText":"hola"}`
+		}
+		fmt.Fprintf(w, `{"data":{"translations":[%s]}}`, strings.Join(parts, ","))
 	}))
 	defer srv.Close()
 	translator.SetGoogleAPIURL(srv.URL)

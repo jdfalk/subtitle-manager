@@ -1,3 +1,7 @@
+// file: pkg/subtitles/translatefile.go
+// version: 1.0.0
+// guid: c23af6ff-5b82-431d-9676-86c6c51ad086
+
 package subtitles
 
 import (
@@ -77,9 +81,6 @@ func TranslateFileToSRT(inPath, outPath, lang, service, googleKey, gptKey, grpcA
 // translateFileToSRTBatch uses batch Google Translate API for improved performance.
 // It groups unique texts and translates them in batches to reduce API calls.
 func translateFileToSRTBatch(sub *astisub.Subtitles, outPath, lang, googleKey string) error {
-	// For now, fall back to individual translation calls but optimize by grouping
-	// This maintains compatibility with existing test infrastructure
-	// TODO: Implement proper batch API when we can handle real Google client
 
 	// Extract unique dialogue texts and their positions
 	textToItems := make(map[string][]*astisub.Item)
@@ -112,14 +113,14 @@ func translateFileToSRTBatch(sub *astisub.Subtitles, outPath, lang, googleKey st
 		return os.WriteFile(outPath, buf.Bytes(), 0644)
 	}
 
-	// Translate unique texts (for now, one by one, but without duplicates)
-	translations := make(map[string]string)
-	for _, text := range uniqueTexts {
-		translated, err := translator.GoogleTranslate(text, lang, googleKey)
-		if err != nil {
-			return fmt.Errorf("translation failed: %w", err)
-		}
-		translations[text] = translated
+	// Translate all unique texts using the batch API
+	translatedSlice, err := translator.GoogleTranslateBatch(uniqueTexts, lang, googleKey)
+	if err != nil {
+		return fmt.Errorf("translation failed: %w", err)
+	}
+	translations := make(map[string]string, len(uniqueTexts))
+	for i, text := range uniqueTexts {
+		translations[text] = translatedSlice[i]
 	}
 
 	// Apply translations to subtitle items
