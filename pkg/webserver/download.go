@@ -1,4 +1,6 @@
 // file: pkg/webserver/download.go
+// version: 1.0.0
+// guid: d801e060-5edf-4b5f-8cbd-a0f8095c6eee
 package webserver
 
 import (
@@ -12,6 +14,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/scanner"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
+	"github.com/sirupsen/logrus"
 )
 
 // downloadHandler downloads a subtitle using a provider and stores history.
@@ -41,7 +44,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger := logging.GetLogger("webserver.download")
 		if r.Method != http.MethodPost {
-			logger.Debugf("method %s not allowed", r.Method)
+			logger.WithField("method", r.Method).Debug("method not allowed")
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Method not allowed"})
@@ -50,7 +53,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 
 		var q req
 		if err := json.NewDecoder(r.Body).Decode(&q); err != nil || q.Path == "" || q.Lang == "" {
-			logger.Warnf("invalid request body: %v", err)
+			logger.WithField("error", err).Warn("invalid request body")
 			metrics.APIRequests.WithLabelValues("/api/download", "POST", "400").Inc()
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
@@ -61,7 +64,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 		// Validate and sanitize the file path to prevent path injection
 		validatedPath, err := security.ValidateAndSanitizePath(q.Path)
 		if err != nil {
-			logger.Warnf("invalid file path: %v", err)
+			logger.WithField("error", err).Warn("invalid file path")
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Invalid file path: " + err.Error()})
@@ -70,7 +73,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 
 		// Validate the language code to ensure it conforms to expected patterns
 		if err := security.ValidateLanguageCode(q.Lang); err != nil {
-			logger.Warnf("invalid language code: %v", err)
+			logger.WithField("error", err).Warn("invalid language code")
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Invalid language code: " + err.Error()})
@@ -80,7 +83,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 		// Validate provider name if provided
 		if q.Provider != "" {
 			if err := security.ValidateProviderName(q.Provider); err != nil {
-				logger.Warnf("invalid provider name: %v", err)
+				logger.WithField("error", err).Warn("invalid provider name")
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
 				_ = json.NewEncoder(w).Encode(apiError{Error: "Invalid provider name: " + err.Error()})
@@ -101,7 +104,10 @@ func downloadHandler(db *sql.DB) http.Handler {
 				name = q.Provider
 			}
 			if providerErr != nil {
-				logger.Warnf("provider resolution failed: %v", providerErr)
+				logger.WithFields(logrus.Fields{
+					"provider": q.Provider,
+					"error":    providerErr,
+				}).Warn("provider resolution failed")
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
 				_ = json.NewEncoder(w).Encode(apiError{Error: "Provider not found or error: " + providerErr.Error()})
@@ -109,9 +115,20 @@ func downloadHandler(db *sql.DB) http.Handler {
 			}
 		}
 
+		logger.WithFields(logrus.Fields{
+			"path":     validatedPath,
+			"lang":     q.Lang,
+			"provider": name,
+		}).Info("starting download")
+
 		// Process the file using the scanner
 		if err := scanner.ProcessFile(r.Context(), validatedPath, q.Lang, name, p, false, nil); err != nil {
-			logger.Errorf("failed to process file %s: %v", validatedPath, err)
+			logger.WithFields(logrus.Fields{
+				"path":     validatedPath,
+				"lang":     q.Lang,
+				"provider": name,
+				"error":    err,
+			}).Error("failed to process file")
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Failed to process file: " + err.Error()})
@@ -121,7 +138,11 @@ func downloadHandler(db *sql.DB) http.Handler {
 		// Construct output path using validated inputs
 		out, outErr := security.ValidateSubtitleOutputPath(validatedPath, q.Lang)
 		if outErr != nil {
-			logger.Errorf("failed to construct output path for %s: %v", validatedPath, outErr)
+			logger.WithFields(logrus.Fields{
+				"path":  validatedPath,
+				"lang":  q.Lang,
+				"error": outErr,
+			}).Error("failed to construct output path")
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Failed to construct output path: " + outErr.Error()})
@@ -131,13 +152,23 @@ func downloadHandler(db *sql.DB) http.Handler {
 		// Insert download record into database if available
 		if db != nil {
 			if err := database.InsertDownload(db, out, validatedPath, name, q.Lang); err != nil {
-				logger.Warnf("failed to record download: %v", err)
+				logger.WithFields(logrus.Fields{
+					"file":  out,
+					"path":  validatedPath,
+					"lang":  q.Lang,
+					"error": err,
+				}).Warn("failed to record download")
 			}
 		}
 
 		metrics.APIRequests.WithLabelValues("/api/download", "POST", "200").Inc()
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(resp{File: out})
-		logger.Infof("downloaded subtitle %s for %s", out, validatedPath)
+		logger.WithFields(logrus.Fields{
+			"file":     out,
+			"path":     validatedPath,
+			"lang":     q.Lang,
+			"provider": name,
+		}).Info("subtitle downloaded")
 	})
 }
