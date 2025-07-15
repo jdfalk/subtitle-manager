@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Finalize Dockerfile.hybrid migration",
+  "body": "Switch build scripts and docs to Dockerfile.hybrid",
+  "labels": ["documentation", "build"],
+  "guid": "5a944fb5-373d-4904-8b0e-ed79fcd07dfe",
+  "legacy_guid": "create-finalize-dockerfile-hybrid-migration-2025-07-15"
+}

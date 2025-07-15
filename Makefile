@@ -433,17 +433,17 @@ docker-push-assets: docker-assets
 docker-fast:
 	@echo "🚀 Fast Docker build using pre-built assets..."
 	@if docker pull $(DOCKER_IMAGE)/assets:latest; then \
-		docker build -f Dockerfile.fast -t $(DOCKER_IMAGE):$(VERSION)-fast .; \
+	docker build -f Dockerfile.hybrid -t $(DOCKER_IMAGE):$(VERSION)-fast .; \
 	else \
-		echo "⚠️  Pre-built assets not available, falling back to optimized build"; \
-		$(MAKE) docker-optimized; \
+	echo "⚠️  Pre-built assets not available, falling back to standard build"; \
+	$(MAKE) docker-optimized; \
 	fi
 
 # Optimized multi-stage build
 docker-optimized:
-	@echo "🔧 Optimized Docker build with caching..."
+	@echo "🔧 Standard Docker build using Dockerfile.hybrid..."
 	DOCKER_BUILDKIT=1 docker build \
-		-f Dockerfile.optimized \
+		-f Dockerfile.hybrid \
 		-t $(DOCKER_IMAGE):$(VERSION) \
 		-t $(DOCKER_IMAGE):latest \
 		--build-arg VERSION=$(VERSION) \
@@ -452,16 +452,16 @@ docker-optimized:
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		--cache-from $(DOCKER_IMAGE):latest \
 		.
-
+	
 # Benchmark build times
 docker-benchmark:
-	@echo "⏱️  Benchmarking Docker build methods..."
-	@echo "Building with original Dockerfile..."
-	@time docker build -f Dockerfile -t $(DOCKER_IMAGE):original . &>/dev/null || echo "Original build failed"
-	@echo "Building with optimized Dockerfile..."
-	@time docker build -f Dockerfile.optimized -t $(DOCKER_IMAGE):optimized . &>/dev/null || echo "Optimized build failed"
-	@echo "Building with fast method (if assets available)..."
-	@time docker build -f Dockerfile.fast -t $(DOCKER_IMAGE):fast . &>/dev/null || echo "Fast build failed (assets not available)"
+		@echo "⏱️  Benchmarking Docker build methods..."
+		@echo "Building with original Dockerfile..."
+		@time docker build -f Dockerfile -t $(DOCKER_IMAGE):original . &>/dev/null || echo "Original build failed"
+		@echo "Building with hybrid Dockerfile..."
+		@time docker build -f Dockerfile.hybrid -t $(DOCKER_IMAGE):hybrid . &>/dev/null || echo "Hybrid build failed"
+		@echo "Building with fast method (if assets available)..."
+		@time docker build -f Dockerfile.hybrid -t $(DOCKER_IMAGE):fast . &>/dev/null || echo "Fast build failed (assets not available)"
 
 #
 # Protocol Buffers

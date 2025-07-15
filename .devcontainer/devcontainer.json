@@ -1,6 +1,6 @@
 {
   "name": "Subtitle Manager Development",
-  "dockerFile": "Dockerfile",
+  "dockerFile": "Dockerfile.hybrid",
   "context": "..",
   "workspaceFolder": "/workspace",
 
