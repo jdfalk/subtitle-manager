@@ -1,4 +1,8 @@
+// file: proto/translator.proto
+// version: 1.0.0
+// guid: e1caa361-535c-428a-8348-83e617d1ff27
 syntax = "proto3";
+edition = "2023";
 package translator;
 option go_package = "github.com/jdfalk/subtitle-manager/pkg/translatorpb";
 
@@ -25,4 +29,17 @@ message ConfigResponse {
 
 message ConfigRequest {
   map<string, string> settings = 1;
+}
+
+// RateLimit defines basic provider rate limiting parameters.
+message RateLimit {
+  uint32 requests_per_minute = 1;
+  uint32 burst = 2;
+}
+
+// ProviderInfo describes metadata about a provider service.
+message ProviderInfo {
+  string name = 1;
+  RateLimit rate_limit = 2;
+  repeated string capabilities = 3;
 }

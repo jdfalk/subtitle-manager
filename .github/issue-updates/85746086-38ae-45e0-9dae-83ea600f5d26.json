@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Define provider metadata fields",
+  "body": "Introduce proto messages for provider info with rate limits and capabilities",
+  "labels": ["enhancement"],
+  "guid": "85746086-38ae-45e0-9dae-83ea600f5d26",
+  "legacy_guid": "create-define-provider-metadata-fields-2025-07-15"
+}
