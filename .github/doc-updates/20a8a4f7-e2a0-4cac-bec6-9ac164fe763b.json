@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Replaced local metrics with gcommon implementation",
+  "guid": "20a8a4f7-e2a0-4cac-bec6-9ac164fe763b",
+  "created_at": "2025-07-15T04:08:51Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

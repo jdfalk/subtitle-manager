@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Duplicate WithTags function",
+  "body": "metrics/grpc_service.go defines WithTags which duplicates the helper in factory.go. When building, Go reports 'WithTags redeclared in this block'. Remove the duplicate or place it behind build tags.",
+  "labels": ["bug"],
+  "guid": "7c582a2a-d967-4303-b58d-7eacae2c47ab",
+  "legacy_guid": "create-duplicate-withtags-function-2025-07-15"
+}
