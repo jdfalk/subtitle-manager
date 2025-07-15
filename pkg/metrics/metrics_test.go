@@ -8,11 +8,15 @@ import (
 	"strings"
 	"testing"
 
+	gmetrics "github.com/jdfalk/gcommon/pkg/metrics"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/testutil"
 )
 
 func TestProviderRequestsMetric(t *testing.T) {
+	if err := Initialize(); err != nil {
+		t.Fatalf("failed to init metrics: %v", err)
+	}
 	// Test that the provider requests metric is properly registered
 	if ProviderRequests == nil {
 		t.Fatal("ProviderRequests metric is nil")
@@ -22,9 +26,18 @@ func TestProviderRequestsMetric(t *testing.T) {
 	ProviderRequests.Reset()
 
 	// Increment the metric
-	ProviderRequests.WithLabelValues("opensubtitles", "success").Inc()
-	ProviderRequests.WithLabelValues("opensubtitles", "error").Inc()
-	ProviderRequests.WithLabelValues("opensubtitles", "error").Inc()
+	ProviderRequests.WithTags(
+		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
+		gmetrics.Tag{Key: "status", Value: "success"},
+	).Inc()
+	ProviderRequests.WithTags(
+		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
+		gmetrics.Tag{Key: "status", Value: "error"},
+	).Inc()
+	ProviderRequests.WithTags(
+		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
+		gmetrics.Tag{Key: "status", Value: "error"},
+	).Inc()
 
 	// Check the metric values
 	expected := `
@@ -39,6 +52,9 @@ func TestProviderRequestsMetric(t *testing.T) {
 }
 
 func TestTranslationRequestsMetric(t *testing.T) {
+	if err := Initialize(); err != nil {
+		t.Fatalf("failed to init metrics: %v", err)
+	}
 	// Test that the translation requests metric is properly registered
 	if TranslationRequests == nil {
 		t.Fatal("TranslationRequests metric is nil")
@@ -48,8 +64,16 @@ func TestTranslationRequestsMetric(t *testing.T) {
 	TranslationRequests.Reset()
 
 	// Increment the metric
-	TranslationRequests.WithLabelValues("google", "en", "success").Inc()
-	TranslationRequests.WithLabelValues("openai", "fr", "error").Inc()
+	TranslationRequests.WithTags(
+		gmetrics.Tag{Key: "service", Value: "google"},
+		gmetrics.Tag{Key: "target_language", Value: "en"},
+		gmetrics.Tag{Key: "status", Value: "success"},
+	).Inc()
+	TranslationRequests.WithTags(
+		gmetrics.Tag{Key: "service", Value: "openai"},
+		gmetrics.Tag{Key: "target_language", Value: "fr"},
+		gmetrics.Tag{Key: "status", Value: "error"},
+	).Inc()
 
 	// Check the metric values
 	expected := `
@@ -64,6 +88,9 @@ func TestTranslationRequestsMetric(t *testing.T) {
 }
 
 func TestSubtitleDownloadsMetric(t *testing.T) {
+	if err := Initialize(); err != nil {
+		t.Fatalf("failed to init metrics: %v", err)
+	}
 	// Test that the subtitle downloads metric is properly registered
 	if SubtitleDownloads == nil {
 		t.Fatal("SubtitleDownloads metric is nil")
@@ -73,9 +100,18 @@ func TestSubtitleDownloadsMetric(t *testing.T) {
 	SubtitleDownloads.Reset()
 
 	// Increment the metric
-	SubtitleDownloads.WithLabelValues("opensubtitles", "en").Inc()
-	SubtitleDownloads.WithLabelValues("opensubtitles", "en").Inc()
-	SubtitleDownloads.WithLabelValues("subscene", "fr").Inc()
+	SubtitleDownloads.WithTags(
+		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
+		gmetrics.Tag{Key: "language", Value: "en"},
+	).Inc()
+	SubtitleDownloads.WithTags(
+		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
+		gmetrics.Tag{Key: "language", Value: "en"},
+	).Inc()
+	SubtitleDownloads.WithTags(
+		gmetrics.Tag{Key: "provider", Value: "subscene"},
+		gmetrics.Tag{Key: "language", Value: "fr"},
+	).Inc()
 
 	// Check the metric values
 	expected := `
@@ -90,6 +126,9 @@ func TestSubtitleDownloadsMetric(t *testing.T) {
 }
 
 func TestAllMetricsRegistered(t *testing.T) {
+	if err := Initialize(); err != nil {
+		t.Fatalf("failed to init metrics: %v", err)
+	}
 	// Check that all metrics are properly defined
 	metrics := []prometheus.Collector{
 		ProviderRequests,

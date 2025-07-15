@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	gmetrics "github.com/jdfalk/gcommon/pkg/metrics"
 	"github.com/jdfalk/subtitle-manager/pkg/metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -17,6 +18,10 @@ import (
 func TestMetricsEndpoint(t *testing.T) {
 	// Create a test mux similar to the one in Handler()
 	mux := http.NewServeMux()
+
+	if err := metrics.Initialize(); err != nil {
+		t.Fatalf("failed to init metrics: %v", err)
+	}
 
 	// Add the metrics endpoint like in the main Handler function
 	mux.Handle("/metrics", promhttp.Handler())
@@ -27,9 +32,19 @@ func TestMetricsEndpoint(t *testing.T) {
 	metrics.SubtitleDownloads.Reset()
 
 	// Increment some metrics to verify they appear in the output
-	metrics.ProviderRequests.WithLabelValues("test_provider", "success").Inc()
-	metrics.TranslationRequests.WithLabelValues("google", "en", "success").Inc()
-	metrics.SubtitleDownloads.WithLabelValues("test_provider", "en").Inc()
+	metrics.ProviderRequests.WithTags(
+		gmetrics.Tag{Key: "provider", Value: "test_provider"},
+		gmetrics.Tag{Key: "status", Value: "success"},
+	).Inc()
+	metrics.TranslationRequests.WithTags(
+		gmetrics.Tag{Key: "service", Value: "google"},
+		gmetrics.Tag{Key: "target_language", Value: "en"},
+		gmetrics.Tag{Key: "status", Value: "success"},
+	).Inc()
+	metrics.SubtitleDownloads.WithTags(
+		gmetrics.Tag{Key: "provider", Value: "test_provider"},
+		gmetrics.Tag{Key: "language", Value: "en"},
+	).Inc()
 
 	// Create a test request
 	req := httptest.NewRequest("GET", "/metrics", nil)

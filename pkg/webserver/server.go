@@ -1,3 +1,7 @@
+// file: pkg/webserver/server.go
+// version: 1.0.0
+// guid: a3f02a01-bcb0-4d6e-a572-8138f7a6d720
+
 package webserver
 
 import (
@@ -12,7 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	ghealth "github.com/jdfalk/gcommon/pkg/health"
+	gmetrics "github.com/jdfalk/gcommon/pkg/metrics"
 	"github.com/spf13/viper"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -23,6 +28,7 @@ import (
 	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/maintenance"
+	"github.com/jdfalk/subtitle-manager/pkg/metrics"
 	"github.com/jdfalk/subtitle-manager/pkg/radarr"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
 	"github.com/jdfalk/subtitle-manager/pkg/selftest"
@@ -169,7 +175,6 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/errors/stats", authMiddleware(db, "basic", errorStatsHandler()))
 	mux.Handle(prefix+"/api/errors/recent", authMiddleware(db, "basic", errorRecentHandler()))
 	mux.Handle(prefix+"/api/errors/top", authMiddleware(db, "basic", errorTopHandler()))
-	mux.Handle(prefix+"/api/errors/health", authMiddleware(db, "basic", errorHealthHandler()))
 	mux.Handle(prefix+"/api/tasks", authMiddleware(db, "basic", tasksHandler()))
 	mux.Handle(prefix+"/api/tasks/start", authMiddleware(db, "basic", startTaskHandler()))
 	mux.Handle(prefix+"/ws/tasks", authMiddleware(db, "basic", tasksWebSocketHandler()))
@@ -224,7 +229,6 @@ func Handler(db *sql.DB) (http.Handler, error) {
 	mux.Handle(prefix+"/api/cache/stats", authMiddleware(db, "basic", cacheStatsHandler()))
 	mux.Handle(prefix+"/api/cache/clear", authMiddleware(db, "admin", cacheClearHandler()))
 	mux.Handle(prefix+"/api/cache/config", authMiddleware(db, "basic", cacheConfigHandler()))
-	mux.Handle(prefix+"/api/cache/health", authMiddleware(db, "basic", cacheHealthHandler()))
 	mux.Handle(prefix+"/api/cache/types/", authMiddleware(db, "admin", cacheTypedOperationsHandler()))
 
 	// Universal tagging system
@@ -241,7 +245,11 @@ func Handler(db *sql.DB) (http.Handler, error) {
 
 	// Language profiles management
 	// Prometheus metrics endpoint (no authentication required for monitoring)
-	mux.Handle(prefix+"/metrics", promhttp.Handler())
+	mux.Handle(prefix+"/metrics", metrics.Provider.Handler())
+
+	// Health endpoints using gcommon/health
+	mux.Handle(prefix+"/health", HealthProvider.Handler())
+	mux.Handle(prefix+"/health/", HealthProvider.Handler())
 
 	fsHandler := spaFileServer(f)
 	mux.Handle(prefix+"/", staticFileMiddleware(http.StripPrefix(prefix+"/", fsHandler)))
@@ -304,9 +312,29 @@ func StartServer(addr string) error {
 		logger.Info("cache system initialized successfully")
 	}
 
+	if err := metrics.Initialize(); err != nil {
+		logger.Warnf("failed to initialize metrics: %v", err)
+	}
+
+	if err := initializeHealth(prefix + "/health"); err != nil {
+		logger.Warnf("failed to initialize health checks: %v", err)
+	}
+
 	h, err := Handler(db)
 	if err != nil {
 		return err
+	}
+
+	if metrics.Provider != nil {
+		if err := metrics.Provider.Start(context.Background()); err != nil {
+			logger.Warnf("metrics start failed: %v", err)
+		}
+	}
+
+	if HealthProvider != nil {
+		if err := HealthProvider.Start(context.Background()); err != nil {
+			logger.Warnf("health checks start failed: %v", err)
+		}
 	}
 
 	// Start periodic cleanup of expired sessions
