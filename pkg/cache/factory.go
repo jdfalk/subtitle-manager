@@ -1,5 +1,5 @@
 // file: pkg/cache/factory.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 123e4567-e89b-12d3-a456-426614174003
 
 package cache
@@ -83,6 +83,16 @@ func (m *Manager) GetProviderSearchResults(ctx context.Context, key string) ([]b
 // SetProviderSearchResults caches provider search results with configured TTL.
 func (m *Manager) SetProviderSearchResults(ctx context.Context, key string, data []byte) error {
 	return m.cache.Set(ctx, "provider:"+key, data, m.config.TTLs.ProviderSearchResults)
+}
+
+// GetSearchResults retrieves cached manual search results.
+func (m *Manager) GetSearchResults(ctx context.Context, key string) ([]byte, error) {
+	return m.cache.Get(ctx, "search:"+key)
+}
+
+// SetSearchResults caches manual search results with configured TTL.
+func (m *Manager) SetSearchResults(ctx context.Context, key string, data []byte) error {
+	return m.cache.Set(ctx, "search:"+key, data, m.config.TTLs.SearchResults)
 }
 
 // GetTMDBMetadata retrieves cached TMDB/OMDb metadata.

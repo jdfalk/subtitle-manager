@@ -1,5 +1,5 @@
 // file: pkg/cache/interface_test.go
-// version: 1.0.0
+// version: 1.0.1
 // guid: 123e4567-e89b-12d3-a456-426614174004
 
 package cache
@@ -43,6 +43,10 @@ func TestDefaultConfig(t *testing.T) {
 
 	if config.TTLs.ProviderSearchResults != 5*time.Minute {
 		t.Errorf("expected provider search results TTL to be 5 minutes, got %v", config.TTLs.ProviderSearchResults)
+	}
+
+	if config.TTLs.SearchResults != 5*time.Minute {
+		t.Errorf("expected search results TTL to be 5 minutes, got %v", config.TTLs.SearchResults)
 	}
 
 	if config.TTLs.TMDBMetadata != 24*time.Hour {

@@ -1,5 +1,5 @@
 // file: pkg/webserver/search.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 7e49aff0-0057-49b4-b507-1a57a5f8a923
 
 package webserver
@@ -505,6 +505,12 @@ func fetchSearchResults(ctx context.Context, req SearchRequest) ([]SearchResult,
 	mgr := GetCacheManager()
 	key := searchCacheKey(req)
 	if mgr != nil {
+		if data, err := mgr.GetSearchResults(ctx, key); err == nil && data != nil {
+			var cached []SearchResult
+			if err := json.Unmarshal(data, &cached); err == nil {
+				return cached, nil
+			}
+		}
 		if data, err := mgr.GetProviderSearchResults(ctx, key); err == nil && data != nil {
 			var cached []SearchResult
 			if err := json.Unmarshal(data, &cached); err == nil {
@@ -519,6 +525,7 @@ func fetchSearchResults(ctx context.Context, req SearchRequest) ([]SearchResult,
 	if mgr != nil {
 		if data, err := json.Marshal(scored); err == nil {
 			mgr.SetProviderSearchResults(ctx, key, data)
+			mgr.SetSearchResults(ctx, key, data)
 		}
 	}
 

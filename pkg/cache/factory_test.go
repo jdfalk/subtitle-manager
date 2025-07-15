@@ -1,5 +1,5 @@
 // file: pkg/cache/factory_test.go
-// version: 1.0.0
+// version: 1.0.1
 // guid: 123e4567-e89b-12d3-a456-426614174006
 
 package cache
@@ -88,6 +88,7 @@ func TestNewManager(t *testing.T) {
 		},
 		TTLs: TTLConfig{
 			ProviderSearchResults: 5 * time.Minute,
+			SearchResults:         5 * time.Minute,
 			TMDBMetadata:          24 * time.Hour,
 			TranslationResults:    0, // permanent
 			UserSessions:          24 * time.Hour,
@@ -115,6 +116,20 @@ func TestNewManager(t *testing.T) {
 	}
 	if string(data) != "provider-data" {
 		t.Errorf("expected 'provider-data', got %s", string(data))
+	}
+
+	// Test manual search results
+	err = manager.SetSearchResults(ctx, "search1", []byte("search-data"))
+	if err != nil {
+		t.Fatalf("failed to set search results: %v", err)
+	}
+
+	data, err = manager.GetSearchResults(ctx, "search1")
+	if err != nil {
+		t.Fatalf("failed to get search results: %v", err)
+	}
+	if string(data) != "search-data" {
+		t.Errorf("expected 'search-data', got %s", string(data))
 	}
 
 	// Test TMDB metadata
@@ -186,6 +201,7 @@ func TestManager_ClearByPrefix(t *testing.T) {
 		},
 		TTLs: TTLConfig{
 			ProviderSearchResults: 5 * time.Minute,
+			SearchResults:         5 * time.Minute,
 			TMDBMetadata:          24 * time.Hour,
 		},
 	}
