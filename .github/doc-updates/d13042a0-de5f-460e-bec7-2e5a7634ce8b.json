@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "Script 'create-github-projects.sh' now verifies GitHub CLI project scopes",
+  "guid": "d13042a0-de5f-460e-bec7-2e5a7634ce8b",
+  "created_at": "2025-07-15T04:01:24Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

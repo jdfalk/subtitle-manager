@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- create-github-projects.sh validates GitHub CLI scopes",
+  "guid": "1e353d9a-4a7b-43e5-a3ba-32f5cbf3c858",
+  "created_at": "2025-07-15T04:01:29Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

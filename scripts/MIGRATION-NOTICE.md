@@ -1,5 +1,5 @@
 <!-- file: scripts/MIGRATION-NOTICE.md -->
-<!-- version: 1.0.0 -->
+<!-- version: 1.0.1 -->
 <!-- guid: 9a8b7c6d-5e4f-3210-9876-fedcba098765 -->
 
 # GitHub Project Scripts Migration Notice
@@ -10,7 +10,7 @@ The GitHub project management scripts previously located in this repository have
 
 ### Old Scripts (REMOVED)
 
-- ❌ `create-github-projects.sh` - **REMOVED**
+- ❌ `create-github-projects.sh` - **REMOVED** (replaced with new wrapper script)
 - ❌ `setup-project-workflows.sh` - **REMOVED**
 - ❌ `manage-project-structure.sh` - **REMOVED**
 - ❌ `github_project_manager.py` - **REMOVED**
@@ -18,6 +18,10 @@ The GitHub project management scripts previously located in this repository have
 ### New Unified Script
 
 ✅ **Use instead:** `ghcommon/scripts/unified_github_project_manager_v2.py`
+
+The repository now provides a lightweight wrapper script
+`scripts/create-github-projects.sh` which verifies your GitHub CLI
+authentication scopes before delegating to the unified project manager.
 
 ## Usage
 
