@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "insert-after",
+  "content": "A helper script `scripts/create-github-projects.sh` automates project board creation for open feature issues.",
+  "guid": "e2eabd0e-2d12-49c9-820b-098249d31780",
+  "created_at": "2025-07-15T04:00:45Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

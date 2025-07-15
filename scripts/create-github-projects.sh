@@ -1,58 +1,73 @@
 #!/bin/bash
 # file: scripts/create-github-projects.sh
-# version: 1.0.0
-# guid: fc4bb6a5-97e2-46fb-a869-55be8644ba34
+# version: 1.0.1
+# guid: e8ac48cd-67d1-49a8-a543-d23656009be8
 
 set -euo pipefail
 
-usage() {
-    cat <<'USAGE'
-Usage: create-github-projects.sh [options]
+# Create GitHub Projects for open feature issues.
+# Requires GitHub CLI with project scopes.
+# Environment variables:
+#   ORG  - GitHub organization (default: jdfalk)
+#   REPO - Repository name (default: subtitle-manager)
 
-Verifies GitHub CLI authentication scopes before calling the unified
-project manager script. Set GH_PROJECT_SCRIPT to override the default
-script location.
-USAGE
+ORG="${ORG:-jdfalk}"
+REPO="${REPO:-subtitle-manager}"
+
+check_requirements() {
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "❌ gh CLI is required" >&2
+    exit 1
+  fi
+
+  if ! gh auth status >/dev/null 2>&1; then
+    echo "❌ gh CLI is not authenticated" >&2
+    exit 1
+  fi
+
+  if ! gh auth status --scopes | grep -q 'project'; then
+    echo "❌ gh CLI lacks project scopes" >&2
+    exit 1
+  fi
 }
 
-REQUIRED_SCOPES=("repo" "project")
+# Check whether project already exists
+project_exists() {
+  local title="$1"
+  gh project list --owner "$ORG" --limit 100 --json title | jq -e ".[] | select(.title==\"$title\")" >/dev/null 2>&1
+}
 
-check_scopes() {
-    if ! command -v gh >/dev/null 2>&1; then
-        echo "❌ GitHub CLI (gh) is not installed." >&2
-        exit 1
-    fi
+create_project_for_issue() {
+  local number="$1"
+  local title="Feature: $2"
 
-    if ! gh auth status >/dev/null 2>&1; then
-        echo "❌ GitHub CLI is not authenticated. Run:\n   gh auth login --scopes repo,project --web" >&2
-        exit 1
-    fi
+  if project_exists "$title"; then
+    echo "⚠️  Project already exists: $title"
+    return
+  fi
 
-    local scopes
-    scopes=$(gh auth status -t 2>/dev/null | grep -i 'scopes' | cut -d ':' -f2- | tr -d ' ')
+  echo "Creating project: $title"
+  local pj_json
+  pj_json=$(gh project create --title "$title" --owner "$ORG" --format json)
+  local pj_number
+  pj_number=$(echo "$pj_json" | jq -r '.number')
+  local issue_id
+  issue_id=$(gh issue view "$number" --repo "$ORG/$REPO" --json id -q '.id')
+  gh project item-add "$pj_number" --owner "$ORG" --content-id "$issue_id" >/dev/null
+}
 
-    for scope in "${REQUIRED_SCOPES[@]}"; do
-        if [[ "$scopes" != *"$scope"* ]]; then
-            echo "❌ Missing '$scope' scope. Re-authenticate with:\n   gh auth login --scopes repo,project --web" >&2
-            exit 1
-        fi
+main() {
+  check_requirements
+
+  echo "📋 Fetching open feature issues from $ORG/$REPO"
+  gh issue list --repo "$ORG/$REPO" --label feature --state open --json number,title | \
+    jq -c '.[]' | while read -r issue; do
+      number=$(echo "$issue" | jq -r '.number')
+      title=$(echo "$issue" | jq -r '.title')
+      create_project_for_issue "$number" "$title"
+      sleep 1
     done
+  echo "✅ Project creation complete"
 }
 
-run_project_manager() {
-    local script="${GH_PROJECT_SCRIPT:-../ghcommon/scripts/unified_github_project_manager_v2.py}"
-    if [[ ! -f "$script" ]]; then
-        echo "❌ Unified project manager script not found at $script" >&2
-        exit 1
-    fi
-    python3 "$script" "$@"
-}
-
-if [[ "${1:-}" == "--help" ]]; then
-    usage
-    exit 0
-fi
-
-check_scopes
-run_project_manager "$@"
-
+main "$@"

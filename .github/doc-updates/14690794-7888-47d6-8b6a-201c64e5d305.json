@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-complete",
+  "content": "🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh",
+  "guid": "14690794-7888-47d6-8b6a-201c64e5d305",
+  "created_at": "2025-07-15T04:01:07Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
