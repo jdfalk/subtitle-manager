@@ -284,11 +284,12 @@ func initSchema(db *sql.DB) error {
 		return err
 	}
 
-	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_profile_assignments (
-		media_id TEXT PRIMARY KEY,
-		profile_id TEXT NOT NULL,
-		created_at TIMESTAMP NOT NULL
-	)`); err != nil {
+	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS media_profiles (
+               media_id TEXT PRIMARY KEY,
+               profile_id TEXT NOT NULL,
+               created_at TIMESTAMP NOT NULL,
+               FOREIGN KEY (profile_id) REFERENCES language_profiles(id) ON DELETE CASCADE
+       )`); err != nil {
 		return err
 	}
 
