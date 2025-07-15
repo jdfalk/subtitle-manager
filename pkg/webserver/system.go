@@ -1,3 +1,7 @@
+// file: pkg/webserver/system.go
+// version: 1.0.1
+// guid: 37c23ec8-b8b9-4086-be5c-8058fee3fd54
+
 package webserver
 
 import (
@@ -12,6 +16,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/jdfalk/gcommon/pkg/health"
 	"github.com/jdfalk/subtitle-manager/pkg/backups"
 	"github.com/jdfalk/subtitle-manager/pkg/errors"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
@@ -227,6 +232,42 @@ func errorTopHandler() http.Handler {
 
 // errorHealthHandler returns overall error health status.
 func errorHealthHandler() http.Handler {
-	dashboard := errors.GetDashboard()
-	return dashboard.HealthHandler()
+	cfg := health.DefaultConfig()
+	cfg.Endpoint = "/api/errors/health"
+	cfg.EnableLivenessEndpoint = false
+	cfg.EnableReadinessEndpoint = false
+
+	provider, _ := health.NewProvider(cfg)
+
+	provider.Register("errors", health.NewSimpleCheck("errors", func(ctx context.Context) (health.Result, error) {
+		stats := errors.GlobalTracker.GetStats()
+
+		var totalErrors int
+		var criticalErrors int
+		recentThreshold := time.Now().Add(-5 * time.Minute)
+
+		for _, stat := range stats {
+			totalErrors += stat.Count
+			if stat.LastOccurred.After(recentThreshold) && !stat.Retryable {
+				criticalErrors += stat.Count
+			}
+		}
+
+		status := health.StatusUp
+		if criticalErrors > 10 {
+			status = health.StatusDown
+		} else if criticalErrors > 5 {
+			status = health.StatusDegraded
+		}
+
+		details := map[string]interface{}{
+			"total_errors":           totalErrors,
+			"critical_errors_recent": criticalErrors,
+			"unique_error_types":     len(stats),
+		}
+
+		return health.NewResult(status).WithDetails(details), nil
+	}, health.WithType(health.TypeReadiness)))
+
+	return provider.Handler()
 }

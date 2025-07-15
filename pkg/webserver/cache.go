@@ -1,14 +1,17 @@
 // file: pkg/webserver/cache.go
-// version: 1.0.0
+// version: 1.0.1
 // guid: 123e4567-e89b-12d3-a456-426614174010
 
 package webserver
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/jdfalk/gcommon/pkg/health"
 	"github.com/jdfalk/subtitle-manager/pkg/cache"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
@@ -211,84 +214,57 @@ func cacheTypedOperationsHandler() http.Handler {
 
 // cacheHealthHandler checks cache health and connectivity.
 func cacheHealthHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	cfg := health.DefaultConfig()
+	cfg.Endpoint = "/api/cache/health"
+	cfg.EnableLivenessEndpoint = false
+	cfg.EnableReadinessEndpoint = false
+
+	provider, _ := health.NewProvider(cfg)
+
+	provider.Register("cache", health.NewSimpleCheck("cache", func(ctx context.Context) (health.Result, error) {
 		logger := logging.GetLogger("webserver.cache")
 
-		if r.Method != http.MethodGet {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-
 		if cacheManager == nil {
-			http.Error(w, "Cache not initialized", http.StatusInternalServerError)
-			return
+			return health.NewResult(health.StatusDown).
+				WithError(fmt.Errorf("cache not initialized")), nil
 		}
 
-		// Test cache connectivity by doing a simple set/get operation
 		testKey := "health-check"
 		testValue := []byte("ok")
 
-		err := cacheManager.SetAPIResponse(r.Context(), testKey, testValue)
-		if err != nil {
+		if err := cacheManager.SetAPIResponse(ctx, testKey, testValue); err != nil {
 			logger.Errorf("cache health check failed (set): %v", err)
-			response := map[string]interface{}{
-				"status":  "unhealthy",
-				"message": "Failed to write to cache",
-				"error":   err.Error(),
-			}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusServiceUnavailable)
-			json.NewEncoder(w).Encode(response)
-			return
+			return health.NewResult(health.StatusDown).
+				WithError(fmt.Errorf("failed to write to cache: %w", err)), nil
 		}
 
-		retrievedValue, err := cacheManager.GetAPIResponse(r.Context(), testKey)
+		retrievedValue, err := cacheManager.GetAPIResponse(ctx, testKey)
 		if err != nil {
 			logger.Errorf("cache health check failed (get): %v", err)
-			response := map[string]interface{}{
-				"status":  "unhealthy",
-				"message": "Failed to read from cache",
-				"error":   err.Error(),
-			}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusServiceUnavailable)
-			json.NewEncoder(w).Encode(response)
-			return
+			return health.NewResult(health.StatusDown).
+				WithError(fmt.Errorf("failed to read from cache: %w", err)), nil
 		}
 
 		if string(retrievedValue) != string(testValue) {
 			logger.Error("cache health check failed: value mismatch")
-			response := map[string]interface{}{
-				"status":  "unhealthy",
-				"message": "Cache value mismatch",
-			}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusServiceUnavailable)
-			json.NewEncoder(w).Encode(response)
-			return
+			return health.NewResult(health.StatusDown).
+				WithError(fmt.Errorf("cache value mismatch")), nil
 		}
 
-		// Clean up test data
-		cacheManager.Delete(r.Context(), "api:"+testKey)
+		cacheManager.Delete(ctx, "api:"+testKey)
 
-		// Get stats for additional health info
-		stats, err := cacheManager.Stats(r.Context())
+		stats, err := cacheManager.Stats(ctx)
 		if err != nil {
 			logger.Warnf("failed to get stats for health check: %v", err)
 		}
 
-		response := map[string]interface{}{
-			"status":  "healthy",
-			"message": "Cache is operational",
-		}
-
+		result := health.NewResult(health.StatusUp).
+			WithDetails(map[string]interface{}{"message": "Cache is operational"})
 		if stats != nil {
-			response["stats"] = stats
+			result = result.WithDetails(map[string]interface{}{"stats": stats})
 		}
+		return result, nil
+	}, health.WithType(health.TypeReadiness)))
 
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(response); err != nil {
-			logger.Errorf("failed to encode cache health response: %v", err)
-		}
-	})
+	return provider.Handler()
 }

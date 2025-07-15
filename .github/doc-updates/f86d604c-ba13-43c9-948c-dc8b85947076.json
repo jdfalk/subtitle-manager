@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-complete",
+  "content": "Replace existing health endpoints with gcommon/health handlers",
+  "guid": "f86d604c-ba13-43c9-948c-dc8b85947076",
+  "created_at": "2025-07-15T04:09:58Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
