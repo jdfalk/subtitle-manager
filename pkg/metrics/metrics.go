@@ -1,68 +1,99 @@
 //go:build !gcommonmetrics
 
 // file: pkg/metrics/metrics.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
 
 package metrics
 
 import (
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
+	gmetrics "github.com/jdfalk/gcommon/pkg/metrics"
 )
 
 var (
-	// ProviderRequests counts the number of requests made to subtitle providers
-	ProviderRequests = promauto.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "subtitle_manager_provider_requests_total",
-			Help: "The total number of requests made to subtitle providers",
-		},
-		[]string{"provider", "status"},
-	)
+	// Provider is the active metrics provider.
+	Provider gmetrics.Provider
 
-	// TranslationRequests counts the number of translation requests processed
-	TranslationRequests = promauto.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "subtitle_manager_translation_requests_total",
-			Help: "The total number of translation requests processed",
-		},
-		[]string{"service", "target_language", "status"},
-	)
+	// ProviderRequests counts the number of requests made to subtitle providers.
+	ProviderRequests gmetrics.Counter
 
-	// APIRequests counts the number of API requests by endpoint
-	APIRequests = promauto.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "subtitle_manager_api_requests_total",
-			Help: "The total number of API requests by endpoint",
-		},
-		[]string{"endpoint", "method", "status_code"},
-	)
+	// TranslationRequests counts the number of translation requests processed.
+	TranslationRequests gmetrics.Counter
 
-	// RequestDuration tracks the duration of API requests
-	RequestDuration = promauto.NewHistogramVec(
-		prometheus.HistogramOpts{
-			Name:    "subtitle_manager_request_duration_seconds",
-			Help:    "The duration of API requests in seconds",
-			Buckets: prometheus.DefBuckets,
-		},
-		[]string{"endpoint", "method"},
-	)
+	// APIRequests counts the number of API requests by endpoint.
+	APIRequests gmetrics.Counter
 
-	// ActiveSessions tracks the number of active user sessions
-	ActiveSessions = promauto.NewGauge(
-		prometheus.GaugeOpts{
-			Name: "subtitle_manager_active_sessions",
-			Help: "The number of active user sessions",
-		},
-	)
+	// RequestDuration tracks the duration of API requests.
+	RequestDuration gmetrics.Histogram
 
-	// SubtitleDownloads counts successful subtitle downloads
-	SubtitleDownloads = promauto.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "subtitle_manager_subtitle_downloads_total",
-			Help: "The total number of subtitle downloads",
-		},
-		[]string{"provider", "language"},
-	)
+	// ActiveSessions tracks the number of active user sessions.
+	ActiveSessions gmetrics.Gauge
+
+	// SubtitleDownloads counts successful subtitle downloads.
+	SubtitleDownloads gmetrics.Counter
 )
+
+// Initialize configures the metrics provider and registers application metrics.
+func Initialize() error {
+	if Provider != nil {
+		return nil
+	}
+
+	cfg := gmetrics.Config{
+		Enabled:   true,
+		Provider:  "prometheus",
+		Namespace: "subtitle_manager",
+	}
+
+	p, err := gmetrics.NewProvider(cfg)
+	if err != nil {
+		return err
+	}
+	Provider = p
+
+	ProviderRequests = p.Counter("provider_requests_total",
+		gmetrics.WithDescription("The total number of requests made to subtitle providers"),
+		gmetrics.WithTags(gmetrics.Tag{Key: "provider"}, gmetrics.Tag{Key: "status"}),
+	)
+
+	TranslationRequests = p.Counter("translation_requests_total",
+		gmetrics.WithDescription("The total number of translation requests processed"),
+		gmetrics.WithTags(
+			gmetrics.Tag{Key: "service"},
+			gmetrics.Tag{Key: "target_language"},
+			gmetrics.Tag{Key: "status"},
+		),
+	)
+
+	APIRequests = p.Counter("api_requests_total",
+		gmetrics.WithDescription("The total number of API requests by endpoint"),
+		gmetrics.WithTags(
+			gmetrics.Tag{Key: "endpoint"},
+			gmetrics.Tag{Key: "method"},
+			gmetrics.Tag{Key: "status_code"},
+		),
+	)
+
+	RequestDuration = p.Histogram("request_duration_seconds",
+		gmetrics.WithDescription("The duration of API requests in seconds"),
+		gmetrics.WithBuckets(gmetrics.DefaultBuckets),
+		gmetrics.WithTags(
+			gmetrics.Tag{Key: "endpoint"},
+			gmetrics.Tag{Key: "method"},
+		),
+	)
+
+	ActiveSessions = p.Gauge("active_sessions",
+		gmetrics.WithDescription("The number of active user sessions"),
+	)
+
+	SubtitleDownloads = p.Counter("subtitle_downloads_total",
+		gmetrics.WithDescription("The total number of subtitle downloads"),
+		gmetrics.WithTags(
+			gmetrics.Tag{Key: "provider"},
+			gmetrics.Tag{Key: "language"},
+		),
+	)
+
+	return nil
+}
