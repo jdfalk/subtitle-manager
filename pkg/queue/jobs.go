@@ -7,7 +7,9 @@ import (
 	"context"
 	"fmt"
 
+	jobpb "github.com/jdfalk/subtitle-manager/pkg/jobpb"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 // JobType represents the type of translation job.
@@ -30,6 +32,8 @@ type Job interface {
 	Execute(ctx context.Context) error
 	// Description returns a human-readable description of the job.
 	Description() string
+	// QueueMessage converts the job to a gcommon queue message.
+	QueueMessage() (*QueueMessage, error)
 }
 
 // SingleFileJob represents a job to translate a single subtitle file.
@@ -72,6 +76,25 @@ func (j *SingleFileJob) Description() string {
 	return fmt.Sprintf("Translate %s to %s (%s)", j.InputPath, j.Language, j.OutputPath)
 }
 
+// QueueMessage converts the job to a gcommon queue message.
+func (j *SingleFileJob) QueueMessage() (*QueueMessage, error) {
+	job := &jobpb.TranslationJob{
+		InputPaths: []string{j.InputPath},
+		OutputPath: j.OutputPath,
+		Language:   j.Language,
+		Service:    j.Service,
+		GoogleKey:  j.GoogleKey,
+		GptKey:     j.GPTKey,
+		GrpcAddr:   j.GRPCAddr,
+		Workers:    1,
+	}
+	anyMsg, err := anypb.New(job)
+	if err != nil {
+		return nil, err
+	}
+	return &QueueMessage{Id: j.JobID, Body: anyMsg}, nil
+}
+
 // BatchFilesJob represents a job to translate multiple subtitle files.
 type BatchFilesJob struct {
 	JobID      string
@@ -110,4 +133,22 @@ func (j *BatchFilesJob) Execute(ctx context.Context) error {
 // Description returns a description of the job.
 func (j *BatchFilesJob) Description() string {
 	return fmt.Sprintf("Translate %d files to %s", len(j.InputPaths), j.Language)
+}
+
+// QueueMessage converts the batch job to a gcommon queue message.
+func (j *BatchFilesJob) QueueMessage() (*QueueMessage, error) {
+	job := &jobpb.TranslationJob{
+		InputPaths: j.InputPaths,
+		Language:   j.Language,
+		Service:    j.Service,
+		GoogleKey:  j.GoogleKey,
+		GptKey:     j.GPTKey,
+		GrpcAddr:   j.GRPCAddr,
+		Workers:    int32(j.Workers),
+	}
+	anyMsg, err := anypb.New(job)
+	if err != nil {
+		return nil, err
+	}
+	return &QueueMessage{Id: j.JobID, Body: anyMsg}, nil
 }

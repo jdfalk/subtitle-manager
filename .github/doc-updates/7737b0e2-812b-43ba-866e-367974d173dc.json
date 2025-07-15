@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "Adopted gcommon queue for asynchronous job processing",
+  "guid": "7737b0e2-812b-43ba-866e-367974d173dc",
+  "created_at": "2025-07-15T04:09:50Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
