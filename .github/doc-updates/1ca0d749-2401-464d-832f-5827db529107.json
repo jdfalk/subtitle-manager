@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "Added unit test documentation for /api/sync/batch endpoint",
+  "guid": "1ca0d749-2401-464d-832f-5827db529107",
+  "created_at": "2025-07-15T04:06:51Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

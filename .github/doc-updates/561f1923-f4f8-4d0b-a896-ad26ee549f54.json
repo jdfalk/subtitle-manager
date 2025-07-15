@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added unit test for /api/sync/batch endpoint",
+  "guid": "561f1923-f4f8-4d0b-a896-ad26ee549f54",
+  "created_at": "2025-07-15T04:06:38Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
