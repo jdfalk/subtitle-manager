@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added structured logging for download API",
+  "guid": "01fdaa5d-e62e-494e-94a5-3eb85c87df91",
+  "created_at": "2025-07-15T04:01:42Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

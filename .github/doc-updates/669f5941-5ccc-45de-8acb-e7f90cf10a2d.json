@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Add tests for structured logging",
+  "guid": "669f5941-5ccc-45de-8acb-e7f90cf10a2d",
+  "created_at": "2025-07-15T04:01:57Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
