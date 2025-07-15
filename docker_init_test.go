@@ -161,6 +161,7 @@ fi`
 		"WHISPER_CONTAINER_NAME=test-whisper-fail",
 		"WHISPER_DEVICE=cpu",
 		"WHISPER_HEALTH_TIMEOUT=0", // Skip health check in tests
+		"WHISPER_MAX_RETRIES=2",
 	)
 
 	cmd := exec.Command("sh", "docker-init.sh")
@@ -175,10 +176,10 @@ fi`
 		t.Fatalf("read docker log: %v", err)
 	}
 
-	// Should have attempted exactly 3 times
+	// Should have attempted exactly 2 times
 	runCount := strings.Count(string(logData), "run -d --name test-whisper-fail")
-	if runCount != 3 {
-		t.Fatalf("expected exactly 3 docker run attempts, got %d: %s", runCount, string(logData))
+	if runCount != 2 {
+		t.Fatalf("expected exactly 2 docker run attempts, got %d: %s", runCount, string(logData))
 	}
 }
 

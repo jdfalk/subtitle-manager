@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "insert-after",
+  "content": "- `WHISPER_MAX_RETRIES` - Startup attempts before failure (default `3`)",
+  "guid": "3d3d86ea-fbbd-4abc-9eda-fae7abe5bfdb",
+  "created_at": "2025-07-15T04:04:55Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
