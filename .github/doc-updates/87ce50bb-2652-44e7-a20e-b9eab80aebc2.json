@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Add tests for DirectoryChooser directory detection",
+  "guid": "87ce50bb-2652-44e7-a20e-b9eab80aebc2",
+  "created_at": "2025-07-15T04:07:15Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

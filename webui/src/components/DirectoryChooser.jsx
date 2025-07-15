@@ -50,7 +50,9 @@ export default function DirectoryChooser({ open, onClose, onSelect }) {
           const data = await resp.json();
           const directories =
             data.items
-              ?.filter(item => item.isDirectory)
+              ?.filter(
+                item => item.isDirectory || item.type === 'directory'
+              )
               .map(item => item.path) || [];
           setDirs(directories);
         } else {
