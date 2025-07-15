@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "Added note about media_profiles table for SQLite initialization",
+  "guid": "291d69bc-1c20-4a6b-ad1a-7839e15b1210",
+  "created_at": "2025-07-15T03:54:46Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Fix SQLite initialization",
+  "body": "Add missing media_profiles table to schema so application starts correctly.",
+  "labels": ["bug"],
+  "guid": "77b2d056-2e48-4234-8e17-c9aed8da7ee5",
+  "legacy_guid": "create-fix-sqlite-initialization-2025-07-15"
+}
