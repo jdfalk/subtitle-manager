@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "### Metrics\\n\\nThis release switches to the shared gcommon metrics module. Prometheus scraping works out of the box using /metrics.",
+  "guid": "e82e850c-53ce-4176-929a-5ce03bab711f",
+  "created_at": "2025-07-15T04:09:00Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

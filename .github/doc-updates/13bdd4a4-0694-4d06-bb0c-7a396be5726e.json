@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "append",
+  "content": "- ✅ Integrated gcommon/metrics for Prometheus instrumentation",
+  "guid": "13bdd4a4-0694-4d06-bb0c-7a396be5726e",
+  "created_at": "2025-07-15T04:08:57Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
