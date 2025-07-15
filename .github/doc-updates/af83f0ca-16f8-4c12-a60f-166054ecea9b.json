@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Fixed\n\n- Deduplicated persistent flag definitions in root command to prevent test panics",
+  "guid": "af83f0ca-16f8-4c12-a60f-166054ecea9b",
+  "created_at": "2025-07-15T04:05:19Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

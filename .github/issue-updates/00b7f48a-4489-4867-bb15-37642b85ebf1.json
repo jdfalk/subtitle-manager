@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Deduplicate Persistent Flags",
+  "body": "Remove repeated persistent flag definitions in the root command to avoid panics",
+  "labels": ["bug"],
+  "guid": "00b7f48a-4489-4867-bb15-37642b85ebf1",
+  "legacy_guid": "create-deduplicate-persistent-flags-2025-07-15"
+}

@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Verify root command flags are initialized only once",
+  "guid": "082ab1c3-8864-4c7a-9cff-f6ca884c4ba2",
+  "created_at": "2025-07-15T04:05:45Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

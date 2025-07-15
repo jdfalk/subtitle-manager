@@ -1,3 +1,6 @@
+// file: cmd/root.go
+// version: 1.0.2
+// guid: 537af48f-4b60-44b5-a4a1-76a2616b9ccb
 // Package cmd implements the CLI commands for subtitle-manager.
 // It provides the root command and subcommands for all user-facing operations.
 //
@@ -27,7 +30,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
 	"github.com/jdfalk/subtitle-manager/pkg/captcha"
@@ -79,7 +81,7 @@ func GetDatabaseBackend() string {
 var rootInit sync.Once
 
 func init() {
-	if pflag.CommandLine.Lookup("s3-region") != nil {
+	if rootCmd.PersistentFlags().Lookup("s3-region") != nil {
 		return
 	}
 	rootInit.Do(func() {
