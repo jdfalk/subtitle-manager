@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Validate codex-rebase.sh conflict handling",
+  "body": "Tested codex-rebase.sh automatic conflict resolution and verified proper commit and force push.",
+  "labels": ["automation", "testing"],
+  "guid": "974a2c7f-6db1-496b-a99c-9d3d50e58d78",
+  "legacy_guid": "create-validate-codex-rebase-sh-conflict-handling-2025-07-15"
+}
