@@ -1,5 +1,5 @@
 // file: pkg/cache/interface.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 123e4567-e89b-12d3-a456-426614174000
 
 package cache
@@ -140,6 +140,9 @@ type TTLConfig struct {
 	// ProviderSearchResults caches subtitle provider search results.
 	ProviderSearchResults time.Duration `json:"provider_search_results" yaml:"provider_search_results" mapstructure:"provider_search_results"`
 
+	// SearchResults caches manual search results.
+	SearchResults time.Duration `json:"search_results" yaml:"search_results" mapstructure:"search_results"`
+
 	// TMDBMetadata caches TMDB/OMDb metadata.
 	TMDBMetadata time.Duration `json:"tmdb_metadata" yaml:"tmdb_metadata" mapstructure:"tmdb_metadata"`
 
@@ -175,6 +178,7 @@ func DefaultConfig() *Config {
 		},
 		TTLs: TTLConfig{
 			ProviderSearchResults: 5 * time.Minute,
+			SearchResults:         5 * time.Minute,
 			TMDBMetadata:          24 * time.Hour,
 			TranslationResults:    0, // permanent
 			UserSessions:          24 * time.Hour,

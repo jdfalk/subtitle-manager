@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Cache manual search results",
+  "body": "Add caching layer for manual search results to improve repeated query performance.",
+  "labels": ["enhancement", "backend"],
+  "guid": "5715c6ac-9771-4692-8d7f-d2bb6aec0a99",
+  "legacy_guid": "create-cache-manual-search-results-2025-07-15"
+}

@@ -1,5 +1,5 @@
 // file: pkg/cache/config_test.go
-// version: 1.0.0
+// version: 1.0.1
 // guid: 123e4567-e89b-12d3-a456-426614174009
 
 package cache
@@ -32,6 +32,7 @@ func TestConfigFromViper(t *testing.T) {
 	v.Set("cache.redis.read_timeout", "5s")
 	v.Set("cache.redis.write_timeout", "5s")
 	v.Set("cache.ttls.provider_search_results", "10m")
+	v.Set("cache.ttls.search_results", "10m")
 	v.Set("cache.ttls.tmdb_metadata", "48h")
 	v.Set("cache.ttls.translation_results", "1h")
 	v.Set("cache.ttls.user_sessions", "12h")
@@ -121,6 +122,10 @@ func TestConfigFromViper(t *testing.T) {
 		t.Errorf("expected provider search results TTL 10m, got %v", config.TTLs.ProviderSearchResults)
 	}
 
+	if config.TTLs.SearchResults != 10*time.Minute {
+		t.Errorf("expected search results TTL 10m, got %v", config.TTLs.SearchResults)
+	}
+
 	if config.TTLs.TMDBMetadata != 48*time.Hour {
 		t.Errorf("expected TMDB metadata TTL 48h, got %v", config.TTLs.TMDBMetadata)
 	}
@@ -187,6 +192,7 @@ func TestConfigFromViper_InvalidDurations(t *testing.T) {
 	v.Set("cache.memory.cleanup_interval", "not-a-duration")
 	v.Set("cache.redis.dial_timeout", "bad-timeout")
 	v.Set("cache.ttls.provider_search_results", "malformed")
+	v.Set("cache.ttls.search_results", "bad")
 
 	// Replace the global viper instance temporarily
 	originalViper := viper.GetViper()
@@ -224,5 +230,9 @@ func TestConfigFromViper_InvalidDurations(t *testing.T) {
 
 	if config.TTLs.ProviderSearchResults != 5*time.Minute {
 		t.Errorf("expected fallback provider search results TTL 5m, got %v", config.TTLs.ProviderSearchResults)
+	}
+
+	if config.TTLs.SearchResults != 5*time.Minute {
+		t.Errorf("expected fallback search results TTL 5m, got %v", config.TTLs.SearchResults)
 	}
 }

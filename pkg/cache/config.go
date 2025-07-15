@@ -1,5 +1,5 @@
 // file: pkg/cache/config.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 123e4567-e89b-12d3-a456-426614174008
 
 package cache
@@ -102,6 +102,14 @@ func ConfigFromViper() (*Config, error) {
 			config.TTLs.ProviderSearchResults = duration
 		} else {
 			config.TTLs.ProviderSearchResults = 5 * time.Minute // fallback
+		}
+	}
+
+	if searchTTLStr := viper.GetString("cache.ttls.search_results"); searchTTLStr != "" {
+		if duration, err := time.ParseDuration(searchTTLStr); err == nil {
+			config.TTLs.SearchResults = duration
+		} else {
+			config.TTLs.SearchResults = 5 * time.Minute // fallback
 		}
 	}
 
