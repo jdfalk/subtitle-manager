@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Add regression test for sync batch endpoint",
+  "guid": "6896e188-49c1-4cd6-acd2-4879f3c2e32c",
+  "created_at": "2025-07-15T04:06:44Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
