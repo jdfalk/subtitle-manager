@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Document monitor autosync usage",
+  "guid": "d78bf185-ffc7-4b60-86b2-0b161f8c7f4c",
+  "created_at": "2025-07-15T04:03:15Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
