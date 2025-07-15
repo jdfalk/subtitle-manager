@@ -179,7 +179,7 @@ export default function Dashboard({ backendAvailable = true }) {
         const data =
           typeof resp.json === 'function' ? await resp.json() : { items: [] };
         const dirs = (data.items || [])
-          .filter(item => item.isDirectory)
+          .filter(item => item.isDirectory || item.type === 'directory')
           .map(item => item.path)
           .filter(p => p.startsWith(prefix));
         setSuggestions(dirs);

@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "Updated DirectoryChooser to show folders",
+  "guid": "746c340c-86e9-4ddc-b0b2-5cc27c192c3d",
+  "created_at": "2025-07-15T04:07:07Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

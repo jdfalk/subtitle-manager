@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Fixed\n\n- Handle type field when displaying directories",
+  "guid": "402ca0a6-38d1-46e0-a076-397a71cbe970",
+  "created_at": "2025-07-15T04:07:11Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
