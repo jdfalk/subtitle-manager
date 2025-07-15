@@ -41,6 +41,10 @@ func (m *mockJob) Execute(ctx context.Context) error {
 	return nil
 }
 
+func (m *mockJob) QueueMessage() (*QueueMessage, error) {
+	return &QueueMessage{Id: m.id}, nil
+}
+
 func TestNewQueue(t *testing.T) {
 	q := NewQueue(5)
 	assert.NotNil(t, q)

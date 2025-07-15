@@ -1,4 +1,4 @@
-# file: Makefile
+	# file: Makefile
 # Makefile for Subtitle Manager - Comprehensive build automation
 
 # Project Configuration
@@ -470,7 +470,7 @@ docker-benchmark:
 .PHONY: proto-gen
 proto-gen: ## Generate protobuf code
 	@echo "$(COLOR_BLUE)Generating protobuf code...$(COLOR_RESET)"
-	cd $(PROTO_DIR) && $(PROTOC) --go_out=../pkg/translatorpb --go-grpc_out=../pkg/translatorpb translator.proto
+	cd $(PROTO_DIR) && $(PROTOC) --go_out='paths=source_relative:../pkg/jobpb' queue_job.proto
 	@echo "$(COLOR_GREEN)✓ Protobuf code generated$(COLOR_RESET)"
 
 #

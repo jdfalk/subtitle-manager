@@ -105,9 +105,14 @@ func (q *Queue) Add(job Job) (string, error) {
 		return "", fmt.Errorf("queue is not running")
 	}
 
+	msg, err := job.QueueMessage()
+	if err != nil {
+		return "", fmt.Errorf("marshal job: %w", err)
+	}
+
 	select {
 	case q.jobs <- job:
-		q.logger.Infof("Queued job %s: %s", job.ID(), job.Description())
+		q.logger.WithField("queue_message", msg).Infof("Queued job %s: %s", job.ID(), job.Description())
 		return job.ID(), nil
 	default:
 		return "", fmt.Errorf("queue is full")
