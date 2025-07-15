@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Automate GitHub project board creation",
+  "body": "Implement create-github-projects.sh to generate boards for open feature issues",
+  "labels": ["automation", "ci"],
+  "guid": "9665a88f-6a66-4f44-bc53-c7fc51e5e3ca",
+  "legacy_guid": "create-automate-github-project-board-creation-2025-07-15"
+}

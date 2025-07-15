@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added create-github-projects.sh to automate project board creation",
+  "guid": "9bf2e90f-9912-42dc-94b1-5abd118b9344",
+  "created_at": "2025-07-15T03:59:35Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
