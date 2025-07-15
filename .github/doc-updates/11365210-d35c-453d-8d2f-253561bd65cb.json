@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "- [ ] 🟡 **Search**: Add integration tests for cached provider results",
+  "guid": "11365210-d35c-453d-8d2f-253561bd65cb",
+  "created_at": "2025-07-15T04:10:07Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

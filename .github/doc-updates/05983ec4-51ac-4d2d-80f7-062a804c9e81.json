@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Implement provider fallback logic for failed searches",
+  "guid": "05983ec4-51ac-4d2d-80f7-062a804c9e81",
+  "created_at": "2025-07-15T12:15:42Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

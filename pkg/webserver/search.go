@@ -1,5 +1,5 @@
 // file: pkg/webserver/search.go
-// version: 1.1.0
+// version: 1.1.1
 // guid: 7e49aff0-0057-49b4-b507-1a57a5f8a923
 
 package webserver
@@ -21,6 +21,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"go.uber.org/multierr"
 
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
@@ -229,10 +231,9 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Complete implementation for https://github.com/jdfalk/subtitle-manager/issues/36
-	// - Add more robust error handling, logging, and test coverage
-	// - Consider caching, rate limiting, and provider fallback logic
-	// - Optimize parallel search and scoring for large provider sets
+	// Search is executed concurrently across providers with caching
+	// and aggregated error handling. Results are scored and sorted
+	// before being returned to the client.
 
 	scoredResults, err := fetchSearchResults(r.Context(), req)
 	if err != nil {
@@ -338,64 +339,65 @@ func handleSearchQuery(w http.ResponseWriter, r *http.Request) {
 }
 
 // performParallelSearch executes search across multiple providers concurrently
-func performParallelSearch(ctx context.Context, req SearchRequest) []SearchResult {
-	var wg sync.WaitGroup
-	resultsChan := make(chan []SearchResult, len(req.Providers))
+func performParallelSearch(ctx context.Context, req SearchRequest) ([]SearchResult, []error) {
+	var (
+		wg      sync.WaitGroup
+		mu      sync.Mutex
+		results []SearchResult
+		errs    []error
+	)
 
-	// Search each provider in parallel
 	for _, providerName := range req.Providers {
 		wg.Add(1)
-		go func(name string) {
+		name := providerName
+		go func() {
 			defer wg.Done()
 
 			provider, err := providers.Get(name, "")
 			if err != nil {
+				mu.Lock()
+				errs = append(errs, fmt.Errorf("get provider %s: %w", name, err))
+				mu.Unlock()
 				return
 			}
 
-			// Check if provider supports search
 			searcher, ok := provider.(providers.Searcher)
 			if !ok {
+				mu.Lock()
+				errs = append(errs, fmt.Errorf("provider %s does not support search", name))
+				mu.Unlock()
 				return
 			}
 
 			urls, err := searcher.Search(ctx, req.MediaPath, req.Language)
 			if err != nil {
+				mu.Lock()
+				errs = append(errs, fmt.Errorf("provider %s search error: %w", name, err))
+				mu.Unlock()
 				return
 			}
 
-			// Convert URLs to SearchResult objects
-			results := make([]SearchResult, 0, len(urls))
+			local := make([]SearchResult, len(urls))
 			for i, url := range urls {
-				result := SearchResult{
+				local[i] = SearchResult{
 					ID:          fmt.Sprintf("%s_%d", name, i),
 					Provider:    name,
 					Name:        extractNameFromURL(url),
 					Language:    req.Language,
 					DownloadURL: url,
 					PreviewURL:  fmt.Sprintf("/api/search/preview?url=%s", url),
-					Score:       0.5, // Default score, will be calculated later
+					Score:       0.5,
 				}
-				results = append(results, result)
 			}
 
-			resultsChan <- results
-		}(providerName)
+			mu.Lock()
+			results = append(results, local...)
+			mu.Unlock()
+		}()
 	}
 
-	// Close channel when all goroutines complete
-	go func() {
-		wg.Wait()
-		close(resultsChan)
-	}()
-
-	// Collect all results
-	var allResults []SearchResult
-	for results := range resultsChan {
-		allResults = append(allResults, results...)
-	}
-
-	return allResults
+	wg.Wait()
+	return results, errs
 }
 
 // calculateScores assigns relevance scores to search results
@@ -502,8 +504,10 @@ func extractNameFromURL(url string) string {
 
 // fetchSearchResults returns scored search results, using cache when available.
 func fetchSearchResults(ctx context.Context, req SearchRequest) ([]SearchResult, error) {
+	logger := logging.GetLogger("webserver.search")
 	mgr := GetCacheManager()
 	key := searchCacheKey(req)
+
 	if mgr != nil {
 		if data, err := mgr.GetSearchResults(ctx, key); err == nil && data != nil {
 			var cached []SearchResult
@@ -514,19 +518,28 @@ func fetchSearchResults(ctx context.Context, req SearchRequest) ([]SearchResult,
 		if data, err := mgr.GetProviderSearchResults(ctx, key); err == nil && data != nil {
 			var cached []SearchResult
 			if err := json.Unmarshal(data, &cached); err == nil {
+				logger.Debugf("cache hit for %s", key)
 				return cached, nil
 			}
+			logger.Warnf("failed to unmarshal cached results: %v", err)
 		}
 	}
 
-	results := performParallelSearch(ctx, req)
+	results, errs := performParallelSearch(ctx, req)
 	scored := calculateScores(results, req)
 
 	if mgr != nil {
 		if data, err := json.Marshal(scored); err == nil {
-			mgr.SetProviderSearchResults(ctx, key, data)
-			mgr.SetSearchResults(ctx, key, data)
+			if err := mgr.SetProviderSearchResults(ctx, key, data); err != nil {
+				logger.Warnf("failed to cache results: %v", err)
+			}
 		}
+	}
+
+	if len(errs) > 0 {
+		agg := multierr.Combine(errs...)
+		logger.Warnf("search completed with errors: %v", agg)
+		return scored, agg
 	}
 
 	return scored, nil
