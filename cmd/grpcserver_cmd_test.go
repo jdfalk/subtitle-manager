@@ -9,7 +9,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 	translatormocks "github.com/jdfalk/subtitle-manager/pkg/translator/mocks"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"

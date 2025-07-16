@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 )
 
 var grpcConfigAddr string

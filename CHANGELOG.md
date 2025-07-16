@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Migrated translator proto to gcommon and regenerated bindings
+
 ### Changed
 
 - codex-rebase.sh now uses Codex or ChatGPT CLI for conflict resolution and automatically commits before force pushing

@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	translate "cloud.google.com/go/translate"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/text/language"

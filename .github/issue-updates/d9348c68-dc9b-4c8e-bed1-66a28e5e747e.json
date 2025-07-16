@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Fix gcommon proto build",
+  "body": "Generated code won't compile; adjust imports",
+  "labels": ["bug", "proto"],
+  "guid": "d9348c68-dc9b-4c8e-bed1-66a28e5e747e",
+  "legacy_guid": "create-fix-gcommon-proto-build-2025-07-15"
+}

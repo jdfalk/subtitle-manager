@@ -1,26 +1,34 @@
 // file: proto/translator.proto
-// version: 1.0.0
-// guid: e1caa361-535c-428a-8348-83e617d1ff27
-syntax = "proto3";
+// version: 1.1.1
+// guid: 70eca88d-31fe-4044-8b76-a22bd3c9e0bd
+
 edition = "2023";
-package translator;
-option go_package = "github.com/jdfalk/subtitle-manager/pkg/translatorpb";
 
+package gcommon.v1.translator;
+
+import "google/protobuf/go_features.proto";
 import "google/protobuf/empty.proto";
+import "pkg/common/proto/messages/request_metadata.proto";
+import "pkg/common/proto/messages/error.proto";
 
-service Translator {
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/translatorpb;translatorpb";
+option features.(pb.go).api_level = API_HYBRID;
+
+service TranslatorService {
   rpc Translate(TranslateRequest) returns (TranslateResponse);
   rpc GetConfig(google.protobuf.Empty) returns (ConfigResponse);
   rpc SetConfig(ConfigRequest) returns (google.protobuf.Empty);
 }
 
 message TranslateRequest {
-  string text = 1;
-  string language = 2;
+  gcommon.v1.common.RequestMetadata meta = 1;
+  string text = 2;
+  string language = 3;
 }
 
 message TranslateResponse {
   string translated_text = 1;
+  repeated gcommon.v1.common.Error errors = 2;
 }
 
 message ConfigResponse {
@@ -28,7 +36,8 @@ message ConfigResponse {
 }
 
 message ConfigRequest {
-  map<string, string> settings = 1;
+  gcommon.v1.common.RequestMetadata meta = 1;
+  map<string, string> settings = 2;
 }
 
 // RateLimit defines basic provider rate limiting parameters.

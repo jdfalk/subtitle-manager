@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 	"github.com/spf13/viper"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
