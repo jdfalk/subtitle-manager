@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -32,6 +31,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/captcha"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	gconfig "github.com/jdfalk/subtitle-manager/pkg/gcommon/config"
 	"github.com/jdfalk/subtitle-manager/pkg/i18n"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
@@ -214,24 +214,8 @@ func init() {
 }
 
 func initConfig() {
-	viper.SetEnvPrefix("SM")
-	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_", ".", "_"))
-	viper.AutomaticEnv()
-
-	// Check for config file from flag, environment variable, or default
-	configFile := cfgFile
-	if configFile == "" {
-		configFile = viper.GetString("config_file") // This will get SM_CONFIG_FILE
-	}
-
-	if configFile != "" {
-		viper.SetConfigFile(configFile)
-	} else {
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".subtitle-manager")
+	if err := gconfig.Load(rootCmd, cfgFile); err != nil {
+		rootCmd.PrintErrf("failed to load config: %v\n", err)
 	}
 
 	// Set defaults (needs to happen regardless of config file source)

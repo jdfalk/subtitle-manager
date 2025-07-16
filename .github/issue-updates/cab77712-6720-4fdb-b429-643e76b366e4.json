@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Expose config loader in gcommon repo",
+  "body": "Publish gcommon/config module separately\n\n<!-- GCOMMON ISSUE JSON\n{\"action\": \"create\", \"title\": \"Publish gcommon config loader\", \"body\": \"Expose gcommon/config as its own module so other projects can import it.\", \"labels\": [\"enhancement\"]}\n-->",
+  "labels": ["gcommon", "enhancement"],
+  "guid": "cab77712-6720-4fdb-b429-643e76b366e4",
+  "legacy_guid": "create-expose-config-loader-in-gcommon-repo-2025-07-15"
+}
