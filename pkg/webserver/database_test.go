@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 	"github.com/spf13/viper"
 )
 

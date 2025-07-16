@@ -6,8 +6,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 )
 
 var userCmd = &cobra.Command{

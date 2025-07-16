@@ -1,6 +1,7 @@
-// file: pkg/auth/session_test.go
-
-package auth
+// file: pkg/gcommonauth/session_test.go
+// version: 1.0.0
+// guid: 619fb89c-869d-43ba-baf7-167d4345cc8d
+package gcommonauth
 
 import (
 	"testing"

@@ -1,4 +1,7 @@
-package auth
+// file: pkg/gcommonauth/auth.go
+// version: 1.0.0
+// guid: ec8f6814-42cc-41ab-956a-a0ee798664a4
+package gcommonauth
 
 import (
 	"database/sql"

@@ -1,4 +1,7 @@
-package auth
+// file: pkg/gcommonauth/auth_test.go
+// version: 1.0.0
+// guid: fb1a0786-29d8-4305-8c9c-8762fb8845c7
+package gcommonauth
 
 import (
 	"testing"

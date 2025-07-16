@@ -11,8 +11,8 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 )
 
 // TestGitHubCallbackHandler verifies OAuth2 callback creates a session cookie.
