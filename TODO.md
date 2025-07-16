@@ -972,3 +972,5 @@ audio track details. The `splitLines` helper has been updated accordingly.
 
 - [ ] 🟡 **General**: Create GitHub projects for open features
 - [ ] 🟡 **DevOps**: Validate codex-rebase.sh AI conflict resolution
+
+- [ ] 🟡 **General**: Align remaining services with gcommon proto

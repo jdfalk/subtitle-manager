@@ -18,7 +18,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/syncer/mocks"
 	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb/proto"
+	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 	"google.golang.org/grpc"
 )
 
