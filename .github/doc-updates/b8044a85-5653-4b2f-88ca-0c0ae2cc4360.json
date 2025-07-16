@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "replace-section",
+  "content": "#### Phase 5: Queue System\n\n- Replace the internal queue with `gcommon/queue`.\n- Migrate all job types to the new system.\n- ✅ Document queue configuration in the README.",
+  "guid": "b8044a85-5653-4b2f-88ca-0c0ae2cc4360",
+  "created_at": "2025-07-15T04:03:31Z",
+  "options": {
+    "section": "Phase 5: Queue System",
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
