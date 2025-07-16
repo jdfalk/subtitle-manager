@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add session validation and management",
+  "body": "Implement ValidateSession, GetSession, UpdateSession, TerminateSession, and ListUserSessions RPCs in gcommon/auth.",
+  "labels": ["enhancement", "auth"],
+  "guid": "dc20fcde-5700-49ac-8b21-39ba0c1de5c3",
+  "legacy_guid": "create-add-session-validation-and-management-2025-07-15"
+}

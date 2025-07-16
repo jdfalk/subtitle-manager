@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Switched authentication to gcommon/auth library",
+  "guid": "c8f5d2cb-0a19-4fb6-9e56-7b42ada59c74",
+  "created_at": "2025-07-15T04:11:04Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

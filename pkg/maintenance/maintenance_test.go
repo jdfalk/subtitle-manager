@@ -10,7 +10,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/metadata"
 
-	"github.com/jdfalk/subtitle-manager/pkg/auth"
+	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 )
 

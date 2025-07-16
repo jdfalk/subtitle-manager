@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "Authentication now uses the shared gcommon/auth library for session management",
+  "guid": "ed3fb366-4104-4a96-b7a9-6b73372fed11",
+  "created_at": "2025-07-15T04:11:09Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

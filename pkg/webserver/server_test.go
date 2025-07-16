@@ -20,8 +20,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 	"github.com/jdfalk/subtitle-manager/pkg/testutil"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jdfalk/subtitle-manager/pkg/auth"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 	"github.com/jdfalk/subtitle-manager/pkg/metadata"
 	"github.com/jdfalk/subtitle-manager/pkg/scheduler"
 )
