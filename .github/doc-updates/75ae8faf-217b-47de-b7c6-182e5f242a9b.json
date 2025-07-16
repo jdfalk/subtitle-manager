@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Verify new stash and remote checks in rebase scripts",
+  "guid": "75ae8faf-217b-47de-b7c6-182e5f242a9b",
+  "created_at": "2025-07-15T13:03:48Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

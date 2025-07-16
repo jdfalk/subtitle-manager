@@ -1,5 +1,7 @@
 #!/bin/bash
 # file: scripts/codex-rebase.sh
+# version: 1.1.0
+# guid: 38643ccd-055a-45ea-b990-4c12defc6421
 
 # Codex-specific rebase automation script
 # This script is designed to be used by AI agents with minimal interaction
@@ -11,6 +13,7 @@ FORCE_PUSH=true
 AUTO_COMMIT=true
 BACKUP_ENABLED=true
 CONFLICT_STRATEGY="auto-resolve"
+STASHED=false
 
 # Colors
 RED='\033[0;31m'
@@ -30,6 +33,40 @@ error() {
 success() {
     echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
+
+check_dependencies() {
+    if ! command -v git >/dev/null 2>&1; then
+        error "git command not found"
+        exit 1
+    fi
+}
+
+check_clean_state() {
+    if [[ -d .git/rebase-merge || -d .git/rebase-apply || -d .git/MERGE_HEAD ]]; then
+        error "Another Git operation is in progress"
+        exit 1
+    fi
+}
+
+stash_changes() {
+    if ! git diff-index --quiet HEAD --; then
+        log "Stashing uncommitted changes"
+        git stash push -m "codex-pre-rebase-$(date +%Y%m%d-%H%M%S)" >/dev/null
+        STASHED=true
+    else
+        STASHED=false
+    fi
+}
+
+restore_stash() {
+    if [[ "$STASHED" == true ]]; then
+        if git stash list | grep -q "codex-pre-rebase"; then
+            log "Restoring stashed changes"
+            git stash pop >/dev/null || true
+        fi
+    fi
+}
+trap restore_stash EXIT
 
 # Get target branch (default to main)
 TARGET_BRANCH="${1:-main}"
@@ -51,7 +88,10 @@ log "Current branch: $CURRENT_BRANCH"
 log "Target branch: $TARGET_BRANCH"
 
 # Setup remote if needed
-setup_remote()
+setup_remote
+
+check_dependencies
+check_clean_state
 
 # Pre-flight checks
 if [[ "$CURRENT_BRANCH" == "$TARGET_BRANCH" ]]; then
@@ -60,22 +100,23 @@ if [[ "$CURRENT_BRANCH" == "$TARGET_BRANCH" ]]; then
 fi
 
 # Stash any uncommitted changes
-if ! git diff-index --quiet HEAD --; then
-    log "Stashing uncommitted changes"
-    git stash push -m "Codex auto-stash before rebase $(date)"
-fi
+stash_changes
 
 # Create backup branch
 BACKUP_BRANCH="codex-backup-$(date +%Y%m%d-%H%M%S)-$CURRENT_BRANCH"
 git branch "$BACKUP_BRANCH"
 log "Created backup branch: $BACKUP_BRANCH"
 
-# Fetch latest changes
-log "Fetching latest changes"
-if ! git fetch origin; then
-    error "Failed to fetch from origin. Check network connectivity and authentication."
-    error "Remote URL: $(git remote get-url origin 2>/dev/null || echo 'Not configured')"
-    exit 1
+# Fetch latest changes if 'origin' remote exists
+if git remote get-url origin >/dev/null 2>&1; then
+    log "Fetching latest changes"
+    if ! git fetch origin; then
+        error "Failed to fetch from origin. Check network connectivity and authentication."
+        error "Remote URL: $(git remote get-url origin 2>/dev/null || echo 'Not configured')"
+        exit 1
+    fi
+else
+    log "Remote 'origin' not found, skipping fetch"
 fi
 
 # Resolve a single conflict using Codex or ChatGPT CLI if available
@@ -238,3 +279,4 @@ done
 shopt -u nullglob
 
 log "Rebase automation complete. Check $SUMMARY_FILE for details."
+restore_stash

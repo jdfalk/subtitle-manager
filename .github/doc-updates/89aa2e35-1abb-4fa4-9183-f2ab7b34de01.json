@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "Rebase scripts now stash and restore local changes and ensure a clean git state.",
+  "guid": "89aa2e35-1abb-4fa4-9183-f2ab7b34de01",
+  "created_at": "2025-07-15T13:04:04Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
