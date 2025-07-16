@@ -1,5 +1,5 @@
 // file: pkg/database/metadata_helpers.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 8f7e6d5c-4b3a-2198-7e6f-5d4c3b2a1098
 
 package database
@@ -134,11 +134,47 @@ func CreateSubtitleSource(sourceHash, originalURL, provider string, metadata *Pr
 }
 
 // UpdateDownloadWithResult updates a download record with the result of the download attempt.
+//
+// Because the store currently lacks an explicit update method, this function
+// creates a new download record based on the original and stores the updated
+// information. The original record is left unchanged.
 func UpdateDownloadWithResult(store SubtitleStore, downloadID string, success bool, errorMsg string, responseTimeMs int) error {
-	// Note: This would require extending the store interface to support updating download records
-	// For now, we track this information in new download records
-	// This is a placeholder for future implementation
-	return fmt.Errorf("update download record not yet implemented")
+	downloads, err := store.ListDownloads()
+	if err != nil {
+		return fmt.Errorf("failed to list downloads: %w", err)
+	}
+
+	var base *DownloadRecord
+	for i := range downloads {
+		if downloads[i].ID == downloadID {
+			base = &downloads[i]
+			break
+		}
+	}
+	if base == nil {
+		return fmt.Errorf("download record %s not found", downloadID)
+	}
+
+	newRec := &DownloadRecord{
+		File:             base.File,
+		VideoFile:        base.VideoFile,
+		Provider:         base.Provider,
+		Language:         base.Language,
+		SearchQuery:      base.SearchQuery,
+		MatchScore:       base.MatchScore,
+		DownloadAttempts: base.DownloadAttempts + 1,
+		ErrorMessage:     errorMsg,
+		CreatedAt:        time.Now(),
+	}
+	if responseTimeMs > 0 {
+		newRec.ResponseTimeMs = &responseTimeMs
+	}
+
+	if err := store.InsertDownload(newRec); err != nil {
+		return fmt.Errorf("failed to insert updated download record: %w", err)
+	}
+
+	return nil
 }
 
 // GetProviderPerformanceStats calculates performance statistics for a provider.
