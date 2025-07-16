@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Improve rebase script robustness",
+  "body": "Add stash, dependency checks, and remote setup",
+  "labels": ["enhancement"],
+  "guid": "54bfae72-0498-4be8-abb5-d8077bf05fa0",
+  "legacy_guid": "create-improve-rebase-script-robustness-2025-07-15"
+}

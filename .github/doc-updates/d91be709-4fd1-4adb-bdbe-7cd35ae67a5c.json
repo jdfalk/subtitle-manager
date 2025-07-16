@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added robust safety checks to rebase scripts",
+  "guid": "d91be709-4fd1-4adb-bdbe-7cd35ae67a5c",
+  "created_at": "2025-07-15T13:03:43Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

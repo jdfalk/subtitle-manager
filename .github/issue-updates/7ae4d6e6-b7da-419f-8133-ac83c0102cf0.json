@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Skip fetch when no origin",
+  "body": "Update rebase scripts to skip git fetch when origin remote is missing",
+  "labels": ["bug", "documentation"],
+  "guid": "7ae4d6e6-b7da-419f-8133-ac83c0102cf0",
+  "legacy_guid": "create-skip-fetch-when-no-origin-2025-07-15"
+}

@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Fixed\n\n- Handled missing origin remote in rebase scripts",
+  "guid": "aedc4e38-619b-477b-859a-74f362a3a478",
+  "created_at": "2025-07-15T04:02:32Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
