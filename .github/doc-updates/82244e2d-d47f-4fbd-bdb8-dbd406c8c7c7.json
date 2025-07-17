@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- monitor autosync supports cron schedules",
+  "guid": "82244e2d-d47f-4fbd-bdb8-dbd406c8c7c7",
+  "created_at": "2025-07-15T04:08:01Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

@@ -1,5 +1,5 @@
 // file: cmd/monitor.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 12345678-1234-1234-1234-123456789014
 
 package cmd
@@ -84,6 +84,7 @@ var monitorBlacklistRemoveCmd = &cobra.Command{
 var (
 	monitorInterval     string
 	monitorSyncInterval string
+	monitorSyncSchedule string
 	monitorLanguages    []string
 	monitorMaxRetries   int
 	monitorQualityCheck bool
@@ -120,6 +121,7 @@ func init() {
 	monitorAutoSyncCmd.Flags().StringSliceVar(&monitorLanguages, "languages", []string{"en"}, "Languages to monitor (comma-separated)")
 	monitorAutoSyncCmd.Flags().IntVar(&monitorMaxRetries, "max-retries", 3, "Maximum retry attempts per item")
 	monitorAutoSyncCmd.Flags().StringVar(&monitorSource, "source", "both", "Source to sync from: sonarr, radarr, or both")
+	monitorAutoSyncCmd.Flags().StringVar(&monitorSyncSchedule, "schedule", "", "Cron schedule expression")
 
 	rootCmd.AddCommand(monitorCmd)
 }
@@ -263,6 +265,11 @@ func runMonitorAutoSync(cmd *cobra.Command, args []string) error {
 	}
 
 	ctx := context.Background()
+	if monitorSyncSchedule != "" {
+		fmt.Printf("Starting scheduled sync using cron '%s'\n", monitorSyncSchedule)
+		return monitoring.RunCronSync(ctx, monitorSyncSchedule, sched, opts)
+	}
+
 	fmt.Printf("Starting scheduled sync every %v\n", interval)
 	return sched.StartScheduledSync(ctx, interval, opts)
 }
