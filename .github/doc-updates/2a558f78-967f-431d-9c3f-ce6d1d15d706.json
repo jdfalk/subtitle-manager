@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-complete",
+  "content": "Write a migration script to convert existing configs to the new format.",
+  "guid": "2a558f78-967f-431d-9c3f-ce6d1d15d706",
+  "created_at": "2025-07-15T04:04:44Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
