@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Document sonarr-sync command",
+  "body": "Update README and CHANGELOG for new CLI",
+  "labels": ["documentation", "codex"],
+  "guid": "2d55db3f-9058-41da-bd60-e6b55ec7ca0b",
+  "legacy_guid": "create-document-sonarr-sync-command-2025-07-15"
+}
