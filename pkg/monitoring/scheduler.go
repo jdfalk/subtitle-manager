@@ -1,5 +1,5 @@
 // file: pkg/monitoring/scheduler.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 12345678-1234-1234-1234-123456789016
 
 package monitoring
@@ -81,5 +81,12 @@ func (s *ScheduledMonitor) StartScheduledSync(ctx context.Context, interval time
 
 	return scheduler.RunWithOptions(ctx, syncOpts, func(ctx context.Context) error {
 		return s.RunSyncTask(ctx, opts)
+	})
+}
+
+// RunCronSync executes a sync task immediately and then on the provided cron schedule.
+func RunCronSync(ctx context.Context, spec string, sched *ScheduledMonitor, opts SyncOptions) error {
+	return scheduler.RunCron(ctx, spec, func(ctx context.Context) error {
+		return sched.RunSyncTask(ctx, opts)
 	})
 }
