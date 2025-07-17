@@ -1,0 +1,30 @@
+# file: buf.gen.yaml
+# version: 2.0.0
+# guid: 7e2b1c4d-5f6a-4b7c-8d9e-0a1b2c3d4e5f
+
+# Buf code generation configuration for subtitle-manager
+# This file enables buf to generate Go code for all proto files in proto/
+
+version: v2
+managed:
+  enabled: true
+  disable:
+    - file_option: go_package
+      module: buf.build/googleapis/googleapis
+  override:
+    - file_option: go_package_prefix
+      value: github.com/jdfalk/subtitle-manager
+plugins:
+  - remote: buf.build/protocolbuffers/go:v1.36.6
+    out: pkg
+    opt:
+      - paths=source_relative
+      - Mgoogle/protobuf/timestamp.proto=google.golang.org/protobuf/types/known/timestamppb
+      - Mgoogle/protobuf/duration.proto=google.golang.org/protobuf/types/known/durationpb
+      - Mgoogle/protobuf/empty.proto=google.golang.org/protobuf/types/known/emptypb
+      - Mgoogle/protobuf/any.proto=google.golang.org/protobuf/types/known/anypb
+  - remote: buf.build/grpc/go:v1.5.1
+    out: pkg
+    opt:
+      - paths=source_relative
+      - require_unimplemented_servers=false
