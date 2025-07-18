@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Failed rebase using rebase script",
+  "body": "Rebase attempt using codex-rebase.sh failed because the origin remote is not configured or accessible in this environment.",
+  "labels": ["rebase", "automation"],
+  "guid": "4d471c5b-98f1-49ab-b7f5-f3ec03589630",
+  "legacy_guid": "create-failed-rebase-using-rebase-script-2025-07-16"
+}
