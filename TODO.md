@@ -184,7 +184,7 @@ and `/api/search/history`.
       refresh, and disk scans. See [docs/SCHEDULING.md](docs/SCHEDULING.md).
       ([#888](https://github.com/jdfalk/subtitle-manager/issues/888))
 - [x] **Azure Blob Storage Support**: Initial Azure cloud storage provider.
-- [ ] **Whisper Container Integration**: Optional embedded Whisper service.
+- [x] **Whisper Container Integration**: Optional embedded Whisper service.
       ([#1132](https://github.com/jdfalk/subtitle-manager/issues/1132))
   - [x] Launch
         [ahmetoner/whisper-asr-webservice](https://github.com/ahmetoner/whisper-asr-webservice)
@@ -215,7 +215,7 @@ and `/api/search/history`.
         `metadata show` command.
   - [x] Added `metadata apply` command to write selected metadata to the database while honoring field locks.
   - [x] CLI interactive search and selection when fetching metadata.
-- [ ] **Search Result Caching**: Cache manual search results for faster responses.
+- [x] **Search Result Caching**: Cache manual search results for faster responses.
       ([#1330](https://github.com/jdfalk/subtitle-manager/issues/1330))
 
 ### Universal Tagging System Implementation
@@ -962,15 +962,93 @@ development before the project can be considered feature complete.
 **Note**: `pkg/audio.GetAudioTracks` now parses ffprobe JSON output for accurate
 audio track details. The `splitLines` helper has been updated accordingly.
 
-- [ ] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
+- [x] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
 
-- [ ] 🟡 **General**: Create GitHub projects for open features
+- [x] 🟡 **General**: Create GitHub projects for open features
 
 - [x] **Search rate limiting**: Per-IP token bucket to prevent abuse
   - Location: `pkg/webserver/search.go`
-- [ ] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
+- [x] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
 
-- [ ] 🟡 **General**: Create GitHub projects for open features
+- [x] 🟡 **General**: Create GitHub projects for open features
 - [ ] 🟡 **DevOps**: Validate codex-rebase.sh AI conflict resolution
 
 - [ ] 🟡 **General**: Align remaining services with gcommon proto
+
+Ensure SQLite integration tests run in CI with sqlite build tag
+
+Implement provider fallback logic for failed searches
+
+Add DB update support for download results
+
+Verify root command flags are initialized only once
+
+- [ ] 🟡 **Search**: Add integration tests for cached provider results
+
+- ✅ Integrated gcommon/metrics for Prometheus instrumentation
+Verify SQLite schema migration for media_profiles
+
+Add 'whisper start' and 'whisper stop' commands
+
+Validate rebase scripts skip fetch when origin is absent
+
+Align remaining services with gcommon proto
+
+Review directory add workflow
+
+Investigate cross-correlation method to achieve near-perfect subtitle alignment
+
+Add `sonarr-sync` command for one-time library sync.
+
+Investigate remaining web UI test failures
+
+Add context timeouts for gRPC translations
+
+Add tests for structured logging
+
+Add regression test for sync batch endpoint
+
+Verify new stash and remote checks in rebase scripts
+
+Config loader migrated to gcommon/config
+Deduplicated S3 and storage flags in root command
+
+Add tests for DirectoryChooser directory detection
+
+Verify custom port mapping works in stack
+
+- [ ] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
+
+Integrated gcommon metrics and health modules
+Add configurable batch size for translations
+
+Document cron support for monitor autosync
+
+Verify PAT-based merge conflict workflow
+
+- [ ] 🟡 **General**: Monitor AI rebase workflow results
+
+
+# Phase 5: Queue System
+
+#### Phase 5: Queue System
+
+- Replace the internal queue with `gcommon/queue`.
+- Migrate all job types to the new system.
+- ✅ Document queue configuration in the README.
+
+Test docker-local make target
+
+Verify built-in GitHub project automation is configured correctly
+
+Document monitor autosync usage
+
+Implement SupportedServices helper in translator package
+
+- [ ] 🟡 **General**: Create GitHub projects for open features
+
+Verify Prometheus metrics via new provider
+
+Implement provider metadata usage across services
+
+Normalize provider order when generating search cache keys

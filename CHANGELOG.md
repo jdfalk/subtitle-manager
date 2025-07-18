@@ -6,6 +6,204 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Use gcommon proto messages
+
+### Added
+
+- Added robust safety checks to rebase scripts
+
+### Added
+
+- Added GitHub project setup script
+
+### Added
+
+- Added caching to CLI search command
+
+### Added
+
+- Validated codex-rebase.sh conflict handling
+
+### Added
+
+- Switched authentication to gcommon/auth library
+
+Added translation result caching for translator
+
+### Added
+
+- Improved DirectoryChooser supports custom folder input
+
+### Added
+
+- Added monitor autosync command for scheduled Sonarr/Radarr synchronization
+
+### Fixed
+
+- use PAT secret for fix-merge-conflicts workflow
+
+### Added
+
+- Added provider metadata proto messages
+
+### Added
+
+- Added sonarr-sync command for one-time library synchronization
+
+### Fixed
+
+- Deduplicated persistent flag definitions in root command to prevent test panics
+
+### Fixed
+
+- Handled missing origin remote in rebase scripts
+
+### Added
+
+- Improved synchronization accuracy with median offset
+
+### Added
+
+- Added docker-local make target for local multi-arch builds
+
+### Added
+
+- Add SupportedServices helper and gRPC dial fix
+
+### Added
+
+- Improved subtitle search handler with caching and parallelization
+
+### Fixed
+
+- Add missing media_profiles table for SQLite schema
+
+### Added
+
+- Added create-github-projects.sh to automate project board creation
+
+### Added
+
+- Integrated gcommon metrics and health modules
+
+### Added
+
+- Migrated config loader to gcommon/config with new migration script
+
+### Changed\n\n- Improved GitHub project setup script with auth checks
+
+### Fixed
+
+- Added @testing-library/dom to resolve missing module errors
+
+### Added
+
+- monitor autosync supports cron schedules
+
+### Added
+
+- Finalize optional Whisper container integration
+
+### Added
+
+- Added search result caching for CLI search command
+
+### Changed\n- Switched health endpoints to use gcommon/health handlers
+
+Adopted gcommon queue for asynchronous job processing
+
+### Added
+
+- Added config migration script for gcommon
+
+### Fixed
+
+- Fixed search cache key to ignore provider order
+
+### Added
+
+- Improved provider order normalization for search result caching
+
+### Added
+
+- Enhanced search error handling with aggregated caching
+
+### Added
+
+- Added unit test for /api/sync/batch endpoint
+
+### Added
+
+- Documented gcommon queue configuration in README
+
+### Added
+
+- Implemented manual search result caching for faster repeated queries
+
+### Fixed
+
+- Corrected Docker stack port mapping
+
+### Added
+
+- Implemented UpdateDownloadWithResult to track download results
+
+### Fixed
+
+- Skip SQLite migration test when SQLite support is not built
+
+### Added
+
+- Standardized on Dockerfile.hybrid for all builds
+
+### Fixed
+
+- Handle type field when displaying directories
+
+### Added
+
+- Implemented Google batch translation support
+
+### Added
+
+- Integrated gcommon metrics and health system
+
+### Added
+
+- Added CLI commands to start and stop the Whisper container
+
+### Added
+
+- Added workflow to automatically fix merge conflicts using AI rebase
+
+### Fixed
+
+- Fixed duplicate flag definitions in root command
+
+### Added
+
+- Replaced local metrics with gcommon implementation
+
+### Added
+
+- create-github-projects.sh validates GitHub CLI scopes
+
+### Changed\n\n- Removed add-to-project workflow; using GitHub built-in project automation.
+
+### Added
+
+- Added context timeouts for gRPC translation and cleaned up duplicate CLI flags
+
+### Added
+
+- Added 'whisper start' and 'whisper stop' commands for container management
+
+### Added
+
+- Added structured logging for download API
+
+### Added
+
 - Migrated translator proto to gcommon and regenerated bindings
 
 ### Changed
