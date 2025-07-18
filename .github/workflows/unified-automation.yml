@@ -1,10 +1,16 @@
 # file: .github/workflows/unified-automation.yml
-# version: 2.0.0
+# version: 2.1.0
 # guid: 9a8b7c6d-5e4f-3a2b-1c0d-2e3f4a5b6c7d
 
 name: Unified Issue & Docs Automation
 
 on:
+  push:
+    branches: [main, master]
+    paths:
+      - ".github/issue-updates/**"
+      - ".github/doc-updates/**"
+      - "issue_updates.json"
   workflow_dispatch:
     inputs:
       operation:
