@@ -1,7 +1,12 @@
+// file: cmd/grpcsetconfig.go
+// version: 1.1.0
+// guid: e252459e-8583-447a-81d5-1ac0eb51979c
+
 package cmd
 
 import (
 	"context"
+	"time"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -18,13 +23,16 @@ var grpcSetConfigCmd = &cobra.Command{
 	Use:   "grpc-set-config",
 	Short: "Set configuration value via gRPC",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
 		conn, err := grpc.NewClient(grpcConfigAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			return err
 		}
 		defer conn.Close()
 		client := pb.NewTranslatorClient(conn)
-		_, err = client.SetConfig(context.Background(), &pb.ConfigRequest{Settings: map[string]string{grpcConfigKey: grpcConfigValue}})
+		_, err = client.SetConfig(ctx, &pb.ConfigRequest{Settings: map[string]string{grpcConfigKey: grpcConfigValue}})
 		if err != nil {
 			return err
 		}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"testing"
+	"time"
 
 	translate "cloud.google.com/go/translate"
 	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
@@ -41,7 +42,9 @@ func TestServerTranslate(t *testing.T) {
 	}
 	defer conn.Close()
 	c := pb.NewTranslatorClient(conn)
-	resp, err := c.Translate(context.Background(), &pb.TranslateRequest{Text: "x", Language: "en"})
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	resp, err := c.Translate(ctx, &pb.TranslateRequest{Text: "x", Language: "en"})
 	if err != nil {
 		t.Fatalf("translate: %v", err)
 	}
