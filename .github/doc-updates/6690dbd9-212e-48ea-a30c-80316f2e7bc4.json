@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Review /api/sync/batch test edge cases",
+  "guid": "6690dbd9-212e-48ea-a30c-80316f2e7bc4",
+  "created_at": "2025-07-15T04:06:33Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

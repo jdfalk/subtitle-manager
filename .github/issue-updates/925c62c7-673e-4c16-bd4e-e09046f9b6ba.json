@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Add test for /api/sync/batch invalid JSON",
+  "body": "Ensure endpoint correctly handles malformed JSON",
+  "labels": ["test"],
+  "guid": "925c62c7-673e-4c16-bd4e-e09046f9b6ba",
+  "legacy_guid": "create-add-test-for-api-sync-batch-invalid-json-2025-07-15"
+}
