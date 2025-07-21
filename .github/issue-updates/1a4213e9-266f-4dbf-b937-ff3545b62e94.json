@@ -1,11 +1,7 @@
 {
   "action": "create",
   "title": "gcommon translation protos",
-  "body": "Request translation service proto definitions for cross-repo use.
-
-<!-- GCOMMON ISSUE JSON
-{"action": "create", "title": "Add translation service protos", "body": "Add proto definitions for translation requests and responses used by Subtitle Manager.", "labels": ["enhancement"]}
--->",
+  "body": "Request translation service proto definitions for cross-repo use.",
   "labels": ["codex", "gcommon"],
   "guid": "1a4213e9-266f-4dbf-b937-ff3545b62e94",
   "legacy_guid": "create-gcommon-translation-protos-2025-07-05"
