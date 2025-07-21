@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Normalize provider order in CLI search cache key",
+  "body": "Sort provider names when building cache key to ensure deterministic key",
+  "labels": ["bug", "cli"],
+  "guid": "7c33ad6e-76ab-4455-8517-733fd9e159e8",
+  "legacy_guid": "create-normalize-provider-order-in-cli-search-cache-key-2025-07-15"
+}

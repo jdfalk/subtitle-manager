@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Normalize provider order in CLI search cache key",
+  "guid": "e32214bf-5d8a-45ec-9f00-69d654fdad76",
+  "created_at": "2025-07-15T04:07:01Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

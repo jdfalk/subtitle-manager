@@ -1,9 +1,13 @@
+// file: cmd/search.go
+// version: 1.0.0
+// guid: 4a1ea762-2199-42b5-8fe4-b154a7542ba9
 package cmd
 
 import (
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -24,6 +28,10 @@ var searchCmd = &cobra.Command{
 		media, lang := args[0], args[1]
 		key := viper.GetString("opensubtitles.api_key")
 		names := providers.All()
+		// Ensure provider order does not affect cache key generation
+		sortedNames := make([]string, len(names))
+		copy(sortedNames, names)
+		sort.Strings(sortedNames)
 
 		type cacheReq struct {
 			Providers []string `json:"providers"`
@@ -31,7 +39,7 @@ var searchCmd = &cobra.Command{
 			Language  string   `json:"language"`
 		}
 
-		req := cacheReq{Providers: names, MediaPath: media, Language: lang}
+		req := cacheReq{Providers: sortedNames, MediaPath: media, Language: lang}
 		reqData, _ := json.Marshal(req)
 		sum := sha1.Sum(reqData)
 		cacheKey := fmt.Sprintf("%x", sum)
@@ -55,7 +63,7 @@ var searchCmd = &cobra.Command{
 		}
 
 		var all []string
-		for i, name := range names {
+		for i, name := range sortedNames {
 			p, err := providers.Get(name, key)
 			if err != nil {
 				continue

@@ -1,0 +1,16 @@
+{
+  "file": "README.md",
+  "mode": "append",
+  "content": "- CLI search cache now normalizes provider order for consistent cache hits.",
+  "guid": "20b170e2-745e-44a7-a498-c92dbf4a20c9",
+  "created_at": "2025-07-15T04:06:56Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
