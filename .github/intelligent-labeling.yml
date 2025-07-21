@@ -1,0 +1,207 @@
+# file: .github/intelligent-labeling.yml
+# version: 1.0.0
+# guid: 9d0e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a
+
+# Intelligent Issue Labeling Configuration
+# This file defines rules and patterns for automatically applying labels to GitHub issues
+
+# Global settings
+global:
+  confidence_threshold: 0.7 # Minimum confidence to apply a label (0.0-1.0)
+  max_labels_per_issue: 8 # Maximum number of labels to apply per issue
+  preserve_existing_labels: true # Keep existing labels when adding new ones
+  use_ai_fallback: true # Use AI when pattern matching has low confidence
+
+# Pattern-based labeling rules
+patterns:
+  # Issue type patterns
+  issue_types:
+    bug:
+      keywords: ["bug", "error", "fail", "broken", "issue", "problem", "crash", "exception"]
+      title_weight: 1.2 # Higher weight for title matches
+      confidence: 0.8
+
+    enhancement:
+      keywords: ["feature", "enhancement", "improve", "add", "new", "implement", "support"]
+      confidence: 0.8
+
+    documentation:
+      keywords: ["doc", "documentation", "readme", "guide", "manual", "tutorial", "wiki"]
+      confidence: 0.9
+
+    question:
+      keywords: ["question", "help", "how", "why", "what", "clarification", "doubt"]
+      confidence: 0.7
+
+  # Priority patterns
+  priority:
+    priority-high:
+      keywords: ["urgent", "critical", "blocker", "asap", "emergency", "severe", "major"]
+      confidence: 0.9
+
+    priority-medium:
+      keywords: ["medium", "moderate", "normal", "standard"]
+      confidence: 0.6
+      default: true # Apply when no other priority matches
+
+    priority-low:
+      keywords: ["low priority", "minor", "nice to have", "enhancement", "cleanup"]
+      confidence: 0.8
+
+  # Technology patterns
+  technology:
+    tech:go:
+      keywords: ["go", "golang", ".go", "gofmt", "go.mod", "go.sum"]
+      file_patterns: ["*.go", "go.mod", "go.sum"]
+      confidence: 0.9 # Higher confidence for Go-focused repo
+
+    tech:javascript:
+      keywords: ["javascript", "js", ".js", "npm", "node", "package.json", "webui"]
+      file_patterns: ["*.js", "package.json", "package-lock.json", "webui/**/*.js"]
+      confidence: 0.85
+
+    tech:html:
+      keywords: ["html", ".html", "template", "web", "ui", "interface"]
+      file_patterns: ["*.html", "webui/**/*.html"]
+      confidence: 0.85
+
+    tech:css:
+      keywords: ["css", ".css", "style", "styling", "design"]
+      file_patterns: ["*.css", "webui/**/*.css"]
+      confidence: 0.85
+
+    tech:docker:
+      keywords: ["docker", "dockerfile", "container", "image", "docker-compose"]
+      file_patterns: ["Dockerfile*", "docker-compose*.yml", "*.dockerfile"]
+      confidence: 0.85
+
+    tech:shell:
+      keywords: ["bash", "shell", ".sh", "script", "zsh", "fish"]
+      file_patterns: ["*.sh", "*.bash", "*.zsh"]
+      confidence: 0.85
+
+    tech:python:
+      keywords: ["python", ".py", "pip", "pytest", "requirements.txt"]
+      file_patterns: ["*.py", "requirements.txt"]
+      confidence: 0.85
+
+  # Module patterns (subtitle-manager specific)
+  modules:
+    module:conversion:
+      keywords: ["conversion", "convert", "transform", "format", "subtitle", "srt", "vtt", "ass"]
+      confidence: 0.9
+
+    module:web:
+      keywords: ["web", "http", "server", "api", "rest", "endpoint", "handler", "webui"]
+      confidence: 0.8
+
+    module:ui:
+      keywords: ["ui", "interface", "frontend", "html", "css", "javascript", "webui"]
+      confidence: 0.8
+
+    module:file:
+      keywords: ["file", "upload", "download", "filesystem", "storage", "io"]
+      confidence: 0.8
+
+    module:parser:
+      keywords: ["parse", "parser", "parsing", "decode", "encode", "format"]
+      confidence: 0.8
+
+    module:config:
+      keywords: ["config", "configuration", "settings", "env", "environment", "vars"]
+      confidence: 0.8
+
+    module:auth:
+      keywords: ["auth", "authentication", "login", "password", "oauth", "jwt", "token"]
+      confidence: 0.8
+
+    module:docker:
+      keywords: ["docker", "container", "containerization", "deployment"]
+      confidence: 0.8
+
+  # Workflow patterns
+  workflows:
+    workflow:automation:
+      keywords: ["automation", "script", "workflow", "ci/cd", "pipeline", "deploy"]
+      confidence: 0.8
+
+    workflow:github-actions:
+      keywords: ["github actions", "workflow", ".yml", "action", ".github"]
+      file_patterns: [".github/workflows/*.yml", ".github/workflows/*.yaml"]
+      confidence: 0.8
+
+    workflow:ci-cd:
+      keywords: ["ci", "cd", "continuous integration", "continuous deployment", "build", "test"]
+      confidence: 0.8
+
+    workflow:deployment:
+      keywords: ["deploy", "deployment", "release", "production", "staging"]
+      confidence: 0.8
+
+    workflow:build:
+      keywords: ["build", "compile", "make", "makefile"]
+      confidence: 0.8
+
+  # Special patterns
+  special:
+    security:
+      keywords: ["security", "vulnerability", "cve", "exploit", "attack", "breach"]
+      confidence: 0.9
+
+    performance:
+      keywords: ["performance", "slow", "optimize", "speed", "latency", "throughput"]
+      confidence: 0.8
+
+    breaking-change:
+      keywords: ["breaking", "break", "compatibility", "backward", "migration"]
+      confidence: 0.8
+
+    good first issue:
+      keywords: ["good first issue", "beginner", "starter", "easy", "newcomer"]
+      confidence: 0.9
+
+    help wanted:
+      keywords: ["help wanted", "need help", "assistance", "volunteer"]
+      confidence: 0.8
+
+    dependencies:
+      keywords: ["dependency", "dependencies", "update", "upgrade", "version"]
+      file_patterns: ["package.json", "go.mod", "requirements.txt"]
+      confidence: 0.8
+
+    # Subtitle-specific patterns
+    subtitle-format:
+      keywords: ["subtitle", "srt", "vtt", "ass", "format", "encoding", "timecode"]
+      confidence: 0.9
+
+    media:
+      keywords: ["video", "audio", "media", "file", "stream", "codec"]
+      confidence: 0.8
+
+# AI fallback configuration
+ai_fallback:
+  enabled: true
+  model: "gpt-4o-mini"
+  max_tokens: 500
+  temperature: 0.3
+  trigger_conditions:
+    - low_confidence_suggestions: true # Use AI when confidence is low
+    - few_suggestions: 3 # Use AI when fewer than N suggestions
+    - complex_issue: true # Use AI for issues with many keywords
+
+  system_prompt: |
+    You are an expert at analyzing GitHub issues for a subtitle management application.
+    This repository (subtitle-manager) is a Go application with a web UI for processing and managing subtitle files.
+    It handles subtitle file conversion, web interface, file processing, and Docker support.
+    Analyze the issue content and suggest the most relevant labels with confidence scores.
+    Focus on subtitle formats (SRT, VTT, ASS), file conversion, web UI, and Go backend functionality.
+    Return only valid JSON in the format: {"label_name": confidence_score}
+
+# Label categories for reference
+label_categories:
+  issue_types: ["bug", "enhancement", "documentation", "question"]
+  priorities: ["priority-high", "priority-medium", "priority-low"]
+  technologies: ["tech:go", "tech:javascript", "tech:html", "tech:css", "tech:docker", "tech:shell", "tech:python"]
+  modules: ["module:conversion", "module:web", "module:ui", "module:file", "module:parser", "module:config", "module:auth", "module:docker"]
+  workflows: ["workflow:automation", "workflow:github-actions", "workflow:ci-cd", "workflow:deployment", "workflow:build"]
+  special: ["security", "performance", "breaking-change", "good first issue", "help wanted", "dependencies", "subtitle-format", "media"]
