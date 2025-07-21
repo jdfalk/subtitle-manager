@@ -1,8 +1,0 @@
-{
-  "action": "create",
-  "title": "gcommon provider metadata",
-  "body": "Propose standard provider metadata fields shared across services.",
-  "labels": ["codex", "gcommon"],
-  "guid": "0927ae0b-1052-4ef1-b180-e849d2676873",
-  "legacy_guid": "create-gcommon-provider-metadata-2025-07-05"
-}

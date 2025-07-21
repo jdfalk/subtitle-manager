@@ -32,6 +32,45 @@ This approach will:
 
 ## 🚧 Remaining Work
 
+
+### 📝 Recent Updates
+
+- [x] - [x] 🟡 **General**: Create GitHub projects for open features
+- [ ] - [ ] 🟡 **General**: Investigate remote configuration for rebase script
+- [ ] - [ ] 🟡 **General**: Monitor AI rebase workflow results
+- [ ] - [ ] 🟡 **Search**: Add integration tests for cached provider results
+- [x] - [x] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
+- [ ] Add 'whisper start' and 'whisper stop' commands
+- [ ] Add DB update support for download results
+- [ ] Add `sonarr-sync` command for one-time library sync.
+- [ ] Add configurable batch size for translations
+- [ ] Add context timeouts for gRPC translations
+- [ ] Add regression test for sync batch endpoint
+- [ ] Add tests for DirectoryChooser directory detection
+- [ ] Add tests for structured logging
+- [ ] Align remaining services with gcommon proto
+- [ ] Deduplicated S3 and storage flags in root command
+- [ ] Document cron support for monitor autosync
+- [ ] Document monitor autosync usage
+- [ ] Ensure SQLite integration tests run in CI with sqlite build tag
+- [ ] Implement SupportedServices helper in translator package
+- [ ] Implement provider fallback logic for failed searches
+- [ ] Implement provider metadata usage across services
+- [ ] Investigate cross-correlation method to achieve near-perfect subtitle alignment
+- [ ] Investigate remaining web UI test failures
+- [ ] Normalize provider order in CLI search cache key
+- [ ] Normalize provider order when generating search cache keys
+- [ ] Review directory add workflow
+- [ ] Test docker-local make target
+- [ ] Validate rebase scripts skip fetch when origin is absent
+- [ ] Verify PAT-based merge conflict workflow
+- [ ] Verify Prometheus metrics via new provider
+- [ ] Verify SQLite schema migration for media_profiles
+- [ ] Verify built-in GitHub project automation is configured correctly
+- [ ] Verify custom port mapping works in stack
+- [ ] Verify new stash and remote checks in rebase scripts
+- [ ] Verify root command flags are initialized only once
+
 ### 🎯 Database Backend Migration - Complete
 
 **Full PebbleDB Implementation**: All SQLite-backed features now available in
