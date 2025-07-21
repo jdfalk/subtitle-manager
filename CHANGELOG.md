@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Implemented context timeouts for gRPC translation commands
+
 ### Added
 
 - Add SupportedServices helper and gRPC dial fix

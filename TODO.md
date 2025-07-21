@@ -1095,3 +1095,5 @@ Normalize provider order when generating search cache keys
 - [ ] 🟡 **General**: Investigate remote configuration for rebase script
 
 Normalize provider order in CLI search cache key
+
+Add context timeouts for gRPC translation commands
