@@ -1,0 +1,29 @@
+# file: docs/examples/gcommon-config.yaml
+# version: 1.0.0
+# guid: 27cfc968-bf1d-4763-8511-33da6ddd1f42
+
+# Sample configuration demonstrating gcommon modules
+server:
+  host: localhost
+  port: 9000
+  timeout: 30s
+
+database:
+  driver: postgres
+  dsn: postgres://user:password@localhost/submgr
+  maxOpenConns: 10
+  maxIdleConns: 5
+  connMaxLifetime: 5m
+
+logging:
+  level: info
+  format: json
+  output: subtitle-manager.log
+
+metrics:
+  enabled: true
+  provider: prometheus
+  endpoint: /metrics
+
+hot_reload: true
+env_prefix: SM

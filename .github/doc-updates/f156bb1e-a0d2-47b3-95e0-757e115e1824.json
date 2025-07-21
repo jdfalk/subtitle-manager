@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Document gcommon config example",
+  "guid": "f156bb1e-a0d2-47b3-95e0-757e115e1824",
+  "created_at": "2025-07-15T04:05:59Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

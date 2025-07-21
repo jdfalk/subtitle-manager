@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added gcommon configuration example",
+  "guid": "75b2f214-ab96-4f41-b201-ed9a4587ec45",
+  "created_at": "2025-07-15T04:05:55Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
