@@ -1005,9 +1005,9 @@ func TestSyncBatchEndpoint(t *testing.T) {
 	}
 }
 
-// TestSyncBatchEndpointInvalid verifies that invalid JSON results in
-// a 400 Bad Request response.
-func TestSyncBatchEndpointInvalid(t *testing.T) {
+// TestSyncBatchEndpointInvalidJSON verifies that invalid JSON input
+// results in a 400 Bad Request response when hitting POST /api/sync/batch.
+func TestSyncBatchEndpointInvalidJSON(t *testing.T) {
 	skipIfNoSQLite(t)
 	db, err := database.Open(":memory:")
 	if err != nil {
@@ -1019,12 +1019,12 @@ func TestSyncBatchEndpointInvalid(t *testing.T) {
 
 	h, err := Handler(db)
 	if err != nil {
-		t.Fatalf("handler: %v", err)
+		t.Fatalf("handler error: %v", err)
 	}
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 
-	req, _ := http.NewRequest("POST", srv.URL+"/api/sync/batch", strings.NewReader("invalid"))
+	req, _ := http.NewRequest("POST", srv.URL+"/api/sync/batch", strings.NewReader("{invalid"))
 	req.Header.Set("X-API-Key", key)
 	resp, err := srv.Client().Do(req)
 	if err != nil {
