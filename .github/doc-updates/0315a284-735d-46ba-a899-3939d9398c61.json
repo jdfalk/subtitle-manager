@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Fixed\n\n- Normalize provider order when computing CLI search cache keys",
+  "guid": "0315a284-735d-46ba-a899-3939d9398c61",
+  "created_at": "2025-07-15T04:06:54Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
