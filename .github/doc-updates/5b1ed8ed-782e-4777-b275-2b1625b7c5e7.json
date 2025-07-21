@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added unit test for /api/sync/batch invalid JSON case",
+  "guid": "5b1ed8ed-782e-4777-b275-2b1625b7c5e7",
+  "created_at": "2025-07-15T04:06:21Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
