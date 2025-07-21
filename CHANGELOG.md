@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Added gcommon configuration example
+
 ### Fixed
 
 - Implemented context timeouts for gRPC translation commands

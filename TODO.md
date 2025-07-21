@@ -1097,3 +1097,5 @@ Normalize provider order when generating search cache keys
 Normalize provider order in CLI search cache key
 
 Add context timeouts for gRPC translation commands
+
+Document gcommon config example
