@@ -2233,3 +2233,5 @@ Note: SQLite-related tests are skipped automatically when the binary is built wi
 ### Metrics\n\nThis release switches to the shared gcommon metrics module. Prometheus scraping works out of the box using /metrics.
 Authentication now uses the shared gcommon/auth library for session management
 Install dependencies to ensure testing packages are present
+- CLI search cache now normalizes provider order for consistent cache hits.
+## Rebase script status\n\nTODO: Add content for this section

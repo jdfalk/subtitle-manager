@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Codex rebase script failed due to missing origin remote
+
+### Fixed
+
+- Normalize provider order when computing CLI search cache keys
+
 ### Added
 
 - Use gcommon proto messages
