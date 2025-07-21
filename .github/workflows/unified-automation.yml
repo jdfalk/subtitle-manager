@@ -1,5 +1,5 @@
 # file: .github/workflows/unified-automation.yml
-# version: 2.2.0
+# version: 2.3.0
 # guid: 9a8b7c6d-5e4f-3a2b-1c0d-2e3f4a5b6c7d
 
 name: Unified Issue & Docs Automation
