@@ -1,6 +1,6 @@
 {
   "action": "update",
-  "number": 089ec761,
+  "number": 89,
   "body": "apply sanitizer across CLI and storage",
   "labels": ["codex"],
   "guid": "6de40e00-17fd-49bb-9a28-36e1c6743bb4",
