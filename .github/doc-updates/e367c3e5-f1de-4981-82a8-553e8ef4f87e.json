@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added gcommon logrus provider for structured logging",
+  "guid": "e367c3e5-f1de-4981-82a8-553e8ef4f87e",
+  "created_at": "2025-07-23T03:34:37Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
