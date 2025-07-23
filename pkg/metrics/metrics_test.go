@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	gmetrics "github.com/jdfalk/gcommon/pkg/metrics"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/testutil"
 )
@@ -26,18 +25,9 @@ func TestProviderRequestsMetric(t *testing.T) {
 	ProviderRequests.Reset()
 
 	// Increment the metric
-	ProviderRequests.WithTags(
-		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
-		gmetrics.Tag{Key: "status", Value: "success"},
-	).Inc()
-	ProviderRequests.WithTags(
-		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
-		gmetrics.Tag{Key: "status", Value: "error"},
-	).Inc()
-	ProviderRequests.WithTags(
-		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
-		gmetrics.Tag{Key: "status", Value: "error"},
-	).Inc()
+	ProviderRequests.WithLabelValues("opensubtitles", "success").Inc()
+	ProviderRequests.WithLabelValues("opensubtitles", "error").Inc()
+	ProviderRequests.WithLabelValues("opensubtitles", "error").Inc()
 
 	// Check the metric values
 	expected := `
@@ -64,16 +54,8 @@ func TestTranslationRequestsMetric(t *testing.T) {
 	TranslationRequests.Reset()
 
 	// Increment the metric
-	TranslationRequests.WithTags(
-		gmetrics.Tag{Key: "service", Value: "google"},
-		gmetrics.Tag{Key: "target_language", Value: "en"},
-		gmetrics.Tag{Key: "status", Value: "success"},
-	).Inc()
-	TranslationRequests.WithTags(
-		gmetrics.Tag{Key: "service", Value: "openai"},
-		gmetrics.Tag{Key: "target_language", Value: "fr"},
-		gmetrics.Tag{Key: "status", Value: "error"},
-	).Inc()
+	TranslationRequests.WithLabelValues("google", "en", "success").Inc()
+	TranslationRequests.WithLabelValues("openai", "fr", "error").Inc()
 
 	// Check the metric values
 	expected := `
@@ -100,18 +82,9 @@ func TestSubtitleDownloadsMetric(t *testing.T) {
 	SubtitleDownloads.Reset()
 
 	// Increment the metric
-	SubtitleDownloads.WithTags(
-		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
-		gmetrics.Tag{Key: "language", Value: "en"},
-	).Inc()
-	SubtitleDownloads.WithTags(
-		gmetrics.Tag{Key: "provider", Value: "opensubtitles"},
-		gmetrics.Tag{Key: "language", Value: "en"},
-	).Inc()
-	SubtitleDownloads.WithTags(
-		gmetrics.Tag{Key: "provider", Value: "subscene"},
-		gmetrics.Tag{Key: "language", Value: "fr"},
-	).Inc()
+	SubtitleDownloads.WithLabelValues("opensubtitles", "en").Inc()
+	SubtitleDownloads.WithLabelValues("opensubtitles", "en").Inc()
+	SubtitleDownloads.WithLabelValues("subscene", "fr").Inc()
 
 	// Check the metric values
 	expected := `

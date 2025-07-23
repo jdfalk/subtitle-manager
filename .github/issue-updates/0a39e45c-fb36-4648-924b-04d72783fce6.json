@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Finish metrics proto migration",
+  "body": "Add local metrics proto aggregator and update metrics package to avoid missing gcommon protobufs",
+  "labels": ["refactor"],
+  "guid": "0a39e45c-fb36-4648-924b-04d72783fce6",
+  "legacy_guid": "create-finish-metrics-proto-migration-2025-07-23"
+}

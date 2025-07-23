@@ -29,7 +29,8 @@ module.exports = async ({ github, context, core }) => {
       summary += '- Basic syntax and style issues\n\n';
     } else if (hasAutoFixes && !autoCommitEnabled) {
       summary += '🔧 **Auto-fixes available but not committed**\n\n';
-      summary += 'Auto-fixes were applied but not committed due to configuration.\n\n';
+      summary +=
+        'Auto-fixes were applied but not committed due to configuration.\n\n';
     } else if (!hasAutoFixes) {
       summary += '✨ **No auto-fixes needed**\n\n';
     }
@@ -43,7 +44,7 @@ module.exports = async ({ github, context, core }) => {
     const reportPaths = [
       'super-linter-reports/super-linter.report',
       'super-linter.report',
-      'super-linter-reports/super-linter.log'
+      'super-linter-reports/super-linter.log',
     ];
 
     for (const reportPath of reportPaths) {
@@ -61,7 +62,8 @@ module.exports = async ({ github, context, core }) => {
         summary += '❌ **Linting failed** - Please fix the issues below:\n\n';
         // Truncate very long reports
         if (reportContent.length > 4000) {
-          reportContent = reportContent.substring(0, 4000) + '\n... (truncated)';
+          reportContent =
+            reportContent.substring(0, 4000) + '\n... (truncated)';
         }
         summary += '```\n' + reportContent + '\n```\n\n';
       } else {
@@ -72,7 +74,8 @@ module.exports = async ({ github, context, core }) => {
       core.warning('No linting report found in any expected location');
     }
   } catch (error) {
-    summary += '⚠️ **Error reading linting results**: ' + error.message + '\n\n';
+    summary +=
+      '⚠️ **Error reading linting results**: ' + error.message + '\n\n';
     core.error(`Error reading linting results: ${error.message}`);
   }
 
@@ -80,10 +83,16 @@ module.exports = async ({ github, context, core }) => {
     summary += '### Auto-fix Configuration\n';
     summary += `- **Auto-fix enabled**: ${autoFixEnabled ? '✅' : '❌'}\n`;
     summary += `- **Auto-commit enabled**: ${autoCommitEnabled ? '✅' : '❌'}\n`;
-    summary += '- **Supported formatters**: Black (Python), Prettier (JS/TS), stylelint (CSS), markdownlint, yamllint, gofmt\n\n';
+    summary +=
+      '- **Supported formatters**: Black (Python), Prettier (JS/TS), stylelint (CSS), markdownlint, yamllint, gofmt\n\n';
   }
 
-  summary += 'View the [workflow run](' + context.payload.repository.html_url + '/actions/runs/' + context.runId + ') for detailed results.';
+  summary +=
+    'View the [workflow run](' +
+    context.payload.repository.html_url +
+    '/actions/runs/' +
+    context.runId +
+    ') for detailed results.';
 
   try {
     // Find existing comment
@@ -103,7 +112,7 @@ module.exports = async ({ github, context, core }) => {
         owner: context.repo.owner,
         repo: context.repo.repo,
         comment_id: existingComment.id,
-        body: summary
+        body: summary,
       });
       core.info('Updated existing PR comment');
     } else {
@@ -112,7 +121,7 @@ module.exports = async ({ github, context, core }) => {
         owner: context.repo.owner,
         repo: context.repo.repo,
         issue_number: context.issue.number,
-        body: summary
+        body: summary,
       });
       core.info('Created new PR comment');
     }

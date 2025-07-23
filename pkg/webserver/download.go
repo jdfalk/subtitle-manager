@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	gmetrics "github.com/jdfalk/gcommon/pkg/metrics"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	"github.com/jdfalk/subtitle-manager/pkg/metrics"
@@ -56,11 +55,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 		var q req
 		if err := json.NewDecoder(r.Body).Decode(&q); err != nil || q.Path == "" || q.Lang == "" {
 			logger.Warnf("invalid request body: %v", err)
-			metrics.APIRequests.WithTags(
-				gmetrics.Tag{Key: "endpoint", Value: "/api/download"},
-				gmetrics.Tag{Key: "method", Value: "POST"},
-				gmetrics.Tag{Key: "status_code", Value: "400"},
-			).Inc()
+			metrics.APIRequests.WithLabelValues("/api/download", "POST", "400").Inc()
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			_ = json.NewEncoder(w).Encode(apiError{Error: "Invalid request body, path, or language"})
@@ -167,11 +162,7 @@ func downloadHandler(db *sql.DB) http.Handler {
 			}
 		}
 
-		metrics.APIRequests.WithTags(
-			gmetrics.Tag{Key: "endpoint", Value: "/api/download"},
-			gmetrics.Tag{Key: "method", Value: "POST"},
-			gmetrics.Tag{Key: "status_code", Value: "200"},
-		).Inc()
+		metrics.APIRequests.WithLabelValues("/api/download", "POST", "200").Inc()
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(resp{File: out})
 		logger.WithFields(logrus.Fields{

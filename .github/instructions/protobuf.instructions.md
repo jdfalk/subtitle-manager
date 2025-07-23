@@ -3,26 +3,32 @@
 <!-- guid: 7d6c5b4a-3c2d-1e0f-9a8b-7c6d5e4f3a2b -->
 
 applyTo: "\*\*/\*.proto"ile: .github/instructions/protobuf.instructions.md -->
+
 <!-- version: 1.0.0 -->
 
 ## <!-- guid: 7d6c5b4a-3c2d-1e0f-9a8b-7c6d5e4f3a2b -->
 
-applyTo: "\*_/_.proto"
-description: |
-Protocol Buffers (protobuf) style and documentation rules for Copilot/AI agents and VS Code Copilot customization. These rules extend the general instructions in `general-coding.instructions.md` and merge all unique content from the Google Protobuf Style Guide.
+applyTo: "\*_/_.proto" description: | Protocol Buffers (protobuf) style and
+documentation rules for Copilot/AI agents and VS Code Copilot customization.
+These rules extend the general instructions in `general-coding.instructions.md`
+and merge all unique content from the Google Protobuf Style Guide.
 
 ---
 
 # Protobuf Coding Instructions
 
 - Follow the [general coding instructions](general-coding.instructions.md).
-- Follow the [Google Protobuf Style Guide](https://protobuf.dev/programming-guides/style/) for additional best practices.
-- All protobuf files must begin with the required file header (see general instructions for details and Protobuf example).
+- Follow the
+  [Google Protobuf Style Guide](https://protobuf.dev/programming-guides/style/)
+  for additional best practices.
+- All protobuf files must begin with the required file header (see general
+  instructions for details and Protobuf example).
 
 ## Edition 2023 Features
 
 - All proto files MUST use Edition 2023: `edition = "2023";`
-- Enhanced features, better defaults, future-proofing, hybrid APIs, improved validation
+- Enhanced features, better defaults, future-proofing, hybrid APIs, improved
+  validation
 
 ## File Structure
 
@@ -47,7 +53,9 @@ Protocol Buffers (protobuf) style and documentation rules for Copilot/AI agents 
 
 ## Required File Header
 
-All protobuf files must begin with a standard header as described in the [general coding instructions](general-coding.instructions.md). Example for Protobuf:
+All protobuf files must begin with a standard header as described in the
+[general coding instructions](general-coding.instructions.md). Example for
+Protobuf:
 
 ```protobuf
 // file: path/to/file.proto

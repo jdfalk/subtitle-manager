@@ -12,7 +12,6 @@ import (
 
 	"github.com/spf13/viper"
 
-	gmetrics "github.com/jdfalk/gcommon/pkg/metrics"
 	"github.com/jdfalk/subtitle-manager/pkg/metrics"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 )
@@ -30,32 +29,20 @@ func translateHandler() http.Handler {
 			return
 		}
 		if err := r.ParseMultipartForm(32 << 20); err != nil {
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: ""},
-				gmetrics.Tag{Key: "target_language", Value: ""},
-				gmetrics.Tag{Key: "status", Value: "bad_request"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues("", "", "bad_request").Inc()
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		file, hdr, err := r.FormFile("file")
 		if err != nil {
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: ""},
-				gmetrics.Tag{Key: "target_language", Value: ""},
-				gmetrics.Tag{Key: "status", Value: "bad_request"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues("", "", "bad_request").Inc()
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		defer file.Close()
 		lang := r.FormValue("lang")
 		if lang == "" {
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: ""},
-				gmetrics.Tag{Key: "target_language", Value: ""},
-				gmetrics.Tag{Key: "status", Value: "bad_request"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues("", "", "bad_request").Inc()
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -75,11 +62,7 @@ func translateHandler() http.Handler {
 
 		in, err := os.CreateTemp("", "in-*"+filepath.Ext(hdr.Filename))
 		if err != nil {
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: service},
-				gmetrics.Tag{Key: "target_language", Value: lang},
-				gmetrics.Tag{Key: "status", Value: "error"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues(service, lang, "error").Inc()
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -87,61 +70,37 @@ func translateHandler() http.Handler {
 		defer os.Remove(in.Name())
 		if _, err := io.Copy(in, file); err != nil {
 			_ = in.Close()
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: service},
-				gmetrics.Tag{Key: "target_language", Value: lang},
-				gmetrics.Tag{Key: "status", Value: "error"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues(service, lang, "error").Inc()
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		out, err := os.CreateTemp("", "out-*.srt")
 		if err != nil {
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: service},
-				gmetrics.Tag{Key: "target_language", Value: lang},
-				gmetrics.Tag{Key: "status", Value: "error"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues(service, lang, "error").Inc()
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		defer func() { _ = out.Close() }()
 		defer os.Remove(out.Name())
 		if err := out.Close(); err != nil {
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: service},
-				gmetrics.Tag{Key: "target_language", Value: lang},
-				gmetrics.Tag{Key: "status", Value: "error"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues(service, lang, "error").Inc()
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		if err := subtitles.TranslateFileToSRT(in.Name(), out.Name(), lang, service, gKey, gptKey, grpcAddr); err != nil {
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: service},
-				gmetrics.Tag{Key: "target_language", Value: lang},
-				gmetrics.Tag{Key: "status", Value: "error"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues(service, lang, "error").Inc()
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		data, err := os.ReadFile(out.Name())
 		if err != nil {
-			metrics.TranslationRequests.WithTags(
-				gmetrics.Tag{Key: "service", Value: service},
-				gmetrics.Tag{Key: "target_language", Value: lang},
-				gmetrics.Tag{Key: "status", Value: "error"},
-			).Inc()
+			metrics.TranslationRequests.WithLabelValues(service, lang, "error").Inc()
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		metrics.TranslationRequests.WithTags(
-			gmetrics.Tag{Key: "service", Value: service},
-			gmetrics.Tag{Key: "target_language", Value: lang},
-			gmetrics.Tag{Key: "status", Value: "success"},
-		).Inc()
+		metrics.TranslationRequests.WithLabelValues(service, lang, "success").Inc()
 		w.Header().Set("Content-Type", "application/x-subrip")
 		_, _ = w.Write(data)
 	})

@@ -6,7 +6,9 @@
 
 ## Project Overview
 
-This is the **Subtitle Manager** repository, a comprehensive subtitle file processing and management application built with Go and featuring a modern web UI. The project focuses on:
+This is the **Subtitle Manager** repository, a comprehensive subtitle file
+processing and management application built with Go and featuring a modern web
+UI. The project focuses on:
 
 - Subtitle file format conversion and processing
 - Web-based subtitle management interface
@@ -29,19 +31,23 @@ This is the **Subtitle Manager** repository, a comprehensive subtitle file proce
 
 ### README.md
 
-Contains project overview, installation instructions, and usage examples for the subtitle management system.
+Contains project overview, installation instructions, and usage examples for the
+subtitle management system.
 
 ### .github/instructions/general-coding.instructions.md
 
-Standard coding guidelines including file headers, version management, and documentation requirements.
+Standard coding guidelines including file headers, version management, and
+documentation requirements.
 
 ### go.mod
 
-Go module definition showing dependencies on subtitle processing libraries, web frameworks, and database drivers.
+Go module definition showing dependencies on subtitle processing libraries, web
+frameworks, and database drivers.
 
 ### main.go
 
-Application entry point with command-line interface, server initialization, and core subtitle processing logic.
+Application entry point with command-line interface, server initialization, and
+core subtitle processing logic.
 
 ## Common Conflict Patterns
 
@@ -117,4 +123,6 @@ Subtitle processing follows a standard pipeline:
 4. **Conversion**: Transform between different subtitle formats
 5. **Optimization**: Adjust timing and improve readability
 
-When resolving conflicts in subtitle processing code, preserve both format improvements and ensure the pipeline remains functional for all supported formats.
+When resolving conflicts in subtitle processing code, preserve both format
+improvements and ensure the pipeline remains functional for all supported
+formats.
