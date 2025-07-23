@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+Migrated cache TTL configuration to gcommon CachePolicy proto
+
 ### Added
 
 - Added gcommon configuration example
