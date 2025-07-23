@@ -1,8 +1,8 @@
 	# file: Makefile
 # Makefile for Subtitle Manager - Comprehensive build automation
 
-# Project Configuration
-APP_NAME := subtitle-manager
+	# Project Configuration
+	APP_NAME := subtitle-manager
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%I:%M:%S%p')
 GIT_COMMIT := $(shell git rev-parse HEAD 2>/dev/null || echo "unknown")
@@ -471,6 +471,7 @@ docker-benchmark:
 proto-gen: ## Generate protobuf code
 	@echo "$(COLOR_BLUE)Generating protobuf code...$(COLOR_RESET)"
 	cd $(PROTO_DIR) && $(PROTOC) --go_out='paths=source_relative:../pkg/jobpb' queue_job.proto
+	cd $(PROTO_DIR) && $(PROTOC) --go_out='paths=source_relative:../pkg/databasepb' database.proto
 	@echo "$(COLOR_GREEN)✓ Protobuf code generated$(COLOR_RESET)"
 
 #
