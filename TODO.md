@@ -1101,3 +1101,5 @@ Add context timeouts for gRPC translation commands
 Document gcommon config example
 
 Migrate cache TTL config to gcommon CachePolicy
+
+Add protobuf messages for database records
