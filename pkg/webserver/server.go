@@ -316,7 +316,7 @@ func StartServer(addr string) error {
 		logger.Warnf("failed to initialize metrics: %v", err)
 	}
 
-	if err := initializeHealth(prefix + "/health"); err != nil {
+	if err := InitializeHealth(prefix + "/health"); err != nil {
 		logger.Warnf("failed to initialize health checks: %v", err)
 	}
 

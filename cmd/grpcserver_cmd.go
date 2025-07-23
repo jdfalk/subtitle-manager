@@ -3,9 +3,11 @@ package cmd
 import (
 	"net"
 
+	ghealth "github.com/jdfalk/gcommon/pkg/health"
 	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
+	"github.com/jdfalk/subtitle-manager/pkg/webserver"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -29,6 +31,12 @@ var grpcServerCmd = &cobra.Command{
 		)
 
 		pb.RegisterTranslatorServer(s, server)
+
+		if err := webserver.InitializeHealth(""); err == nil {
+			if provider := webserver.GetHealthProvider(); provider != nil {
+				ghealth.NewGRPCServer(provider).Register(s)
+			}
+		}
 		lis, err := net.Listen("tcp", grpcAddr)
 		if err != nil {
 			return err
