@@ -47,7 +47,7 @@ This approach will:
 - [ ] Add context timeouts for gRPC translations
 - [ ] Add regression test for sync batch endpoint
 - [ ] Add tests for DirectoryChooser directory detection
-- [ ] Add tests for structured logging
+- [x] Add tests for structured logging
 - [ ] Align remaining services with gcommon proto
 - [ ] Deduplicated S3 and storage flags in root command
 - [ ] Document cron support for monitor autosync

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Added gcommon logrus provider for structured logging
+
 Added config protobuf for centralized configuration
 
 ### Added

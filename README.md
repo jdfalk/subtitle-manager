@@ -2242,3 +2242,4 @@ Install dependencies to ensure testing packages are present
 gRPC translation and configuration commands now use context timeouts
 See docs/examples/gcommon-config.yaml for a sample gcommon configuration.
 Centralized queue messages now use the gcommon QueueMessage proto.
+### gcommon Logging Provider\n\nImplemented a logrus provider compatible with the centralized gcommon logging proto.
