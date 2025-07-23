@@ -1,5 +1,5 @@
 // file: pkg/webserver/health.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 9e8d7c6b-5a4f-3d2c-1b0a-9f8e7d6c5b4a
 
 package webserver
@@ -16,8 +16,8 @@ import (
 
 var HealthProvider ghealth.Provider
 
-// initializeHealth sets up the global health provider with built-in checks.
-func initializeHealth(endpoint string) error {
+// InitializeHealth sets up the global health provider with built-in checks.
+func InitializeHealth(endpoint string) error {
 	if HealthProvider != nil {
 		return nil
 	}
@@ -107,4 +107,9 @@ func cacheHealthCheck(ctx context.Context) (ghealth.Result, error) {
 		res.WithDetails(map[string]any{"stats": stats})
 	}
 	return res, nil
+}
+
+// GetHealthProvider returns the global health provider instance.
+func GetHealthProvider() ghealth.Provider {
+	return HealthProvider
 }
