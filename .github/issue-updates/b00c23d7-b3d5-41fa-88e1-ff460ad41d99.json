@@ -1,0 +1,8 @@
+{
+  "action": "create",
+  "title": "Implement config protobuf",
+  "body": "Add proto definitions for configuration and update server/CLI",
+  "labels": ["enhancement"],
+  "guid": "b00c23d7-b3d5-41fa-88e1-ff460ad41d99",
+  "legacy_guid": "create-implement-config-protobuf-2025-07-23"
+}

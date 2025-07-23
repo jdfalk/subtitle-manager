@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Implement config protobuf",
+  "guid": "6eb34b8c-1342-479d-8847-a9a67042a588",
+  "created_at": "2025-07-23T03:26:18Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

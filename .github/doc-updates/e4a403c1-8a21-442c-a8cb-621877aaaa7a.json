@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "Added config protobuf for centralized configuration",
+  "guid": "e4a403c1-8a21-442c-a8cb-621877aaaa7a",
+  "created_at": "2025-07-23T03:26:13Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

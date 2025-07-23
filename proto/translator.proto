@@ -1,5 +1,5 @@
 // file: proto/translator.proto
-// version: 1.1.1
+// version: 1.2.0
 // guid: 70eca88d-31fe-4044-8b76-a22bd3c9e0bd
 
 edition = "2023";
@@ -10,14 +10,15 @@ import "google/protobuf/go_features.proto";
 import "google/protobuf/empty.proto";
 import "pkg/common/proto/messages/request_metadata.proto";
 import "pkg/common/proto/messages/error.proto";
+import "proto/config.proto";
 
 option go_package = "github.com/jdfalk/subtitle-manager/pkg/translatorpb;translatorpb";
 option features.(pb.go).api_level = API_HYBRID;
 
 service TranslatorService {
   rpc Translate(TranslateRequest) returns (TranslateResponse);
-  rpc GetConfig(google.protobuf.Empty) returns (ConfigResponse);
-  rpc SetConfig(ConfigRequest) returns (google.protobuf.Empty);
+  rpc GetConfig(google.protobuf.Empty) returns (gcommon.v1.config.SubtitleManagerConfig);
+  rpc SetConfig(gcommon.v1.config.SubtitleManagerConfig) returns (google.protobuf.Empty);
 }
 
 message TranslateRequest {
@@ -31,14 +32,6 @@ message TranslateResponse {
   repeated gcommon.v1.common.Error errors = 2;
 }
 
-message ConfigResponse {
-  map<string, string> settings = 1;
-}
-
-message ConfigRequest {
-  gcommon.v1.common.RequestMetadata meta = 1;
-  map<string, string> settings = 2;
-}
 
 // RateLimit defines basic provider rate limiting parameters.
 message RateLimit {

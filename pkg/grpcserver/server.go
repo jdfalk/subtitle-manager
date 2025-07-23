@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	gconfig "github.com/jdfalk/subtitle-manager/pkg/gcommon/config"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 	"github.com/spf13/viper"
@@ -33,20 +34,30 @@ func NewServer(googleKey, gptKey string, persistConfig bool, configKeyPrefix str
 
 // SetConfig updates configuration values. If persistConfig is enabled, changes
 // are saved using Viper. The configKeyPrefix determines how keys are mapped.
-func (s *Server) SetConfig(ctx context.Context, req *pb.ConfigRequest) (*emptypb.Empty, error) {
-	for k, v := range req.Settings {
+func (s *Server) SetConfig(ctx context.Context, req *pb.SubtitleManagerConfig) (*emptypb.Empty, error) {
+	if req.GoogleApiKey != nil {
+		s.googleKey = req.GetGoogleApiKey()
 		if s.persistConfig {
-			// Use Viper for persistent config
-			viper.Set(k, v)
+			viper.Set(s.configKeyPrefix+"google_api_key", s.googleKey)
 		}
-
-		// Update in-memory values based on key mapping
-		switch k {
-		case s.configKeyPrefix + "google_api_key", "GOOGLE_API_KEY":
-			s.googleKey = v
-		case s.configKeyPrefix + "openai_api_key", "OPENAI_API_KEY":
-			s.gptKey = v
+	}
+	if req.OpenaiApiKey != nil {
+		s.gptKey = req.GetOpenaiApiKey()
+		if s.persistConfig {
+			viper.Set(s.configKeyPrefix+"openai_api_key", s.gptKey)
 		}
+	}
+	if req.DbPath != nil && s.persistConfig {
+		viper.Set("db_path", req.GetDbPath())
+	}
+	if req.DbBackend != nil && s.persistConfig {
+		viper.Set("db_backend", req.GetDbBackend())
+	}
+	if req.Sqlite3Filename != nil && s.persistConfig {
+		viper.Set("sqlite3_filename", req.GetSqlite3Filename())
+	}
+	if req.LogFile != nil && s.persistConfig {
+		viper.Set("log_file", req.GetLogFile())
 	}
 
 	if s.persistConfig {
@@ -61,21 +72,21 @@ func (s *Server) SetConfig(ctx context.Context, req *pb.ConfigRequest) (*emptypb
 }
 
 // GetConfig returns current configuration values.
-func (s *Server) GetConfig(ctx context.Context, _ *emptypb.Empty) (*pb.ConfigResponse, error) {
-	settings := make(map[string]string)
-
+func (s *Server) GetConfig(ctx context.Context, _ *emptypb.Empty) (*pb.SubtitleManagerConfig, error) {
 	if s.persistConfig {
-		// Return all Viper settings for persistent config
-		for k, v := range viper.AllSettings() {
-			settings[k] = fmt.Sprintf("%v", v)
+		cfg := gconfig.ToProto()
+		if s.googleKey != "" {
+			cfg.GoogleApiKey = &s.googleKey
 		}
-	} else {
-		// Return only API keys for memory-only config
-		settings["GOOGLE_API_KEY"] = s.googleKey
-		settings["OPENAI_API_KEY"] = s.gptKey
+		if s.gptKey != "" {
+			cfg.OpenaiApiKey = &s.gptKey
+		}
+		return cfg, nil
 	}
-
-	return &pb.ConfigResponse{Settings: settings}, nil
+	return &pb.SubtitleManagerConfig{
+		GoogleApiKey: &s.googleKey,
+		OpenaiApiKey: &s.gptKey,
+	}, nil
 }
 
 // Translate translates text using the configured translation service.
