@@ -18,16 +18,16 @@ Brief description of the overall changes and their purpose.
 Issues Addressed:
 
 type(scope): description
-- [path/to/file1.ext](path/to/file1.ext) - Description of changes
-- [path/to/file2.ext](path/to/file2.ext) - Description of changes
-- [path/to/file3.ext](path/to/file3.ext) - Description of changes
+- path/to/file1.ext - Description of changes
+- path/to/file2.ext - Description of changes
+- path/to/file3.ext - Description of changes
 
 type(scope): description
-- [path/to/file4.ext](path/to/file4.ext) - Description of changes
-- [path/to/file5.ext](path/to/file5.ext) - Description of changes
+- path/to/file4.ext - Description of changes
+- path/to/file5.ext - Description of changes
 
 type(scope): description
-- [path/to/file6.ext](path/to/file6.ext) - Description of changes
+- path/to/file6.ext - Description of changes
 ```
 
 For single commits, use the standard format:
@@ -64,8 +64,8 @@ type(scope): description
 Brief description of what was changed and why.
 
 Files changed:
-- [path/to/file1.ext](path/to/file1.ext) - Description of changes
-- [path/to/file2.ext](path/to/file2.ext) - Description of changes
+- path/to/file1.ext - Description of changes
+- path/to/file2.ext - Description of changes
 ```
 
 ## Guidelines
@@ -102,9 +102,8 @@ Files changed:
 ### File Documentation
 
 - **Always list every modified file**
-- **Use markdown links**: `[path/to/file.ext](path/to/file.ext)` for easy navigation
 - Explain what changed in each file, not just what the file does
-- Use relative paths from repository root
+- Use relative paths from repository root as markdown links: `[path/to/file.ext](path/to/file.ext)`
 - Be specific about the nature of changes
 
 ### Issue References
