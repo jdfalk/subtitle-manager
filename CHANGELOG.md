@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Adopted gcommon queue proto for internal queue
+
+### Added
+
 - Added gRPC AuthService using gcommon protobufs
 
 ### Added
