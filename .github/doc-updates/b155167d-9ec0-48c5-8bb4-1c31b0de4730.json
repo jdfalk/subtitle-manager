@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added protobuf definitions for database records",
+  "guid": "b155167d-9ec0-48c5-8bb4-1c31b0de4730",
+  "created_at": "2025-07-23T03:21:38Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
