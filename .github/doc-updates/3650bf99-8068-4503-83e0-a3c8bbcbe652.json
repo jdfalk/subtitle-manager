@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "Migrated cache TTL configuration to gcommon CachePolicy proto",
+  "guid": "3650bf99-8068-4503-83e0-a3c8bbcbe652",
+  "created_at": "2025-07-23T03:19:26Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
