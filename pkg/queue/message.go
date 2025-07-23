@@ -1,12 +1,11 @@
 // file: pkg/queue/message.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 2f76c9a4-8f24-4d5f-9aaa-97db45af4c61
 package queue
 
-import "google.golang.org/protobuf/types/known/anypb"
+import queuepb "github.com/jdfalk/gcommon/pkg/queue/proto"
 
-// QueueMessage mirrors the gcommon queue message for basic use.
-type QueueMessage struct {
-	Id   string
-	Body *anypb.Any
-}
+// QueueMessage is an alias of the gcommon queue message type.
+// This allows the internal queue package to use the centralized
+// protobuf definition without rewriting existing code.
+type QueueMessage = queuepb.QueueMessage
