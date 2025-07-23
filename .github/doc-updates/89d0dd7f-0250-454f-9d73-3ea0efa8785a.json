@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Added gRPC AuthService using gcommon protobufs",
+  "guid": "89d0dd7f-0250-454f-9d73-3ea0efa8785a",
+  "created_at": "2025-07-23T03:19:52Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
