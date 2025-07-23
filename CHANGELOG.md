@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Added gRPC AuthService using gcommon protobufs
+
+### Added
+
 - Added protobuf definitions for database records
 
 Migrated cache TTL configuration to gcommon CachePolicy proto
