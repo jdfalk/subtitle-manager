@@ -1,0 +1,10 @@
+File: f729ca44-de32-4136-9bc2-194e93cfbd10.json
+Error: Update application failed
+Timestamp: 2025-07-23T03:32:45.814688
+Stack trace:
+Traceback (most recent call last):
+  File "/home/runner/work/subtitle-manager/subtitle-manager/doc_update_manager.py", line 447, in _process_single_file_safely
+    self.process_update_file_data(update_file, update_data)
+  File "/home/runner/work/subtitle-manager/subtitle-manager/doc_update_manager.py", line 495, in process_update_file_data
+    raise Exception("Update application failed")
+Exception: Update application failed

@@ -1105,3 +1105,4 @@ Migrate cache TTL config to gcommon CachePolicy
 Add protobuf messages for database records
 
 ✅ Adopted gcommon QueueMessage for internal queue
+Implement config protobuf

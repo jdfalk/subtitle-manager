@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+Added config protobuf for centralized configuration
+
 ### Added
 
 - Adopted gcommon queue proto for internal queue
