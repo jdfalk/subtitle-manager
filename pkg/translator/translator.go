@@ -227,7 +227,24 @@ func GRPCSetConfig(settings map[string]string, addr string) error {
 	}
 	defer conn.Close()
 	client := pb.NewTranslatorClient(conn)
-	_, err = client.SetConfig(ctx, &pb.ConfigRequest{Settings: settings})
+	cfg := &pb.SubtitleManagerConfig{}
+	for k, v := range settings {
+		switch k {
+		case "google_api_key":
+			cfg.GoogleApiKey = &v
+		case "openai_api_key":
+			cfg.OpenaiApiKey = &v
+		case "db_path":
+			cfg.DbPath = &v
+		case "db_backend":
+			cfg.DbBackend = &v
+		case "sqlite3_filename":
+			cfg.Sqlite3Filename = &v
+		case "log_file":
+			cfg.LogFile = &v
+		}
+	}
+	_, err = client.SetConfig(ctx, cfg)
 	return err
 }
 

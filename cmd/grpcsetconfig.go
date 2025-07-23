@@ -1,11 +1,12 @@
 // file: cmd/grpcsetconfig.go
-// version: 1.1.0
+// version: 1.2.0
 // guid: e252459e-8583-447a-81d5-1ac0eb51979c
 
 package cmd
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -32,7 +33,24 @@ var grpcSetConfigCmd = &cobra.Command{
 		}
 		defer conn.Close()
 		client := pb.NewTranslatorClient(conn)
-		_, err = client.SetConfig(ctx, &pb.ConfigRequest{Settings: map[string]string{grpcConfigKey: grpcConfigValue}})
+		cfg := &pb.SubtitleManagerConfig{}
+		switch grpcConfigKey {
+		case "google_api_key":
+			cfg.GoogleApiKey = &grpcConfigValue
+		case "openai_api_key":
+			cfg.OpenaiApiKey = &grpcConfigValue
+		case "db_path":
+			cfg.DbPath = &grpcConfigValue
+		case "db_backend":
+			cfg.DbBackend = &grpcConfigValue
+		case "sqlite3_filename":
+			cfg.Sqlite3Filename = &grpcConfigValue
+		case "log_file":
+			cfg.LogFile = &grpcConfigValue
+		default:
+			return fmt.Errorf("unknown config key: %s", grpcConfigKey)
+		}
+		_, err = client.SetConfig(ctx, cfg)
 		if err != nil {
 			return err
 		}

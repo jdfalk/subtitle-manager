@@ -1,5 +1,5 @@
 // file: pkg/grpcserver/server_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 123e4567-e89b-12d3-a456-426614174006
 
 package grpcserver
@@ -95,9 +95,17 @@ func TestServer_SetConfig(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			server := NewServer("initial-google", "initial-gpt", tt.persistConfig, tt.configKeyPrefix)
 
-			req := &pb.ConfigRequest{
-				Settings: tt.settings,
+			cfg := &pb.SubtitleManagerConfig{}
+			for k, v := range tt.settings {
+				switch k {
+				case tt.configKeyPrefix + "google_api_key", "GOOGLE_API_KEY":
+					cfg.GoogleApiKey = &v
+				case tt.configKeyPrefix + "openai_api_key", "OPENAI_API_KEY":
+					cfg.OpenaiApiKey = &v
+				}
 			}
+
+			_, err := server.SetConfig(context.Background(), cfg)
 
 			_, err := server.SetConfig(context.Background(), req)
 
@@ -230,10 +238,8 @@ func TestServer_SetConfigWithPersistence_ErrorHandling(t *testing.T) {
 	// Set an invalid config file that will cause WriteConfig to fail
 	viper.SetConfigFile("/invalid/path/config.yaml")
 
-	req := &pb.ConfigRequest{
-		Settings: map[string]string{
-			"test_key": "test_value",
-		},
+	req := &pb.SubtitleManagerConfig{
+		DbPath: protoString("invalid"),
 	}
 
 	// Should handle the error gracefully
@@ -255,3 +261,5 @@ func TestServer_InterfaceCompliance(t *testing.T) {
 	// Test that the server can handle the basic gRPC methods
 	require.NotNil(t, server)
 }
+
+func protoString(s string) *string { return &s }
