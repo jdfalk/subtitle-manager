@@ -6,7 +6,8 @@
 
 ## 🚫 Temporarily Disabled Checks
 
-The following automation checks have been temporarily disabled in the unified automation workflow to prevent failures during protobuf generation work:
+The following automation checks have been temporarily disabled in the unified
+automation workflow to prevent failures during protobuf generation work:
 
 ### Super Linter Validations Disabled
 

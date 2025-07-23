@@ -1,3 +1,7 @@
+<!-- file: CHANGELOG.md -->
+<!-- version: 1.0.1 -->
+<!-- guid: 6a7b8c9d-0e1f-2a3b-4c5d-6e7f8a9b0c1d -->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -7,33 +11,13 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Added gcommon logrus provider for structured logging
-
-Added config protobuf for centralized configuration
-
-### Added
-
+- Added config protobuf for centralized configuration
 - Adopted gcommon queue proto for internal queue
-
-### Added
-
 - Added gRPC AuthService using gcommon protobufs
-
-### Added
-
 - Added protobuf definitions for database records
-
-Migrated cache TTL configuration to gcommon CachePolicy proto
-
-### Added
-
+- Migrated cache TTL configuration to gcommon CachePolicy proto
+- Added metrics proto aggregator and refactored metrics package
 - Added gcommon configuration example
-
-### Fixed
-
-- Implemented context timeouts for gRPC translation commands
-
-### Added
-
 - Add SupportedServices helper and gRPC dial fix
 - Added 'whisper start' and 'whisper stop' commands for container management
 - Added CLI commands to start and stop the Whisper container
@@ -74,11 +58,13 @@ Migrated cache TTL configuration to gcommon CachePolicy proto
 
 ### Fixed
 
+- Implemented context timeouts for gRPC translation commands
 - Add missing media_profiles table for SQLite schema
 - Added @testing-library/dom to resolve missing module errors
 - Codex rebase script failed due to missing origin remote
 - Corrected Docker stack port mapping
-- Deduplicated persistent flag definitions in root command to prevent test panics
+- Deduplicated persistent flag definitions in root command to prevent test
+  panics
 - Fixed duplicate flag definitions in root command
 - Fixed search cache key to ignore provider order
 - Handle type field when displaying directories
@@ -89,14 +75,9 @@ Migrated cache TTL configuration to gcommon CachePolicy proto
 
 ### Changed
 
-- ### Changed
 - Switched health endpoints to use gcommon/health handlers
-- ### Changed
-
 - Improved GitHub project setup script with auth checks
-- ### Changed
-
-- Removed add-to-project workflow; using GitHub built-in project automation.
+- Removed add-to-project workflow; using GitHub built-in project automation
 
 ## [0.9.0] - 2025-06-30
 
@@ -403,4 +384,5 @@ achieved.
 
 - `radarr-sync` command for one-time library synchronization.
 - Metadata refresh respects field locks set via `metadata update`.
-- `metadata apply` command to write selected metadata to library items while respecting field locks.
+- `metadata apply` command to write selected metadata to library items while
+  respecting field locks.

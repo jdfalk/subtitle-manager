@@ -1,0 +1,13 @@
+// file: proto/metrics.proto
+// version: 1.0.0
+// guid: 5e7f9a80-1234-4c7b-8d90-abcdef123456
+
+edition = "2023";
+
+package gcommon.v1.metrics;
+
+import "google/protobuf/go_features.proto";
+import public "pkg/metrics/proto/metrics.proto";
+
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/metricspb;metricspb";
+option features.(pb.go).api_level = API_HYBRID;

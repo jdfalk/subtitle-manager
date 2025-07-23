@@ -1,3 +1,7 @@
+<!-- file: README.md -->
+<!-- version: 1.0.1 -->
+<!-- guid: 2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e -->
+
 # Subtitle Manager
 
 Subtitle Manager is a comprehensive subtitle management application written in
@@ -430,10 +434,10 @@ tags, permissions, and subtitle history.
 subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded]
 [--translate] subtitle-manager history [--video file] subtitle-manager extract
 [media] [output] subtitle-manager transcribe [media] [output] [lang]
-subtitle-manager whisper status subtitle-manager fetch [media] [lang]
-[output] subtitle-manager fetch --tags tag1,tag2 [media] [lang] [output]
-subtitle-manager search [media] [lang] subtitle-manager batch [lang] [files...]
-subtitle-manager syncbatch -config file.json
+subtitle-manager whisper status subtitle-manager fetch [media] [lang] [output]
+subtitle-manager fetch --tags tag1,tag2 [media] [lang] [output] subtitle-manager
+search [media] [lang] subtitle-manager batch [lang] [files...] subtitle-manager
+syncbatch -config file.json
 
 # syncbatch expects a JSON file describing media and subtitle pairs
 
@@ -1528,6 +1532,7 @@ subtitle-manager sync [media] [subtitle] [output] [--use-audio] [--use-embedded]
 [--translate] subtitle-manager history [--video file] subtitle-manager extract
 [media] [output] subtitle-manager transcribe [media] [output] [lang]
 subtitle-manager whisper status subtitle-manager fetch [media] [lang]
+
 > > > > > > > implementations: [store.go](pkg/database/store.go),
 > > > > > > > [database.go](pkg/database/database.go),
 > > > > > > > [pebble.go](pkg/database/pebble.go),
@@ -1558,7 +1563,8 @@ subtitle-manager login [username] [password] subtitle-manager login-token
 [token] subtitle-manager user add [username] [email] [password] subtitle-manager
 user apikey [username] subtitle-manager user token [email] subtitle-manager user
 role [username] [role] subtitle-manager user list subtitle-manager radarr-sync
-```
+
+````
 
 Locked fields prevent automatic refresh from overwriting manual edits. Specify them with `--lock title,release_group` when using `metadata update`.
 
@@ -1760,10 +1766,13 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 **Basic Configuration:**
 
 - `SM_LOG_LEVEL` - Log level (debug, info, warn, error) - Default: `info`
-- `SM_LOG_FILE` - Path to log file - Default: `/config/logs/subtitle-manager.log`
-- `SM_CONFIG_FILE` - Path to configuration file - Default: `/config/subtitle-manager.yaml`
+- `SM_LOG_FILE` - Path to log file - Default:
+  `/config/logs/subtitle-manager.log`
+- `SM_CONFIG_FILE` - Path to configuration file - Default:
+  `/config/subtitle-manager.yaml`
 - `SM_DB_PATH` - Database file path - Default: `/config/subtitle-manager.db`
-- `SM_DB_BACKEND` - Database backend (sqlite, pebble, postgres) - Default: `sqlite`
+- `SM_DB_BACKEND` - Database backend (sqlite, pebble, postgres) - Default:
+  `sqlite`
 - `SM_BASE_URL` - Base URL path when behind a reverse proxy
 
 **API Keys:**
@@ -1788,17 +1797,26 @@ Configure Subtitle Manager using environment variables with the `SM_` prefix:
 - `SM_PROVIDERS_GENERIC_PASSWORD` - Generic provider password
 - `SM_PROVIDERS_GENERIC_API_KEY` - Generic provider API key
 - `ENABLE_WHISPER` - Launch local Whisper service when set to `1`
-- `SM_PROVIDERS_WHISPER_API_URL` - Override Whisper service URL (default `http://localhost:9000`)
-- `SM_OPENAI_API_URL` - Override OpenAI/Whisper API base URL (default `https://api.openai.com/v1`)
+- `SM_PROVIDERS_WHISPER_API_URL` - Override Whisper service URL (default
+  `http://localhost:9000`)
+- `SM_OPENAI_API_URL` - Override OpenAI/Whisper API base URL (default
+  `https://api.openai.com/v1`)
 
 #### Whisper Service Requirements
-When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper-asr-webservice` with automatic retry logic and health checks for reliable startup. Mount the Docker socket and install the NVIDIA Container Toolkit if GPU acceleration is desired. Customize the service with these optional variables:
+
+When `ENABLE_WHISPER=1` is set, the container launches
+`onerahmet/openai-whisper-asr-webservice` with automatic retry logic and health
+checks for reliable startup. Mount the Docker socket and install the NVIDIA
+Container Toolkit if GPU acceleration is desired. Customize the service with
+these optional variables:
+
 - `WHISPER_CONTAINER_NAME` - Container name (default `whisper-asr-service`)
 - `WHISPER_IMAGE` - Docker image to use
 - `WHISPER_PORT` - Port to expose (default `9000`)
 - `WHISPER_MODEL` - Whisper model (base, small, medium, large)
 - `WHISPER_DEVICE` - `cuda` or `cpu` to toggle GPU usage
-- `WHISPER_HEALTH_TIMEOUT` - Health check timeout in seconds (default `10`, set to `0` to skip)
+- `WHISPER_HEALTH_TIMEOUT` - Health check timeout in seconds (default `10`, set
+  to `0` to skip)
 
 **GitHub OAuth (Optional):**
 
@@ -1822,82 +1840,85 @@ When `ENABLE_WHISPER=1` is set, the container launches `onerahmet/openai-whisper
 For easier management, use the provided Docker Compose configuration:
 
 \```bash
+
 # Download the compose file
-curl -O https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-compose.yml
+
+curl -O
+https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-compose.yml
 
 # Edit the volume paths in docker-compose.yml to match your setup
+
 # Update /path/to/your/movies and /path/to/your/tv
 
 # Start the service
+
 docker-compose up -d
 
 # View logs
+
 docker-compose logs -f
+
 # Log file stored in ./config/logs/subtitle-manager.log
 
 # Stop the service
-docker-compose down
-\```
+
+docker-compose down \```
 
 **Sample docker-compose.yml:**
 
-\```yaml
-version: "3.8"
-services:
-  subtitle-manager:
-    image: ghcr.io/jdfalk/subtitle-manager:latest
-    container_name: subtitle-manager
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./config:/config
-      - /path/to/your/movies:/media/movies:ro
-      - /path/to/your/tv:/media/tv:ro
-    environment:
-      - SM_LOG_LEVEL=info
-      - SM_GOOGLE_API_KEY=your_api_key_here
-\```
+\```yaml version: "3.8" services: subtitle-manager: image:
+ghcr.io/jdfalk/subtitle-manager:latest container_name: subtitle-manager restart:
+unless-stopped ports: - "8080:8080" volumes: - ./config:/config -
+/path/to/your/movies:/media/movies:ro - /path/to/your/tv:/media/tv:ro
+environment: - SM_LOG_LEVEL=info - SM_GOOGLE_API_KEY=your_api_key_here \```
 
 #### Production Deployment (Docker Swarm)
 
 For production deployments with Docker Swarm:
 
 \```bash
+
 # Download the stack file
-curl -O https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-stack.yml
+
+curl -O
+https://raw.githubusercontent.com/jdfalk/subtitle-manager/main/docker-stack.yml
 
 # Edit volume paths and resource limits as needed
 
 # Deploy the stack
+
 docker stack deploy -c docker-stack.yml subtitle-manager
 
 # Check service status
-docker service ls
-docker service logs subtitle-manager_subtitle-manager
+
+docker service ls docker service logs subtitle-manager_subtitle-manager
 
 # Update the service
-docker service update --image ghcr.io/jdfalk/subtitle-manager:latest subtitle-manager_subtitle-manager
+
+docker service update --image ghcr.io/jdfalk/subtitle-manager:latest
+subtitle-manager_subtitle-manager
 
 # Remove the stack
-docker stack rm subtitle-manager
-\```
+
+docker stack rm subtitle-manager \```
 
 #### Building Custom Images
 
 Build a container image with your customizations:
 
 \```bash
+
 # Clone the repository
-git clone https://github.com/jdfalk/subtitle-manager.git
-cd subtitle-manager
+
+git clone https://github.com/jdfalk/subtitle-manager.git cd subtitle-manager
 
 # Build the image
+
 docker build -t subtitle-manager-custom .
 
 # Run your custom image
-docker run -d -p 8080:8080 subtitle-manager-custom
-\```
+
+docker run -d -p 8080:8080 subtitle-manager-custom \```
 
 #### Initial Setup
 
@@ -1912,7 +1933,9 @@ All configuration will be persisted in the `/config` volume.
 
 ### Linux Service (systemd)
 
-For Linux servers, Subtitle Manager can run as a native systemd service. This provides better system integration and resource management compared to Docker for production deployments.
+For Linux servers, Subtitle Manager can run as a native systemd service. This
+provides better system integration and resource management compared to Docker
+for production deployments.
 
 ```bash
 # Quick start - see systemd/README.md for detailed instructions
@@ -1939,40 +1962,50 @@ sudo journalctl -u subtitle-manager -f
 ```
 
 **Key Benefits:**
+
 - Native Linux service integration
 - Automatic startup on boot
 - System resource management
 - Security hardening with systemd features
 - Centralized logging with journald
 
-See [systemd/README.md](systemd/README.md) for complete installation instructions, configuration options, and troubleshooting guide.
+See [systemd/README.md](systemd/README.md) for complete installation
+instructions, configuration options, and troubleshooting guide.
 
 ## Development
 
 ### Quick Start with Dev Container
 
-The easiest way to start developing is using the provided VS Code development container:
+The easiest way to start developing is using the provided VS Code development
+container:
 
-1. Install [VS Code](https://code.visualstudio.com/) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+1. Install [VS Code](https://code.visualstudio.com/) and the
+   [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 2. Clone the repository and open it in VS Code
 3. When prompted, click "Reopen in Container"
-4. The container will automatically set up Go, Node.js, FFmpeg, SQLite, and all development tools
+4. The container will automatically set up Go, Node.js, FFmpeg, SQLite, and all
+   development tools
 
-See [.devcontainer/README.md](.devcontainer/README.md) for detailed dev container documentation.
+See [.devcontainer/README.md](.devcontainer/README.md) for detailed dev
+container documentation.
 
 ### Local Development
 
-Tests can be run with `go test ./...`.
-PostgreSQL tests require a local PostgreSQL installation and will skip gracefully if unavailable.
-Web UI unit tests live in `webui/src/__tests__` and are executed with `npm test` from the `webui` directory.
-End-to-end tests use Playwright and run with `npm run test:e2e` once browsers are installed via `npx playwright install`. Media library scanning is now covered by a dedicated Playwright test.
-Continuous integration is provided via a GitHub Actions workflow that verifies formatting, vets code and runs the test suite on each push.
+Tests can be run with `go test ./...`. PostgreSQL tests require a local
+PostgreSQL installation and will skip gracefully if unavailable. Web UI unit
+tests live in `webui/src/__tests__` and are executed with `npm test` from the
+`webui` directory. End-to-end tests use Playwright and run with
+`npm run test:e2e` once browsers are installed via `npx playwright install`.
+Media library scanning is now covered by a dedicated Playwright test. Continuous
+integration is provided via a GitHub Actions workflow that verifies formatting,
+vets code and runs the test suite on each push.
 
 ### Git Hooks and Code Formatting
 
 #### Automatic Formatting on GitHub
 
-The repository includes an **automatic code formatting system** that runs on all pull requests:
+The repository includes an **automatic code formatting system** that runs on all
+pull requests:
 
 - **Go code**: Automatically formatted with `gofmt -s -w .` and `goimports`
 - **Frontend code**: Automatically formatted with `prettier --write`
@@ -1984,30 +2017,39 @@ When you open or update a pull request, GitHub Actions will:
 3. Commit the changes back to your PR branch
 4. Add a comment explaining what was formatted
 
-This means **you don't need to worry about code formatting** - just focus on your code logic and let the automation handle the style!
+This means **you don't need to worry about code formatting** - just focus on
+your code logic and let the automation handle the style!
 
 #### Optional Local Pre-commit Hooks
 
-For developers who prefer to format code locally before pushing, you have several options:
+For developers who prefer to format code locally before pushing, you have
+several options:
 
 ##### Modern Pre-commit Framework (Recommended)
 
-The repository includes a `.pre-commit-config.yaml` configuration with Ruff for Python and Prettier for JavaScript/Markdown:
+The repository includes a `.pre-commit-config.yaml` configuration with Ruff for
+Python and Prettier for JavaScript/Markdown:
 
 \```bash
+
 # Install pre-commit and tools
+
 pip install pre-commit ruff
 
 # Install the pre-commit hooks
+
 pre-commit install
 
 # Run on all files (one-time setup)
-pre-commit run --all-files
-\```
+
+pre-commit run --all-files \```
 
 This will automatically:
-- **Python files**: Lint and format with Ruff (fast, modern replacement for flake8/black)
-- **JS/MD/CSS files**: Format with Prettier using the existing webui configuration
+
+- **Python files**: Lint and format with Ruff (fast, modern replacement for
+  flake8/black)
+- **JS/MD/CSS files**: Format with Prettier using the existing webui
+  configuration
 - **All files**: Check for trailing whitespace, file endings, YAML/JSON syntax
 
 ##### Shell-based Pre-commit Hooks (Legacy)
@@ -2015,12 +2057,14 @@ This will automatically:
 You can also use the existing shell-based hooks:
 
 \```bash
+
 # Install the auto-formatting pre-commit hook
+
 ./scripts/install-pre-commit-hooks.sh
 
 # Or install the legacy quality-check pre-commit hook
-./scripts/install-hooks.sh
-\```
+
+./scripts/install-hooks.sh \```
 
 The **auto-formatting hook** (`install-pre-commit-hooks.sh`) will:
 
@@ -2035,7 +2079,9 @@ The **legacy quality-check hook** (`install-hooks.sh`) will:
 - Prevent commits that don't pass these checks
 
 **Benefits of the modern pre-commit framework:**
-- ✅ **Ruff for Python**: Much faster than traditional tools (10-100x faster than flake8)
+
+- ✅ **Ruff for Python**: Much faster than traditional tools (10-100x faster
+  than flake8)
 - ✅ **Consistent formatting**: Uses the same Prettier configuration as CI
 - ✅ **Extensible**: Easy to add new languages and tools
 - ✅ **Smart**: Only runs on changed files by default
@@ -2044,29 +2090,33 @@ To bypass any hook temporarily, use `git commit --no-verify`.
 
 ### Issue updates
 
-🚀 **New Distributed System**: We now use individual UUID-named files in `.github/issue-updates/` to eliminate merge conflicts! Use the helper script: `./scripts/create-issue-update.sh create "Title" "Body" "labels"`. See [Quick Start Guide](.github/ISSUE_UPDATES_QUICK_START.md) for details.
+🚀 **New Distributed System**: We now use individual UUID-named files in
+`.github/issue-updates/` to eliminate merge conflicts! Use the helper script:
+`./scripts/create-issue-update.sh create "Title" "Body" "labels"`. See
+[Quick Start Guide](.github/ISSUE_UPDATES_QUICK_START.md) for details.
 
-**Legacy Support**: Pushing an `issue_updates.json` file to the repository root still works for backward compatibility. The unified issue management workflow processes both formats.
+**Legacy Support**: Pushing an `issue_updates.json` file to the repository root
+still works for backward compatibility. The unified issue management workflow
+processes both formats.
 
-Note: If the unified issue management workflow fails due to a missing `requirements.txt` file, update to the latest version of [ghcommon](https://github.com/jdfalk/ghcommon) which now provides this file. This resolves issues #1249 and #1251.
+Note: If the unified issue management workflow fails due to a missing
+`requirements.txt` file, update to the latest version of
+[ghcommon](https://github.com/jdfalk/ghcommon) which now provides this file.
+This resolves issues #1249 and #1251.
 
-The new format uses individual files with this structure:
-\```json
-{
-  "action": "create",
-  "title": "Issue title",
-  "body": "Issue description",
-  "labels": ["enhancement"]
-}
-\```
+The new format uses individual files with this structure: \```json { "action":
+"create", "title": "Issue title", "body": "Issue description", "labels":
+["enhancement"] } \```
 
 Benefits of the new system:
+
 - ✅ No merge conflicts - each update is in its own file
 - ✅ Parallel development - multiple people can create updates simultaneously
 - ✅ Atomic operations - each file represents a single issue action
 - ✅ Better git history - changes are tracked individually
 
-The workflow runs on every push to `main` and processes all updates from both the legacy file and the new directory structure.
+The workflow runs on every push to `main` and processes all updates from both
+the legacy file and the new directory structure.
 
 ### Duplicate ticket cleanup
 
@@ -2082,13 +2132,15 @@ The gRPC service definitions are located in `proto/translator.proto`. If you
 modify this file, regenerate the Go bindings before committing:
 
 \```bash
+
 # Install protobuf tools if missing
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest go install
+google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 # Generate updated gRPC code
-make proto-gen
-\```
+
+make proto-gen \```
 
 The generated files live in `pkg/translatorpb` and should be committed with your
 changes.
@@ -2097,12 +2149,16 @@ changes.
 
 We are migrating to a hybrid model for all shared types and business logic:
 
-- **Protobufs** will define the canonical data models (e.g., LanguageProfile, MediaItem, etc.)
+- **Protobufs** will define the canonical data models (e.g., LanguageProfile,
+  MediaItem, etc.)
 - **Go types** will be generated from Protobufs for use in all Go projects
-- **gcommon** will contain all shared business logic, helpers, and interface implementations, importing the generated types
-- **Other languages** (Python, JS, etc.) can generate types from the same Protobufs as needed
+- **gcommon** will contain all shared business logic, helpers, and interface
+  implementations, importing the generated types
+- **Other languages** (Python, JS, etc.) can generate types from the same
+  Protobufs as needed
 - **All work for this migration will be done on the `gcommon-refactor` branch**
-- **Main branches** will continue using Go types and type packages until the migration is complete
+- **Main branches** will continue using Go types and type packages until the
+  migration is complete
 
 This approach will:
 
@@ -2111,25 +2167,44 @@ This approach will:
 - Centralize business logic and validation
 - Allow for incremental migration and testing
 
-The project is **mostly feature complete** with full Bazarr parity as the target. Remaining work focuses on Sonarr/Radarr sync improvements and the metadata editor. See `TODO.md` for details. The `metadata fetch` command now supports an interactive mode to select the correct TMDB result.
-Extensive architectural details and design decisions are documented in `docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see `docs/COMPLETE_DESIGN.md`. New contributors should review these documents to understand package responsibilities and completed features.
-For a detailed list of Bazarr features used as the parity target, see [docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md).
-Instructions for importing an existing Bazarr configuration are documented in [docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md).
-A high-level code overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).
-Protobuf regeneration steps are documented in [docs/PROTOBUF_REGEN.md](docs/PROTOBUF_REGEN.md).
-Additional references include [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) for environment setup and [docs/API_DESIGN.md](docs/API_DESIGN.md) for REST and gRPC design notes.
+The project is **mostly feature complete** with full Bazarr parity as the
+target. Remaining work focuses on Sonarr/Radarr sync improvements and the
+metadata editor. See `TODO.md` for details. The `metadata fetch` command now
+supports an interactive mode to select the correct TMDB result. Extensive
+architectural details and design decisions are documented in
+`docs/TECHNICAL_DESIGN.md`. For a package-by-package function reference see
+`docs/COMPLETE_DESIGN.md`. New contributors should review these documents to
+understand package responsibilities and completed features. For a detailed list
+of Bazarr features used as the parity target, see
+[docs/BAZARR_FEATURES.md](docs/BAZARR_FEATURES.md). Instructions for importing
+an existing Bazarr configuration are documented in
+[docs/BAZARR_SETTINGS_SYNC.md](docs/BAZARR_SETTINGS_SYNC.md). A high-level code
+overview is available in [docs/CODE_OVERVIEW.md](docs/CODE_OVERVIEW.md).
+Protobuf regeneration steps are documented in
+[docs/PROTOBUF_REGEN.md](docs/PROTOBUF_REGEN.md). Additional references include
+[docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) for environment setup and
+[docs/API_DESIGN.md](docs/API_DESIGN.md) for REST and gRPC design notes.
 
 ## Security
 
-Subtitle Manager applies strict security headers, including `Referrer-Policy: no-referrer`, and sanitizes HTML content in the web interface using DOMPurify. When contributing UI or API code, ensure all user-provided data is properly validated and sanitized.
+Subtitle Manager applies strict security headers, including
+`Referrer-Policy: no-referrer`, and sanitizes HTML content in the web interface
+using DOMPurify. When contributing UI or API code, ensure all user-provided data
+is properly validated and sanitized.
 
 ### Security Policy
 
-**Reporting Vulnerabilities**: Please do not report security vulnerabilities through public GitHub issues. Instead, use GitHub's private vulnerability reporting feature or contact directly through the repository's communication channels.
+**Reporting Vulnerabilities**: Please do not report security vulnerabilities
+through public GitHub issues. Instead, use GitHub's private vulnerability
+reporting feature or contact directly through the repository's communication
+channels.
 
-**Supported Versions**: Security updates are provided for the latest version of Subtitle Manager. Please use the latest version to ensure you have the most recent security fixes.
+**Supported Versions**: Security updates are provided for the latest version of
+Subtitle Manager. Please use the latest version to ensure you have the most
+recent security fixes.
 
 **When reporting a vulnerability, please include:**
+
 - **Description**: A clear description of the vulnerability
 - **Impact**: What could an attacker accomplish by exploiting this?
 - **Reproduction**: Steps to reproduce the vulnerability
@@ -2139,6 +2214,7 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 ### Security Best Practices
 
 **For Users:**
+
 - Keep Subtitle Manager updated to the latest version
 - Use strong, unique passwords for user accounts
 - Enable OAuth2 authentication when available
@@ -2146,6 +2222,7 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 - Monitor logs for suspicious activity
 
 **For Developers:**
+
 - Follow secure coding practices
 - Validate all inputs and sanitize outputs
 - Regularly update dependencies and monitor for vulnerabilities
@@ -2163,11 +2240,13 @@ Subtitle Manager applies strict security headers, including `Referrer-Policy: no
 
 ## License
 
-This project is licensed under the terms of the MIT license. See `LICENSE` for details.
+This project is licensed under the terms of the MIT license. See `LICENSE` for
+details.
 
 ## Project Management
 
-GitHub Projects are now managed by the unified project manager located in the `ghcommon` repository.
+GitHub Projects are now managed by the unified project manager located in the
+`ghcommon` repository.
 
 Use the unified script to create and manage all GitHub Projects:
 
@@ -2177,69 +2256,87 @@ python3 /path/to/ghcommon/scripts/unified_github_project_manager_v2.py
 
 See `scripts/MIGRATION-NOTICE.md` for migration details.
 
-CLI search command now caches results for faster repeats with per-IP rate limiting to prevent abuse.
+CLI search command now caches results for faster repeats with per-IP rate
+limiting to prevent abuse.
 
-The `codex-rebase.sh` script now uses Codex or ChatGPT CLI to resolve merge conflicts, commits the results, and force pushes for a clean working tree.
+The `codex-rebase.sh` script now uses Codex or ChatGPT CLI to resolve merge
+conflicts, commits the results, and force pushes for a clean working tree.
 
 ## gcommon Protobuf\n\nTODO: Add content for this section
+
 ### Scheduled Sync\n\nUse `subtitle-manager monitor autosync` to periodically sync libraries from Sonarr and Radarr.
-Rebase scripts now skip fetching when the 'origin' remote is missing.
-CLI search command now uses cache for faster results
-Document gcommon metrics and health integration
+
+Rebase scripts now skip fetching when the 'origin' remote is missing. CLI search
+command now uses cache for faster results Document gcommon metrics and health
+integration
+
 ### Queue Configuration\nUse `--queue-provider` and `--queue-workers` to configure the gcommon-based job queue.
-Our fix-merge-conflicts workflow now uses the JF_CI_GH_PAT secret instead of the default GITHUB_TOKEN for better permissions.
-Added unit test documentation for /api/sync/batch endpoint
+
+Our fix-merge-conflicts workflow now uses the JF_CI_GH_PAT secret instead of the
+default GITHUB_TOKEN for better permissions. Added unit test documentation for
+/api/sync/batch endpoint
+
 - **Cached Results**: Search results are cached for faster repeat queries
+
 ## Project Management\n\nNew script `create-github-projects.sh` sets up GitHub Projects and assigns issues.
-- Expose /metrics and /health endpoints using gcommon
-Added note about media_profiles table for SQLite initialization
-Added instructions for migrate_config_to_gcommon.py
-### Custom Port\nUse '-p HOSTPORT:8080' to expose a different port. Example:\n```bash\ndocker run -p 9555:8080 ghcr.io/jdfalk/subtitle-manager:latest\n```
-Translation results now cached via global cache manager
-Script `create-github-projects.sh` now checks authentication and links repository
-Fixed duplicate persistent flags causing test panics
-Added `whisper start` and `whisper stop` commands
-Updated DirectoryChooser to show folders
-Provider order is now normalized when caching manual search results.
-Added --schedule flag to monitor autosync for cron scheduling
-Added sonarr-sync command for one-time library synchronization
-Added migrate-config-to-gcommon.py utility for converting legacy configs
-CLI search command now caches results for faster repeats
-Added note about SupportedServices function in translator package
-- Enhanced parallel search with improved error aggregation
-Rebase scripts now stash and restore local changes and ensure a clean git state.
-Added manual path entry to DirectoryChooser
-Removed dedicated add-to-project workflow; GitHub's built-in automation is now used.
-Document UpdateDownloadWithResult helper
-- Enhanced syncer uses median timing offset for precise alignment
-Document gcommon proto integration
-- Dockerfile.hybrid and workflow for container builds.
-Manual search results are cached for 5 minutes
-- Updated health check endpoints to use gcommon/health
-subtitle-manager whisper start subtitle-manager whisper stop
-- Validated codex-rebase.sh conflict handling
-Updated root command initialization notes about persistent flag deduplication
+
+- Expose /metrics and /health endpoints using gcommon Added note about
+  media_profiles table for SQLite initialization Added instructions for
+  migrate_config_to_gcommon.py
+
+### Custom Port\nUse '-p HOSTPORT:8080' to expose a different port. Example:\n`bash\ndocker run -p 9555:8080 ghcr.io/jdfalk/subtitle-manager:latest\n`
+
+Translation results now cached via global cache manager Script
+`create-github-projects.sh` now checks authentication and links repository Fixed
+duplicate persistent flags causing test panics Added `whisper start` and
+`whisper stop` commands Updated DirectoryChooser to show folders Provider order
+is now normalized when caching manual search results. Added --schedule flag to
+monitor autosync for cron scheduling Added sonarr-sync command for one-time
+library synchronization Added migrate-config-to-gcommon.py utility for
+converting legacy configs CLI search command now caches results for faster
+repeats Added note about SupportedServices function in translator package
+
+- Enhanced parallel search with improved error aggregation Rebase scripts now
+  stash and restore local changes and ensure a clean git state. Added manual
+  path entry to DirectoryChooser Removed dedicated add-to-project workflow;
+  GitHub's built-in automation is now used. Document UpdateDownloadWithResult
+  helper
+- Enhanced syncer uses median timing offset for precise alignment Document
+  gcommon proto integration
+- Dockerfile.hybrid and workflow for container builds. Manual search results are
+  cached for 5 minutes
+- Updated health check endpoints to use gcommon/health subtitle-manager whisper
+  start subtitle-manager whisper stop
+- Validated codex-rebase.sh conflict handling Updated root command
+  initialization notes about persistent flag deduplication
+
 ### Merge Conflict Resolution
 
-The `fix-merge-conflicts.yml` workflow uses the reusable AI rebase action from ghcommon to resolve PR merge conflicts automatically.
+The `fix-merge-conflicts.yml` workflow uses the reusable AI rebase action from
+ghcommon to resolve PR merge conflicts automatically.
+
 ### Batch Translation\n\nGoogle Translate operations now use batch requests for faster processing.
-Script 'create-github-projects.sh' now verifies GitHub CLI project scopes
-Added structured logging for download handler
-gRPC translation now uses context timeouts
+
+Script 'create-github-projects.sh' now verifies GitHub CLI project scopes Added
+structured logging for download handler gRPC translation now uses context
+timeouts
+
 ### Provider Metadata
 
-New proto messages `RateLimit` and `ProviderInfo` describe provider rate limits and capabilities.
-Note: SQLite-related tests are skipped automatically when the binary is built without SQLite support.
+New proto messages `RateLimit` and `ProviderInfo` describe provider rate limits
+and capabilities. Note: SQLite-related tests are skipped automatically when the
+binary is built without SQLite support.
+
 ### Metrics\n\nThis release switches to the shared gcommon metrics module. Prometheus scraping works out of the box using /metrics.
+
 Authentication now uses the shared gcommon/auth library for session management
 Install dependencies to ensure testing packages are present
+
 - CLI search cache now normalizes provider order for consistent cache hits.
+
 ## Rebase script status\n\nTODO: Add content for this section
 
 ## Recent Updates
 
-
-gRPC translation and configuration commands now use context timeouts
-See docs/examples/gcommon-config.yaml for a sample gcommon configuration.
-Centralized queue messages now use the gcommon QueueMessage proto.
-### gcommon Logging Provider\n\nImplemented a logrus provider compatible with the centralized gcommon logging proto.
+gRPC translation and configuration commands now use context timeouts See
+docs/examples/gcommon-config.yaml for a sample gcommon configuration.

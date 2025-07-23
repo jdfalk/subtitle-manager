@@ -17,7 +17,7 @@ import (
 	"time"
 
 	ghealth "github.com/jdfalk/gcommon/pkg/health"
-	gmetrics "github.com/jdfalk/gcommon/pkg/metrics"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -245,7 +245,7 @@ func Handler(db *sql.DB) (http.Handler, error) {
 
 	// Language profiles management
 	// Prometheus metrics endpoint (no authentication required for monitoring)
-	mux.Handle(prefix+"/metrics", metrics.Provider.Handler())
+	mux.Handle(prefix+"/metrics", promhttp.Handler())
 
 	// Health endpoints using gcommon/health
 	mux.Handle(prefix+"/health", HealthProvider.Handler())
@@ -323,12 +323,6 @@ func StartServer(addr string) error {
 	h, err := Handler(db)
 	if err != nil {
 		return err
-	}
-
-	if metrics.Provider != nil {
-		if err := metrics.Provider.Start(context.Background()); err != nil {
-			logger.Warnf("metrics start failed: %v", err)
-		}
 	}
 
 	if HealthProvider != nil {

@@ -20,10 +20,7 @@
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "forwardPorts": [
-    8080,
-    3000
-  ],
+  "forwardPorts": [8080, 3000],
   "portsAttributes": {
     "8080": {
       "label": "Application",
