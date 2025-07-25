@@ -2243,3 +2243,5 @@ recent security fixes.
 This project is licensed under the terms of the MIT license. See `LICENSE` for
 details.
 
+
+- Expose gRPC health service using gcommon protobufs

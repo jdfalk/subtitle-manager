@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+Added gRPC health service using gcommon protobufs
+
 ### Added
 
 - Added gcommon logrus provider for structured logging
