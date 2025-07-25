@@ -107,7 +107,9 @@ export default function DirectoryChooser({ open, onClose, onSelect }) {
                 <FolderIcon />
               </ListItemIcon>
               <ListItemText
-                primary={dir.name || dir.path.replace(/\\/g, '/').split('/').pop()}
+                primary={
+                  dir.name || dir.path.replace(/\\/g, '/').split('/').pop()
+                }
               />
             </ListItemButton>
           ))}
