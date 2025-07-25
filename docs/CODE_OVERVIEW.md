@@ -57,4 +57,4 @@ These components interact as shown in the chart above. The CLI and web server
 call into the packages under `pkg/`, which manage database access and provider
 logic. The React UI communicates with the REST API served by `pkg/webserver/`.
 
-- `Dockerfile.hybrid`        | Hybrid build producing the container image.
+- `Dockerfile.hybrid` | Hybrid build producing the container image.
