@@ -6,11 +6,13 @@
 
 ## 🚨 IMPORTANT: Scripts have been migrated
 
-The GitHub project management scripts previously located in this repository have been **migrated to the unified project manager** in the `ghcommon` repository.
+The GitHub project management scripts previously located in this repository have
+been **migrated to the unified project manager** in the `ghcommon` repository.
 
 ### Old Scripts (REMOVED)
 
-- ❌ `create-github-projects.sh` - **REMOVED** (replaced with new wrapper script)
+- ❌ `create-github-projects.sh` - **REMOVED** (replaced with new wrapper
+  script)
 - ❌ `setup-project-workflows.sh` - **REMOVED**
 - ❌ `manage-project-structure.sh` - **REMOVED**
 - ❌ `github_project_manager.py` - **REMOVED**
