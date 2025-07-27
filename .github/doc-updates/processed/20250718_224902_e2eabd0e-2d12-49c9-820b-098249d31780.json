@@ -1,0 +1,25 @@
+{
+  "file": "README.md",
+  "mode": "insert-after",
+  "content": "A helper script `scripts/create-github-projects.sh` automates project board creation for open feature issues.",
+  "guid": "e2eabd0e-2d12-49c9-820b-098249d31780",
+  "created_at": "2025-07-15T04:00:45Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  },
+  "file_modified_at": "2025-07-21T02:26:06.106953+00:00",
+  "file_created_at": "2025-07-21T02:26:06.106772+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:55.416126+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:55.416135+00:00",
+    "source_file": ".github/doc-updates/failed/20250718_224902_e2eabd0e-2d12-49c9-820b-098249d31780.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:43:05.699002+00:00"
+}

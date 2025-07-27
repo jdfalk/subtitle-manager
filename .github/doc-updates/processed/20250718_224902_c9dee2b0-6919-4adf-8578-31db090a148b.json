@@ -1,0 +1,25 @@
+{
+  "file": "TODO.md",
+  "mode": "task-complete",
+  "content": "search result caching completed",
+  "guid": "c9dee2b0-6919-4adf-8578-31db090a148b",
+  "created_at": "2025-07-10T01:20:21Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  },
+  "file_modified_at": "2025-07-21T02:26:06.105833+00:00",
+  "file_created_at": "2025-07-21T02:26:06.105795+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:56.169595+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:56.169606+00:00",
+    "source_file": ".github/doc-updates/failed/20250718_224902_c9dee2b0-6919-4adf-8578-31db090a148b.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:43:05.692017+00:00"
+}

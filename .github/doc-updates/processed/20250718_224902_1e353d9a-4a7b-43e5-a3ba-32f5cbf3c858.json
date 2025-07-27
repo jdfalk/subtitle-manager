@@ -12,5 +12,14 @@
     "badge_name": null,
     "priority": null,
     "category": null
-  }
+  },
+  "file_modified_at": "2025-07-21T02:26:06.111978+00:00",
+  "file_created_at": "2025-07-21T02:26:06.111941+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:56.767357+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:56.767365+00:00",
+    "source_file": ".github/doc-updates/processed/20250718_224902_1e353d9a-4a7b-43e5-a3ba-32f5cbf3c858.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:43:05.699875+00:00"
 }

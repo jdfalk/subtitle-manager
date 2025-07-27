@@ -1,0 +1,25 @@
+{
+  "file": "README.md",
+  "mode": "after",
+  "content": "Cache configuration now uses gcommon.v1.common.CachePolicy messages for each TTL",
+  "guid": "d3a5f8b1-2f46-4e35-8a8a-f02ced951d15",
+  "created_at": "2025-07-23T03:19:21Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  },
+  "file_modified_at": "2025-07-25T01:40:10.697255+00:00",
+  "file_created_at": "2025-07-25T01:40:10.697119+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:55.309881+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:55.309890+00:00",
+    "source_file": ".github/doc-updates/failed/20250723_032845_d3a5f8b1-2f46-4e35-8a8a-f02ced951d15.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:43:05.715753+00:00"
+}

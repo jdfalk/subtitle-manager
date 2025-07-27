@@ -1,0 +1,25 @@
+{
+  "file": "README.md",
+  "mode": "insert-after",
+  "content": "- `WHISPER_MAX_RETRIES` - Startup attempts before failure (default `3`)",
+  "guid": "3d3d86ea-fbbd-4abc-9eda-fae7abe5bfdb",
+  "created_at": "2025-07-15T04:04:55Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  },
+  "file_modified_at": "2025-07-21T02:26:06.102446+00:00",
+  "file_created_at": "2025-07-21T02:26:06.102401+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:55.077230+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:55.077241+00:00",
+    "source_file": ".github/doc-updates/failed/20250718_224902_3d3d86ea-fbbd-4abc-9eda-fae7abe5bfdb.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:43:05.703545+00:00"
+}
