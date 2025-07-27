@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	pb "github.com/jdfalk/subtitle-manager/pkg/configpb"
+	configpb "github.com/jdfalk/subtitle-manager/pkg/configpb"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -56,8 +56,8 @@ func Load(cmd *cobra.Command, cfgFile string) error {
 }
 
 // ToProto converts current viper settings to a protobuf config message.
-func ToProto() *pb.SubtitleManagerConfig {
-	return &pb.SubtitleManagerConfig{
+func ToProto() *configpb.SubtitleManagerConfig {
+	return &configpb.SubtitleManagerConfig{
 		DbPath:          protoString(viper.GetString("db_path")),
 		DbBackend:       protoString(viper.GetString("db_backend")),
 		Sqlite3Filename: protoString(viper.GetString("sqlite3_filename")),
@@ -68,7 +68,7 @@ func ToProto() *pb.SubtitleManagerConfig {
 }
 
 // ApplyProto sets viper values from a protobuf config message.
-func ApplyProto(cfg *pb.SubtitleManagerConfig) {
+func ApplyProto(cfg *configpb.SubtitleManagerConfig) {
 	if cfg == nil {
 		return
 	}
