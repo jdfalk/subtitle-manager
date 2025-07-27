@@ -1,8 +1,0 @@
-{
-  "action": "create",
-  "title": "Implement gcommon logrus provider",
-  "body": "Add a logrus provider conforming to gcommon logging interfaces",
-  "labels": ["enhancement"],
-  "guid": "b05bffdc-3c87-4a51-a0a1-22cbf5a598e5",
-  "legacy_guid": "create-implement-gcommon-logrus-provider-2025-07-23"
-}

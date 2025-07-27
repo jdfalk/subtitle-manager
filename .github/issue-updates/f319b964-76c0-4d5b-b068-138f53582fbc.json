@@ -1,8 +1,0 @@
-{
-  "action": "create",
-  "title": "Add example gcommon configuration file",
-  "body": "Provide sample YAML config demonstrating gcommon module usage",
-  "labels": ["documentation"],
-  "guid": "f319b964-76c0-4d5b-b068-138f53582fbc",
-  "legacy_guid": "create-add-example-gcommon-configuration-file-2025-07-15"
-}

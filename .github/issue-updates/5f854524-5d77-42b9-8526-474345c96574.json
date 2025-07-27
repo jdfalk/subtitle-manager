@@ -1,8 +1,0 @@
-{
-  "action": "create",
-  "title": "Database protobuf messages",
-  "body": "Add proto definitions for SubtitleRecord and DownloadRecord for centralized protobuf migration.",
-  "labels": ["migration", "proto"],
-  "guid": "5f854524-5d77-42b9-8526-474345c96574",
-  "legacy_guid": "create-database-protobuf-messages-2025-07-23"
-}

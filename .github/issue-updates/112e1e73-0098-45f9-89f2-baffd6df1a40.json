@@ -1,8 +1,0 @@
-{
-  "action": "create",
-  "title": "Implement AuthService using gcommon proto",
-  "body": "Add gRPC AuthService server using gcommon authentication protobufs",
-  "labels": ["enhancement", "auth"],
-  "guid": "112e1e73-0098-45f9-89f2-baffd6df1a40",
-  "legacy_guid": "create-implement-authservice-using-gcommon-proto-2025-07-23"
-}
