@@ -2,7 +2,19 @@
   "action": "create",
   "title": "Improve sync accuracy",
   "body": "Implement median-based offset calculation in syncer",
-  "labels": ["enhancement"],
+  "labels": [
+    "enhancement"
+  ],
   "guid": "beb3d080-0996-4a92-8c4e-39c8d033b870",
-  "legacy_guid": "create-improve-sync-accuracy-2025-07-10"
+  "legacy_guid": "create-improve-sync-accuracy-2025-07-10",
+  "file_modified_at": "2025-07-19T01:49:31.241064+00:00",
+  "file_created_at": "2025-07-19T01:49:31.241030+00:00",
+  "created_at": "2025-07-19T01:49:31.241030+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:50.061476+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:50.061485+00:00",
+    "source_file": ".github/issue-updates/processed/beb3d080-0996-4a92-8c4e-39c8d033b870.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.738056+00:00"
 }

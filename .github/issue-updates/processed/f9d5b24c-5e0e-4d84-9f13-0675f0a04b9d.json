@@ -4,5 +4,15 @@
   "state_reason": "completed",
   "body": "OAuth2 login implemented in commit 27ad00f",
   "guid": "95d1b568-5400-4fa5-905c-b49d325f2026",
-  "legacy_guid": "c7572514-863c-4c14-baf5-826df76a4104"
+  "legacy_guid": "c7572514-863c-4c14-baf5-826df76a4104",
+  "file_modified_at": "2025-07-07T01:31:00.495545+00:00",
+  "file_created_at": "2025-07-07T01:31:00.495437+00:00",
+  "created_at": "2025-07-07T01:31:00.495437+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:46.129480+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:46.129486+00:00",
+    "source_file": ".github/issue-updates/processed/f9d5b24c-5e0e-4d84-9f13-0675f0a04b9d.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.711114+00:00"
 }

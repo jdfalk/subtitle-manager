@@ -2,7 +2,19 @@
   "action": "update",
   "number": 546,
   "body": "Working on caching translation results",
-  "labels": ["codex"],
+  "labels": [
+    "codex"
+  ],
   "guid": "49a9f927-d909-471b-80a0-3beb18fff5ef",
-  "legacy_guid": "update-issue-546-2025-06-23"
+  "legacy_guid": "update-issue-546-2025-06-23",
+  "file_modified_at": "2025-07-07T01:31:00.455857+00:00",
+  "file_created_at": "2025-07-07T01:31:00.455629+00:00",
+  "created_at": "2025-07-07T01:31:00.455629+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:29.110695+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:29.110706+00:00",
+    "source_file": ".github/issue-updates/processed/70ca8003-036c-4b0d-8cbd-66791649ab51.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.685558+00:00"
 }

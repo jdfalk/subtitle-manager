@@ -3,5 +3,15 @@
   "number": 0,
   "body": "## Plan of Action\n\n1. Stub Docker CLI interactions to simulate container lifecycle.\n2. Write integration test for docker-init launching Whisper container.\n3. Verify environment variable SM_PROVIDERS_WHISPER_API_URL is exported.\n4. Use `testing` package with temporary scripts.\n5. Add to CI pipeline.",
   "guid": "5e4be22c-0d76-4758-830a-660dc6b1ac71",
-  "legacy_guid": "comment-0-2025-06-22-195859"
+  "legacy_guid": "comment-0-2025-06-22-195859",
+  "file_modified_at": "2025-07-07T01:31:00.489880+00:00",
+  "file_created_at": "2025-07-07T01:31:00.489637+00:00",
+  "created_at": "2025-07-07T01:31:00.489637+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:28.439278+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:28.439287+00:00",
+    "source_file": ".github/issue-updates/processed/cf7bce0d-ab6d-4de2-8b7e-a3a2284fc83e.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.702997+00:00"
 }

@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add path index for Pebble media updates",
   "body": "Improve Pebble store performance by indexing media items by path",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "9b8d2bd5-9f3e-4674-837c-fe4230ad6fb6",
-  "legacy_guid": "create-add-path-index-for-pebble-media-updates-2025-06-23"
+  "legacy_guid": "create-add-path-index-for-pebble-media-updates-2025-06-23",
+  "file_modified_at": "2025-07-07T01:31:00.463782+00:00",
+  "file_created_at": "2025-07-07T01:31:00.463404+00:00",
+  "created_at": "2025-07-07T01:31:00.463404+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:12.818345+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:12.818354+00:00",
+    "source_file": ".github/issue-updates/processed/82f19407-d921-440b-a1f8-b405d4b51dc7.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.689617+00:00"
 }

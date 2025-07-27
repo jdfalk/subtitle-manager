@@ -3,5 +3,15 @@
   "body": "## Plan of Action\n\n1. Replace manual HTTP calls with osdb SDK.\n2. Update tests for new implementation.\n3. Document change in CHANGELOG.",
   "guid": "8434dfd8-9277-45e0-ac71-b611142259be",
   "action": "comment",
-  "legacy_guid": "comment-issue-531-plan-2025-06-21"
+  "legacy_guid": "comment-issue-531-plan-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.446407+00:00",
+  "file_created_at": "2025-07-07T01:31:00.445748+00:00",
+  "created_at": "2025-07-07T01:31:00.445748+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:39.240845+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:39.240853+00:00",
+    "source_file": ".github/issue-updates/processed/5cec10c3-995a-4c3b-a4d1-1e907ef8eb08.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.679950+00:00"
 }

@@ -1,0 +1,20 @@
+{
+  "action": "create",
+  "title": "Add context timeouts to gRPC translation service",
+  "body": "Implement context timeouts for translation gRPC client calls to avoid hanging connections",
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "fefbd248-b34b-4d4b-81ce-a6bd076c3cf1",
+  "legacy_guid": "create-add-context-timeouts-to-grpc-translation-service-2025-07-15",
+  "file_modified_at": "2025-07-21T03:56:39.231931+00:00",
+  "file_created_at": "2025-07-21T03:56:39.231675+00:00",
+  "created_at": "2025-07-21T03:56:39.231675+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:20.068764+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:20.068775+00:00",
+    "source_file": ".github/issue-updates/processed/fefbd248-b34b-4d4b-81ce-a6bd076c3cf1.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.749754+00:00"
+}

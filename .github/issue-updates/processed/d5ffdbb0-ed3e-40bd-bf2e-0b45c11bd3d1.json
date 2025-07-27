@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add media scan E2E test",
   "body": "Implement Playwright test to verify library scan workflow and progress display.",
-  "labels": ["codex", "testing"],
+  "labels": [
+    "codex",
+    "testing"
+  ],
   "guid": "d5ffdbb0-ed3e-40bd-bf2e-0b45c11bd3d1",
-  "legacy_guid": "create-add-media-scan-e2e-test-2025-07-06"
+  "legacy_guid": "create-add-media-scan-e2e-test-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.242331+00:00",
+  "file_created_at": "2025-07-19T01:49:31.242250+00:00",
+  "created_at": "2025-07-19T01:49:31.242250+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:17.102744+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:17.102753+00:00",
+    "source_file": ".github/issue-updates/processed/d5ffdbb0-ed3e-40bd-bf2e-0b45c11bd3d1.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.740379+00:00"
 }

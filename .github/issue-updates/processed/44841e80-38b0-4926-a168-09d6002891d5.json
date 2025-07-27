@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Implement tag management CLI",
   "body": "Add 'tag' subcommand with list, add and remove operations for all entity types using TagManager. Include tests and README examples.",
-  "labels": ["feature", "cli"],
+  "labels": [
+    "feature",
+    "cli"
+  ],
   "guid": "4f1ac21b-56c4-4d3d-8b63-c0b13ffb9d74",
-  "legacy_guid": "create-implement-tag-management-cli-2025-06-29"
+  "legacy_guid": "create-implement-tag-management-cli-2025-06-29",
+  "file_modified_at": "2025-07-07T01:31:00.443487+00:00",
+  "file_created_at": "2025-07-07T01:31:00.443054+00:00",
+  "created_at": "2025-07-07T01:31:00.443054+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:48.386702+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:48.386709+00:00",
+    "source_file": ".github/issue-updates/processed/44841e80-38b0-4926-a168-09d6002891d5.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.676425+00:00"
 }

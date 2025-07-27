@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Test token validation",
   "body": "Add unit tests for gcommon/auth token handling",
-  "labels": ["codex", "test"],
+  "labels": [
+    "codex",
+    "test"
+  ],
   "guid": "c05d3edd-f594-4cac-9364-f2eb7c14b4c3",
-  "legacy_guid": "create-test-token-validation-2025-07-05"
+  "legacy_guid": "create-test-token-validation-2025-07-05",
+  "file_modified_at": "2025-07-19T01:49:31.241239+00:00",
+  "file_created_at": "2025-07-19T01:49:31.241169+00:00",
+  "created_at": "2025-07-19T01:49:31.241169+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:34.243581+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:34.243589+00:00",
+    "source_file": ".github/issue-updates/processed/c05d3edd-f594-4cac-9364-f2eb7c14b4c3.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.738518+00:00"
 }

@@ -2,7 +2,19 @@
   "action": "create",
   "title": "Refine dashboard widget API",
   "body": "Improve widgets endpoints, update tests, handle unknown widgets",
-  "labels": ["codex"],
+  "labels": [
+    "codex"
+  ],
   "guid": "cbba6849-009b-4e59-b0ad-88266ced1382",
-  "legacy_guid": "create-refine-dashboard-widget-api-2025-06-26"
+  "legacy_guid": "create-refine-dashboard-widget-api-2025-06-26",
+  "file_modified_at": "2025-07-07T01:31:00.439606+00:00",
+  "file_created_at": "2025-07-07T01:31:00.439565+00:00",
+  "created_at": "2025-07-07T01:31:00.439565+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:16.433370+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:16.433376+00:00",
+    "source_file": ".github/issue-updates/processed/277d583a-64ac-402c-ad05-2be082335871.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.671075+00:00"
 }

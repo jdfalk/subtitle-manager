@@ -1,0 +1,20 @@
+{
+  "action": "create",
+  "title": "Add example gcommon configuration file",
+  "body": "Provide sample YAML config demonstrating gcommon module usage",
+  "labels": [
+    "documentation"
+  ],
+  "guid": "f319b964-76c0-4d5b-b068-138f53582fbc",
+  "legacy_guid": "create-add-example-gcommon-configuration-file-2025-07-15",
+  "file_modified_at": "2025-07-21T03:56:39.231641+00:00",
+  "file_created_at": "2025-07-21T03:56:39.231551+00:00",
+  "created_at": "2025-07-21T03:56:39.231551+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:20.297143+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:20.297150+00:00",
+    "source_file": ".github/issue-updates/processed/f319b964-76c0-4d5b-b068-138f53582fbc.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.749539+00:00"
+}

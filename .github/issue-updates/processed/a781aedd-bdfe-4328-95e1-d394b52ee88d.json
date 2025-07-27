@@ -3,5 +3,15 @@
   "number": 0,
   "body": "Planning to update Node installation in devcontainer using features. Will verify devcontainer build.",
   "guid": "a781aedd-bdfe-4328-95e1-d394b52ee88d",
-  "legacy_guid": "comment-issue-0-2025-07-03"
+  "legacy_guid": "comment-issue-0-2025-07-03",
+  "file_modified_at": "2025-07-19T01:49:31.240118+00:00",
+  "file_created_at": "2025-07-19T01:49:31.240035+00:00",
+  "created_at": "2025-07-19T01:49:31.240035+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:53.640475+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:53.640484+00:00",
+    "source_file": ".github/issue-updates/processed/a781aedd-bdfe-4328-95e1-d394b52ee88d.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.735718+00:00"
 }

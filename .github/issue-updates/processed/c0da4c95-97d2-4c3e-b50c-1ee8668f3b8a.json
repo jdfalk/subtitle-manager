@@ -3,5 +3,15 @@
   "number": 1288,
   "body": "Begin implementing tag CLI with list/add/remove operations",
   "guid": "c0da4c95-97d2-4c3e-b50c-1ee8668f3b8a",
-  "legacy_guid": "comment-issue-1288-2025-07-06"
+  "legacy_guid": "comment-issue-1288-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.241310+00:00",
+  "file_created_at": "2025-07-19T01:49:31.241273+00:00",
+  "created_at": "2025-07-19T01:49:31.241273+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:27.196638+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:27.196646+00:00",
+    "source_file": ".github/issue-updates/processed/c0da4c95-97d2-4c3e-b50c-1ee8668f3b8a.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.738710+00:00"
 }

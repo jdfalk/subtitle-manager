@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Update handlers",
   "body": "Refactor gRPC and REST handlers to use new gcommon proto messages",
-  "labels": ["codex", "refactor"],
+  "labels": [
+    "codex",
+    "refactor"
+  ],
   "guid": "7a1e6d11-1615-4942-8957-bbff743e4802",
-  "legacy_guid": "create-update-handlers-2025-07-05"
+  "legacy_guid": "create-update-handlers-2025-07-05",
+  "file_modified_at": "2025-07-19T01:49:31.236804+00:00",
+  "file_created_at": "2025-07-19T01:49:31.236714+00:00",
+  "created_at": "2025-07-19T01:49:31.236714+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:15.397033+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:15.397042+00:00",
+    "source_file": ".github/issue-updates/processed/7a1e6d11-1615-4942-8957-bbff743e4802.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.732936+00:00"
 }

@@ -2,8 +2,20 @@
   "action": "create",
   "title": "Add configuration page to web interface",
   "body": "Allow editing of configuration files through the React UI.",
-  "labels": ["frontend"],
+  "labels": [
+    "frontend"
+  ],
   "guid": "4fbc9930-4280-4397-96d7-bde61d636986",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1081",
-  "legacy_guid": "create-config-page-2025-06-20"
+  "legacy_guid": "create-config-page-2025-06-20",
+  "file_modified_at": "2025-07-07T01:31:00.441581+00:00",
+  "file_created_at": "2025-07-07T01:31:00.441481+00:00",
+  "created_at": "2025-07-07T01:31:00.441481+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:34.748998+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:34.749006+00:00",
+    "source_file": ".github/issue-updates/processed/3c49b1fa-444d-4162-86fe-64df07aad0a8.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.674018+00:00"
 }

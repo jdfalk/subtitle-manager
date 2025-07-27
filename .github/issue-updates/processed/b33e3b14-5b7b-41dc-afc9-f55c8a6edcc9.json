@@ -3,5 +3,15 @@
   "number": 0,
   "body": "Updated devcontainer to use Node 20 feature and updated docs. Ran pre-commit and go tests.",
   "guid": "b33e3b14-5b7b-41dc-afc9-f55c8a6edcc9",
-  "legacy_guid": "comment-issue-0-2025-07-03"
+  "legacy_guid": "comment-issue-0-2025-07-03",
+  "file_modified_at": "2025-07-19T01:49:31.240460+00:00",
+  "file_created_at": "2025-07-19T01:49:31.240382+00:00",
+  "created_at": "2025-07-19T01:49:31.240382+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:26.639707+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:26.639715+00:00",
+    "source_file": ".github/issue-updates/processed/b33e3b14-5b7b-41dc-afc9-f55c8a6edcc9.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.736587+00:00"
 }

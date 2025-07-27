@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Implement customizable dashboard widgets",
   "body": "Add front-end widget system with drag-and-drop and user preferences. Ensure data stored in Postgres/SQLite and security checks.",
-  "labels": ["enhancement", "codex"],
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
   "guid": "02339854-90ca-45c3-901a-d1ff2d2d516e",
-  "legacy_guid": "create-implement-customizable-dashboard-widgets-2025-06-23"
+  "legacy_guid": "create-implement-customizable-dashboard-widgets-2025-06-23",
+  "file_modified_at": "2025-07-07T01:31:00.469491+00:00",
+  "file_created_at": "2025-07-07T01:31:00.469197+00:00",
+  "created_at": "2025-07-07T01:31:00.469197+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:54.552776+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:54.552785+00:00",
+    "source_file": ".github/issue-updates/processed/93d0d923-8606-49a6-8698-7835f0d8c54a.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.693233+00:00"
 }

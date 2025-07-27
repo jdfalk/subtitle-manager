@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Dashboard provider dropdown lacks configuration link",
   "body": "When selecting an unconfigured provider in the dashboard, the dropdown closes without guidance. We should show a message linking directly to configuration.",
-  "labels": ["bug", "codex"],
+  "labels": [
+    "bug",
+    "codex"
+  ],
   "guid": "268f8e96-3581-4cbb-a186-3fc32a5f547c",
-  "legacy_guid": "create-dashboard-provider-dropdown-lacks-configuration-link-2025-06-22"
+  "legacy_guid": "create-dashboard-provider-dropdown-lacks-configuration-link-2025-06-22",
+  "file_modified_at": "2025-07-07T01:31:00.492649+00:00",
+  "file_created_at": "2025-07-07T01:31:00.492517+00:00",
+  "created_at": "2025-07-07T01:31:00.492517+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:20.408325+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:20.408333+00:00",
+    "source_file": ".github/issue-updates/processed/db7124ad-6781-40af-b6a8-657bc525ae55.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.706314+00:00"
 }

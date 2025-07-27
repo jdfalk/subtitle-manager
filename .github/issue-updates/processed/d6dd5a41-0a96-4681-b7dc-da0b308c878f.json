@@ -2,7 +2,21 @@
   "action": "create",
   "title": "Master Plan: Achieve Full Bazarr Feature Parity",
   "body": "## Overview\nThis is the master tracking issue for achieving full Bazarr feature parity in Subtitle Manager.\n\n## Current Status\n- ✅ Core subtitle management (85% complete)\n- ✅ 40+ providers integrated\n- ✅ Web UI with Material Design\n- ✅ Authentication and RBAC\n- ✅ Media library management\n- ⚠️ Missing critical features for parity\n\n## Implementation Phases\n\n### Phase 1: Critical Features (2-3 weeks)\n- [ ] #1 Whisper ASR Integration\n- [ ] #2 Language Profiles\n- [ ] #3 Subtitle Quality Scoring\n- [ ] #4 Manual Search UI\n- [ ] #5 Episode Monitoring\n\n### Phase 2: Enhanced Integration (1-2 weeks)\n- [ ] #6 Complete Webhook System\n- [ ] #7 Caching Layer\n- [ ] #8 Backup/Restore System\n\n### Phase 3: Quality & Polish (2 weeks)\n- [ ] #9 Error Handling Standardization\n- [ ] #10 90%+ Test Coverage\n- [ ] #11 API Documentation\n- [ ] #12 Performance Optimization\n\n## Success Metrics\n- Feature parity with Bazarr 1.4.x\n- 90%+ test coverage\n- < 200ms API response time\n- Support for 1000+ concurrent users\n- Zero data loss backup/restore\n\n## Resources\n- [Technical Analysis](docs/TECHNICAL_ANALYSIS_AND_ROADMAP.md)\n- [Complete Breakdown](docs/COMPLETE_TECHNICAL_BREAKDOWN.md)\n- [Bazarr Feature List](docs/BAZARR_FEATURE_LIST_COMPLETE.md)\n\n## Timeline\n- Start Date: 2025-06-23\n- Target Completion: 2025-09-01 (10 weeks)\n- First Release Candidate: 2025-08-15\n\nThis issue will be updated weekly with progress reports.",
-  "labels": ["epic", "planning", "coordination"],
+  "labels": [
+    "epic",
+    "planning",
+    "coordination"
+  ],
   "guid": "cc6ddd5c-6fb5-47f8-bb7f-0eec1e34d2a7",
-  "legacy_guid": "create-master-plan-achieve-full-bazarr-feature-parity-2025-06-29"
+  "legacy_guid": "create-master-plan-achieve-full-bazarr-feature-parity-2025-06-29",
+  "file_modified_at": "2025-07-07T01:40:12.510759+00:00",
+  "file_created_at": "2025-07-07T01:40:12.510658+00:00",
+  "created_at": "2025-07-07T01:40:12.510658+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:35.752611+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:35.752621+00:00",
+    "source_file": ".github/issue-updates/processed/d6dd5a41-0a96-4681-b7dc-da0b308c878f.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.720330+00:00"
 }

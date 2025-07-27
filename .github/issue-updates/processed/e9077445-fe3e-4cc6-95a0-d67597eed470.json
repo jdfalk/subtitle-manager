@@ -1,8 +1,21 @@
 {
   "title": "CI fails due to Codecov upload errors",
   "body": "Backend tests succeeded but CI marked the job failed when the Codecov upload step returned an error. Ignore these failures to avoid false negatives.",
-  "labels": ["bug", "ci"],
+  "labels": [
+    "bug",
+    "ci"
+  ],
   "guid": "eb5c65f9-0b58-4fa4-b679-50a5a086710c",
   "action": "create",
-  "legacy_guid": "create-codecov-failure-2025-06-21"
+  "legacy_guid": "create-codecov-failure-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.494107+00:00",
+  "file_created_at": "2025-07-07T01:31:00.494011+00:00",
+  "created_at": "2025-07-07T01:31:00.494011+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:34.858412+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:34.858421+00:00",
+    "source_file": ".github/issue-updates/processed/e9077445-fe3e-4cc6-95a0-d67597eed470.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.708860+00:00"
 }

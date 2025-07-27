@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Media metadata editor",
   "body": "Add CLI and web UI for manual metadata editing using the design in docs/METADATA_EDITOR_PLAN.md. Should allow manual search, alternate titles and field-level locks. Depends on online metadata sources (#351, #890).",
-  "labels": ["enhancement", "codex"],
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
   "guid": "60fd389b-4b16-42cb-98e6-d6df22a72a23",
-  "legacy_guid": "create-media-metadata-editor-2025-06-27"
+  "legacy_guid": "create-media-metadata-editor-2025-06-27",
+  "file_modified_at": "2025-07-07T01:31:00.444309+00:00",
+  "file_created_at": "2025-07-07T01:31:00.444266+00:00",
+  "created_at": "2025-07-07T01:31:00.444266+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:37.997538+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:37.997545+00:00",
+    "source_file": ".github/issue-updates/processed/51aec541-d88f-41c5-b65a-59b74a74eb55.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.677220+00:00"
 }

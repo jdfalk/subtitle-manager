@@ -3,5 +3,15 @@
   "body": "Ensured Bazarr URLs are built with url.ResolveReference after validation.",
   "guid": "400fd129-2740-4802-bbfc-5f03ee1692df",
   "action": "comment",
-  "legacy_guid": "comment-933-bazarr-url-2025-06-21"
+  "legacy_guid": "comment-933-bazarr-url-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.465613+00:00",
+  "file_created_at": "2025-07-07T01:31:00.465267+00:00",
+  "created_at": "2025-07-07T01:31:00.465267+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:24.149464+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:24.149472+00:00",
+    "source_file": ".github/issue-updates/processed/8c237a09-3dbf-4bb6-b992-4674bb07c3f3.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.691430+00:00"
 }

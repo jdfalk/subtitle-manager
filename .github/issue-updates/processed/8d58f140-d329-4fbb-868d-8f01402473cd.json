@@ -3,5 +3,15 @@
   "number": 999,
   "body": "Plan: implement count methods and update stats handler.",
   "guid": "64994f63-40cc-4dc2-903e-1c6c158440f2",
-  "legacy_guid": "comment-999-2025-06-22-160217"
+  "legacy_guid": "comment-999-2025-06-22-160217",
+  "file_modified_at": "2025-07-07T01:31:00.465939+00:00",
+  "file_created_at": "2025-07-07T01:31:00.465714+00:00",
+  "created_at": "2025-07-07T01:31:00.465714+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:15.633632+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:15.633641+00:00",
+    "source_file": ".github/issue-updates/processed/8d58f140-d329-4fbb-868d-8f01402473cd.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.691674+00:00"
 }

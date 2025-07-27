@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add radarr-sync command",
   "body": "Implement CLI command to run a single Radarr library sync for manual or initial use.",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "df346733-fe34-4fd7-b5b0-fe42c1fbf868",
-  "legacy_guid": "create-add-radarr-sync-command-2025-07-06"
+  "legacy_guid": "create-add-radarr-sync-command-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.243065+00:00",
+  "file_created_at": "2025-07-19T01:49:31.243025+00:00",
+  "created_at": "2025-07-19T01:49:31.243025+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:20.531497+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:20.531508+00:00",
+    "source_file": ".github/issue-updates/processed/df346733-fe34-4fd7-b5b0-fe42c1fbf868.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.741026+00:00"
 }

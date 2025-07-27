@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Respect field-level metadata locks",
   "body": "Implement logic in metadata refresh to skip updating locked fields",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "d59e71ae-48d5-4b51-aeb6-df8f3f429cfa",
-  "legacy_guid": "create-respect-field-level-metadata-locks-2025-07-09"
+  "legacy_guid": "create-respect-field-level-metadata-locks-2025-07-09",
+  "file_modified_at": "2025-07-19T01:49:31.242211+00:00",
+  "file_created_at": "2025-07-19T01:49:31.242128+00:00",
+  "created_at": "2025-07-19T01:49:31.242128+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:31.529883+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:31.529891+00:00",
+    "source_file": ".github/issue-updates/processed/d59e71ae-48d5-4b51-aeb6-df8f3f429cfa.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.740153+00:00"
 }

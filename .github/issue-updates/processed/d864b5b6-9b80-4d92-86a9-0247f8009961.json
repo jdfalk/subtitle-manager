@@ -2,8 +2,21 @@
   "action": "create",
   "title": "Complete gRPC configuration API",
   "body": "Expose configuration management over authenticated gRPC.",
-  "labels": ["feature", "grpc"],
+  "labels": [
+    "feature",
+    "grpc"
+  ],
   "guid": "1e0f27b9-78d1-41df-bba2-fad299a00736",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1080",
-  "legacy_guid": "create-grpc-config-api-2025-06-20"
+  "legacy_guid": "create-grpc-config-api-2025-06-20",
+  "file_modified_at": "2025-07-07T01:31:00.491811+00:00",
+  "file_created_at": "2025-07-07T01:31:00.491641+00:00",
+  "created_at": "2025-07-07T01:31:00.491641+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:42.866247+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:42.866257+00:00",
+    "source_file": ".github/issue-updates/processed/d864b5b6-9b80-4d92-86a9-0247f8009961.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.705622+00:00"
 }

@@ -3,5 +3,15 @@
   "number": 1192,
   "body": "Fixed in PR #849",
   "guid": "85e007c4-c840-4d40-bafb-f77562bb9ebc",
-  "legacy_guid": "comment-issue-1192-2025-06-26"
+  "legacy_guid": "comment-issue-1192-2025-06-26",
+  "file_modified_at": "2025-07-07T01:31:00.455572+00:00",
+  "file_created_at": "2025-07-07T01:31:00.455501+00:00",
+  "created_at": "2025-07-07T01:31:00.455501+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:37.208067+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:37.208075+00:00",
+    "source_file": ".github/issue-updates/processed/70200b9c-0f32-42bf-943e-f31d00965033.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.685360+00:00"
 }

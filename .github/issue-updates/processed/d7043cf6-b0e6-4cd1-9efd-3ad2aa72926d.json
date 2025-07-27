@@ -2,8 +2,20 @@
   "action": "create",
   "title": "Track subtitle download history",
   "body": "Record where and when subtitles were obtained.",
-  "labels": ["feature"],
+  "labels": [
+    "feature"
+  ],
   "guid": "aeb8ab20-4f19-4799-9fc6-0c47347db5a9",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1077",
-  "legacy_guid": "create-download-history-2025-06-20"
+  "legacy_guid": "create-download-history-2025-06-20",
+  "file_modified_at": "2025-07-07T01:31:00.491214+00:00",
+  "file_created_at": "2025-07-07T01:31:00.491098+00:00",
+  "created_at": "2025-07-07T01:31:00.491098+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:28.090058+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:28.090069+00:00",
+    "source_file": ".github/issue-updates/processed/d7043cf6-b0e6-4cd1-9efd-3ad2aa72926d.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.704804+00:00"
 }

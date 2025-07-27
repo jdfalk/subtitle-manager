@@ -2,8 +2,20 @@
   "action": "create",
   "title": "Evaluate performance of merging and translation",
   "body": "Benchmark and optimise the merging and translation functions.",
-  "labels": ["performance"],
+  "labels": [
+    "performance"
+  ],
   "guid": "a032a17d-70b2-46e1-9089-84447a64a8fe",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1037",
-  "legacy_guid": "create-performance-eval-2025-06-20"
+  "legacy_guid": "create-performance-eval-2025-06-20",
+  "file_modified_at": "2025-07-07T01:31:00.493326+00:00",
+  "file_created_at": "2025-07-07T01:31:00.493221+00:00",
+  "created_at": "2025-07-07T01:31:00.493221+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:27.087988+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:27.087996+00:00",
+    "source_file": ".github/issue-updates/processed/e18e7b7d-030c-43e7-9777-c8f56e8618ca.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.707799+00:00"
 }

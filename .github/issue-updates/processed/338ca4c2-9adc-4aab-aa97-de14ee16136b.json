@@ -3,5 +3,15 @@
   "number": 1249,
   "body": "The missing requirements file has been added to the ghcommon repository. This resolves the failure in the unified issue management workflow.",
   "guid": "338ca4c2-9adc-4aab-aa97-de14ee16136b",
-  "legacy_guid": "comment-issue-1249-2025-07-03"
+  "legacy_guid": "comment-issue-1249-2025-07-03",
+  "file_modified_at": "2025-07-07T01:40:12.506292+00:00",
+  "file_created_at": "2025-07-07T01:40:12.506252+00:00",
+  "created_at": "2025-07-07T01:40:12.506252+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:52.316481+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:52.316491+00:00",
+    "source_file": ".github/issue-updates/processed/338ca4c2-9adc-4aab-aa97-de14ee16136b.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.714539+00:00"
 }

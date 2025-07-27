@@ -3,5 +3,15 @@
   "number": 1100,
   "body": "Use security package validation helper",
   "guid": "16239b3b-4cba-4ef8-89c9-d8645f280f83",
-  "legacy_guid": "comment-1100-2025-06-23-131611"
+  "legacy_guid": "comment-1100-2025-06-23-131611",
+  "file_modified_at": "2025-07-07T01:31:00.495402+00:00",
+  "file_created_at": "2025-07-07T01:31:00.495304+00:00",
+  "created_at": "2025-07-07T01:31:00.495304+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:43.202842+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:43.202849+00:00",
+    "source_file": ".github/issue-updates/processed/f6bf416d-5ec6-46bc-b0e7-a0ad626aaf7f.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.710909+00:00"
 }

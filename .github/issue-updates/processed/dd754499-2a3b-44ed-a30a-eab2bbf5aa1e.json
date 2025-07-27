@@ -1,7 +1,19 @@
 {
   "number": 930,
-  "labels": ["codex"],
+  "labels": [
+    "codex"
+  ],
   "guid": "b860e4be-7217-446c-81a0-fe46dec5f94b",
   "action": "update",
-  "legacy_guid": "update-issue-930-2025-06-21"
+  "legacy_guid": "update-issue-930-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.492829+00:00",
+  "file_created_at": "2025-07-07T01:31:00.492702+00:00",
+  "created_at": "2025-07-07T01:31:00.492702+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:32.640850+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:32.640859+00:00",
+    "source_file": ".github/issue-updates/processed/dd754499-2a3b-44ed-a30a-eab2bbf5aa1e.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.706555+00:00"
 }

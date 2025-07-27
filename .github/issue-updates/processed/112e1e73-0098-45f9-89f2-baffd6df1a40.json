@@ -1,0 +1,21 @@
+{
+  "action": "create",
+  "title": "Implement AuthService using gcommon proto",
+  "body": "Add gRPC AuthService server using gcommon authentication protobufs",
+  "labels": [
+    "enhancement",
+    "auth"
+  ],
+  "guid": "112e1e73-0098-45f9-89f2-baffd6df1a40",
+  "legacy_guid": "create-implement-authservice-using-gcommon-proto-2025-07-23",
+  "file_modified_at": "2025-07-25T01:40:10.701557+00:00",
+  "file_created_at": "2025-07-25T01:40:10.701338+00:00",
+  "created_at": "2025-07-25T01:40:10.701338+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:18.798305+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:18.798312+00:00",
+    "source_file": ".github/issue-updates/processed/112e1e73-0098-45f9-89f2-baffd6df1a40.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.749970+00:00"
+}

@@ -2,7 +2,22 @@
   "action": "update",
   "number": 1244,
   "body": "## Description\nImprove widget endpoints, update tests, and handle unknown widget types gracefully.\n\n## Current Issues\n- Widget API lacks standardization\n- Unknown widget types cause errors\n- Test coverage is incomplete\n- Performance issues with many widgets\n\n## API Improvements\n### Endpoints\n- GET /api/widgets - List available widgets\n- GET /api/widgets/:id - Get widget data\n- POST /api/widgets/:id/config - Update widget config\n- GET /api/dashboard/layout - Get user layout\n- PUT /api/dashboard/layout - Save user layout\n\n### Data Format\n\\`\\`\\`json\n{\n  \"widget\": {\n    \"id\": \"stats-summary\",\n    \"type\": \"statistics\",\n    \"version\": \"1.0.0\",\n    \"data\": {},\n    \"config\": {},\n    \"permissions\": []\n  }\n}\n\\`\\`\\`\n\n## Error Handling\n- Unknown widget types return placeholder\n- Graceful degradation for missing data\n- Client-side error boundaries\n- Detailed error logging\n\n## Acceptance Criteria\n- [ ] All widget endpoints follow RESTful standards\n- [ ] Unknown widget types show placeholder widget\n- [ ] API responses include versioning\n- [ ] Pagination works for widget lists\n- [ ] Caching headers optimize performance\n- [ ] WebSocket updates for real-time data\n- [ ] Comprehensive test coverage (>90%)\n- [ ] API documentation is complete\n- [ ] Performance metrics meet targets\n- [ ] Error responses follow standard format\n\n## Performance Requirements\n- Widget list loads in < 200ms\n- Individual widget data in < 100ms\n- Layout saves in < 300ms\n- WebSocket latency < 50ms\n\n## Testing Requirements\n- Unit tests for all endpoints\n- Integration tests for widget lifecycle\n- Load tests with 50+ widgets\n- Error scenario tests\n- WebSocket connection tests\n\n<!-- guid:cbba6849-009b-4e59-b0ad-88266ced1382 -->",
-  "labels": ["codex", "api", "widgets", "refactor"],
+  "labels": [
+    "codex",
+    "api",
+    "widgets",
+    "refactor"
+  ],
   "guid": "83bdd064-9b75-41ee-9b46-668af4621c3a",
-  "legacy_guid": "update-issue-1244-2025-06-30"
+  "legacy_guid": "update-issue-1244-2025-06-30",
+  "file_modified_at": "2025-07-07T01:40:12.507834+00:00",
+  "file_created_at": "2025-07-07T01:40:12.507638+00:00",
+  "created_at": "2025-07-07T01:40:12.507638+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:51.753879+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:51.753886+00:00",
+    "source_file": ".github/issue-updates/processed/83bdd064-9b75-41ee-9b46-668af4621c3a.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.716465+00:00"
 }

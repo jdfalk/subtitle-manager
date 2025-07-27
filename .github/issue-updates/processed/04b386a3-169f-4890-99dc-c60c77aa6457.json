@@ -2,7 +2,19 @@
   "action": "create",
   "title": "Missing protobuf types in metrics",
   "body": "The metrics module's gRPC services reference generated protobuf code that isn't included in the repository. Importing the metrics package fails with errors like 'undefined: pb.UnimplementedMetricsServiceServer'. Add generated .pb.go files to pkg/metrics/proto or guard the gRPC files behind build tags so the package builds without them.",
-  "labels": ["bug"],
+  "labels": [
+    "bug"
+  ],
   "guid": "04b386a3-169f-4890-99dc-c60c77aa6457",
-  "legacy_guid": "create-missing-protobuf-types-in-metrics-2025-07-15"
+  "legacy_guid": "create-missing-protobuf-types-in-metrics-2025-07-15",
+  "file_modified_at": "2025-07-21T02:40:47.725083+00:00",
+  "file_created_at": "2025-07-21T02:40:47.725044+00:00",
+  "created_at": "2025-07-21T02:40:47.725044+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:11.726439+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:11.726447+00:00",
+    "source_file": ".github/issue-updates/processed/04b386a3-169f-4890-99dc-c60c77aa6457.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.743171+00:00"
 }

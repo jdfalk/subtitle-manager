@@ -3,5 +3,15 @@
   "number": 0,
   "body": "## Plan of Action\n1. Add SM_OPENAI_API_URL configuration with CLI flag.\n2. Update transcriber to use the configured base URL.\n3. Set SM_OPENAI_API_URL in docker-init.sh when ENABLE_WHISPER=1.\n4. Document new variables in README and .env.example.\n5. Update tests.",
   "guid": "7e6d83a0-b4e6-447f-b6d9-1e02d540b9c5",
-  "legacy_guid": "comment-0-2025-06-23-001052"
+  "legacy_guid": "comment-0-2025-06-23-001052",
+  "file_modified_at": "2025-07-07T01:31:00.439749+00:00",
+  "file_created_at": "2025-07-07T01:31:00.439642+00:00",
+  "created_at": "2025-07-07T01:31:00.439642+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:54.662961+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:54.662969+00:00",
+    "source_file": ".github/issue-updates/processed/287a722b-7b4e-4235-a375-676a8f31f15c.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.671211+00:00"
 }

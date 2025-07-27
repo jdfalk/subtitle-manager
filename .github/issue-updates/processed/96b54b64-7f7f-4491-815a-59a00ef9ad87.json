@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Generate proto bindings",
   "body": "Run protoc to generate Go code for gcommon protos",
-  "labels": ["codex", "refactor"],
+  "labels": [
+    "codex",
+    "refactor"
+  ],
   "guid": "96b54b64-7f7f-4491-815a-59a00ef9ad87",
-  "legacy_guid": "create-generate-proto-bindings-2025-07-05"
+  "legacy_guid": "create-generate-proto-bindings-2025-07-05",
+  "file_modified_at": "2025-07-19T01:49:31.239319+00:00",
+  "file_created_at": "2025-07-19T01:49:31.239220+00:00",
+  "created_at": "2025-07-19T01:49:31.239220+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:52.429013+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:52.429020+00:00",
+    "source_file": ".github/issue-updates/processed/96b54b64-7f7f-4491-815a-59a00ef9ad87.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.734615+00:00"
 }

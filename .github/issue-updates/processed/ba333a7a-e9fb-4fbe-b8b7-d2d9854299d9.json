@@ -3,5 +3,15 @@
   "number": 1106,
   "body": "Plan: validate dir path to prevent path injection and use filepath.Join for output",
   "guid": "41cbf016-d565-45fa-9911-4c9442b13f9f",
-  "legacy_guid": "comment-1106-2025-06-23-125105"
+  "legacy_guid": "comment-1106-2025-06-23-125105",
+  "file_modified_at": "2025-07-07T01:31:00.485022+00:00",
+  "file_created_at": "2025-07-07T01:31:00.484223+00:00",
+  "created_at": "2025-07-07T01:31:00.484223+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:33.571649+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:33.571656+00:00",
+    "source_file": ".github/issue-updates/processed/ba333a7a-e9fb-4fbe-b8b7-d2d9854299d9.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.699434+00:00"
 }

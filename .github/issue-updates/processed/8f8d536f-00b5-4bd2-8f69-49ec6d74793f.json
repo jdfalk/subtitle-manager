@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add DB update support for download results",
   "body": "Implement DB-level update logic for downloads instead of creating new records.",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "8f8d536f-00b5-4bd2-8f69-49ec6d74793f",
-  "legacy_guid": "create-add-db-update-support-for-download-results-2025-07-15"
+  "legacy_guid": "create-add-db-update-support-for-download-results-2025-07-15",
+  "file_modified_at": "2025-07-21T02:40:47.726533+00:00",
+  "file_created_at": "2025-07-21T02:40:47.726498+00:00",
+  "created_at": "2025-07-21T02:40:47.726498+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:31.416181+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:31.416189+00:00",
+    "source_file": ".github/issue-updates/processed/8f8d536f-00b5-4bd2-8f69-49ec6d74793f.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.745828+00:00"
 }

@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Metadata fetch command",
   "body": "Add CLI command to fetch metadata from TMDB/OMDb and display languages and rating.",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "a0de1ff5-92e4-48a9-bcee-b40aa8f83fdb",
-  "legacy_guid": "create-metadata-fetch-command-2025-07-06"
+  "legacy_guid": "create-metadata-fetch-command-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.239616+00:00",
+  "file_created_at": "2025-07-19T01:49:31.239579+00:00",
+  "created_at": "2025-07-19T01:49:31.239579+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:17.664931+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:17.664938+00:00",
+    "source_file": ".github/issue-updates/processed/a0de1ff5-92e4-48a9-bcee-b40aa8f83fdb.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.735020+00:00"
 }

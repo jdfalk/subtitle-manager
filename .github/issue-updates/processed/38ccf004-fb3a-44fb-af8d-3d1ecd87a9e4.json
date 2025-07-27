@@ -3,5 +3,15 @@
   "number": 1251,
   "body": "The missing requirements file has been added to the ghcommon repository. This resolves the workflow setup issue.",
   "guid": "38ccf004-fb3a-44fb-af8d-3d1ecd87a9e4",
-  "legacy_guid": "comment-issue-1251-2025-07-03"
+  "legacy_guid": "comment-issue-1251-2025-07-03",
+  "file_modified_at": "2025-07-07T01:40:12.506637+00:00",
+  "file_created_at": "2025-07-07T01:40:12.506598+00:00",
+  "created_at": "2025-07-07T01:40:12.506598+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:32.418865+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:32.418872+00:00",
+    "source_file": ".github/issue-updates/processed/38ccf004-fb3a-44fb-af8d-3d1ecd87a9e4.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.714964+00:00"
 }

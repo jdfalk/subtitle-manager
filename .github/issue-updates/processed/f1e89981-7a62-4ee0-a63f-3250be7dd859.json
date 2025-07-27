@@ -4,5 +4,15 @@
   "state_reason": "completed",
   "body": "Examples and templates have been comprehensively created:\n\n✅ examples/workflows/issue-management-basic.yml\n✅ examples/workflows/issue-management-advanced.yml\n✅ templates/workflows/complete-ci-cd.yml\n✅ templates/workflows/container-only.yml\n✅ templates/workflows/library-release.yml\n✅ Migration guide with step-by-step instructions\n✅ Multiple configuration examples in documentation\n\nClosing as completed.",
   "guid": "f1e89981-7a62-4ee0-a63f-3250be7dd859",
-  "legacy_guid": "close-issue-10-2024-06-23"
+  "legacy_guid": "close-issue-10-2024-06-23",
+  "file_modified_at": "2025-07-07T01:40:12.512470+00:00",
+  "file_created_at": "2025-07-07T01:40:12.512323+00:00",
+  "created_at": "2025-07-07T01:40:12.512323+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:47.597970+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:47.597983+00:00",
+    "source_file": ".github/issue-updates/processed/f1e89981-7a62-4ee0-a63f-3250be7dd859.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.722434+00:00"
 }

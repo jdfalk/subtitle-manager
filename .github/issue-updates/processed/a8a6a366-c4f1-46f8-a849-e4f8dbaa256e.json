@@ -3,5 +3,15 @@
   "number": 1102,
   "body": "Plan: update CI workflow to ignore Codecov errors using continue-on-error.",
   "guid": "da4d6f0b-55d6-441d-b372-e64ea18f8c07",
-  "legacy_guid": "comment-1102-2025-06-23-125302"
+  "legacy_guid": "comment-1102-2025-06-23-125302",
+  "file_modified_at": "2025-07-07T01:31:00.478825+00:00",
+  "file_created_at": "2025-07-07T01:31:00.478426+00:00",
+  "created_at": "2025-07-07T01:31:00.478426+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:34.636443+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:34.636452+00:00",
+    "source_file": ".github/issue-updates/processed/a8a6a366-c4f1-46f8-a849-e4f8dbaa256e.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.697589+00:00"
 }

@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Media metadata editor",
   "body": "Add manual search, alternate titles, release group tracking and locks",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "c7858f1d-7989-4b9e-87c1-eeac34feaa53",
-  "legacy_guid": "create-media-metadata-editor-2025-06-22"
+  "legacy_guid": "create-media-metadata-editor-2025-06-22",
+  "file_modified_at": "2025-07-07T01:31:00.460965+00:00",
+  "file_created_at": "2025-07-07T01:31:00.460809+00:00",
+  "created_at": "2025-07-07T01:31:00.460809+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:49.391917+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:49.391924+00:00",
+    "source_file": ".github/issue-updates/processed/7be7ac2f-c4d9-42e0-90cb-c83714ea3621.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.687385+00:00"
 }

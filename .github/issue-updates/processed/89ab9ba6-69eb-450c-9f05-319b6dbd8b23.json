@@ -2,7 +2,19 @@
   "action": "create",
   "title": "Search cache key order",
   "body": "Normalize provider order when caching search results",
-  "labels": ["bug"],
+  "labels": [
+    "bug"
+  ],
   "guid": "89ab9ba6-69eb-450c-9f05-319b6dbd8b23",
-  "legacy_guid": "create-search-cache-key-order-2025-07-10"
+  "legacy_guid": "create-search-cache-key-order-2025-07-10",
+  "file_modified_at": "2025-07-19T01:49:31.237515+00:00",
+  "file_created_at": "2025-07-19T01:49:31.237477+00:00",
+  "created_at": "2025-07-19T01:49:31.237477+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:12.478965+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:12.478972+00:00",
+    "source_file": ".github/issue-updates/processed/89ab9ba6-69eb-450c-9f05-319b6dbd8b23.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.733687+00:00"
 }

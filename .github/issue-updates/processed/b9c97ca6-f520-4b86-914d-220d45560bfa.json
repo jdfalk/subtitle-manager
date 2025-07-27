@@ -2,7 +2,19 @@
   "action": "update",
   "number": 542,
   "body": "Add codex label",
-  "labels": ["codex"],
+  "labels": [
+    "codex"
+  ],
   "guid": "8b758026-e222-4782-baf9-9e503de6fb40",
-  "legacy_guid": "update-issue-542-2025-06-23"
+  "legacy_guid": "update-issue-542-2025-06-23",
+  "file_modified_at": "2025-07-07T01:31:00.484149+00:00",
+  "file_created_at": "2025-07-07T01:31:00.483785+00:00",
+  "created_at": "2025-07-07T01:31:00.483785+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:53.760013+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:53.760021+00:00",
+    "source_file": ".github/issue-updates/processed/b9c97ca6-f520-4b86-914d-220d45560bfa.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.699232+00:00"
 }

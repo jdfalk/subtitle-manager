@@ -3,5 +3,15 @@
   "body": "Validated input paths when browsing directories in the web server.",
   "guid": "13386a86-953b-4326-a928-fcf9b42b8368",
   "action": "comment",
-  "legacy_guid": "comment-934-browse-validate-2025-06-21"
+  "legacy_guid": "comment-934-browse-validate-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.437678+00:00",
+  "file_created_at": "2025-07-07T01:31:00.436747+00:00",
+  "created_at": "2025-07-07T01:31:00.436747+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:25.750849+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:25.750857+00:00",
+    "source_file": ".github/issue-updates/processed/1c0514c7-2855-47db-a762-3bfa04ffe09b.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.668312+00:00"
 }

@@ -2,8 +2,20 @@
   "action": "create",
   "title": "Add JSON-based issue workflow",
   "body": "Implement create, update and delete operations using a JSON file.",
-  "labels": ["automation"],
+  "labels": [
+    "automation"
+  ],
   "guid": "0a0adf9b-df65-4732-96c6-9fe495b747f1",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1032",
-  "legacy_guid": "create-json-workflow-2025-06-20"
+  "legacy_guid": "create-json-workflow-2025-06-20",
+  "file_modified_at": "2025-07-07T01:31:00.447906+00:00",
+  "file_created_at": "2025-07-07T01:31:00.447711+00:00",
+  "created_at": "2025-07-07T01:31:00.447711+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:47.259071+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:47.259080+00:00",
+    "source_file": ".github/issue-updates/processed/60c91fa3-7896-423f-ac93-7491c6f1c2cf.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.681241+00:00"
 }

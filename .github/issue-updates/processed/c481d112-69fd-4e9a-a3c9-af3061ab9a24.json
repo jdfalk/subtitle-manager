@@ -3,5 +3,15 @@
   "body": "CI updated to ignore Codecov failures using `fail_ci_if_error: false`. This prevents false negatives during backend testing.",
   "guid": "39b3fd0a-0d61-4647-956c-1fbe4ae1e00c",
   "action": "comment",
-  "legacy_guid": "comment-923-codecov-fix-2025-06-21"
+  "legacy_guid": "comment-923-codecov-fix-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.488687+00:00",
+  "file_created_at": "2025-07-07T01:31:00.488006+00:00",
+  "created_at": "2025-07-07T01:31:00.488006+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:31.302050+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:31.302061+00:00",
+    "source_file": ".github/issue-updates/processed/c481d112-69fd-4e9a-a3c9-af3061ab9a24.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.701446+00:00"
 }

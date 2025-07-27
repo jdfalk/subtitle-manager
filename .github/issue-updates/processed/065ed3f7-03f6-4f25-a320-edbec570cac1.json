@@ -2,22 +2,54 @@
   {
     "action": "update",
     "number": 954,
-    "labels": ["codex"],
+    "labels": [
+      "codex"
+    ],
     "guid": "update-issue-954-2025-06-21",
-    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954"
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954",
+    "file_modified_at": "2025-07-07T01:31:00.433490+00:00",
+    "file_created_at": "2025-07-07T01:31:00.433448+00:00",
+    "created_at": "2025-07-07T01:31:00.433448+00:00",
+    "timestamp_extracted_at": "2025-07-26T23:42:11.942037+00:00",
+    "processing_metadata": {
+      "enhanced_at": "2025-07-26T23:42:11.942046+00:00",
+      "source_file": ".github/issue-updates/processed/065ed3f7-03f6-4f25-a320-edbec570cac1.json",
+      "version": "2.0.0"
+    },
+    "processed_at": "2025-07-26T23:42:54.664329+00:00"
   },
   {
     "action": "comment",
     "number": 954,
     "body": "## Plan of Action\n\n1. Confirm `copilot-tickets.yml` was removed in favor of the unified workflow\n2. Close this alert as resolved",
     "guid": "plan-comment-954-2025-06-21",
-    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954"
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954",
+    "file_modified_at": "2025-07-07T01:31:00.433490+00:00",
+    "file_created_at": "2025-07-07T01:31:00.433448+00:00",
+    "created_at": "2025-07-07T01:31:00.433448+00:00",
+    "timestamp_extracted_at": "2025-07-26T23:42:11.942037+00:00",
+    "processing_metadata": {
+      "enhanced_at": "2025-07-26T23:42:11.942052+00:00",
+      "source_file": ".github/issue-updates/processed/065ed3f7-03f6-4f25-a320-edbec570cac1.json",
+      "version": "2.0.0"
+    },
+    "processed_at": "2025-07-26T23:42:54.664334+00:00"
   },
   {
     "action": "close",
     "number": 954,
     "state_reason": "completed",
     "guid": "close-issue-954-2025-06-21",
-    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954"
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/954",
+    "file_modified_at": "2025-07-07T01:31:00.433490+00:00",
+    "file_created_at": "2025-07-07T01:31:00.433448+00:00",
+    "created_at": "2025-07-07T01:31:00.433448+00:00",
+    "timestamp_extracted_at": "2025-07-26T23:42:11.942037+00:00",
+    "processing_metadata": {
+      "enhanced_at": "2025-07-26T23:42:11.942054+00:00",
+      "source_file": ".github/issue-updates/processed/065ed3f7-03f6-4f25-a320-edbec570cac1.json",
+      "version": "2.0.0"
+    },
+    "processed_at": "2025-07-26T23:42:54.664336+00:00"
   }
 ]

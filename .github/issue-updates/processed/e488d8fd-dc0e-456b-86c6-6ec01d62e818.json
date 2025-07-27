@@ -3,5 +3,15 @@
   "number": 7,
   "body": "Rollback mechanisms need further investigation:\n\n🔄 Partial support:\n- Dry-run mode for testing\n- Failed operations don't affect successful ones (matrix strategy)\n- Files remain in place if processing fails\n\n❌ Still needed:\n- Transaction support for multi-step operations\n- Explicit rollback for partially completed operations\n- State persistence for recovery\n\nThis aligns with TODO.md Phase 2 improvements. Should remain open.",
   "guid": "e488d8fd-dc0e-456b-86c6-6ec01d62e818",
-  "legacy_guid": "update-issue-7-2024-06-23"
+  "legacy_guid": "update-issue-7-2024-06-23",
+  "file_modified_at": "2025-07-07T01:40:12.511994+00:00",
+  "file_created_at": "2025-07-07T01:40:12.511797+00:00",
+  "created_at": "2025-07-07T01:40:12.511797+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:31.753328+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:31.753339+00:00",
+    "source_file": ".github/issue-updates/processed/e488d8fd-dc0e-456b-86c6-6ec01d62e818.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.721837+00:00"
 }

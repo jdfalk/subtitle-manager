@@ -2,7 +2,22 @@
   "action": "create",
   "title": "Standardize Error Handling Across Application",
   "body": "## Description\nImplement consistent error handling, reporting, and recovery mechanisms throughout the application.\n\n## Error Categories\n- Provider errors (retry-able)\n- Network errors (retry-able)\n- Authentication errors\n- Validation errors\n- System errors\n- User errors\n\n## Implementation\n```go\n// pkg/errors/types.go\ntype AppError struct {\n    Code       string\n    Message    string\n    UserMsg    string\n    Err        error\n    Retryable  bool\n    StatusCode int\n}\n\n// pkg/errors/handler.go\ntype ErrorHandler interface {\n    Handle(ctx context.Context, err error) Response\n    Recover(ctx context.Context, panic interface{}) Response\n}\n```\n\n## Error Reporting\n- Structured logging\n- User notifications\n- Admin alerts\n- Error aggregation\n- Stack trace capture\n\n## Recovery Mechanisms\n- Automatic retry with backoff\n- Circuit breaker pattern\n- Fallback strategies\n- Graceful degradation\n\n## Acceptance Criteria\n- [ ] Standardized error types\n- [ ] Consistent error responses\n- [ ] Error tracking dashboard\n- [ ] Alert configuration\n- [ ] Recovery automation\n- [ ] Error documentation",
-  "labels": ["enhancement", "backend", "reliability", "priority-medium"],
+  "labels": [
+    "enhancement",
+    "backend",
+    "reliability",
+    "priority-medium"
+  ],
   "guid": "4ca2506b-f2af-41af-ab0d-5650fc3dd670",
-  "legacy_guid": "create-standardize-error-handling-across-application-2025-06-29"
+  "legacy_guid": "create-standardize-error-handling-across-application-2025-06-29",
+  "file_modified_at": "2025-07-07T01:40:12.509072+00:00",
+  "file_created_at": "2025-07-07T01:40:12.508976+00:00",
+  "created_at": "2025-07-07T01:40:12.508976+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:53.046561+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:53.046572+00:00",
+    "source_file": ".github/issue-updates/processed/ad8b5f94-ea9e-470c-86ba-ad31b2a14e46.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.718273+00:00"
 }

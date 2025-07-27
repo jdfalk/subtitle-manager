@@ -2,7 +2,19 @@
   "action": "update",
   "number": 540,
   "body": "Planning to implement configuration gRPC endpoints",
-  "labels": ["codex"],
+  "labels": [
+    "codex"
+  ],
   "guid": "ba5792c5-31a1-43c9-98d8-db2f6cac8a8b",
-  "legacy_guid": "update-issue-540-2025-06-23"
+  "legacy_guid": "update-issue-540-2025-06-23",
+  "file_modified_at": "2025-07-07T01:31:00.470403+00:00",
+  "file_created_at": "2025-07-07T01:31:00.469995+00:00",
+  "created_at": "2025-07-07T01:31:00.469995+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:13.881961+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:13.881968+00:00",
+    "source_file": ".github/issue-updates/processed/96669e99-5b81-469a-b003-ca3fc13609e3.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.693772+00:00"
 }

@@ -2,15 +2,37 @@
   {
     "action": "update",
     "number": 920,
-    "labels": ["codex"],
+    "labels": [
+      "codex"
+    ],
     "guid": "update-issue-920-2025-06-20",
-    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/920"
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/920",
+    "file_modified_at": "2025-07-07T01:31:00.453360+00:00",
+    "file_created_at": "2025-07-07T01:31:00.453299+00:00",
+    "created_at": "2025-07-07T01:31:00.453299+00:00",
+    "timestamp_extracted_at": "2025-07-26T23:42:43.653634+00:00",
+    "processing_metadata": {
+      "enhanced_at": "2025-07-26T23:42:43.653643+00:00",
+      "source_file": ".github/issue-updates/processed/6b695a60-c5ad-40b4-8fe9-25f9369ea63b.json",
+      "version": "2.0.0"
+    },
+    "processed_at": "2025-07-26T23:42:54.683420+00:00"
   },
   {
     "action": "comment",
     "number": 920,
     "body": "I'll update tests to fail fast when JSON decoding fails, covering webhooks, notifications, captcha, and web server handlers.",
     "guid": "comment-920-json-decode-tests-2025-06-20",
-    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/920"
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/920",
+    "file_modified_at": "2025-07-07T01:31:00.453360+00:00",
+    "file_created_at": "2025-07-07T01:31:00.453299+00:00",
+    "created_at": "2025-07-07T01:31:00.453299+00:00",
+    "timestamp_extracted_at": "2025-07-26T23:42:43.653634+00:00",
+    "processing_metadata": {
+      "enhanced_at": "2025-07-26T23:42:43.653648+00:00",
+      "source_file": ".github/issue-updates/processed/6b695a60-c5ad-40b4-8fe9-25f9369ea63b.json",
+      "version": "2.0.0"
+    },
+    "processed_at": "2025-07-26T23:42:54.683422+00:00"
   }
 ]

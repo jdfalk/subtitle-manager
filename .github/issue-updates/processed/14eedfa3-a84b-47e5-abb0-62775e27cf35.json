@@ -3,5 +3,15 @@
   "number": 543,
   "body": "Plan: update React components to use unified gRPC API with REST fallback",
   "guid": "15d99194-cfd2-49c8-a00f-88fa8853f65c",
-  "legacy_guid": "comment-543-2025-06-23-125603"
+  "legacy_guid": "comment-543-2025-06-23-125603",
+  "file_modified_at": "2025-07-07T01:31:00.435588+00:00",
+  "file_created_at": "2025-07-07T01:31:00.435379+00:00",
+  "created_at": "2025-07-07T01:31:00.435379+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:22.470969+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:22.470976+00:00",
+    "source_file": ".github/issue-updates/processed/14eedfa3-a84b-47e5-abb0-62775e27cf35.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.667040+00:00"
 }

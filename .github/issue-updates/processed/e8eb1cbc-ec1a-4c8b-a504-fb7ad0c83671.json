@@ -3,5 +3,15 @@
   "number": 1073,
   "body": "## Plan of Action\n\n1. Apply codex label using distributed update.\n2. Verify the workflow processes this file correctly.",
   "guid": "76ad1020-9691-4687-8a99-4cba69052a06",
-  "legacy_guid": "comment-1073-2025-06-23-125343"
+  "legacy_guid": "comment-1073-2025-06-23-125343",
+  "file_modified_at": "2025-07-07T01:31:00.493971+00:00",
+  "file_created_at": "2025-07-07T01:31:00.493862+00:00",
+  "created_at": "2025-07-07T01:31:00.493862+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:26.973612+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:26.973625+00:00",
+    "source_file": ".github/issue-updates/processed/e8eb1cbc-ec1a-4c8b-a504-fb7ad0c83671.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.708678+00:00"
 }

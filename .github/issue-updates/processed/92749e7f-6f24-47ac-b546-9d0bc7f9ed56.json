@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add tests for sync batch endpoint",
   "body": "Implement unit tests for /api/sync/batch to verify successful processing and error handling.",
-  "labels": ["codex", "test"],
+  "labels": [
+    "codex",
+    "test"
+  ],
   "guid": "92749e7f-6f24-47ac-b546-9d0bc7f9ed56",
-  "legacy_guid": "create-add-tests-for-sync-batch-endpoint-2025-07-06"
+  "legacy_guid": "create-add-tests-for-sync-batch-endpoint-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.238441+00:00",
+  "file_created_at": "2025-07-19T01:49:31.238407+00:00",
+  "created_at": "2025-07-19T01:49:31.238407+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:38.906390+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:38.906401+00:00",
+    "source_file": ".github/issue-updates/processed/92749e7f-6f24-47ac-b546-9d0bc7f9ed56.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.734234+00:00"
 }

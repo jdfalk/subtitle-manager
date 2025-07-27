@@ -2,7 +2,20 @@
   "action": "update",
   "number": 1257,
   "body": "Implement StartContinuousSync helper for Sonarr/Radarr background jobs",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "61459ec1-54d1-4a9a-b81d-2f056813dc1e",
-  "legacy_guid": "update-issue-1257-2025-07-06"
+  "legacy_guid": "update-issue-1257-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.235729+00:00",
+  "file_created_at": "2025-07-19T01:49:31.235690+00:00",
+  "created_at": "2025-07-19T01:49:31.235690+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:48.950099+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:48.950106+00:00",
+    "source_file": ".github/issue-updates/processed/61459ec1-54d1-4a9a-b81d-2f056813dc1e.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.731030+00:00"
 }

@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Replace auth middleware",
   "body": "Use gcommon/auth for token validation and OAuth2",
-  "labels": ["codex", "refactor"],
+  "labels": [
+    "codex",
+    "refactor"
+  ],
   "guid": "5e1e4312-0d29-4a69-996a-9013179429fa",
-  "legacy_guid": "create-replace-auth-middleware-2025-07-05"
+  "legacy_guid": "create-replace-auth-middleware-2025-07-05",
+  "file_modified_at": "2025-07-19T01:49:31.235308+00:00",
+  "file_created_at": "2025-07-19T01:49:31.235216+00:00",
+  "created_at": "2025-07-19T01:49:31.235216+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:37.097730+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:37.097740+00:00",
+    "source_file": ".github/issue-updates/processed/5e1e4312-0d29-4a69-996a-9013179429fa.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.730482+00:00"
 }

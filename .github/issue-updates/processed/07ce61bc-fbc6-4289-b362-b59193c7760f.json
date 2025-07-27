@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Set up GitHub project boards",
   "body": "Use script create-github-projects.sh to create projects and assign issues",
-  "labels": ["management", "codex"],
+  "labels": [
+    "management",
+    "codex"
+  ],
   "guid": "07ce61bc-fbc6-4289-b362-b59193c7760f",
-  "legacy_guid": "create-set-up-github-project-boards-2025-07-09"
+  "legacy_guid": "create-set-up-github-project-boards-2025-07-09",
+  "file_modified_at": "2025-07-19T01:49:31.231795+00:00",
+  "file_created_at": "2025-07-19T01:49:31.231723+00:00",
+  "created_at": "2025-07-19T01:49:31.231723+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:46.799567+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:46.799575+00:00",
+    "source_file": ".github/issue-updates/processed/07ce61bc-fbc6-4289-b362-b59193c7760f.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.724063+00:00"
 }

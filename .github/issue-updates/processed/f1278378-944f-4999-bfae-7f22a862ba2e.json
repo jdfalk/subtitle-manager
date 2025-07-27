@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Use hybrid Dockerfile",
   "body": "Adopt Dockerfile.hybrid for all builds",
-  "labels": ["codex", "build"],
+  "labels": [
+    "codex",
+    "build"
+  ],
   "guid": "f1278378-944f-4999-bfae-7f22a862ba2e",
-  "legacy_guid": "create-use-hybrid-dockerfile-2025-07-05"
+  "legacy_guid": "create-use-hybrid-dockerfile-2025-07-05",
+  "file_modified_at": "2025-07-19T01:49:31.243595+00:00",
+  "file_created_at": "2025-07-19T01:49:31.243515+00:00",
+  "created_at": "2025-07-19T01:49:31.243515+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:44.441019+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:44.441025+00:00",
+    "source_file": ".github/issue-updates/processed/f1278378-944f-4999-bfae-7f22a862ba2e.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.742148+00:00"
 }

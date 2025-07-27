@@ -3,5 +3,15 @@
   "number": 1105,
   "body": "Use security.ValidateAndSanitizePath for batch output",
   "guid": "09edd031-bfad-49db-af71-7bf1786f45d6",
-  "legacy_guid": "comment-1105-2025-06-23-130428"
+  "legacy_guid": "comment-1105-2025-06-23-130428",
+  "file_modified_at": "2025-07-07T01:31:00.487266+00:00",
+  "file_created_at": "2025-07-07T01:31:00.486763+00:00",
+  "created_at": "2025-07-07T01:31:00.486763+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:23.924471+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:23.924480+00:00",
+    "source_file": ".github/issue-updates/processed/c17013d3-a715-447c-9d1a-b409458b3bd2.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.700754+00:00"
 }

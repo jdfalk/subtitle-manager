@@ -2,7 +2,19 @@
   "action": "create",
   "title": "Add structured logging for download API",
   "body": "Introduce structured logging with logrus in download handler",
-  "labels": ["enhancement"],
+  "labels": [
+    "enhancement"
+  ],
   "guid": "919f8f25-bc7b-45ac-81db-8abb31a99cd3",
-  "legacy_guid": "create-add-structured-logging-for-download-api-2025-07-15"
+  "legacy_guid": "create-add-structured-logging-for-download-api-2025-07-15",
+  "file_modified_at": "2025-07-21T02:40:47.726612+00:00",
+  "file_created_at": "2025-07-21T02:40:47.726576+00:00",
+  "created_at": "2025-07-21T02:40:47.726576+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:20.764086+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:20.764096+00:00",
+    "source_file": ".github/issue-updates/processed/919f8f25-bc7b-45ac-81db-8abb31a99cd3.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.746026+00:00"
 }

@@ -2,8 +2,20 @@
   "action": "create",
   "title": "Implement manual subtitle search",
   "body": "Allow searching and downloading subtitles on demand.",
-  "labels": ["feature"],
+  "labels": [
+    "feature"
+  ],
   "guid": "fecebce3-89af-41b5-a1e5-89f33e491f14",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1076",
-  "legacy_guid": "create-manual-search-2025-06-20"
+  "legacy_guid": "create-manual-search-2025-06-20",
+  "file_modified_at": "2025-07-07T01:31:00.436015+00:00",
+  "file_created_at": "2025-07-07T01:31:00.435914+00:00",
+  "created_at": "2025-07-07T01:31:00.435914+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:43.534674+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:43.534686+00:00",
+    "source_file": ".github/issue-updates/processed/174826e0-dbb3-49af-9167-5f8632e642b7.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.667482+00:00"
 }

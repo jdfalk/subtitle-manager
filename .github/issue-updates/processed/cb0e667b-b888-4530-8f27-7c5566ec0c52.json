@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Optimize library scanning progress callback",
   "body": "Refactor ScanLibraryProgress to avoid second directory walk and use typed store.",
-  "labels": ["enhancement", "codex"],
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
   "guid": "aba846b5-222a-4edd-bccd-95075ba75c0d",
-  "legacy_guid": "create-optimize-library-scanning-progress-callback-2025-06-23"
+  "legacy_guid": "create-optimize-library-scanning-progress-callback-2025-06-23",
+  "file_modified_at": "2025-07-07T01:31:00.488956+00:00",
+  "file_created_at": "2025-07-07T01:31:00.488917+00:00",
+  "created_at": "2025-07-07T01:31:00.488917+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:26.309301+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:26.309309+00:00",
+    "source_file": ".github/issue-updates/processed/cb0e667b-b888-4530-8f27-7c5566ec0c52.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.701856+00:00"
 }

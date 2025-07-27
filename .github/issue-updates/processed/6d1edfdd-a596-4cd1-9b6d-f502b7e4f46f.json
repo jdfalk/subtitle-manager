@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add TMDB and OMDb API key configuration",
   "body": "Expose TMDB and OMDb API keys via CLI flags and environment variables. Use them in metadata refresh operations.",
-  "labels": ["enhancement", "codex"],
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
   "guid": "45a6d075-a258-4b83-be81-0293aacea5da",
-  "legacy_guid": "create-add-tmdb-and-omdb-api-key-configuration-2025-06-26"
+  "legacy_guid": "create-add-tmdb-and-omdb-api-key-configuration-2025-06-26",
+  "file_modified_at": "2025-07-07T01:31:00.454692+00:00",
+  "file_created_at": "2025-07-07T01:31:00.454646+00:00",
+  "created_at": "2025-07-07T01:31:00.454646+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:26.863854+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:26.863862+00:00",
+    "source_file": ".github/issue-updates/processed/6d1edfdd-a596-4cd1-9b6d-f502b7e4f46f.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.684298+00:00"
 }

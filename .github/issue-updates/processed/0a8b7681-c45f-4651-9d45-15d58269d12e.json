@@ -2,8 +2,20 @@
   "action": "create",
   "title": "Automatic subtitle upgrades",
   "body": "Detect and fetch better quality subtitles when available.",
-  "labels": ["feature"],
+  "labels": [
+    "feature"
+  ],
   "guid": "a48ddb3d-6612-4a5d-944e-efcd61831b89",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1079",
-  "legacy_guid": "create-subtitle-upgrades-2025-06-20"
+  "legacy_guid": "create-subtitle-upgrades-2025-06-20",
+  "file_modified_at": "2025-07-07T01:31:00.434731+00:00",
+  "file_created_at": "2025-07-07T01:31:00.434405+00:00",
+  "created_at": "2025-07-07T01:31:00.434405+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:21.219788+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:21.219802+00:00",
+    "source_file": ".github/issue-updates/processed/0a8b7681-c45f-4651-9d45-15d58269d12e.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.665975+00:00"
 }

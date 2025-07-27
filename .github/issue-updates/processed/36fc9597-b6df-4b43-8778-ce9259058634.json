@@ -4,5 +4,15 @@
   "state_reason": "completed",
   "body": "Documentation has been comprehensively created:\n\n✅ docs/unified-issue-management.md - Complete guide\n✅ examples/workflows/ - Basic and advanced examples  \n✅ examples/migration-guides/subtitle-manager-migration.md\n✅ scripts/README.md - Script documentation\n✅ Inline documentation in all workflows\n✅ WORKFLOW_ARCHITECTURE.md for clarity\n\nClosing as completed.",
   "guid": "36fc9597-b6df-4b43-8778-ce9259058634",
-  "legacy_guid": "close-issue-6-2024-06-23"
+  "legacy_guid": "close-issue-6-2024-06-23",
+  "file_modified_at": "2025-07-07T01:40:12.506559+00:00",
+  "file_created_at": "2025-07-07T01:40:12.506335+00:00",
+  "created_at": "2025-07-07T01:40:12.506335+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:44.106189+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:44.106198+00:00",
+    "source_file": ".github/issue-updates/processed/36fc9597-b6df-4b43-8778-ce9259058634.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.714753+00:00"
 }

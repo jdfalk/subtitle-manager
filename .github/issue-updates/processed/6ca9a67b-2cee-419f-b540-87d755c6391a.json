@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Provider configuration popover",
   "body": "When selecting an unconfigured provider, the dropdown should show a popover with a direct link to settings.",
-  "labels": ["bug", "codex"],
+  "labels": [
+    "bug",
+    "codex"
+  ],
   "guid": "724b4f7a-8a15-4535-8955-c6e20c29bfe5",
-  "legacy_guid": "create-provider-configuration-popover-2025-06-22"
+  "legacy_guid": "create-provider-configuration-popover-2025-06-22",
+  "file_modified_at": "2025-07-07T01:31:00.454584+00:00",
+  "file_created_at": "2025-07-07T01:31:00.454421+00:00",
+  "created_at": "2025-07-07T01:31:00.454421+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:41.970856+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:41.970865+00:00",
+    "source_file": ".github/issue-updates/processed/6ca9a67b-2cee-419f-b540-87d755c6391a.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.684096+00:00"
 }

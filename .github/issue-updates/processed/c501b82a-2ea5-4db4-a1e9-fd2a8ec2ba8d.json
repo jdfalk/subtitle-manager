@@ -3,5 +3,15 @@
   "number": 1114,
   "body": "Plan: Show a configuration snackbar when an unconfigured provider is selected. Clicking the Configure button will navigate to Settings. Update tests accordingly.",
   "guid": "07c7d605-0cd8-431a-a36e-c9dc1aaf2183",
-  "legacy_guid": "comment-1114-2025-06-22-155509"
+  "legacy_guid": "comment-1114-2025-06-22-155509",
+  "file_modified_at": "2025-07-07T01:31:00.488874+00:00",
+  "file_created_at": "2025-07-07T01:31:00.488741+00:00",
+  "created_at": "2025-07-07T01:31:00.488741+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:35.866484+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:35.866492+00:00",
+    "source_file": ".github/issue-updates/processed/c501b82a-2ea5-4db4-a1e9-fd2a8ec2ba8d.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.701663+00:00"
 }

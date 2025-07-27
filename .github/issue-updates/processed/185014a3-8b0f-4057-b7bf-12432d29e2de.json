@@ -2,7 +2,19 @@
   "action": "create",
   "title": "Fix lint errors in LibraryScan and NotificationSettings",
   "body": "ESLint flagged unused variables in the poller and notification components. Use these variables so lint passes.",
-  "labels": ["codex"],
+  "labels": [
+    "codex"
+  ],
   "guid": "d43397b6-b186-4f9e-8534-ee1a7962495d",
-  "legacy_guid": "create-fix-lint-errors-in-libraryscan-and-notificationsettings-2025-06-28"
+  "legacy_guid": "create-fix-lint-errors-in-libraryscan-and-notificationsettings-2025-06-28",
+  "file_modified_at": "2025-07-07T01:31:00.436519+00:00",
+  "file_created_at": "2025-07-07T01:31:00.436247+00:00",
+  "created_at": "2025-07-07T01:31:00.436247+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:18.686793+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:18.686800+00:00",
+    "source_file": ".github/issue-updates/processed/185014a3-8b0f-4057-b7bf-12432d29e2de.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.667888+00:00"
 }

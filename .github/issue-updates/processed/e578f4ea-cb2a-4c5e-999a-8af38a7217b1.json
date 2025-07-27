@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Example gcommon config",
   "body": "Provide sample config file showing gcommon settings",
-  "labels": ["codex", "docs"],
+  "labels": [
+    "codex",
+    "docs"
+  ],
   "guid": "e578f4ea-cb2a-4c5e-999a-8af38a7217b1",
-  "legacy_guid": "create-example-gcommon-config-2025-07-05"
+  "legacy_guid": "create-example-gcommon-config-2025-07-05",
+  "file_modified_at": "2025-07-19T01:49:31.243328+00:00",
+  "file_created_at": "2025-07-19T01:49:31.243246+00:00",
+  "created_at": "2025-07-19T01:49:31.243246+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:49.837595+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:49.837603+00:00",
+    "source_file": ".github/issue-updates/processed/e578f4ea-cb2a-4c5e-999a-8af38a7217b1.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.741608+00:00"
 }

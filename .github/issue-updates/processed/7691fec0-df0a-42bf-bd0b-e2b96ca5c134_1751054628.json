@@ -2,7 +2,19 @@
   "action": "update",
   "number": 1074,
   "body": "Label issue for Codex work",
-  "labels": ["codex"],
+  "labels": [
+    "codex"
+  ],
   "guid": "6601e28d-1bc9-4af6-9623-e4bc3e75a936",
-  "legacy_guid": "update-issue-1074-2025-06-23"
+  "legacy_guid": "update-issue-1074-2025-06-23",
+  "file_modified_at": "2025-07-07T01:31:00.457358+00:00",
+  "file_created_at": "2025-07-07T01:31:00.456676+00:00",
+  "created_at": "2025-07-07T01:31:00.456676+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:51.299615+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:51.299621+00:00",
+    "source_file": ".github/issue-updates/processed/7691fec0-df0a-42bf-bd0b-e2b96ca5c134_1751054628.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.686596+00:00"
 }

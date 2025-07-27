@@ -3,5 +3,15 @@
   "number": 1107,
   "body": "Implemented fix to sanitize baseURL and added tests.",
   "guid": "237beeea-3cac-4035-901b-d15cd21bf0dc",
-  "legacy_guid": "comment-1107-2025-06-23-125255"
+  "legacy_guid": "comment-1107-2025-06-23-125255",
+  "file_modified_at": "2025-07-07T01:31:00.489324+00:00",
+  "file_created_at": "2025-07-07T01:31:00.489206+00:00",
+  "created_at": "2025-07-07T01:31:00.489206+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:22.356579+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:22.356586+00:00",
+    "source_file": ".github/issue-updates/processed/cd1c8d9d-390b-431c-81d5-c5df52deeb47.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.702334+00:00"
 }

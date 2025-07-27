@@ -3,5 +3,15 @@
   "body": "Cleaned subtitle paths before hashing in OpenSubtitles provider.",
   "guid": "0feead78-32cb-44c2-9a54-a3b39c0e2114",
   "action": "comment",
-  "legacy_guid": "comment-936-hash-clean-2025-06-21"
+  "legacy_guid": "comment-936-hash-clean-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.440237+00:00",
+  "file_created_at": "2025-07-07T01:31:00.440140+00:00",
+  "created_at": "2025-07-07T01:31:00.440140+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:36.423947+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:36.423956+00:00",
+    "source_file": ".github/issue-updates/processed/29ef335b-deb1-42be-b488-247724d6aa21.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.671793+00:00"
 }

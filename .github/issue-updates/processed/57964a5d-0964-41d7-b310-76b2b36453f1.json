@@ -3,5 +3,15 @@
   "number": 8,
   "body": "Metrics and monitoring are not yet implemented:\n\n❌ No performance metrics collection\n❌ No workflow telemetry system\n❌ No monitoring dashboards\n\nThis aligns with TODO.md Phase 4: Performance & Advanced Features. Should remain open as a future enhancement.",
   "guid": "57964a5d-0964-41d7-b310-76b2b36453f1",
-  "legacy_guid": "update-issue-8-2024-06-23"
+  "legacy_guid": "update-issue-8-2024-06-23",
+  "file_modified_at": "2025-07-07T01:40:12.507459+00:00",
+  "file_created_at": "2025-07-07T01:40:12.507329+00:00",
+  "created_at": "2025-07-07T01:40:12.507329+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:27.433295+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:27.433305+00:00",
+    "source_file": ".github/issue-updates/processed/57964a5d-0964-41d7-b310-76b2b36453f1.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.716047+00:00"
 }

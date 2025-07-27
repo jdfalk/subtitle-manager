@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Enhance Bazarr import",
   "body": "Allow specifying server and API key and choose settings to import",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "323e2f84-236f-43b9-93c7-7c69ca0d8658",
-  "legacy_guid": "create-enhance-bazarr-import-2025-06-22"
+  "legacy_guid": "create-enhance-bazarr-import-2025-06-22",
+  "file_modified_at": "2025-07-07T01:31:00.490325+00:00",
+  "file_created_at": "2025-07-07T01:31:00.490201+00:00",
+  "created_at": "2025-07-07T01:31:00.490201+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:40.491112+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:40.491123+00:00",
+    "source_file": ".github/issue-updates/processed/d283d508-681e-4b20-8e0d-c772835b9816.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.703666+00:00"
 }

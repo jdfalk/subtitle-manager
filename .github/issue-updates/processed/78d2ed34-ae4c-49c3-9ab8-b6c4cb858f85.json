@@ -3,5 +3,15 @@
   "number": 0,
   "body": "Implemented docker-init test verifying Whisper container launches and env vars exported",
   "guid": "038a8e85-f1ca-4768-9dbe-54e88728a59d",
-  "legacy_guid": "comment-issue-0-2025-06-26"
+  "legacy_guid": "comment-issue-0-2025-06-26",
+  "file_modified_at": "2025-07-07T01:31:00.460767+00:00",
+  "file_created_at": "2025-07-07T01:31:00.460686+00:00",
+  "created_at": "2025-07-07T01:31:00.460686+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:29.000368+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:29.000374+00:00",
+    "source_file": ".github/issue-updates/processed/78d2ed34-ae4c-49c3-9ab8-b6c4cb858f85.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.687279+00:00"
 }

@@ -3,5 +3,15 @@
   "number": 1249,
   "body": "This issue should be addressed in the ghcommon repository, not here.",
   "guid": "1e08a071-bd6c-4c81-b969-66f6ae67378a",
-  "legacy_guid": "comment-issue-1249-2025-06-30"
+  "legacy_guid": "comment-issue-1249-2025-06-30",
+  "file_modified_at": "2025-07-07T01:40:12.505966+00:00",
+  "file_created_at": "2025-07-07T01:40:12.505780+00:00",
+  "created_at": "2025-07-07T01:40:12.505780+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:43.424649+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:43.424658+00:00",
+    "source_file": ".github/issue-updates/processed/1e08a071-bd6c-4c81-b969-66f6ae67378a.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.714122+00:00"
 }

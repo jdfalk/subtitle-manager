@@ -3,5 +3,15 @@
   "number": 1072,
   "body": "Plan: add docs on distributed issue updates",
   "guid": "3f81f596-d02c-4023-9531-e7add425a1ea",
-  "legacy_guid": "comment-1072-2025-06-23-125352"
+  "legacy_guid": "comment-1072-2025-06-23-125352",
+  "file_modified_at": "2025-07-07T01:31:00.440927+00:00",
+  "file_created_at": "2025-07-07T01:31:00.440822+00:00",
+  "created_at": "2025-07-07T01:31:00.440822+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:45.458462+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:45.458468+00:00",
+    "source_file": ".github/issue-updates/processed/323864a3-0dd6-43e4-8d55-2ad7612fce48.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.672614+00:00"
 }

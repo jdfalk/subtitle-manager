@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Cache CLI search results",
   "body": "Implement caching for CLI search command",
-  "labels": ["enhancement", "codex"],
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
   "guid": "4580a2d8-400b-46f1-a540-997691a9c457",
-  "legacy_guid": "create-cache-cli-search-results-2025-07-10"
+  "legacy_guid": "create-cache-cli-search-results-2025-07-10",
+  "file_modified_at": "2025-07-19T01:49:31.234179+00:00",
+  "file_created_at": "2025-07-19T01:49:31.234133+00:00",
+  "created_at": "2025-07-19T01:49:31.234133+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:13.063421+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:13.063429+00:00",
+    "source_file": ".github/issue-updates/processed/4580a2d8-400b-46f1-a540-997691a9c457.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.728126+00:00"
 }

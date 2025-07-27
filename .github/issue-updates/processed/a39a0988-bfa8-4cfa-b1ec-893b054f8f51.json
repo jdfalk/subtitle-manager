@@ -2,7 +2,19 @@
   "action": "create",
   "title": "CLI search caching",
   "body": "Implement caching for CLI search command to speed up repeated queries",
-  "labels": ["enhancement"],
+  "labels": [
+    "enhancement"
+  ],
   "guid": "a39a0988-bfa8-4cfa-b1ec-893b054f8f51",
-  "legacy_guid": "create-cli-search-caching-2025-07-10"
+  "legacy_guid": "create-cli-search-caching-2025-07-10",
+  "file_modified_at": "2025-07-19T01:49:31.239775+00:00",
+  "file_created_at": "2025-07-19T01:49:31.239735+00:00",
+  "created_at": "2025-07-19T01:49:31.239735+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:28.772594+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:28.772602+00:00",
+    "source_file": ".github/issue-updates/processed/a39a0988-bfa8-4cfa-b1ec-893b054f8f51.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.735472+00:00"
 }

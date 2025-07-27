@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Use gcommon config",
   "body": "Replace local config loader with gcommon/config and migrate environment variables.",
-  "labels": ["codex", "refactor"],
+  "labels": [
+    "codex",
+    "refactor"
+  ],
   "guid": "025e231d-48b6-4a87-bbe7-c337f2adcbe7",
-  "legacy_guid": "create-use-gcommon-config-2025-07-05"
+  "legacy_guid": "create-use-gcommon-config-2025-07-05",
+  "file_modified_at": "2025-07-19T01:49:31.231228+00:00",
+  "file_created_at": "2025-07-19T01:49:31.230870+00:00",
+  "created_at": "2025-07-19T01:49:31.230870+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:10.640080+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:10.640087+00:00",
+    "source_file": ".github/issue-updates/processed/025e231d-48b6-4a87-bbe7-c337f2adcbe7.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.722898+00:00"
 }

@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Finalize GCS provider",
   "body": "Implement missing Google Cloud Storage features",
-  "labels": ["enhancement", "codex"],
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
   "guid": "b9da037e-45f8-4bb7-b753-e1536ec6325a",
-  "legacy_guid": "create-finalize-gcs-provider-2025-07-06"
+  "legacy_guid": "create-finalize-gcs-provider-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.240646+00:00",
+  "file_created_at": "2025-07-19T01:49:31.240612+00:00",
+  "created_at": "2025-07-19T01:49:31.240612+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:17.215091+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:17.215097+00:00",
+    "source_file": ".github/issue-updates/processed/b9da037e-45f8-4bb7-b753-e1536ec6325a.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.737333+00:00"
 }

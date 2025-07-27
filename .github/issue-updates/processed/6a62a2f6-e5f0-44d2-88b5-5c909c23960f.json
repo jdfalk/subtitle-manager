@@ -3,5 +3,15 @@
   "number": 351,
   "body": "Reviewed metadata fetch improvements",
   "guid": "6a62a2f6-e5f0-44d2-88b5-5c909c23960f",
-  "legacy_guid": "comment-issue-351-2025-07-06"
+  "legacy_guid": "comment-issue-351-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.236110+00:00",
+  "file_created_at": "2025-07-19T01:49:31.236070+00:00",
+  "created_at": "2025-07-19T01:49:31.236070+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:25.281423+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:25.281433+00:00",
+    "source_file": ".github/issue-updates/processed/6a62a2f6-e5f0-44d2-88b5-5c909c23960f.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.731995+00:00"
 }

@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Whisper container integration",
   "body": "Complete optional Whisper ASR service integration so docker-init.sh reliably launches the container when ENABLE_WHISPER=1. Add integration tests for startup behaviour and update docs. Related to #1132.",
-  "labels": ["enhancement", "codex"],
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
   "guid": "9cd322d6-cff1-4d17-b913-f1e8c18a174b",
-  "legacy_guid": "create-whisper-container-integration-2025-06-27"
+  "legacy_guid": "create-whisper-container-integration-2025-06-27",
+  "file_modified_at": "2025-07-07T01:31:00.491586+00:00",
+  "file_created_at": "2025-07-07T01:31:00.491542+00:00",
+  "created_at": "2025-07-07T01:31:00.491542+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:46.912242+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:46.912293+00:00",
+    "source_file": ".github/issue-updates/processed/d857cb33-d5f1-4dc5-962e-cec0e280341c.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.705432+00:00"
 }

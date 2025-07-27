@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Verify GH CLI project scopes",
   "body": "Add wrapper script to check GitHub CLI has repo and project scopes",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "f52a6352-389c-4081-8779-3fe61203034e",
-  "legacy_guid": "create-verify-gh-cli-project-scopes-2025-07-15"
+  "legacy_guid": "create-verify-gh-cli-project-scopes-2025-07-15",
+  "file_modified_at": "2025-07-21T02:40:47.727325+00:00",
+  "file_created_at": "2025-07-21T02:40:47.727279+00:00",
+  "created_at": "2025-07-21T02:40:47.727279+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:29.448040+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:29.448049+00:00",
+    "source_file": ".github/issue-updates/processed/f52a6352-389c-4081-8779-3fe61203034e.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.749267+00:00"
 }

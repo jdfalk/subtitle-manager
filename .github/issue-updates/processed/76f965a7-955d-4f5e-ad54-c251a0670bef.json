@@ -2,22 +2,54 @@
   {
     "action": "update",
     "number": 952,
-    "labels": ["codex"],
+    "labels": [
+      "codex"
+    ],
     "guid": "update-issue-952-2025-06-21",
-    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/952"
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/952",
+    "file_modified_at": "2025-07-07T01:31:00.457442+00:00",
+    "file_created_at": "2025-07-07T01:31:00.457398+00:00",
+    "created_at": "2025-07-07T01:31:00.457398+00:00",
+    "timestamp_extracted_at": "2025-07-26T23:42:45.571053+00:00",
+    "processing_metadata": {
+      "enhanced_at": "2025-07-26T23:42:45.571061+00:00",
+      "source_file": ".github/issue-updates/processed/76f965a7-955d-4f5e-ad54-c251a0670bef.json",
+      "version": "2.0.0"
+    },
+    "processed_at": "2025-07-26T23:42:54.686808+00:00"
   },
   {
     "action": "comment",
     "number": 952,
     "body": "## Plan of Action\n\n1. Confirm `update-issues.yml` was removed in favor of the unified workflow\n2. Close this alert as resolved",
     "guid": "plan-comment-952-2025-06-21",
-    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/952"
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/952",
+    "file_modified_at": "2025-07-07T01:31:00.457442+00:00",
+    "file_created_at": "2025-07-07T01:31:00.457398+00:00",
+    "created_at": "2025-07-07T01:31:00.457398+00:00",
+    "timestamp_extracted_at": "2025-07-26T23:42:45.571053+00:00",
+    "processing_metadata": {
+      "enhanced_at": "2025-07-26T23:42:45.571066+00:00",
+      "source_file": ".github/issue-updates/processed/76f965a7-955d-4f5e-ad54-c251a0670bef.json",
+      "version": "2.0.0"
+    },
+    "processed_at": "2025-07-26T23:42:54.686810+00:00"
   },
   {
     "action": "close",
     "number": 952,
     "state_reason": "completed",
     "guid": "close-issue-952-2025-06-21",
-    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/952"
+    "permalink": "https://github.com/jdfalk/subtitle-manager/issues/952",
+    "file_modified_at": "2025-07-07T01:31:00.457442+00:00",
+    "file_created_at": "2025-07-07T01:31:00.457398+00:00",
+    "created_at": "2025-07-07T01:31:00.457398+00:00",
+    "timestamp_extracted_at": "2025-07-26T23:42:45.571053+00:00",
+    "processing_metadata": {
+      "enhanced_at": "2025-07-26T23:42:45.571068+00:00",
+      "source_file": ".github/issue-updates/processed/76f965a7-955d-4f5e-ad54-c251a0670bef.json",
+      "version": "2.0.0"
+    },
+    "processed_at": "2025-07-26T23:42:54.686811+00:00"
   }
 ]

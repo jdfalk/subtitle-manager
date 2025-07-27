@@ -3,5 +3,15 @@
   "number": 1105,
   "body": "Sanitize batch output path with filepath.Clean to prevent path injection",
   "guid": "d9da48bc-5365-4a33-8190-1b222355a1cf",
-  "legacy_guid": "comment-1105-2025-06-23-125446"
+  "legacy_guid": "comment-1105-2025-06-23-125446",
+  "file_modified_at": "2025-07-07T01:31:00.440788+00:00",
+  "file_created_at": "2025-07-07T01:31:00.440601+00:00",
+  "created_at": "2025-07-07T01:31:00.440601+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:14.920994+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:14.921003+00:00",
+    "source_file": ".github/issue-updates/processed/2fb02dd4-cef7-4375-a6d6-077ed2936268.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.672370+00:00"
 }

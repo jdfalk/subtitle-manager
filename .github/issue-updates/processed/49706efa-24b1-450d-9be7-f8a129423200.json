@@ -2,7 +2,19 @@
   "action": "create",
   "title": "Integrate gcommon metrics",
   "body": "Add Prometheus and new health endpoints",
-  "labels": ["enhancement"],
+  "labels": [
+    "enhancement"
+  ],
   "guid": "49706efa-24b1-450d-9be7-f8a129423200",
-  "legacy_guid": "create-integrate-gcommon-metrics-2025-07-15"
+  "legacy_guid": "create-integrate-gcommon-metrics-2025-07-15",
+  "file_modified_at": "2025-07-21T02:40:47.725639+00:00",
+  "file_created_at": "2025-07-21T02:40:47.725602+00:00",
+  "created_at": "2025-07-21T02:40:47.725602+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:14.223359+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:14.223370+00:00",
+    "source_file": ".github/issue-updates/processed/49706efa-24b1-450d-9be7-f8a129423200.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.744108+00:00"
 }

@@ -1,0 +1,20 @@
+{
+  "action": "create",
+  "title": "Finish metrics proto migration",
+  "body": "Add local metrics proto aggregator and update metrics package to avoid missing gcommon protobufs",
+  "labels": [
+    "refactor"
+  ],
+  "guid": "0a39e45c-fb36-4648-924b-04d72783fce6",
+  "legacy_guid": "create-finish-metrics-proto-migration-2025-07-23",
+  "file_modified_at": "2025-07-25T01:45:56.356185+00:00",
+  "file_created_at": "2025-07-25T01:45:56.356022+00:00",
+  "created_at": "2025-07-25T01:45:56.356022+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:42.083413+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:42.083421+00:00",
+    "source_file": ".github/issue-updates/processed/0a39e45c-fb36-4648-924b-04d72783fce6.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.751067+00:00"
+}

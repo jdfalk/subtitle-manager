@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add tests for Whisper container integration",
   "body": "Implement integration tests verifying docker-init script launches Whisper container when ENABLE_WHISPER=1. Use docker CLI mocking for unit tests.",
-  "labels": ["enhancement", "test"],
+  "labels": [
+    "enhancement",
+    "test"
+  ],
   "guid": "6e6b4036-000d-4f8c-a3a8-2e5a896476dc",
-  "legacy_guid": "create-add-tests-for-whisper-container-integration-2025-06-22"
+  "legacy_guid": "create-add-tests-for-whisper-container-integration-2025-06-22",
+  "file_modified_at": "2025-07-07T01:31:00.435877+00:00",
+  "file_created_at": "2025-07-07T01:31:00.435627+00:00",
+  "created_at": "2025-07-07T01:31:00.435627+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:17.437222+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:17.437230+00:00",
+    "source_file": ".github/issue-updates/processed/170956ad-f11b-4587-b719-0cff3b122add.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.667245+00:00"
 }

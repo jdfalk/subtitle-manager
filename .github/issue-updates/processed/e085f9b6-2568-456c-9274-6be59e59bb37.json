@@ -2,7 +2,22 @@
   "action": "update",
   "number": 1245,
   "body": "## Description\nExpose TMDB and OMDb API keys via CLI flags and environment variables for metadata refresh operations.\n\n## Technical Requirements\n- Environment variable support (TMDB_API_KEY, OMDB_API_KEY)\n- CLI flag overrides (--tmdb-api-key, --omdb-api-key)\n- Secure storage in configuration\n- API key validation\n- Rate limit handling\n\n## Implementation Details\n1. Update configuration schema\n2. Add CLI flag parsing\n3. Implement secure storage\n4. Add validation endpoints\n5. Update metadata refresh logic\n\n## Configuration Options\n- Environment variables (highest priority)\n- CLI flags (override config file)\n- Configuration file (persistent storage)\n- Default fallback (limited requests)\n\n## Acceptance Criteria\n- [ ] API keys can be set via environment variables\n- [ ] CLI flags override environment variables\n- [ ] Keys are stored securely (not in plain text)\n- [ ] Invalid keys show helpful error messages\n- [ ] Rate limits are handled gracefully\n- [ ] Documentation explains configuration methods\n- [ ] API key validation endpoint works\n- [ ] Metadata refresh uses configured keys\n- [ ] Unit tests cover all configuration paths\n- [ ] Integration tests verify API communication\n\n## Security Requirements\n- Keys are never logged in plain text\n- Configuration files have restricted permissions\n- API keys are redacted in error messages\n- Audit log tracks key usage\n\n## Error Handling\n- Clear messages for missing keys\n- Specific errors for invalid keys\n- Rate limit exceeded notifications\n- Fallback behavior documented\n\n## Testing Requirements\n- Unit tests for configuration loading\n- Integration tests with mock APIs\n- Security tests for key storage\n- Rate limit handling tests\n\n<!-- guid:45a6d075-a258-4b83-be81-0293aacea5da -->",
-  "labels": ["enhancement", "codex", "configuration", "metadata"],
+  "labels": [
+    "enhancement",
+    "codex",
+    "configuration",
+    "metadata"
+  ],
   "guid": "e085f9b6-2568-456c-9274-6be59e59bb37",
-  "legacy_guid": "update-issue-1245-2025-06-30"
+  "legacy_guid": "update-issue-1245-2025-06-30",
+  "file_modified_at": "2025-07-07T01:40:12.511467+00:00",
+  "file_created_at": "2025-07-07T01:40:12.511338+00:00",
+  "created_at": "2025-07-07T01:40:12.511338+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:23.145690+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:23.145704+00:00",
+    "source_file": ".github/issue-updates/processed/e085f9b6-2568-456c-9274-6be59e59bb37.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.721074+00:00"
 }

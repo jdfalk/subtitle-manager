@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Expose config loader in gcommon repo",
   "body": "Publish gcommon/config module separately\n\n<!-- GCOMMON ISSUE JSON\n{\"action\": \"create\", \"title\": \"Publish gcommon config loader\", \"body\": \"Expose gcommon/config as its own module so other projects can import it.\", \"labels\": [\"enhancement\"]}\n-->",
-  "labels": ["gcommon", "enhancement"],
+  "labels": [
+    "gcommon",
+    "enhancement"
+  ],
   "guid": "cab77712-6720-4fdb-b429-643e76b366e4",
-  "legacy_guid": "create-expose-config-loader-in-gcommon-repo-2025-07-15"
+  "legacy_guid": "create-expose-config-loader-in-gcommon-repo-2025-07-15",
+  "file_modified_at": "2025-07-21T02:40:47.727054+00:00",
+  "file_created_at": "2025-07-21T02:40:47.727020+00:00",
+  "created_at": "2025-07-21T02:40:47.727020+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:38.337387+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:38.337395+00:00",
+    "source_file": ".github/issue-updates/processed/cab77712-6720-4fdb-b429-643e76b366e4.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.748642+00:00"
 }

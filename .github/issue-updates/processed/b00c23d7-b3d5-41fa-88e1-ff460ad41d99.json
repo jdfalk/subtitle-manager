@@ -1,0 +1,20 @@
+{
+  "action": "create",
+  "title": "Implement config protobuf",
+  "body": "Add proto definitions for configuration and update server/CLI",
+  "labels": [
+    "enhancement"
+  ],
+  "guid": "b00c23d7-b3d5-41fa-88e1-ff460ad41d99",
+  "legacy_guid": "create-implement-config-protobuf-2025-07-23",
+  "file_modified_at": "2025-07-25T01:40:10.701797+00:00",
+  "file_created_at": "2025-07-25T01:40:10.701713+00:00",
+  "created_at": "2025-07-25T01:40:10.701713+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:29.571662+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:29.571673+00:00",
+    "source_file": ".github/issue-updates/processed/b00c23d7-b3d5-41fa-88e1-ff460ad41d99.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.750416+00:00"
+}

@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add video filter to history command",
   "body": "Allow filtering of subtitle history by video file via --video flag",
-  "labels": ["enhancement", "cli"],
+  "labels": [
+    "enhancement",
+    "cli"
+  ],
   "guid": "ca2dd777-79a6-4fb0-868a-abbfa5238949",
-  "legacy_guid": "create-add-video-filter-to-history-command-2025-07-06"
+  "legacy_guid": "create-add-video-filter-to-history-command-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.241821+00:00",
+  "file_created_at": "2025-07-19T01:49:31.241738+00:00",
+  "created_at": "2025-07-19T01:49:31.241738+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:12.937861+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:12.937869+00:00",
+    "source_file": ".github/issue-updates/processed/ca2dd777-79a6-4fb0-868a-abbfa5238949.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.739490+00:00"
 }

@@ -3,5 +3,15 @@
   "number": 544,
   "body": "Added tests for memory hook",
   "guid": "723857e1-1486-4ccd-b189-4b4f32e872eb",
-  "legacy_guid": "comment-544-2025-06-23-125749"
+  "legacy_guid": "comment-544-2025-06-23-125749",
+  "file_modified_at": "2025-07-07T01:31:00.438308+00:00",
+  "file_created_at": "2025-07-07T01:31:00.438092+00:00",
+  "created_at": "2025-07-07T01:31:00.438092+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:41.081773+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:41.081782+00:00",
+    "source_file": ".github/issue-updates/processed/22095436-9c2e-4f6a-ae66-8c42260ab32d.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.669251+00:00"
 }

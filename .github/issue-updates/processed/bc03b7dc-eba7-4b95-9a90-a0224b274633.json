@@ -2,8 +2,22 @@
   "action": "create",
   "title": "Implement WebSocket real-time updates",
   "body": "Add WebSocket support for real-time status updates in the web UI.\n\n## Benefits\n- Real-time progress updates\n- Better user experience\n- Reduced polling overhead\n\n## Implementation\n- Add WebSocket endpoint\n- Update React components\n- Handle connection management",
-  "labels": ["enhancement", "frontend", "websocket"],
+  "labels": [
+    "enhancement",
+    "frontend",
+    "websocket"
+  ],
   "guid": "fb22c49b-900c-447b-b784-35e0aac327f9",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1074",
-  "legacy_guid": "create-websocket-updates-2025-06-21"
+  "legacy_guid": "create-websocket-updates-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.486139+00:00",
+  "file_created_at": "2025-07-07T01:31:00.485997+00:00",
+  "created_at": "2025-07-07T01:31:00.485997+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:39.473971+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:39.473986+00:00",
+    "source_file": ".github/issue-updates/processed/bc03b7dc-eba7-4b95-9a90-a0224b274633.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.700071+00:00"
 }

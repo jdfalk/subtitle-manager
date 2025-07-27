@@ -2,7 +2,19 @@
   "action": "update",
   "number": 889,
   "body": "Implemented initial continuous sync jobs",
-  "labels": ["codex"],
+  "labels": [
+    "codex"
+  ],
   "guid": "c580d197-e0d5-4cf1-8269-d819b2ed66b1",
-  "legacy_guid": "update-issue-889-2025-07-06"
+  "legacy_guid": "update-issue-889-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.241451+00:00",
+  "file_created_at": "2025-07-19T01:49:31.241418+00:00",
+  "created_at": "2025-07-19T01:49:31.241418+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:42.641616+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:42.641623+00:00",
+    "source_file": ".github/issue-updates/processed/c580d197-e0d5-4cf1-8269-d819b2ed66b1.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.738857+00:00"
 }

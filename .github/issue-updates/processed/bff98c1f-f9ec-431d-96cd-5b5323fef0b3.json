@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Add CLI commands to manage Whisper container",
   "body": "Add 'whisper start' and 'whisper stop' commands to control the embedded Whisper service for local transcription",
-  "labels": ["enhancement", "codex"],
+  "labels": [
+    "enhancement",
+    "codex"
+  ],
   "guid": "bff98c1f-f9ec-431d-96cd-5b5323fef0b3",
-  "legacy_guid": "create-add-cli-commands-to-manage-whisper-container-2025-07-10"
+  "legacy_guid": "create-add-cli-commands-to-manage-whisper-container-2025-07-10",
+  "file_modified_at": "2025-07-19T01:49:31.241134+00:00",
+  "file_created_at": "2025-07-19T01:49:31.241099+00:00",
+  "created_at": "2025-07-19T01:49:31.241099+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:27.312271+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:27.312280+00:00",
+    "source_file": ".github/issue-updates/processed/bff98c1f-f9ec-431d-96cd-5b5323fef0b3.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.738249+00:00"
 }

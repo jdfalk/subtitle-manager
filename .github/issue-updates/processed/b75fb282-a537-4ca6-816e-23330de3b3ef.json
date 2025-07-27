@@ -3,5 +3,15 @@
   "body": "Patched all directory operations using filepath.Clean to avoid path traversal in scanner and web server.",
   "guid": "566de5a5-1a9a-41a5-aa48-96ca459a6eaa",
   "action": "comment",
-  "legacy_guid": "comment-931-path-sanitize-2025-06-21"
+  "legacy_guid": "comment-931-path-sanitize-2025-06-21",
+  "file_modified_at": "2025-07-07T01:31:00.483696+00:00",
+  "file_created_at": "2025-07-07T01:31:00.483030+00:00",
+  "created_at": "2025-07-07T01:31:00.483030+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:24.601213+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:24.601220+00:00",
+    "source_file": ".github/issue-updates/processed/b75fb282-a537-4ca6-816e-23330de3b3ef.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.699132+00:00"
 }

@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Implement media metadata editor",
   "body": "Add manual metadata selection, alternate titles, release group tracking, and field locks",
-  "labels": ["codex", "enhancement"],
+  "labels": [
+    "codex",
+    "enhancement"
+  ],
   "guid": "2ee3b797-c495-4baa-adce-54f185421398",
-  "legacy_guid": "create-implement-media-metadata-editor-2025-06-22"
+  "legacy_guid": "create-implement-media-metadata-editor-2025-06-22",
+  "file_modified_at": "2025-07-07T01:31:00.440567+00:00",
+  "file_created_at": "2025-07-07T01:31:00.440496+00:00",
+  "created_at": "2025-07-07T01:31:00.440496+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:49.282687+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:49.282695+00:00",
+    "source_file": ".github/issue-updates/processed/2ee3b797-c495-4baa-adce-54f185421398.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.672154+00:00"
 }

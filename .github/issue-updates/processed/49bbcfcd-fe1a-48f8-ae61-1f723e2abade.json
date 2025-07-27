@@ -3,5 +3,15 @@
   "number": 1257,
   "body": "Implemented monitor autosync command with conflict-aware merging",
   "guid": "49bbcfcd-fe1a-48f8-ae61-1f723e2abade",
-  "legacy_guid": "comment-issue-1257-2025-07-06"
+  "legacy_guid": "comment-issue-1257-2025-07-06",
+  "file_modified_at": "2025-07-19T01:49:31.234513+00:00",
+  "file_created_at": "2025-07-19T01:49:31.234467+00:00",
+  "created_at": "2025-07-19T01:49:31.234467+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:52.934244+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:52.934253+00:00",
+    "source_file": ".github/issue-updates/processed/49bbcfcd-fe1a-48f8-ae61-1f723e2abade.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.729592+00:00"
 }

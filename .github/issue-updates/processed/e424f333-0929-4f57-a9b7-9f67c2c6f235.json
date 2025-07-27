@@ -4,5 +4,15 @@
   "state_reason": "completed",
   "body": "Duplicate detection has been comprehensively implemented:\n\n✅ Dual-GUID system (UUID + legacy GUID)\n✅ Title-based duplicate detection in DuplicateIssueManager\n✅ GUID uniqueness validation before creating issues\n✅ Smart migration script for GUID management\n✅ GitHub API integration to check existing issues\n\nClosing as completed.",
   "guid": "e424f333-0929-4f57-a9b7-9f67c2c6f235",
-  "legacy_guid": "close-issue-4-2024-06-23"
+  "legacy_guid": "close-issue-4-2024-06-23",
+  "file_modified_at": "2025-07-07T01:40:12.511704+00:00",
+  "file_created_at": "2025-07-07T01:40:12.511526+00:00",
+  "created_at": "2025-07-07T01:40:12.511526+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:25.975857+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:25.975869+00:00",
+    "source_file": ".github/issue-updates/processed/e424f333-0929-4f57-a9b7-9f67c2c6f235.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.721283+00:00"
 }

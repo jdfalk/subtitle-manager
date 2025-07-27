@@ -2,7 +2,20 @@
   "action": "create",
   "title": "Validate codex-rebase.sh conflict handling",
   "body": "Tested codex-rebase.sh automatic conflict resolution and verified proper commit and force push.",
-  "labels": ["automation", "testing"],
+  "labels": [
+    "automation",
+    "testing"
+  ],
   "guid": "974a2c7f-6db1-496b-a99c-9d3d50e58d78",
-  "legacy_guid": "create-validate-codex-rebase-sh-conflict-handling-2025-07-15"
+  "legacy_guid": "create-validate-codex-rebase-sh-conflict-handling-2025-07-15",
+  "file_modified_at": "2025-07-21T02:40:47.726823+00:00",
+  "file_created_at": "2025-07-21T02:40:47.726781+00:00",
+  "created_at": "2025-07-21T02:40:47.726781+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:39.353715+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:39.353722+00:00",
+    "source_file": ".github/issue-updates/processed/974a2c7f-6db1-496b-a99c-9d3d50e58d78.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.746515+00:00"
 }

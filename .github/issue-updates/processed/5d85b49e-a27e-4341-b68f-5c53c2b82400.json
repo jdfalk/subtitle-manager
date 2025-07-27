@@ -3,5 +3,15 @@
   "number": 1100,
   "body": "Planned fix: check for exact omdbapi.com host.",
   "guid": "dd9761e7-4ead-4afa-b486-5c8ea23f05e5",
-  "legacy_guid": "comment-1100-2025-06-23-125525"
+  "legacy_guid": "comment-1100-2025-06-23-125525",
+  "file_modified_at": "2025-07-07T01:31:00.447201+00:00",
+  "file_created_at": "2025-07-07T01:31:00.447076+00:00",
+  "created_at": "2025-07-07T01:31:00.447076+00:00",
+  "timestamp_extracted_at": "2025-07-26T23:42:31.865904+00:00",
+  "processing_metadata": {
+    "enhanced_at": "2025-07-26T23:42:31.865911+00:00",
+    "source_file": ".github/issue-updates/processed/5d85b49e-a27e-4341-b68f-5c53c2b82400.json",
+    "version": "2.0.0"
+  },
+  "processed_at": "2025-07-26T23:42:54.680473+00:00"
 }
