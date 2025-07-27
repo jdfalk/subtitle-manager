@@ -15,7 +15,7 @@ require (
 	github.com/docker/go-connections v0.5.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
-	github.com/jdfalk/gcommon v0.0.0-20250714012452-4be5c68d71d5
+	github.com/jdfalk/gcommon v0.1.0
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.28
 	github.com/oz/osdb v0.0.0-20221214175751-f169057712ec

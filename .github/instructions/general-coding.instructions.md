@@ -1,12 +1,12 @@
 <!-- file: .github/instructions/general-coding.instructions.md -->
-<!-- version: 1.0.0 -->
+<!-- version: 1.2.0 -->
 <!-- guid: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d -->
+<!-- DO NOT EDIT: This file is managed centrally in ghcommon repository -->
+<!-- To update: Create an issue/PR in jdfalk/ghcommon -->
 
-applyTo: "\*\*" description: | General coding, documentation, and workflow rules
-for all Copilot/AI agents and VS Code Copilot customization. These rules apply
-to all files and languages unless overridden by a more specific instructions
-file. For details, see the main documentation in
-`.github/copilot-instructions.md`.
+applyTo: "**"
+description: |
+  General coding, documentation, and workflow rules for all Copilot/AI agents and VS Code Copilot customization. These rules apply to all files and languages unless overridden by a more specific instructions file. For details, see the main documentation in `.github/copilot-instructions.md`.
 
 ---
 
@@ -43,7 +43,7 @@ containing:
 
 - The exact relative file path from the repository root (e.g.,
   `# file: path/to/file.py`)
-- The file's semantic version (e.g., `# version: 1.0.0`)
+- The file's semantic version (e.g., `# version: 1.1.0`)
 - The file's GUID (e.g., `# guid: 123e4567-e89b-12d3-a456-426614174000`)
 
 **Header format varies by language/file type:**
@@ -51,65 +51,59 @@ containing:
 - **Markdown:**
   ```markdown
   <!-- file: path/to/file.md -->
-  <!-- version: 1.0.0 -->
+  <!-- version: 1.1.0 -->
   <!-- guid: 123e4567-e89b-12d3-a456-426614174000 -->
   ```
 - **Python:**
   ```python
   #!/usr/bin/env python3
   # file: path/to/file.py
-  # version: 1.0.0
+  # version: 1.1.0
   # guid: 123e4567-e89b-12d3-a456-426614174000
   ```
 - **Go:**
   ```go
   // file: path/to/file.go
-  // version: 1.0.0
+  // version: 1.1.0
   // guid: 123e4567-e89b-12d3-a456-426614174000
   ```
 - **JavaScript/TypeScript:**
   ```js
   // file: path/to/file.js
-  // version: 1.0.0
+  // version: 1.1.0
   // guid: 123e4567-e89b-12d3-a456-426614174000
   ```
 - **Shell (bash/sh):**
   ```bash
   #!/bin/bash
   # file: path/to/script.sh
-  # version: 1.0.0
+  # version: 1.1.0
   # guid: 123e4567-e89b-12d3-a456-426614174000
   ```
   (Header must come after the shebang line)
-- **Protobuf:**
-  ```protobuf
-  // file: path/to/file.proto
-  // version: 1.0.0
-  // guid: 123e4567-e89b-12d3-a456-426614174000
-  ```
 - **CSS:**
   ```css
   /* file: path/to/file.css */
-  /* version: 1.0.0 */
+  /* version: 1.1.0 */
   /* guid: 123e4567-e89b-12d3-a456-426614174000 */
   ```
 - **R:**
   ```r
   # file: path/to/file.R
-  # version: 1.0.0
+  # version: 1.1.0
   # guid: 123e4567-e89b-12d3-a456-426614174000
   ```
 - **JSON:**
   ```jsonc
   // file: path/to/file.json
-  // version: 1.0.0
+  // version: 1.1.0
   // guid: 123e4567-e89b-12d3-a456-426614174000
   ```
 - **TOML:**
   ```toml
   [section]
   # file: path/to/file.toml
-  # version: 1.0.0
+  # version: 1.1.0
   # guid: 123e4567-e89b-12d3-a456-426614174000
   ```
   (Header must be inside a section as TOML doesn't support top-level comments)

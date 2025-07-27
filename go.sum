@@ -165,8 +165,8 @@ github.com/iancoleman/strcase v0.3.0 h1:nTXanmYxhfFAMjZL34Ov6gkzEsSJZ5DbhxWjvSAS
 github.com/iancoleman/strcase v0.3.0/go.mod h1:iwCmte+B7n89clKwxIoIXy/HfoL7AsD47ZCWhYzw7ho=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-github.com/jdfalk/gcommon v0.0.0-20250714012452-4be5c68d71d5 h1:09GTRaG1j0k21uvz7b2I3/F4lHsXe3CYjEuk9O58P2U=
-github.com/jdfalk/gcommon v0.0.0-20250714012452-4be5c68d71d5/go.mod h1:qworSnMEXa5MH+O325JscX6MnLQajoi0hHKnfto80j4=
+github.com/jdfalk/gcommon v0.1.0 h1:RttHbTirh749Y1Q4PST+D/CKoRSk1XpSgGb2lfEUuu8=
+github.com/jdfalk/gcommon v0.1.0/go.mod h1:qworSnMEXa5MH+O325JscX6MnLQajoi0hHKnfto80j4=
 github.com/jinzhu/copier v0.4.0 h1:w3ciUoD19shMCRargcpm0cm91ytaBhDvuRpz1ODO/U8=
 github.com/jinzhu/copier v0.4.0/go.mod h1:DfbEm0FYsaqBcKcFuvmOZb218JkPGtvSHsKg8S8hyyg=
 github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=
