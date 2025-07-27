@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Enhance Bazarr import",
   "body": "Allow specifying server and API key and choose settings to import",
-  "labels": [
-    "codex",
-    "enhancement"
-  ],
+  "labels": ["codex", "enhancement"],
   "guid": "8d8984c1-4719-4c8c-acb2-0ab6ba5b975a",
   "legacy_guid": "create-enhance-bazarr-import-2025-06-22",
   "file_modified_at": "2025-07-07T01:31:00.490752+00:00",

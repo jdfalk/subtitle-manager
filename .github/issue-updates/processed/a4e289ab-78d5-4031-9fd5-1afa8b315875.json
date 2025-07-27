@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Media library scanning E2E test",
   "body": "Add Playwright test covering library scan initiation and progress polling.",
-  "labels": [
-    "codex",
-    "test"
-  ],
+  "labels": ["codex", "test"],
   "guid": "a4e289ab-78d5-4031-9fd5-1afa8b315875",
   "legacy_guid": "create-media-library-scanning-e2e-test-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.239993+00:00",

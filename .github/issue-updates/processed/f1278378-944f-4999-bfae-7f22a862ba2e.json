@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Use hybrid Dockerfile",
   "body": "Adopt Dockerfile.hybrid for all builds",
-  "labels": [
-    "codex",
-    "build"
-  ],
+  "labels": ["codex", "build"],
   "guid": "f1278378-944f-4999-bfae-7f22a862ba2e",
   "legacy_guid": "create-use-hybrid-dockerfile-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.243595+00:00",

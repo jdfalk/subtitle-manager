@@ -2,9 +2,7 @@
   {
     "action": "update",
     "number": 920,
-    "labels": [
-      "codex"
-    ],
+    "labels": ["codex"],
     "guid": "update-issue-920-2025-06-20",
     "permalink": "https://github.com/jdfalk/subtitle-manager/issues/920",
     "file_modified_at": "2025-07-07T01:31:00.453360+00:00",

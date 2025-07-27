@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Media metadata editor",
   "body": "Add manual search, alternate titles, release group tracking and locks",
-  "labels": [
-    "codex",
-    "enhancement"
-  ],
+  "labels": ["codex", "enhancement"],
   "guid": "c7858f1d-7989-4b9e-87c1-eeac34feaa53",
   "legacy_guid": "create-media-metadata-editor-2025-06-22",
   "file_modified_at": "2025-07-07T01:31:00.460965+00:00",

@@ -2,12 +2,7 @@
   "action": "create",
   "title": "Achieve 90%+ Test Coverage with Comprehensive Test Suite",
   "body": "## Description\nExpand test coverage to 90%+ with unit, integration, and end-to-end tests.\n\n## Test Categories\n\n### Unit Tests (Target: 95%)\n- All business logic\n- Provider implementations\n- Database operations\n- API handlers\n- Utility functions\n\n### Integration Tests (Target: 85%)\n- API endpoints\n- Database migrations\n- Provider communication\n- File operations\n- Authentication flows\n\n### E2E Tests (Target: 70%)\n- Critical user workflows\n- Cross-browser testing\n- Mobile responsiveness\n- Performance testing\n- Load testing\n\n## Implementation Plan\n1. Add missing unit tests\n2. Create test fixtures\n3. Mock external services\n4. Add integration test suite\n5. Expand E2E coverage\n6. Add performance benchmarks\n\n## Testing Infrastructure\n- CI/CD test automation\n- Coverage reporting\n- Performance tracking\n- Flaky test detection\n- Test parallelization\n\n## Acceptance Criteria\n- [ ] 90%+ overall coverage\n- [ ] All critical paths tested\n- [ ] Mock implementations for providers\n- [ ] Test data generators\n- [ ] Performance benchmarks\n- [ ] Load test scenarios",
-  "labels": [
-    "enhancement",
-    "testing",
-    "quality",
-    "priority-high"
-  ],
+  "labels": ["enhancement", "testing", "quality", "priority-high"],
   "guid": "56927f92-1bfa-4dbf-960c-e06f861968d3",
   "legacy_guid": "create-achieve-90-test-coverage-with-comprehensive-test-suite-2025-06-29",
   "file_modified_at": "2025-07-07T01:40:12.511096+00:00",

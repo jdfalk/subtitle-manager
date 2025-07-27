@@ -2,9 +2,7 @@
   "action": "update",
   "number": 541,
   "body": "Add codex label",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "089fb270-4a41-4689-aff8-0991484aad81",
   "legacy_guid": "update-issue-541-2025-06-23",
   "file_modified_at": "2025-07-07T01:31:00.467785+00:00",

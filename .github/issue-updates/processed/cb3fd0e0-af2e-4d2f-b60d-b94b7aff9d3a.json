@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Cache search results",
   "body": "Implement caching for manual search endpoint to improve performance.",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "cb3fd0e0-af2e-4d2f-b60d-b94b7aff9d3a",
   "legacy_guid": "create-cache-search-results-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.242015+00:00",

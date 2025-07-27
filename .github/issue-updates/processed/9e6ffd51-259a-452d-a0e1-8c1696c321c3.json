@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Integrate tags across CLI",
   "body": "Extend tag-based provider filtering and update fetch command to handle tags in all areas",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "facd4c2d-be63-4361-b4a8-09c8d00d899f",
   "legacy_guid": "create-integrate-tags-across-cli-2025-06-22",
   "file_modified_at": "2025-07-07T01:31:00.473318+00:00",

@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Implement manual subtitle search",
   "body": "Allow searching and downloading subtitles on demand.",
-  "labels": [
-    "feature"
-  ],
+  "labels": ["feature"],
   "guid": "fecebce3-89af-41b5-a1e5-89f33e491f14",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1076",
   "legacy_guid": "create-manual-search-2025-06-20",

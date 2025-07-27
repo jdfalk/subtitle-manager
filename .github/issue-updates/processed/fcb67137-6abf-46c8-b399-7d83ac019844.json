@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Add sync batch endpoint test",
   "body": "Implement unit test for /api/sync/batch endpoint",
-  "labels": [
-    "codex",
-    "test"
-  ],
+  "labels": ["codex", "test"],
   "guid": "fcb67137-6abf-46c8-b399-7d83ac019844",
   "legacy_guid": "create-add-sync-batch-endpoint-test-2025-07-09",
   "file_modified_at": "2025-07-19T01:49:31.243835+00:00",

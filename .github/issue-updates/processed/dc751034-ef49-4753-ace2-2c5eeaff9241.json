@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Implement GCS provider",
   "body": "Add Google Cloud Storage backend with upload, download, list, delete, and signed URL capabilities.",
-  "labels": [
-    "codex",
-    "enhancement"
-  ],
+  "labels": ["codex", "enhancement"],
   "guid": "dc751034-ef49-4753-ace2-2c5eeaff9241",
   "legacy_guid": "create-implement-gcs-provider-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.242994+00:00",

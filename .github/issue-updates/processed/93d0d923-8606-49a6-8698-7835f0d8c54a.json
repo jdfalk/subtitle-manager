@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Implement customizable dashboard widgets",
   "body": "Add front-end widget system with drag-and-drop and user preferences. Ensure data stored in Postgres/SQLite and security checks.",
-  "labels": [
-    "enhancement",
-    "codex"
-  ],
+  "labels": ["enhancement", "codex"],
   "guid": "02339854-90ca-45c3-901a-d1ff2d2d516e",
   "legacy_guid": "create-implement-customizable-dashboard-widgets-2025-06-23",
   "file_modified_at": "2025-07-07T01:31:00.469491+00:00",

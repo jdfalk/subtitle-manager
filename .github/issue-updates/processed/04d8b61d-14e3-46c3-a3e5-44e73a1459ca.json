@@ -2,9 +2,7 @@
   "action": "update",
   "number": 1255,
   "body": "Added metadata pick command for interactive selection.",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "04d8b61d-14e3-46c3-a3e5-44e73a1459ca",
   "legacy_guid": "update-issue-1255-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.231627+00:00",

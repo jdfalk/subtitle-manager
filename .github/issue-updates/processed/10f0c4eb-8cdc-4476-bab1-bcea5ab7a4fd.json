@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Normalize provider order in search cache key",
   "body": "Implement provider name sorting in cache key to improve cache hits",
-  "labels": [
-    "enhancement"
-  ],
+  "labels": ["enhancement"],
   "guid": "10f0c4eb-8cdc-4476-bab1-bcea5ab7a4fd",
   "legacy_guid": "create-normalize-provider-order-in-search-cache-key-2025-07-10",
   "file_modified_at": "2025-07-19T01:49:31.232198+00:00",

@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Add missing requirements.txt for workflow",
   "body": "The unified issue management workflow downloads requirements.txt from ghcommon but the file is missing. Please add the file or update the script. The script should also allow creating tickets in other repositories.",
-  "labels": [
-    "bug",
-    "codex"
-  ],
+  "labels": ["bug", "codex"],
   "guid": "9bbb720d-6c5b-45af-9b7c-a8f4bc1f9397",
   "legacy_guid": "create-add-missing-requirements-txt-for-workflow-2025-06-26",
   "file_modified_at": "2025-07-07T01:31:00.496102+00:00",

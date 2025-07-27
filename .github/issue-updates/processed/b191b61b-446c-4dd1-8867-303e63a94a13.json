@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Migrate cache config to gcommon",
   "body": "Implement gcommon CachePolicy conversions",
-  "labels": [
-    "refactor"
-  ],
+  "labels": ["refactor"],
   "guid": "b191b61b-446c-4dd1-8867-303e63a94a13",
   "legacy_guid": "create-migrate-cache-config-to-gcommon-2025-07-23",
   "file_modified_at": "2025-07-25T01:40:10.702044+00:00",

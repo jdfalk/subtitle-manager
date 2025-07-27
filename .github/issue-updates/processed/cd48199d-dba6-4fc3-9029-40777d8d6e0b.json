@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Implement OAuth2 login support",
   "body": "Allow users to authenticate via providers such as Google or GitHub.",
-  "labels": [
-    "enhancement",
-    "auth"
-  ],
+  "labels": ["enhancement", "auth"],
   "guid": "5b109a3c-3d09-488d-9df4-4bdfd6662d02",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1033",
   "legacy_guid": "create-oauth2-support-2025-06-20",

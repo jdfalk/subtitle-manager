@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Add gRPC health service",
   "body": "Expose gRPC health service using gcommon protobufs",
-  "labels": [
-    "codex",
-    "enhancement"
-  ],
+  "labels": ["codex", "enhancement"],
   "guid": "45e66235-28cf-45b0-b7e2-b55bf1dc845b",
   "legacy_guid": "create-add-grpc-health-service-2025-07-23",
   "file_modified_at": "2025-07-25T01:54:29.611111+00:00",

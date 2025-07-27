@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Add video file filter to history API",
   "body": "Extend /api/history to filter translation and download history by video file path. Provide database helpers and tests.",
-  "labels": [
-    "enhancement",
-    "api"
-  ],
+  "labels": ["enhancement", "api"],
   "guid": "9230b988-bf02-44ac-afc1-cf118c5bbd44",
   "legacy_guid": "create-add-video-file-filter-to-history-api-2025-06-26",
   "file_modified_at": "2025-07-07T01:31:00.495619+00:00",

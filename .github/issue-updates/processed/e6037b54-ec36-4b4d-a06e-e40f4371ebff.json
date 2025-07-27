@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Adopt gcommon QueueMessage",
   "body": "Refactor internal queue to use gcommon queue proto",
-  "labels": [
-    "refactor",
-    "codex"
-  ],
+  "labels": ["refactor", "codex"],
   "guid": "e6037b54-ec36-4b4d-a06e-e40f4371ebff",
   "legacy_guid": "create-adopt-gcommon-queuemessage-2025-07-23",
   "file_modified_at": "2025-07-25T01:40:10.702170+00:00",

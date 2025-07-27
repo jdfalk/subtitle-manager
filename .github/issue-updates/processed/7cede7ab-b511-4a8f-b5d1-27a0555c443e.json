@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Fix dev container Node installation",
   "body": "Dev container build fails due to missing Node. Configure Node 20 using devcontainers feature.",
-  "labels": [
-    "devcontainer"
-  ],
+  "labels": ["devcontainer"],
   "guid": "7cede7ab-b511-4a8f-b5d1-27a0555c443e",
   "legacy_guid": "create-fix-dev-container-node-installation-2025-07-03",
   "file_modified_at": "2025-07-19T01:49:31.237252+00:00",

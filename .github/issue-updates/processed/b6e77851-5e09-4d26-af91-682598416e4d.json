@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Migrate job types",
   "body": "Refactor existing jobs to work with gcommon queue",
-  "labels": [
-    "codex",
-    "refactor"
-  ],
+  "labels": ["codex", "refactor"],
   "guid": "b6e77851-5e09-4d26-af91-682598416e4d",
   "legacy_guid": "create-migrate-job-types-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.240576+00:00",

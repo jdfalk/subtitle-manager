@@ -2,12 +2,7 @@
   "action": "create",
   "title": "Implement Subtitle Quality Scoring System",
   "body": "## Description\nAdd a scoring system to evaluate subtitle quality and automatically select the best match.\n\n## Scoring Criteria\n- Provider reliability score\n- Release match (proper, web-dl, bluray)\n- Subtitle format (SRT preferred)\n- Hearing impaired (HI) tags\n- Forced subtitle detection\n- Upload date (newer preferred)\n- Download count/rating\n- File size correlation\n\n## Implementation\n```go\n// pkg/scoring/scorer.go\ntype SubtitleScore struct {\n    Total         int\n    ProviderScore int\n    ReleaseScore  int\n    FormatScore   int\n    MetadataScore int\n}\n\nfunc CalculateScore(subtitle Subtitle, media MediaItem, profile Profile) SubtitleScore\n```\n\n## UI Requirements\n- Score display in search results\n- Configurable scoring weights\n- Score threshold settings\n- Manual override option\n\n## Acceptance Criteria\n- [ ] Scoring algorithm implementation\n- [ ] Score-based automatic selection\n- [ ] UI display of scores\n- [ ] Configurable scoring weights\n- [ ] Score history tracking",
-  "labels": [
-    "enhancement",
-    "backend",
-    "frontend",
-    "priority-high"
-  ],
+  "labels": ["enhancement", "backend", "frontend", "priority-high"],
   "guid": "cc4982ca-68cc-4391-bbda-413e4831f4d4",
   "legacy_guid": "create-implement-subtitle-quality-scoring-system-2025-06-29",
   "file_modified_at": "2025-07-07T01:40:12.509251+00:00",

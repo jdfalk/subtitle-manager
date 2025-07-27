@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Remove old packages",
   "body": "Delete local modules superseded by gcommon",
-  "labels": [
-    "codex",
-    "refactor"
-  ],
+  "labels": ["codex", "refactor"],
   "guid": "9e997e7b-5cdf-47a7-9f6c-299857b87644",
   "legacy_guid": "create-remove-old-packages-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.239535+00:00",

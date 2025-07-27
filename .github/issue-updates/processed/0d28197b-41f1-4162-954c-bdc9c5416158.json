@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Deduplicate persistent flags in root command",
   "body": "Repeated persistent flag definitions caused panic in tests; removed duplicates.",
-  "labels": [
-    "bug"
-  ],
+  "labels": ["bug"],
   "guid": "0d28197b-41f1-4162-954c-bdc9c5416158",
   "legacy_guid": "create-deduplicate-persistent-flags-in-root-command-2025-07-10",
   "file_modified_at": "2025-07-19T01:49:31.232078+00:00",

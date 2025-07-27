@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Implement Azure Blob Storage provider",
   "body": "Add basic Azure storage implementation",
-  "labels": [
-    "enhancement",
-    "codex"
-  ],
+  "labels": ["enhancement", "codex"],
   "guid": "1251ed38-88c8-44a8-b37e-bc41c9481da7",
   "legacy_guid": "create-implement-azure-blob-storage-provider-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.232260+00:00",

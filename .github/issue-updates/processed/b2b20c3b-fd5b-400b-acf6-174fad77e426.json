@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Add SupportedServices helper",
   "body": "Expose translator providers list",
-  "labels": [
-    "enhancement"
-  ],
+  "labels": ["enhancement"],
   "guid": "b2b20c3b-fd5b-400b-acf6-174fad77e426",
   "legacy_guid": "create-add-supportedservices-helper-2025-07-10",
   "file_modified_at": "2025-07-19T01:49:31.240350+00:00",

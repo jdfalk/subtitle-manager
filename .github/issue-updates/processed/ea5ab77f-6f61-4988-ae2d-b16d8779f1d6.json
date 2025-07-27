@@ -2,9 +2,7 @@
   "action": "update",
   "number": 1135,
   "body": "Started metadata editor scaffolding",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "ea5ab77f-6f61-4988-ae2d-b16d8779f1d6",
   "legacy_guid": "update-issue-1135-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.243403+00:00",

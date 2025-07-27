@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Fix SQLite test",
   "body": "Skip SQLite tests when support missing and fix root command flag duplication",
-  "labels": [
-    "codex",
-    "test"
-  ],
+  "labels": ["codex", "test"],
   "guid": "4f034e42-9522-41d5-a33c-d4e61c11be10",
   "legacy_guid": "create-fix-sqlite-test-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.234607+00:00",

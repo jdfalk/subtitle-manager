@@ -2,12 +2,7 @@
   "action": "update",
   "number": 1259,
   "body": "## Description\nComplete the optional Whisper ASR service integration so docker-init.sh reliably launches the container when ENABLE_WHISPER=1.\n\n## Technical Requirements\n- Docker container management for Whisper service\n- Health check endpoint for container status\n- Automatic restart on failure\n- Resource limits configuration\n- GPU support detection and configuration\n\n## Implementation Details\n1. Update `docker-init.sh` to handle Whisper container lifecycle\n2. Add environment variable validation\n3. Implement container health monitoring\n4. Create integration tests for startup behavior\n5. Document configuration options\n\n## Acceptance Criteria\n- [ ] Whisper container starts automatically when ENABLE_WHISPER=1\n- [ ] Container health is monitored and reported\n- [ ] Failed containers are automatically restarted\n- [ ] GPU is utilized when available\n- [ ] Resource limits prevent system overload\n- [ ] Integration tests pass consistently\n- [ ] Documentation includes troubleshooting guide\n\n## Testing Requirements\n- Unit tests for container management logic\n- Integration tests for startup scenarios\n- Performance tests with various model sizes\n- Resource usage monitoring tests\n\n## Dependencies\n- Docker API client library\n- Whisper model files\n- GPU drivers (optional)\n\nRelated to #1132.\n\n<!-- guid:9cd322d6-cff1-4d17-b913-f1e8c18a174b -->",
-  "labels": [
-    "enhancement",
-    "codex",
-    "whisper",
-    "docker"
-  ],
+  "labels": ["enhancement", "codex", "whisper", "docker"],
   "guid": "5431aea4-27c0-4340-8a18-e3161446567c",
   "legacy_guid": "update-issue-1259-2025-06-30",
   "file_modified_at": "2025-07-07T01:40:12.507287+00:00",

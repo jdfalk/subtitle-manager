@@ -2,10 +2,7 @@
   "action": "create",
   "title": "HTTP auth middleware",
   "body": "Provide middleware in gcommon/auth that validates sessions and API keys via the session service.",
-  "labels": [
-    "enhancement",
-    "auth"
-  ],
+  "labels": ["enhancement", "auth"],
   "guid": "2ee210e3-2c16-415c-9267-dc6d7f1598fa",
   "legacy_guid": "create-http-auth-middleware-2025-07-15",
   "file_modified_at": "2025-07-21T02:40:47.725561+00:00",

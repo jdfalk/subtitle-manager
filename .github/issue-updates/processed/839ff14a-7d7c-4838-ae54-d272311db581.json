@@ -2,12 +2,7 @@
   "action": "update",
   "number": 1257,
   "body": "## Description\nImplement background jobs that continuously sync Sonarr and Radarr libraries, resolving conflicts automatically.\n\n## Technical Requirements\n- Scheduled background job system\n- Conflict resolution algorithms\n- Progress tracking and reporting\n- Error recovery mechanisms\n- Rate limiting for API calls\n\n## Implementation Details\n1. Create job scheduler using cron or similar\n2. Implement sync logic with conflict detection\n3. Add automatic conflict resolution strategies\n4. Create monitoring dashboard\n5. Add configuration options for sync frequency\n\n## Conflict Resolution Strategies\n- Newest wins (by modified date)\n- Source priority (Sonarr > Radarr > Manual)\n- Quality-based resolution\n- User-defined rules\n\n## Acceptance Criteria\n- [ ] Background jobs run on configurable schedule\n- [ ] Libraries sync without manual intervention\n- [ ] Conflicts are detected and resolved automatically\n- [ ] Sync progress is visible in UI\n- [ ] Failed syncs are retried with backoff\n- [ ] API rate limits are respected\n- [ ] Comprehensive logging of sync operations\n- [ ] Unit tests cover all conflict scenarios\n\n## Testing Requirements\n- Unit tests for conflict resolution logic\n- Integration tests with mock Sonarr/Radarr APIs\n- Performance tests with large libraries\n- Stress tests for concurrent syncs\n\n## Configuration Options\n- Sync frequency (minutes/hours/days)\n- Conflict resolution strategy\n- Retry attempts and backoff\n- API rate limits\n- Notification preferences\n\nBuilds on existing sync enhancements in #889.\n\n<!-- guid:06c04066-b88d-4dac-877f-75677911371c -->",
-  "labels": [
-    "enhancement",
-    "codex",
-    "integration",
-    "automation"
-  ],
+  "labels": ["enhancement", "codex", "integration", "automation"],
   "guid": "839ff14a-7d7c-4838-ae54-d272311db581",
   "legacy_guid": "update-issue-1257-2025-06-30",
   "file_modified_at": "2025-07-07T01:40:12.507590+00:00",

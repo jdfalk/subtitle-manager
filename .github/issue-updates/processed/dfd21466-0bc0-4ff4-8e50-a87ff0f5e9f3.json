@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Interactive metadata search",
   "body": "Add interactive search and selection when fetching metadata",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "dfd21466-0bc0-4ff4-8e50-a87ff0f5e9f3",
   "legacy_guid": "create-20250709021209",
   "file_modified_at": "2025-07-19T01:49:31.243209+00:00",

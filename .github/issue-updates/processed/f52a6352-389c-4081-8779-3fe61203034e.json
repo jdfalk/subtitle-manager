@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Verify GH CLI project scopes",
   "body": "Add wrapper script to check GitHub CLI has repo and project scopes",
-  "labels": [
-    "codex",
-    "enhancement"
-  ],
+  "labels": ["codex", "enhancement"],
   "guid": "f52a6352-389c-4081-8779-3fe61203034e",
   "legacy_guid": "create-verify-gh-cli-project-scopes-2025-07-15",
   "file_modified_at": "2025-07-21T02:40:47.727325+00:00",

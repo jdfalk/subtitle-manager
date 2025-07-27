@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Add database backup CLI",
   "body": "Implement backup create, list and restore commands using pkg/backups. Store backup files in configurable directory and document usage.",
-  "labels": [
-    "feature",
-    "cli"
-  ],
+  "labels": ["feature", "cli"],
   "guid": "606c194d-f5d3-4ebb-8cb0-b2828ff54060",
   "legacy_guid": "create-add-database-backup-cli-2025-06-29",
   "file_modified_at": "2025-07-07T01:31:00.445073+00:00",

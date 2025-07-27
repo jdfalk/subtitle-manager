@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Adopt gcommon queue",
   "body": "Replace internal queue with gcommon and update job serialization",
-  "labels": [
-    "enhancement",
-    "queue"
-  ],
+  "labels": ["enhancement", "queue"],
   "guid": "6f1bb8b6-711a-449b-86ab-e1651d5402de",
   "legacy_guid": "create-adopt-gcommon-queue-2025-07-15",
   "file_modified_at": "2025-07-21T02:40:47.725999+00:00",

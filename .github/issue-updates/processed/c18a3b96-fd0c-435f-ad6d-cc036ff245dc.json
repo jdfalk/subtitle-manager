@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Track gcommon config loader usage",
   "body": "Document migrating config loader to gcommon/config with script",
-  "labels": [
-    "enhancement",
-    "documentation"
-  ],
+  "labels": ["enhancement", "documentation"],
   "guid": "c18a3b96-fd0c-435f-ad6d-cc036ff245dc",
   "legacy_guid": "create-track-gcommon-config-loader-usage-2025-07-15",
   "file_modified_at": "2025-07-21T02:40:47.726980+00:00",

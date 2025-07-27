@@ -2,12 +2,7 @@
   "action": "create",
   "title": "Implement Redis-Compatible Caching Layer",
   "body": "## Description\nAdd a caching layer to improve performance and reduce API calls to external services.\n\n## Cache Targets\n- Provider search results (5 min TTL)\n- TMDB/OMDb metadata (24 hour TTL)\n- Translation results (permanent)\n- User sessions (configurable TTL)\n- API responses (varies by endpoint)\n\n## Implementation Options\n1. In-memory cache (default)\n2. Redis connection (optional)\n3. Distributed cache (future)\n\n## Technical Design\n```go\n// pkg/cache/interface.go\ntype Cache interface {\n    Get(ctx context.Context, key string) ([]byte, error)\n    Set(ctx context.Context, key string, value []byte, ttl time.Duration) error\n    Delete(ctx context.Context, key string) error\n    Clear(ctx context.Context) error\n}\n\n// pkg/cache/memory.go\ntype MemoryCache struct {\n    data map[string]cacheEntry\n    mu   sync.RWMutex\n}\n\n// pkg/cache/redis.go\ntype RedisCache struct {\n    client *redis.Client\n}\n```\n\n## Configuration\n- Cache backend selection\n- TTL configuration per type\n- Maximum memory usage\n- Eviction policy\n\n## Acceptance Criteria\n- [ ] Cache interface implementation\n- [ ] Memory backend with TTL\n- [ ] Redis backend support\n- [ ] Cache statistics API\n- [ ] Cache management UI\n- [ ] Performance metrics",
-  "labels": [
-    "enhancement",
-    "backend",
-    "performance",
-    "priority-medium"
-  ],
+  "labels": ["enhancement", "backend", "performance", "priority-medium"],
   "guid": "11f61033-db2f-4a99-bfc8-fb063642078e",
   "legacy_guid": "create-implement-redis-compatible-caching-layer-2025-06-29",
   "file_modified_at": "2025-07-07T01:40:12.512153+00:00",

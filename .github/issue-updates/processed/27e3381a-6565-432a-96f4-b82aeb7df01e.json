@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Integrate gcommon metrics",
   "body": "Use gcommon/metrics for Prometheus instrumentation",
-  "labels": [
-    "codex",
-    "refactor"
-  ],
+  "labels": ["codex", "refactor"],
   "guid": "27e3381a-6565-432a-96f4-b82aeb7df01e",
   "legacy_guid": "create-integrate-gcommon-metrics-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.232819+00:00",

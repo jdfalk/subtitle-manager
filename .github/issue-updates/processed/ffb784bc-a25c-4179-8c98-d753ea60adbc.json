@@ -2,12 +2,7 @@
   "action": "update",
   "number": 1243,
   "body": "## Description\nError 'b is not a function' occurs when selecting provider configuration. Need to reset state and use apiService to fetch providers.\n\n## Root Cause Analysis\n- State management issue in provider configuration dialog\n- Incorrect function binding or missing dependency\n- API service not properly initialized\n- Race condition in component lifecycle\n\n## Technical Fix\n1. Reset component state on dialog open\n2. Ensure apiService is properly injected\n3. Add error boundaries for better debugging\n4. Implement proper loading states\n\n## Code Changes Required\n- Fix ProviderConfigDialog component\n- Update state management logic\n- Add proper error handling\n- Implement retry mechanism\n\n## Acceptance Criteria\n- [ ] Provider configuration dialog opens without errors\n- [ ] All provider types load correctly\n- [ ] Configuration forms render properly\n- [ ] Form validation works as expected\n- [ ] Save functionality persists settings\n- [ ] Error messages are user-friendly\n- [ ] Loading states show during API calls\n- [ ] Component has proper error boundaries\n- [ ] Unit tests cover error scenarios\n- [ ] E2E tests verify full flow\n\n## Testing Scenarios\n1. Click configuration for each provider type\n2. Test with slow network conditions\n3. Test with API failures\n4. Verify form validation\n5. Test concurrent dialog opens\n\n## Error Prevention\n- Add TypeScript types for all props\n- Implement proper null checks\n- Add API response validation\n- Use error boundaries\n\n<!-- guid:d1f49555-bea9-4e6e-afdd-e42909d34d2d -->",
-  "labels": [
-    "bug",
-    "codex",
-    "ui",
-    "providers"
-  ],
+  "labels": ["bug", "codex", "ui", "providers"],
   "guid": "ffb784bc-a25c-4179-8c98-d753ea60adbc",
   "legacy_guid": "update-issue-1243-2025-06-30",
   "file_modified_at": "2025-07-07T01:40:12.512632+00:00",

@@ -2,9 +2,7 @@
   "action": "update",
   "number": 1243,
   "body": "Added provider configuration tests",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "5eee3854-d143-4d6c-9e29-118555542573",
   "legacy_guid": "update-issue-1243-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.235421+00:00",

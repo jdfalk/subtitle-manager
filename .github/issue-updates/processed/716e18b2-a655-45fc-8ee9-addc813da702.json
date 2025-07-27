@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Display subtitle history hierarchy",
   "body": "Sort subtitle records by parent-child relationships in GetSubtitleHistory",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "716e18b2-a655-45fc-8ee9-addc813da702",
   "legacy_guid": "create-display-subtitle-history-hierarchy-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.236425+00:00",

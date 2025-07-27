@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Provider config fails when clicking configuration required",
   "body": "Error: b is not a function when selecting provider configuration. Reset state and use apiService to fetch providers.",
-  "labels": [
-    "bug",
-    "codex"
-  ],
+  "labels": ["bug", "codex"],
   "guid": "d1f49555-bea9-4e6e-afdd-e42909d34d2d",
   "legacy_guid": "create-provider-config-fails-when-clicking-configuration-required-2025-06-26",
   "file_modified_at": "2025-07-07T01:31:00.435342+00:00",

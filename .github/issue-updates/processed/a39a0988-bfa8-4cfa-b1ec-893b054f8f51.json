@@ -2,9 +2,7 @@
   "action": "create",
   "title": "CLI search caching",
   "body": "Implement caching for CLI search command to speed up repeated queries",
-  "labels": [
-    "enhancement"
-  ],
+  "labels": ["enhancement"],
   "guid": "a39a0988-bfa8-4cfa-b1ec-893b054f8f51",
   "legacy_guid": "create-cli-search-caching-2025-07-10",
   "file_modified_at": "2025-07-19T01:49:31.239775+00:00",

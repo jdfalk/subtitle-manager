@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Integrate golangci-lint in CI",
   "body": "Add golangci-lint to GitHub Actions to enforce style and catch common issues. Document how to run the linter locally.",
-  "labels": [
-    "ci",
-    "enhancement"
-  ],
+  "labels": ["ci", "enhancement"],
   "guid": "e230b641-9be6-4e9b-92e1-e92c1ef3884a",
   "legacy_guid": "create-integrate-golangci-lint-in-ci-2025-06-28",
   "file_modified_at": "2025-07-07T01:31:00.452984+00:00",

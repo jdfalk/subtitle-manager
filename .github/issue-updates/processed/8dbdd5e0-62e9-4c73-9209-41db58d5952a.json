@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Review cloud storage docs",
   "body": "Update documentation for Azure provider",
-  "labels": [
-    "documentation",
-    "codex"
-  ],
+  "labels": ["documentation", "codex"],
   "guid": "8dbdd5e0-62e9-4c73-9209-41db58d5952a",
   "legacy_guid": "create-review-cloud-storage-docs-2025-07-06",
   "file_modified_at": "2025-07-19T01:49:31.237726+00:00",

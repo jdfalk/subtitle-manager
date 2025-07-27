@@ -2,12 +2,7 @@
   "action": "create",
   "title": "Implement Language Profiles for Subtitle Management",
   "body": "## Description\nAdd support for language profiles similar to Bazarr, allowing users to define preferred languages and quality thresholds.\n\n## Requirements\n- Multiple languages per profile with priority ordering\n- Cutoff scores for quality thresholds\n- Profile assignment to shows/movies\n- Default profile for new media\n- Migration from simple language settings\n\n## Technical Implementation\n```go\n// pkg/profiles/language.go\ntype LanguageProfile struct {\n    ID          string\n    Name        string\n    Languages   []LanguageConfig\n    CutoffScore int\n}\n\ntype LanguageConfig struct {\n    Language string\n    Priority int\n    Forced   bool\n    HI       bool\n}\n```\n\n## Database Schema\n```sql\nCREATE TABLE language_profiles (\n    id TEXT PRIMARY KEY,\n    name TEXT NOT NULL,\n    config JSONB NOT NULL,\n    is_default BOOLEAN DEFAULT FALSE\n);\n\nCREATE TABLE media_profiles (\n    media_id INTEGER,\n    profile_id TEXT,\n    FOREIGN KEY (media_id) REFERENCES media_items(id),\n    FOREIGN KEY (profile_id) REFERENCES language_profiles(id)\n);\n```\n\n## Acceptance Criteria\n- [ ] CRUD operations for language profiles\n- [ ] Profile assignment UI in media library\n- [ ] Profile-based subtitle search\n- [ ] Migration tool for existing configurations\n- [ ] API endpoints for profile management",
-  "labels": [
-    "enhancement",
-    "backend",
-    "frontend",
-    "priority-high"
-  ],
+  "labels": ["enhancement", "backend", "frontend", "priority-high"],
   "guid": "2094c6e2-29f6-4d20-a664-af78e3ed6b07",
   "legacy_guid": "create-implement-language-profiles-for-subtitle-management-2025-06-29",
   "file_modified_at": "2025-07-07T01:40:12.510605+00:00",

@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Document hybrid build",
   "body": "Update README with hybrid Docker workflow",
-  "labels": [
-    "codex",
-    "docs"
-  ],
+  "labels": ["codex", "docs"],
   "guid": "8a9c5adf-7c71-4e42-8d7c-9870f428bdfd",
   "legacy_guid": "create-document-hybrid-build-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.237643+00:00",

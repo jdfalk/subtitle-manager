@@ -2,13 +2,7 @@
   "action": "update",
   "number": 1255,
   "body": "## Description\nAdd comprehensive CLI and web UI for manual metadata editing using the design in docs/METADATA_EDITOR_PLAN.md.\n\n## Features\n- Manual metadata search across multiple sources\n- Field-level editing with validation\n- Alternate title management\n- Metadata locking to prevent overwrites\n- Bulk editing capabilities\n- History tracking with rollback\n\n## Technical Requirements\n### Backend\n- RESTful API for metadata operations\n- Metadata source aggregation\n- Validation rules engine\n- Audit log for changes\n- Conflict detection\n\n### Frontend\n- React-based metadata editor component\n- Real-time validation\n- Drag-and-drop for images\n- Keyboard shortcuts\n- Responsive design\n\n### CLI\n- Interactive metadata search\n- Field editing commands\n- Batch operations\n- Export/import functionality\n\n## Acceptance Criteria\n- [ ] Web UI allows searching and editing all metadata fields\n- [ ] CLI provides equivalent functionality\n- [ ] Changes are validated before saving\n- [ ] Locked fields cannot be overwritten\n- [ ] History shows all changes with timestamps\n- [ ] Rollback functionality works correctly\n- [ ] Bulk operations handle errors gracefully\n- [ ] API documentation is complete\n- [ ] Unit tests cover all operations\n- [ ] Integration tests verify UI functionality\n\n## UI/UX Requirements\n- Search results show confidence scores\n- Visual indicators for locked fields\n- Inline editing where appropriate\n- Confirmation dialogs for destructive operations\n- Progress indicators for bulk operations\n\n## Testing Requirements\n- Unit tests for validation logic\n- Integration tests for API endpoints\n- E2E tests for UI workflows\n- Performance tests for bulk operations\n\nDepends on online metadata sources (#351, #890).\n\n<!-- guid:60fd389b-4b16-42cb-98e6-d6df22a72a23 -->",
-  "labels": [
-    "enhancement",
-    "codex",
-    "metadata",
-    "ui",
-    "cli"
-  ],
+  "labels": ["enhancement", "codex", "metadata", "ui", "cli"],
   "guid": "c86fa613-6158-464b-b77c-be442fb94be6",
   "legacy_guid": "update-issue-1255-2025-06-30",
   "file_modified_at": "2025-07-07T01:40:12.510466+00:00",

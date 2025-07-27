@@ -2,9 +2,7 @@
   {
     "action": "update",
     "number": 949,
-    "labels": [
-      "codex"
-    ],
+    "labels": ["codex"],
     "guid": "update-issue-949-2025-06-21",
     "permalink": "https://github.com/jdfalk/subtitle-manager/issues/949",
     "file_modified_at": "2025-07-07T01:31:00.440455+00:00",

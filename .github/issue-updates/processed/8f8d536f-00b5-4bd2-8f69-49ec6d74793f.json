@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Add DB update support for download results",
   "body": "Implement DB-level update logic for downloads instead of creating new records.",
-  "labels": [
-    "codex",
-    "enhancement"
-  ],
+  "labels": ["codex", "enhancement"],
   "guid": "8f8d536f-00b5-4bd2-8f69-49ec6d74793f",
   "legacy_guid": "create-add-db-update-support-for-download-results-2025-07-15",
   "file_modified_at": "2025-07-21T02:40:47.726533+00:00",

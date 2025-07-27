@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Provide Helm chart",
   "body": "Create Helm chart for Kubernetes deployment with Deployment, Service, ConfigMap, and PVC. Document installation in docs/KUBERNETES.md.",
-  "labels": [
-    "enhancement",
-    "ops"
-  ],
+  "labels": ["enhancement", "ops"],
   "guid": "cd224c87-ec17-41b5-8cbc-7a443854ab19",
   "legacy_guid": "create-provide-helm-chart-2025-06-29",
   "file_modified_at": "2025-07-07T01:31:00.438676+00:00",

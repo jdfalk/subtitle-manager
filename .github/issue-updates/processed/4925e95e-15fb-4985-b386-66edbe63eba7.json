@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Vendor gcommon",
   "body": "Vendor gcommon modules for deterministic builds.",
-  "labels": [
-    "codex",
-    "refactor"
-  ],
+  "labels": ["codex", "refactor"],
   "guid": "4925e95e-15fb-4985-b386-66edbe63eba7",
   "legacy_guid": "create-vendor-gcommon-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.234320+00:00",

@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Implement self tester for startup",
   "body": "Add a periodic self-testing mechanism to verify startup components and keep service alive",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "a1c58fb7-05f5-4b29-b9d9-21892dfc9587",
   "legacy_guid": "create-implement-self-tester-for-startup-2025-07-07",
   "file_modified_at": "2025-07-19T01:49:31.239693+00:00",

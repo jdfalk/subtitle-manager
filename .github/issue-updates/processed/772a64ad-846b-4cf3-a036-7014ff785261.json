@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Use gcommon protos",
   "body": "Adopt shared proto messages from gcommon",
-  "labels": [
-    "codex",
-    "refactor"
-  ],
+  "labels": ["codex", "refactor"],
   "guid": "772a64ad-846b-4cf3-a036-7014ff785261",
   "legacy_guid": "create-use-gcommon-protos-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.236585+00:00",

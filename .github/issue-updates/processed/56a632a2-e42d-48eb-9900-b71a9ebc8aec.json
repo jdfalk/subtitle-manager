@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Sonarr/Radarr sync conflict detection",
   "body": "Log conflicts when existing media metadata differs from remote library during sync.",
-  "labels": [
-    "enhancement",
-    "codex"
-  ],
+  "labels": ["enhancement", "codex"],
   "guid": "56a632a2-e42d-48eb-9900-b71a9ebc8aec",
   "legacy_guid": "create-sonarr/radarr-sync-conflict-detection-2025-07-09",
   "file_modified_at": "2025-07-19T01:49:31.234838+00:00",

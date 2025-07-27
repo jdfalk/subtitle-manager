@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Implement monitor autosync",
   "body": "Added command for periodic Sonarr/Radarr synchronization",
-  "labels": [
-    "enhancement",
-    "monitor"
-  ],
+  "labels": ["enhancement", "monitor"],
   "guid": "179081c6-3269-4eea-a30f-46afb1843464",
   "legacy_guid": "create-implement-monitor-autosync-2025-07-15",
   "file_modified_at": "2025-07-21T02:40:47.725188+00:00",

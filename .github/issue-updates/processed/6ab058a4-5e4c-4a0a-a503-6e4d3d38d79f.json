@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Prometheus setup",
   "body": "Configure Prometheus scraping using gcommon metrics",
-  "labels": [
-    "codex",
-    "refactor"
-  ],
+  "labels": ["codex", "refactor"],
   "guid": "6ab058a4-5e4c-4a0a-a503-6e4d3d38d79f",
   "legacy_guid": "create-prometheus-setup-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.236237+00:00",

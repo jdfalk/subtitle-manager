@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Track subtitle download history",
   "body": "Record where and when subtitles were obtained.",
-  "labels": [
-    "feature"
-  ],
+  "labels": ["feature"],
   "guid": "aeb8ab20-4f19-4799-9fc6-0c47347db5a9",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1077",
   "legacy_guid": "create-download-history-2025-06-20",

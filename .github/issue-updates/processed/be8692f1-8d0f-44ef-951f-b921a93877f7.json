@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Centralize Go types",
   "body": "Add a new pkg/types package for shared domain structs and update imports",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "be8692f1-8d0f-44ef-951f-b921a93877f7",
   "legacy_guid": "create-centralize-go-types-2025-07-05",
   "file_modified_at": "2025-07-19T01:49:31.240989+00:00",

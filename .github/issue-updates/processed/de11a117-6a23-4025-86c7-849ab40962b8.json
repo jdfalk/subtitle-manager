@@ -2,11 +2,7 @@
   "action": "create",
   "title": "Immediate Action Items for Bazarr Parity Sprint",
   "body": "## Immediate Actions Required\n\n### Week 1 Tasks (Start immediately)\n\n#### Backend Team\n1. **Whisper Integration Scaffold**\n    - Set up Docker client in `pkg/transcriber/`\n    - Create container management interface\n    - Add configuration schema\n\n2. **Language Profile Schema**\n    - Design database tables\n    - Create migration scripts\n    - Implement CRUD operations\n\n3. **Scoring System Foundation**\n    - Define scoring algorithm\n    - Create score calculation service\n    - Add database fields\n\n#### Frontend Team\n1. **Manual Search UI**\n    - Create search component\n    - Add provider selection\n    - Implement result table\n\n2. **Language Profile UI**\n    - Profile management page\n    - Media assignment interface\n    - Migration wizard\n\n#### DevOps Team\n1. **Testing Infrastructure**\n    - Set up integration test environment\n    - Configure coverage reporting\n    - Add performance benchmarks\n\n2. **Caching Setup**\n    - Evaluate Redis vs in-memory\n    - Design cache key structure\n    - Implement cache wrapper\n\n### Daily Standup Topics\n- Blockers and dependencies\n- API contract agreements\n- Testing requirements\n- Documentation needs\n\n### Week 1 Deliverables\n- [ ] Whisper integration design doc\n- [ ] Language profile API spec\n- [ ] Manual search UI mockups\n- [ ] Scoring algorithm proposal\n- [ ] Test plan document\n\n### Success Criteria\n- All scaffolding in place\n- No breaking changes to existing features\n- Clear path forward for Week 2\n- Team alignment on implementation\n\n## Resources\n- Bazarr source: https://github.com/morpheus65535/bazarr\n- OpenAPI spec template in `docs/api/`\n- UI component library in Storybook\n\n## Communication\n- Daily standups at 9 AM\n- Slack channel: #subtitle-manager-dev\n- Weekly demo on Fridays",
-  "labels": [
-    "planning",
-    "coordination",
-    "sprint"
-  ],
+  "labels": ["planning", "coordination", "sprint"],
   "guid": "721a6ed8-3a95-4ef6-9f82-b607afef8b65",
   "legacy_guid": "create-immediate-action-items-for-bazarr-parity-sprint-2025-06-29",
   "file_modified_at": "2025-07-07T01:40:12.511237+00:00",

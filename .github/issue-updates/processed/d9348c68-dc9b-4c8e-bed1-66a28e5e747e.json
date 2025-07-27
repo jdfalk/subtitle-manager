@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Fix gcommon proto build",
   "body": "Generated code won't compile; adjust imports",
-  "labels": [
-    "bug",
-    "proto"
-  ],
+  "labels": ["bug", "proto"],
   "guid": "d9348c68-dc9b-4c8e-bed1-66a28e5e747e",
   "legacy_guid": "create-fix-gcommon-proto-build-2025-07-15",
   "file_modified_at": "2025-07-21T02:40:47.727162+00:00",

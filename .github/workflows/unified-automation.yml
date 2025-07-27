@@ -32,6 +32,4 @@ jobs:
     uses: jdfalk/ghcommon/.github/workflows/reusable-unified-automation.yml@main
     with:
       operation: ${{ github.event.inputs.operation || 'all' }}
-    secrets:
-      github-pat: ${{ secrets.GITHUB_PAT }}
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit

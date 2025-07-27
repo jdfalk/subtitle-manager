@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Database stats endpoint returns empty results",
   "body": "The /api/database/stats endpoint always returns zeros, so the UI shows no statistics.",
-  "labels": [
-    "bug",
-    "codex"
-  ],
+  "labels": ["bug", "codex"],
   "guid": "3984d4cb-0862-4812-8142-655eb99b524f",
   "legacy_guid": "create-database-stats-endpoint-returns-empty-results-2025-06-22",
   "file_modified_at": "2025-07-07T01:31:00.473132+00:00",

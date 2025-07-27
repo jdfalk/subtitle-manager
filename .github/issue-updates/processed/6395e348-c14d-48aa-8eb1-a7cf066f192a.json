@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Track fix-merge-conflicts workflow",
   "body": "Ensure new workflow resolves PR merge conflicts",
-  "labels": [
-    "workflow"
-  ],
+  "labels": ["workflow"],
   "guid": "6395e348-c14d-48aa-8eb1-a7cf066f192a",
   "legacy_guid": "create-track-fix-merge-conflicts-workflow-2025-07-10",
   "file_modified_at": "2025-07-19T01:49:31.235814+00:00",

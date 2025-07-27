@@ -2,9 +2,7 @@
   "action": "create",
   "title": "Automatic subtitle upgrades",
   "body": "Detect and fetch better quality subtitles when available.",
-  "labels": [
-    "feature"
-  ],
+  "labels": ["feature"],
   "guid": "a48ddb3d-6612-4a5d-944e-efcd61831b89",
   "permalink": "https://github.com/jdfalk/subtitle-manager/issues/1079",
   "legacy_guid": "create-subtitle-upgrades-2025-06-20",

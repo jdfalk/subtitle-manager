@@ -2,10 +2,7 @@
   "action": "create",
   "title": "Improve search handler concurrency",
   "body": "Enhance error handling, caching, and parallel search logic",
-  "labels": [
-    "backend",
-    "search"
-  ],
+  "labels": ["backend", "search"],
   "guid": "5f482469-533c-48c3-b5bf-1fc9ef8cd191",
   "legacy_guid": "create-improve-search-handler-concurrency-2025-07-15",
   "file_modified_at": "2025-07-21T02:40:47.725932+00:00",

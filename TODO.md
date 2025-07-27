@@ -1121,7 +1121,8 @@ Add gRPC health service using gcommon protobufs
 
 - [x] Ensure GitHub CLI has project scopes for create-github-projects.sh
 
-- [x] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
+- [x] 🟢 **General**: Ensure GitHub CLI has project scopes for
+      create-github-projects.sh
 
 - [x] Replace internal queue with gcommon/queue
 

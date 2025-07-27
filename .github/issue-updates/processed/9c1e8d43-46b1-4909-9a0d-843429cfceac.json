@@ -2,9 +2,7 @@
   "action": "update",
   "number": 1107,
   "body": "Investigating CodeQL alert; plan to sanitize URL usage.",
-  "labels": [
-    "codex"
-  ],
+  "labels": ["codex"],
   "guid": "cb974477-713f-4782-b85f-f4e78b682006",
   "legacy_guid": "update-issue-1107-2025-06-23",
   "file_modified_at": "2025-07-07T01:31:00.472743+00:00",
