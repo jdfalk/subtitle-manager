@@ -1,10 +1,10 @@
 // file: proto/database.proto
-// version: 1.0.0
+// version: 1.1.0
 // guid: d2b5a1f0-e01a-4f79-9a50-df50aa774617
 
 edition = "2023";
 
-package gcommon.v1.database;
+package subtitlemanager.v1;
 
 import "google/protobuf/go_features.proto";
 import "google/protobuf/timestamp.proto";
@@ -22,8 +22,8 @@ message SubtitleRecord {
   bool embedded = 7;
   string source_url = 8;
   string provider_metadata = 9;
-  optional double confidence_score = 10;
-  optional string parent_id = 11;
+  double confidence_score = 10 [features.field_presence = EXPLICIT];
+  string parent_id = 11 [features.field_presence = EXPLICIT];
   string modification_type = 12;
   google.protobuf.Timestamp created_at = 13;
 }
@@ -35,9 +35,9 @@ message DownloadRecord {
   string provider = 4;
   string language = 5;
   string search_query = 6;
-  optional double match_score = 7;
+  double match_score = 7 [features.field_presence = EXPLICIT];
   int32 download_attempts = 8;
   string error_message = 9;
-  optional int32 response_time_ms = 10;
+  int32 response_time_ms = 10 [features.field_presence = EXPLICIT];
   google.protobuf.Timestamp created_at = 11;
 }
