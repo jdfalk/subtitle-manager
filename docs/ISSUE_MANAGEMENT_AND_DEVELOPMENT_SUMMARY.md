@@ -398,3 +398,15 @@ The smart rebase scripts integrate seamlessly with:
 These scripts reduce manual intervention in the development process while
 maintaining code quality and ensuring proper conflict resolution strategies are
 applied consistently.
+
+#### File Type Based Resolution
+
+| File Type                                | Strategy    | Reasoning |
+| ---------------------------------------- | ----------- | ---------- |
+| Documentation (`.md`, `docs/`)           | Incoming    | Main branch docs are usually current |
+| Build files (`.github/`, `Dockerfile.hybrid`)   | Incoming    | Build config should match main |
+| Package files (`go.mod`, `package.json`) | Incoming    | Dependencies should match main |
+| Configuration (`.json`, `.yml`)          | Smart Merge | Configs need careful merging |
+| Source code (`.go`, `.js`, `.py`)        | Save Both   | Code needs manual review |
+| Test files (`*_test.go`, `test/`)        | Save Both   | Tests need careful review |
+| Data files (`.sql`, `data/`)             | Current     | Data is often environment-specific |

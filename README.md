@@ -2245,3 +2245,35 @@ details.
 
 
 - Expose gRPC health service using gcommon protobufs
+Cache configuration now uses gcommon.v1.common.CachePolicy messages for each TTL
+
+Cache configuration now uses gcommon.v1.common.CachePolicy messages for each TTL
+
+### gcommon Protobuf\n\nAuthentication now uses the shared gcommon.v1.auth.AuthService. The initial implementation supports password and API key login via gRPC with session token validation. Additional methods will migrate incrementally.
+
+Configuration can now be exchanged via gRPC using the new proto message `SubtitleManagerConfig`.
+
+#### gcommon Queue Configuration
+
+The asynchronous job queue is provided by `gcommon/queue`. Add a `queue` section to `subtitle-manager.yaml`:
+
+```yaml
+queue:
+  workers: 4
+  backend: redis://localhost:6379/0
+```
+
+Override with environment variables:
+
+- `SM_QUEUE_WORKERS` - Worker count (default `4`)
+- `SM_QUEUE_BACKEND` - Backend connection string
+
+The queue starts automatically with the server. Use `subtitle-manager queue start` during development to run workers manually.
+
+- `WHISPER_MAX_RETRIES` - Startup attempts before failure (default `3`)
+
+- **`make docker-local`** - Build multi-arch Docker image locally
+
+A helper script `scripts/create-github-projects.sh` automates project board creation for open feature issues.
+
+- **Search result caching**: Manual search results cached for faster repeated queries

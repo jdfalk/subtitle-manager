@@ -380,3 +380,5 @@ Potential improvements for the error handling system:
 - **Error aggregation** - Group similar errors automatically
 - **Recovery suggestions** - Automated suggestions for error resolution
 - **Error correlation** - Link related errors across requests
+
+- `/health` - Application health status

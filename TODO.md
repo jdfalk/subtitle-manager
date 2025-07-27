@@ -1089,7 +1089,7 @@ Document monitor autosync usage
 
 Implement SupportedServices helper in translator package
 
-- [ ] 🟡 **General**: Create GitHub projects for open features
+- [x] 🟡 **General**: Create GitHub projects for open features
 
 Verify Prometheus metrics via new provider
 
@@ -1112,3 +1112,31 @@ Add protobuf messages for database records
 ✅ Adopted gcommon QueueMessage for internal queue Implement config protobuf
 
 Add gRPC health service using gcommon protobufs
+
+- [x] Auth: Implement gRPC AuthService using gcommon protobuf messages
+
+- [x] Whisper container start/stop CLI commands implemented
+
+- [x] Write a migration script to convert existing configs to the new format.
+
+- [x] Ensure GitHub CLI has project scopes for create-github-projects.sh
+
+- [x] 🟢 **General**: Ensure GitHub CLI has project scopes for create-github-projects.sh
+
+- [x] Replace internal queue with gcommon/queue
+
+- [x] Switch authentication to gcommon/auth library
+
+- [x] Standardize on `Dockerfile.hybrid` for development and CI.
+
+- [x] Search Result Caching
+
+- [x] search result caching completed
+
+- [x] Search Result Caching
+
+- [x] Implement translation result caching
+
+- [x] Replace existing health endpoints with gcommon/health handlers
+
+- [x] Validated codex-rebase.sh AI conflict resolution
