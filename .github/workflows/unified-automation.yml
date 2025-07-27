@@ -1,5 +1,5 @@
 # file: .github/workflows/unified-automation.yml
-# version: 2.5.0
+# version: 2.6.0
 # guid: 9a8b7c6d-5e4f-3a2b-1c0d-2e3f4a5b6c7d
 
 name: Unified Issue & Docs Automation
@@ -15,6 +15,7 @@ permissions:
   statuses: write # For commit status updates
   packages: read # For package access (required by super-linter)
   id-token: write # For attestation and artifact uploads (required by super-linter)
+  models: read # For AI model access (required by ai-rebase)
 
 on:
   push:
