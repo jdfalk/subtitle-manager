@@ -8,7 +8,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Added gRPC health service using gcommon protobufs
+### Added
+
+- Added gRPC health service using gcommon protobufs
+- Added per-IP rate limiting to search API
 
 ### Added
 
