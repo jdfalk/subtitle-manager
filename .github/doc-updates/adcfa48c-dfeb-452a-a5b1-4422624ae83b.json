@@ -1,0 +1,16 @@
+{
+  "file": "TODO.md",
+  "mode": "task-add",
+  "content": "Validate codex-rebase.sh AI conflict resolution",
+  "guid": "adcfa48c-dfeb-452a-a5b1-4422624ae83b",
+  "created_at": "2025-07-23T13:09:32Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

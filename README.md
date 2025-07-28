@@ -2280,4 +2280,4 @@ A helper script `scripts/create-github-projects.sh` automates project board
 creation for open feature issues.
 
 - **Search result caching**: Manual search results cached for faster repeated
-  queries
+  queries with per-IP rate limiting to prevent abuse

@@ -1,0 +1,16 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Changed\\n\\n- codex-rebase.sh now uses Codex or ChatGPT CLI for conflict resolution and automatically commits before force pushing",
+  "guid": "69916a29-0f7a-4f9a-be3d-a3e996f4efe4",
+  "created_at": "2025-07-23T13:09:24Z",
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}
