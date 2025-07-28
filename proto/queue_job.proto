@@ -1,5 +1,5 @@
 // file: proto/queue_job.proto
-// version: 1.1.0
+// version: 1.2.0
 // guid: 1f3aeed2-6b5a-4e2c-bc6c-123456789abc
 
 edition = "2023";
@@ -7,10 +7,9 @@ edition = "2023";
 package subtitle.v1;
 
 import "google/protobuf/go_features.proto";
-import "pkg/common/proto/messages/request_metadata.proto";
 
-option go_package = "github.com/jdfalk/subtitle-manager/pkg/jobpb";
 option features.(pb.go).api_level = API_HYBRID;
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/jobpb";
 
 // TranslationJob represents a translation request for one or more subtitle files.
 message TranslationJob {
