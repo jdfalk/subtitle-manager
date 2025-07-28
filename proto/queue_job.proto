@@ -1,10 +1,10 @@
 // file: proto/queue_job.proto
-// version: 1.2.0
+// version: 1.3.0
 // guid: 1f3aeed2-6b5a-4e2c-bc6c-123456789abc
 
 edition = "2023";
 
-package subtitle.v1;
+package subtitle.job.v1;
 
 import "google/protobuf/go_features.proto";
 
