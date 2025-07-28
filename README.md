@@ -2281,3 +2281,6 @@ creation for open feature issues.
 
 - **Search result caching**: Manual search results cached for faster repeated
   queries with per-IP rate limiting to prevent abuse
+
+The `codex-rebase.sh` script now uses Codex or ChatGPT CLI to resolve merge conflicts, commits the results, and force pushes for a clean working tree.
+- Added unit test coverage for /api/sync/batch invalid JSON

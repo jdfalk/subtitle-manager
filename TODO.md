@@ -1035,3 +1035,7 @@ audio track details. The `splitLines` helper has been updated accordingly.
 - [x] Search Result Caching
 - [x] Implement translation result caching
 - [x] Replace existing health endpoints with gcommon/health handlers
+
+Review /api/sync/batch test edge cases
+
+Validate codex-rebase.sh AI conflict resolution

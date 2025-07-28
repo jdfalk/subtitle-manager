@@ -8,6 +8,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed\n\n- codex-rebase.sh now uses Codex or ChatGPT CLI for conflict resolution and automatically commits before force pushing
+
+### Added
+
+- Added unit test for /api/sync/batch invalid JSON case
+
 ### Added
 
 - Added gRPC health service using gcommon protobufs
