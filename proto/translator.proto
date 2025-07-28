@@ -1,17 +1,4 @@
 // file: proto/translator.proto
-// version: 1.3.0
-// guid: 70eca88d-31fe-4044-8b76-a22bd3c9e0bd
-
-edition = "2023";
-
-package subtitle.v1.translator;
-
-import "google/protobuf/go_features.proto";
-import "google/protobuf/empty.proto";
-import "proto/config.proto";
-
-option go_package = "github.com/jdfalk/subtitle-manager/pkg/translatorpb;translatorpb";
-// file: proto/translator.proto
 // version: 1.5.0
 // guid: 70eca88d-31fe-4044-8b76-a22bd3c9e0bd
 
