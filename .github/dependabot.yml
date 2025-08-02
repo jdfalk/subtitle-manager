@@ -13,16 +13,11 @@ updates:
       time: "09:00"
       timezone: "America/New_York"
     open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
     commit-message:
       prefix: "go"
       include: "scope"
     labels:
       - "dependencies"
-      - "golang"
     allow:
       - dependency-type: "direct"
     ignore:
@@ -38,17 +33,12 @@ updates:
       time: "09:00"
       timezone: "America/New_York"
     open-pull-requests-limit: 8
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
     commit-message:
       prefix: "frontend"
       include: "scope"
     labels:
       - "dependencies"
-      - "frontend"
-      - "npm"
+      - "ui/ux"
     allow:
       - dependency-type: "direct"
       - dependency-type: "indirect"
@@ -96,17 +86,11 @@ updates:
       time: "09:00"
       timezone: "America/New_York"
     open-pull-requests-limit: 3
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
     commit-message:
       prefix: "docker"
       include: "scope"
     labels:
       - "dependencies"
-      - "docker"
-      - "infrastructure"
 
   # GitHub Actions dependencies (.github/workflows/*.yml found)
   - package-ecosystem: "github-actions"
@@ -117,17 +101,12 @@ updates:
       time: "09:00"
       timezone: "America/New_York"
     open-pull-requests-limit: 5
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
     commit-message:
       prefix: "actions"
       include: "scope"
     labels:
       - "dependencies"
-      - "github-actions"
-      - "ci"
+      - "ci/cd"
     groups:
       ci-dependencies:
         patterns:
@@ -155,17 +134,11 @@ updates:
       time: "09:00"
       timezone: "America/New_York"
     open-pull-requests-limit: 3
-    reviewers:
-      - "jdfalk"
-    assignees:
-      - "jdfalk"
     commit-message:
       prefix: "python"
       include: "scope"
     labels:
       - "dependencies"
-      - "python"
-      - "scripts"
     allow:
       - dependency-type: "direct"
     ignore:
