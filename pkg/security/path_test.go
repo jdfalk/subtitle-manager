@@ -1,4 +1,6 @@
 // file: pkg/security/path_test.go
+// version: 1.1.0
+// guid: 0f457ffd-07c4-4ea3-b917-e86abb3ed750
 package security
 
 import (
@@ -134,6 +136,46 @@ func TestValidateSubtitleOutputPath(t *testing.T) {
 	_, err = ValidateSubtitleOutputPath("/etc/passwd", "en")
 	if err == nil {
 		t.Error("expected error for path traversal in video path")
+	}
+}
+
+func TestGetAllowedBaseDirsExcludesMediaRoot(t *testing.T) {
+	// Setup
+	viper.Reset()
+	t.Cleanup(viper.Reset)
+
+	dir1 := filepath.Join("/media", "test1")
+	dir2 := filepath.Join("/media", "test2")
+	if err := os.MkdirAll(dir1, 0o755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+	if err := os.MkdirAll(dir2, 0o755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+	t.Cleanup(func() {
+		os.RemoveAll(dir1)
+		os.RemoveAll(dir2)
+	})
+
+	// Exercise
+	dirs := GetAllowedBaseDirs()
+
+	// Verify
+	for _, d := range dirs {
+		if d == "/media" {
+			t.Fatalf("/media should not be included in allowed base dirs")
+		}
+	}
+	contains := func(list []string, s string) bool {
+		for _, v := range list {
+			if v == s {
+				return true
+			}
+		}
+		return false
+	}
+	if !contains(dirs, dir1) || !contains(dirs, dir2) {
+		t.Fatalf("expected subdirectories to be included, got %v", dirs)
 	}
 }
 

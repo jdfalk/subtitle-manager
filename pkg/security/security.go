@@ -1,4 +1,6 @@
 // file: pkg/security/security.go
+// version: 1.1.0
+// guid: efe90a08-389d-4157-a46e-8a57bfc1181a
 package security
 
 import (
@@ -66,8 +68,19 @@ func GetAllowedBaseDirs() []string {
 	if subDir := viper.GetString("subtitle_directory"); subDir != "" {
 		dirs = append(dirs, subDir)
 	}
+
+	if info, err := os.Stat("/media"); err == nil && info.IsDir() {
+		if entries, err := os.ReadDir("/media"); err == nil {
+			for _, entry := range entries {
+				if entry.IsDir() {
+					dirs = append(dirs, filepath.Join("/media", entry.Name()))
+				}
+			}
+		}
+	}
+
 	commonDirs := []string{
-		"/media", "/mnt/media", "/home/media", "/var/media",
+		"/mnt/media", "/home/media", "/var/media",
 		"/Movies", "/TV", "/Videos",
 	}
 	if runtime.GOOS == "windows" {
