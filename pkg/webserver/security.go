@@ -1,4 +1,6 @@
 // file: pkg/webserver/security.go
+// version: 1.0.1
+// guid: f6e0dba3-dddf-4a3b-9ee6-f3ed345ac9ab
 
 package webserver
 
@@ -6,28 +8,24 @@ import "net/http"
 
 // securityHeadersMiddleware sets common security headers on all responses.
 // It helps mitigate XSS, clickjacking and other browser based attacks.
-// The CSP allows necessary resources for the React/Material-UI frontend while maintaining security.
+// The CSP is intentionally permissive during development and should be tightened
+// before production deployment.
 func securityHeadersMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Frame-Options", "DENY")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "no-referrer")
 
-		// Content Security Policy that allows:
-		// - Self-hosted content (scripts, styles, images, etc.)
-		// - Google Fonts (Material-UI requirement)
-		// - Inline styles (Material-UI dynamic styles)
-		// - Data URLs for images (common in modern web apps)
-		// - Blob URLs (file operations and dynamic content)
-		// - HTTPS images (for external content like movie posters)
-		csp := "default-src 'self'; " +
-			"script-src 'self' 'unsafe-inline' blob:; " +
-			"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-			"font-src 'self' https://fonts.gstatic.com; " +
-			"img-src 'self' data: https: blob:; " +
-			"connect-src 'self'; " +
-			"object-src 'none'; " +
-			"base-uri 'self'"
+		// Temporarily allow all sources to simplify development. This
+		// policy should be restricted once development is complete.
+		csp := "default-src * data: blob:; " +
+			"script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; " +
+			"style-src * 'unsafe-inline' data:; " +
+			"img-src * data: blob:; " +
+			"connect-src *; " +
+			"font-src * data:; " +
+			"object-src *; " +
+			"base-uri *"
 
 		w.Header().Set("Content-Security-Policy", csp)
 		w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
