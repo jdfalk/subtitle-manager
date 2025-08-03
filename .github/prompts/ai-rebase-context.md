@@ -1,128 +1,90 @@
 <!-- file: .github/prompts/ai-rebase-context.md -->
-<!-- version: 1.0.0 -->
-<!-- guid: 7f8e9d6c-5b4a-3c2d-1e0f-6a5b4c3d2e1f -->
+<!-- version: 1.0.1 -->
+<!-- guid: 5f8e7d6c-9b8a-7c6d-5e4f-3a2b1c0d9e8f -->
 
 # Repository Context for AI Rebase
 
 ## Project Overview
 
-This is the **Subtitle Manager** repository, a comprehensive subtitle file
-processing and management application built with Go and featuring a modern web
-UI. The project focuses on:
+This is the **ghcommon** repository, which contains shared GitHub workflows,
+automation scripts, and common utilities for managing multiple repositories in
+the organization. It focuses on:
 
-- Subtitle file format conversion and processing
-- Web-based subtitle management interface
-- Media file scanning and organization
-- Advanced subtitle synchronization and editing
-- Cloud storage integration for subtitle libraries
-- Whisper ASR integration for automatic transcription
+- Reusable GitHub Actions workflows
+- Documentation management automation
+- Issue and project management tools
+- Code quality and standardization tools
 
 ## Coding Standards
 
-- Use Go conventions: CamelCase for exported functions, camelCase for private
-- Follow standard file header format with path, version, and GUID
-- Use conventional commit message format: `type(scope): description`
-- All Go code should include comprehensive documentation
-- Web UI follows React/JavaScript best practices with Material-UI components
-- Database interactions use proper error handling and transactions
-- API endpoints follow RESTful conventions
+- Follow conventional commit message format: `type(scope): description`
+- Use proper file headers with path, version, and GUID
+- Maintain documentation with every code change
+- Use semantic versioning for all files
+- Follow the centralized coding instructions system in `.github/instructions/`
 
 ## Key Files to Reference
 
 ### README.md
 
-Contains project overview, installation instructions, and usage examples for the
-subtitle management system.
+The main project documentation explaining the repository's purpose and
+structure.
 
 ### .github/instructions/general-coding.instructions.md
 
-Standard coding guidelines including file headers, version management, and
-documentation requirements.
+Contains the canonical coding standards and file header requirements that apply
+to all files.
 
-### go.mod
+### .github/commit-messages.md
 
-Go module definition showing dependencies on subtitle processing libraries, web
-frameworks, and database drivers.
+Defines the conventional commit message format used across all repositories.
 
-### main.go
+### .github/workflows/
 
-Application entry point with command-line interface, server initialization, and
-core subtitle processing logic.
+Contains reusable GitHub Actions workflows that can be used by other
+repositories.
 
 ## Common Conflict Patterns
 
-### Go Code Conflicts
+### File Headers
 
-When resolving Go conflicts:
+When resolving conflicts in file headers, always:
 
-- Preserve both import statements when they're different packages
-- Combine struct field additions from both branches
-- Merge handler function improvements while maintaining API compatibility
-- Keep both test cases when they test different scenarios
-- Preserve error handling improvements from both sides
+- Keep the correct file path relative to repository root
+- Increment the version number appropriately (patch/minor/major)
+- Preserve the GUID (never change it)
+- Use the correct comment format for the file type
 
-### Web UI Conflicts
+### Workflow Files
 
-For React/JavaScript conflicts:
+For GitHub Actions workflow conflicts:
 
-- Combine component prop additions from both branches
-- Merge CSS styling improvements while maintaining visual consistency
-- Preserve both event handler additions when they serve different purposes
-- Combine Material-UI component upgrades and customizations
-- Keep both API endpoint additions when they serve different features
+- Preserve both workflow logic when possible
+- Maintain proper YAML indentation
+- Keep input/output definitions consistent
+- Ensure environment variables are properly quoted
 
-### Configuration Conflicts
+### Documentation Updates
 
-For configuration file conflicts:
+When resolving documentation conflicts:
 
-- Merge environment variable additions from both branches
-- Combine Docker configuration improvements
-- Preserve both database migration scripts
-- Merge API route definitions when they don't overlap
-- Keep both feature flag additions
+- Combine content additions rather than choosing one side
+- Maintain consistent formatting and structure
+- Preserve both sets of new information when relevant
+- Keep version history in changelogs
 
 ## Dependencies and Imports
 
-- **Core Go libraries**: `net/http`, `encoding/json`, `database/sql`
-- **Subtitle processing**: Custom subtitle format parsers and converters
-- **Web framework**: Gorilla Mux for routing, middleware for CORS/auth
-- **Database**: SQLite/PostgreSQL drivers for metadata storage
-- **Frontend**: React, Material-UI, modern JavaScript/TypeScript
-- **Testing**: Go testing package, testify for assertions
-- **Cloud storage**: AWS S3, DigitalOcean Spaces integration
+- Python scripts use standard library when possible
+- Shell scripts should be POSIX-compatible
+- GitHub Actions use official actions with pinned versions
+- Templates and prompts should be self-contained
 
 ## Project Structure
 
-- `main.go` - Application entry point and CLI interface
-- `pkg/` - Core subtitle processing libraries and utilities
-- `webui/` - React-based web interface for subtitle management
-- `cmd/` - Command-line tools and utilities
-- `docs/` - Documentation including API specs and user guides
-- `test/` - Integration tests and test data
-- `scripts/` - Build scripts and development tools
-- `sdks/` - Client SDKs for different programming languages
-
-## Subtitle-Specific Context
-
-### File Format Support
-
-The application handles multiple subtitle formats with specific parsing logic:
-
-- **SRT (SubRip)**: Most common format with simple time codes
-- **VTT (WebVTT)**: Web-compatible format with styling support
-- **ASS/SSA**: Advanced SubStation Alpha with complex styling
-- **SUB**: MicroDVD format with frame-based timing
-
-### Processing Pipeline
-
-Subtitle processing follows a standard pipeline:
-
-1. **Detection**: Identify subtitle format from file content
-2. **Parsing**: Extract timing, text, and styling information
-3. **Validation**: Check for timing overlaps and formatting errors
-4. **Conversion**: Transform between different subtitle formats
-5. **Optimization**: Adjust timing and improve readability
-
-When resolving conflicts in subtitle processing code, preserve both format
-improvements and ensure the pipeline remains functional for all supported
-formats.
+- `.github/workflows/` - Reusable GitHub Actions workflows
+- `.github/instructions/` - Coding standards and guidelines
+- `.github/prompts/` - AI prompt templates
+- `scripts/` - Automation and utility scripts
+- `templates/` - File and project templates
+- `docs/` - Additional documentation
