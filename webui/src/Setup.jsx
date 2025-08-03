@@ -1,3 +1,7 @@
+// file: webui/src/Setup.jsx
+// version: 1.1.0
+// guid: fbd4687e-dff3-4715-8aad-504665006080
+
 import {
   CheckCircleOutlined,
   CloudDownloadOutlined,
@@ -38,6 +42,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import { apiService } from './services/api.js';
+import { normalizeUrl } from './utils/url.js';
 
 // Material Design 3 theme
 const theme = createTheme({
@@ -132,8 +137,18 @@ export default function Setup() {
   const [loading, setLoading] = useState('');
 
   const importBazarr = async () => {
-    if (!bazarrURL || !bazarrAPIKey) {
+    const url = bazarrURL.trim();
+    if (!url || !bazarrAPIKey) {
       setBazarrError('Please enter both URL and API key');
+      return;
+    }
+
+    let normalized;
+    try {
+      normalized = normalizeUrl(url);
+      new URL(normalized);
+    } catch {
+      setBazarrError('Please enter a valid URL');
       return;
     }
 
@@ -142,7 +157,7 @@ export default function Setup() {
 
     try {
       const response = await apiService.setup.importBazarr(
-        bazarrURL,
+        normalized,
         bazarrAPIKey
       );
 
