@@ -1,4 +1,6 @@
 // file: pkg/scanner/scanner.go
+// version: 1.1.0
+// guid: ad2ef6ba-8afa-4ced-8508-0c535dbb23fd
 package scanner
 
 import (
@@ -15,6 +17,7 @@ import (
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/events"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/metadata"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
@@ -50,7 +53,15 @@ func ScanDirectory(ctx context.Context, dir, lang string, providerName string, p
 	if err != nil {
 		return err
 	}
-	return work.Wait()
+	if err := work.Wait(); err != nil {
+		return err
+	}
+	if store != nil {
+		if err := metadata.ScanLibrary(ctx, sanitizedDir, store); err != nil {
+			logger.Warnf("scan library: %v", err)
+		}
+	}
+	return nil
 }
 
 // ProcessFile downloads a subtitle for path using providerName for history
@@ -219,7 +230,15 @@ func ScanDirectoryWithProfiles(ctx context.Context, dir string, db *sql.DB, upgr
 	if err != nil {
 		return err
 	}
-	return work.Wait()
+	if err := work.Wait(); err != nil {
+		return err
+	}
+	if store != nil {
+		if err := metadata.ScanLibrary(ctx, sanitizedDir, store); err != nil {
+			logger.Warnf("scan library: %v", err)
+		}
+	}
+	return nil
 }
 
 // ProcessFileWithProfile downloads subtitles using the language profile assigned to the media file.

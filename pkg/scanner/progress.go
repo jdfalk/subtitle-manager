@@ -1,4 +1,6 @@
 // file: pkg/scanner/progress.go
+// version: 1.1.0
+// guid: 30d76902-4260-48c3-8dbb-acbbdc9bcea7
 package scanner
 
 import (
@@ -10,6 +12,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
+	"github.com/jdfalk/subtitle-manager/pkg/metadata"
 	"github.com/jdfalk/subtitle-manager/pkg/providers"
 	"github.com/jdfalk/subtitle-manager/pkg/security"
 )
@@ -53,5 +56,13 @@ func ScanDirectoryProgress(ctx context.Context, dir, lang, providerName string,
 	if err != nil {
 		return err
 	}
-	return work.Wait()
+	if err := work.Wait(); err != nil {
+		return err
+	}
+	if store != nil {
+		if err := metadata.ScanLibrary(ctx, sanitizedDir, store); err != nil {
+			logger.Warnf("scan library: %v", err)
+		}
+	}
+	return nil
 }
