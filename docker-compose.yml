@@ -42,11 +42,9 @@ services:
       test:
         [
           "CMD",
-          "wget",
-          "--quiet",
-          "--tries=1",
-          "--spider",
-          "http://localhost:8080/api/system",
+          "sh",
+          "-c",
+          "PORT=$${SM_HTTP_PORT:-8080} && wget --quiet --tries=1 --spider http://localhost:$$PORT/api/system",
         ]
       interval: 30s
       timeout: 10s

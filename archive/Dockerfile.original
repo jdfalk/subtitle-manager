@@ -84,4 +84,4 @@ EXPOSE 8080
 
 # Default command starts the web interface
 ENTRYPOINT ["/subtitle-manager"]
-CMD ["web", "--addr", ":8080"]
+CMD ["web"]

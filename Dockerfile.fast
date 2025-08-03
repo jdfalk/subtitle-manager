@@ -76,4 +76,4 @@ ENV SM_CONFIG_FILE=/config/subtitle-manager.yaml \
 EXPOSE 8080
 
 ENTRYPOINT ["/usr/local/bin/docker-init.sh"]
-CMD ["web", "--addr", ":8080"]
+CMD ["web"]

@@ -71,15 +71,7 @@ services:
 
     # Healthcheck for production monitoring
     healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--quiet",
-          "--tries=1",
-          "--spider",
-          "http://localhost:8080/api/system",
-        ]
+      test: ["CMD", "sh", "-c", "PORT=$${SM_HTTP_PORT:-8080} && wget --quiet --tries=1 --spider http://localhost:$$PORT/api/system"]
       interval: 30s
       timeout: 10s
       retries: 3
