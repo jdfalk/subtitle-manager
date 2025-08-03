@@ -1,3 +1,6 @@
+// file: pkg/scanner/scanner_test.go
+// version: 1.1.0
+// guid: 74a6ae1b-741b-4e53-8f4d-2a36279cffd4
 package scanner
 
 import (
@@ -6,6 +9,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/jdfalk/subtitle-manager/pkg/database"
 	providersmocks "github.com/jdfalk/subtitle-manager/pkg/providers/mocks"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/mock"
@@ -19,10 +23,15 @@ func TestScanDirectory(t *testing.T) {
 	}
 	viper.Set("media_directory", dir)
 	defer viper.Reset()
-	// first scan creates subtitle
+	store, err := database.OpenPebble(t.TempDir())
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+	// first scan creates subtitle and library entry
 	m := providersmocks.NewProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("a"), nil)
-	if err := ScanDirectory(context.Background(), dir, "en", "test", m, false, 2, nil); err != nil {
+	if err := ScanDirectory(context.Background(), dir, "en", "test", m, false, 2, store); err != nil {
 		t.Fatalf("scan: %v", err)
 	}
 	m.AssertExpectations(t)
@@ -34,9 +43,16 @@ func TestScanDirectory(t *testing.T) {
 	if string(data) != "a" {
 		t.Fatalf("unexpected subtitle %q", data)
 	}
-	// second scan without upgrade should keep existing subtitle
+	count, err := store.CountMediaItems()
+	if err != nil {
+		t.Fatalf("count media items: %v", err)
+	}
+	if count != 1 {
+		t.Fatalf("expected 1 media item, got %d", count)
+	}
+	// second scan without upgrade should keep existing subtitle and not fail
 	m2 := providersmocks.NewProvider(t)
-	if err := ScanDirectory(context.Background(), dir, "en", "test", m2, false, 2, nil); err != nil {
+	if err := ScanDirectory(context.Background(), dir, "en", "test", m2, false, 2, store); err != nil {
 		t.Fatalf("scan 2: %v", err)
 	}
 	data, _ = os.ReadFile(sub)
@@ -46,7 +62,7 @@ func TestScanDirectory(t *testing.T) {
 	// scan with upgrade should replace subtitle
 	m3 := providersmocks.NewProvider(t)
 	m3.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("cc"), nil)
-	if err := ScanDirectory(context.Background(), dir, "en", "test", m3, true, 2, nil); err != nil {
+	if err := ScanDirectory(context.Background(), dir, "en", "test", m3, true, 2, store); err != nil {
 		t.Fatalf("scan upgrade: %v", err)
 	}
 	m3.AssertExpectations(t)
