@@ -18,6 +18,7 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
+      - "tech:go"
     allow:
       - dependency-type: "direct"
     ignore:
@@ -38,7 +39,8 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-      - "ui/ux"
+      - "tech:typescript"
+      - "ui"
     allow:
       - dependency-type: "direct"
       - dependency-type: "indirect"
@@ -91,6 +93,7 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
+      - "tech:docker"
 
   # GitHub Actions dependencies (.github/workflows/*.yml found)
   - package-ecosystem: "github-actions"
@@ -106,7 +109,8 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-      - "ci/cd"
+      - "github-actions"
+      - "ci-cd"
     groups:
       ci-dependencies:
         patterns:
@@ -139,6 +143,7 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
+      - "tech:python"
     allow:
       - dependency-type: "direct"
     ignore:
