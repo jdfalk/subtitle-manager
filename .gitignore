@@ -366,3 +366,6 @@ cookies.txt
 
 # Documentation update stats (disabled to prevent merge conflicts)
 .doc-update-stats*.json
+
+# Task logs
+logs/
