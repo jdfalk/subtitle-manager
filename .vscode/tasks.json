@@ -4,7 +4,18 @@
         {
             "label": "Go Build",
             "type": "shell",
-            "command": "mkdir -p logs && go build -o bin/subtitle-manager ./cmd/subtitle-manager > logs/go_build.log 2>&1 && echo 'SUCCESS: go build completed' >> logs/go_build.log || echo 'FAILED: go build failed' >> logs/go_build.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "exec",
+                "go",
+                "build",
+                "-o",
+                "bin/subtitle-manager",
+                "./cmd/subtitle-manager"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "build",
             "isBackground": false,
             "problemMatcher": [
@@ -14,7 +25,16 @@
         {
             "label": "Go Test",
             "type": "shell",
-            "command": "mkdir -p logs && go test ./... > logs/go_test.log 2>&1 && echo 'SUCCESS: go test completed' >> logs/go_test.log || echo 'FAILED: go test failed' >> logs/go_test.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "exec",
+                "go",
+                "test",
+                "./..."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "test",
             "isBackground": false,
             "problemMatcher": [
@@ -24,9 +44,18 @@
         {
             "label": "Go Run",
             "type": "shell",
-            "command": "mkdir -p logs && go run ./cmd/subtitle-manager > logs/go_run.log 2>&1 && echo 'SUCCESS: go run completed' >> logs/go_run.log || echo 'FAILED: go run failed' >> logs/go_run.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "exec",
+                "go",
+                "run",
+                "./cmd/subtitle-manager"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "build",
-            "isBackground": true,
+            "isBackground": false,
             "problemMatcher": [
                 "$go"
             ]
@@ -34,7 +63,18 @@
         {
             "label": "Docker Build",
             "type": "shell",
-            "command": "mkdir -p logs && docker build -t subtitle-manager . > logs/docker_build.log 2>&1 && echo 'SUCCESS: docker build completed' >> logs/docker_build.log || echo 'FAILED: docker build failed' >> logs/docker_build.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "exec",
+                "docker",
+                "build",
+                "-t",
+                "subtitle-manager",
+                "."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "build",
             "isBackground": false,
             "problemMatcher": []
@@ -42,7 +82,14 @@
         {
             "label": "Git Add All",
             "type": "shell",
-            "command": "mkdir -p logs && git add . > logs/git_add.log 2>&1 && echo 'SUCCESS: git add completed' >> logs/git_add.log || echo 'FAILED: git add failed' >> logs/git_add.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "git",
+                "add"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "build",
             "isBackground": false,
             "problemMatcher": []
@@ -50,7 +97,15 @@
         {
             "label": "Git Add Selective",
             "type": "shell",
-            "command": "mkdir -p logs && PATTERN='${input:filePattern}'; git add $PATTERN > logs/git_add_selective.log 2>&1 && echo \"SUCCESS: git add completed for pattern: $PATTERN\" >> logs/git_add_selective.log || echo \"FAILED: git add failed for pattern: $PATTERN\" >> logs/git_add_selective.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "git",
+                "add",
+                "${input:filePattern}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "build",
             "isBackground": false,
             "problemMatcher": []
@@ -58,7 +113,16 @@
         {
             "label": "Git Commit",
             "type": "shell",
-            "command": "mkdir -p logs && MESSAGE='${input:commitMessage}'; git commit -m \"$MESSAGE\" > logs/git_commit.log 2>&1 && echo 'SUCCESS: git commit completed' >> logs/git_commit.log || echo 'FAILED: git commit failed' >> logs/git_commit.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "git",
+                "commit",
+                "--message",
+                "${input:commitMessage}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "build",
             "isBackground": false,
             "problemMatcher": []
@@ -66,7 +130,14 @@
         {
             "label": "Git Push",
             "type": "shell",
-            "command": "mkdir -p logs && git push > logs/git_push.log 2>&1 && echo 'SUCCESS: git push completed' >> logs/git_push.log || echo 'FAILED: git push failed' >> logs/git_push.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "git",
+                "push"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "build",
             "isBackground": false,
             "problemMatcher": []
@@ -74,7 +145,14 @@
         {
             "label": "Git Status",
             "type": "shell",
-            "command": "mkdir -p logs && git status --porcelain > logs/git_status.log 2>&1 && echo '--- Git Status Summary ---' >> logs/git_status.log && git status >> logs/git_status.log",
+            "command": "/Users/jdfalk/repos/github.com/jdfalk/copilot-agent-util/bin/copilot-agent-util",
+            "args": [
+                "git",
+                "status"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": "build",
             "isBackground": false,
             "problemMatcher": []
@@ -84,13 +162,13 @@
         {
             "id": "commitMessage",
             "description": "Commit message",
-            "default": "fix: update project files",
+            "default": "feat: automated commit via copilot-agent-util",
             "type": "promptString"
         },
         {
             "id": "filePattern",
-            "description": "File pattern to add (e.g., '*.go', 'cmd/', '**/*.proto')",
-            "default": "*.go",
+            "description": "File pattern to add (e.g., '*.go', 'pkg/', '**/*.proto')",
+            "default": ".",
             "type": "promptString"
         }
     ]
