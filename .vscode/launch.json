@@ -1,0 +1,63 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Application",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}",
+      "env": {},
+      "args": ["--help"],
+      "showLog": true
+    },
+    {
+      "name": "Debug Test",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${workspaceFolder}",
+      "env": {},
+      "args": ["-test.v"],
+      "showLog": true
+    },
+    {
+      "name": "Debug Current Test",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["-test.v", "-test.run", "^${input:testName}$"],
+      "showLog": true
+    },
+    {
+      "name": "Scan Command",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}",
+      "env": {},
+      "args": ["scan", "opensubtitles", "/path/to/videos", "en"],
+      "showLog": true
+    },
+    {
+      "name": "Web Server",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}",
+      "env": {},
+      "args": ["web", "--port", "8080"],
+      "showLog": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "testName",
+      "description": "Test function name",
+      "default": "",
+      "type": "promptString"
+    }
+  ]
+}

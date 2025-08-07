@@ -1,0 +1,64 @@
+{
+  "go.testFlags": ["-v"],
+  "go.buildFlags": ["-v"],
+  "go.lintTool": "golangci-lint",
+  "go.lintOnSave": "package",
+  "go.formatTool": "goimports",
+  "go.useLanguageServer": true,
+  "go.coverOnSave": false,
+  "go.coverOnSingleTest": true,
+  "go.testTimeout": "30s",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "files.associations": {
+    "*.srt": "plaintext",
+    "*.ass": "plaintext",
+    "*.vtt": "plaintext",
+    ".github/copilot-instructions.md": "plaintext"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/bin": true,
+    "**/dist": true,
+    "**/.git": true,
+    "**/coverage.out": true,
+    "**/coverage.html": true
+  },
+  "markdownlint.ignore": [".github/copilot-instructions.md"],
+  "markdown.validate.ignoredLinks": [
+    ".github/copilot-instructions.md",
+    "cmd/convert.go",
+    "webui/handlers.go"
+  ],
+  "markdown.validate.enabled": false,
+  "markdown.validate.fileLinks.enabled": "ignore",
+  "[markdown]": {
+    "editor.quickSuggestions": {
+      "other": false,
+      "comments": false,
+      "strings": false
+    }
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true
+  },
+  "problems.decorations.enabled": false,
+  "markdown.validate.fileLinks.markdownFragmentLinks": "ignore",
+  "markdown.validate.fragmentLinks.enabled": "ignore",
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "eslint.options": {
+    "ignorePattern": [".github/copilot-instructions.md"]
+  }
+}
