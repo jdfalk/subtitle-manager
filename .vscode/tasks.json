@@ -4,7 +4,7 @@
         {
             "label": "Go Build",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "exec",
                 "go",
@@ -25,7 +25,7 @@
         {
             "label": "Go Test",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "exec",
                 "go",
@@ -44,7 +44,7 @@
         {
             "label": "Go Run",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "exec",
                 "go",
@@ -63,7 +63,7 @@
         {
             "label": "Docker Build",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "exec",
                 "docker",
@@ -82,7 +82,7 @@
         {
             "label": "Git Add All",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "git",
                 "add"
@@ -97,7 +97,7 @@
         {
             "label": "Git Add Selective",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "git",
                 "add",
@@ -113,7 +113,7 @@
         {
             "label": "Git Commit",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "git",
                 "commit",
@@ -130,7 +130,7 @@
         {
             "label": "Git Push",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "git",
                 "push"
@@ -145,7 +145,7 @@
         {
             "label": "Git Status",
             "type": "shell",
-            "command": "copilot-agent-utilr",
+            "command": "copilot-agent-util",
             "args": [
                 "git",
                 "status"
@@ -162,7 +162,7 @@
         {
             "id": "commitMessage",
             "description": "Commit message",
-            "default": "feat: automated commit via copilot-agent-utilr",
+            "default": "feat: automated commit via copilot-agent-util",
             "type": "promptString"
         },
         {
