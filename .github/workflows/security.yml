@@ -43,7 +43,7 @@ jobs:
       has_docker: ${{ steps.detect.outputs.has_docker }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Detect project languages
         id: detect
@@ -103,7 +103,7 @@ jobs:
         language: ${{ fromJSON(format('["{0}"]', needs.detect-languages.outputs.languages)) }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -145,7 +145,7 @@ jobs:
     needs: detect-languages
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -199,7 +199,7 @@ jobs:
     if: needs.detect-languages.outputs.has_docker == 'true'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build Docker image for scanning
         run: |
@@ -240,7 +240,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -266,7 +266,7 @@ jobs:
     needs: detect-languages
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Go license check
         if: needs.detect-languages.outputs.has_go == 'true'
@@ -307,7 +307,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Check for security policy
         run: |

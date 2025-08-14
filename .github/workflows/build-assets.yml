@@ -22,7 +22,7 @@ jobs:
       id-token: write # Required for signing and attestations
       attestations: write # Required for build attestations
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
