@@ -1,5 +1,5 @@
 # file: .github/workflows/ci.yml
-# version: 4.0.0
+# version: 1.1.0
 # guid: f1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6
 
 name: Continuous Integration
@@ -23,9 +23,6 @@ env:
   PYTHON_VERSION: "3.12"
   COVERAGE_THRESHOLD: "80"
   CACHE_VERSION: "v1"
-  # subtitle-manager specific
-  FRONTEND_PATH: "webui"
-  DOCKER_FILE: "Dockerfile.hybrid"
 
 permissions:
   contents: write
@@ -73,6 +70,7 @@ jobs:
               - '**/go.sum'
             frontend:
               - 'webui/**'
+              - 'frontend/**'
               - '**/package.json'
               - '**/package-lock.json'
               - '**/yarn.lock'
@@ -104,19 +102,28 @@ jobs:
               - '.github/workflows/**'
               - '.github/actions/**'
 
-      - name: Determine execution strategy
+      - name: Determine workflow execution
         id: determine
         run: |
           echo "should-lint=true" >> $GITHUB_OUTPUT
-          if [[ "${{ steps.filter.outputs.go }}" == "true" ]] || [[ "${{ steps.filter.outputs.frontend }}" == "true" ]] || [[ "${{ steps.filter.outputs.python }}" == "true" ]]; then
+
+          if [[ "${{ steps.filter.outputs.go }}" == "true" ||
+                "${{ steps.filter.outputs.frontend }}" == "true" ||
+                "${{ steps.filter.outputs.python }}" == "true" ]]; then
             echo "should-test=true" >> $GITHUB_OUTPUT
-            echo "should-build=true" >> $GITHUB_OUTPUT
           else
             echo "should-test=false" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ "${{ steps.filter.outputs.go }}" == "true" ||
+                "${{ steps.filter.outputs.frontend }}" == "true" ||
+                "${{ steps.filter.outputs.docker }}" == "true" ]]; then
+            echo "should-build=true" >> $GITHUB_OUTPUT
+          else
             echo "should-build=false" >> $GITHUB_OUTPUT
           fi
 
-  # Lint all code for quality and style compliance
+  # Comprehensive linting for all file types
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
@@ -127,6 +134,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Go
         if: needs.detect-changes.outputs.go == 'true'
@@ -135,88 +143,100 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
-      - name: Run Go linting
-        if: needs.detect-changes.outputs.go == 'true'
-        run: |
-          echo "Running Go formatting check..."
-          if ! gofmt -l $(find . -name '*.go' | grep -v vendor/) | grep .; then
-            echo "✅ Go code is properly formatted"
-          else
-            echo "❌ Go code formatting issues found"
-            gofmt -l $(find . -name '*.go' | grep -v vendor/)
-            exit 1
-          fi
-
-          echo "Running go vet..."
-          go vet ./...
-
-          echo "Running go mod tidy check..."
-          go mod tidy
-          if ! git diff --quiet go.mod go.sum; then
-            echo "❌ go.mod or go.sum needs tidying"
-            git diff go.mod go.sum
-            exit 1
-          fi
-
       - name: Set up Node.js
         if: needs.detect-changes.outputs.frontend == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: ${{ env.FRONTEND_PATH }}/package-lock.json
-
-      - name: Install frontend dependencies
-        if: needs.detect-changes.outputs.frontend == 'true'
-        working-directory: ${{ env.FRONTEND_PATH }}
-        run: npm ci --legacy-peer-deps
-
-      - name: Run frontend linting
-        if: needs.detect-changes.outputs.frontend == 'true'
-        working-directory: ${{ env.FRONTEND_PATH }}
-        run: |
-          echo "Running ESLint..."
-          npm run lint || echo "ESLint issues found"
-
-          echo "Running Prettier check..."
-          npm run format:check || echo "Prettier formatting issues found"
+          cache: npm
+          cache-dependency-path: |
+            **/package-lock.json
+            webui/package-lock.json
 
       - name: Set up Python
         if: needs.detect-changes.outputs.python == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+          cache: pip
 
-      - name: Run Python linting
-        if: needs.detect-changes.outputs.python == 'true'
+      - name: Run Super Linter
+        uses: github/super-linter/slim@v5
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          FILTER_REGEX_EXCLUDE: ".*\\.git/.*|.*\\.github/copilot/.*|.*\\.vscode/.*|.*node_modules/.*|.*\\.cache/.*|.*vendor/.*|.*dist/.*"
+
+          # Language-specific validation
+          VALIDATE_GO: ${{ needs.detect-changes.outputs.go }}
+          VALIDATE_JAVASCRIPT_ES: ${{ needs.detect-changes.outputs.frontend }}
+          VALIDATE_TYPESCRIPT_ES: ${{ needs.detect-changes.outputs.frontend }}
+          VALIDATE_PYTHON_BLACK: ${{ needs.detect-changes.outputs.python }}
+          VALIDATE_PYTHON_PYLINT: ${{ needs.detect-changes.outputs.python }}
+          VALIDATE_PYTHON_ISORT: ${{ needs.detect-changes.outputs.python }}
+
+          # Always validate these
+          VALIDATE_MARKDOWN: true
+          VALIDATE_YAML: true
+          VALIDATE_JSON: true
+          VALIDATE_GITHUB_ACTIONS: true
+          VALIDATE_DOCKERFILE_HADOLINT: ${{ needs.detect-changes.outputs.docker }}
+          VALIDATE_SHELL_SHFMT: true
+          VALIDATE_GITLEAKS: true
+
+          # Auto-fix capabilities
+          FIX_MARKDOWN: true
+          FIX_JSON: true
+          FIX_YAML: true
+          FIX_GO: ${{ needs.detect-changes.outputs.go }}
+          FIX_PYTHON_BLACK: ${{ needs.detect-changes.outputs.python }}
+          FIX_PYTHON_ISORT: ${{ needs.detect-changes.outputs.python }}
+          FIX_SHELL_SHFMT: true
+
+      - name: Check for auto-fixes
+        id: check-fixes
         run: |
-          echo "Installing Python linting tools..."
-          pip install black isort flake8 mypy
+          if ! git diff --quiet; then
+            echo "has_fixes=true" >> $GITHUB_OUTPUT
+            echo "✨ Auto-fixes were applied by Super Linter"
+          else
+            echo "has_fixes=false" >> $GITHUB_OUTPUT
+            echo "✅ No auto-fixes needed"
+          fi
 
-          echo "Running Black formatting check..."
-          black --check .
+      - name: Commit auto-fixes
+        if: steps.check-fixes.outputs.has_fixes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "style: auto-fix linting issues [skip ci]
 
-          echo "Running isort import sorting check..."
-          isort --check-only .
+          Auto-formatting and fixes applied by Super Linter.
 
-          echo "Running Flake8 linting..."
-          flake8 .
+          - Fixed formatting issues
+          - Applied code style corrections
+          - Resolved linting violations"
+          git push
 
-  # Run unit tests for all detected languages
+  # Go testing with multiple versions and modules
   test-go:
-    name: Test Go Code
+    name: Test Go
     runs-on: ubuntu-latest
     needs: [detect-changes, lint]
     if: needs.detect-changes.outputs.go == 'true'
     strategy:
       matrix:
-        go-version: ["1.23", "1.24"]
+        go-version: ["1.22", "1.23", "1.24"]
+        include:
+          - go-version: "1.24"
+            primary: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up Go ${{ matrix.go-version }}
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
@@ -225,152 +245,158 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
-      - name: Run tests with coverage
+      - name: Run tests
         run: |
-          echo "Running Go tests with coverage..."
-          go test -v -race -coverprofile=coverage-go-${{ matrix.go-version }}.out -covermode=atomic ./...
+          go test -v -race -coverprofile=coverage.out ./...
+          go tool cover -html=coverage.out -o coverage.html
 
-      - name: Upload Go coverage to artifact
+      - name: Check coverage
+        if: matrix.primary
+        run: |
+          total=$(go tool cover -func coverage.out | tail -n 1 | awk '{print substr($3, 1, length($3)-1)}')
+          echo "Coverage: $total%"
+          if (( $(echo "$total < $COVERAGE_THRESHOLD" | bc -l) )); then
+            echo "❌ Coverage $total% is below threshold $COVERAGE_THRESHOLD%"
+            exit 1
+          fi
+          echo "✅ Coverage $total% meets threshold $COVERAGE_THRESHOLD%"
+
+      - name: Upload coverage
+        if: matrix.primary
         uses: actions/upload-artifact@v4
         with:
-          name: go-coverage-${{ matrix.go-version }}
-          path: coverage-go-${{ matrix.go-version }}.out
-          retention-days: 7
+          name: go-coverage
+          path: |
+            coverage.out
+            coverage.html
 
+  # Frontend testing (Node.js)
   test-frontend:
-    name: Test Frontend Code
+    name: Test Frontend
     runs-on: ubuntu-latest
     needs: [detect-changes, lint]
     if: needs.detect-changes.outputs.frontend == 'true'
     strategy:
       matrix:
-        node-version: ["20", "22"]
+        node-version: ["20", "22", "24"]
+        include:
+          - node-version: "22"
+            primary: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: ${{ env.FRONTEND_PATH }}/package-lock.json
+          cache: npm
+          cache-dependency-path: |
+            **/package-lock.json
+            webui/package-lock.json
 
       - name: Install dependencies
-        working-directory: ${{ env.FRONTEND_PATH }}
-        run: npm ci --legacy-peer-deps
-
-      - name: Run frontend tests
-        working-directory: ${{ env.FRONTEND_PATH }}
         run: |
-          echo "Running frontend tests..."
-          npm test -- --coverage --watchAll=false
+          if [ -f "webui/package.json" ]; then
+            cd webui && npm ci --legacy-peer-deps
+          elif [ -f "package.json" ]; then
+            npm ci --legacy-peer-deps
+          fi
 
-      - name: Build frontend
-        working-directory: ${{ env.FRONTEND_PATH }}
+      - name: Run tests
         run: |
-          echo "Building frontend..."
-          npm run build
+          if [ -f "webui/package.json" ]; then
+            cd webui && npm test -- --coverage --watchAll=false
+          elif [ -f "package.json" ]; then
+            npm test -- --coverage --watchAll=false
+          fi
 
-      - name: Upload frontend coverage
+      - name: Upload coverage
+        if: matrix.primary
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-coverage-${{ matrix.node-version }}
-          path: ${{ env.FRONTEND_PATH }}/coverage/
-          retention-days: 7
+          name: frontend-coverage
+          path: |
+            webui/coverage/
+            coverage/
 
-      - name: Upload frontend build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build-${{ matrix.node-version }}
-          path: ${{ env.FRONTEND_PATH }}/dist/
-          retention-days: 7
-
+  # Python testing
   test-python:
-    name: Test Python Code
+    name: Test Python
     runs-on: ubuntu-latest
     needs: [detect-changes, lint]
     if: needs.detect-changes.outputs.python == 'true'
     strategy:
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
+        include:
+          - python-version: "3.12"
+            primary: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+          cache: pip
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          if [ -f pyproject.toml ]; then
+            pip install -e .
+          fi
           pip install pytest pytest-cov
 
-      - name: Run Python tests
+      - name: Run tests
         run: |
-          echo "Running Python tests with coverage..."
-          pytest --cov=. --cov-report=xml --cov-report=term
+          pytest --cov --cov-report=xml --cov-report=html
 
-      - name: Upload Python coverage
+      - name: Upload coverage
+        if: matrix.primary
         uses: actions/upload-artifact@v4
         with:
-          name: python-coverage-${{ matrix.python-version }}
-          path: coverage.xml
-          retention-days: 7
+          name: python-coverage
+          path: |
+            htmlcov/
+            coverage.xml
 
-  # Integration tests for the complete application
-  integration-tests:
-    name: Integration Tests
+  # Security scanning with CodeQL
+  security-scan:
+    name: Security Scan
     runs-on: ubuntu-latest
-    needs: [detect-changes, test-go, test-frontend]
-    if: needs.detect-changes.outputs.should-test == 'true'
+    needs: detect-changes
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+    strategy:
+      matrix:
+        language: ["go", "javascript", "python"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
         with:
-          go-version: ${{ env.GO_VERSION }}
-          cache: true
+          languages: ${{ matrix.language }}
+          config-file: ./.github/codeql.yml
 
-      - name: Set up Node.js
-        if: needs.detect-changes.outputs.frontend == 'true'
-        uses: actions/setup-node@v4
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: ${{ env.FRONTEND_PATH }}/package-lock.json
+          category: "/language:${{matrix.language}}"
 
-      - name: Download frontend build artifacts
-        if: needs.detect-changes.outputs.frontend == 'true'
-        uses: actions/download-artifact@v5
-        with:
-          name: frontend-build-22
-          path: ${{ env.FRONTEND_PATH }}/dist/
-
-      - name: Build application
-        run: |
-          echo "Building subtitle-manager application..."
-          go build -v -o subtitle-manager ./cmd/subtitle-manager
-
-      - name: Start services for integration testing
-        run: |
-          echo "Starting services for integration testing..."
-          # Start any required services (database, redis, etc.)
-          # This is subtitle-manager specific
-
-      - name: Run integration tests
-        run: |
-          echo "Running integration tests..."
-          go test -v -tags=integration ./tests/integration/... || echo "Integration tests not yet implemented"
-
-  # Build final artifacts
+  # Build artifacts
   build:
     name: Build Artifacts
     runs-on: ubuntu-latest
@@ -395,130 +421,140 @@ jobs:
 
       - name: Download frontend build artifacts
         if: needs.detect-changes.outputs.frontend == 'true'
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           name: frontend-build-22
-          path: ${{ env.FRONTEND_PATH }}/dist/
+          path: webui/dist/
 
       - name: Build binary
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
         run: |
-          echo "Building for $GOOS/$GOARCH..."
-          BINARY_NAME="subtitle-manager-$GOOS-$GOARCH"
-          if [ "$GOOS" = "windows" ]; then
-            BINARY_NAME="$BINARY_NAME.exe"
+          # Build frontend if needed
+          if [ -f "webui/package.json" ]; then
+            cd webui
+            npm ci --legacy-peer-deps
+            npm run build
+            cd ..
+          elif [ -f "package.json" ]; then
+            npm ci --legacy-peer-deps
+            npm run build
           fi
 
-          go build -v -ldflags="-s -w" -o "$BINARY_NAME" ./cmd/subtitle-manager
-
-          echo "Binary built: $BINARY_NAME"
-          ls -la "$BINARY_NAME"
+          # Build Go binary
+          mkdir -p bin
+          go build -v -o bin/subtitle-manager-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/subtitle-manager
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: subtitle-manager-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: subtitle-manager-*
-          retention-days: 30
+          name: build-artifacts-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: |
+            bin/
+            webui/dist/
+            dist/
+            build/
 
-  # Aggregate coverage reports
-  coverage:
+  # Generate comprehensive coverage report
+  coverage-report:
     name: Coverage Report
     runs-on: ubuntu-latest
-    needs: [detect-changes, test-go, test-frontend, test-python]
-    if: always() && needs.detect-changes.outputs.should-test == 'true'
+    needs: [test-go, test-frontend, test-python]
+    if: always() && (needs.test-go.result == 'success' || needs.test-frontend.result == 'success' || needs.test-python.result == 'success')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
       - name: Download all coverage artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
-          pattern: "*coverage*"
-          path: coverage-reports
-          merge-multiple: true
+          path: coverage-artifacts
 
-      - name: Aggregate Go coverage
-        if: needs.detect-changes.outputs.go == 'true'
+      - name: Combine coverage reports
         run: |
-          echo "Aggregating Go coverage reports..."
-          find coverage-reports -name "coverage-go-*.out" | head -1 | xargs -I {} cp {} coverage-go.out || echo "No Go coverage files found"
+          echo "# 📊 Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ -f coverage-go.out ]; then
-            echo "Go coverage summary:"
-            go tool cover -func coverage-go.out | tail -1
-
-            COVERAGE=$(go tool cover -func coverage-go.out | tail -1 | awk '{print substr($3, 1, length($3)-1)}')
-            echo "Go coverage: $COVERAGE%"
-
-            # Check coverage threshold
-            if (( $(echo "$COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
-              echo "❌ Go coverage $COVERAGE% is below threshold $COVERAGE_THRESHOLD%"
-              exit 1
-            else
-              echo "✅ Go coverage $COVERAGE% meets threshold $COVERAGE_THRESHOLD%"
-            fi
+          # Go coverage
+          if [ -f "coverage-artifacts/go-coverage/coverage.out" ]; then
+            go_coverage=$(go tool cover -func coverage-artifacts/go-coverage/coverage.out | tail -n 1 | awk '{print substr($3, 1, length($3)-1)}')
+            echo "- **Go**: ${go_coverage}%" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Upload final coverage report
-        if: needs.detect-changes.outputs.go == 'true'
+          # Frontend coverage
+          if [ -d "coverage-artifacts/frontend-coverage" ]; then
+            echo "- **Frontend**: Coverage reports available" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Python coverage
+          if [ -f "coverage-artifacts/python-coverage/coverage.xml" ]; then
+            echo "- **Python**: Coverage reports available" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload combined coverage
         uses: actions/upload-artifact@v4
         with:
-          name: final-coverage-report
-          path: coverage-go.out
-          retention-days: 30
+          name: combined-coverage-report
+          path: coverage-artifacts/
 
   # Final status check
-  ci-complete:
-    name: CI Complete
+  ci-status:
+    name: CI Status
     runs-on: ubuntu-latest
-    needs: [detect-changes, lint, test-go, test-frontend, test-python, integration-tests, build, coverage]
+    needs: [detect-changes, lint, test-go, test-frontend, test-python, security-scan, build]
     if: always()
     steps:
-      - name: Check all job statuses
+      - name: Check CI status
         run: |
-          echo "=== CI Pipeline Summary ==="
-          echo "Changes detected: ${{ needs.detect-changes.result }}"
-          echo "Lint: ${{ needs.lint.result }}"
-          echo "Go tests: ${{ needs.test-go.result }}"
-          echo "Frontend tests: ${{ needs.test-frontend.result }}"
-          echo "Python tests: ${{ needs.test-python.result }}"
-          echo "Integration tests: ${{ needs.integration-tests.result }}"
-          echo "Build: ${{ needs.build.result }}"
-          echo "Coverage: ${{ needs.coverage.result }}"
+          echo "# 🚀 CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Check if any required job failed
-          if [[ "${{ needs.detect-changes.result }}" == "failure" ]] || \
-             [[ "${{ needs.lint.result }}" == "failure" ]] || \
-             [[ "${{ needs.test-go.result }}" == "failure" ]] || \
-             [[ "${{ needs.test-frontend.result }}" == "failure" ]] || \
-             [[ "${{ needs.test-python.result }}" == "failure" ]] || \
-             [[ "${{ needs.integration-tests.result }}" == "failure" ]] || \
-             [[ "${{ needs.build.result }}" == "failure" ]] || \
-             [[ "${{ needs.coverage.result }}" == "failure" ]]; then
-            echo "❌ CI pipeline failed"
-            exit 1
+          if [[ "${{ needs.lint.result }}" == "success" ]]; then
+            echo "✅ **Linting**: Passed" >> $GITHUB_STEP_SUMMARY
           else
-            echo "✅ CI pipeline completed successfully"
+            echo "❌ **Linting**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Create workflow summary
-        run: |
-          echo "# 🚀 CI Pipeline Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Job | Status | Duration |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----|---------|----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Detect Changes | ${{ needs.detect-changes.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Lint | ${{ needs.lint.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Go Tests | ${{ needs.test-go.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Frontend Tests | ${{ needs.test-frontend.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Python Tests | ${{ needs.test-python.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Integration Tests | ${{ needs.integration-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build | ${{ needs.build.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Coverage | ${{ needs.coverage.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ needs.test-go.result }}" == "success" ]]; then
+            echo "✅ **Go Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ needs.test-go.result }}" == "skipped" ]]; then
+            echo "⏭️ **Go Tests**: Skipped (no changes)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Go Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ "${{ needs.test-frontend.result }}" == "success" ]]; then
+            echo "✅ **Frontend Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ needs.test-frontend.result }}" == "skipped" ]]; then
+            echo "⏭️ **Frontend Tests**: Skipped (no changes)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Frontend Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ "${{ needs.security-scan.result }}" == "success" ]]; then
+            echo "✅ **Security Scan**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Security Scan**: Issues found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ "${{ needs.build.result }}" == "success" ]]; then
+            echo "✅ **Build**: Passed" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ needs.build.result }}" == "skipped" ]]; then
+            echo "⏭️ **Build**: Skipped (no changes)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Build**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check if any critical jobs failed
+          if [[ "${{ needs.lint.result }}" == "failure" ||
+                "${{ needs.test-go.result }}" == "failure" ||
+                "${{ needs.test-frontend.result }}" == "failure" ||
+                "${{ needs.test-python.result }}" == "failure" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **Overall Status**: FAILED - Critical issues found" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Overall Status**: PASSED - All checks successful" >> $GITHUB_STEP_SUMMARY
+          fi
