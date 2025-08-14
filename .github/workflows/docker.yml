@@ -245,7 +245,7 @@ jobs:
           path: sbom.spdx.json
 
       - name: Attest SBOM
-        uses: actions/attest-sbom@v1
+        uses: actions/attest-sbom@v2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ needs.build.outputs.image-digest }}
