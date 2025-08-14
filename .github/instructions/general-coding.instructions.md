@@ -1,6 +1,6 @@
-<!-- file: .github/instructions/general-coding.instructions.md -->
-<!-- version: 1.4.0 -->
-<!-- guid: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d -->
+# file: .github/instructions/general-coding.instructions.md
+# version: 1.5.0
+# guid: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
 <!-- DO NOT EDIT: This file is managed centrally in ghcommon repository -->
 <!-- To update: Create an issue/PR in jdfalk/ghcommon -->
 
@@ -36,6 +36,7 @@ Copilot customization.
   `.vscode/copilot/`.
 - **ALWAYS check before doing:** Before creating files, running operations, or executing scripts, always check current state first. Make all scripts and operations idempotent by checking if the desired state already exists before making changes.
 - **USE VS CODE TASKS FIRST:** ALWAYS use VS Code tasks when available instead of manual terminal commands. Tasks provide consistent logging, error handling, and automation. Only fall back to manual commands when no appropriate task exists.
+- **NO POINTLESS ECHO COMMANDS:** Never suggest running terminal commands that only echo success messages or confirmations. The user can see the work is complete from the conversation context.
 
 For more details and the full system, see
 [copilot-instructions.md](../copilot-instructions.md).
