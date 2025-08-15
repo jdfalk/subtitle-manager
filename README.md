@@ -1,5 +1,5 @@
 <!-- file: README.md -->
-<!-- version: 1.0.1 -->
+<!-- version: 1.0.2 -->
 <!-- guid: 2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e -->
 
 # Subtitle Manager
@@ -1537,9 +1537,11 @@ subtitle-manager whisper status subtitle-manager fetch [media] [lang]
 > > > > > > > implementations: [store.go](pkg/database/store.go),
 > > > > > > > [database.go](pkg/database/database.go),
 > > > > > > > [pebble.go](pkg/database/pebble.go),
-> > > > > > > [postgres.go](pkg/database/postgres.go)\n- updated mocks:
+> > > > > > > [postgres.go](pkg/database/postgres.go)
+- updated mocks:
 > > > > > > > [service_test.go](pkg/backups/service_test.go),
-> > > > > > > [monitor_test.go](pkg/monitoring/monitor_test.go)\n- documentation
+> > > > > > > [monitor_test.go](pkg/monitoring/monitor_test.go)
+- documentation
 > > > > > > > and changelog updates: [README.md](README.md), [TODO.md](TODO.md),
 > > > > > > > [CHANGELOG.md](CHANGELOG.md)) subtitle-manager fetch [media]
 > > > > > > > [lang] [output] subtitle-manager fetch --tags tag1,tag2 [media]
@@ -2250,7 +2252,9 @@ details.
 
 Cache configuration now uses gcommon.v1.common.CachePolicy messages for each TTL
 
-### gcommon Protobuf\n\nAuthentication now uses the shared gcommon.v1.auth.AuthService. The initial implementation supports password and API key login via gRPC with session token validation. Additional methods will migrate incrementally.
+### gcommon Protobuf
+
+Authentication now uses the shared gcommon.v1.auth.AuthService. The initial implementation supports password and API key login via gRPC with session token validation. Additional methods will migrate incrementally.
 
 Configuration can now be exchanged via gRPC using the new proto message
 `SubtitleManagerConfig`.
