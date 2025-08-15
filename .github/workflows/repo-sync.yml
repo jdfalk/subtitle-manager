@@ -4,15 +4,15 @@
 
 name: Repository Synchronization
 
-on:
-  push:
+# DISABLED - on:
+# DISABLED -   push:
     branches: [main]
     paths:
       - ".github/workflows/**"
       - ".github/instructions/**"
       - ".github/copilot-instructions.md"
       - "labels.json"
-  workflow_dispatch:
+# DISABLED -   workflow_dispatch:
     inputs:
       target_repos:
         description: "Comma-separated list of repos to sync (or 'all')"
