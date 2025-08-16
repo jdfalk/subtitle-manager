@@ -102,6 +102,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: detect-languages
     if: needs.detect-languages.outputs.languages != ''
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
     strategy:
       fail-fast: false
       matrix:
