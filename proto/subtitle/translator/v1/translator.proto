@@ -1,5 +1,5 @@
-// file: proto/translator.proto
-// version: 1.5.1
+// file: proto/subtitle/translator/v1/translator.proto
+// version: 1.6.0
 // guid: 70eca88d-31fe-4044-8b76-a22bd3c9e0bd
 
 edition = "2023";
@@ -7,7 +7,7 @@ edition = "2023";
 package subtitle.translator.v1;
 
 import "google/protobuf/go_features.proto";
-import "config.proto";
+import "subtile/config/v1/config.proto"; // corrected import path
 
 option go_package = "github.com/jdfalk/subtitle-manager/pkg/translatorpb;translatorpb";
 option features.(pb.go).api_level = API_HYBRID;

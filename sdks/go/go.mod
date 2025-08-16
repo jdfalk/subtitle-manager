@@ -4,7 +4,7 @@
 
 module github.com/jdfalk/subtitle-manager/sdks/go
 
-go 1.24
+go 1.23.0
 
 require (
 	github.com/stretchr/testify v1.10.0

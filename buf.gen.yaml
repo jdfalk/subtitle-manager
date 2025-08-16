@@ -6,14 +6,6 @@
 # This file enables buf to generate Go code for all proto files in proto/
 
 version: v2
-managed:
-  enabled: true
-  disable:
-    - file_option: go_package
-      module: buf.build/googleapis/googleapis
-  override:
-    - file_option: go_package_prefix
-      value: github.com/jdfalk/subtitle-manager
 plugins:
   - remote: buf.build/protocolbuffers/go:v1.36.6
     out: pkg
