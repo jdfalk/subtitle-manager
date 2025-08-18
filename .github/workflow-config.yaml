@@ -10,16 +10,16 @@ build:
   go_versions:
     - "1.23"
     - "1.24"
-  
+
   # Platform support
   platforms:
     - "linux/amd64"
     - "linux/arm64"
-  
+
   operating_systems:
     - "ubuntu-latest"
     - "macos-latest"
-  
+
   # Feature flags specific to subtitle-manager
   enable_protobuf: true
   enable_docker: true
@@ -44,12 +44,12 @@ build_config:
     platforms:
       - "linux/amd64"
       - "linux/arm64"
-  
+
   protobuf:
     enabled: true
     buf_config: true
     generate_on_build: true
-  
+
   testing:
     coverage_threshold: 80
     run_integration_tests: true
@@ -61,7 +61,7 @@ quality:
   security_scan_required: true
   lint_required: true
   tests_required: true
-  
+
   # Go-specific quality rules
   go_vet_required: true
   staticcheck_required: true
@@ -71,7 +71,7 @@ quality:
 development:
   debug_mode: false
   verbose_logging: false
-  
+
   # Go-specific settings
   go_mod_tidy_check: true
   go_fmt_check: true
@@ -82,7 +82,7 @@ performance:
   cache_enabled: true
   parallel_jobs: 4
   timeout_minutes: 30
-  
+
   # Go-specific performance
   go_build_cache: true
   go_test_cache: true
