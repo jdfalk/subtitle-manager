@@ -1,0 +1,123 @@
+# file: .github/workflows/commit-override-handler.yml
+# version: 1.1.0
+# guid: e1f2a3b4-c5d6-7890-abcd-ef1234567890
+
+name: Commit Override Handler
+
+on:
+  workflow_call:
+    inputs:
+      override_token:
+        type: string
+        required: true
+      commit_message:
+        type: string
+        required: true
+      skip_validation:
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  handle-override:
+    name: Handle Commit Override
+    runs-on: ubuntu-latest
+    if: contains(inputs.commit_message, '[OVERRIDE-CI]') || contains(inputs.commit_message, '[SKIP-CI]')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          token: ${{ inputs.override_token }}
+          fetch-depth: 0
+
+      - name: Validate override token
+        if: "!inputs.skip_validation"
+        run: |
+          # Validate that the token has appropriate permissions
+          # This is a placeholder - implement based on your security requirements
+          echo "Validating override token..."
+
+          # Check if user has admin or write permissions
+          gh auth status
+
+          # Additional validation logic can be added here
+        env:
+          GITHUB_TOKEN: ${{ inputs.override_token }}
+
+      - name: Parse commit message
+        id: parse
+        run: |
+          COMMIT_MSG="${{ inputs.commit_message }}"
+
+          # Extract override type
+          if [[ "$COMMIT_MSG" == *"[OVERRIDE-CI]"* ]]; then
+            echo "override_type=override" >> $GITHUB_OUTPUT
+            echo "Override CI checks detected"
+          elif [[ "$COMMIT_MSG" == *"[SKIP-CI]"* ]]; then
+            echo "override_type=skip" >> $GITHUB_OUTPUT
+            echo "Skip CI checks detected"
+          fi
+
+          # Extract any additional flags
+          REASON=""
+          if [[ "$COMMIT_MSG" == *"[REASON:"* ]]; then
+            REASON=$(echo "$COMMIT_MSG" | sed -n 's/.*\[REASON:\([^]]*\)\].*/\1/p')
+            echo "reason=$REASON" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Log override action
+        run: |
+          echo "# 🚨 Commit Override Detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Override Type:** ${{ steps.parse.outputs.override_type }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit Message:** ${{ inputs.commit_message }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Actor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+
+          if [[ -n "${{ steps.parse.outputs.reason }}" ]]; then
+            echo "**Reason:** ${{ steps.parse.outputs.reason }}" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Warning:** This commit bypassed normal CI validation." >> $GITHUB_STEP_SUMMARY
+
+      - name: Create override status
+        if: steps.parse.outputs.override_type == 'override'
+        run: |
+          # Create a custom status check that indicates override was used
+          gh api repos/${{ github.repository }}/statuses/${{ github.sha }} \
+            --method POST \
+            --field state='success' \
+            --field target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            --field description='CI checks overridden by ${{ github.actor }}' \
+            --field context='ci/override-handler'
+        env:
+          GITHUB_TOKEN: ${{ inputs.override_token }}
+
+      - name: Skip CI status
+        if: steps.parse.outputs.override_type == 'skip'
+        run: |
+          # Create a status that indicates CI was skipped
+          gh api repos/${{ github.repository }}/statuses/${{ github.sha }} \
+            --method POST \
+            --field state='success' \
+            --field target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            --field description='CI checks skipped by ${{ github.actor }}' \
+            --field context='ci/skip-handler'
+        env:
+          GITHUB_TOKEN: ${{ inputs.override_token }}
+
+      - name: Notify teams (if configured)
+        run: |
+          # Optional: Send notification to teams channel, Slack, etc.
+          # This is a placeholder for your notification system
+          echo "Override action logged and completed"
+
+          # Example webhook notification (uncomment and configure as needed):
+          # curl -X POST "${{ secrets.TEAMS_WEBHOOK_URL }}" \
+          #   -H "Content-Type: application/json" \
+          #   -d '{"text": "🚨 CI Override used by ${{ github.actor }} in ${{ github.repository }}"}'
