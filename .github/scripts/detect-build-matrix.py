@@ -1,213 +1,241 @@
 #!/usr/bin/env python3
 # file: .github/scripts/detect-build-matrix.py
-# version: 1.0.0
-# guid: f0a1b2c3-d4e5-6789-012f-345678901234
+# version: 1.1.0
+# guid: a1b2c3d4-e5f6-7890-1234-56789abcdef0
 
 """
-Dynamic Build Matrix Detection for GitHub Actions
-
-This script analyzes the repository structure and generates appropriate
-build matrices for different technology stacks (Go, Python, Frontend, Docker).
-It outputs GitHub Actions workflow outputs that can be consumed by matrix builds.
+Detect build matrix requirements for the repository.
+This script analyzes the repository to determine what technologies are used
+and generates appropriate build matrices for GitHub Actions.
 """
 
 import json
 import os
-from pathlib import Path
-from typing import Any, Dict, List
+import subprocess
+import sys
 
 
-def check_file_exists(patterns: List[str]) -> bool:
-    """Check if any of the given file patterns exist in the repository."""
-    for pattern in patterns:
-        if list(Path(".").glob(pattern)):
-            return True
-    return False
+def run_command(cmd, capture_output=True):
+    """Run a shell command and return the result."""
+    try:
+        result = subprocess.run(
+            cmd, shell=True, capture_output=capture_output, text=True
+        )
+        return result.returncode == 0, result.stdout.strip()
+    except Exception:
+        return False, ""
 
 
-def detect_go_project() -> Dict[str, Any]:
-    """Detect Go project and generate build matrix."""
-    go_files = [
-        "go.mod",
-        "go.sum",
-        "*.go",
-        "**/*.go",
-        "cmd/**",
-        "pkg/**",
-        "internal/**",
-    ]
+def check_file_exists(pattern):
+    """Check if files matching pattern exist."""
+    success, output = run_command(f"find . -name '{pattern}' | head -1")
+    return success and output.strip() != ""
 
-    if not check_file_exists(go_files):
-        return {"include": []}
 
-    # Default Go matrix - can be customized based on project needs
-    matrix = {
-        "include": [
-            {"go-version": "1.21", "os": "ubuntu-latest", "primary": True},
-            {"go-version": "1.20", "os": "ubuntu-latest", "primary": False},
-            {"go-version": "1.21", "os": "windows-latest", "primary": False},
-            {"go-version": "1.21", "os": "macos-latest", "primary": False},
-        ]
+def detect_build_requirements():
+    """Detect what build requirements are needed."""
+    print("Detecting build matrix requirements...")
+
+    # Initialize matrices
+    matrices = {
+        "go": {"include": []},
+        "python": {"include": []},
+        "frontend": {"include": []},
+        "docker": {"include": []},
     }
 
-    return matrix
-
-
-def detect_python_project() -> Dict[str, Any]:
-    """Detect Python project and generate build matrix."""
-    python_files = [
-        "requirements.txt",
-        "pyproject.toml",
-        "setup.py",
-        "setup.cfg",
-        "*.py",
-        "**/*.py",
-        "src/**/*.py",
-    ]
-
-    if not check_file_exists(python_files):
-        return {"include": []}
-
-    # Default Python matrix
-    matrix = {
-        "include": [
-            {"python-version": "3.11", "os": "ubuntu-latest", "primary": True},
-            {"python-version": "3.10", "os": "ubuntu-latest", "primary": False},
-            {"python-version": "3.9", "os": "ubuntu-latest", "primary": False},
-            {"python-version": "3.11", "os": "windows-latest", "primary": False},
-            {"python-version": "3.11", "os": "macos-latest", "primary": False},
-        ]
+    flags = {
+        "has_go": False,
+        "has_python": False,
+        "has_frontend": False,
+        "has_docker": False,
+        "protobuf_needed": False,
     }
 
-    return matrix
+    # Check for Go projects
+    if os.path.exists("go.mod") or check_file_exists("*.go"):
+        print("Go project detected")
+        flags["has_go"] = True
+        matrices["go"] = {
+            "include": [
+                {"go-version": "1.22", "os": "ubuntu-latest", "arch": "amd64"},
+                {"go-version": "1.23", "os": "ubuntu-latest", "arch": "amd64"},
+                {
+                    "go-version": "1.24",
+                    "os": "ubuntu-latest",
+                    "arch": "amd64",
+                    "primary": True,
+                },
+                {"go-version": "1.24", "os": "macos-latest", "arch": "amd64"},
+                {"go-version": "1.24", "os": "windows-latest", "arch": "amd64"},
+            ]
+        }
+
+    # Check for Python projects
+    if any(
+        os.path.exists(f) for f in ["pyproject.toml", "requirements.txt", "setup.py"]
+    ) or check_file_exists("*.py"):
+        print("Python project detected")
+        flags["has_python"] = True
+        matrices["python"] = {
+            "include": [
+                {"python-version": "3.11", "os": "ubuntu-latest"},
+                {"python-version": "3.12", "os": "ubuntu-latest", "primary": True},
+                {"python-version": "3.13", "os": "ubuntu-latest"},
+                {"python-version": "3.12", "os": "macos-latest"},
+                {"python-version": "3.12", "os": "windows-latest"},
+            ]
+        }
+
+    # Check for frontend projects
+    if os.path.exists("package.json"):
+        # Read package.json to determine if this is actually a frontend project
+        try:
+            with open("package.json", "r") as f:
+                import json as json_lib
+
+                pkg_data = json_lib.load(f)
+
+            # Check for frontend indicators
+            frontend_indicators = [
+                # Dependencies that indicate frontend development
+                "react",
+                "vue",
+                "angular",
+                "@angular/core",
+                "svelte",
+                "solid-js",
+                "next",
+                "nuxt",
+                "gatsby",
+                "vite",
+                "webpack",
+                "rollup",
+                "parcel",
+                "typescript",
+                "@types/node",
+                "eslint",
+                "prettier",
+                # Build frameworks
+                "create-react-app",
+                "vue-cli",
+                "@vue/cli",
+                "@angular/cli",
+                # UI libraries
+                "bootstrap",
+                "tailwindcss",
+                "@mui/material",
+                "antd",
+                # Testing frameworks for frontend
+                "jest",
+                "cypress",
+                "@testing-library/react",
+                "vitest",
+            ]
+
+            # Build script indicators
+            build_scripts = pkg_data.get("scripts", {})
+            script_indicators = ["build", "serve", "dev", "start"]
+
+            # Check dependencies and devDependencies
+            all_deps = {
+                **pkg_data.get("dependencies", {}),
+                **pkg_data.get("devDependencies", {}),
+            }
+
+            has_frontend_deps = any(
+                indicator in all_deps for indicator in frontend_indicators
+            )
+            has_build_scripts = any(
+                script in build_scripts
+                for script in script_indicators
+                if script not in ["commitlint", "commitlint-ci", "lint", "test"]
+            )
+
+            # Only treat as frontend if we have actual frontend dependencies or meaningful build scripts
+            if has_frontend_deps or has_build_scripts:
+                print("Frontend project detected")
+                flags["has_frontend"] = True
+                matrices["frontend"] = {
+                    "include": [
+                        {"node-version": "20", "os": "ubuntu-latest"},
+                        {"node-version": "22", "os": "ubuntu-latest", "primary": True},
+                        {"node-version": "24", "os": "ubuntu-latest"},
+                        {"node-version": "22", "os": "macos-latest"},
+                        {"node-version": "22", "os": "windows-latest"},
+                    ]
+                }
+            else:
+                print(
+                    "package.json found but no frontend project detected (likely build tooling only)"
+                )
+
+        except Exception as e:
+            print(f"Warning: Could not parse package.json: {e}")
+            # If we can't parse package.json, assume it's not a frontend project
+
+    # Check for Docker projects
+    if (
+        check_file_exists("Dockerfile*")
+        or check_file_exists("docker-compose*.yml")
+        or check_file_exists("docker-compose*.yaml")
+    ):
+        print("Docker project detected")
+        flags["has_docker"] = True
+        matrices["docker"] = {
+            "include": [
+                {"platform": "linux/amd64", "os": "ubuntu-latest", "primary": True},
+                {"platform": "linux/arm64", "os": "ubuntu-latest"},
+            ]
+        }
+
+    # Check for protobuf
+    if any(
+        os.path.exists(f) for f in ["buf.yaml", "buf.gen.yaml"]
+    ) or check_file_exists("*.proto"):
+        print("Protobuf project detected")
+        flags["protobuf_needed"] = True
+
+    return matrices, flags
 
 
-def detect_frontend_project() -> Dict[str, Any]:
-    """Detect frontend project and generate build matrix."""
-    frontend_files = [
-        "package.json",
-        "package-lock.json",
-        "yarn.lock",
-        "webpack.config.js",
-        "vite.config.js",
-        "angular.json",
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "src/**/*.js",
-        "src/**/*.jsx",
-    ]
+def set_github_output(key, value):
+    """Set GitHub Actions output."""
+    if isinstance(value, (dict, list)):
+        value = json.dumps(value)
+    elif isinstance(value, bool):
+        value = "true" if value else "false"
 
-    if not check_file_exists(frontend_files):
-        return {"include": []}
-
-    # Default Node.js matrix
-    matrix = {
-        "include": [
-            {"node-version": "18", "os": "ubuntu-latest", "primary": True},
-            {"node-version": "16", "os": "ubuntu-latest", "primary": False},
-            {"node-version": "20", "os": "ubuntu-latest", "primary": False},
-        ]
-    }
-
-    return matrix
-
-
-def detect_docker_project() -> Dict[str, Any]:
-    """Detect Docker project and generate build matrix."""
-    docker_files = [
-        "Dockerfile",
-        "docker-compose.yml",
-        "docker-compose.yaml",
-        ".dockerignore",
-        "Dockerfile.*",
-    ]
-
-    if not check_file_exists(docker_files):
-        return {"include": []}
-
-    # Default Docker matrix - multi-platform builds
-    matrix = {
-        "include": [
-            {"platform": "linux/amd64", "os": "ubuntu-latest", "primary": True},
-            {"platform": "linux/arm64", "os": "ubuntu-latest", "primary": False},
-        ]
-    }
-
-    return matrix
-
-
-def detect_protobuf_project() -> bool:
-    """Detect if protobuf generation is needed."""
-    protobuf_files = [
-        "buf.yaml",
-        "buf.gen.yaml",
-        "buf.work.yaml",
-        "proto/**/*.proto",
-        "*.proto",
-        "**/*.proto",
-    ]
-
-    return check_file_exists(protobuf_files)
+    # GitHub Actions output
+    github_output = os.environ.get("GITHUB_OUTPUT")
+    if github_output:
+        with open(github_output, "a") as f:
+            f.write(f"{key}={value}\n")
+    else:
+        print(f"{key}={value}")
 
 
 def main():
-    """Main function to detect build requirements and output matrices."""
+    """Main entry point."""
+    try:
+        matrices, flags = detect_build_requirements()
 
-    # Detect each technology stack
-    go_matrix = detect_go_project()
-    python_matrix = detect_python_project()
-    frontend_matrix = detect_frontend_project()
-    docker_matrix = detect_docker_project()
-    protobuf_needed = detect_protobuf_project()
+        # Set outputs
+        set_github_output("go-matrix", matrices["go"])
+        set_github_output("python-matrix", matrices["python"])
+        set_github_output("frontend-matrix", matrices["frontend"])
+        set_github_output("docker-matrix", matrices["docker"])
+        set_github_output("protobuf-needed", flags["protobuf_needed"])
+        set_github_output("has-go", flags["has_go"])
+        set_github_output("has-python", flags["has_python"])
+        set_github_output("has-frontend", flags["has_frontend"])
+        set_github_output("has-docker", flags["has_docker"])
 
-    # Check if each stack has any builds
-    has_go = len(go_matrix["include"]) > 0
-    has_python = len(python_matrix["include"]) > 0
-    has_frontend = len(frontend_matrix["include"]) > 0
-    has_docker = len(docker_matrix["include"]) > 0
+        print("Matrix detection complete")
 
-    # Set GitHub Actions outputs
-    outputs = {
-        "go-matrix": json.dumps(go_matrix),
-        "python-matrix": json.dumps(python_matrix),
-        "frontend-matrix": json.dumps(frontend_matrix),
-        "docker-matrix": json.dumps(docker_matrix),
-        "protobuf-needed": str(protobuf_needed).lower(),
-        "has-go": str(has_go).lower(),
-        "has-python": str(has_python).lower(),
-        "has-frontend": str(has_frontend).lower(),
-        "has-docker": str(has_docker).lower(),
-    }
-
-    # Write to GitHub Actions outputs
-    github_output = os.getenv("GITHUB_OUTPUT")
-    if github_output:
-        with open(github_output, "a") as f:
-            for key, value in outputs.items():
-                f.write(f"{key}={value}\n")
-
-    # Also print for debugging
-    print("Detected build requirements:")
-    for key, value in outputs.items():
-        print(f"  {key}: {value}")
-
-    # Print summary
-    technologies = []
-    if has_go:
-        technologies.append("Go")
-    if has_python:
-        technologies.append("Python")
-    if has_frontend:
-        technologies.append("Frontend")
-    if has_docker:
-        technologies.append("Docker")
-    if protobuf_needed:
-        technologies.append("Protobuf")
-
-    if technologies:
-        print(f"\n✅ Build matrix will include: {', '.join(technologies)}")
-    else:
-        print("\n❌ No recognized technology stacks found")
+    except Exception as e:
+        print(f"Error during matrix detection: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
