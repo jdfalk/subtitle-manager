@@ -1,5 +1,5 @@
 // file: proto/config.proto
-// version: 1.2.0
+// version: 1.3.0
 // guid: 5d263e60-6079-4a1e-bfcb-82e8feb6f1af
 
 edition = "2023";
@@ -7,6 +7,8 @@ edition = "2023";
 package subtitle.config.v1;
 
 import "google/protobuf/go_features.proto";
+import "gcommon/v1/common/enums/log_level.proto";
+import "gcommon/v1/common/enums/appender_type.proto";
 
 option go_package = "subtitle-manager/pkg/configpb;configpb";
 option features.(pb.go).api_level = API_HYBRID;
@@ -15,7 +17,49 @@ message SubtitleManagerConfig {
   string db_path = 1;
   string db_backend = 2;
   string sqlite3_filename = 3;
-  string log_file = 4;
+  
+  // Legacy string-based log file configuration (deprecated)
+  string log_file = 4 [deprecated = true];
+  
   string google_api_key = 5;
   string openai_api_key = 6;
+  
+  // Enhanced logging configuration using gcommon types
+  LoggingConfig logging = 7;
+}
+
+// LoggingConfig defines comprehensive logging settings
+message LoggingConfig {
+  // Global log level
+  gcommon.v1.common.LogLevel global_level = 1;
+  
+  // Primary appender type (console, file, etc.)
+  gcommon.v1.common.AppenderType primary_appender = 2;
+  
+  // Log file path (when using file appenders)
+  string log_file_path = 3;
+  
+  // Component-specific log levels
+  map<string, gcommon.v1.common.LogLevel> component_levels = 4;
+  
+  // Enable structured JSON logging
+  bool structured_logging = 5;
+  
+  // Log rotation settings
+  LogRotationConfig rotation = 6;
+}
+
+// LogRotationConfig defines log file rotation settings
+message LogRotationConfig {
+  // Maximum file size in MB before rotation
+  int32 max_size_mb = 1;
+  
+  // Maximum number of backup files to keep
+  int32 max_backups = 2;
+  
+  // Maximum age in days for backup files
+  int32 max_age_days = 3;
+  
+  // Compress backup files
+  bool compress = 4;
 }
