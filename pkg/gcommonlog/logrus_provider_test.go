@@ -1,5 +1,5 @@
 // file: pkg/gcommonlog/logrus_provider_test.go
-// version: 1.0.0
+// version: 2.0.0
 // guid: 3456b7c8-9d0e-4f12-8b34-5a6c7d8e9f01
 package gcommonlog
 
@@ -8,18 +8,16 @@ import (
 	"strings"
 	"testing"
 
-	gclog "github.com/jdfalk/gcommon/pkg/log"
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 )
 
 // TestLogrusProvider verifies that the provider writes log messages and fields.
 func TestLogrusProvider(t *testing.T) {
 	buf := &bytes.Buffer{}
-	p, err := gclog.NewProvider(gclog.Config{Provider: "logrus", Level: "debug"})
-	if err != nil {
-		t.Fatalf("new provider: %v", err)
-	}
+	p := NewLogrusProviderWithLevel(common.LogLevel_LOG_LEVEL_DEBUG)
 	p.SetOutput(buf)
-	p.Info("hello", gclog.Field{Key: "k", Value: "v"})
+	fields := map[string]interface{}{"k": "v"}
+	p.Info("hello", fields)
 
 	out := buf.String()
 	if !strings.Contains(out, "hello") || !strings.Contains(out, "k=v") {
@@ -30,14 +28,12 @@ func TestLogrusProvider(t *testing.T) {
 // TestWithField ensures With adds structured fields.
 func TestWithField(t *testing.T) {
 	buf := &bytes.Buffer{}
-	p, err := gclog.NewProvider(gclog.Config{Provider: "logrus", Level: "info"})
-	if err != nil {
-		t.Fatalf("new provider: %v", err)
-	}
+	p := NewLogrusProviderWithLevel(common.LogLevel_LOG_LEVEL_INFO)
 	p.SetOutput(buf)
 
-	logger := p.With(gclog.Field{Key: "module", Value: "test"})
-	logger.Info("msg")
+	fields := map[string]interface{}{"module": "test"}
+	logger := p.With(fields)
+	logger.Info("msg", nil)
 
 	out := buf.String()
 	if !strings.Contains(out, "module=test") {

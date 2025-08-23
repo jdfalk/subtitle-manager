@@ -167,6 +167,8 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/jdfalk/gcommon v0.1.0 h1:RttHbTirh749Y1Q4PST+D/CKoRSk1XpSgGb2lfEUuu8=
 github.com/jdfalk/gcommon v0.1.0/go.mod h1:qworSnMEXa5MH+O325JscX6MnLQajoi0hHKnfto80j4=
+github.com/jdfalk/gcommon/sdks/go v1.2.0 h1:KbXdSbNo3mSNtbFNEs7pSWK+Ufk2n4rUpwpACvud24g=
+github.com/jdfalk/gcommon/sdks/go v1.2.0/go.mod h1:hPiRKwva3c5+RwKCIgTiuF6LJdAQU41zRRxL2DLgquY=
 github.com/jinzhu/copier v0.4.0 h1:w3ciUoD19shMCRargcpm0cm91ytaBhDvuRpz1ODO/U8=
 github.com/jinzhu/copier v0.4.0/go.mod h1:DfbEm0FYsaqBcKcFuvmOZb218JkPGtvSHsKg8S8hyyg=
 github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=

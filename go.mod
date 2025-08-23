@@ -93,7 +93,8 @@ require (
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jdfalk/gcommon/sdks/go/v1/config v0.0.0-00010101000000-000000000000 // indirect
+	github.com/jdfalk/gcommon v0.1.0
+	github.com/jdfalk/gcommon/sdks/go v1.2.0
 	github.com/jdfalk/gcommon/sdks/go/v1/metrics v0.0.0-00010101000000-000000000000 // indirect
 	github.com/jdfalk/gcommon/sdks/go/v1/organization v0.0.0-00010101000000-000000000000 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
