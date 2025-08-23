@@ -6,11 +6,11 @@ edition = "2023";
 
 package subtitle.translator.v1;
 
+import "config.proto"; // corrected import path
 import "google/protobuf/go_features.proto";
-import "subtile/config/v1/config.proto"; // corrected import path
 
-option go_package = "subtitle-manager/pkg/translatorpb;translatorpb";
 option features.(pb.go).api_level = API_HYBRID;
+option go_package = "subtitle-manager/pkg/translatorpb;translatorpb";
 
 // Temporary local types until gcommon is properly integrated
 message RequestMetadata {

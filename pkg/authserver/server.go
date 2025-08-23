@@ -1,5 +1,5 @@
 // file: pkg/authserver/server.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: d14bd9a1-4b55-4b57-bffc-4adc165ebd1a
 
 package authserver
@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	authpb "github.com/jdfalk/gcommon/pkg/auth/proto"
+	authpb "github.com/jdfalk/gcommon/sdks/go/v1/common"
 	gauth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

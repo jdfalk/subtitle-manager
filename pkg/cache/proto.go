@@ -1,11 +1,11 @@
 // file: pkg/cache/proto.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 94a9a33b-5e6e-4b6c-9c34-24e2f5a1e3a1
 
 package cache
 
 import (
-	commonpb "github.com/jdfalk/gcommon/pkg/common/proto"
+	commonpb "github.com/jdfalk/gcommon/sdks/go/v1/common"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 

@@ -13,7 +13,7 @@
 package translatorpb
 
 import (
-	proto "github.com/jdfalk/gcommon/pkg/common/proto"
+	proto "github.com/jdfalk/gcommon/sdks/go/v1/common"
 	configpb "github.com/jdfalk/subtitle-manager/pkg/configpb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"

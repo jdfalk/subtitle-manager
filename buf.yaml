@@ -1,16 +1,18 @@
 # file: buf.yaml
-# version: 2.2.0
+# version: 2.3.0
 # guid: 8f3c2d5e-6a7b-4c8d-9e0f-1b2c3d4e5f6a
 
 # Buf configuration for subtitle-manager
-# Clean configuration using only standard dependencies
+# Temporary configuration without gcommon dependency
+# TODO: Re-add gcommon dependency when protobuf integration is complete
 
 version: v2
 modules:
   - path: proto
 deps:
   - buf.build/googleapis/googleapis
-  - buf.build/jdfalk/gcommon
+  # TODO: Re-enable when gcommon protobuf is ready
+  # - buf.build/jdfalk/gcommon
 lint:
   use:
     - STANDARD
