@@ -15,7 +15,7 @@ require (
 	github.com/docker/go-connections v0.5.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
-	github.com/jdfalk/gcommon/sdks/go/v1/common v1.1.0
+	github.com/jdfalk/gcommon/sdks/go/v1/common v1.3.0
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.28
 	github.com/oz/osdb v0.0.0-20221214175751-f169057712ec
@@ -38,6 +38,8 @@ require (
 	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
 )
+
+require github.com/jdfalk/gcommon/sdks/go/v1/config v1.0.0 // indirect
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
@@ -95,8 +97,6 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jdfalk/gcommon v0.1.0
 	github.com/jdfalk/gcommon/sdks/go v1.2.0
-	github.com/jdfalk/gcommon/sdks/go/v1/metrics v0.0.0-00010101000000-000000000000 // indirect
-	github.com/jdfalk/gcommon/sdks/go/v1/organization v0.0.0-00010101000000-000000000000 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kolo/xmlrpc v0.0.0-20220921171641-a4b6fa1dd06b // indirect

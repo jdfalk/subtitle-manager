@@ -1538,16 +1538,17 @@ subtitle-manager whisper status subtitle-manager fetch [media] [lang]
 > > > > > > > [database.go](pkg/database/database.go),
 > > > > > > > [pebble.go](pkg/database/pebble.go),
 > > > > > > > [postgres.go](pkg/database/postgres.go)
+
 - updated mocks:
-> > > > > > > [service_test.go](pkg/backups/service_test.go),
-> > > > > > > [monitor_test.go](pkg/monitoring/monitor_test.go)
+  > > > > > > > [service_test.go](pkg/backups/service_test.go),
+  > > > > > > > [monitor_test.go](pkg/monitoring/monitor_test.go)
 - documentation
-> > > > > > > and changelog updates: [README.md](README.md), [TODO.md](TODO.md),
-> > > > > > > [CHANGELOG.md](CHANGELOG.md)) subtitle-manager fetch [media]
-> > > > > > > [lang] [output] subtitle-manager fetch --tags tag1,tag2 [media]
-> > > > > > > [lang] [output] subtitle-manager search [media] [lang]
-> > > > > > > subtitle-manager batch [lang] [files...] subtitle-manager
-> > > > > > > syncbatch -config file.json
+  > > > > > > > and changelog updates: [README.md](README.md),
+  > > > > > > > [TODO.md](TODO.md), [CHANGELOG.md](CHANGELOG.md))
+  > > > > > > > subtitle-manager fetch [media] [lang] [output] subtitle-manager
+  > > > > > > > fetch --tags tag1,tag2 [media] [lang] [output] subtitle-manager
+  > > > > > > > search [media] [lang] subtitle-manager batch [lang] [files...]
+  > > > > > > > subtitle-manager syncbatch -config file.json
 
 # syncbatch expects a JSON file describing media and subtitle pairs
 
@@ -2254,7 +2255,9 @@ Cache configuration now uses gcommon.v1.common.CachePolicy messages for each TTL
 
 ### gcommon Protobuf
 
-Authentication now uses the shared gcommon.v1.auth.AuthService. The initial implementation supports password and API key login via gRPC with session token validation. Additional methods will migrate incrementally.
+Authentication now uses the shared gcommon.v1.auth.AuthService. The initial
+implementation supports password and API key login via gRPC with session token
+validation. Additional methods will migrate incrementally.
 
 Configuration can now be exchanged via gRPC using the new proto message
 `SubtitleManagerConfig`.

@@ -292,16 +292,7 @@ jobs:
   build-status:
     name: Build Status Summary
     runs-on: ubuntu-latest
-    needs:
-      [
-        detect-languages,
-        generate-protobuf,
-        build-go,
-        build-python,
-        build-frontend,
-        build-docker,
-        build-rust,
-      ]
+    needs: [detect-languages, generate-protobuf, build-go, build-python, build-frontend, build-docker, build-rust]
     if: always()
     steps:
       - name: Generate build summary
