@@ -1,15 +1,21 @@
 #!/bin/bash
 # file: scripts/create-doc-update.sh
-# version: 2.0.0
+# version: 3.0.0
 # guid: 4db28a8c-33e2-4853-9f0c-1d8283720bd1
 
 set -euo pipefail
 
-# Enhanced Documentation Update Script
+# Enhanced Documentation Update Script v3.0 with Enhanced Timestamp Format v2.0
 #
 # This script creates structured JSON files for documentation updates that can be
 # processed by the reusable-docs-update.yml workflow. It supports multiple modes
 # of operation and provides templates for common documentation updates.
+#
+# Enhanced Features:
+# - Enhanced timestamp format v2.0 with lifecycle tracking (created_at, processed_at, failed_at)
+# - Chronological processing support with sequence numbers
+# - Parent GUID tracking for dependency management
+# - Full backwards compatibility with existing workflows
 #
 # Usage examples:
 #   ./scripts/create-doc-update.sh README.md "## New Feature\nAdded amazing functionality" append
@@ -258,7 +264,7 @@ create_update() {
   mkdir -p "$dir"
   local path="$dir/${uuid}.json"
 
-  # Create comprehensive update file
+  # Create comprehensive update file with enhanced timestamp format v2.0
   jq -n \
     --arg file "$file" \
     --arg mode "$mode" \
@@ -278,6 +284,10 @@ create_update() {
       content: $content,
       guid: $guid,
       created_at: $timestamp,
+      processed_at: null,
+      failed_at: null,
+      sequence: 0,
+      parent_guid: null,
       options: {
         section: (if $section != "" then $section else null end),
         after: (if $after != "" then $after else null end),
@@ -424,4 +434,42 @@ if [[ $# -lt 2 ]]; then
   exit 1
 fi
 
-create_update "$1" "$2" "${3:-append}"
+FILE="$1"
+CONTENT="$2"
+MODE="${3:-append}"
+
+# Validate mode-specific required options
+case "$MODE" in
+  "insert-after")
+    if [[ -z "$AFTER" ]]; then
+      echo "❌ --after option is required for insert-after mode" >&2
+      exit 1
+    fi
+    ;;
+  "insert-before")
+    if [[ -z "$BEFORE" ]]; then
+      echo "❌ --before option is required for insert-before mode" >&2
+      exit 1
+    fi
+    ;;
+  "replace-section")
+    if [[ -z "$SECTION" ]]; then
+      echo "❌ --section option is required for replace-section mode" >&2
+      exit 1
+    fi
+    ;;
+  "task-complete")
+    if [[ -z "$TASK_ID" ]]; then
+      echo "❌ --task-id option is required for task-complete mode" >&2
+      exit 1
+    fi
+    ;;
+  "update-badge")
+    if [[ -z "$BADGE_NAME" ]]; then
+      echo "❌ --badge-name option is required for update-badge mode" >&2
+      exit 1
+    fi
+    ;;
+esac
+
+create_update "$FILE" "$CONTENT" "$MODE"

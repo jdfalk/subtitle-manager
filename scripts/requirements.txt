@@ -1,7 +1,0 @@
-# file: scripts/requirements.txt
-# Python dependencies for scripts in this directory
-# Currently all scripts use only standard library modules for maximum compatibility
-# This file is maintained for future dependency additions and Dependabot monitoring
-
-# No external dependencies required at this time
-# Scripts are designed to be dependency-free for maximum portability

@@ -1,7 +1,5 @@
 #!/bin/bash
 # file: scripts/rebase.sh
-# version: 1.1.0
-# guid: d632d324-83ed-4c5f-b5c3-bc8188052e65
 
 # Smart Git Rebase Tool - Shell Implementation
 #
@@ -38,7 +36,6 @@ START_TIME=""
 SUMMARY_FILE=""
 CONFLICTS_RESOLVED=0
 TOTAL_CONFLICTS=0
-STASHED=false
 
 # Arrays for tracking
 declare -a RESOLVED_FILES=()
@@ -149,60 +146,6 @@ get_current_branch() {
 branch_exists() {
     local branch_name="$1"
     git show-ref --verify --quiet "refs/heads/$branch_name" 2>/dev/null
-}
-
-# Check if a Git remote exists
-remote_exists() {
-    local remote_name="$1"
-    git remote get-url "$remote_name" >/dev/null 2>&1
-}
-
-# Ensure required commands are available
-check_dependencies() {
-    if ! command -v git >/dev/null 2>&1; then
-        log_error "git command not found"
-        exit 1
-    fi
-}
-
-# Abort if another rebase or merge is in progress
-check_clean_state() {
-    if [[ -d .git/rebase-merge || -d .git/rebase-apply || -d .git/MERGE_HEAD ]]; then
-        log_error "Another Git operation is in progress. Abort it before running rebase.sh"
-        exit 1
-    fi
-}
-
-# Optionally set up origin remote when missing
-setup_remote() {
-    if ! remote_exists "origin"; then
-        log_warning "No 'origin' remote found; adding default remote"
-        git remote add origin https://github.com/jdfalk/subtitle-manager.git
-        log_info "Added origin remote: https://github.com/jdfalk/subtitle-manager.git"
-    else
-        log_verbose "Origin remote: $(git remote get-url origin)"
-    fi
-}
-
-# Stash local changes before rebase
-stash_changes() {
-    if ! git diff-index --quiet HEAD --; then
-        log_info "Stashing local changes"
-        git stash push -m "pre-rebase-$(date +%Y%m%d-%H%M%S)" >/dev/null
-        STASHED=true
-    else
-        STASHED=false
-    fi
-}
-
-# Restore stashed changes after rebase
-restore_stash() {
-    if [[ "$STASHED" == true ]]; then
-        if git stash list | grep -q "pre-rebase"; then
-            log_info "Restoring stashed changes"
-            git stash pop >/dev/null || true
-        fi
-    fi
 }
 
 # Create backup branch
@@ -525,14 +468,10 @@ run_rebase() {
     # Create backup branch
     create_backup_branch "$SOURCE_BRANCH"
 
-    # Fetch latest changes if 'origin' remote exists
-    if remote_exists "origin"; then
-        log_info "Fetching latest changes from remote"
-        if ! run_command git fetch origin; then
-            log_warning "Failed to fetch from remote, continuing anyway"
-        fi
-    else
-        log_warning "Remote 'origin' not found, skipping fetch"
+    # Fetch latest changes
+    log_info "Fetching latest changes from remote"
+    if ! run_command git fetch origin; then
+        log_warning "Failed to fetch from remote, continuing anyway"
     fi
 
     # Perform the rebase
@@ -647,26 +586,17 @@ main() {
         exit 1
     fi
 
-    check_dependencies
-    check_clean_state
-    setup_remote
-
     # Parse arguments
     parse_arguments "$@"
 
     log_info "Smart Git Rebase Tool - Shell Implementation"
 
-    stash_changes
-
     # Run the rebase
     if run_rebase "$TARGET_BRANCH" "$MODE" "$FORCE_PUSH"; then
-        local exit_code=0
+        exit 0
     else
-        local exit_code=$?
+        exit $?
     fi
-
-    restore_stash
-    exit "$exit_code"
 }
 
 # Run main function if script is executed directly
