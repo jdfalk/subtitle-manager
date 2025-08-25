@@ -204,10 +204,10 @@ func GRPCTranslate(text, targetLang, addr string) (string, error) {
 		return "", err
 	}
 	defer conn.Close()
-	client := pb.NewTranslatorClient(conn)
-	resp, err := client.Translate(ctx, &pb.TranslateRequest{
-		Text:     text,
-		Language: targetLang,
+	client := translatorpb.NewTranslatorServiceClient(conn)
+	resp, err := client.Translate(ctx, &translatorpb.TranslateRequest{
+		Text:     &text,
+		Language: &targetLang,
 	})
 	if err != nil {
 		return "", err

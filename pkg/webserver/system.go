@@ -7,14 +7,12 @@ package webserver
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -271,7 +269,7 @@ func errorHealthHandler() http.Handler {
 		} else {
 			w.WriteHeader(http.StatusOK)
 		}
-		
+
 		json.NewEncoder(w).Encode(response)
 	})
 }

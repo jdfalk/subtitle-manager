@@ -21,14 +21,14 @@ func main() {
 	enabled := true
 	maxRetries := int32(3)
 	delaySeconds := int32(1)
-	
+
 	retrySettings := (&common.ConfigRetrySettings_builder{
 		Enabled:      &enabled,
 		MaxRetries:   &maxRetries,
 		DelaySeconds: &delaySeconds,
 	}).Build()
 
-	fmt.Printf("Created retry settings: enabled=%v, max_retries=%d, delay=%d\n", 
+	fmt.Printf("Created retry settings: enabled=%v, max_retries=%d, delay=%d\n",
 		retrySettings.GetEnabled(), retrySettings.GetMaxRetries(), retrySettings.GetDelaySeconds())
 
 	// Example 2: Using setter methods

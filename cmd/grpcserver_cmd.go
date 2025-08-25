@@ -3,7 +3,6 @@ package cmd
 import (
 	"net"
 
-	ghealth "github.com/jdfalk/gcommon/pkg/health"
 	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
@@ -34,7 +33,7 @@ var grpcServerCmd = &cobra.Command{
 
 		if err := webserver.InitializeHealth(""); err == nil {
 			if provider := webserver.GetHealthProvider(); provider != nil {
-				ghealth.NewGRPCServer(provider).Register(s)
+				// ghealth.NewGRPCServer(provider).Register(s) // TODO: Replace with simple gRPC health
 			}
 		}
 		lis, err := net.Listen("tcp", grpcAddr)

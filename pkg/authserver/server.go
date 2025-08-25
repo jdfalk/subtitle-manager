@@ -28,22 +28,24 @@ func NewServer(db *sql.DB) *Server {
 }
 
 // Authenticate validates user credentials and issues a session token.
-func (s *Server) Authenticate(ctx context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error) {
+func (s *Server) Authenticate(ctx context.Context, req *authpb.AuthAuthenticateRequest) (*authpb.AuthAuthenticateResponse, error) {
 	var userID int64
-	switch creds := req.Credentials.(type) {
-	case *authpb.AuthenticateRequest_Password:
-		id, err := gauth.AuthenticateUser(s.DB, creds.Password.Username, creds.Password.Password)
+	
+	if req.HasPassword() {
+		creds := req.GetPassword()
+		id, err := gauth.AuthenticateUser(s.DB, creds.GetUsername(), creds.GetPassword())
 		if err != nil {
 			return nil, err
 		}
 		userID = id
-	case *authpb.AuthenticateRequest_ApiKey:
-		id, err := gauth.ValidateAPIKey(s.DB, creds.ApiKey.Key)
+	} else if req.HasApiKey() {
+		creds := req.GetApiKey()
+		id, err := gauth.ValidateAPIKey(s.DB, creds.GetKey())
 		if err != nil {
 			return nil, err
 		}
 		userID = id
-	default:
+	} else {
 		return nil, sql.ErrNoRows
 	}
 
@@ -52,20 +54,24 @@ func (s *Server) Authenticate(ctx context.Context, req *authpb.AuthenticateReque
 		return nil, err
 	}
 
-	return &authpb.AuthenticateResponse{
-		AccessToken: token,
-		TokenType:   "session",
-		ExpiresIn:   int32(24 * 60 * 60),
-		UserInfo: &authpb.UserInfo{
-			Id:       strconv.FormatInt(userID, 10),
-			Username: credsUsername(req),
-		},
-	}, nil
+	// Create UserInfo
+	userInfo := &authpb.UserInfo{}
+	userInfo.SetUserId(strconv.FormatInt(userID, 10))
+	userInfo.SetUsername(credsUsername(req))
+	
+	// Create response
+	response := &authpb.AuthAuthenticateResponse{}
+	response.SetAccessToken(token)
+	response.SetTokenType("session")
+	response.SetExpiresIn(int32(24 * 60 * 60))
+	response.SetUserInfo(userInfo)
+	
+	return response, nil
 }
 
-func credsUsername(req *authpb.AuthenticateRequest) string {
-	if p, ok := req.Credentials.(*authpb.AuthenticateRequest_Password); ok {
-		return p.Password.Username
+func credsUsername(req *authpb.AuthAuthenticateRequest) string {
+	if req.HasPassword() {
+		return req.GetPassword().GetUsername()
 	}
 	return ""
 }
@@ -74,21 +80,26 @@ func credsUsername(req *authpb.AuthenticateRequest) string {
 func (s *Server) ValidateToken(ctx context.Context, req *authpb.ValidateTokenRequest) (*authpb.ValidateTokenResponse, error) {
 	var userID int64
 	var expires time.Time
-	row := s.DB.QueryRow(`SELECT user_id, expires_at FROM sessions WHERE token = ?`, req.AccessToken)
+	row := s.DB.QueryRow(`SELECT user_id, expires_at FROM sessions WHERE token = ?`, req.GetAccessToken())
 	if err := row.Scan(&userID, &expires); err != nil {
 		if err == sql.ErrNoRows {
-			return &authpb.ValidateTokenResponse{Valid: false}, nil
+			response := &authpb.ValidateTokenResponse{}
+			response.SetValid(false)
+			return response, nil
 		}
 		return nil, err
 	}
 	if time.Now().After(expires) {
-		return &authpb.ValidateTokenResponse{Valid: false}, nil
+		response := &authpb.ValidateTokenResponse{}
+		response.SetValid(false)
+		return response, nil
 	}
 
-	return &authpb.ValidateTokenResponse{
-		Valid:     true,
-		Subject:   strconv.FormatInt(userID, 10),
-		ExpiresAt: timestamppb.New(expires),
-		ExpiresIn: int32(time.Until(expires).Seconds()),
-	}, nil
+	response := &authpb.ValidateTokenResponse{}
+	response.SetValid(true)
+	response.SetSubject(strconv.FormatInt(userID, 10))
+	response.SetExpiresAt(timestamppb.New(expires))
+	response.SetExpiresIn(int32(time.Until(expires).Seconds()))
+	
+	return response, nil
 }

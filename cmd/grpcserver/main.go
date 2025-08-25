@@ -6,11 +6,9 @@ import (
 
 	"google.golang.org/grpc"
 
-	ghealth "github.com/jdfalk/gcommon/pkg/health"
 	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
-	"github.com/jdfalk/subtitle-manager/pkg/webserver"
 )
 
 func main() {
@@ -29,13 +27,8 @@ func main() {
 		"",    // no prefix needed
 	)
 
-	pb.RegisterTranslatorServer(s, server)
-
-	if err := webserver.InitializeHealth(""); err == nil {
-		if provider := webserver.GetHealthProvider(); provider != nil {
-			ghealth.NewGRPCServer(provider).Register(s)
-		}
-	}
+	// Register the gRPC service using the new ServiceDesc format
+	s.RegisterService(&pb.TranslatorService_ServiceDesc, server)
 
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {

@@ -1,5 +1,5 @@
 // file: pkg/webserver/health.go
-// version: 1.2.0
+// version: 1.3.0
 // guid: 9e8d7c6b-5a4f-3d2c-1b0a-9f8e7d6c5b4a
 
 package webserver
@@ -7,8 +7,8 @@ package webserver
 import (
 	"context"
 	"fmt"
-	"time"
 	"sync"
+	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/errors"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
@@ -18,9 +18,16 @@ import (
 type HealthStatus string
 
 const (
-	HealthStatusHealthy   HealthStatus = "healthy"
-	HealthStatusUnhealthy HealthStatus = "unhealthy"
+	HealthStatusUp       HealthStatus = "up"
+	HealthStatusDown     HealthStatus = "down"
+	HealthStatusDegraded HealthStatus = "degraded"
 )
+
+type HealthResult struct {
+	Status  HealthStatus           `json:"status"`
+	Details map[string]interface{} `json:"details,omitempty"`
+	Error   error                  `json:"error,omitempty"`
+}
 
 type HealthCheck struct {
 	Name   string
@@ -30,7 +37,44 @@ type HealthCheck struct {
 
 type SimpleHealthProvider struct {
 	mu     sync.RWMutex
-	checks map[string]HealthCheck
+	checks map[string]func(context.Context) HealthResult
+}
+
+func (p *SimpleHealthProvider) Status() HealthStatus {
+	return HealthStatusUp
+}
+
+func (p *SimpleHealthProvider) CheckAll(ctx context.Context) (HealthResult, error) {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+
+	overallStatus := HealthStatusUp
+	details := make(map[string]interface{})
+
+	for name, checkFunc := range p.checks {
+		result := checkFunc(ctx)
+		details[name] = map[string]interface{}{
+			"status":  result.Status,
+			"details": result.Details,
+		}
+
+		if result.Status == HealthStatusDown {
+			overallStatus = HealthStatusDown
+		} else if result.Status == HealthStatusDegraded && overallStatus != HealthStatusDown {
+			overallStatus = HealthStatusDegraded
+		}
+	}
+
+	return HealthResult{
+		Status:  overallStatus,
+		Details: details,
+	}, nil
+}
+
+func (p *SimpleHealthProvider) AddCheck(name string, checkFunc func(context.Context) HealthResult) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.checks[name] = checkFunc
 }
 
 var HealthProvider *SimpleHealthProvider
@@ -42,22 +86,19 @@ func InitializeHealth(endpoint string) error {
 	}
 
 	HealthProvider = &SimpleHealthProvider{
-		checks: make(map[string]HealthCheck),
+		checks: make(map[string]func(context.Context) HealthResult),
 	}
 
-	provider, err := ghealth.NewProvider(cfg)
-	if err != nil {
-		return err
-	}
+	// Add error health check
+	HealthProvider.AddCheck("errors", errorHealthCheck)
 
-	provider.Register("errors", ghealth.CheckFunc(errorHealthCheck), ghealth.WithType(ghealth.TypeComponent))
-	provider.Register("cache", ghealth.CheckFunc(cacheHealthCheck), ghealth.WithType(ghealth.TypeComponent))
+	// Add cache health check
+	HealthProvider.AddCheck("cache", cacheHealthCheck)
 
-	HealthProvider = provider
 	return nil
 }
 
-func errorHealthCheck(ctx context.Context) (ghealth.Result, error) {
+func errorHealthCheck(ctx context.Context) HealthResult {
 	stats := errors.GlobalTracker.GetStats()
 	var total, critical int
 	recent := time.Now().Add(-5 * time.Minute)
@@ -68,25 +109,30 @@ func errorHealthCheck(ctx context.Context) (ghealth.Result, error) {
 		}
 	}
 
-	status := ghealth.StatusUp
+	status := HealthStatusUp
 	if critical > 10 {
-		status = ghealth.StatusDown
+		status = HealthStatusDown
 	} else if critical > 5 {
-		status = ghealth.StatusDegraded
+		status = HealthStatusDegraded
 	}
 
-	res := ghealth.NewResult(status).WithDetails(map[string]any{
-		"total_errors":           total,
-		"critical_errors_recent": critical,
-		"unique_error_types":     len(stats),
-	})
-	return res, nil
+	return HealthResult{
+		Status: status,
+		Details: map[string]interface{}{
+			"total_errors":           total,
+			"critical_errors_recent": critical,
+			"unique_error_types":     len(stats),
+		},
+	}
 }
 
-func cacheHealthCheck(ctx context.Context) (ghealth.Result, error) {
+func cacheHealthCheck(ctx context.Context) HealthResult {
 	logger := logging.GetLogger("webserver.cache")
 	if cacheManager == nil {
-		return ghealth.NewResult(ghealth.StatusDown).WithError(fmt.Errorf("cache not initialized")), nil
+		return HealthResult{
+			Status: HealthStatusDown,
+			Error:  fmt.Errorf("cache not initialized"),
+		}
 	}
 
 	testKey := "health-check"
@@ -94,22 +140,28 @@ func cacheHealthCheck(ctx context.Context) (ghealth.Result, error) {
 
 	if err := cacheManager.SetAPIResponse(ctx, testKey, testValue); err != nil {
 		logger.Errorf("cache health check failed (set): %v", err)
-		return ghealth.NewResult(ghealth.StatusDown).
-			WithError(err).
-			WithDetails(map[string]any{"message": "Failed to write to cache"}), nil
+		return HealthResult{
+			Status:  HealthStatusDown,
+			Error:   err,
+			Details: map[string]interface{}{"message": "Failed to write to cache"},
+		}
 	}
 
 	value, err := cacheManager.GetAPIResponse(ctx, testKey)
 	if err != nil {
 		logger.Errorf("cache health check failed (get): %v", err)
-		return ghealth.NewResult(ghealth.StatusDown).
-			WithError(err).
-			WithDetails(map[string]any{"message": "Failed to read from cache"}), nil
+		return HealthResult{
+			Status:  HealthStatusDown,
+			Error:   err,
+			Details: map[string]interface{}{"message": "Failed to read from cache"},
+		}
 	}
 	if string(value) != string(testValue) {
 		logger.Error("cache health check failed: value mismatch")
-		return ghealth.NewResult(ghealth.StatusDown).
-			WithDetails(map[string]any{"message": "Cache value mismatch"}), nil
+		return HealthResult{
+			Status:  HealthStatusDown,
+			Details: map[string]interface{}{"message": "Cache value mismatch"},
+		}
 	}
 
 	_ = cacheManager.Delete(ctx, "api:"+testKey)
@@ -119,14 +171,18 @@ func cacheHealthCheck(ctx context.Context) (ghealth.Result, error) {
 		logger.Warnf("failed to get stats for health check: %v", err)
 	}
 
-	res := ghealth.NewResult(ghealth.StatusUp).WithDetails(map[string]any{"message": "Cache is operational"})
+	details := map[string]interface{}{"message": "Cache is operational"}
 	if stats != nil {
-		res.WithDetails(map[string]any{"stats": stats})
+		details["stats"] = stats
 	}
-	return res, nil
+
+	return HealthResult{
+		Status:  HealthStatusUp,
+		Details: details,
+	}
 }
 
 // GetHealthProvider returns the global health provider instance.
-func GetHealthProvider() ghealth.Provider {
+func GetHealthProvider() *SimpleHealthProvider {
 	return HealthProvider
 }

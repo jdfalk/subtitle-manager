@@ -12,14 +12,33 @@ import (
 // TTLConfigToProto converts a TTLConfig to a map of CachePolicy messages
 // keyed by configuration name.
 func TTLConfigToProto(cfg TTLConfig) map[string]*commonpb.CachePolicy {
-	return map[string]*commonpb.CachePolicy{
-		"provider_search_results": {DefaultTtl: durationpb.New(cfg.ProviderSearchResults)},
-		"search_results":          {DefaultTtl: durationpb.New(cfg.SearchResults)},
-		"tmdb_metadata":           {DefaultTtl: durationpb.New(cfg.TMDBMetadata)},
-		"translation_results":     {DefaultTtl: durationpb.New(cfg.TranslationResults)},
-		"user_sessions":           {DefaultTtl: durationpb.New(cfg.UserSessions)},
-		"api_responses":           {DefaultTtl: durationpb.New(cfg.APIResponses)},
-	}
+	policies := make(map[string]*commonpb.CachePolicy)
+	
+	providerPolicy := &commonpb.CachePolicy{}
+	providerPolicy.SetDefaultTtl(durationpb.New(cfg.ProviderSearchResults))
+	policies["provider_search_results"] = providerPolicy
+	
+	searchPolicy := &commonpb.CachePolicy{}
+	searchPolicy.SetDefaultTtl(durationpb.New(cfg.SearchResults))
+	policies["search_results"] = searchPolicy
+	
+	tmdbPolicy := &commonpb.CachePolicy{}
+	tmdbPolicy.SetDefaultTtl(durationpb.New(cfg.TMDBMetadata))
+	policies["tmdb_metadata"] = tmdbPolicy
+	
+	translationPolicy := &commonpb.CachePolicy{}
+	translationPolicy.SetDefaultTtl(durationpb.New(cfg.TranslationResults))
+	policies["translation_results"] = translationPolicy
+	
+	sessionPolicy := &commonpb.CachePolicy{}
+	sessionPolicy.SetDefaultTtl(durationpb.New(cfg.UserSessions))
+	policies["user_sessions"] = sessionPolicy
+	
+	apiPolicy := &commonpb.CachePolicy{}
+	apiPolicy.SetDefaultTtl(durationpb.New(cfg.APIResponses))
+	policies["api_responses"] = apiPolicy
+	
+	return policies
 }
 
 // TTLConfigFromProto converts a map of CachePolicy messages to TTLConfig.

@@ -16,7 +16,6 @@ import (
 	"strings"
 	"time"
 
-github.com/jdfalk/gcommon/sdks/go/v1/common
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 	"golang.org/x/text/cases"

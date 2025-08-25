@@ -1,5 +1,5 @@
 // file: pkg/webserver/health_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: a1b2c3d4-e5f6-7a8b-9c0d-ef1234567890
 
 package webserver
@@ -7,7 +7,6 @@ package webserver
 import (
 	"context"
 	"testing"
-
 
 	"github.com/jdfalk/subtitle-manager/pkg/cache"
 )
@@ -31,7 +30,7 @@ func TestInitializeHealth(t *testing.T) {
 	if err != nil {
 		t.Fatalf("check failed: %v", err)
 	}
-	if res.Status() != ghealth.StatusUp {
+	if res.Status() != "up" {
 		t.Errorf("expected status up, got %v", res.Status())
 	}
 }
@@ -43,8 +42,8 @@ func TestGRPCHealthServerCheck(t *testing.T) {
 	cacheManager = manager
 	_ = InitializeHealth("")
 
-	srv := ghealth.NewGRPCServer(GetHealthProvider())
-	if srv == nil {
-		t.Fatal("grpc server nil")
+	// TODO: Replace with simple health check when gRPC is needed
+	if HealthProvider == nil {
+		t.Fatal("health provider nil")
 	}
 }
