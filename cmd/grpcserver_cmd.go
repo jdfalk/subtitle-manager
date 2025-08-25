@@ -29,7 +29,7 @@ var grpcServerCmd = &cobra.Command{
 			"",   // no prefix for Viper keys
 		)
 
-		pb.RegisterTranslatorServer(s, server)
+		pb.RegisterTranslatorServiceServer(s, server)
 
 		if err := webserver.InitializeHealth(""); err == nil {
 			if provider := webserver.GetHealthProvider(); provider != nil {

@@ -6,7 +6,9 @@ package webserver
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"sync"
 	"time"
 
@@ -75,6 +77,35 @@ func (p *SimpleHealthProvider) AddCheck(name string, checkFunc func(context.Cont
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.checks[name] = checkFunc
+}
+
+// Handler returns an HTTP handler for health checks
+func (p *SimpleHealthProvider) Handler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		result, err := p.CheckAll(ctx)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		statusCode := http.StatusOK
+		if result.Status == HealthStatusDown {
+			statusCode = http.StatusServiceUnavailable
+		} else if result.Status == HealthStatusDegraded {
+			statusCode = http.StatusAccepted
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(statusCode)
+		json.NewEncoder(w).Encode(result)
+	})
+}
+
+// Start starts the health provider (no-op for simple provider)
+func (p *SimpleHealthProvider) Start(ctx context.Context) error {
+	return nil
 }
 
 var HealthProvider *SimpleHealthProvider

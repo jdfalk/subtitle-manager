@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jdfalk/gcommon/sdks/go/v1/queue"
 	jobpb "github.com/jdfalk/subtitle-manager/pkg/jobpb"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"google.golang.org/protobuf/types/known/anypb"
@@ -33,7 +34,7 @@ type Job interface {
 	// Description returns a human-readable description of the job.
 	Description() string
 	// QueueMessage converts the job to a gcommon queue message.
-	QueueMessage() (*QueueMessage, error)
+	QueueMessage() (*queue.QueueMessage, error)
 }
 
 // SingleFileJob represents a job to translate a single subtitle file.
@@ -77,22 +78,26 @@ func (j *SingleFileJob) Description() string {
 }
 
 // QueueMessage converts the job to a gcommon queue message.
-func (j *SingleFileJob) QueueMessage() (*QueueMessage, error) {
-	job := &jobpb.TranslationJob{
-		InputPaths: []string{j.InputPath},
-		OutputPath: j.OutputPath,
-		Language:   j.Language,
-		Service:    j.Service,
-		GoogleKey:  j.GoogleKey,
-		GptKey:     j.GPTKey,
-		GrpcAddr:   j.GRPCAddr,
-		Workers:    1,
-	}
+func (j *SingleFileJob) QueueMessage() (*queue.QueueMessage, error) {
+	job := &jobpb.TranslationJob{}
+	job.SetInputPaths([]string{j.InputPath})
+	job.SetOutputPath(j.OutputPath)
+	job.SetLanguage(j.Language)
+	job.SetService(j.Service)
+	job.SetGoogleKey(j.GoogleKey)
+	job.SetGptKey(j.GPTKey)
+	job.SetGrpcAddr(j.GRPCAddr)
+	job.SetWorkers(1)
+
 	anyMsg, err := anypb.New(job)
 	if err != nil {
 		return nil, err
 	}
-	return &QueueMessage{Id: j.JobID, Body: anyMsg}, nil
+
+	queueMsg := &queue.QueueMessage{}
+	queueMsg.SetId(j.JobID)
+	queueMsg.SetBody(anyMsg)
+	return queueMsg, nil
 }
 
 // BatchFilesJob represents a job to translate multiple subtitle files.
@@ -136,19 +141,23 @@ func (j *BatchFilesJob) Description() string {
 }
 
 // QueueMessage converts the batch job to a gcommon queue message.
-func (j *BatchFilesJob) QueueMessage() (*QueueMessage, error) {
-	job := &jobpb.TranslationJob{
-		InputPaths: j.InputPaths,
-		Language:   j.Language,
-		Service:    j.Service,
-		GoogleKey:  j.GoogleKey,
-		GptKey:     j.GPTKey,
-		GrpcAddr:   j.GRPCAddr,
-		Workers:    int32(j.Workers),
-	}
+func (j *BatchFilesJob) QueueMessage() (*queue.QueueMessage, error) {
+	job := &jobpb.TranslationJob{}
+	job.SetInputPaths(j.InputPaths)
+	job.SetLanguage(j.Language)
+	job.SetService(j.Service)
+	job.SetGoogleKey(j.GoogleKey)
+	job.SetGptKey(j.GPTKey)
+	job.SetGrpcAddr(j.GRPCAddr)
+	job.SetWorkers(int32(j.Workers))
+
 	anyMsg, err := anypb.New(job)
 	if err != nil {
 		return nil, err
 	}
-	return &QueueMessage{Id: j.JobID, Body: anyMsg}, nil
+
+	queueMsg := &queue.QueueMessage{}
+	queueMsg.SetId(j.JobID)
+	queueMsg.SetBody(anyMsg)
+	return queueMsg, nil
 }

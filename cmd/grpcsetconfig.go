@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
+	"github.com/jdfalk/subtitle-manager/pkg/configpb"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 )
 
@@ -32,25 +33,28 @@ var grpcSetConfigCmd = &cobra.Command{
 			return err
 		}
 		defer conn.Close()
-		client := pb.NewTranslatorClient(conn)
-		cfg := &pb.SubtitleManagerConfig{}
+		client := pb.NewTranslatorServiceClient(conn)
+		cfg := &configpb.SubtitleManagerConfig{}
 		switch grpcConfigKey {
 		case "google_api_key":
-			cfg.GoogleApiKey = &grpcConfigValue
+			cfg.SetGoogleApiKey(grpcConfigValue)
 		case "openai_api_key":
-			cfg.OpenaiApiKey = &grpcConfigValue
+			cfg.SetOpenaiApiKey(grpcConfigValue)
 		case "db_path":
-			cfg.DbPath = &grpcConfigValue
+			cfg.SetDbPath(grpcConfigValue)
 		case "db_backend":
-			cfg.DbBackend = &grpcConfigValue
+			cfg.SetDbBackend(grpcConfigValue)
 		case "sqlite3_filename":
-			cfg.Sqlite3Filename = &grpcConfigValue
+			cfg.SetSqlite3Filename(grpcConfigValue)
 		case "log_file":
-			cfg.LogFile = &grpcConfigValue
+			cfg.SetLogFile(grpcConfigValue)
 		default:
 			return fmt.Errorf("unknown config key: %s", grpcConfigKey)
 		}
-		_, err = client.SetConfig(ctx, cfg)
+
+		req := &pb.SetConfigRequest{}
+		req.SetConfig(cfg)
+		_, err = client.SetConfig(ctx, req)
 		if err != nil {
 			return err
 		}

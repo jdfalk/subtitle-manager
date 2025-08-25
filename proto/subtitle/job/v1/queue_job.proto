@@ -9,7 +9,7 @@ package subtitle.job.v1;
 import "google/protobuf/go_features.proto";
 
 option features.(pb.go).api_level = API_HYBRID;
-option go_package = "subtitle-manager/pkg/jobpb;jobpb";
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/jobpb;jobpb";
 
 // TranslationJob represents a translation request for one or more subtitle files.
 message TranslationJob {

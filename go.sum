@@ -1,3 +1,5 @@
+buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.8-20250717185734-6c6e0d3c608e.1 h1:sjY1k5uszbIZfv11HO2keV4SLhNA47SabPO886v7Rvo=
+buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.8-20250717185734-6c6e0d3c608e.1/go.mod h1:8EQ5GzyGJQ5tEIwMSxCl8RKJYsjCpAwkdcENoioXT6g=
 cel.dev/expr v0.24.0 h1:56OvJKSH3hDGL0ml5uSxZmz3/3Pq4tJ+fb1unVLAFcY=
 cel.dev/expr v0.24.0/go.mod h1:hLPLo1W4QUmuYdA72RBX06QTs6MXw941piREPl3Yfiw=
 cloud.google.com/go v0.121.6 h1:waZiuajrI28iAf40cWgycWNgaXPO06dupuS+sgibK6c=
@@ -165,6 +167,12 @@ github.com/iancoleman/strcase v0.3.0 h1:nTXanmYxhfFAMjZL34Ov6gkzEsSJZ5DbhxWjvSAS
 github.com/iancoleman/strcase v0.3.0/go.mod h1:iwCmte+B7n89clKwxIoIXy/HfoL7AsD47ZCWhYzw7ho=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+github.com/jdfalk/gcommon/sdks/go/v1/common v1.3.0 h1:D7A1rW3E+gOXoX8zwc66sNwmUJAlSF8adgPZEvKE5tw=
+github.com/jdfalk/gcommon/sdks/go/v1/common v1.3.0/go.mod h1:XY1+x6yFdJao1c+kFZhLQGy+0PECG4QQcwHPDneNFMI=
+github.com/jdfalk/gcommon/sdks/go/v1/metrics v1.3.0 h1:09AXy8BLYCuYfmIHS8ZrOnLltGTlBemAaj4U5SSareA=
+github.com/jdfalk/gcommon/sdks/go/v1/metrics v1.3.0/go.mod h1:avHwOzi2d4vriSLeK+IMmbYfrDtW0SOR3tx5R23XZt4=
+github.com/jdfalk/gcommon/sdks/go/v1/organization v1.3.0 h1:kep4jHUwqpHfZAMLL3nPN+rX9BuNOKqEPOB6stYuORc=
+github.com/jdfalk/gcommon/sdks/go/v1/organization v1.3.0/go.mod h1:NM4yE8v8HPCyiw151fzK3HYK0M9YBS0FNkA1rY2E2Rw=
 github.com/jinzhu/copier v0.4.0 h1:w3ciUoD19shMCRargcpm0cm91ytaBhDvuRpz1ODO/U8=
 github.com/jinzhu/copier v0.4.0/go.mod h1:DfbEm0FYsaqBcKcFuvmOZb218JkPGtvSHsKg8S8hyyg=
 github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=

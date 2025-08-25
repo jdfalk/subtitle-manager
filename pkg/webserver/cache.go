@@ -5,7 +5,6 @@
 package webserver
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -213,19 +212,17 @@ func cacheTypedOperationsHandler() http.Handler {
 
 // cacheHealthHandler checks cache health and connectivity.
 func cacheHealthHandler() http.Handler {
-	cfg := health.DefaultConfig()
-	cfg.Endpoint = "/api/cache/health"
-	cfg.EnableLivenessEndpoint = false
-	cfg.EnableReadinessEndpoint = false
-
-	provider, _ := health.NewProvider(cfg)
-
-	provider.Register("cache", health.NewSimpleCheck("cache", func(ctx context.Context) (health.Result, error) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		logger := logging.GetLogger("webserver.cache")
 
 		if cacheManager == nil {
-			return health.NewResult(health.StatusDown).
-				WithError(fmt.Errorf("cache not initialized")), nil
+			w.WriteHeader(http.StatusServiceUnavailable)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status": "down",
+				"error":  "cache not initialized",
+			})
+			return
 		}
 
 		testKey := "health-check"
@@ -233,21 +230,33 @@ func cacheHealthHandler() http.Handler {
 
 		if err := cacheManager.SetAPIResponse(ctx, testKey, testValue); err != nil {
 			logger.Errorf("cache health check failed (set): %v", err)
-			return health.NewResult(health.StatusDown).
-				WithError(fmt.Errorf("failed to write to cache: %w", err)), nil
+			w.WriteHeader(http.StatusServiceUnavailable)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status": "down",
+				"error":  fmt.Sprintf("failed to write to cache: %v", err),
+			})
+			return
 		}
 
 		retrievedValue, err := cacheManager.GetAPIResponse(ctx, testKey)
 		if err != nil {
 			logger.Errorf("cache health check failed (get): %v", err)
-			return health.NewResult(health.StatusDown).
-				WithError(fmt.Errorf("failed to read from cache: %w", err)), nil
+			w.WriteHeader(http.StatusServiceUnavailable)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status": "down",
+				"error":  fmt.Sprintf("failed to read from cache: %v", err),
+			})
+			return
 		}
 
 		if string(retrievedValue) != string(testValue) {
 			logger.Error("cache health check failed: value mismatch")
-			return health.NewResult(health.StatusDown).
-				WithError(fmt.Errorf("cache value mismatch")), nil
+			w.WriteHeader(http.StatusServiceUnavailable)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status": "down",
+				"error":  "cache value mismatch",
+			})
+			return
 		}
 
 		cacheManager.Delete(ctx, "api:"+testKey)
@@ -257,13 +266,15 @@ func cacheHealthHandler() http.Handler {
 			logger.Warnf("failed to get stats for health check: %v", err)
 		}
 
-		result := health.NewResult(health.StatusUp).
-			WithDetails(map[string]interface{}{"message": "Cache is operational"})
-		if stats != nil {
-			result = result.WithDetails(map[string]interface{}{"stats": stats})
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		result := map[string]interface{}{
+			"status":  "up",
+			"message": "Cache is operational",
 		}
-		return result, nil
-	}, health.WithType(health.TypeReadiness)))
-
-	return provider.Handler()
+		if stats != nil {
+			result["stats"] = stats
+		}
+		json.NewEncoder(w).Encode(result)
+	})
 }
