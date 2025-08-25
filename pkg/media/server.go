@@ -8,10 +8,11 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/asticode/go-astisub"
+	"github.com/google/uuid"
 	"github.com/jdfalk/gcommon/sdks/go/v1/media"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -227,27 +228,9 @@ func (s *MediaServiceServer) UploadMedia(ctx context.Context, req *media.UploadM
 			Filename: "uploaded.mp4",
 		},
 	}, nil
-}erver.go
-// version: 1.0.0
-// guid: 123e4567-e89b-12d3-a456-426614174222
+}
 
-package media
-
-import (
-	"context"
-	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
-
-	"github.com/asticode/go-astisub"
-	mediapb "github.com/jdfalk/gcommon/sdks/go/v1/media"
-	commonpb "github.com/jdfalk/gcommon/sdks/go/v1/common"
-	"github.com/google/uuid"
-	"google.golang.org/protobuf/types/known/timestamppb"
-)
-
-// Server implements the media services defined in gcommon
+// NewServer creates a new server instance
 type Server struct {
 	mediapb.UnimplementedMediaServiceServer
 	mediapb.UnimplementedSubtitleServiceServer
@@ -281,7 +264,7 @@ func (s *Server) CreateMediaFile(ctx context.Context, req *mediapb.CreateMediaFi
 	if fileID == "" {
 		fileID = uuid.New().String()
 	}
-	
+
 	// Create media file metadata with existing getters
 	mediaFile := &mediapb.MediaFile{}
 	// Note: We can't directly set fields due to protobuf opaque generation
@@ -312,10 +295,10 @@ func (s *Server) SearchMedia(ctx context.Context, req *mediapb.SearchMediaReques
 func (s *Server) ExtractSubtitles(ctx context.Context, req *mediapb.ExtractSubtitlesRequest) (*mediapb.ExtractSubtitlesResponse, error) {
 	inputPath := req.GetInputPath()
 	outputPath := req.GetOutputPath()
-	
+
 	// In a real implementation, this would use ffmpeg or similar to extract subtitles
 	// For now, we'll simulate success
-	
+
 	return &mediapb.ExtractSubtitlesResponse{}, nil
 }
 
@@ -356,9 +339,9 @@ func (s *MediaService) ConvertSubtitleFormat(ctx context.Context, req *media.Con
 	}
 
 	return &media.ConvertSubtitleFormatResponse{
-		Success:         true,
-		ConvertedFileId: fmt.Sprintf("%s_converted", subtitleFileId),
-		OutputFormat:    targetFormat,
+		Success:          true,
+		ConvertedFileId:  fmt.Sprintf("%s_converted", subtitleFileId),
+		OutputFormat:     targetFormat,
 		PreservedStyling: preserveStyling,
 	}, nil
 }
