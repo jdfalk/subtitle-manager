@@ -30,7 +30,7 @@ func NewServer(db *sql.DB) *Server {
 // Authenticate validates user credentials and issues a session token.
 func (s *Server) Authenticate(ctx context.Context, req *authpb.AuthAuthenticateRequest) (*authpb.AuthAuthenticateResponse, error) {
 	var userID int64
-	
+
 	if req.HasPassword() {
 		creds := req.GetPassword()
 		id, err := gauth.AuthenticateUser(s.DB, creds.GetUsername(), creds.GetPassword())
@@ -58,14 +58,14 @@ func (s *Server) Authenticate(ctx context.Context, req *authpb.AuthAuthenticateR
 	userInfo := &authpb.UserInfo{}
 	userInfo.SetUserId(strconv.FormatInt(userID, 10))
 	userInfo.SetUsername(credsUsername(req))
-	
+
 	// Create response
 	response := &authpb.AuthAuthenticateResponse{}
 	response.SetAccessToken(token)
 	response.SetTokenType("session")
 	response.SetExpiresIn(int32(24 * 60 * 60))
 	response.SetUserInfo(userInfo)
-	
+
 	return response, nil
 }
 
@@ -100,6 +100,6 @@ func (s *Server) ValidateToken(ctx context.Context, req *authpb.ValidateTokenReq
 	response.SetSubject(strconv.FormatInt(userID, 10))
 	response.SetExpiresAt(timestamppb.New(expires))
 	response.SetExpiresIn(int32(time.Until(expires).Seconds()))
-	
+
 	return response, nil
 }
