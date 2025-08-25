@@ -1,5 +1,5 @@
 // file: pkg/webserver/health.go
-// version: 1.1.0
+// version: 1.2.0
 // guid: 9e8d7c6b-5a4f-3d2c-1b0a-9f8e7d6c5b4a
 
 package webserver
@@ -8,13 +8,32 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"sync"
 
-	ghealth "github.com/jdfalk/gcommon/pkg/health"
 	"github.com/jdfalk/subtitle-manager/pkg/errors"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
 
-var HealthProvider ghealth.Provider
+// Simple local health provider replacement
+type HealthStatus string
+
+const (
+	HealthStatusHealthy   HealthStatus = "healthy"
+	HealthStatusUnhealthy HealthStatus = "unhealthy"
+)
+
+type HealthCheck struct {
+	Name   string
+	Status HealthStatus
+	Error  error
+}
+
+type SimpleHealthProvider struct {
+	mu     sync.RWMutex
+	checks map[string]HealthCheck
+}
+
+var HealthProvider *SimpleHealthProvider
 
 // InitializeHealth sets up the global health provider with built-in checks.
 func InitializeHealth(endpoint string) error {
@@ -22,11 +41,9 @@ func InitializeHealth(endpoint string) error {
 		return nil
 	}
 
-	cfg := ghealth.DefaultConfig()
-	cfg.Endpoint = endpoint
-	cfg.EnableLivenessEndpoint = true
-	cfg.EnableReadinessEndpoint = true
-	cfg.MetricsEnabled = true
+	HealthProvider = &SimpleHealthProvider{
+		checks: make(map[string]HealthCheck),
+	}
 
 	provider, err := ghealth.NewProvider(cfg)
 	if err != nil {

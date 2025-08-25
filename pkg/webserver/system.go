@@ -7,16 +7,17 @@ package webserver
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"syscall"
 	"time"
 
-	"github.com/jdfalk/gcommon/pkg/health"
 	"github.com/jdfalk/subtitle-manager/pkg/backups"
 	"github.com/jdfalk/subtitle-manager/pkg/errors"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
@@ -232,14 +233,7 @@ func errorTopHandler() http.Handler {
 
 // errorHealthHandler returns overall error health status.
 func errorHealthHandler() http.Handler {
-	cfg := health.DefaultConfig()
-	cfg.Endpoint = "/api/errors/health"
-	cfg.EnableLivenessEndpoint = false
-	cfg.EnableReadinessEndpoint = false
-
-	provider, _ := health.NewProvider(cfg)
-
-	provider.Register("errors", health.NewSimpleCheck("errors", func(ctx context.Context) (health.Result, error) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		stats := errors.GlobalTracker.GetStats()
 
 		var totalErrors int
@@ -253,21 +247,31 @@ func errorHealthHandler() http.Handler {
 			}
 		}
 
-		status := health.StatusUp
+		status := "up"
 		if criticalErrors > 10 {
-			status = health.StatusDown
+			status = "down"
 		} else if criticalErrors > 5 {
-			status = health.StatusDegraded
+			status = "degraded"
 		}
 
-		details := map[string]interface{}{
-			"total_errors":           totalErrors,
-			"critical_errors_recent": criticalErrors,
-			"unique_error_types":     len(stats),
+		response := map[string]interface{}{
+			"status": status,
+			"details": map[string]interface{}{
+				"total_errors":           totalErrors,
+				"critical_errors_recent": criticalErrors,
+				"unique_error_types":     len(stats),
+			},
 		}
 
-		return health.NewResult(status).WithDetails(details), nil
-	}, health.WithType(health.TypeReadiness)))
-
-	return provider.Handler()
+		w.Header().Set("Content-Type", "application/json")
+		if status == "down" {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		} else if status == "degraded" {
+			w.WriteHeader(http.StatusAccepted)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+		
+		json.NewEncoder(w).Encode(response)
+	})
 }

@@ -8,7 +8,7 @@ import (
 	"context"
 	"testing"
 
-	ghealth "github.com/jdfalk/gcommon/pkg/health"
+
 	"github.com/jdfalk/subtitle-manager/pkg/cache"
 )
 
