@@ -22,7 +22,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/jdfalk/subtitle-manager/pkg/cache"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
+	translatorpb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 )
 
 var ErrUnsupportedService = errors.New("unsupported translation service")
@@ -212,40 +212,42 @@ func GRPCTranslate(text, targetLang, addr string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return resp.TranslatedText, nil
+	return resp.GetTranslatedText(), nil
 }
 
 // GRPCSetConfig sends configuration key/value pairs to a remote gRPC server.
 // The addr parameter specifies the server address (host:port).
 func GRPCSetConfig(settings map[string]string, addr string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	// TODO: Fix SetConfig when protobuf is properly generated
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancel()
 
-	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	client := pb.NewTranslatorClient(conn)
-	cfg := &pb.SubtitleManagerConfig{}
-	for k, v := range settings {
-		switch k {
-		case "google_api_key":
-			cfg.GoogleApiKey = &v
-		case "openai_api_key":
-			cfg.OpenaiApiKey = &v
-		case "db_path":
-			cfg.DbPath = &v
-		case "db_backend":
-			cfg.DbBackend = &v
-		case "sqlite3_filename":
-			cfg.Sqlite3Filename = &v
-		case "log_file":
-			cfg.LogFile = &v
-		}
-	}
-	_, err = client.SetConfig(ctx, cfg)
-	return err
+	// conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// if err != nil {
+	// 	return err
+	// }
+	// defer conn.Close()
+	// client := translatorpb.NewTranslatorServiceClient(conn)
+	// cfg := &configpb.SubtitleManagerConfig{}
+	// for k, v := range settings {
+	// 	switch k {
+	// 	case "google_api_key":
+	// 		cfg.GoogleApiKey = &v
+	// 	case "openai_api_key":
+	// 		cfg.OpenaiApiKey = &v
+	// 	case "db_path":
+	// 		cfg.DbPath = &v
+	// 	case "db_backend":
+	// 		cfg.DbBackend = &v
+	// 	case "sqlite3_filename":
+	// 		cfg.Sqlite3Filename = &v
+	// 	case "log_file":
+	// 		cfg.LogFile = &v
+	// 	}
+	// }
+	// _, err = client.SetConfig(ctx, cfg)
+	// return err
+	return errors.New("SetConfig not yet implemented with new protobuf structure")
 }
 
 var providers = map[string]TranslateFunc{
