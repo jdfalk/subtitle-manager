@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/jdfalk/gcommon/pkg/health"
 	"github.com/jdfalk/subtitle-manager/pkg/cache"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
