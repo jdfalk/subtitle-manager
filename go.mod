@@ -39,7 +39,10 @@ require (
 	google.golang.org/protobuf v1.36.6
 )
 
-require github.com/jdfalk/gcommon/sdks/go/v1/config v1.0.0 // indirect
+require (
+	github.com/jdfalk/gcommon/sdks/go/v1/metrics v1.3.0 // indirect
+	github.com/jdfalk/gcommon/sdks/go/v1/organization v1.3.0 // indirect
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
@@ -95,8 +98,8 @@ require (
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jdfalk/gcommon v0.1.0
-	github.com/jdfalk/gcommon/sdks/go v1.2.0
+	github.com/jdfalk/gcommon v1.3.0
+	github.com/jdfalk/gcommon/sdks/go v1.3.0
 	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kolo/xmlrpc v0.0.0-20220921171641-a4b6fa1dd06b // indirect
