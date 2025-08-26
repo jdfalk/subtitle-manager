@@ -58,12 +58,12 @@ func Load(cmd *cobra.Command, cfgFile string) error {
 // ToProto converts current viper settings to a protobuf config message.
 func ToProto() *configpb.SubtitleManagerConfig {
 	return &configpb.SubtitleManagerConfig{
-		DbPath:          protoString(viper.GetString("db_path")),
-		DbBackend:       protoString(viper.GetString("db_backend")),
-		Sqlite3Filename: protoString(viper.GetString("sqlite3_filename")),
-		LogFile:         protoString(viper.GetString("log_file")),
-		GoogleApiKey:    protoString(viper.GetString("google_api_key")),
-		OpenaiApiKey:    protoString(viper.GetString("openai_api_key")),
+		DbPath:          viper.GetString("db_path"),
+		DbBackend:       viper.GetString("db_backend"),
+		Sqlite3Filename: viper.GetString("sqlite3_filename"),
+		LogFile:         viper.GetString("log_file"),
+		GoogleApiKey:    viper.GetString("google_api_key"),
+		OpenaiApiKey:    viper.GetString("openai_api_key"),
 	}
 }
 
@@ -72,22 +72,22 @@ func ApplyProto(cfg *configpb.SubtitleManagerConfig) {
 	if cfg == nil {
 		return
 	}
-	if cfg.DbPath != nil {
+	if cfg.DbPath != "" {
 		viper.Set("db_path", cfg.GetDbPath())
 	}
-	if cfg.DbBackend != nil {
+	if cfg.DbBackend != "" {
 		viper.Set("db_backend", cfg.GetDbBackend())
 	}
-	if cfg.Sqlite3Filename != nil {
+	if cfg.Sqlite3Filename != "" {
 		viper.Set("sqlite3_filename", cfg.GetSqlite3Filename())
 	}
-	if cfg.LogFile != nil {
+	if cfg.LogFile != "" {
 		viper.Set("log_file", cfg.GetLogFile())
 	}
-	if cfg.GoogleApiKey != nil {
+	if cfg.GoogleApiKey != "" {
 		viper.Set("google_api_key", cfg.GetGoogleApiKey())
 	}
-	if cfg.OpenaiApiKey != nil {
+	if cfg.OpenaiApiKey != "" {
 		viper.Set("openai_api_key", cfg.GetOpenaiApiKey())
 	}
 }
