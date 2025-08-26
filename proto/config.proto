@@ -2,14 +2,11 @@
 // version: 1.4.0
 // guid: 5d263e60-6079-4a1e-bfcb-82e8feb6f1af
 
-edition = "2023";
+syntax = "proto3";
 
 package subtitle.config.v1;
 
-import "google/protobuf/go_features.proto";
-
 option go_package = "github.com/jdfalk/subtitle-manager/pkg/configpb;configpb";
-option features.(pb.go).api_level = API_HYBRID;
 
 // Local LogLevel enum to replace gcommon dependency
 // TODO: Replace with gcommon/v1/common/log_level.proto when available
@@ -39,7 +36,7 @@ message SubtitleManagerConfig {
   string sqlite3_filename = 3;
 
   // Legacy string-based log file configuration (deprecated)
-  string log_file = 4 [deprecated = true];
+  string log_file = 4;
 
   string google_api_key = 5;
   string openai_api_key = 6;

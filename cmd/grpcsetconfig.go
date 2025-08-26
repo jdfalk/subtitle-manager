@@ -37,17 +37,17 @@ var grpcSetConfigCmd = &cobra.Command{
 		cfg := &configpb.SubtitleManagerConfig{}
 		switch grpcConfigKey {
 		case "google_api_key":
-			cfg.SetGoogleApiKey(grpcConfigValue)
+			cfg.GoogleApiKey = grpcConfigValue
 		case "openai_api_key":
-			cfg.SetOpenaiApiKey(grpcConfigValue)
+			cfg.OpenaiApiKey = grpcConfigValue
 		case "db_path":
-			cfg.SetDbPath(grpcConfigValue)
+			cfg.DbPath = grpcConfigValue
 		case "db_backend":
-			cfg.SetDbBackend(grpcConfigValue)
+			cfg.DbBackend = grpcConfigValue
 		case "sqlite3_filename":
-			cfg.SetSqlite3Filename(grpcConfigValue)
+			cfg.Sqlite3Filename = grpcConfigValue
 		case "log_file":
-			cfg.SetLogFile(grpcConfigValue)
+			cfg.LogFile = grpcConfigValue
 		default:
 			return fmt.Errorf("unknown config key: %s", grpcConfigKey)
 		}
