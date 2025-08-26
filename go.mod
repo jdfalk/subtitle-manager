@@ -16,7 +16,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/jdfalk/gcommon/sdks/go/v1/common v1.3.0
-	github.com/jdfalk/gcommon/sdks/go/v1/media v0.0.0-00010101000000-000000000000
 	github.com/jdfalk/gcommon/sdks/go/v1/metrics v1.3.0
 	github.com/jdfalk/gcommon/sdks/go/v1/queue v1.3.0
 	github.com/lib/pq v1.10.9
@@ -48,7 +47,6 @@ require (
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.8-20250717185734-6c6e0d3c608e.1 // indirect
 	cel.dev/expr v0.24.0 // indirect
 	cloud.google.com/go v0.121.6 // indirect
 	cloud.google.com/go/auth v0.16.5 // indirect
@@ -97,6 +95,7 @@ require (
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/jdfalk/gcommon/sdks/go/v1/organization v1.3.0 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kolo/xmlrpc v0.0.0-20220921171641-a4b6fa1dd06b // indirect
@@ -155,11 +154,4 @@ require (
 	gotest.tools/v3 v3.5.2 // indirect
 )
 
-replace (
-	github.com/jdfalk/gcommon => ../gcommon
-	github.com/jdfalk/gcommon/sdks/go/v1/common => ../gcommon/sdks/go/v1/common
-	github.com/jdfalk/gcommon/sdks/go/v1/media => ../gcommon/sdks/go/v1/media
-	github.com/jdfalk/gcommon/sdks/go/v1/metrics => ../gcommon/sdks/go/v1/metrics
-	github.com/jdfalk/gcommon/sdks/go/v1/organization => ../gcommon/sdks/go/v1/organization
-	github.com/jdfalk/gcommon/sdks/go/v1/queue => ../gcommon/sdks/go/v1/queue
-)
+exclude github.com/jdfalk/gcommon/sdks/go/v1/media v0.0.0-00010101000000-000000000000
