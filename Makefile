@@ -470,8 +470,8 @@ docker-benchmark:
 .PHONY: proto-gen
 proto-gen: ## Generate protobuf code
 	@echo "$(COLOR_BLUE)Generating protobuf code...$(COLOR_RESET)"
-	cd $(PROTO_DIR) && $(PROTOC) --go_out='paths=source_relative:../pkg/jobpb' queue_job.proto
-	cd $(PROTO_DIR) && $(PROTOC) --go_out='paths=source_relative:../pkg/databasepb' database.proto
+	mkdir -p pkg/configpb
+	cd $(PROTO_DIR) && $(PROTOC) --go_out='paths=source_relative:../pkg/configpb' config.proto
 	@echo "$(COLOR_GREEN)✓ Protobuf code generated$(COLOR_RESET)"
 
 #
