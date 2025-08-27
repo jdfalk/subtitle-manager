@@ -171,8 +171,6 @@ github.com/jdfalk/gcommon/sdks/go/v1/metrics v1.3.0 h1:09AXy8BLYCuYfmIHS8ZrOnLlt
 github.com/jdfalk/gcommon/sdks/go/v1/metrics v1.3.0/go.mod h1:avHwOzi2d4vriSLeK+IMmbYfrDtW0SOR3tx5R23XZt4=
 github.com/jdfalk/gcommon/sdks/go/v1/organization v1.3.0 h1:kep4jHUwqpHfZAMLL3nPN+rX9BuNOKqEPOB6stYuORc=
 github.com/jdfalk/gcommon/sdks/go/v1/organization v1.3.0/go.mod h1:NM4yE8v8HPCyiw151fzK3HYK0M9YBS0FNkA1rY2E2Rw=
-github.com/jdfalk/gcommon/sdks/go/v1/queue v1.3.0 h1:nqcHY3q2ZuM9xN7e9SixF4O1g3/LvlfSnK77LMPbKKA=
-github.com/jdfalk/gcommon/sdks/go/v1/queue v1.3.0/go.mod h1:J/byxzn4cL013WZPZVv9LWcjI+QcNBvQ/l4cWRDI9Os=
 github.com/jinzhu/copier v0.4.0 h1:w3ciUoD19shMCRargcpm0cm91ytaBhDvuRpz1ODO/U8=
 github.com/jinzhu/copier v0.4.0/go.mod h1:DfbEm0FYsaqBcKcFuvmOZb218JkPGtvSHsKg8S8hyyg=
 github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=

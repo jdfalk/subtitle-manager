@@ -17,7 +17,6 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/jdfalk/gcommon/sdks/go/v1/common v1.3.0
 	github.com/jdfalk/gcommon/sdks/go/v1/metrics v1.3.0
-	github.com/jdfalk/gcommon/sdks/go/v1/queue v1.3.0
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.32
 	github.com/oz/osdb v0.0.0-20221214175751-f169057712ec
@@ -153,5 +152,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools/v3 v3.5.2 // indirect
 )
-
-exclude github.com/jdfalk/gcommon/sdks/go/v1/media v0.0.0-00010101000000-000000000000
