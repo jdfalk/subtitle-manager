@@ -1,5 +1,5 @@
 <!-- file: docs/testing/E2E_QA_TESTING_GUIDE.md -->
-<!-- version: 1.0.0 -->
+<!-- version: 1.1.0 -->
 <!-- guid: qa-guide-12345-6789-abcd-ef01-234567890abc -->
 
 # End-to-End QA Testing Guide for Subtitle Manager
@@ -36,7 +36,7 @@ Before starting QA testing, ensure the e2e environment is properly configured:
    ```
 
 3. **Verify System Access**
-   - Web interface: http://localhost:8080
+   - Web interface: <http://127.0.0.1:55327>
    - Default credentials: username=`test`, password=`test123`
 
 ## Test Data Structure
@@ -105,7 +105,7 @@ testdir/
 **Steps**:
 
 1. Open web browser
-2. Navigate to http://localhost:8080
+2. Navigate to <http://127.0.0.1:55327>
 3. Enter credentials: username=`test`, password=`test123`
 4. Verify dashboard loads
 
@@ -123,75 +123,226 @@ testdir/
 - [ ] Dashboard loads without errors
 - [ ] All UI elements are functional
 
-### 2. Media Library Setup and Scanning
+### 2. Media Library Interface and Management
 
-#### Test Case 2.1: Add Test Data Directory
+#### Test Case 2.1: Media Library Interface Validation
 
-**Objective**: Configure the application to scan the test data directory
+**Objective**: Verify the Media Library page has the correct interface design and functionality
 
 **Steps**:
 
-1. In the web interface, navigate to Settings or Library Management
-2. Add library path: `./testdir`
-3. Configure scanning options (if available)
-4. Initiate library scan
+1. Navigate to Media Library page
+2. Verify the page contains:
+   - "Add Library Path" button prominently displayed
+   - List of configured library paths
+   - Actual media library content (NOT subtitle scan widgets)
+   - Media organized by categories (Movies, TV Shows, Anime)
+   - Library statistics and information
+3. Confirm the following are NOT present:
+   - Subtitle scan widgets or interfaces
+   - Generic scanning controls
+   - Non-library related content
+4. Test the "Add Library Path" functionality
+5. Verify media items are displayed with proper organization
 
 **Expected Results**:
 
-- Library path is accepted
-- Scanning process starts
+- Media Library page focuses on library management and content display
+- "Add Library Path" button is easily accessible
+- Actual library content is displayed instead of scan widgets
+- Media is properly organized and browsable
+- Interface is clean and library-focused
+
+**Validation**:
+
+- [ ] "Add Library Path" button prominently displayed
+- [ ] Library content shown (not scan widgets)
+- [ ] Media organized by type
+- [ ] Library statistics visible
+- [ ] Clean, library-focused interface
+- [ ] No subtitle scan widgets present
+
+#### Test Case 2.2: Add Test Data Directory
+
+**Objective**: Configure the application to scan the test data directory using the Media Library interface
+
+**Steps**:
+
+1. In the web interface, navigate to Media Library
+2. Click "Add Library Path" button (should be prominently displayed)
+3. Enter library path: `./testdir`
+4. Configure any library-specific options
+5. Save the library path
+6. Initiate initial library scan
+
+**Expected Results**:
+
+- "Add Library Path" button is easily accessible on Media Library page
+- Library path input accepts `./testdir`
+- Library is added to the list of configured libraries
+- Initial scan process starts automatically or with manual trigger
 - Progress indication is shown
 - Scan completes successfully
 
 **Validation**:
 
+- [ ] "Add Library Path" button visible and accessible
 - [ ] Path input accepts `./testdir`
+- [ ] Library appears in configured libraries list
 - [ ] Scan process initiates
 - [ ] Progress is visible
 - [ ] Scan completes without errors
 
-#### Test Case 2.2: Verify Media Detection
+#### Test Case 2.2: Verify Media Library Display
 
-**Objective**: Confirm all test media items are detected with various naming
-conventions
+**Objective**: Confirm the Media Library page shows actual library content instead of subtitle scan widgets
 
 **Steps**:
 
-1. Navigate to Movies section
-2. Verify all movie entries are detected:
+1. Navigate to Media Library page
+2. Verify the main content area shows:
+   - Configured library paths
+   - Media items organized by type (Movies, TV Shows, Anime)
+   - Library statistics (total items, scan status)
+   - Recent additions or activity
+3. Confirm NO subtitle scan widgets are present
+4. Verify library management controls are available:
+   - Add Library Path button
+   - Remove library options
+   - Library-specific settings
+
+**Expected Results**:
+
+- Media Library page displays actual library content
+- No subtitle scan widgets visible
+- Library content is organized and accessible
+- Management controls are intuitive and functional
+
+**Validation**:
+
+- [ ] Library content displayed (not scan widgets)
+- [ ] Media organized by type
+- [ ] Library statistics visible
+- [ ] Add/remove library controls present
+- [ ] No subtitle scan interface visible
+
+#### Test Case 2.3: Global Library Rescan Functionality
+
+**Objective**: Verify global library rescan button is available on all pages
+
+**Steps**:
+
+1. Navigate to different pages in the application:
+   - Dashboard/Home
+   - Media Library
+   - Individual movie pages
+   - Individual TV show pages
+   - Settings
+2. On each page, look for global "Rescan Library" button
+3. Test the global rescan functionality:
+   - Click the global rescan button
+   - Verify confirmation dialog (if present)
+   - Confirm rescan process starts
+   - Monitor progress indication
+
+**Expected Results**:
+
+- Global rescan button is visible on all major pages
+- Button is consistently placed and styled
+- Rescan process works from any page
+- Progress is tracked and displayed
+
+**Validation**:
+
+- [ ] Rescan button on all pages
+- [ ] Consistent placement and styling
+- [ ] Rescan works from any page
+- [ ] Progress tracking visible
+
+#### Test Case 2.4: Global Rescan Button Accessibility
+
+**Objective**: Verify global library rescan button is consistently available across all pages
+
+**Steps**:
+
+1. Navigate to each major page and verify global rescan button presence:
+   - Dashboard/Home page
+   - Media Library page
+   - Individual movie detail pages
+   - Individual TV show detail pages
+   - Episode detail pages
+   - Settings page
+   - Any other major pages
+2. For each page, verify:
+   - Button is visible and appropriately placed
+   - Button styling is consistent
+   - Button functionality works (test on 2-3 pages)
+   - Button doesn't interfere with page-specific actions
+3. Test global rescan functionality:
+   - Click global rescan from different pages
+   - Verify it rescans entire library (not just current item)
+   - Confirm progress tracking works
+   - Check that rescan completes successfully
+
+**Expected Results**:
+
+- Global rescan button is present on all major pages
+- Button placement and styling is consistent
+- Functionality works from any page
+- Rescans entire library, not just current context
+- Progress tracking is visible and accurate
+
+**Validation**:
+
+- [ ] Button present on all major pages
+- [ ] Consistent placement and styling
+- [ ] Functionality works from any page
+- [ ] Rescans entire library
+- [ ] Progress tracking visible
+- [ ] Does not interfere with page-specific actions
+
+#### Test Case 2.5: Verify Media Detection and Organization
+
+**Objective**: Confirm all test media items are detected and properly organized in the Media Library
+
+**Steps**:
+
+1. Navigate to Media Library page
+2. Verify Movies section shows:
    - "The Matrix (1999)" - spaces and parentheses
    - "Blade Runner 2049 (2017)" - spaces and parentheses
    - "Interstellar (2014)" - multiple languages
    - "The_Dark_Knight" - underscores, no year
-3. Navigate to TV Shows section
-4. Verify all TV show entries:
+3. Verify TV Shows section shows:
    - "Breaking Bad (2008)" - standard format
    - "The Office (2005)" - spaces and parentheses
    - "Game of Thrones (2011)" - multiple words
    - "stranger_things_2016" - underscores format
-5. Navigate to Anime section
-6. Verify all anime entries:
+4. Verify Anime section shows:
    - "Attack on Titan (2013)" - standard format
    - "Your Name (2016)" - spaces and parentheses
    - "Spirited Away (2001)" - Studio Ghibli
    - "one_piece-1999" - underscores and dashes
+5. Check that items are clickable and lead to detail pages
 
 **Expected Results**:
 
-- All 12 media items are detected
+- All 12 media items are detected and displayed in Media Library
 - Names are parsed correctly despite different formats
-- Categories (movies/tv/anime) are properly assigned
+- Categories (movies/tv/anime) are properly assigned and organized
 - Years are extracted where present
+- Items are clickable and navigate to detail pages
 
 **Validation**:
 
-- [ ] All movies detected (4 items)
-- [ ] All TV shows detected (4 items)
-- [ ] All anime detected (4 items)
+- [ ] All movies detected and displayed (4 items)
+- [ ] All TV shows detected and displayed (4 items)
+- [ ] All anime detected and displayed (4 items)
 - [ ] Special characters handled correctly
 - [ ] Years parsed correctly
+- [ ] Items navigate to detail pages
 
-#### Test Case 2.3: Subtitle File Detection
+#### Test Case 2.6: Subtitle File Detection
 
 **Objective**: Verify subtitle files are detected and associated correctly
 
@@ -225,26 +376,33 @@ conventions
 
 ### 3. Individual Item Page Testing
 
-#### Test Case 3.1: Movie Item Page Navigation
+#### Test Case 3.1: Movie Item Page Navigation and Actions
 
-**Objective**: Test navigation to individual movie pages and subtitle management
+**Objective**: Test navigation to individual movie pages and page-specific actions
 
 **Steps**:
 
-1. From the Movies section, click on "The Matrix (1999)"
+1. From the Media Library, click on "The Matrix (1999)"
 2. Verify the item detail page loads
 3. Check available subtitle files:
    - The.Matrix.1999.en.srt (English)
    - The.Matrix.1999.es.srt (Spanish)
    - The.Matrix.1999.en.ass (Advanced SubStation Alpha)
-4. Test subtitle preview functionality
-5. Check download options
+4. Test page-specific action buttons:
+   - "Rescan Disk" - rescans this specific movie's directory
+   - "Resync from Radarr" - syncs metadata from Radarr
+   - Any other movie-specific actions
+5. Verify global "Rescan Library" button is also present
+6. Test subtitle preview functionality
+7. Check download options
 
 **Expected Results**:
 
-- Item page loads correctly
+- Item page loads correctly with movie-specific actions
 - Title displays with correct formatting
 - All subtitle files are listed
+- Page-specific action buttons are visible and functional
+- Global rescan button remains accessible
 - File details (format, language, size) are shown
 - Preview and download functions work
 
@@ -252,36 +410,55 @@ conventions
 
 - [ ] Page loads without errors
 - [ ] Title formatting is correct
+- [ ] Page-specific action buttons present
+- [ ] "Rescan Disk" button functional
+- [ ] "Resync from Radarr" button present
+- [ ] Global rescan button accessible
 - [ ] All subtitle files listed
 - [ ] File metadata is accurate
 - [ ] Preview functionality works
 - [ ] Download links function
 
-#### Test Case 3.2: TV Show Episode Management
+#### Test Case 3.2: TV Show Episode Management and Actions
 
-**Objective**: Test TV show episode navigation and subtitle handling
+**Objective**: Test TV show episode navigation and page-specific actions
 
 **Steps**:
 
 1. Navigate to "Breaking Bad (2008)"
 2. Verify episode detection and listing
-3. Click on episode "S01E01"
-4. Check subtitle availability for the episode
-5. Test episode-specific subtitle management
+3. Check for TV show-specific action buttons:
+   - "Rescan Disk" - rescans this TV show's directory
+   - "Resync from Sonarr" - syncs episodes and metadata from Sonarr
+   - "Refresh Episodes" - updates episode list
+   - Any other TV show-specific actions
+4. Click on episode "S01E01"
+5. Check subtitle availability for the episode
+6. Verify episode-specific action buttons:
+   - "Rescan Episode" - rescans this specific episode
+   - "Resync Episode from Sonarr" - syncs this episode from Sonarr
+7. Test episode-specific subtitle management
 
 **Expected Results**:
 
 - TV show page shows season/episode structure
+- TV show-specific action buttons are visible and functional
 - Episodes are listed with proper formatting
-- Episode detail pages load correctly
+- Episode detail pages load correctly with episode-specific actions
 - Episode-specific subtitles are managed separately
+- Global rescan button remains accessible
 
 **Validation**:
 
 - [ ] Season/episode structure detected
+- [ ] TV show action buttons present
+- [ ] "Rescan Disk" button functional
+- [ ] "Resync from Sonarr" button present
 - [ ] Episode naming is correct
 - [ ] Episode pages load properly
+- [ ] Episode-specific actions available
 - [ ] Subtitle management per episode
+- [ ] Global rescan button accessible
 
 #### Test Case 3.3: Anime with Japanese Content
 
@@ -672,10 +849,10 @@ conventions
 
 **Steps**:
 
-1. Test health check endpoint: `GET /health`
-2. Test subtitle listing: `GET /api/v1/subtitles`
-3. Test file upload: `POST /api/v1/subtitles/upload`
-4. Test translation: `POST /api/v1/subtitles/translate`
+1. Test health check endpoint: `GET http://127.0.0.1:55327/health`
+2. Test subtitle listing: `GET http://127.0.0.1:55327/api/v1/subtitles`
+3. Test file upload: `POST http://127.0.0.1:55327/api/v1/subtitles/upload`
+4. Test translation: `POST http://127.0.0.1:55327/api/v1/subtitles/translate`
 5. Verify API responses and error codes
 
 **Expected Results**:
@@ -773,7 +950,7 @@ conventions
 make end2end-tests
 
 # Check if environment is running
-curl http://localhost:8080/health
+curl http://127.0.0.1:55327/health
 ```
 
 ### Monitoring and Logs
@@ -800,7 +977,8 @@ make clean-e2e
 
 The following environment variables are automatically set during e2e testing:
 
-- `SUBTITLE_MANAGER_PORT=8080`
+- `SUBTITLE_MANAGER_PORT=55327`
+- `SUBTITLE_MANAGER_ADDRESS=127.0.0.1`
 - `SUBTITLE_MANAGER_USERNAME=test`
 - `SUBTITLE_MANAGER_PASSWORD=test123`
 - `SUBTITLE_MANAGER_MEDIA_PATH=./testdir`
@@ -816,9 +994,9 @@ The following environment variables are automatically set during e2e testing:
 
 ### Port Conflicts
 
-- **Problem**: Server won't start on port 8080
+- **Problem**: Server won't start on port 55327
 - **Solution**: Kill existing processes or change port
-- **Check**: `lsof -i :8080`
+- **Check**: `lsof -i :55327`
 
 ### File Permission Issues
 
