@@ -23,7 +23,7 @@ TESTDIR="$PROJECT_DIR/testdir"
 BINARY_PATH="$PROJECT_DIR/bin/subtitle-manager"
 
 # Default configuration
-DEFAULT_PORT=8080
+DEFAULT_PORT=55327
 DEFAULT_USERNAME="test"
 DEFAULT_PASSWORD="test123"
 
@@ -92,9 +92,10 @@ start_subtitle_manager() {
     export SUBTITLE_MANAGER_PASSWORD="$DEFAULT_PASSWORD"
     export SUBTITLE_MANAGER_MEDIA_PATH="$TESTDIR"
 
-    "$BINARY_PATH" server \
-        --port "$DEFAULT_PORT" \
-        --media-path "$TESTDIR" \
+    "$BINARY_PATH" web \
+        --addr "127.0.0.1:$DEFAULT_PORT" \
+        --admin-user "$DEFAULT_USERNAME" \
+        --admin-password "$DEFAULT_PASSWORD" \
         --log-level debug \
         > "/tmp/subtitle-manager-e2e.log" 2>&1 &
 
@@ -102,9 +103,9 @@ start_subtitle_manager() {
     echo "$PID" > "/tmp/subtitle-manager-e2e.pid"
 
     # Wait for server to start
-    echo "Waiting for server to start on port $DEFAULT_PORT..."
+    echo "Starting server on port $DEFAULT_PORT..."
     for i in {1..30}; do
-        if curl -s "http://localhost:$DEFAULT_PORT/health" > /dev/null 2>&1; then
+        if curl -s "http://127.0.0.1:$DEFAULT_PORT/health" > /dev/null 2>&1; then
             print_status "Server started successfully (PID: $PID)"
             return 0
         fi
@@ -119,7 +120,7 @@ start_subtitle_manager() {
 run_basic_tests() {
     echo -e "${COLOR_BLUE}Running basic functionality tests...${COLOR_RESET}"
 
-    local BASE_URL="http://localhost:$DEFAULT_PORT"
+    local BASE_URL="http://127.0.0.1:$DEFAULT_PORT"
 
     # Test health endpoint
     if curl -s "$BASE_URL/health" | jq -e '.status == "ok"' > /dev/null; then
@@ -151,7 +152,7 @@ show_access_info() {
     echo -e "${COLOR_BOLD}${COLOR_GREEN}=== E2E Testing Environment Ready ===${COLOR_RESET}"
     echo ""
     echo -e "${COLOR_BLUE}Web Interface:${COLOR_RESET}"
-    echo "  URL: http://localhost:$DEFAULT_PORT"
+    echo "  URL: http://127.0.0.1:$DEFAULT_PORT"
     echo "  Username: $DEFAULT_USERNAME"
     echo "  Password: $DEFAULT_PASSWORD"
     echo ""

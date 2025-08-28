@@ -784,7 +784,7 @@ status-e2e: ## Check E2E environment status
 		PID=$$(cat /tmp/subtitle-manager-e2e.pid); \
 		if kill -0 $$PID 2>/dev/null; then \
 			echo "$(COLOR_GREEN)✓ E2E server running (PID: $$PID)$(COLOR_RESET)"; \
-			echo "$(COLOR_BLUE)Web Interface: http://localhost:8080$(COLOR_RESET)"; \
+			echo "$(COLOR_BLUE)Web Interface: http://127.0.0.1:55327$(COLOR_RESET)"; \
 			echo "$(COLOR_BLUE)Credentials: test/test123$(COLOR_RESET)"; \
 		else \
 			echo "$(COLOR_RED)✗ E2E server not running$(COLOR_RESET)"; \
@@ -792,7 +792,7 @@ status-e2e: ## Check E2E environment status
 	else \
 		echo "$(COLOR_RED)✗ No E2E server running$(COLOR_RESET)"; \
 	fi
-	@if curl -s http://localhost:8080/health > /dev/null 2>&1; then \
+	@if curl -s http://127.0.0.1:55327/health > /dev/null 2>&1; then \
 		echo "$(COLOR_GREEN)✓ Health check passed$(COLOR_RESET)"; \
 	else \
 		echo "$(COLOR_RED)✗ Health check failed$(COLOR_RESET)"; \
