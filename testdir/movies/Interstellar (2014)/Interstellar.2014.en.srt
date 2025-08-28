@@ -1,0 +1,15 @@
+1
+00:00:01,000 --> 00:00:05,000
+[ENGLISH] Interstellar subtitle - sync test
+
+2
+00:00:06,500 --> 00:00:10,200
+This subtitle has timing offsets.
+
+3
+00:00:11,800 --> 00:00:15,300
+Testing synchronization adjustment features.
+
+4
+00:00:16,000 --> 00:00:20,000
+Love is the one thing we're capable of perceiving...

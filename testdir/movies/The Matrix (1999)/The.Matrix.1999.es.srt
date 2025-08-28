@@ -1,0 +1,19 @@
+1
+00:00:01,000 --> 00:00:05,000
+La Matrix: La realidad es una ilusión
+
+2
+00:00:06,000 --> 00:00:10,000
+Bienvenido al mundo real, Neo.
+
+3
+00:00:11,000 --> 00:00:15,000
+Este es un archivo de subtítulos de prueba para testing e2e.
+
+4
+00:00:16,000 --> 00:00:20,000
+Se admiten múltiples idiomas y formatos.
+
+5
+00:00:21,000 --> 00:00:25,000
+Probando sincronización y procesamiento de subtítulos.

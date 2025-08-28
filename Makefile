@@ -452,7 +452,7 @@ docker-optimized:
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		--cache-from $(DOCKER_IMAGE):latest \
 		.
-	
+
 # Benchmark build times
 docker-benchmark:
 		@echo "⏱️  Benchmarking Docker build methods..."
@@ -709,3 +709,100 @@ webui-rebuild: ## Force rebuild web UI and regenerate Go assets
 	@echo "$(COLOR_BLUE)Running go generate...$(COLOR_RESET)"
 	go generate ./webui
 	@echo "$(COLOR_GREEN)✓ Web UI rebuilt and Go assets regenerated$(COLOR_RESET)"
+
+#
+# E2E Testing Targets
+#
+
+.PHONY: end2end-tests
+end2end-tests: setup-e2e-env build ## Start complete E2E testing environment
+	@echo "$(COLOR_BLUE)Starting E2E testing environment...$(COLOR_RESET)"
+	@./scripts/setup-e2e-environment.sh
+
+.PHONY: setup-e2e-env
+setup-e2e-env: ## Setup E2E environment configuration
+	@echo "$(COLOR_BLUE)Setting up E2E environment...$(COLOR_RESET)"
+	@if [ ! -f .env.local ]; then \
+		echo "$(COLOR_YELLOW)⚠️  .env.local not found. Checking for OpenAI API key...$(COLOR_RESET)"; \
+		if [ -z "$$OPENAI_API_KEY" ]; then \
+			echo "$(COLOR_YELLOW)⚠️  No OpenAI API key found in environment.$(COLOR_RESET)"; \
+			echo "$(COLOR_YELLOW)   Please either:$(COLOR_RESET)"; \
+			echo "$(COLOR_YELLOW)   1. Copy .env.local.template to .env.local and add your API key$(COLOR_RESET)"; \
+			echo "$(COLOR_YELLOW)   2. Set OPENAI_API_KEY environment variable$(COLOR_RESET)"; \
+			echo "$(COLOR_YELLOW)   3. Continue without translation features for basic testing$(COLOR_RESET)"; \
+			read -p "Continue without API key? (y/N): " continue_without_key; \
+			if [ "$$continue_without_key" != "y" ] && [ "$$continue_without_key" != "Y" ]; then \
+				echo "$(COLOR_RED)Exiting. Please configure API key and try again.$(COLOR_RESET)"; \
+				exit 1; \
+			fi; \
+		else \
+			echo "$(COLOR_GREEN)✓ Using OPENAI_API_KEY from environment$(COLOR_RESET)"; \
+		fi; \
+	else \
+		echo "$(COLOR_GREEN)✓ Found .env.local configuration$(COLOR_RESET)"; \
+		source .env.local; \
+	fi
+	@echo "$(COLOR_GREEN)✓ E2E environment setup complete$(COLOR_RESET)"
+
+.PHONY: setup-e2e-testdir
+setup-e2e-testdir: ## Create/verify E2E test directory structure
+	@echo "$(COLOR_BLUE)Setting up E2E test directory structure...$(COLOR_RESET)"
+	@mkdir -p testdir/{movies,tv,anime}
+	@mkdir -p testdir/movies/{"The Matrix (1999)","Blade Runner 2049 (2017)","Interstellar (2014)",The_Dark_Knight}
+	@mkdir -p testdir/tv/{"Breaking Bad (2008)","The Office (2005)","Game of Thrones (2011)",stranger_things_2016}
+	@mkdir -p testdir/anime/{"Attack on Titan (2013)","Your Name (2016)","Spirited Away (2001)",one_piece-1999}
+	@echo "$(COLOR_GREEN)✓ E2E test directory structure created$(COLOR_RESET)"
+
+.PHONY: stop-e2e
+stop-e2e: ## Stop the E2E testing environment
+	@echo "$(COLOR_BLUE)Stopping E2E testing environment...$(COLOR_RESET)"
+	@if [ -f /tmp/subtitle-manager-e2e.pid ]; then \
+		PID=$$(cat /tmp/subtitle-manager-e2e.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID; \
+			echo "$(COLOR_GREEN)✓ E2E server stopped (PID: $$PID)$(COLOR_RESET)"; \
+		else \
+			echo "$(COLOR_YELLOW)⚠️  E2E server was not running$(COLOR_RESET)"; \
+		fi; \
+		rm -f /tmp/subtitle-manager-e2e.pid; \
+	else \
+		echo "$(COLOR_YELLOW)⚠️  No E2E server PID file found$(COLOR_RESET)"; \
+		pkill -f subtitle-manager || true; \
+	fi
+
+.PHONY: clean-e2e
+clean-e2e: stop-e2e ## Clean up E2E testing artifacts
+	@echo "$(COLOR_BLUE)Cleaning E2E testing artifacts...$(COLOR_RESET)"
+	@rm -f /tmp/subtitle-manager-e2e.log
+	@rm -f /tmp/subtitle-manager-e2e.pid
+	@echo "$(COLOR_GREEN)✓ E2E artifacts cleaned$(COLOR_RESET)"
+
+.PHONY: status-e2e
+status-e2e: ## Check E2E environment status
+	@echo "$(COLOR_BLUE)Checking E2E environment status...$(COLOR_RESET)"
+	@if [ -f /tmp/subtitle-manager-e2e.pid ]; then \
+		PID=$$(cat /tmp/subtitle-manager-e2e.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(COLOR_GREEN)✓ E2E server running (PID: $$PID)$(COLOR_RESET)"; \
+			echo "$(COLOR_BLUE)Web Interface: http://localhost:8080$(COLOR_RESET)"; \
+			echo "$(COLOR_BLUE)Credentials: test/test123$(COLOR_RESET)"; \
+		else \
+			echo "$(COLOR_RED)✗ E2E server not running$(COLOR_RESET)"; \
+		fi; \
+	else \
+		echo "$(COLOR_RED)✗ No E2E server running$(COLOR_RESET)"; \
+	fi
+	@if curl -s http://localhost:8080/health > /dev/null 2>&1; then \
+		echo "$(COLOR_GREEN)✓ Health check passed$(COLOR_RESET)"; \
+	else \
+		echo "$(COLOR_RED)✗ Health check failed$(COLOR_RESET)"; \
+	fi
+
+.PHONY: logs-e2e
+logs-e2e: ## Show E2E testing logs
+	@echo "$(COLOR_BLUE)Showing E2E testing logs...$(COLOR_RESET)"
+	@if [ -f /tmp/subtitle-manager-e2e.log ]; then \
+		tail -f /tmp/subtitle-manager-e2e.log; \
+	else \
+		echo "$(COLOR_YELLOW)⚠️  No E2E log file found$(COLOR_RESET)"; \
+	fi

@@ -1,0 +1,3 @@
+# Placeholder for video file
+# In a real e2e test, this would be a minimal test video file
+# For testing purposes, the subtitle manager should handle missing video files gracefully

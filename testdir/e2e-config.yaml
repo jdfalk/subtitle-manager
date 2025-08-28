@@ -1,0 +1,89 @@
+# file: testdir/e2e-config.yaml
+# version: 1.0.0
+# guid: e2e12345-6789-abcd-ef01-234567890abc
+
+# End-to-End Testing Configuration for Subtitle Manager
+# This configuration defines the test environment setup
+
+test_environment:
+  name: "e2e-testing"
+  description: "End-to-end testing environment with sample media and subtitles"
+
+media_library:
+  base_path: "./testdir"
+  categories:
+    movies:
+      path: "movies"
+      sample_items:
+        - "The Matrix (1999)"
+        - "Blade Runner 2049 (2017)"
+      formats:
+        - "mkv"
+        - "mp4"
+        - "avi"
+
+    tv:
+      path: "tv"
+      sample_items:
+        - "Breaking Bad (2008)"
+        - "The Office (2005)"
+      episode_format: "S{season:02d}E{episode:02d}"
+
+    anime:
+      path: "anime"
+      sample_items:
+        - "Attack on Titan (2013)"
+        - "Your Name (2016)"
+      languages:
+        - "ja" # Japanese
+        - "en" # English
+
+subtitle_formats:
+  supported:
+    - "srt" # SubRip
+    - "ass" # Advanced SubStation Alpha
+    - "sub" # MicroDVD
+    - "vtt" # WebVTT
+    - "idx" # VobSub Index
+    - "sup" # PGS/SUP
+
+languages:
+  primary:
+    - "en" # English
+    - "es" # Spanish
+    - "fr" # French
+    - "de" # German
+    - "ja" # Japanese
+    - "ko" # Korean
+    - "zh" # Chinese
+
+web_interface:
+  default_credentials:
+    username: "test"
+    password: "test123"
+  port: 8080
+  features:
+    - subtitle_upload
+    - format_conversion
+    - language_detection
+    - synchronization_adjustment
+    - batch_processing
+
+test_scenarios:
+  basic_functionality:
+    - file_detection
+    - subtitle_parsing
+    - format_conversion
+    - language_identification
+
+  advanced_features:
+    - subtitle_synchronization
+    - batch_processing
+    - api_endpoints
+    - web_interface_interaction
+
+  edge_cases:
+    - malformed_subtitles
+    - missing_video_files
+    - unsupported_formats
+    - large_file_handling
