@@ -11,7 +11,9 @@ import (
 
 	"github.com/cockroachdb/pebble"
 	"github.com/google/uuid"
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 	profilesPkg "github.com/jdfalk/subtitle-manager/pkg/profiles"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // PebbleStore wraps a Pebble database and implements basic CRUD operations
@@ -473,14 +475,25 @@ func (p *PebbleStore) GetMediaItem(path string) (*MediaItem, error) {
 
 // ==================== USER AUTHENTICATION FUNCTIONS ====================
 
-// User represents an account in the system for Pebble storage.
-type User struct {
+// UserWithPassword represents an account in the system with password hash for Pebble storage.
+type UserWithPassword struct {
 	ID           string    `json:"id"`
 	Username     string    `json:"username"`
 	PasswordHash string    `json:"password_hash"`
 	Email        string    `json:"email"`
 	Role         string    `json:"role"`
 	CreatedAt    time.Time `json:"created_at"`
+}
+
+// ToUser converts UserWithPassword to common.User.
+func (u UserWithPassword) ToUser() *common.User {
+	user := &common.User{}
+	user.SetId(u.ID)
+	user.SetUsername(u.Username)
+	user.SetEmail(u.Email)
+	user.SetCreatedAt(timestamppb.New(u.CreatedAt))
+	// Note: protobuf User doesn't have Role field - may need to handle roles differently
+	return user
 }
 
 // Session represents a user session for Pebble storage.
@@ -545,7 +558,7 @@ func tagAssocKey(tagID, entityType, entityID string) []byte {
 // CreateUser inserts a new user with hashed password.
 func (p *PebbleStore) CreateUser(username, passwordHash, email, role string) (string, error) {
 	id := uuid.NewString()
-	user := User{
+	user := UserWithPassword{
 		ID:           id,
 		Username:     username,
 		PasswordHash: passwordHash,
@@ -581,7 +594,7 @@ func (p *PebbleStore) CreateUser(username, passwordHash, email, role string) (st
 }
 
 // GetUserByUsername retrieves a user by username.
-func (p *PebbleStore) GetUserByUsername(username string) (*User, error) {
+func (p *PebbleStore) GetUserByUsername(username string) (*common.User, error) {
 	val, closer, err := p.db.Get(userUsernameKey(username))
 	if err != nil {
 		if errors.Is(err, pebble.ErrNotFound) {
@@ -598,15 +611,15 @@ func (p *PebbleStore) GetUserByUsername(username string) (*User, error) {
 	}
 	defer closer.Close()
 
-	var user User
+	var user UserWithPassword
 	if err := json.Unmarshal(userData, &user); err != nil {
 		return nil, err
 	}
-	return &user, nil
+	return user.ToUser(), nil
 }
 
 // GetUserByEmail retrieves a user by email address.
-func (p *PebbleStore) GetUserByEmail(email string) (*User, error) {
+func (p *PebbleStore) GetUserByEmail(email string) (*common.User, error) {
 	val, closer, err := p.db.Get(userEmailKey(email))
 	if err != nil {
 		if errors.Is(err, pebble.ErrNotFound) {
@@ -623,15 +636,15 @@ func (p *PebbleStore) GetUserByEmail(email string) (*User, error) {
 	}
 	defer closer.Close()
 
-	var user User
+	var user UserWithPassword
 	if err := json.Unmarshal(userData, &user); err != nil {
 		return nil, err
 	}
-	return &user, nil
+	return user.ToUser(), nil
 }
 
 // GetUserByID retrieves a user by ID.
-func (p *PebbleStore) GetUserByID(id string) (*User, error) {
+func (p *PebbleStore) GetUserByID(id string) (*common.User, error) {
 	userData, closer, err := p.db.Get(userKey(id))
 	if err != nil {
 		if errors.Is(err, pebble.ErrNotFound) {
@@ -641,45 +654,56 @@ func (p *PebbleStore) GetUserByID(id string) (*User, error) {
 	}
 	defer closer.Close()
 
-	var user User
+	var user UserWithPassword
 	if err := json.Unmarshal(userData, &user); err != nil {
 		return nil, err
 	}
-	return &user, nil
+	return user.ToUser(), nil
 }
 
 // ListUsers returns all users sorted by creation time.
-func (p *PebbleStore) ListUsers() ([]User, error) {
+func (p *PebbleStore) ListUsers() ([]common.User, error) {
 	iter, err := p.db.NewIter(nil)
 	if err != nil {
 		return nil, err
 	}
 	defer iter.Close()
 
-	var users []User
+	var users []common.User
 	for iter.First(); iter.Valid(); iter.Next() {
 		if !strings.HasPrefix(string(iter.Key()), "user:") {
 			continue
 		}
-		var user User
+		var user UserWithPassword
 		if err := json.Unmarshal(iter.Value(), &user); err != nil {
 			return nil, err
 		}
-		users = append(users, user)
+		users = append(users, *user.ToUser())
 	}
 	if err := iter.Error(); err != nil {
 		return nil, err
 	}
 
 	sort.Slice(users, func(i, j int) bool {
-		return users[i].CreatedAt.Before(users[j].CreatedAt)
+		return users[i].GetCreatedAt().AsTime().Before(users[j].GetCreatedAt().AsTime())
 	})
 	return users, nil
 }
 
 // UpdateUserRole updates a user's role.
 func (p *PebbleStore) UpdateUserRole(username, role string) error {
-	user, err := p.GetUserByUsername(username)
+	// Get ID first
+	val, closer, err := p.db.Get(userUsernameKey(username))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil
+		}
+		return err
+	}
+	closer.Close()
+
+	id := string(val)
+	user, err := p.getUserWithPasswordByID(id)
 	if err != nil || user == nil {
 		return err
 	}
@@ -693,9 +717,27 @@ func (p *PebbleStore) UpdateUserRole(username, role string) error {
 	return p.db.Set(userKey(user.ID), userData, pebble.Sync)
 }
 
+// getUserWithPasswordByID retrieves the internal UserWithPassword by ID.
+func (p *PebbleStore) getUserWithPasswordByID(id string) (*UserWithPassword, error) {
+	userData, closer, err := p.db.Get(userKey(id))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	defer closer.Close()
+
+	var user UserWithPassword
+	if err := json.Unmarshal(userData, &user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 // UpdateUserPassword updates a user's password hash.
 func (p *PebbleStore) UpdateUserPassword(userID, passwordHash string) error {
-	user, err := p.GetUserByID(userID)
+	user, err := p.getUserWithPasswordByID(userID)
 	if err != nil || user == nil {
 		return err
 	}
@@ -857,6 +899,13 @@ func (p *PebbleStore) CleanupExpiredSessions() error {
 		}
 	}
 	return batch.Commit(pebble.Sync)
+}
+
+// ValidateOneTimeToken validates a one-time token (placeholder implementation).
+func (p *PebbleStore) ValidateOneTimeToken(token string) (string, error) {
+	// TODO: Implement one-time token storage and validation
+	// For now, return empty string to indicate invalid token
+	return "", nil
 }
 
 // CreateAPIKey creates a new API key for a user.

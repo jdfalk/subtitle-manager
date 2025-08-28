@@ -3,6 +3,7 @@ package database
 import (
 	"time"
 
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 	"github.com/jdfalk/subtitle-manager/pkg/profiles"
 )
 
@@ -113,6 +114,45 @@ type SubtitleStore interface {
 	DeleteMonitoredItem(id string) error
 	// GetMonitoredItemsToCheck returns items that need monitoring.
 	GetMonitoredItemsToCheck(interval time.Duration) ([]MonitoredItem, error)
+
+	// User authentication and session management
+	// CreateUser creates a new user with hashed password and returns user ID.
+	CreateUser(username, passwordHash, email, role string) (string, error)
+	// GetUserByUsername retrieves a user by username.
+	GetUserByUsername(username string) (*common.User, error)
+	// GetUserByEmail retrieves a user by email.
+	GetUserByEmail(email string) (*common.User, error)
+	// GetUserByID retrieves a user by ID.
+	GetUserByID(id string) (*common.User, error)
+	// ListUsers retrieves all users.
+	ListUsers() ([]*common.User, error)
+	// UpdateUserRole updates a user's role.
+	UpdateUserRole(username, role string) error
+	// UpdateUserPassword updates a user's password hash.
+	UpdateUserPassword(userID, passwordHash string) error
+	// CreateSession creates a new user session.
+	CreateSession(userID, token string, duration time.Duration) error
+	// ValidateSession validates a session token and returns user ID.
+	ValidateSession(token string) (string, error)
+	// InvalidateSession invalidates a specific session.
+	InvalidateSession(token string) error
+	// InvalidateUserSessions invalidates all sessions for a user.
+	InvalidateUserSessions(userID string) error
+	// CleanupExpiredSessions removes expired sessions.
+	CleanupExpiredSessions() error
+	// CreateAPIKey creates an API key for a user.
+	CreateAPIKey(userID, key string) error
+	// ValidateAPIKey validates an API key and returns user ID.
+	ValidateAPIKey(key string) (string, error)
+	// CreateOneTimeToken creates a one-time use token.
+	CreateOneTimeToken(userID, token string, duration time.Duration) error
+	// ValidateOneTimeToken validates a one-time token and returns user ID.
+	ValidateOneTimeToken(token string) (string, error)
+	// SetDashboardLayout sets dashboard layout preferences for a user.
+	SetDashboardLayout(userID, layout string) error
+	// GetDashboardLayout gets dashboard layout preferences for a user.
+	GetDashboardLayout(userID string) (string, error)
+
 	// Close releases any resources held by the store.
 	Close() error
 }

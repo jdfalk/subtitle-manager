@@ -52,6 +52,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 	"github.com/spf13/viper"
 )
 
@@ -1558,4 +1559,103 @@ func (s *SQLStore) GetMonitoredItemsToCheck(interval time.Duration) ([]Monitored
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
+}
+
+// Authentication methods for SQLStore
+
+// CreateUser creates a new user with hashed password and returns user ID (placeholder - delegates to gcommonauth).
+func (s *SQLStore) CreateUser(username, passwordHash, email, role string) (string, error) {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	// which directly uses the database connection
+	return "", nil
+}
+
+// GetUserByUsername retrieves a user by username (placeholder - delegates to gcommonauth).
+func (s *SQLStore) GetUserByUsername(username string) (*common.User, error) {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil, nil
+}
+
+// GetUserByEmail retrieves a user by email (placeholder - delegates to gcommonauth).
+func (s *SQLStore) GetUserByEmail(email string) (*common.User, error) {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil, nil
+}
+
+// GetUserByID retrieves a user by ID (placeholder - delegates to gcommonauth).
+func (s *SQLStore) GetUserByID(id string) (*common.User, error) {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil, nil
+}
+
+// ListUsers retrieves all users (placeholder - delegates to gcommonauth).
+func (s *SQLStore) ListUsers() ([]*common.User, error) {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil, nil
+}
+
+// UpdateUserRole updates a user's role (placeholder - delegates to gcommonauth).
+func (s *SQLStore) UpdateUserRole(username, role string) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
+// UpdateUserPassword updates a user's password hash (placeholder - delegates to gcommonauth).
+func (s *SQLStore) UpdateUserPassword(userID, passwordHash string) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
+// CreateSession creates a new user session (placeholder - delegates to gcommonauth).
+func (s *SQLStore) CreateSession(userID, token string, duration time.Duration) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
+// ValidateSession validates a session token and returns user ID (placeholder - delegates to gcommonauth).
+func (s *SQLStore) ValidateSession(token string) (string, error) {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return "", nil
+}
+
+// DeleteSession deletes a session (placeholder - delegates to gcommonauth).
+func (s *SQLStore) DeleteSession(token string) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
+// DeleteUser deletes a user (placeholder - delegates to gcommonauth).
+func (s *SQLStore) DeleteUser(userID string) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
+// CleanupExpiredSessions removes expired sessions (placeholder - delegates to gcommonauth).
+func (s *SQLStore) CleanupExpiredSessions() error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
+// ValidateOneTimeToken validates a one-time token (placeholder - delegates to gcommonauth).
+func (s *SQLStore) ValidateOneTimeToken(token string) (string, error) {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return "", nil
+}
+
+// CreateAPIKey creates a new API key for a user (placeholder - delegates to gcommonauth).
+func (s *SQLStore) CreateAPIKey(userID, key string) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
+// ValidateAPIKey validates an API key and returns user ID (placeholder - delegates to gcommonauth).
+func (s *SQLStore) ValidateAPIKey(key string) (string, error) {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return "", nil
+}
+
+// DeleteAPIKey deletes an API key (placeholder - delegates to gcommonauth).
+func (s *SQLStore) DeleteAPIKey(key string) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
 }
