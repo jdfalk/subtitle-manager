@@ -1,58 +1,58 @@
 import {
-  ArrowBack as BackIcon,
-  Transform as ConvertIcon,
-  Brightness4 as DarkModeIcon,
-  Dashboard as DashboardIcon,
-  Archive as ExtractIcon,
-  History as HistoryIcon,
-  ChildFriendly as KidModeIcon,
-  VideoLibrary as LibraryIcon,
-  Brightness7 as LightModeIcon,
-  Menu as MenuIcon,
-  PushPin as PinIcon,
-  Schedule as ScheduleIcon,
-  Edit as EditIcon,
-  Settings as SettingsIcon,
-  BugReport as SystemIcon,
-  Translate as TranslateIcon,
-  Download as WantedIcon,
-  Refresh as RefreshIcon,
+    ArrowBack as BackIcon,
+    Transform as ConvertIcon,
+    Brightness4 as DarkModeIcon,
+    Dashboard as DashboardIcon,
+    Edit as EditIcon,
+    Archive as ExtractIcon,
+    History as HistoryIcon,
+    ChildFriendly as KidModeIcon,
+    VideoLibrary as LibraryIcon,
+    Brightness7 as LightModeIcon,
+    Menu as MenuIcon,
+    PushPin as PinIcon,
+    Refresh as RefreshIcon,
+    Schedule as ScheduleIcon,
+    Settings as SettingsIcon,
+    BugReport as SystemIcon,
+    Translate as TranslateIcon,
+    Download as WantedIcon,
 } from '@mui/icons-material';
 import {
-  Alert,
-  alpha,
-  AppBar,
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  createTheme,
-  CssBaseline,
-  Divider,
-  Drawer,
-  Fab,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-  Paper,
-  TextField,
-  ThemeProvider,
-  Toolbar,
-  Typography,
+    Alert,
+    alpha,
+    AppBar,
+    Box,
+    Button,
+    CircularProgress,
+    Container,
+    createTheme,
+    CssBaseline,
+    Divider,
+    Drawer,
+    Fab,
+    IconButton,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
+    Paper,
+    TextField,
+    ThemeProvider,
+    Toolbar,
+    Typography,
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  NavLink,
-  Route,
-  BrowserRouter as Router,
-  Routes,
-  useLocation,
-  useNavigate,
+    NavLink,
+    Route,
+    BrowserRouter as Router,
+    Routes,
+    useLocation,
+    useNavigate,
 } from 'react-router-dom';
 import './App.css';
 import OfflineInfo from './OfflineInfo.jsx';
@@ -69,15 +69,14 @@ const System = lazy(() => import('./System.jsx'));
 const Extract = lazy(() => import('./Extract.jsx'));
 const Convert = lazy(() => import('./Convert.jsx'));
 const Translate = lazy(() => import('./Translate.jsx'));
-const LibraryScan = lazy(() => import('./LibraryScan.jsx'));
 const Scheduling = lazy(() => import('./Scheduling.jsx'));
 const Setup = lazy(() => import('./Setup.jsx'));
 const ConfigEditor = lazy(() => import('./ConfigEditor.jsx'));
 const MediaDetails = lazy(() => import('./MediaDetails.jsx'));
 
 /**
- * Creates a Material Design 3 compliant theme with enhanced dark mode support
- * Following Google's Material Design guidelines for color schemes and accessibility
+ * Creates a Sonarr-inspired theme with enhanced dark mode support
+ * Following Sonarr's design patterns with signature teal color and professional media management styling
  * @param {boolean} isDarkMode - Whether to use dark mode
  * @param {boolean} kidMode - Increase font sizes for children if true
  * @returns {Theme} Material UI theme object
@@ -88,45 +87,45 @@ const createAppTheme = (isDarkMode = true, kidMode = false) =>
       mode: isDarkMode ? 'dark' : 'light',
       ...(isDarkMode
         ? {
-            // Dark mode - Material Design 3 dark surface colors
+            // Dark mode - Sonarr-inspired colors
             primary: {
-              main: '#bb86fc',
-              light: '#d0bcff',
-              dark: '#9965f4',
-              contrastText: '#000000',
+              main: '#35c5f4', // Sonarr's signature teal
+              light: '#66f6ff',
+              dark: '#0095c1',
+              contrastText: '#ffffff',
             },
             secondary: {
-              main: '#03dac6',
-              light: '#66fff9',
-              dark: '#00a896',
-              contrastText: '#000000',
+              main: '#35c5f4',
+              light: '#66f6ff',
+              dark: '#0095c1',
+              contrastText: '#ffffff',
             },
             background: {
-              default: '#121212',
-              paper: '#1e1e1e',
+              default: '#262626', // Sonarr's dark background
+              paper: '#333333',   // Slightly lighter for cards/papers
             },
             surface: {
-              main: '#1e1e1e',
-              variant: '#2d2d30',
+              main: '#333333',
+              variant: '#404040',
             },
             text: {
-              primary: '#e1e1e1',
+              primary: '#ffffff',
               secondary: '#b3b3b3',
             },
             error: {
-              main: '#cf6679',
-              light: '#ff94a3',
-              dark: '#9a4052',
+              main: '#f44336',
+              light: '#ff7961',
+              dark: '#ba000d',
             },
             warning: {
-              main: '#ffb74d',
-              light: '#ffe97d',
-              dark: '#c88719',
+              main: '#ff9800',
+              light: '#ffc947',
+              dark: '#c66900',
             },
             info: {
-              main: '#64b5f6',
-              light: '#9be7ff',
-              dark: '#2286c3',
+              main: '#35c5f4', // Use Sonarr teal for info
+              light: '#66f6ff',
+              dark: '#0095c1',
             },
             success: {
               main: '#81c784',
@@ -136,84 +135,101 @@ const createAppTheme = (isDarkMode = true, kidMode = false) =>
             divider: alpha('#ffffff', 0.12),
           }
         : {
-            // Light mode - Material Design 3 light surface colors
+            // Light mode - Sonarr-inspired light theme
             primary: {
-              main: '#6750a4',
-              light: '#9a82db',
-              dark: '#21005d',
+              main: '#35c5f4', // Sonarr's signature teal
+              light: '#66f6ff',
+              dark: '#0095c1',
               contrastText: '#ffffff',
             },
             secondary: {
-              main: '#625b71',
-              light: '#8e82a2',
-              dark: '#463d52',
+              main: '#35c5f4',
+              light: '#66f6ff',
+              dark: '#0095c1',
               contrastText: '#ffffff',
             },
             background: {
-              default: '#fffbfe',
+              default: '#fafafa', // Light gray background
               paper: '#ffffff',
             },
             surface: {
               main: '#ffffff',
-              variant: '#f4f0f7',
+              variant: '#f5f5f5',
             },
             text: {
-              primary: '#1c1b1f',
-              secondary: '#49454f',
+              primary: '#212121',
+              secondary: '#757575',
             },
             divider: alpha('#000000', 0.12),
           }),
     },
     typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: '"Lato", "Roboto", "Helvetica", "Arial", sans-serif', // Use Lato like Sonarr
       htmlFontSize: kidMode ? 20 : 16,
       h1: {
         fontSize: '2.5rem',
-        fontWeight: 400,
+        fontWeight: 300, // Lighter weight like Sonarr
         letterSpacing: '-0.01562em',
       },
+      h2: {
+        fontSize: '2rem',
+        fontWeight: 300,
+        letterSpacing: '-0.00833em',
+      },
+      h3: {
+        fontSize: '1.75rem',
+        fontWeight: 400,
+        letterSpacing: '0em',
+      },
       h4: {
-        fontSize: '2.125rem',
+        fontSize: '1.5rem',
         fontWeight: 400,
         letterSpacing: '0.00735em',
       },
-      h6: {
+      h5: {
         fontSize: '1.25rem',
+        fontWeight: 400,
+        letterSpacing: '0em',
+      },
+      h6: {
+        fontSize: '1.125rem',
         fontWeight: 500,
         letterSpacing: '0.0075em',
       },
       body1: {
         fontSize: '1rem',
         letterSpacing: '0.00938em',
+        lineHeight: 1.5,
       },
       body2: {
         fontSize: '0.875rem',
         letterSpacing: '0.01071em',
+        lineHeight: 1.43,
       },
       button: {
         fontSize: '0.875rem',
         fontWeight: 500,
         letterSpacing: '0.02857em',
-        textTransform: 'uppercase',
+        textTransform: 'none', // Don't force uppercase like Sonarr
       },
     },
     shape: {
-      borderRadius: 12, // More rounded corners for modern look
+      borderRadius: 8, // Moderate rounded corners like Sonarr
     },
     components: {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: isDarkMode ? '#1e1e1e' : '#6750a4',
+            backgroundColor: isDarkMode ? '#252528' : '#35c5f4', // Sonarr colors
             backdropFilter: 'blur(8px)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            boxShadow: isDarkMode ? '0 1px 3px rgba(0,0,0,0.2)' : '0 2px 8px rgba(0,0,0,0.15)',
           },
         },
       },
       MuiDrawer: {
         styleOverrides: {
           paper: {
-            backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
+            backgroundColor: isDarkMode ? '#252528' : '#ffffff', // Match Sonarr's dark navbar
             borderRight: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.12)}`,
           },
         },
@@ -221,21 +237,27 @@ const createAppTheme = (isDarkMode = true, kidMode = false) =>
       MuiCard: {
         styleOverrides: {
           root: {
-            backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
+            backgroundColor: isDarkMode ? '#333333' : '#ffffff', // Sonarr card colors
             boxShadow: isDarkMode
-              ? '0 4px 8px rgba(0,0,0,0.3)'
-              : '0 2px 8px rgba(0,0,0,0.1)',
-            borderRadius: 16,
-            border: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.08)}`,
+              ? '0 1px 3px rgba(0,0,0,0.4)'
+              : '0 1px 3px rgba(0,0,0,0.2)',
+            borderRadius: 8, // Match Sonarr's border radius
+            border: `1px solid ${alpha(isDarkMode ? '#404040' : '#e0e0e0', 0.5)}`,
+            transition: 'box-shadow 0.2s ease-in-out',
+            '&:hover': {
+              boxShadow: isDarkMode
+                ? '0 2px 6px rgba(0,0,0,0.5)'
+                : '0 2px 6px rgba(0,0,0,0.25)',
+            },
           },
         },
       },
       MuiPaper: {
         styleOverrides: {
           root: {
-            backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
+            backgroundColor: isDarkMode ? '#333333' : '#ffffff',
             '&.MuiPaper-outlined': {
-              border: `1px solid ${alpha(isDarkMode ? '#ffffff' : '#000000', 0.12)}`,
+              border: `1px solid ${alpha(isDarkMode ? '#404040' : '#e0e0e0', 0.5)}`,
             },
           },
         },
@@ -243,14 +265,48 @@ const createAppTheme = (isDarkMode = true, kidMode = false) =>
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: 20,
+            borderRadius: 6, // Sonarr-style button radius
             textTransform: 'none',
             fontWeight: 500,
+            padding: '8px 16px',
           },
           contained: {
-            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
             '&:hover': {
-              boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+            },
+          },
+        },
+      },
+      MuiTabs: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDarkMode ? '#404040' : '#f5f5f5',
+            borderRadius: 8,
+            padding: '4px',
+            minHeight: 48,
+          },
+          indicator: {
+            display: 'none', // Hide default indicator for custom styling
+          },
+        },
+      },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            borderRadius: 6,
+            margin: '0 2px',
+            minHeight: 40,
+            textTransform: 'none',
+            fontWeight: 500,
+            color: isDarkMode ? '#b3b3b3' : '#757575',
+            '&.Mui-selected': {
+              backgroundColor: '#35c5f4',
+              color: '#ffffff',
+              fontWeight: 600,
+            },
+            '&:hover': {
+              backgroundColor: isDarkMode ? '#4a4a4a' : '#e0e0e0',
             },
           },
         },
@@ -259,7 +315,7 @@ const createAppTheme = (isDarkMode = true, kidMode = false) =>
         styleOverrides: {
           root: {
             '& .MuiOutlinedInput-root': {
-              borderRadius: 12,
+              borderRadius: 8,
             },
           },
         },
@@ -274,7 +330,7 @@ const createAppTheme = (isDarkMode = true, kidMode = false) =>
       MuiListItemButton: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
+            borderRadius: 8,
             margin: '4px 8px',
             '&.Mui-selected': {
               backgroundColor: alpha(isDarkMode ? '#bb86fc' : '#6750a4', 0.12),
@@ -370,6 +426,29 @@ function App() {
     }
   };
 
+  /**
+   * Handle global library rescan - rescans all configured library paths
+   */
+  const handleGlobalRescan = async () => {
+    if (!backendAvailable) return;
+
+    try {
+      const response = await fetch('/api/library/rescan-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        // Show success notification (could be enhanced with a toast/snackbar)
+        console.log('Global library rescan started');
+      } else {
+        console.error('Failed to start global library rescan');
+      }
+    } catch (error) {
+      console.error('Failed to start global library rescan:', error);
+    }
+  };
+
   const isDrawerOpen = drawerPinned || drawerOpen;
 
   const navigationItems = [
@@ -429,12 +508,6 @@ function App() {
       label: t('nav.translate'),
       icon: <TranslateIcon />,
       path: '/tools/translate',
-    },
-    {
-      id: 'scan',
-      label: t('library.scan'),
-      icon: <RefreshIcon />,
-      path: '/tools/scan',
     },
     {
       id: 'scheduling',
@@ -839,6 +912,17 @@ function App() {
             >
               {t('app.title')}
             </Typography>
+            {/* Global Library Rescan Button */}
+            <IconButton
+              color="inherit"
+              onClick={handleGlobalRescan}
+              aria-label="rescan library"
+              title="Rescan Entire Library"
+              disabled={!backendAvailable}
+              sx={{ mr: 1 }}
+            >
+              <RefreshIcon />
+            </IconButton>
             <IconButton
               color="inherit"
               onClick={toggleDarkMode}
@@ -1020,10 +1104,6 @@ function App() {
               <Route
                 path="/tools/translate"
                 element={<Translate backendAvailable={backendAvailable} />}
-              />
-              <Route
-                path="/tools/scan"
-                element={<LibraryScan backendAvailable={backendAvailable} />}
               />
               <Route
                 path="/tools/scheduling"

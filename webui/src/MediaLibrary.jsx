@@ -1,50 +1,45 @@
 // file: webui/src/MediaLibrary.jsx
+// version: 2.0.0
+// guid: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
 // @ts-nocheck
 
 import {
-  Download as DownloadIcon,
-  Archive as ExtractIcon,
-  Folder as FolderIcon,
-  GridView as GridIcon,
-  Info as InfoIcon,
-  FormatListBulleted as ListIcon,
-  MoreVert as MoreIcon,
-  Movie as MovieIcon,
-  ViewAgenda as PosterIcon,
-  Refresh as RefreshIcon,
-  CloudDownload as SearchIcon,
-  Subtitles as SubtitleIcon,
-  Translate as TranslateIcon,
-  Tv as TvIcon,
+    Add as AddIcon,
+    Folder as FolderIcon,
+    GridView as GridViewIcon,
+    List as ListIcon,
+    MoreVert as MoreIcon,
+    Movie as MovieIcon,
+    QrCodeScanner as Scanner,
+    Storage as StorageIcon,
+    Subtitles as SubtitleIcon,
+    Sync as SyncIcon
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Breadcrumbs,
-  Button,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Chip,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  Grid,
-  IconButton,
-  LinearProgress,
-  Link,
-  Menu,
-  MenuItem,
-  Paper,
-  Typography,
+    Alert,
+    Box,
+    Breadcrumbs,
+    Button,
+    Card,
+    CardActionArea,
+    CardContent,
+    CardMedia,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    IconButton,
+    Link,
+    Tab,
+    Tabs,
+    TextField,
+    ToggleButton,
+    ToggleButtonGroup,
+    Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import TagSelector from './components/TagSelector.jsx';
-import TaskProgressIndicator from './components/TaskProgressIndicator.jsx';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -71,6 +66,12 @@ export default function MediaLibrary({ backendAvailable = true }) {
   const [tasks, setTasks] = useState({});
   // View mode: list, poster, or grid
   const [viewMode, setViewMode] = useState('list');
+  // Active tab for Sonarr-style navigation
+  const [activeTab, setActiveTab] = useState(0);
+  // Library management
+  const [addLibraryDialog, setAddLibraryDialog] = useState(false);
+  const [newLibraryPath, setNewLibraryPath] = useState('');
+  const [libraryPaths, setLibraryPaths] = useState([]);
   const navigate = useNavigate();
 
   // Fetch poster and basic details from OMDb
@@ -205,6 +206,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
 
   useEffect(() => {
     loadCurrentDirectory();
+    loadLibraryPaths();
 
     // Set up task polling if backend is available
     if (backendAvailable) {
@@ -225,6 +227,252 @@ export default function MediaLibrary({ backendAvailable = true }) {
       return () => clearInterval(taskInterval);
     }
   }, [currentPath, backendAvailable]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /**
+   * Load configured library paths
+   */
+  const loadLibraryPaths = async () => {
+    if (!backendAvailable) return;
+
+    try {
+      const response = await fetch('/api/library/paths');
+      if (response.ok) {
+        const data = await response.json();
+        setLibraryPaths(data.paths || []);
+      }
+    } catch (error) {
+      console.error('Failed to load library paths:', error);
+    }
+  };
+
+  /**
+   * Add new library path
+   */
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
+  const handleAddLibraryPath = async () => {
+    if (!newLibraryPath.trim()) return;
+
+    try {
+      const response = await fetch('/api/library/paths', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: newLibraryPath.trim() }),
+      });
+
+      if (response.ok) {
+        await loadLibraryPaths();
+        setNewLibraryPath('');
+        setAddLibraryDialog(false);
+        // Refresh current view if we're in root
+        if (currentPath === '/') {
+          await loadCurrentDirectory();
+        }
+      } else {
+        setError('Failed to add library path');
+      }
+    } catch (error) {
+      console.error('Failed to add library path:', error);
+      setError('Failed to add library path');
+    }
+  };
+
+  /**
+   * Resync from Sonarr/Radarr
+   */
+  const handleResyncFromSonarr = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/library/resync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: currentPath }),
+      });
+
+      if (response.ok) {
+        await loadCurrentDirectory();
+      } else {
+        setError('Failed to resync from Sonarr/Radarr');
+      }
+    } catch (error) {
+      console.error('Failed to resync from Sonarr/Radarr:', error);
+      setError('Failed to resync from Sonarr/Radarr');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Tab content based on active tab
+  const getTabContent = () => {
+    switch (activeTab) {
+      case 0: // All Media
+        return items;
+      case 1: // Movies Only
+        return items.filter(item => item.type === 'movie' || (!item.type && item.name?.match(/\.(mp4|mkv|avi|mov)$/i)));
+      case 2: // TV Shows Only
+        return items.filter(item => item.type === 'tv' || (!item.type && item.is_dir));
+      case 3: // Library Paths
+        return null; // Special case for library management
+      default:
+        return items;
+    }
+  };
+
+  const renderLibraryPathsTab = () => (
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h5" gutterBottom>
+        Library Management
+      </Typography>
+      <Grid container spacing={2}>
+        {libraryPaths.map((path, index) => (
+          <Grid item xs={12} md={6} key={index}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6">
+                  {path}
+                </Typography>
+                <Box sx={{ mt: 2 }}>
+                  <Button
+                    startIcon={<Scanner />}
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    sx={{ mr: 1 }}
+                  >
+                    Rescan Path
+                  </Button>
+                  <Button
+                    color="error"
+                    size="small"
+                  >
+                    Remove
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+        <Grid item xs={12}>
+          <Button
+            startIcon={<AddIcon />}
+            variant="contained"
+            color="primary"
+            onClick={() => setAddLibraryDialog(true)}
+          >
+            Add Library Path
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+
+  const renderListView = (itemsToRender) => (
+    <Grid container spacing={2}>
+      {itemsToRender
+        .filter((item) => item.is_dir || item.name?.match(/\.(mp4|mkv|avi|mov|wmv|flv|webm|m4v)$/i))
+        .map((item) => (
+          <Grid item xs={12} key={item.path || Math.random()}>
+            <Card
+              sx={{
+                cursor: item.is_dir ? 'pointer' : 'default',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                },
+              }}
+              onClick={() => {
+                if (item.is_dir) {
+                  setCurrentPath(item.path);
+                  loadCurrentDirectory();
+                } else {
+                  navigate(
+                    `/details?title=${encodeURIComponent(item.name || '')}&path=${encodeURIComponent(item.path || '')}`
+                  );
+                }
+              }}
+            >
+              <CardContent>
+                <Box display="flex" alignItems="center">
+                  <Box sx={{ mr: 2 }}>
+                    {item.is_dir ? (
+                      <FolderIcon color="primary" />
+                    ) : (
+                      <MovieIcon color="action" />
+                    )}
+                  </Box>
+                  <Box flex={1}>
+                    <Typography variant="h6" noWrap>
+                      {item.name || 'Unknown'}
+                    </Typography>
+                    {item.size && (
+                      <Typography variant="body2" color="text.secondary">
+                        {(item.size / 1024 / 1024 / 1024).toFixed(1)} GB
+                      </Typography>
+                    )}
+                  </Box>
+                  {!item.is_dir && (
+                    <IconButton size="small">
+                      <MoreIcon />
+                    </IconButton>
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+    </Grid>
+  );
+
+  /**
+   * Rescan library disk
+   */
+  const handleRescanDisk = async () => {
+    try {
+      setProgress({ type: 'rescan', file: 'library', progress: 0 });
+      const response = await fetch('/api/library/rescan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: currentPath }),
+      });
+
+      if (response.ok) {
+        await loadCurrentDirectory();
+      } else {
+        setError('Failed to rescan disk');
+      }
+    } catch (error) {
+      console.error('Failed to rescan disk:', error);
+      setError('Failed to rescan disk');
+    } finally {
+      setProgress(null);
+    }
+  };
+
+  /**
+   * Resync from Sonarr/Radarr
+   */
+  const handleResyncFromArr = async () => {
+    try {
+      setProgress({ type: 'resync', file: 'external services', progress: 0 });
+      const response = await fetch('/api/library/resync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: currentPath }),
+      });
+
+      if (response.ok) {
+        await loadCurrentDirectory();
+      } else {
+        setError('Failed to resync from external services');
+      }
+    } catch (error) {
+      console.error('Failed to resync from external services:', error);
+      setError('Failed to resync from external services');
+    } finally {
+      setProgress(null);
+    }
+  };
 
   /**
    * Navigate to a subdirectory
@@ -409,308 +657,165 @@ export default function MediaLibrary({ backendAvailable = true }) {
         <Typography variant="h4" component="h1">
           Media Library
         </Typography>
-        <Box>
+        <Box display="flex" alignItems="center" gap={1}>
+          {/* Library Management */}
           <Button
-            variant={bulkMode ? 'contained' : 'outlined'}
-            onClick={() => {
-              setBulkMode(!bulkMode);
-              setSelectedFiles(new Set());
-            }}
-            sx={{ mr: 1 }}
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setAddLibraryDialog(true)}
             disabled={!backendAvailable}
+            size="small"
           >
-            {bulkMode ? 'Exit Bulk Mode' : 'Bulk Operations'}
+            Add Library Path
           </Button>
-          <IconButton onClick={() => setViewMode('list')} sx={{ mr: 1 }}>
-            <ListIcon color={viewMode === 'list' ? 'primary' : 'inherit'} />
-          </IconButton>
-          <IconButton onClick={() => setViewMode('poster')} sx={{ mr: 1 }}>
-            <PosterIcon color={viewMode === 'poster' ? 'primary' : 'inherit'} />
-          </IconButton>
-          <IconButton onClick={() => setViewMode('grid')} sx={{ mr: 1 }}>
-            <GridIcon color={viewMode === 'grid' ? 'primary' : 'inherit'} />
-          </IconButton>
-          <IconButton
-            onClick={loadCurrentDirectory}
-            disabled={!backendAvailable}
+
+          {/* Page-specific Actions */}
+          {currentPath !== '/' && (
+            <>
+              <Button
+                variant="outlined"
+                startIcon={<StorageIcon />}
+                onClick={handleRescanDisk}
+                disabled={!backendAvailable}
+                size="small"
+              >
+                Rescan Disk
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<SyncIcon />}
+                onClick={handleResyncFromSonarr}
+                disabled={!backendAvailable}
+                size="small"
+              >
+                Resync from Sonarr/Radarr
+              </Button>
+            </>
+          )}
+
+          {/* View mode toggle */}
+          <ToggleButtonGroup
+            value={viewMode}
+            exclusive
+            onChange={(e, newValue) => newValue && setViewMode(newValue)}
+            size="small"
           >
-            <RefreshIcon />
-          </IconButton>
+            <ToggleButton value="list">
+              <ListIcon />
+            </ToggleButton>
+            <ToggleButton value="grid">
+              <GridViewIcon />
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Box>
       </Box>
 
-      {/* Breadcrumbs */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Breadcrumbs>
-          {getBreadcrumbs().map((crumb, index) => (
-            <Link
-              key={index}
-              component="button"
-              variant="body1"
-              onClick={() => navigateToPath(crumb.path)}
-              sx={{ textDecoration: 'none' }}
-            >
-              {crumb.name}
-            </Link>
-          ))}
-        </Breadcrumbs>
-      </Paper>
-
-      {/* Bulk Operations Bar */}
-      {bulkMode && selectedFiles.size > 0 && (
-        <Paper sx={{ p: 2, mb: 3, backgroundColor: 'action.selected' }}>
-          <Box display="flex" alignItems="center" gap={2}>
-            <Typography variant="body1">
-              {selectedFiles.size} files selected
-            </Typography>
-            <Button
-              startIcon={<ExtractIcon />}
-              onClick={() => handleBulkOperation('extract')}
-              size="small"
-            >
-              Extract Subtitles
-            </Button>
-            <Button
-              startIcon={<SearchIcon />}
-              onClick={() => handleBulkOperation('search')}
-              size="small"
-            >
-              Search Subtitles
-            </Button>
-            <Button
-              startIcon={<TranslateIcon />}
-              onClick={() => handleBulkOperation('translate')}
-              size="small"
-            >
-              Translate
-            </Button>
-          </Box>
-        </Paper>
-      )}
-
-      {/* Progress Indicator */}
-      {progress && (
-        <Paper sx={{ p: 2, mb: 3 }}>
-          <Typography variant="body2" gutterBottom>
-            {progress.type.charAt(0).toUpperCase() + progress.type.slice(1)}ing:{' '}
-            {progress.file}
-          </Typography>
-          <LinearProgress />
-        </Paper>
-      )}
-
-      {/* Task-based Progress Indicators */}
-      {Object.values(tasks).filter(task => task.status === 'running').length >
-        0 && (
-        <Paper sx={{ p: 2, mb: 3 }}>
-          <Typography variant="subtitle2" gutterBottom>
-            Active Operations
-          </Typography>
-          {Object.values(tasks)
-            .filter(task => task.status === 'running')
-            .map(task => (
-              <TaskProgressIndicator key={task.id} task={task} />
-            ))}
-        </Paper>
-      )}
-
-      {/* File List */}
-      {viewMode === 'list' && (
-        <Grid container spacing={3}>
-          {items.map(item => (
-            <Grid item xs={12} key={item?.path || Math.random()}>
-              <Card
-                sx={{
-                  cursor: item?.type === 'directory' ? 'pointer' : 'default',
-                  border: selectedFiles.has(item?.path || '')
-                    ? '2px solid'
-                    : '1px solid',
-                  borderColor: selectedFiles.has(item?.path || '')
-                    ? 'primary.main'
-                    : 'divider',
-                }}
-                onClick={() => {
-                  if (bulkMode && item?.type !== 'directory') {
-                    toggleFileSelection(item?.path || '');
-                  } else if (item?.type === 'directory') {
-                    navigateToPath(item?.path || '/');
-                  } else {
-                    navigate(
-                      `/details?title=${encodeURIComponent(item?.name || '')}&path=${encodeURIComponent(item?.path || '')}`
-                    );
-                  }
-                }}
-              >
-                <CardContent>
-                  <Box display="flex" alignItems="center">
-                    <Box sx={{ mr: 2 }}>{getFileIcon(item)}</Box>
-
-                    <Box flex={1}>
-                      <Typography variant="h6" noWrap>
-                        {item?.name || 'Unknown'}
-                      </Typography>
-
-                      {item?.isVideo && (
-                        <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
-                          {item?.subtitles?.map(sub => (
-                            <Chip
-                              key={sub?.language || Math.random()}
-                              label={`${(sub?.language || 'unknown').toUpperCase()} ${sub?.format || 'SRT'}`}
-                              size="small"
-                              color={sub?.embedded ? 'warning' : 'success'}
-                              icon={<SubtitleIcon />}
-                            />
-                          ))}
-                          {(!item?.subtitles ||
-                            item.subtitles.length === 0) && (
-                            <Chip
-                              label="No Subtitles"
-                              size="small"
-                              color="error"
-                              variant="outlined"
-                            />
-                          )}
-                        </Box>
-                      )}
-
-                      {item?.metadata && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ mt: 1 }}
-                        >
-                          {item.metadata.resolution &&
-                            `${item.metadata.resolution} • `}
-                          {item.metadata.duration &&
-                            `${item.metadata.duration} • `}
-                          {item?.size &&
-                            `${(item.size / 1024 / 1024 / 1024).toFixed(1)} GB`}
-                        </Typography>
-                      )}
-                      {item?.isVideo && (
-                        <Box mt={1}>
-                          <TagSelector path={item.path} />
-                        </Box>
-                      )}
-                    </Box>
-
-                    {item?.type !== 'directory' && (
-                      <IconButton
-                        onClick={e => handleActionMenu(e, item)}
-                        size="small"
-                      >
-                        <MoreIcon />
-                      </IconButton>
-                    )}
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-
-      {viewMode === 'poster' && (
-        <Grid container spacing={3}>
-          {items.map(item => (
-            <PosterItem key={item.path} item={item} />
-          ))}
-        </Grid>
-      )}
-
-      {viewMode === 'grid' && (
-        <Grid container spacing={3}>
-          {items.map(item => (
-            <GridItem key={item.path} item={item} />
-          ))}
-        </Grid>
-      )}
-
-      {items.length === 0 && !loading && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary">
-            No files found in this directory
-          </Typography>
-        </Paper>
-      )}
-
-      {/* Action Menu */}
-      <Menu
-        anchorEl={actionMenu.anchor}
-        open={Boolean(actionMenu.anchor)}
-        onClose={closeActionMenu}
-      >
-        {actionMenu.file?.isVideo && [
-          <MenuItem
-            key="extract"
-            onClick={() => handleOperation('extract', actionMenu.file)}
-          >
-            <ExtractIcon sx={{ mr: 1 }} />
-            Extract Embedded Subtitles
-          </MenuItem>,
-          <MenuItem
-            key="search"
-            onClick={() => handleOperation('search', actionMenu.file)}
-          >
-            <SearchIcon sx={{ mr: 1 }} />
-            Search for Subtitles
-          </MenuItem>,
-          <Divider key="divider" />,
-        ]}
-        {actionMenu.file?.isSubtitle && (
-          <MenuItem
-            onClick={() => handleOperation('translate', actionMenu.file)}
-          >
-            <TranslateIcon sx={{ mr: 1 }} />
-            Translate Subtitle
-          </MenuItem>
-        )}
-        <MenuItem
-          onClick={() =>
-            window.open(
-              `/api/download?path=${encodeURIComponent(actionMenu.file?.path)}`,
-              '_blank'
-            )
-          }
+      {/* Sonarr-style Navigation Tabs */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          variant="scrollable"
+          scrollButtons="auto"
         >
-          <DownloadIcon sx={{ mr: 1 }} />
-          Download File
-        </MenuItem>
-      </Menu>
+          <Tab label="All Media" />
+          <Tab label="Movies" />
+          <Tab label="TV Shows" />
+          <Tab label="Library Paths" />
+        </Tabs>
+      </Box>
 
-      {/* Operation Dialog */}
+      {/* Tab Content */}
+      {activeTab === 3 ? (
+        renderLibraryPathsTab()
+      ) : (
+        <>
+          {/* Breadcrumb Navigation */}
+          {currentPath !== '/' && (
+            <Breadcrumbs sx={{ mb: 2 }}>
+              <Link
+                component="button"
+                variant="body1"
+                onClick={() => loadDirectory('/')}
+                underline="hover"
+              >
+                Home
+              </Link>
+              {currentPath
+                .split('/')
+                .filter(Boolean)
+                .map((segment, index, array) => {
+                  const path = '/' + array.slice(0, index + 1).join('/');
+                  const isLast = index === array.length - 1;
+
+                  return isLast ? (
+                    <Typography key={path} color="text.primary">
+                      {segment}
+                    </Typography>
+                  ) : (
+                    <Link
+                      key={path}
+                      component="button"
+                      variant="body1"
+                      onClick={() => loadDirectory(path)}
+                      underline="hover"
+                    >
+                      {segment}
+                    </Link>
+                  );
+                })}
+            </Breadcrumbs>
+          )}
+
+          {/* Content based on tab */}
+          {viewMode === 'grid' ? (
+            <Grid container spacing={2}>
+              {getTabContent()
+                .filter((item) => item.is_dir || item.name?.match(/\.(mp4|mkv|avi|mov|wmv|flv|webm|m4v)$/i))
+                .map((item) => (
+                  <GridItem key={item.path} item={item} />
+                ))}
+            </Grid>
+          ) : (
+            renderListView(getTabContent())
+          )}
+        </>
+      )}
+
+      {/* Add Library Path Dialog */}
       <Dialog
-        open={operationDialog.open}
-        onClose={() =>
-          setOperationDialog({ open: false, type: null, file: null })
-        }
+        open={addLibraryDialog}
+        onClose={() => setAddLibraryDialog(false)}
+        maxWidth="sm"
+        fullWidth
       >
-        <DialogTitle>
-          {operationDialog.type &&
-            `${operationDialog.type.charAt(0).toUpperCase() + operationDialog.type.slice(1)} Subtitles`}
-        </DialogTitle>
+        <DialogTitle>Add Library Path</DialogTitle>
         <DialogContent>
-          <Typography>
-            {operationDialog.type === 'extract' &&
-              'Extract embedded subtitle streams from this video file?'}
-            {operationDialog.type === 'search' &&
-              'Search for subtitles for this video file using enabled providers?'}
-            {operationDialog.type === 'translate' &&
-              'Translate this subtitle file to another language?'}
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            Add a new directory path to your media library. This path will be scanned for media files and subtitles.
           </Typography>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Library Path"
+            fullWidth
+            variant="outlined"
+            value={newLibraryPath}
+            onChange={(e) => setNewLibraryPath(e.target.value)}
+            placeholder="/path/to/your/media/folder"
+            helperText="Enter the full path to a directory containing your media files"
+          />
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() =>
-              setOperationDialog({ open: false, type: null, file: null })
-            }
-          >
+          <Button onClick={() => setAddLibraryDialog(false)}>
             Cancel
           </Button>
-          <Button onClick={executeOperation} variant="contained">
-            {operationDialog.type &&
-              operationDialog.type.charAt(0).toUpperCase() +
-                operationDialog.type.slice(1)}
+          <Button
+            onClick={handleAddLibraryPath}
+            variant="contained"
+            disabled={!newLibraryPath.trim()}
+          >
+            Add Path
           </Button>
         </DialogActions>
       </Dialog>

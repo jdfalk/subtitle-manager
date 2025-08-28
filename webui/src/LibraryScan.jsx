@@ -1,19 +1,23 @@
 // file: webui/src/LibraryScan.jsx
+// version: 1.1.0
+// guid: 2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e
+// NOTE: This component is DEPRECATED. Library scanning functionality has been integrated into MediaLibrary.jsx
+// This file can be removed in a future cleanup.
 import FolderIcon from '@mui/icons-material/Folder';
 import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CircularProgress,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  TextField,
-  Typography,
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CircularProgress,
+    LinearProgress,
+    List,
+    ListItem,
+    ListItemText,
+    Paper,
+    TextField,
+    Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import DirectoryChooser from './components/DirectoryChooser.jsx';
