@@ -15,7 +15,7 @@ require (
 	github.com/docker/go-connections v0.6.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
-	github.com/jdfalk/gcommon/sdks/go v1.4.0
+	github.com/jdfalk/gcommon v1.5.0
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.32
 	github.com/oz/osdb v0.0.0-20221214175751-f169057712ec
@@ -151,7 +151,4 @@ require (
 	gotest.tools/v3 v3.5.2 // indirect
 )
 
-replace (
-	github.com/jdfalk/gcommon => ../gcommon
-	github.com/jdfalk/gcommon/sdks/go => ../gcommon/sdks/go
-)
+replace github.com/jdfalk/gcommon => ../gcommon
