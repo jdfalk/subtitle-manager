@@ -4,40 +4,40 @@
 // @ts-nocheck
 
 import {
-    Add as AddIcon,
-    Folder as FolderIcon,
-    GridView as GridViewIcon,
-    List as ListIcon,
-    MoreVert as MoreIcon,
-    Movie as MovieIcon,
-    QrCodeScanner as Scanner,
-    Storage as StorageIcon,
-    Subtitles as SubtitleIcon,
-    Sync as SyncIcon
+  Add as AddIcon,
+  Folder as FolderIcon,
+  GridView as GridViewIcon,
+  List as ListIcon,
+  MoreVert as MoreIcon,
+  Movie as MovieIcon,
+  QrCodeScanner as Scanner,
+  Storage as StorageIcon,
+  Subtitles as SubtitleIcon,
+  Sync as SyncIcon,
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Breadcrumbs,
-    Button,
-    Card,
-    CardActionArea,
-    CardContent,
-    CardMedia,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    IconButton,
-    Link,
-    Tab,
-    Tabs,
-    TextField,
-    ToggleButton,
-    ToggleButtonGroup,
-    Typography
+  Alert,
+  Box,
+  Breadcrumbs,
+  Button,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+  Link,
+  Tab,
+  Tabs,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -310,9 +310,15 @@ export default function MediaLibrary({ backendAvailable = true }) {
       case 0: // All Media
         return items;
       case 1: // Movies Only
-        return items.filter(item => item.type === 'movie' || (!item.type && item.name?.match(/\.(mp4|mkv|avi|mov)$/i)));
+        return items.filter(
+          item =>
+            item.type === 'movie' ||
+            (!item.type && item.name?.match(/\.(mp4|mkv|avi|mov)$/i))
+        );
       case 2: // TV Shows Only
-        return items.filter(item => item.type === 'tv' || (!item.type && item.is_dir));
+        return items.filter(
+          item => item.type === 'tv' || (!item.type && item.is_dir)
+        );
       case 3: // Library Paths
         return null; // Special case for library management
       default:
@@ -330,9 +336,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
           <Grid item xs={12} md={6} key={index}>
             <Card>
               <CardContent>
-                <Typography variant="h6">
-                  {path}
-                </Typography>
+                <Typography variant="h6">{path}</Typography>
                 <Box sx={{ mt: 2 }}>
                   <Button
                     startIcon={<Scanner />}
@@ -343,10 +347,7 @@ export default function MediaLibrary({ backendAvailable = true }) {
                   >
                     Rescan Path
                   </Button>
-                  <Button
-                    color="error"
-                    size="small"
-                  >
+                  <Button color="error" size="small">
                     Remove
                   </Button>
                 </Box>
@@ -368,11 +369,15 @@ export default function MediaLibrary({ backendAvailable = true }) {
     </Box>
   );
 
-  const renderListView = (itemsToRender) => (
+  const renderListView = itemsToRender => (
     <Grid container spacing={2}>
       {itemsToRender
-        .filter((item) => item.is_dir || item.name?.match(/\.(mp4|mkv|avi|mov|wmv|flv|webm|m4v)$/i))
-        .map((item) => (
+        .filter(
+          item =>
+            item.is_dir ||
+            item.name?.match(/\.(mp4|mkv|avi|mov|wmv|flv|webm|m4v)$/i)
+        )
+        .map(item => (
           <Grid item xs={12} key={item.path || Math.random()}>
             <Card
               sx={{
@@ -771,8 +776,12 @@ export default function MediaLibrary({ backendAvailable = true }) {
           {viewMode === 'grid' ? (
             <Grid container spacing={2}>
               {getTabContent()
-                .filter((item) => item.is_dir || item.name?.match(/\.(mp4|mkv|avi|mov|wmv|flv|webm|m4v)$/i))
-                .map((item) => (
+                .filter(
+                  item =>
+                    item.is_dir ||
+                    item.name?.match(/\.(mp4|mkv|avi|mov|wmv|flv|webm|m4v)$/i)
+                )
+                .map(item => (
                   <GridItem key={item.path} item={item} />
                 ))}
             </Grid>
@@ -792,7 +801,8 @@ export default function MediaLibrary({ backendAvailable = true }) {
         <DialogTitle>Add Library Path</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2 }}>
-            Add a new directory path to your media library. This path will be scanned for media files and subtitles.
+            Add a new directory path to your media library. This path will be
+            scanned for media files and subtitles.
           </Typography>
           <TextField
             autoFocus
@@ -801,15 +811,13 @@ export default function MediaLibrary({ backendAvailable = true }) {
             fullWidth
             variant="outlined"
             value={newLibraryPath}
-            onChange={(e) => setNewLibraryPath(e.target.value)}
+            onChange={e => setNewLibraryPath(e.target.value)}
             placeholder="/path/to/your/media/folder"
             helperText="Enter the full path to a directory containing your media files"
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setAddLibraryDialog(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setAddLibraryDialog(false)}>Cancel</Button>
           <Button
             onClick={handleAddLibraryPath}
             variant="contained"

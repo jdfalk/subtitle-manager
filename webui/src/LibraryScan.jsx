@@ -5,19 +5,19 @@
 // This file can be removed in a future cleanup.
 import FolderIcon from '@mui/icons-material/Folder';
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    CircularProgress,
-    LinearProgress,
-    List,
-    ListItem,
-    ListItemText,
-    Paper,
-    TextField,
-    Typography,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  TextField,
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import DirectoryChooser from './components/DirectoryChooser.jsx';
