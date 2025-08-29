@@ -1,8 +1,8 @@
-# TASK-01-002: Replace databasepb with gcommon database
-
 <!-- file: docs/tasks/01-gcommon-migration/TASK-01-002-replace-databasepb.md -->
 <!-- version: 1.0.0 -->
 <!-- guid: c2d3e4f5-g6h7-8901-bcde-f23456789012 -->
+
+# TASK-01-002: Replace databasepb with gcommon database
 
 ## 🎯 Objective
 

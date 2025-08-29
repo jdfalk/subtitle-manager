@@ -18,7 +18,7 @@
 **CRITICAL**: Read these documents before starting:
 
 - `docs/gcommon-api/database.md` - Database type specifications and schema requirements
-- `docs/gcommon-api/common.md` - Common type field requirements  
+- `docs/gcommon-api/common.md` - Common type field requirements
 - `pkg/database/schema.go` - Current database schema implementation
 - `pkg/database/migrations/` - Existing migration files
 - `docs/MIGRATION_INVENTORY.md` - Field mappings and compatibility requirements
@@ -98,7 +98,7 @@ func AddGcommonUserFields(db *sql.DB, backend string) error {
             "ALTER TABLE users ADD COLUMN permissions_json JSONB DEFAULT '[]'",
         },
     }
-    
+
     statements := migrations[backend]
     for _, stmt := range statements {
         if _, err := db.Exec(stmt); err != nil {
@@ -135,17 +135,17 @@ func (u *UpdatedUserSchema) ToGcommonUser() (*common.User, error) {
     user.SetUsername(u.Username)
     user.SetEmail(u.Email)
     user.SetRole(u.Role)
-    
+
     // Parse metadata from JSON
     var metadata map[string]interface{}
     if err := json.Unmarshal([]byte(u.MetadataJSON), &metadata); err != nil {
         return nil, fmt.Errorf("failed to parse metadata: %v", err)
     }
-    
+
     for key, value := range metadata {
         user.SetField(key, value)
     }
-    
+
     return user, nil
 }
 
@@ -154,18 +154,18 @@ func (u *UpdatedUserSchema) FromGcommonUser(user *common.User) error {
     u.Username = user.GetUsername()
     u.Email = user.GetEmail()
     u.Role = user.GetRole()
-    
+
     // Serialize metadata to JSON
     metadata := make(map[string]interface{})
     // Extract custom fields from gcommon User
     // (Implementation depends on gcommon API)
-    
+
     metadataBytes, err := json.Marshal(metadata)
     if err != nil {
         return fmt.Errorf("failed to serialize metadata: %v", err)
     }
     u.MetadataJSON = string(metadataBytes)
-    
+
     return nil
 }
 ```
@@ -187,17 +187,17 @@ func (s *SQLiteDB) CreateUserTables() error {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
-    
+
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
     CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
     `
-    
+
     _, err := s.db.Exec(createSQL)
     return err
 }
 
-// File: pkg/database/pebbledb.go  
+// File: pkg/database/pebbledb.go
 func (p *PebbleDB) EnsureUserSchema() error {
     // PebbleDB is key-value, so ensure consistent serialization
     // Test with sample gcommon User to verify compatibility
@@ -205,18 +205,18 @@ func (p *PebbleDB) EnsureUserSchema() error {
     testUser.SetId("test")
     testUser.SetUsername("test")
     testUser.SetEmail("test@example.com")
-    
+
     // Serialize and deserialize to test compatibility
     data, err := p.SerializeUser(testUser)
     if err != nil {
         return fmt.Errorf("serialization test failed: %v", err)
     }
-    
+
     _, err = p.DeserializeUser(data)
     if err != nil {
         return fmt.Errorf("deserialization test failed: %v", err)
     }
-    
+
     return nil
 }
 ```
@@ -235,12 +235,12 @@ func RollbackGcommonUserFields(db *sql.DB, backend string) error {
         },
         "postgresql": {
             "ALTER TABLE users DROP COLUMN role",
-            "ALTER TABLE users DROP COLUMN auth_provider", 
+            "ALTER TABLE users DROP COLUMN auth_provider",
             "ALTER TABLE users DROP COLUMN metadata_json",
             "ALTER TABLE users DROP COLUMN permissions_json",
         },
     }
-    
+
     statements := rollbackSQL[backend]
     for _, stmt := range statements {
         if _, err := db.Exec(stmt); err != nil {
@@ -266,29 +266,29 @@ func TestSchemaCompatibility(t *testing.T) {
         {"SQLite", "sqlite", setupSQLiteTest},
         {"PostgreSQL", "postgresql", setupPostgreSQLTest},
     }
-    
+
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
             db := tt.setup()
             defer db.Close()
-            
+
             // Test forward migration
             err := AddGcommonUserFields(db, tt.backend)
             require.NoError(t, err)
-            
+
             // Test data compatibility
             testUser := createTestGcommonUser()
             err = storeUserInDB(db, testUser)
             require.NoError(t, err)
-            
+
             retrievedUser, err := loadUserFromDB(db, testUser.GetId())
             require.NoError(t, err)
-            
+
             // Verify all fields preserved
             assert.Equal(t, testUser.GetId(), retrievedUser.GetId())
             assert.Equal(t, testUser.GetUsername(), retrievedUser.GetUsername())
             assert.Equal(t, testUser.GetEmail(), retrievedUser.GetEmail())
-            
+
             // Test rollback
             err = RollbackGcommonUserFields(db, tt.backend)
             require.NoError(t, err)
@@ -299,28 +299,28 @@ func TestSchemaCompatibility(t *testing.T) {
 func TestPebbleDBCompatibility(t *testing.T) {
     pdb := setupPebbleDBTest()
     defer pdb.Close()
-    
+
     // Test gcommon User serialization
     testUser := createTestGcommonUser()
-    
+
     err := pdb.StoreUser(testUser)
     require.NoError(t, err)
-    
+
     retrievedUser, err := pdb.GetUser(testUser.GetId())
     require.NoError(t, err)
-    
+
     // Verify opaque API fields preserved
     assert.Equal(t, testUser.GetId(), retrievedUser.GetId())
     assert.Equal(t, testUser.GetUsername(), retrievedUser.GetUsername())
-    
+
     // Test custom field preservation
     testUser.SetField("custom_field", "test_value")
     err = pdb.StoreUser(testUser)
     require.NoError(t, err)
-    
+
     retrievedUser, err = pdb.GetUser(testUser.GetId())
     require.NoError(t, err)
-    
+
     customValue, exists := retrievedUser.GetField("custom_field")
     assert.True(t, exists)
     assert.Equal(t, "test_value", customValue)
@@ -334,19 +334,19 @@ func TestMigrationPerformance(t *testing.T) {
     // Test migration performance with large datasets
     db := setupSQLiteTest()
     defer db.Close()
-    
+
     // Create 10,000 test users
     for i := 0; i < 10000; i++ {
         createTestUser(db, fmt.Sprintf("user%d", i))
     }
-    
+
     start := time.Now()
     err := AddGcommonUserFields(db, "sqlite")
     require.NoError(t, err)
-    
+
     migrationTime := time.Since(start)
     t.Logf("Migration of 10,000 users took: %v", migrationTime)
-    
+
     // Migration should complete in reasonable time (< 30s)
     assert.Less(t, migrationTime, 30*time.Second)
 }
@@ -388,7 +388,7 @@ package main
 import (
     "fmt"
     "log"
-    
+
     "github.com/jdfalk/subtitle-manager/pkg/database"
     "github.com/jdfalk/gcommon/sdks/go/v1/common"
 )
@@ -399,15 +399,15 @@ func main() {
         log.Fatal(err)
     }
     defer db.Close()
-    
+
     // Verify all users can be loaded as gcommon types
     users, err := db.GetAllUsers()
     if err != nil {
         log.Fatal(err)
     }
-    
+
     fmt.Printf("Checking %d users for gcommon compatibility...\n", len(users))
-    
+
     for i, user := range users {
         // Verify each user meets gcommon requirements
         if user.GetId() == "" {
@@ -419,7 +419,7 @@ func main() {
         if user.GetEmail() == "" {
             fmt.Printf("User %d: missing email\n", i)
         }
-        
+
         // Test opaque API access
         role, exists := user.GetField("role")
         if !exists {
@@ -428,7 +428,7 @@ func main() {
             fmt.Printf("User %d: role = %v\n", i, role)
         }
     }
-    
+
     fmt.Println("Data integrity check complete")
 }
 ```
@@ -467,7 +467,7 @@ func main() {
 ## Dependencies
 
 - **Requires**: TASK-04-001 (User type migration) completed
-- **Requires**: TASK-04-002 (Session type migration) completed  
+- **Requires**: TASK-04-002 (Session type migration) completed
 - **Enables**: All subsequent database operations with gcommon types
 - **Blocks**: Cannot complete package replacements without schema compatibility
 
