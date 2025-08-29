@@ -127,7 +127,8 @@ testdir/
 
 #### Test Case 2.1: Media Library Interface Validation
 
-**Objective**: Verify the Media Library page has the correct interface design and functionality
+**Objective**: Verify the Media Library page has the correct interface design
+and functionality
 
 **Steps**:
 
@@ -164,7 +165,8 @@ testdir/
 
 #### Test Case 2.2: Add Test Data Directory
 
-**Objective**: Configure the application to scan the test data directory using the Media Library interface
+**Objective**: Configure the application to scan the test data directory using
+the Media Library interface
 
 **Steps**:
 
@@ -195,7 +197,8 @@ testdir/
 
 #### Test Case 2.2: Verify Media Library Display
 
-**Objective**: Confirm the Media Library page shows actual library content instead of subtitle scan widgets
+**Objective**: Confirm the Media Library page shows actual library content
+instead of subtitle scan widgets
 
 **Steps**:
 
@@ -261,7 +264,8 @@ testdir/
 
 #### Test Case 2.4: Global Rescan Button Accessibility
 
-**Objective**: Verify global library rescan button is consistently available across all pages
+**Objective**: Verify global library rescan button is consistently available
+across all pages
 
 **Steps**:
 
@@ -303,7 +307,8 @@ testdir/
 
 #### Test Case 2.5: Verify Media Detection and Organization
 
-**Objective**: Confirm all test media items are detected and properly organized in the Media Library
+**Objective**: Confirm all test media items are detected and properly organized
+in the Media Library
 
 **Steps**:
 
@@ -378,7 +383,8 @@ testdir/
 
 #### Test Case 3.1: Movie Item Page Navigation and Actions
 
-**Objective**: Test navigation to individual movie pages and page-specific actions
+**Objective**: Test navigation to individual movie pages and page-specific
+actions
 
 **Steps**:
 
