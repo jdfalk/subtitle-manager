@@ -1,5 +1,5 @@
 // file: pkg/gcommon/config/config.go
-// version: 1.0.0
+// version: 2.0.0
 // guid: 9f89692c-72ac-4bc6-b7be-7ff20bbf12e3
 
 package config
@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	configpb "github.com/jdfalk/subtitle-manager/pkg/configpb"
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -55,46 +55,65 @@ func Load(cmd *cobra.Command, cfgFile string) error {
 	return nil
 }
 
-// ToProto converts current viper settings to a protobuf config message.
-func ToProto() *configpb.SubtitleManagerConfig {
-	return &configpb.SubtitleManagerConfig{
-		DbPath:          protoString(viper.GetString("db_path")),
-		DbBackend:       protoString(viper.GetString("db_backend")),
-		Sqlite3Filename: protoString(viper.GetString("sqlite3_filename")),
-		LogFile:         protoString(viper.GetString("log_file")),
-		GoogleApiKey:    protoString(viper.GetString("google_api_key")),
-		OpenaiApiKey:    protoString(viper.GetString("openai_api_key")),
+// ToProto converts current viper settings to gcommon config requests.
+// Returns a map of key-value pairs that can be used with SetConfigRequest.
+func ToProto() map[string]*common.ConfigValue {
+	configMap := make(map[string]*common.ConfigValue)
+	
+	// Create config values for each setting
+	if dbPath := viper.GetString("db_path"); dbPath != "" {
+		configMap["db_path"] = &common.ConfigValue{}
+		configMap["db_path"].SetStringValue(dbPath)
 	}
+	
+	if dbBackend := viper.GetString("db_backend"); dbBackend != "" {
+		configMap["db_backend"] = &common.ConfigValue{}
+		configMap["db_backend"].SetStringValue(dbBackend)
+	}
+	
+	if logFile := viper.GetString("log_file"); logFile != "" {
+		configMap["log_file"] = &common.ConfigValue{}
+		configMap["log_file"].SetStringValue(logFile)
+	}
+	
+	if googleKey := viper.GetString("google_api_key"); googleKey != "" {
+		configMap["google_api_key"] = &common.ConfigValue{}
+		configMap["google_api_key"].SetStringValue(googleKey)
+	}
+	
+	if openaiKey := viper.GetString("openai_api_key"); openaiKey != "" {
+		configMap["openai_api_key"] = &common.ConfigValue{}
+		configMap["openai_api_key"].SetStringValue(openaiKey)
+	}
+	
+	return configMap
 }
 
-// ApplyProto sets viper values from a protobuf config message.
-func ApplyProto(cfg *configpb.SubtitleManagerConfig) {
-	if cfg == nil {
+// ApplyProto sets viper values from gcommon config values.
+func ApplyProto(configMap map[string]*common.ConfigValue) {
+	if configMap == nil {
 		return
 	}
-	if cfg.DbPath != nil {
-		viper.Set("db_path", cfg.GetDbPath())
+	
+	if dbPath, ok := configMap["db_path"]; ok && dbPath.GetStringValue() != "" {
+		viper.Set("db_path", dbPath.GetStringValue())
 	}
-	if cfg.DbBackend != nil {
-		viper.Set("db_backend", cfg.GetDbBackend())
+	
+	if dbBackend, ok := configMap["db_backend"]; ok && dbBackend.GetStringValue() != "" {
+		viper.Set("db_backend", dbBackend.GetStringValue())
 	}
-	if cfg.Sqlite3Filename != nil {
-		viper.Set("sqlite3_filename", cfg.GetSqlite3Filename())
+	
+	if logFile, ok := configMap["log_file"]; ok && logFile.GetStringValue() != "" {
+		viper.Set("log_file", logFile.GetStringValue())
 	}
-	if cfg.LogFile != nil {
-		viper.Set("log_file", cfg.GetLogFile())
+	
+	if googleKey, ok := configMap["google_api_key"]; ok && googleKey.GetStringValue() != "" {
+		viper.Set("google_api_key", googleKey.GetStringValue())
 	}
-	if cfg.GoogleApiKey != nil {
-		viper.Set("google_api_key", cfg.GetGoogleApiKey())
-	}
-	if cfg.OpenaiApiKey != nil {
-		viper.Set("openai_api_key", cfg.GetOpenaiApiKey())
+	
+	if openaiKey, ok := configMap["openai_api_key"]; ok && openaiKey.GetStringValue() != "" {
+		viper.Set("openai_api_key", openaiKey.GetStringValue())
 	}
 }
 
-func protoString(s string) *string {
-	if s == "" {
-		return nil
-	}
-	return &s
-}
+
