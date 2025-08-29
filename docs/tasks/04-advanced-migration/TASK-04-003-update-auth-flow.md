@@ -6,7 +6,8 @@
 
 ## 🎯 Task Overview
 
-**Primary Objective**: Update complete authentication flow to use gcommon types with opaque API patterns
+**Primary Objective**: Update complete authentication flow to use gcommon types
+with opaque API patterns
 
 **Task Type**: Authentication System Migration
 
@@ -56,7 +57,7 @@ import (
     "encoding/hex"
     "fmt"
     "time"
-    
+
     "github.com/jdfalk/gcommon/sdks/go/v1/common"
     "golang.org/x/crypto/bcrypt"
     "google.golang.org/protobuf/types/known/timestamppb"
@@ -69,14 +70,14 @@ type AuthService interface {
     GetUserByID(ctx context.Context, userID string) (*common.User, error)
     GetUserByUsername(ctx context.Context, username string) (*common.User, error)
     UpdateUserPassword(ctx context.Context, userID, newPassword string) error
-    
+
     // Session management
     CreateSession(ctx context.Context, userID string) (*common.Session, error)
     GetSession(ctx context.Context, sessionID string) (*common.Session, error)
     ValidateSession(ctx context.Context, sessionID string) (*common.User, *common.Session, error)
     DeleteSession(ctx context.Context, sessionID string) error
     CleanupExpiredSessions(ctx context.Context) error
-    
+
     // Token management
     GenerateAuthToken(ctx context.Context, userID string) (string, error)
     ValidateAuthToken(ctx context.Context, token string) (*common.User, error)
@@ -93,7 +94,7 @@ type DataStore interface {
     GetUserByUsername(ctx context.Context, username string) (*common.User, error)
     GetUserByEmail(ctx context.Context, email string) (*common.User, error)
     UpdateUser(ctx context.Context, user *common.User) error
-    
+
     // Session operations
     CreateSession(ctx context.Context, sessionID, userID string, expiresAt time.Time) error
     GetSession(ctx context.Context, sessionID string) (*common.Session, error)
@@ -117,18 +118,18 @@ func (a *authService) CreateUser(ctx context.Context, username, email, password 
     if _, err := a.store.GetUserByUsername(ctx, username); err == nil {
         return nil, fmt.Errorf("username already exists")
     }
-    
+
     // Check if email exists
     if _, err := a.store.GetUserByEmail(ctx, email); err == nil {
         return nil, fmt.Errorf("email already exists")
     }
-    
+
     // Hash password
     hashedPassword, err := hashPassword(password)
     if err != nil {
         return nil, fmt.Errorf("failed to hash password: %w", err)
     }
-    
+
     // Create user with opaque API
     user := &common.User{}
     userID := generateUserID()
@@ -139,12 +140,12 @@ func (a *authService) CreateUser(ctx context.Context, username, email, password 
     user.SetCreatedAt(timestamppb.Now())
     user.SetUpdatedAt(timestamppb.Now())
     user.SetIsActive(true)
-    
+
     err = a.store.CreateUser(ctx, user)
     if err != nil {
         return nil, fmt.Errorf("failed to create user: %w", err)
     }
-    
+
     return user, nil
 }
 
@@ -153,25 +154,25 @@ func (a *authService) AuthenticateUser(ctx context.Context, username, password s
     if err != nil {
         return nil, fmt.Errorf("invalid credentials")
     }
-    
+
     if !user.GetIsActive() {
         return nil, fmt.Errorf("account is inactive")
     }
-    
+
     if !verifyPassword(password, user.GetPasswordHash()) {
         return nil, fmt.Errorf("invalid credentials")
     }
-    
+
     // Update last login
     user.SetLastLogin(timestamppb.Now())
     user.SetUpdatedAt(timestamppb.Now())
-    
+
     err = a.store.UpdateUser(ctx, user)
     if err != nil {
         // Log error but don't fail authentication
         // The user is valid, login timestamp update is not critical
     }
-    
+
     return user, nil
 }
 
@@ -188,15 +189,15 @@ func (a *authService) UpdateUserPassword(ctx context.Context, userID, newPasswor
     if err != nil {
         return fmt.Errorf("user not found: %w", err)
     }
-    
+
     hashedPassword, err := hashPassword(newPassword)
     if err != nil {
         return fmt.Errorf("failed to hash password: %w", err)
     }
-    
+
     user.SetPasswordHash(hashedPassword)
     user.SetUpdatedAt(timestamppb.Now())
-    
+
     return a.store.UpdateUser(ctx, user)
 }
 ```
@@ -209,19 +210,19 @@ func (a *authService) UpdateUserPassword(ctx context.Context, userID, newPasswor
 func (a *authService) CreateSession(ctx context.Context, userID string) (*common.Session, error) {
     sessionID := generateSessionID()
     expiresAt := time.Now().Add(24 * time.Hour) // 24 hour session
-    
+
     err := a.store.CreateSession(ctx, sessionID, userID, expiresAt)
     if err != nil {
         return nil, fmt.Errorf("failed to create session: %w", err)
     }
-    
+
     // Return session object
     session := &common.Session{}
     session.SetId(sessionID)
     session.SetUserId(userID)
     session.SetExpiresAt(timestamppb.New(expiresAt))
     session.SetCreatedAt(timestamppb.Now())
-    
+
     return session, nil
 }
 
@@ -234,24 +235,24 @@ func (a *authService) ValidateSession(ctx context.Context, sessionID string) (*c
     if err != nil {
         return nil, nil, fmt.Errorf("session not found: %w", err)
     }
-    
+
     // Check if session is expired
     if session.GetExpiresAt().AsTime().Before(time.Now()) {
         // Clean up expired session
         a.store.DeleteSession(ctx, sessionID)
         return nil, nil, fmt.Errorf("session expired")
     }
-    
+
     // Get user associated with session
     user, err := a.store.GetUserByID(ctx, session.GetUserId())
     if err != nil {
         return nil, nil, fmt.Errorf("user not found: %w", err)
     }
-    
+
     if !user.GetIsActive() {
         return nil, nil, fmt.Errorf("user account is inactive")
     }
-    
+
     return user, session, nil
 }
 
@@ -304,12 +305,12 @@ func (a *authService) GenerateAuthToken(ctx context.Context, userID string) (str
     // Store token with expiration (could be in database or cache)
     // For simplicity, using session table with longer expiration
     expiresAt := time.Now().Add(30 * 24 * time.Hour) // 30 days
-    
+
     err := a.store.CreateSession(ctx, "token_"+token, userID, expiresAt)
     if err != nil {
         return "", fmt.Errorf("failed to create auth token: %w", err)
     }
-    
+
     return token, nil
 }
 
@@ -318,21 +319,21 @@ func (a *authService) ValidateAuthToken(ctx context.Context, token string) (*com
     if err != nil {
         return nil, fmt.Errorf("invalid token")
     }
-    
+
     if session.GetExpiresAt().AsTime().Before(time.Now()) {
         a.store.DeleteSession(ctx, "token_"+token)
         return nil, fmt.Errorf("token expired")
     }
-    
+
     user, err := a.store.GetUserByID(ctx, session.GetUserId())
     if err != nil {
         return nil, fmt.Errorf("user not found")
     }
-    
+
     if !user.GetIsActive() {
         return nil, fmt.Errorf("user account inactive")
     }
-    
+
     return user, nil
 }
 ```
@@ -348,7 +349,7 @@ import (
     "html/template"
     "net/http"
     "time"
-    
+
     "github.com/jdfalk/subtitle-manager/pkg/auth"
 )
 
@@ -369,7 +370,7 @@ func (s *WebServer) renderLoginPage(w http.ResponseWriter, errorMsg string) {
     }{
         Error: errorMsg,
     }
-    
+
     tmpl := `
 <!DOCTYPE html>
 <html>
@@ -401,7 +402,7 @@ func (s *WebServer) renderLoginPage(w http.ResponseWriter, errorMsg string) {
     <p><a href="/register">Create new account</a></p>
 </body>
 </html>`
-    
+
     t, _ := template.New("login").Parse(tmpl)
     t.Execute(w, data)
 }
@@ -409,26 +410,26 @@ func (s *WebServer) renderLoginPage(w http.ResponseWriter, errorMsg string) {
 func (s *WebServer) processLogin(w http.ResponseWriter, r *http.Request) {
     username := r.FormValue("username")
     password := r.FormValue("password")
-    
+
     if username == "" || password == "" {
         s.renderLoginPage(w, "Username and password are required")
         return
     }
-    
+
     // Authenticate user using auth service
     user, err := s.authService.AuthenticateUser(r.Context(), username, password)
     if err != nil {
         s.renderLoginPage(w, "Invalid username or password")
         return
     }
-    
+
     // Create session
     session, err := s.authService.CreateSession(r.Context(), user.GetId())
     if err != nil {
         s.renderLoginPage(w, "Failed to create session")
         return
     }
-    
+
     // Set session cookie
     http.SetCookie(w, &http.Cookie{
         Name:     "session_id",
@@ -439,7 +440,7 @@ func (s *WebServer) processLogin(w http.ResponseWriter, r *http.Request) {
         Secure:   s.config.UseHTTPS,
         SameSite: http.SameSiteStrictMode,
     })
-    
+
     http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -459,30 +460,30 @@ func (s *WebServer) processRegister(w http.ResponseWriter, r *http.Request) {
     email := r.FormValue("email")
     password := r.FormValue("password")
     confirmPassword := r.FormValue("confirm_password")
-    
+
     // Validation
     if username == "" || email == "" || password == "" {
         s.renderRegisterPage(w, "All fields are required")
         return
     }
-    
+
     if password != confirmPassword {
         s.renderRegisterPage(w, "Passwords do not match")
         return
     }
-    
+
     if len(password) < 8 {
         s.renderRegisterPage(w, "Password must be at least 8 characters")
         return
     }
-    
+
     // Create user using auth service
     user, err := s.authService.CreateUser(r.Context(), username, email, password)
     if err != nil {
         s.renderRegisterPage(w, err.Error())
         return
     }
-    
+
     // Auto-login after registration
     session, err := s.authService.CreateSession(r.Context(), user.GetId())
     if err != nil {
@@ -490,7 +491,7 @@ func (s *WebServer) processRegister(w http.ResponseWriter, r *http.Request) {
         http.Redirect(w, r, "/login", http.StatusSeeOther)
         return
     }
-    
+
     // Set session cookie
     http.SetCookie(w, &http.Cookie{
         Name:     "session_id",
@@ -501,7 +502,7 @@ func (s *WebServer) processRegister(w http.ResponseWriter, r *http.Request) {
         Secure:   s.config.UseHTTPS,
         SameSite: http.SameSiteStrictMode,
     })
-    
+
     http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -510,7 +511,7 @@ func (s *WebServer) handleLogout(w http.ResponseWriter, r *http.Request) {
     if session, ok := GetSessionFromContext(r.Context()); ok {
         s.authService.DeleteSession(r.Context(), session.GetId())
     }
-    
+
     // Clear session cookie
     http.SetCookie(w, &http.Cookie{
         Name:     "session_id",
@@ -519,7 +520,7 @@ func (s *WebServer) handleLogout(w http.ResponseWriter, r *http.Request) {
         Expires:  time.Unix(0, 0),
         HttpOnly: true,
     })
-    
+
     http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 ```
@@ -560,31 +561,31 @@ func (s *WebServer) handleAPILogin(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         return
     }
-    
+
     var req LoginRequest
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
         s.sendAPIError(w, "Invalid JSON", http.StatusBadRequest)
         return
     }
-    
+
     user, err := s.authService.AuthenticateUser(r.Context(), req.Username, req.Password)
     if err != nil {
         s.sendAPIError(w, "Invalid credentials", http.StatusUnauthorized)
         return
     }
-    
+
     token, err := s.authService.GenerateAuthToken(r.Context(), user.GetId())
     if err != nil {
         s.sendAPIError(w, "Failed to generate token", http.StatusInternalServerError)
         return
     }
-    
+
     response := LoginResponse{
         Success: true,
         Token:   token,
         UserID:  user.GetId(),
     }
-    
+
     s.sendAPIResponse(w, response, http.StatusOK)
 }
 
@@ -593,31 +594,31 @@ func (s *WebServer) handleAPIRegister(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         return
     }
-    
+
     var req RegisterRequest
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
         s.sendAPIError(w, "Invalid JSON", http.StatusBadRequest)
         return
     }
-    
+
     user, err := s.authService.CreateUser(r.Context(), req.Username, req.Email, req.Password)
     if err != nil {
         s.sendAPIError(w, err.Error(), http.StatusBadRequest)
         return
     }
-    
+
     token, err := s.authService.GenerateAuthToken(r.Context(), user.GetId())
     if err != nil {
         s.sendAPIError(w, "Failed to generate token", http.StatusInternalServerError)
         return
     }
-    
+
     response := LoginResponse{
         Success: true,
         Token:   token,
         UserID:  user.GetId(),
     }
-    
+
     s.sendAPIResponse(w, response, http.StatusCreated)
 }
 
@@ -629,21 +630,21 @@ func (s *WebServer) APIAuthMiddleware(next http.Handler) http.Handler {
             s.sendAPIError(w, "Authorization header required", http.StatusUnauthorized)
             return
         }
-        
+
         // Expected format: "Bearer <token>"
         parts := strings.SplitN(authHeader, " ", 2)
         if len(parts) != 2 || parts[0] != "Bearer" {
             s.sendAPIError(w, "Invalid authorization format", http.StatusUnauthorized)
             return
         }
-        
+
         token := parts[1]
         user, err := s.authService.ValidateAuthToken(r.Context(), token)
         if err != nil {
             s.sendAPIError(w, "Invalid or expired token", http.StatusUnauthorized)
             return
         }
-        
+
         // Add user to request context
         ctx := context.WithValue(r.Context(), "api_user", user)
         next.ServeHTTP(w, r.WithContext(ctx))
@@ -690,41 +691,41 @@ type WebServer struct {
 
 func NewWebServer(config *Config, store database.Store) *WebServer {
     authService := auth.NewAuthService(store)  // Create auth service
-    
+
     ws := &WebServer{
         config:      config,
         store:       store,
         authService: authService,
         templates:   make(map[string]*template.Template),
     }
-    
+
     ws.setupRoutes()
     return ws
 }
 
 func (s *WebServer) setupRoutes() {
     mux := http.NewServeMux()
-    
+
     // Public routes
     mux.HandleFunc("/login", s.handleLogin)
     mux.HandleFunc("/register", s.handleRegister)
     mux.HandleFunc("/logout", s.handleLogout)
-    
+
     // API routes
     mux.HandleFunc("/api/login", s.handleAPILogin)
     mux.HandleFunc("/api/register", s.handleAPIRegister)
-    
+
     // Protected web routes
     mux.Handle("/", s.AuthMiddleware(http.HandlerFunc(s.handleHome)))
     mux.Handle("/profile", s.AuthMiddleware(http.HandlerFunc(s.handleProfile)))
     mux.Handle("/settings", s.AuthMiddleware(http.HandlerFunc(s.handleSettings)))
-    
+
     // Protected API routes
     apiMux := http.NewServeMux()
     apiMux.HandleFunc("/subtitles", s.handleAPISubtitles)
     apiMux.HandleFunc("/movies", s.handleAPIMovies)
     mux.Handle("/api/", s.APIAuthMiddleware(apiMux))
-    
+
     s.server = &http.Server{
         Addr:    s.config.Address,
         Handler: mux,
@@ -741,24 +742,24 @@ func TestAuthService(t *testing.T) {
     store := setupTestStore(t)
     authService := auth.NewAuthService(store)
     ctx := context.Background()
-    
+
     // Test user creation
     user, err := authService.CreateUser(ctx, "testuser", "test@example.com", "password123")
     assert.NoError(t, err)
     assert.Equal(t, "testuser", user.GetUsername())
     assert.Equal(t, "test@example.com", user.GetEmail())
     assert.True(t, user.GetIsActive())
-    
+
     // Test authentication
     authUser, err := authService.AuthenticateUser(ctx, "testuser", "password123")
     assert.NoError(t, err)
     assert.Equal(t, user.GetId(), authUser.GetId())
-    
+
     // Test session creation
     session, err := authService.CreateSession(ctx, user.GetId())
     assert.NoError(t, err)
     assert.Equal(t, user.GetId(), session.GetUserId())
-    
+
     // Test session validation
     validUser, validSession, err := authService.ValidateSession(ctx, session.GetId())
     assert.NoError(t, err)
@@ -772,7 +773,7 @@ func TestAuthService(t *testing.T) {
 ```go
 func TestWebAuthentication(t *testing.T) {
     server := setupTestWebServer(t)
-    
+
     // Test registration
     regData := url.Values{
         "username":         {"testuser"},
@@ -780,14 +781,14 @@ func TestWebAuthentication(t *testing.T) {
         "password":        {"password123"},
         "confirm_password": {"password123"},
     }
-    
+
     req := httptest.NewRequest("POST", "/register", strings.NewReader(regData.Encode()))
     req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     rr := httptest.NewRecorder()
-    
+
     server.handleRegister(rr, req)
     assert.Equal(t, http.StatusSeeOther, rr.Code)
-    
+
     // Extract session cookie
     cookies := rr.Result().Cookies()
     var sessionCookie *http.Cookie
@@ -798,19 +799,19 @@ func TestWebAuthentication(t *testing.T) {
         }
     }
     assert.NotNil(t, sessionCookie)
-    
+
     // Test protected endpoint with session
     req = httptest.NewRequest("GET", "/profile", nil)
     req.AddCookie(sessionCookie)
     rr = httptest.NewRecorder()
-    
+
     server.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         user, ok := GetUserFromContext(r.Context())
         assert.True(t, ok)
         assert.Equal(t, "testuser", user.GetUsername())
         w.WriteHeader(http.StatusOK)
     })).ServeHTTP(rr, req)
-    
+
     assert.Equal(t, http.StatusOK, rr.Code)
 }
 ```
@@ -820,39 +821,39 @@ func TestWebAuthentication(t *testing.T) {
 ```go
 func TestAPIAuthentication(t *testing.T) {
     server := setupTestWebServer(t)
-    
+
     // Test API registration
     regReq := LoginRequest{
         Username: "apiuser",
-        Email:    "api@example.com", 
+        Email:    "api@example.com",
         Password: "password123",
     }
-    
+
     reqBody, _ := json.Marshal(regReq)
     req := httptest.NewRequest("POST", "/api/register", bytes.NewBuffer(reqBody))
     req.Header.Set("Content-Type", "application/json")
     rr := httptest.NewRecorder()
-    
+
     server.handleAPIRegister(rr, req)
     assert.Equal(t, http.StatusCreated, rr.Code)
-    
+
     var response LoginResponse
     json.NewDecoder(rr.Body).Decode(&response)
     assert.True(t, response.Success)
     assert.NotEmpty(t, response.Token)
-    
+
     // Test protected API endpoint
     req = httptest.NewRequest("GET", "/api/subtitles", nil)
     req.Header.Set("Authorization", "Bearer "+response.Token)
     rr = httptest.NewRecorder()
-    
+
     server.APIAuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         user, ok := GetAPIUserFromContext(r.Context())
         assert.True(t, ok)
         assert.Equal(t, "apiuser", user.GetUsername())
         w.WriteHeader(http.StatusOK)
     })).ServeHTTP(rr, req)
-    
+
     assert.Equal(t, http.StatusOK, rr.Code)
 }
 ```
@@ -866,7 +867,8 @@ func TestAPIAuthentication(t *testing.T) {
 ```markdown
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
 
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Required File Header (File Identification)
 
@@ -874,7 +876,8 @@ All source, script, and documentation files MUST begin with a standard header.
 
 ## Version Update Requirements
 
-**When modifying any file with a version header, ALWAYS update the version number**
+**When modifying any file with a version header, ALWAYS update the version
+number**
 ```
 
 ### Authentication Security Best Practices

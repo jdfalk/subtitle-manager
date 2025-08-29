@@ -571,7 +571,8 @@ if **name** == "**main**": from github_issue_manager import GitHubIssueManager
         json.dump(mappings, f, indent=2, default=str)
 
     print("Mappings saved to issue_task_mappings.json for TASK-03-001-B")
-```
+
+````
 
 ### Completion of Part A
 
@@ -585,7 +586,7 @@ cat issue_analysis.json | jq '.summary'
 cat issue_task_mappings.json | jq 'keys'
 
 # Part A is complete - proceed to TASK-03-001-B for resolution workflows
-```
+````
 
 ## 📚 Required Documentation
 
@@ -596,13 +597,15 @@ cat issue_task_mappings.json | jq 'keys'
 ```markdown
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
 
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Script Language Preference
 
 **MANDATORY RULE: Prefer Python for scripts unless they are incredibly simple.**
 
 Use Python for:
+
 - API interactions (GitHub, REST APIs, etc.)
 - JSON/YAML processing
 - File manipulation beyond simple copying
@@ -613,12 +616,14 @@ Use Python for:
 ## 🧪 Testing Requirements
 
 ### GitHub API Testing
+
 - [ ] Verify API authentication works correctly
 - [ ] Test issue fetching and categorization
 - [ ] Validate JSON data export formats
 - [ ] Test task file parsing and updates
 
 ### Analysis Validation
+
 - [ ] Verify issue categorization accuracy
 - [ ] Test task mapping logic
 - [ ] Validate data export completeness
@@ -649,7 +654,9 @@ Use Python for:
 
 ## 🔄 Part B Continuation
 
-**Part A prepares data for TASK-03-001-B-issue-resolution.md which will handle:**
+**Part A prepares data for TASK-03-001-B-issue-resolution.md which will
+handle:**
+
 - Issue resolution workflows
 - Automated closure systems
 - Resolution comment generation
@@ -667,7 +674,7 @@ Use Python for:
 - Export all analysis data as JSON for Part B workflows
 - Part A is focused on READ operations only - no issue modifications
 
-```python
+````python
 #!/usr/bin/env python3
 # file: scripts/resolve_issues.py
 # version: 1.0.0

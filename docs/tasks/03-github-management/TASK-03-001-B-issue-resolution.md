@@ -6,7 +6,9 @@
 
 ## 🎯 Task Overview
 
-**Primary Objective**: Implement comprehensive GitHub issue resolution workflows, automated closure systems, ongoing monitoring, and maintenance automation.
+**Primary Objective**: Implement comprehensive GitHub issue resolution
+workflows, automated closure systems, ongoing monitoring, and maintenance
+automation.
 
 **Continuation of**: TASK-03-001-A (GitHub Issue Analysis and Setup)
 
@@ -15,6 +17,7 @@
 **Estimated Effort**: 4-6 hours
 
 **Prerequisites**:
+
 - TASK-03-001-A completed successfully
 - `issue_analysis.json` and `issue_task_mappings.json` files available
 - GitHub API access configured and tested
@@ -35,12 +38,14 @@
 ## 🔄 Dependencies
 
 **Input from Part A**:
+
 - `issue_analysis.json` - Complete issue analysis data
 - `issue_task_mappings.json` - Issue-to-task mapping data
 - Updated task files with GitHub issue placeholders
 - Tested GitHub API configuration
 
 **External Dependencies**:
+
 - PyGithub library for GitHub API access
 - GitHub API token with repository write permissions
 - Task files from `docs/tasks/` directory
@@ -51,7 +56,7 @@
 
 Load Part A data and implement resolution workflows:
 
-```python
+````python
 #!/usr/bin/env python3
 # file: scripts/resolve_issues.py
 # version: 1.0.0
@@ -142,9 +147,10 @@ The resolution has been verified through:
    ```bash
    go test ./...  # All tests passing
    npm test      # Frontend tests passing
-   ```
+````
 
 2. **Package Usage Verification:**
+
    ```bash
    grep -r "gcommon/v1" --include="*.go" .  # New packages in use
    grep -r "configpb|databasepb" --include="*.go" . || echo "Old packages removed"
@@ -185,17 +191,18 @@ The migration also enables:
 
 ---
 
-**Issue Status:** ✅ **RESOLVED**
-**Resolution Date:** {timestamp}
-**Migration Phase:** Complete
+**Issue Status:** ✅ **RESOLVED** **Resolution Date:** {timestamp} **Migration
+Phase:** Complete
 
-If you experience any issues related to this change, please open a new issue with specific details about the problem and steps to reproduce."""
+If you experience any issues related to this change, please open a new issue
+with specific details about the problem and steps to reproduce."""
 
     def update_issue_with_task_links(self, issue_number, task_links):
         """Update issue with links to related tasks"""
         comment = f"""## 🔗 Related Implementation Tasks
 
-This issue is being addressed through the following detailed implementation tasks:
+This issue is being addressed through the following detailed implementation
+tasks:
 
 {chr(10).join(f'- 📋 [{task}](../docs/tasks/{task})' for task in task_links)}
 
@@ -209,14 +216,16 @@ Each task includes:
 
 ### 📊 Progress Tracking:
 
-You can track progress on this issue by monitoring the completion of the linked tasks above. Each task is designed to be completed independently by automated agents or developers.
+You can track progress on this issue by monitoring the completion of the linked
+tasks above. Each task is designed to be completed independently by automated
+agents or developers.
 
 ### ⏱️ Expected Timeline:
 
 The implementation tasks are prioritized as follows:
 
-1. **Phase 1**: gcommon package migration (TASK-01-*)
-2. **Phase 2**: UI/UX improvements (TASK-02-*)
+1. **Phase 1**: gcommon package migration (TASK-01-\*)
+2. **Phase 2**: UI/UX improvements (TASK-02-\*)
 3. **Phase 3**: Testing and validation (ongoing)
 
 This issue will be automatically updated as tasks are completed."""
@@ -262,11 +271,12 @@ This issue will be automatically updated as tasks are completed."""
             self.resolve_issues_batch(testing_issues)
 
 # Example usage and resolution workflow
-if __name__ == "__main__":
-    resolver = IssueResolver(dry_run=True)  # Set to False to actually resolve
-    resolver.execute_resolution_workflow()
-    print("Resolution workflow completed!")
-```
+
+if **name** == "**main**": resolver = IssueResolver(dry_run=True) # Set to False
+to actually resolve resolver.execute_resolution_workflow() print("Resolution
+workflow completed!")
+
+````
 
 ### Step 2: Create automated issue management and monitoring
 
@@ -514,7 +524,7 @@ if __name__ == "__main__":
 
     # Optionally start automated monitoring
     # manager.start_automated_monitoring()
-```
+````
 
 ### Step 3: Create comprehensive issue templates
 
@@ -624,7 +634,9 @@ body:
     id: alternatives
     attributes:
       label: Describe alternatives you've considered
-      description: A clear and concise description of any alternative solutions or features you've considered
+      description:
+        A clear and concise description of any alternative solutions or features
+        you've considered
     validations:
       required: false
 
@@ -644,7 +656,8 @@ body:
     id: additional-context
     attributes:
       label: Additional context
-      description: Add any other context or screenshots about the feature request here
+      description:
+        Add any other context or screenshots about the feature request here
     validations:
       required: false
 ```
@@ -682,7 +695,8 @@ body:
     attributes:
       label: Migration Issue Description
       description: Describe the specific migration problem
-      placeholder: Detailed description of the issue encountered during migration
+      placeholder:
+        Detailed description of the issue encountered during migration
     validations:
       required: true
 
@@ -720,7 +734,8 @@ Create `docs/issue-resolution-report.md`:
 
 ## Executive Summary
 
-This report documents the comprehensive resolution of GitHub issues as part of the subtitle-manager refactoring to use gcommon packages.
+This report documents the comprehensive resolution of GitHub issues as part of
+the subtitle-manager refactoring to use gcommon packages.
 
 ### Resolution Statistics
 
@@ -828,7 +843,8 @@ This report documents the comprehensive resolution of GitHub issues as part of t
 
 ---
 
-_This report is automatically updated as issues are resolved and new issues are created._
+_This report is automatically updated as issues are resolved and new issues are
+created._
 ```
 
 ### Step 5: Execute comprehensive resolution workflow
@@ -942,13 +958,15 @@ if __name__ == "__main__":
 ```markdown
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
 
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Script Language Preference
 
 **MANDATORY RULE: Prefer Python for scripts unless they are incredibly simple.**
 
 Use Python for:
+
 - API interactions (GitHub, REST APIs, etc.)
 - JSON/YAML processing
 - File manipulation beyond simple copying
@@ -959,6 +977,7 @@ Use Python for:
 ## 🧪 Testing Requirements
 
 ### Resolution Workflow Testing
+
 - [ ] Test issue resolution with dry_run=True first
 - [ ] Verify resolution comments are properly formatted
 - [ ] Test automated monitoring system
@@ -966,6 +985,7 @@ Use Python for:
 - [ ] Test issue template deployment
 
 ### Integration Testing
+
 - [ ] Test Part A data loading
 - [ ] Verify resolution workflows use mapping data correctly
 - [ ] Test automated maintenance scheduling
@@ -973,6 +993,7 @@ Use Python for:
 - [ ] Test GitHub API rate limit handling
 
 ### End-to-End Validation
+
 - [ ] Complete workflow from Part A to Part B
 - [ ] Test issue lifecycle from creation to resolution
 - [ ] Verify automated monitoring continues running
@@ -991,7 +1012,8 @@ Use Python for:
 
 ## 🚨 Common Pitfalls
 
-1. **Rate Limiting**: GitHub API has strict rate limits - always implement delays
+1. **Rate Limiting**: GitHub API has strict rate limits - always implement
+   delays
 2. **Bulk Operations**: Test with small batches before full resolution
 3. **Permission Issues**: Ensure GitHub token has write access for closures
 4. **Comment Formatting**: Verify markdown renders correctly in GitHub
@@ -1009,10 +1031,13 @@ Use Python for:
 ## 🔄 Related Tasks
 
 **Depends on**:
+
 - **TASK-03-001-A**: GitHub Issue Analysis and Setup (must be completed first)
 
 **Related implementation tasks**:
-- **TASK-01-001 to TASK-01-003**: gcommon migration tasks (issues resolved reference these)
+
+- **TASK-01-001 to TASK-01-003**: gcommon migration tasks (issues resolved
+  reference these)
 - **TASK-02-001**: UI fixes (UI-related issues reference this)
 - **TASK-02-002**: Testing framework (testing issues reference this)
 

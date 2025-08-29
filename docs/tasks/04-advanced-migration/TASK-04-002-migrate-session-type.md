@@ -6,13 +6,15 @@
 
 ## 🎯 Task Overview
 
-**Primary Objective**: Replace local Session types with gcommon Session type and update authentication middleware
+**Primary Objective**: Replace local Session types with gcommon Session type and
+update authentication middleware
 
 **Task Type**: Core Type Migration - Session Management
 
 **Estimated Effort**: 2-3 hours
 
-**Dependencies**: 
+**Dependencies**:
+
 - TASK-04-001 (Migrate User Type) completed
 - Authentication middleware understanding
 
@@ -29,10 +31,12 @@
 ## 🔄 Dependencies
 
 **Input Requirements**:
+
 - TASK-04-001 completed (User type migrated)
 - gcommon Session type understanding
 
 **External Dependencies**:
+
 - gcommon/sdks/go/v1/common package
 - Updated authentication middleware
 - Session storage backends
@@ -42,6 +46,7 @@
 ### Step 1: Update Session type imports
 
 **Files to Modify**:
+
 - `pkg/webserver/auth.go`
 - `pkg/webserver/middleware.go`
 - `pkg/database/store.go`
@@ -51,6 +56,7 @@
 - `pkg/authserver/server.go`
 
 **Import Updates**:
+
 ```go
 // OLD - Remove local session imports
 import "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
@@ -62,11 +68,12 @@ import "github.com/jdfalk/gcommon/sdks/go/v1/common"
 ### Step 2: Convert Session field access to opaque API
 
 **Critical Session Field Mappings**:
+
 ```go
 // OLD - Direct field access (REMOVE)
 session := auth.Session{
     Id:        "sess123",
-    UserId:    "user456", 
+    UserId:    "user456",
     ExpiresAt: time.Now().Add(24 * time.Hour),
     CreatedAt: time.Now(),
 }
@@ -85,10 +92,13 @@ userID := session.GetUserId()
 ```
 
 **All Session Field Conversions**:
+
 - `session.Id` → `session.GetId()` / `session.SetId("value")`
 - `session.UserId` → `session.GetUserId()` / `session.SetUserId("value")`
-- `session.ExpiresAt` → `session.GetExpiresAt()` / `session.SetExpiresAt(timestamppb.New(time))`
-- `session.CreatedAt` → `session.GetCreatedAt()` / `session.SetCreatedAt(timestamppb.New(time))`
+- `session.ExpiresAt` → `session.GetExpiresAt()` /
+  `session.SetExpiresAt(timestamppb.New(time))`
+- `session.CreatedAt` → `session.GetCreatedAt()` /
+  `session.SetCreatedAt(timestamppb.New(time))`
 
 ### Step 3: Update authentication middleware
 
@@ -128,7 +138,7 @@ func (s *WebServer) AuthMiddleware(next http.Handler) http.Handler {
         // Add user and session to request context
         ctx := context.WithValue(r.Context(), "user", user)
         ctx = context.WithValue(ctx, "session", session)
-        
+
         next.ServeHTTP(w, r.WithContext(ctx))
     })
 }
@@ -139,7 +149,7 @@ func GetUserFromContext(ctx context.Context) (*common.User, bool) {
     return user, ok
 }
 
-// Helper function to get session from context  
+// Helper function to get session from context
 func GetSessionFromContext(ctx context.Context) (*common.Session, bool) {
     session, ok := ctx.Value("session").(*common.Session)
     return session, ok
@@ -161,22 +171,22 @@ func (s *SQLStore) CreateSession(ctx context.Context, sessionID, userID string, 
 func (s *SQLStore) GetSession(ctx context.Context, sessionID string) (*common.Session, error) {
     row := s.db.QueryRowContext(ctx,
         "SELECT id, user_id, expires_at, created_at FROM sessions WHERE id = ?", sessionID)
-    
+
     session := &common.Session{}
     var id, userID string
     var expiresAt, createdAt time.Time
-    
+
     err := row.Scan(&id, &userID, &expiresAt, &createdAt)
     if err != nil {
         return nil, err
     }
-    
+
     // Use opaque API to populate session
     session.SetId(id)
     session.SetUserId(userID)
     session.SetExpiresAt(timestamppb.New(expiresAt))
     session.SetCreatedAt(timestamppb.New(createdAt))
-    
+
     return session, nil
 }
 
@@ -193,26 +203,26 @@ func (s *SQLStore) GetSessionsByUserID(ctx context.Context, userID string) ([]*c
         return nil, err
     }
     defer rows.Close()
-    
+
     var sessions []*common.Session
     for rows.Next() {
         session := &common.Session{}
         var id, userID string
         var expiresAt, createdAt time.Time
-        
+
         err := rows.Scan(&id, &userID, &expiresAt, &createdAt)
         if err != nil {
             return nil, err
         }
-        
+
         session.SetId(id)
         session.SetUserId(userID)
         session.SetExpiresAt(timestamppb.New(expiresAt))
         session.SetCreatedAt(timestamppb.New(createdAt))
-        
+
         sessions = append(sessions, session)
     }
-    
+
     return sessions, rows.Err()
 }
 
@@ -236,7 +246,7 @@ func (p *PostgresStore) CreateSession(ctx context.Context, sessionID, userID str
 func (p *PostgresStore) GetSession(ctx context.Context, sessionID string) (*common.Session, error) {
     row := p.db.QueryRowContext(ctx,
         "SELECT id, user_id, expires_at, created_at FROM sessions WHERE id = $1", sessionID)
-    
+
     return p.scanSession(row)
 }
 
@@ -245,7 +255,7 @@ func (p *PostgresStore) scanSession(scanner interface{}) (*common.Session, error
     session := &common.Session{}
     var id, userID string
     var expiresAt, createdAt time.Time
-    
+
     var err error
     switch s := scanner.(type) {
     case *sql.Row:
@@ -255,16 +265,16 @@ func (p *PostgresStore) scanSession(scanner interface{}) (*common.Session, error
     default:
         return nil, fmt.Errorf("unsupported scanner type")
     }
-    
+
     if err != nil {
         return nil, err
     }
-    
+
     session.SetId(id)
     session.SetUserId(userID)
     session.SetExpiresAt(timestamppb.New(expiresAt))
     session.SetCreatedAt(timestamppb.New(createdAt))
-    
+
     return session, nil
 }
 ```
@@ -299,7 +309,7 @@ func (s *WebServer) handleLogin(w http.ResponseWriter, r *http.Request) {
     // Create new session
     sessionID := generateSessionID()
     expiresAt := time.Now().Add(24 * time.Hour)
-    
+
     err = s.store.CreateSession(r.Context(), sessionID, user.GetId(), expiresAt)
     if err != nil {
         http.Error(w, "Failed to create session", http.StatusInternalServerError)
@@ -388,7 +398,7 @@ func TestSessionTypeMigration(t *testing.T) {
     session.SetUserId("user456")
     session.SetExpiresAt(timestamppb.New(time.Now().Add(time.Hour)))
     session.SetCreatedAt(timestamppb.Now())
-    
+
     assert.Equal(t, "sess123", session.GetId())
     assert.Equal(t, "user456", session.GetUserId())
     assert.True(t, session.GetExpiresAt().AsTime().After(time.Now()))
@@ -397,25 +407,25 @@ func TestSessionTypeMigration(t *testing.T) {
 func TestSessionDatabaseOperations(t *testing.T) {
     store := setupTestStore(t)
     ctx := context.Background()
-    
+
     // Create session
     sessionID := "test_session_123"
     userID := "test_user_456"
     expiresAt := time.Now().Add(time.Hour)
-    
+
     err := store.CreateSession(ctx, sessionID, userID, expiresAt)
     assert.NoError(t, err)
-    
+
     // Retrieve session
     session, err := store.GetSession(ctx, sessionID)
     assert.NoError(t, err)
     assert.Equal(t, sessionID, session.GetId())
     assert.Equal(t, userID, session.GetUserId())
-    
+
     // Delete session
     err = store.DeleteSession(ctx, sessionID)
     assert.NoError(t, err)
-    
+
     // Verify deletion
     _, err = store.GetSession(ctx, sessionID)
     assert.Error(t, err)
@@ -427,19 +437,19 @@ func TestSessionDatabaseOperations(t *testing.T) {
 ```go
 func TestAuthenticationMiddleware(t *testing.T) {
     server := setupTestServer(t)
-    
+
     // Create test user and session
     user := createTestUser(t, server.store)
     sessionID := "test_session"
     expiresAt := time.Now().Add(time.Hour)
-    
+
     err := server.store.CreateSession(context.Background(), sessionID, user.GetId(), expiresAt)
     assert.NoError(t, err)
-    
+
     // Test protected endpoint with valid session
     req := httptest.NewRequest("GET", "/protected", nil)
     req.AddCookie(&http.Cookie{Name: "session_id", Value: sessionID})
-    
+
     rr := httptest.NewRecorder()
     server.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         contextUser, ok := GetUserFromContext(r.Context())
@@ -447,26 +457,26 @@ func TestAuthenticationMiddleware(t *testing.T) {
         assert.Equal(t, user.GetId(), contextUser.GetId())
         w.WriteHeader(http.StatusOK)
     })).ServeHTTP(rr, req)
-    
+
     assert.Equal(t, http.StatusOK, rr.Code)
 }
 
 func TestExpiredSessionCleanup(t *testing.T) {
     store := setupTestStore(t)
     ctx := context.Background()
-    
+
     // Create expired session
     sessionID := "expired_session"
     userID := "test_user"
     expiresAt := time.Now().Add(-time.Hour) // Already expired
-    
+
     err := store.CreateSession(ctx, sessionID, userID, expiresAt)
     assert.NoError(t, err)
-    
+
     // Run cleanup
     err = store.CleanupExpiredSessions(ctx)
     assert.NoError(t, err)
-    
+
     // Verify expired session is gone
     _, err = store.GetSession(ctx, sessionID)
     assert.Error(t, err)
@@ -482,7 +492,8 @@ func TestExpiredSessionCleanup(t *testing.T) {
 ```markdown
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
 
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Required File Header (File Identification)
 
@@ -490,7 +501,8 @@ All source, script, and documentation files MUST begin with a standard header.
 
 ## Version Update Requirements
 
-**When modifying any file with a version header, ALWAYS update the version number**
+**When modifying any file with a version header, ALWAYS update the version
+number**
 ```
 
 ### Session Security Best Practices
@@ -530,9 +542,11 @@ All source, script, and documentation files MUST begin with a standard header.
 ## 🔄 Related Tasks
 
 **Must complete before this task**:
+
 - **TASK-04-001**: Migrate User Type (provides updated User handling)
 
 **Enables these tasks**:
+
 - **TASK-04-003**: Update authentication flow end-to-end
 - **TASK-04-004**: Implement session management UI
 - **TASK-06-001**: Integration testing with authentication

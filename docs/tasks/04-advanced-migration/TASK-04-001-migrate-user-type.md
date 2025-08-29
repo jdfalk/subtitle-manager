@@ -6,13 +6,15 @@
 
 ## 🎯 Task Overview
 
-**Primary Objective**: Replace all local User types with gcommon User type using opaque API pattern
+**Primary Objective**: Replace all local User types with gcommon User type using
+opaque API pattern
 
 **Task Type**: Core Type Migration - User Entity
 
 **Estimated Effort**: 3-4 hours
 
-**Dependencies**: 
+**Dependencies**:
+
 - TASK-01-003 (Replace gcommonauth package)
 - gcommon v1.8.0 properly configured
 
@@ -29,10 +31,12 @@
 ## 🔄 Dependencies
 
 **Input Requirements**:
+
 - gcommon v1.8.0 available and configured
 - Understanding of opaque API pattern for protobuf access
 
 **External Dependencies**:
+
 - gcommon/sdks/go/v1/common package
 - Database interface implementations
 - Authentication system components
@@ -42,8 +46,9 @@
 ### Step 1: Update imports across all user-related files
 
 **Files to Modify**:
+
 - `pkg/database/store.go`
-- `pkg/database/pebble.go` 
+- `pkg/database/pebble.go`
 - `pkg/database/database.go`
 - `pkg/database/postgres.go`
 - `pkg/webserver/auth.go`
@@ -52,6 +57,7 @@
 - All test files using User type
 
 **Import Replacement**:
+
 ```go
 // OLD - Remove these imports
 import auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
@@ -79,7 +85,7 @@ username := user.Username
 // NEW - Opaque API pattern (IMPLEMENT)
 user := &common.User{}
 user.SetId("user123")
-user.SetUsername("john_doe") 
+user.SetUsername("john_doe")
 user.SetEmail("john@example.com")
 user.SetIsAdmin(true)
 
@@ -88,10 +94,12 @@ username := user.GetUsername()
 ```
 
 **Common Field Mappings**:
+
 - `user.Id` → `user.GetId()` / `user.SetId("value")`
 - `user.Username` → `user.GetUsername()` / `user.SetUsername("value")`
 - `user.Email` → `user.GetEmail()` / `user.SetEmail("value")`
-- `user.PasswordHash` → `user.GetPasswordHash()` / `user.SetPasswordHash("value")`
+- `user.PasswordHash` → `user.GetPasswordHash()` /
+  `user.SetPasswordHash("value")`
 - `user.IsAdmin` → `user.GetIsAdmin()` / `user.SetIsAdmin(true)`
 - `user.CreatedAt` → `user.GetCreatedAt()` / `user.SetCreatedAt(time.Now())`
 - `user.UpdatedAt` → `user.GetUpdatedAt()` / `user.SetUpdatedAt(time.Now())`
@@ -111,13 +119,14 @@ func ListUsers() []*common.User { ... }
 ```
 
 **Method Signature Updates**:
+
 ```go
 // OLD
 func CreateUser(user auth.User) error
 func UpdateUser(user auth.User) error
 func GetUserByID(id string) (auth.User, error)
 
-// NEW  
+// NEW
 func CreateUser(user *common.User) error
 func UpdateUser(user *common.User) error
 func GetUserByID(id string) (*common.User, error)
@@ -130,13 +139,13 @@ func GetUserByID(id string) (*common.User, error)
 ```go
 // 1. CreateOneTimeToken
 func (s *SQLStore) CreateOneTimeToken(ctx context.Context, userID string, token string, expiresAt time.Time) error {
-    _, err := s.db.ExecContext(ctx, 
+    _, err := s.db.ExecContext(ctx,
         "INSERT INTO one_time_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
         userID, token, expiresAt)
     return err
 }
 
-// 2. CleanupExpiredSessions 
+// 2. CleanupExpiredSessions
 func (s *SQLStore) CleanupExpiredSessions(ctx context.Context) error {
     _, err := s.db.ExecContext(ctx,
         "DELETE FROM sessions WHERE expires_at < ?", time.Now())
@@ -147,17 +156,17 @@ func (s *SQLStore) CleanupExpiredSessions(ctx context.Context) error {
 func (s *SQLStore) GetUserByID(ctx context.Context, id string) (*common.User, error) {
     row := s.db.QueryRowContext(ctx,
         "SELECT id, username, email, password_hash, is_admin, created_at, updated_at FROM users WHERE id = ?", id)
-    
+
     user := &common.User{}
     var createdAt, updatedAt time.Time
     var id, username, email, passwordHash string
     var isAdmin bool
-    
+
     err := row.Scan(&id, &username, &email, &passwordHash, &isAdmin, &createdAt, &updatedAt)
     if err != nil {
         return nil, err
     }
-    
+
     // Use opaque API to populate user
     user.SetId(id)
     user.SetUsername(username)
@@ -166,7 +175,7 @@ func (s *SQLStore) GetUserByID(ctx context.Context, id string) (*common.User, er
     user.SetIsAdmin(isAdmin)
     user.SetCreatedAt(timestamppb.New(createdAt))
     user.SetUpdatedAt(timestamppb.New(updatedAt))
-    
+
     return user, nil
 }
 
@@ -174,16 +183,16 @@ func (s *SQLStore) GetUserByID(ctx context.Context, id string) (*common.User, er
 func (s *SQLStore) GetUserByEmail(ctx context.Context, email string) (*common.User, error) {
     row := s.db.QueryRowContext(ctx,
         "SELECT id, username, email, password_hash, is_admin, created_at, updated_at FROM users WHERE email = ?", email)
-    
+
     // Similar implementation to GetUserByID...
     return s.scanUser(row)
 }
 
-// 5. GetUserByUsername  
+// 5. GetUserByUsername
 func (s *SQLStore) GetUserByUsername(ctx context.Context, username string) (*common.User, error) {
     row := s.db.QueryRowContext(ctx,
         "SELECT id, username, email, password_hash, is_admin, created_at, updated_at FROM users WHERE username = ?", username)
-    
+
     return s.scanUser(row)
 }
 
@@ -195,7 +204,7 @@ func (s *SQLStore) ListUsers(ctx context.Context) ([]*common.User, error) {
         return nil, err
     }
     defer rows.Close()
-    
+
     var users []*common.User
     for rows.Next() {
         user, err := s.scanUser(rows)
@@ -204,19 +213,20 @@ func (s *SQLStore) ListUsers(ctx context.Context) ([]*common.User, error) {
         }
         users = append(users, user)
     }
-    
+
     return users, rows.Err()
 }
 ```
 
 **Helper Method for User Scanning**:
+
 ```go
 func (s *SQLStore) scanUser(scanner interface{}) (*common.User, error) {
     user := &common.User{}
     var createdAt, updatedAt time.Time
     var id, username, email, passwordHash string
     var isAdmin bool
-    
+
     var err error
     switch s := scanner.(type) {
     case *sql.Row:
@@ -226,11 +236,11 @@ func (s *SQLStore) scanUser(scanner interface{}) (*common.User, error) {
     default:
         return nil, fmt.Errorf("unsupported scanner type")
     }
-    
+
     if err != nil {
         return nil, err
     }
-    
+
     // Use opaque API
     user.SetId(id)
     user.SetUsername(username)
@@ -239,7 +249,7 @@ func (s *SQLStore) scanUser(scanner interface{}) (*common.User, error) {
     user.SetIsAdmin(isAdmin)
     user.SetCreatedAt(timestamppb.New(createdAt))
     user.SetUpdatedAt(timestamppb.New(updatedAt))
-    
+
     return user, nil
 }
 ```
@@ -253,7 +263,7 @@ func (s *SQLStore) scanUser(scanner interface{}) (*common.User, error) {
 func (p *PostgresStore) GetUserByID(ctx context.Context, id string) (*common.User, error) {
     row := p.db.QueryRowContext(ctx,
         "SELECT id, username, email, password_hash, is_admin, created_at, updated_at FROM users WHERE id = $1", id)
-    
+
     return p.scanUser(row)
 }
 
@@ -282,7 +292,7 @@ func (s *AuthServer) CreateUser(ctx context.Context, req *common.CreateUserReque
     user.SetIsAdmin(req.GetIsAdmin())
     user.SetCreatedAt(timestamppb.Now())
     user.SetUpdatedAt(timestamppb.Now())
-    
+
     err := s.store.CreateUser(ctx, user)
     return user, err
 }
@@ -301,19 +311,19 @@ func (s *AuthServer) GetUser(ctx context.Context, req *common.GetUserRequest) (*
 func (s *WebServer) handleLogin(w http.ResponseWriter, r *http.Request) {
     username := r.FormValue("username")
     password := r.FormValue("password")
-    
+
     user, err := s.store.GetUserByUsername(r.Context(), username)
     if err != nil {
         http.Error(w, "Invalid credentials", http.StatusUnauthorized)
         return
     }
-    
+
     // Use opaque API
     if !verifyPassword(password, user.GetPasswordHash()) {
         http.Error(w, "Invalid credentials", http.StatusUnauthorized)
         return
     }
-    
+
     // Create session using user.GetId()
     sessionID := generateSessionID()
     err = s.store.CreateSession(r.Context(), sessionID, user.GetId(), time.Now().Add(24*time.Hour))
@@ -321,14 +331,14 @@ func (s *WebServer) handleLogin(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Failed to create session", http.StatusInternalServerError)
         return
     }
-    
+
     // Set session cookie and redirect
     http.SetCookie(w, &http.Cookie{
         Name:  "session_id",
         Value: sessionID,
         Path:  "/",
     })
-    
+
     http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 ```
@@ -346,7 +356,7 @@ func TestUserTypeMigration(t *testing.T) {
     user.SetId("test123")
     user.SetUsername("testuser")
     user.SetEmail("test@example.com")
-    
+
     assert.Equal(t, "test123", user.GetId())
     assert.Equal(t, "testuser", user.GetUsername())
     assert.Equal(t, "test@example.com", user.GetEmail())
@@ -354,16 +364,16 @@ func TestUserTypeMigration(t *testing.T) {
 
 func TestUserDatabaseOperations(t *testing.T) {
     store := setupTestStore(t)
-    
+
     // Test user creation
     user := &common.User{}
     user.SetId("user123")
     user.SetUsername("john")
     user.SetEmail("john@example.com")
-    
+
     err := store.CreateUser(context.Background(), user)
     assert.NoError(t, err)
-    
+
     // Test user retrieval
     retrieved, err := store.GetUserByID(context.Background(), "user123")
     assert.NoError(t, err)
@@ -378,16 +388,16 @@ func TestUserDatabaseOperations(t *testing.T) {
 func TestAuthenticationFlow(t *testing.T) {
     // Test complete authentication with new User type
     server := setupTestServer(t)
-    
+
     // Create user
     user := &common.User{}
     user.SetUsername("integration_test")
     user.SetEmail("test@integration.com")
     user.SetPasswordHash(hashPassword("password123"))
-    
+
     err := server.store.CreateUser(context.Background(), user)
     assert.NoError(t, err)
-    
+
     // Test login flow
     // Test session management
     // Test user operations
@@ -403,18 +413,22 @@ func TestAuthenticationFlow(t *testing.T) {
 ```markdown
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
 
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Required File Header (File Identification)
 
-All source, script, and documentation files MUST begin with a standard header containing:
+All source, script, and documentation files MUST begin with a standard header
+containing:
+
 - The exact relative file path from the repository root
-- The file's semantic version 
+- The file's semantic version
 - The file's GUID
 
 ## Version Update Requirements
 
-**When modifying any file with a version header, ALWAYS update the version number**
+**When modifying any file with a version header, ALWAYS update the version
+number**
 ```
 
 ### Opaque API Pattern Requirements
@@ -427,7 +441,7 @@ user.Id = "123"
 username := user.Username
 
 // ✅ ALWAYS do this - Use setter/getter methods
-user.SetId("123") 
+user.SetId("123")
 username := user.GetUsername()
 ```
 
@@ -461,9 +475,11 @@ username := user.GetUsername()
 ## 🔄 Related Tasks
 
 **Must complete before this task**:
+
 - **TASK-01-003**: Replace gcommonauth package (provides foundation)
 
 **Enables these tasks**:
+
 - **TASK-04-002**: Migrate Session type
 - **TASK-04-003**: Update authentication middleware
 - **TASK-06-001**: Integration testing with new User type

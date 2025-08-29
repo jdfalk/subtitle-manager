@@ -6,7 +6,8 @@
 
 ## 🎯 Task Overview
 
-**Primary Objective**: Migrate all middleware components and error handling to use gcommon types with opaque API
+**Primary Objective**: Migrate all middleware components and error handling to
+use gcommon types with opaque API
 
 **Task Type**: Core Middleware Migration
 
@@ -54,7 +55,7 @@ package middleware
 import (
     "context"
     "net/http"
-    
+
     "github.com/jdfalk/gcommon/sdks/go/v1/common"
 )
 
@@ -116,7 +117,7 @@ import (
     "log"
     "net/http"
     "time"
-    
+
     "github.com/jdfalk/subtitle-manager/pkg/auth"
 )
 
@@ -139,7 +140,7 @@ func (a *AuthMiddleware) Handler(next http.Handler) http.Handler {
         ctx := SetRequestIDInContext(r.Context(), requestID)
         ctx = context.WithValue(ctx, StartTimeKey, time.Now())
         r = r.WithContext(ctx)
-        
+
         // Check for session cookie
         cookie, err := r.Cookie("session_id")
         if err != nil {
@@ -147,7 +148,7 @@ func (a *AuthMiddleware) Handler(next http.Handler) http.Handler {
             a.redirectToLogin(w, r)
             return
         }
-        
+
         // Validate session
         user, session, err := a.authService.ValidateSession(r.Context(), cookie.Value)
         if err != nil {
@@ -155,15 +156,15 @@ func (a *AuthMiddleware) Handler(next http.Handler) http.Handler {
             a.redirectToLogin(w, r)
             return
         }
-        
+
         // Add user and session to context
         ctx = SetUserInContext(r.Context(), user)
         ctx = SetSessionInContext(ctx, session)
-        
+
         // Log successful authentication
-        a.logger.Printf("User %s authenticated for request %s (session: %s)", 
+        a.logger.Printf("User %s authenticated for request %s (session: %s)",
             user.GetUsername(), requestID, session.GetId())
-        
+
         // Continue to next handler
         next.ServeHTTP(w, r.WithContext(ctx))
     })
@@ -178,7 +179,7 @@ func (a *AuthMiddleware) redirectToLogin(w http.ResponseWriter, r *http.Request)
         Expires:  time.Unix(0, 0),
         HttpOnly: true,
     })
-    
+
     // Redirect to login page
     http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
@@ -201,7 +202,7 @@ import (
     "encoding/json"
     "net/http"
     "strings"
-    
+
     "github.com/jdfalk/subtitle-manager/pkg/auth"
 )
 
@@ -223,27 +224,27 @@ func (a *APIAuthMiddleware) Handler(next http.Handler) http.Handler {
         requestID := generateRequestID()
         ctx := SetRequestIDInContext(r.Context(), requestID)
         r = r.WithContext(ctx)
-        
+
         // Get Authorization header
         authHeader := r.Header.Get("Authorization")
         if authHeader == "" {
             a.sendAPIError(w, "Authorization header required", http.StatusUnauthorized)
             return
         }
-        
+
         // Parse Bearer token
         parts := strings.SplitN(authHeader, " ", 2)
         if len(parts) != 2 || parts[0] != "Bearer" {
             a.sendAPIError(w, "Invalid authorization format. Use: Bearer <token>", http.StatusUnauthorized)
             return
         }
-        
+
         token := parts[1]
         if token == "" {
             a.sendAPIError(w, "Token cannot be empty", http.StatusUnauthorized)
             return
         }
-        
+
         // Validate token
         user, err := a.authService.ValidateAuthToken(r.Context(), token)
         if err != nil {
@@ -251,13 +252,13 @@ func (a *APIAuthMiddleware) Handler(next http.Handler) http.Handler {
             a.sendAPIError(w, "Invalid or expired token", http.StatusUnauthorized)
             return
         }
-        
+
         // Add user to context (API doesn't use sessions)
         ctx = SetUserInContext(r.Context(), user)
-        
+
         // Log successful API authentication
         a.logger.Printf("API user %s authenticated for request %s", user.GetUsername(), requestID)
-        
+
         // Continue to next handler
         next.ServeHTTP(w, r.WithContext(ctx))
     })
@@ -266,7 +267,7 @@ func (a *APIAuthMiddleware) Handler(next http.Handler) http.Handler {
 func (a *APIAuthMiddleware) sendAPIError(w http.ResponseWriter, message string, statusCode int) {
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(statusCode)
-    
+
     response := struct {
         Success bool   `json:"success"`
         Error   string `json:"error"`
@@ -274,7 +275,7 @@ func (a *APIAuthMiddleware) sendAPIError(w http.ResponseWriter, message string, 
         Success: false,
         Error:   message,
     }
-    
+
     json.NewEncoder(w).Encode(response)
 }
 ```
@@ -303,7 +304,7 @@ func NewLoggingMiddleware(logger *log.Logger) *LoggingMiddleware {
 func (l *LoggingMiddleware) Handler(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         start := time.Now()
-        
+
         // Get request ID from context
         requestID, _ := GetRequestIDFromContext(r.Context())
         if requestID == "" {
@@ -311,29 +312,29 @@ func (l *LoggingMiddleware) Handler(next http.Handler) http.Handler {
             ctx := SetRequestIDInContext(r.Context(), requestID)
             r = r.WithContext(ctx)
         }
-        
+
         // Log request start
-        l.logger.Printf("Started %s %s [%s] from %s", 
+        l.logger.Printf("Started %s %s [%s] from %s",
             r.Method, r.URL.Path, requestID, r.RemoteAddr)
-        
+
         // Get user info if available
         if user, ok := GetUserFromContext(r.Context()); ok {
-            l.logger.Printf("Request %s authenticated as user: %s (ID: %s)", 
+            l.logger.Printf("Request %s authenticated as user: %s (ID: %s)",
                 requestID, user.GetUsername(), user.GetId())
         }
-        
+
         // Wrap response writer to capture status code
         wrapped := &responseWriter{
             ResponseWriter: w,
             statusCode:     http.StatusOK,
         }
-        
+
         // Call next handler
         next.ServeHTTP(wrapped, r)
-        
+
         // Log completion
         duration := time.Since(start)
-        l.logger.Printf("Completed %s %s [%s] %d in %v", 
+        l.logger.Printf("Completed %s %s [%s] %d in %v",
             r.Method, r.URL.Path, requestID, wrapped.statusCode, duration)
     })
 }
@@ -380,31 +381,31 @@ func NewCORSMiddleware(origins, methods, headers []string, credentials bool) *CO
 func (c *CORSMiddleware) Handler(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         origin := r.Header.Get("Origin")
-        
+
         // Check if origin is allowed
         if c.isOriginAllowed(origin) {
             w.Header().Set("Access-Control-Allow-Origin", origin)
         }
-        
+
         // Set other CORS headers
         if len(c.allowedMethods) > 0 {
             w.Header().Set("Access-Control-Allow-Methods", strings.Join(c.allowedMethods, ", "))
         }
-        
+
         if len(c.allowedHeaders) > 0 {
             w.Header().Set("Access-Control-Allow-Headers", strings.Join(c.allowedHeaders, ", "))
         }
-        
+
         if c.allowedCredentials {
             w.Header().Set("Access-Control-Allow-Credentials", "true")
         }
-        
+
         // Handle preflight requests
         if r.Method == http.MethodOptions {
             w.WriteHeader(http.StatusOK)
             return
         }
-        
+
         next.ServeHTTP(w, r)
     })
 }
@@ -451,13 +452,13 @@ func (v *ValidationMiddleware) Handler(next http.Handler) http.Handler {
             v.sendValidationError(w, "Request body too large", http.StatusRequestEntityTooLarge)
             return
         }
-        
+
         // Validate path
         if !v.isPathAllowed(r.URL.Path) {
             v.sendValidationError(w, "Path not allowed", http.StatusForbidden)
             return
         }
-        
+
         // Validate content type for POST/PUT requests
         if r.Method == http.MethodPost || r.Method == http.MethodPut {
             contentType := r.Header.Get("Content-Type")
@@ -465,16 +466,16 @@ func (v *ValidationMiddleware) Handler(next http.Handler) http.Handler {
                 v.sendValidationError(w, "Content-Type header required", http.StatusBadRequest)
                 return
             }
-            
+
             // Allow form data and JSON
-            if !strings.Contains(contentType, "application/json") && 
+            if !strings.Contains(contentType, "application/json") &&
                !strings.Contains(contentType, "application/x-www-form-urlencoded") &&
                !strings.Contains(contentType, "multipart/form-data") {
                 v.sendValidationError(w, "Unsupported content type", http.StatusUnsupportedMediaType)
                 return
             }
         }
-        
+
         next.ServeHTTP(w, r)
     })
 }
@@ -484,7 +485,7 @@ func (v *ValidationMiddleware) isPathAllowed(path string) bool {
     if len(v.allowedPaths) == 0 {
         return true
     }
-    
+
     for _, allowed := range v.allowedPaths {
         if strings.HasPrefix(path, allowed) {
             return true
@@ -496,7 +497,7 @@ func (v *ValidationMiddleware) isPathAllowed(path string) bool {
 func (v *ValidationMiddleware) sendValidationError(w http.ResponseWriter, message string, statusCode int) {
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(statusCode)
-    
+
     response := struct {
         Success bool   `json:"success"`
         Error   string `json:"error"`
@@ -504,7 +505,7 @@ func (v *ValidationMiddleware) sendValidationError(w http.ResponseWriter, messag
         Success: false,
         Error:   message,
     }
-    
+
     json.NewEncoder(w).Encode(response)
 }
 ```
@@ -519,7 +520,7 @@ package middleware
 import (
     "log"
     "net/http"
-    
+
     "github.com/jdfalk/subtitle-manager/pkg/auth"
 )
 
@@ -591,7 +592,7 @@ import (
     "log"
     "net/http"
     "os"
-    
+
     "github.com/jdfalk/subtitle-manager/pkg/auth"
     "github.com/jdfalk/subtitle-manager/pkg/middleware"
 )
@@ -605,44 +606,44 @@ type WebServer struct {
 
 func NewWebServer(config *Config, authService auth.AuthService) *WebServer {
     logger := log.New(os.Stdout, "[WEB] ", log.LstdFlags|log.Lshortfile)
-    
+
     ws := &WebServer{
         config:      config,
         authService: authService,
         logger:      logger,
     }
-    
+
     ws.setupRoutes()
     return ws
 }
 
 func (s *WebServer) setupRoutes() {
     mux := http.NewServeMux()
-    
+
     // Create middleware chains
     webChain := middleware.WebMiddlewareChain(s.authService, s.logger)
     apiChain := middleware.APIMiddlewareChain(s.authService, s.logger)
     publicChain := middleware.PublicMiddlewareChain(s.logger)
-    
+
     // Public routes (no authentication required)
     mux.Handle("/login", publicChain.Then(http.HandlerFunc(s.handleLogin)))
     mux.Handle("/register", publicChain.Then(http.HandlerFunc(s.handleRegister)))
     mux.Handle("/health", publicChain.Then(http.HandlerFunc(s.handleHealth)))
     mux.Handle("/static/", publicChain.Then(http.FileServer(http.Dir("./web/"))))
-    
+
     // Protected web routes
     mux.Handle("/", webChain.Then(http.HandlerFunc(s.handleHome)))
     mux.Handle("/profile", webChain.Then(http.HandlerFunc(s.handleProfile)))
     mux.Handle("/settings", webChain.Then(http.HandlerFunc(s.handleSettings)))
     mux.Handle("/logout", webChain.Then(http.HandlerFunc(s.handleLogout)))
-    
+
     // API routes (token authentication)
     mux.Handle("/api/login", publicChain.Then(http.HandlerFunc(s.handleAPILogin)))
     mux.Handle("/api/register", publicChain.Then(http.HandlerFunc(s.handleAPIRegister)))
     mux.Handle("/api/subtitles", apiChain.Then(http.HandlerFunc(s.handleAPISubtitles)))
     mux.Handle("/api/movies", apiChain.Then(http.HandlerFunc(s.handleAPIMovies)))
     mux.Handle("/api/user/profile", apiChain.Then(http.HandlerFunc(s.handleAPIUserProfile)))
-    
+
     s.server = &http.Server{
         Addr:    s.config.Address,
         Handler: mux,
@@ -655,7 +656,7 @@ func (s *WebServer) handleHome(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "User not found in context", http.StatusInternalServerError)
         return
     }
-    
+
     data := struct {
         User      *common.User
         RequestID string
@@ -663,7 +664,7 @@ func (s *WebServer) handleHome(w http.ResponseWriter, r *http.Request) {
         User:      user,
         RequestID: getRequestID(r.Context()),
     }
-    
+
     s.renderTemplate(w, "home.html", data)
 }
 
@@ -684,11 +685,11 @@ func TestAuthMiddleware(t *testing.T) {
     authService := setupMockAuthService()
     logger := log.New(os.Stdout, "[TEST] ", log.LstdFlags)
     authMW := middleware.NewAuthMiddleware(authService, logger)
-    
+
     // Test successful authentication
     req := httptest.NewRequest("GET", "/protected", nil)
     req.AddCookie(&http.Cookie{Name: "session_id", Value: "valid_session"})
-    
+
     rr := httptest.NewRecorder()
     handler := authMW.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         user, ok := middleware.GetUserFromContext(r.Context())
@@ -696,7 +697,7 @@ func TestAuthMiddleware(t *testing.T) {
         assert.Equal(t, "testuser", user.GetUsername())
         w.WriteHeader(http.StatusOK)
     }))
-    
+
     handler.ServeHTTP(rr, req)
     assert.Equal(t, http.StatusOK, rr.Code)
 }
@@ -705,11 +706,11 @@ func TestAPIAuthMiddleware(t *testing.T) {
     authService := setupMockAuthService()
     logger := log.New(os.Stdout, "[TEST] ", log.LstdFlags)
     apiMW := middleware.NewAPIAuthMiddleware(authService, logger)
-    
+
     // Test successful API authentication
     req := httptest.NewRequest("GET", "/api/test", nil)
     req.Header.Set("Authorization", "Bearer valid_token")
-    
+
     rr := httptest.NewRecorder()
     handler := apiMW.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         user, ok := middleware.GetUserFromContext(r.Context())
@@ -717,7 +718,7 @@ func TestAPIAuthMiddleware(t *testing.T) {
         assert.Equal(t, "apiuser", user.GetUsername())
         w.WriteHeader(http.StatusOK)
     }))
-    
+
     handler.ServeHTTP(rr, req)
     assert.Equal(t, http.StatusOK, rr.Code)
 }
@@ -729,30 +730,30 @@ func TestAPIAuthMiddleware(t *testing.T) {
 func TestMiddlewareChain(t *testing.T) {
     authService := setupTestAuthService()
     logger := log.New(os.Stdout, "[TEST] ", log.LstdFlags)
-    
+
     chain := middleware.WebMiddlewareChain(authService, logger)
-    
+
     handler := chain.Then(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         // Verify all context values are set
         user, hasUser := middleware.GetUserFromContext(r.Context())
         session, hasSession := middleware.GetSessionFromContext(r.Context())
         requestID, hasRequestID := middleware.GetRequestIDFromContext(r.Context())
-        
+
         assert.True(t, hasUser)
         assert.True(t, hasSession)
         assert.True(t, hasRequestID)
         assert.NotEmpty(t, requestID)
-        
+
         w.WriteHeader(http.StatusOK)
     }))
-    
+
     // Create request with valid session
     req := httptest.NewRequest("GET", "/test", nil)
     req.AddCookie(&http.Cookie{Name: "session_id", Value: "valid_session"})
-    
+
     rr := httptest.NewRecorder()
     handler.ServeHTTP(rr, req)
-    
+
     assert.Equal(t, http.StatusOK, rr.Code)
 }
 ```
@@ -766,7 +767,8 @@ func TestMiddlewareChain(t *testing.T) {
 ```markdown
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
 
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Required File Header (File Identification)
 
@@ -774,7 +776,8 @@ All source, script, and documentation files MUST begin with a standard header.
 
 ## Version Update Requirements
 
-**When modifying any file with a version header, ALWAYS update the version number**
+**When modifying any file with a version header, ALWAYS update the version
+number**
 ```
 
 ### Middleware Security Best Practices
@@ -816,7 +819,7 @@ All source, script, and documentation files MUST begin with a standard header.
 **Must complete before this task**:
 
 - **TASK-04-001**: Migrate User Type
-- **TASK-04-002**: Migrate Session Type  
+- **TASK-04-002**: Migrate Session Type
 - **TASK-04-003**: Update Authentication Flow
 
 **Enables these tasks**:

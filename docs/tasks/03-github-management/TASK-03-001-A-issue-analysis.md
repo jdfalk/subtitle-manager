@@ -569,9 +569,10 @@ if **name** == "**main**": from github_issue_manager import GitHubIssueManager
     # Save mappings for Part B
     with open('issue_task_mappings.json', 'w') as f:
         json.dump(mappings, f, indent=2, default=str)
-    
+
     print("Mappings saved to issue_task_mappings.json for TASK-03-001-B")
-```
+
+````
 
 ### Completion of Part A
 
@@ -585,7 +586,7 @@ cat issue_analysis.json | jq '.summary'
 cat issue_task_mappings.json | jq 'keys'
 
 # Part A is complete - proceed to TASK-03-001-B for resolution workflows
-```
+````
 
 ## 📚 Required Documentation
 
@@ -596,15 +597,17 @@ cat issue_task_mappings.json | jq 'keys'
 ```markdown
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
 
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
-## Script Language Preference  
+## Script Language Preference
 
 **MANDATORY RULE: Prefer Python for scripts unless they are incredibly simple.**
 
 Use Python for:
+
 - API interactions (GitHub, REST APIs, etc.)
-- JSON/YAML processing  
+- JSON/YAML processing
 - File manipulation beyond simple copying
 - Error handling and logging
 - Data parsing or transformation
@@ -613,12 +616,14 @@ Use Python for:
 ## 🧪 Testing Requirements
 
 ### GitHub API Testing
+
 - [ ] Verify API authentication works correctly
-- [ ] Test issue fetching and categorization  
+- [ ] Test issue fetching and categorization
 - [ ] Validate JSON data export formats
 - [ ] Test task file parsing and updates
 
 ### Analysis Validation
+
 - [ ] Verify issue categorization accuracy
 - [ ] Test task mapping logic
 - [ ] Validate data export completeness
@@ -636,7 +641,7 @@ Use Python for:
 ## 🚨 Common Pitfalls
 
 1. **API Rate Limits**: GitHub API has rate limits - implement delays
-2. **Token Permissions**: Ensure GitHub token has sufficient permissions  
+2. **Token Permissions**: Ensure GitHub token has sufficient permissions
 3. **Data Format**: Ensure JSON exports are valid and complete
 4. **Task File Updates**: Don't break existing task file format
 5. **Analysis Accuracy**: Verify categorization logic is correct
@@ -644,14 +649,16 @@ Use Python for:
 ## 📖 Additional Resources
 
 - [GitHub REST API Documentation](https://docs.github.com/en/rest)
-- [PyGithub Documentation](https://pygithub.readthedocs.io/)  
+- [PyGithub Documentation](https://pygithub.readthedocs.io/)
 - [JSON Processing in Python](https://docs.python.org/3/library/json.html)
 
 ## 🔄 Part B Continuation
 
-**Part A prepares data for TASK-03-001-B-issue-resolution.md which will handle:**
+**Part A prepares data for TASK-03-001-B-issue-resolution.md which will
+handle:**
+
 - Issue resolution workflows
-- Automated closure systems  
+- Automated closure systems
 - Resolution comment generation
 - Ongoing monitoring and maintenance
 - Stale issue management
@@ -667,7 +674,7 @@ Use Python for:
 - Export all analysis data as JSON for Part B workflows
 - Part A is focused on READ operations only - no issue modifications
 
-```python
+````python
 #!/usr/bin/env python3
 # file: scripts/resolve_issues.py
 # version: 1.0.0
