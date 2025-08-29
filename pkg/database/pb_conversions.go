@@ -1,5 +1,5 @@
 // file: pkg/database/pb_conversions.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: c9cf2d1a-c284-46f4-90d1-70925cbe8b27
 
 package database
@@ -7,69 +7,63 @@ package database
 import (
 	"time"
 
-	"github.com/jdfalk/subtitle-manager/pkg/databasepb"
+	"github.com/jdfalk/gcommon/sdks/go/v1/database"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // ToProto converts a SubtitleRecord to its protobuf representation.
-func (r *SubtitleRecord) ToProto() *databasepb.SubtitleRecord {
+func (r *SubtitleRecord) ToProto() *database.SubtitleRecord {
 	if r == nil {
 		return nil
 	}
-	var score *float64
+	pb := &database.SubtitleRecord{}
+	pb.SetId(r.ID)
+	pb.SetFile(r.File)
+	pb.SetVideoFile(r.VideoFile)
+	pb.SetRelease(r.Release)
+	pb.SetLanguage(r.Language)
+	pb.SetService(r.Service)
+	pb.SetEmbedded(r.Embedded)
+	pb.SetSourceUrl(r.SourceURL)
+	pb.SetProviderMetadata(r.ProviderMetadata)
 	if r.ConfidenceScore != nil {
-		v := *r.ConfidenceScore
-		score = &v
+		pb.SetConfidenceScore(*r.ConfidenceScore)
 	}
-	var parent *string
 	if r.ParentID != nil {
-		v := *r.ParentID
-		parent = &v
+		pb.SetParentId(*r.ParentID)
 	}
-	return &databasepb.SubtitleRecord{
-		Id:               r.ID,
-		File:             r.File,
-		VideoFile:        r.VideoFile,
-		Release:          r.Release,
-		Language:         r.Language,
-		Service:          r.Service,
-		Embedded:         r.Embedded,
-		SourceUrl:        r.SourceURL,
-		ProviderMetadata: r.ProviderMetadata,
-		ConfidenceScore:  score,
-		ParentId:         parent,
-		ModificationType: r.ModificationType,
-		CreatedAt:        timestamppb.New(r.CreatedAt.UTC()),
-	}
+	pb.SetModificationType(r.ModificationType)
+	pb.SetCreatedAt(timestamppb.New(r.CreatedAt.UTC()))
+	return pb
 }
 
-// SubtitleRecordFromProto converts a protobuf record to internal struct.
-func SubtitleRecordFromProto(pb *databasepb.SubtitleRecord) *SubtitleRecord {
+// SubtitleRecordFromProto converts a protobuf record to an internal struct.
+func SubtitleRecordFromProto(pb *database.SubtitleRecord) *SubtitleRecord {
 	if pb == nil {
 		return nil
 	}
 	rec := &SubtitleRecord{
-		ID:               pb.Id,
-		File:             pb.File,
-		VideoFile:        pb.VideoFile,
-		Release:          pb.Release,
-		Language:         pb.Language,
-		Service:          pb.Service,
-		Embedded:         pb.Embedded,
-		SourceURL:        pb.SourceUrl,
-		ProviderMetadata: pb.ProviderMetadata,
-		ModificationType: pb.ModificationType,
+		ID:               pb.GetId(),
+		File:             pb.GetFile(),
+		VideoFile:        pb.GetVideoFile(),
+		Release:          pb.GetRelease(),
+		Language:         pb.GetLanguage(),
+		Service:          pb.GetService(),
+		Embedded:         pb.GetEmbedded(),
+		SourceURL:        pb.GetSourceUrl(),
+		ProviderMetadata: pb.GetProviderMetadata(),
+		ModificationType: pb.GetModificationType(),
 	}
-	if pb.ConfidenceScore != nil {
-		v := *pb.ConfidenceScore
+	if pb.GetConfidenceScore() != 0 {
+		v := pb.GetConfidenceScore()
 		rec.ConfidenceScore = &v
 	}
-	if pb.ParentId != nil {
-		v := *pb.ParentId
+	if pb.GetParentId() != "" {
+		v := pb.GetParentId()
 		rec.ParentID = &v
 	}
-	if pb.CreatedAt != nil {
-		rec.CreatedAt = pb.CreatedAt.AsTime()
+	if pb.GetCreatedAt() != nil {
+		rec.CreatedAt = pb.GetCreatedAt().AsTime()
 	} else {
 		rec.CreatedAt = time.Time{}
 	}
@@ -77,60 +71,54 @@ func SubtitleRecordFromProto(pb *databasepb.SubtitleRecord) *SubtitleRecord {
 }
 
 // ToProto converts a DownloadRecord to its protobuf representation.
-func (r *DownloadRecord) ToProto() *databasepb.DownloadRecord {
+func (r *DownloadRecord) ToProto() *database.DownloadRecord {
 	if r == nil {
 		return nil
 	}
-	var score *float64
+	pb := &database.DownloadRecord{}
+	pb.SetId(r.ID)
+	pb.SetFile(r.File)
+	pb.SetVideoFile(r.VideoFile)
+	pb.SetProvider(r.Provider)
+	pb.SetLanguage(r.Language)
+	pb.SetSearchQuery(r.SearchQuery)
 	if r.MatchScore != nil {
-		v := *r.MatchScore
-		score = &v
+		pb.SetMatchScore(*r.MatchScore)
 	}
-	var rt *int32
+	pb.SetDownloadAttempts(int32(r.DownloadAttempts))
+	pb.SetErrorMessage(r.ErrorMessage)
 	if r.ResponseTimeMs != nil {
-		v := int32(*r.ResponseTimeMs)
-		rt = &v
+		pb.SetResponseTimeMs(int32(*r.ResponseTimeMs))
 	}
-	return &databasepb.DownloadRecord{
-		Id:               r.ID,
-		File:             r.File,
-		VideoFile:        r.VideoFile,
-		Provider:         r.Provider,
-		Language:         r.Language,
-		SearchQuery:      r.SearchQuery,
-		MatchScore:       score,
-		DownloadAttempts: int32(r.DownloadAttempts),
-		ErrorMessage:     r.ErrorMessage,
-		ResponseTimeMs:   rt,
-		CreatedAt:        timestamppb.New(r.CreatedAt.UTC()),
-	}
+	pb.SetCreatedAt(timestamppb.New(r.CreatedAt.UTC()))
+	return pb
 }
 
-// DownloadRecordFromProto converts protobuf to internal struct.
-func DownloadRecordFromProto(pb *databasepb.DownloadRecord) *DownloadRecord {
+// DownloadRecordFromProto converts a protobuf record to an internal struct.
+func DownloadRecordFromProto(pb *database.DownloadRecord) *DownloadRecord {
 	if pb == nil {
 		return nil
 	}
 	rec := &DownloadRecord{
-		ID:               pb.Id,
-		File:             pb.File,
-		VideoFile:        pb.VideoFile,
-		Provider:         pb.Provider,
-		Language:         pb.Language,
-		SearchQuery:      pb.SearchQuery,
-		DownloadAttempts: int(pb.DownloadAttempts),
-		ErrorMessage:     pb.ErrorMessage,
+		ID:               pb.GetId(),
+		File:             pb.GetFile(),
+		VideoFile:        pb.GetVideoFile(),
+		Provider:         pb.GetProvider(),
+		Language:         pb.GetLanguage(),
+		SearchQuery:      pb.GetSearchQuery(),
+		DownloadAttempts: int(pb.GetDownloadAttempts()),
+		ErrorMessage:     pb.GetErrorMessage(),
 	}
-	if pb.MatchScore != nil {
-		v := *pb.MatchScore
+	if pb.GetMatchScore() != 0 {
+		v := pb.GetMatchScore()
 		rec.MatchScore = &v
 	}
-	if pb.ResponseTimeMs != nil {
-		v := int(*pb.ResponseTimeMs)
+	if pb.GetResponseTimeMs() != 0 {
+		v := int(pb.GetResponseTimeMs())
 		rec.ResponseTimeMs = &v
 	}
-	if pb.CreatedAt != nil {
-		rec.CreatedAt = pb.CreatedAt.AsTime()
+	if pb.GetCreatedAt() != nil {
+		rec.CreatedAt = pb.GetCreatedAt().AsTime()
 	}
 	return rec
 }

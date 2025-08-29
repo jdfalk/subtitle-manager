@@ -1,5 +1,5 @@
 // file: pkg/database/pb_conversions_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 126b63da-4b50-4d5d-8299-1e4aec6ed6dd
 
 package database
@@ -30,7 +30,7 @@ func TestSubtitleRecordConversions(t *testing.T) {
 		CreatedAt:        now,
 	}
 	pb := rec.ToProto()
-	if pb.Id != rec.ID || pb.File != rec.File || pb.VideoFile != rec.VideoFile {
+	if pb.GetId() != rec.ID || pb.GetFile() != rec.File || pb.GetVideoFile() != rec.VideoFile {
 		t.Fatalf("basic fields mismatch")
 	}
 	back := SubtitleRecordFromProto(pb)
@@ -57,7 +57,7 @@ func TestDownloadRecordConversions(t *testing.T) {
 		CreatedAt:        now,
 	}
 	pb := rec.ToProto()
-	if pb.Id != rec.ID || pb.Provider != rec.Provider {
+	if pb.GetId() != rec.ID || pb.GetProvider() != rec.Provider {
 		t.Fatalf("basic fields mismatch")
 	}
 	back := DownloadRecordFromProto(pb)
