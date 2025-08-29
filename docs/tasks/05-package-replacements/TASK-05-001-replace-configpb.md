@@ -1,17 +1,18 @@
 # file: docs/tasks/05-package-replacements/TASK-05-001-replace-configpb.md
+
 # version: 1.0.0
+
 # guid: a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d
 
 # TASK-05-001: Replace configpb with gcommon/config
 
 ## Overview
 
-**Objective**: Completely replace local configpb package with gcommon config types throughout the subtitle-manager application.
+**Objective**: Completely replace local configpb package with gcommon config
+types throughout the subtitle-manager application.
 
-**Phase**: 3 (Package Replacements)
-**Priority**: High
-**Estimated Effort**: 6-8 hours
-**Prerequisites**: Phase 2 Core Type Migration completed (Tasks 6-10)
+**Phase**: 3 (Package Replacements) **Priority**: High **Estimated Effort**: 6-8
+hours **Prerequisites**: Phase 2 Core Type Migration completed (Tasks 6-10)
 
 ## Required Reading
 
@@ -21,15 +22,19 @@
 - `docs/MIGRATION_INVENTORY.md` - Current package usage inventory
 - `pkg/configpb/config.pb.go` - Current configpb implementation to be replaced
 - `pkg/translatorpb/translator.pb.go` - Translation service configuration
-- `pkg/subtitle/translator/v1/translator.pb.go` - Subtitle translator configuration
+- `pkg/subtitle/translator/v1/translator.pb.go` - Subtitle translator
+  configuration
 
 ## Problem Statement
 
-The subtitle-manager currently uses a local `configpb` package for configuration management. This package needs to be completely replaced with gcommon configuration types to:
+The subtitle-manager currently uses a local `configpb` package for configuration
+management. This package needs to be completely replaced with gcommon
+configuration types to:
 
 1. **Eliminate Local Dependencies**: Remove custom protobuf config types
 2. **Standardize Configuration**: Use gcommon standard configuration patterns
-3. **Improve Interoperability**: Enable configuration sharing with other gcommon-based services
+3. **Improve Interoperability**: Enable configuration sharing with other
+   gcommon-based services
 4. **Leverage Opaque API**: Use gcommon's flexible configuration system
 
 ### Current Configuration Structure
@@ -63,7 +68,8 @@ appConfig.SetVersion("1.0.0")
 
 ### Configuration Mapping Strategy
 
-1. **Identify Configuration Sections**: Map current config sections to gcommon equivalents
+1. **Identify Configuration Sections**: Map current config sections to gcommon
+   equivalents
 2. **Opaque API Migration**: Convert field access to Set*/Get* methods
 3. **Validation Integration**: Use gcommon validation for configuration
 4. **Environment Integration**: Leverage gcommon environment variable support
@@ -785,11 +791,15 @@ func main() {
 
 ## Common Pitfalls
 
-1. **Field Type Mismatches**: gcommon opaque API returns interface{}, ensure proper type assertions
-2. **Default Value Handling**: Ensure default values are consistent with old configpb behavior
+1. **Field Type Mismatches**: gcommon opaque API returns interface{}, ensure
+   proper type assertions
+2. **Default Value Handling**: Ensure default values are consistent with old
+   configpb behavior
 3. **Environment Variable Precedence**: Maintain same precedence order as before
-4. **Configuration Validation**: Don't lose existing validation logic during migration
-5. **Nested Configuration**: Handle complex nested config structures properly with opaque API
+4. **Configuration Validation**: Don't lose existing validation logic during
+   migration
+5. **Nested Configuration**: Handle complex nested config structures properly
+   with opaque API
 
 ## Dependencies
 
@@ -832,4 +842,6 @@ if port, exists := appConfig.GetField("server.port"); exists {
 4. **Environment Variables**: Support environment variable overrides
 5. **Documentation**: Document all configuration options clearly
 
-This comprehensive task ensures complete migration from configpb to gcommon configuration types while maintaining functionality and improving standardization across the gcommon ecosystem.
+This comprehensive task ensures complete migration from configpb to gcommon
+configuration types while maintaining functionality and improving
+standardization across the gcommon ecosystem.

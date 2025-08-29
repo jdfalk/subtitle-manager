@@ -6,12 +6,12 @@
 
 ## Overview
 
-**Objective**: Use gcommon media types for video and subtitle file handling throughout the subtitle-manager application.
+**Objective**: Use gcommon media types for video and subtitle file handling
+throughout the subtitle-manager application.
 
-**Phase**: 3 (Package Replacements)
-**Priority**: High
-**Estimated Effort**: 8-10 hours
-**Prerequisites**: TASK-05-003 (health monitoring) and gcommon package foundation completed
+**Phase**: 3 (Package Replacements) **Priority**: High **Estimated Effort**:
+8-10 hours **Prerequisites**: TASK-05-003 (health monitoring) and gcommon
+package foundation completed
 
 ## Required Reading
 
@@ -25,12 +25,15 @@
 
 ## Problem Statement
 
-The subtitle-manager currently uses custom media file handling for video and subtitle processing. This needs to be replaced with gcommon media types to:
+The subtitle-manager currently uses custom media file handling for video and
+subtitle processing. This needs to be replaced with gcommon media types to:
 
-1. **Standardize Media Types**: Use gcommon MediaFile, VideoMetadata, SubtitleMetadata types
+1. **Standardize Media Types**: Use gcommon MediaFile, VideoMetadata,
+   SubtitleMetadata types
 2. **Improve Format Support**: Leverage gcommon's comprehensive format support
 3. **Enhanced Metadata**: Use standardized metadata extraction and processing
-4. **Better Integration**: Enable interoperability with other gcommon-based media services
+4. **Better Integration**: Enable interoperability with other gcommon-based
+   media services
 
 ### Current Media Implementation
 
@@ -1051,10 +1054,13 @@ func TestMediaProcessor(t *testing.T) {
 
 ## Dependencies
 
-- **Requires**: TASK-05-003 (health monitoring) for media processing health checks
+- **Requires**: TASK-05-003 (health monitoring) for media processing health
+  checks
 - **Requires**: gcommon media SDK properly installed
 - **Requires**: Updated database schema for gcommon metadata storage
 - **Enables**: Standardized media handling across gcommon ecosystem
 - **Blocks**: Advanced media features until migration complete
 
-This comprehensive media package integration replaces custom media handling with gcommon standardized media types while maintaining all existing functionality and improving format support and metadata handling.
+This comprehensive media package integration replaces custom media handling with
+gcommon standardized media types while maintaining all existing functionality
+and improving format support and metadata handling.

@@ -6,18 +6,19 @@
 
 ## Overview
 
-**Objective**: Replace current metrics collection with gcommon metrics system and update monitoring dashboards.
+**Objective**: Replace current metrics collection with gcommon metrics system
+and update monitoring dashboards.
 
-**Phase**: 3 (Package Replacements)
-**Priority**: High
-**Estimated Effort**: 6-8 hours
-**Prerequisites**: TASK-05-004 (media package integration) and gcommon package foundation completed
+**Phase**: 3 (Package Replacements) **Priority**: High **Estimated Effort**: 6-8
+hours **Prerequisites**: TASK-05-004 (media package integration) and gcommon
+package foundation completed
 
 ## Required Reading
 
 **CRITICAL**: Read these documents before starting:
 
-- `docs/gcommon-api/metrics.md` - gcommon metrics type specifications and patterns
+- `docs/gcommon-api/metrics.md` - gcommon metrics type specifications and
+  patterns
 - Current metrics implementation in `pkg/metrics/` directory
 - Monitoring dashboard configurations
 - Alerting rule definitions
@@ -25,10 +26,14 @@
 
 ## Problem Statement
 
-The subtitle-manager currently uses custom metrics collection for monitoring application performance and health. This needs to be replaced with gcommon metrics types to:
+The subtitle-manager currently uses custom metrics collection for monitoring
+application performance and health. This needs to be replaced with gcommon
+metrics types to:
 
-1. **Standardize Metrics**: Use gcommon MetricRegistry, Counter, Gauge, Histogram types
-2. **Improve Monitoring**: Leverage gcommon's comprehensive monitoring capabilities
+1. **Standardize Metrics**: Use gcommon MetricRegistry, Counter, Gauge,
+   Histogram types
+2. **Improve Monitoring**: Leverage gcommon's comprehensive monitoring
+   capabilities
 3. **Enhanced Dashboards**: Use standardized dashboard configurations
 4. **Better Alerting**: Enable consistent alerting across gcommon-based services
 
@@ -545,7 +550,7 @@ kind: ConfigMap
 metadata:
   name: subtitle-manager-dashboard
   labels:
-    grafana_dashboard: "1"
+    grafana_dashboard: '1'
 data:
   subtitle-manager.json: |
     {
@@ -693,24 +698,27 @@ groups:
   - name: subtitle-manager
     rules:
       - alert: HighDownloadErrorRate
-        expr: rate(subtitle_errors_total{error_type="download_failed"}[5m]) > 0.1
+        expr:
+          rate(subtitle_errors_total{error_type="download_failed"}[5m]) > 0.1
         for: 2m
         labels:
           severity: warning
           service: subtitle-manager
         annotations:
-          summary: "High download error rate detected"
-          description: "Download error rate is {{ $value }} errors per second"
+          summary: 'High download error rate detected'
+          description: 'Download error rate is {{ $value }} errors per second'
 
       - alert: SlowProcessingTime
-        expr: histogram_quantile(0.95, rate(subtitle_processing_duration_seconds_bucket[5m])) > 30
+        expr:
+          histogram_quantile(0.95,
+          rate(subtitle_processing_duration_seconds_bucket[5m])) > 30
         for: 5m
         labels:
           severity: warning
           service: subtitle-manager
         annotations:
-          summary: "Slow subtitle processing detected"
-          description: "95th percentile processing time is {{ $value }} seconds"
+          summary: 'Slow subtitle processing detected'
+          description: '95th percentile processing time is {{ $value }} seconds'
 
       - alert: HighMemoryUsage
         expr: subtitle_manager_memory_usage > 90
@@ -719,8 +727,8 @@ groups:
           severity: critical
           service: subtitle-manager
         annotations:
-          summary: "High memory usage detected"
-          description: "Memory usage is {{ $value }}%"
+          summary: 'High memory usage detected'
+          description: 'Memory usage is {{ $value }}%'
 
       - alert: ServiceDown
         expr: up{job="subtitle-manager"} == 0
@@ -729,8 +737,9 @@ groups:
           severity: critical
           service: subtitle-manager
         annotations:
-          summary: "Subtitle Manager service is down"
-          description: "The subtitle-manager service has been down for more than 1 minute"
+          summary: 'Subtitle Manager service is down'
+          description:
+            'The subtitle-manager service has been down for more than 1 minute'
 
       - alert: HighActiveOperations
         expr: subtitle_active_operations > 100
@@ -739,8 +748,8 @@ groups:
           severity: warning
           service: subtitle-manager
         annotations:
-          summary: "High number of active operations"
-          description: "{{ $value }} active operations detected"
+          summary: 'High number of active operations'
+          description: '{{ $value }} active operations detected'
 ```
 
 ### Step 5: Create Metrics HTTP Endpoint
@@ -936,18 +945,24 @@ func TestCustomMetrics(t *testing.T) {
 
 ## Common Pitfalls
 
-1. **Metric Name Changes**: Ensure dashboard queries updated for new metric names
+1. **Metric Name Changes**: Ensure dashboard queries updated for new metric
+   names
 2. **Label Consistency**: Maintain consistent labeling across all metrics
 3. **Performance Impact**: Monitor overhead of metrics collection
-4. **Alert Threshold**: Verify alert thresholds still appropriate with new metrics
-5. **Dashboard Compatibility**: Test dashboard functionality with new metric structure
+4. **Alert Threshold**: Verify alert thresholds still appropriate with new
+   metrics
+5. **Dashboard Compatibility**: Test dashboard functionality with new metric
+   structure
 
 ## Dependencies
 
-- **Requires**: TASK-05-004 (media package integration) for media-related metrics
+- **Requires**: TASK-05-004 (media package integration) for media-related
+  metrics
 - **Requires**: gcommon metrics SDK properly installed
 - **Requires**: Prometheus and Grafana configuration access
 - **Enables**: Comprehensive monitoring with gcommon ecosystem
 - **Blocks**: Production monitoring until migration complete
 
-This comprehensive metrics migration replaces custom metrics collection with gcommon standardized metrics while maintaining all monitoring capabilities and improving dashboard consistency across the gcommon ecosystem.
+This comprehensive metrics migration replaces custom metrics collection with
+gcommon standardized metrics while maintaining all monitoring capabilities and
+improving dashboard consistency across the gcommon ecosystem.

@@ -1,23 +1,26 @@
 # file: docs/tasks/04-advanced-migration/TASK-04-005-database-schema-compatibility.md
+
 # version: 1.0.0
+
 # guid: e8f9a0b1-2c3d-4e5f-6a7b-8c9d0e1f2a3b
 
 # TASK-04-005: Database Schema Compatibility
 
 ## Overview
 
-**Objective**: Ensure database schemas work with gcommon types and add any missing fields required for full gcommon compatibility.
+**Objective**: Ensure database schemas work with gcommon types and add any
+missing fields required for full gcommon compatibility.
 
-**Phase**: 2 (Core Type Migration)
-**Priority**: High
-**Estimated Effort**: 4-6 hours
-**Prerequisites**: TASK-04-001 (User migration) and TASK-04-002 (Session migration)
+**Phase**: 2 (Core Type Migration) **Priority**: High **Estimated Effort**: 4-6
+hours **Prerequisites**: TASK-04-001 (User migration) and TASK-04-002 (Session
+migration)
 
 ## Required Reading
 
 **CRITICAL**: Read these documents before starting:
 
-- `docs/gcommon-api/database.md` - Database type specifications and schema requirements
+- `docs/gcommon-api/database.md` - Database type specifications and schema
+  requirements
 - `docs/gcommon-api/common.md` - Common type field requirements
 - `pkg/database/schema.go` - Current database schema implementation
 - `pkg/database/migrations/` - Existing migration files
@@ -25,14 +28,20 @@
 
 ## Problem Statement
 
-The current database schema was designed for local protobuf types and may lack fields required by gcommon types. After migrating to gcommon User and Session types, the database schema must support all fields and constraints required by these types across multiple database backends.
+The current database schema was designed for local protobuf types and may lack
+fields required by gcommon types. After migrating to gcommon User and Session
+types, the database schema must support all fields and constraints required by
+these types across multiple database backends.
 
 ### Current Issues
 
-1. **Missing Fields**: gcommon types may have fields not present in current schema
+1. **Missing Fields**: gcommon types may have fields not present in current
+   schema
 2. **Type Mismatches**: Field types may not match gcommon requirements
-3. **Constraint Differences**: Foreign keys, indexes, and constraints may be incompatible
-4. **Multi-Backend Support**: Schema must work with SQLite, PebbleDB, and PostgreSQL
+3. **Constraint Differences**: Foreign keys, indexes, and constraints may be
+   incompatible
+4. **Multi-Backend Support**: Schema must work with SQLite, PebbleDB, and
+   PostgreSQL
 
 ## Technical Approach
 
@@ -436,6 +445,7 @@ func main() {
 ## Success Metrics
 
 ### Functional Requirements
+
 - [ ] Schema supports all gcommon User fields without data loss
 - [ ] Schema supports all gcommon Session fields without data loss
 - [ ] Migration scripts work on SQLite, PebbleDB, and PostgreSQL
@@ -443,6 +453,7 @@ func main() {
 - [ ] No performance degradation after migration
 
 ### Technical Requirements
+
 - [ ] All existing data preserved during migration
 - [ ] New fields have appropriate defaults and constraints
 - [ ] Indexes optimized for gcommon query patterns
@@ -450,6 +461,7 @@ func main() {
 - [ ] Database size increase < 20%
 
 ### Validation Requirements
+
 - [ ] All database tests pass with new schema
 - [ ] Performance tests show acceptable migration time
 - [ ] Data integrity verification script passes
@@ -462,7 +474,8 @@ func main() {
 2. **Type Conversion Errors**: Test with real data, not just synthetic
 3. **Performance Impact**: Monitor query performance after adding fields
 4. **Cross-Platform Issues**: Different SQL dialects have different constraints
-5. **Rollback Failures**: SQLite DROP COLUMN limitations require special handling
+5. **Rollback Failures**: SQLite DROP COLUMN limitations require special
+   handling
 
 ## Dependencies
 
@@ -512,8 +525,10 @@ type Session interface {
 
 ### Database Backend Considerations
 
-- **SQLite**: Limited ALTER TABLE support, use backup/restore for complex changes
+- **SQLite**: Limited ALTER TABLE support, use backup/restore for complex
+  changes
 - **PostgreSQL**: Full ALTER TABLE support, JSONB for metadata storage
 - **PebbleDB**: Key-value store, ensure consistent serialization format
 
-This comprehensive task ensures the database schema fully supports gcommon types while maintaining data integrity and performance across all database backends.
+This comprehensive task ensures the database schema fully supports gcommon types
+while maintaining data integrity and performance across all database backends.

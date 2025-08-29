@@ -1,23 +1,26 @@
 # file: docs/tasks/05-package-replacements/TASK-05-003-health-monitoring-integration.md
+
 # version: 1.0.0
+
 # guid: c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f
 
 # TASK-05-003: Health Monitoring Integration
 
 ## Overview
 
-**Objective**: Integrate gcommon health monitoring throughout the subtitle-manager application.
+**Objective**: Integrate gcommon health monitoring throughout the
+subtitle-manager application.
 
-**Phase**: 3 (Package Replacements)
-**Priority**: Medium
-**Estimated Effort**: 4-6 hours
-**Prerequisites**: TASK-05-002 (databasepb replacement) and gcommon database integration
+**Phase**: 3 (Package Replacements) **Priority**: Medium **Estimated Effort**:
+4-6 hours **Prerequisites**: TASK-05-002 (databasepb replacement) and gcommon
+database integration
 
 ## Required Reading
 
 **CRITICAL**: Read these documents before starting:
 
-- `docs/gcommon-api/health.md` - gcommon health monitoring specifications and patterns
+- `docs/gcommon-api/health.md` - gcommon health monitoring specifications and
+  patterns
 - Current health checking implementations in the application
 - `pkg/webserver/` directory for existing health endpoints
 - `docs/MIGRATION_INVENTORY.md` - Health monitoring usage inventory
@@ -25,12 +28,18 @@
 
 ## Problem Statement
 
-The subtitle-manager currently lacks comprehensive health monitoring or uses basic health check implementations. This needs to be upgraded to use gcommon health monitoring to:
+The subtitle-manager currently lacks comprehensive health monitoring or uses
+basic health check implementations. This needs to be upgraded to use gcommon
+health monitoring to:
 
-1. **Standardize Health Checks**: Use gcommon HealthStatus types for consistent monitoring
-2. **Comprehensive Monitoring**: Monitor database, external services, and application health
-3. **Integration Ready**: Prepare for integration with monitoring systems (Prometheus, etc.)
-4. **Debugging Support**: Provide detailed health information for troubleshooting
+1. **Standardize Health Checks**: Use gcommon HealthStatus types for consistent
+   monitoring
+2. **Comprehensive Monitoring**: Monitor database, external services, and
+   application health
+3. **Integration Ready**: Prepare for integration with monitoring systems
+   (Prometheus, etc.)
+4. **Debugging Support**: Provide detailed health information for
+   troubleshooting
 
 ### Current State
 
@@ -60,8 +69,10 @@ status := healthService.GetOverallHealth()
 
 ### Health Monitoring Strategy
 
-1. **Service Registration**: Register all critical services for health monitoring
-2. **Check Implementation**: Implement comprehensive health checks for each service
+1. **Service Registration**: Register all critical services for health
+   monitoring
+2. **Check Implementation**: Implement comprehensive health checks for each
+   service
 3. **Status Aggregation**: Use gcommon health status aggregation
 4. **Endpoint Integration**: Expose health status via HTTP endpoints
 
@@ -873,4 +884,6 @@ func TestHealthEndpoints(t *testing.T) {
 - **Enables**: Comprehensive application monitoring and troubleshooting
 - **Enables**: Integration with external monitoring systems
 
-This comprehensive health monitoring integration provides robust application monitoring using gcommon standardized health patterns while enabling effective troubleshooting and system reliability monitoring.
+This comprehensive health monitoring integration provides robust application
+monitoring using gcommon standardized health patterns while enabling effective
+troubleshooting and system reliability monitoring.

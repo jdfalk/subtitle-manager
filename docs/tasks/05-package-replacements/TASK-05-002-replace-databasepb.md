@@ -1,36 +1,44 @@
 # file: docs/tasks/05-package-replacements/TASK-05-002-replace-databasepb.md
+
 # version: 1.0.0
+
 # guid: b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e
 
 # TASK-05-002: Replace databasepb with gcommon/database
 
 ## Overview
 
-**Objective**: Replace local databasepb types with gcommon database types throughout the subtitle-manager application.
+**Objective**: Replace local databasepb types with gcommon database types
+throughout the subtitle-manager application.
 
-**Phase**: 3 (Package Replacements)
-**Priority**: High
-**Estimated Effort**: 6-8 hours
-**Prerequisites**: TASK-05-001 (configpb replacement) and Phase 2 Core Type Migration completed
+**Phase**: 3 (Package Replacements) **Priority**: High **Estimated Effort**: 6-8
+hours **Prerequisites**: TASK-05-001 (configpb replacement) and Phase 2 Core
+Type Migration completed
 
 ## Required Reading
 
 **CRITICAL**: Read these documents before starting:
 
-- `docs/gcommon-api/database.md` - gcommon database type specifications and patterns
-- `pkg/databasepb/databasepb.go` - Current databasepb implementation to be replaced
+- `docs/gcommon-api/database.md` - gcommon database type specifications and
+  patterns
+- `pkg/databasepb/databasepb.go` - Current databasepb implementation to be
+  replaced
 - `pkg/database/pb_conversions.go` - Current protobuf conversion utilities
 - `docs/MIGRATION_INVENTORY.md` - Database type usage inventory
 - Database schema documentation and current storage implementations
 
 ## Problem Statement
 
-The subtitle-manager currently uses a local `databasepb` package for database record types (SubtitleRecord, DownloadRecord, etc.). This package needs to be completely replaced with gcommon database types to:
+The subtitle-manager currently uses a local `databasepb` package for database
+record types (SubtitleRecord, DownloadRecord, etc.). This package needs to be
+completely replaced with gcommon database types to:
 
-1. **Eliminate Local Database Types**: Remove custom protobuf database record types
+1. **Eliminate Local Database Types**: Remove custom protobuf database record
+   types
 2. **Standardize Data Models**: Use gcommon standard database patterns
 3. **Improve Serialization**: Leverage gcommon optimized serialization
-4. **Enable Data Interoperability**: Share data models with other gcommon-based services
+4. **Enable Data Interoperability**: Share data models with other gcommon-based
+   services
 
 ### Current Database Types
 
@@ -990,9 +998,12 @@ func main() {
 
 ## Common Pitfalls
 
-1. **Type Assertion Failures**: gcommon opaque API returns interface{}, ensure proper type checking
-2. **Field Name Changes**: Ensure field names are consistent between old and new systems
-3. **Serialization Format Changes**: Maintain compatibility with existing serialized data
+1. **Type Assertion Failures**: gcommon opaque API returns interface{}, ensure
+   proper type checking
+2. **Field Name Changes**: Ensure field names are consistent between old and new
+   systems
+3. **Serialization Format Changes**: Maintain compatibility with existing
+   serialized data
 4. **Query Performance**: Monitor query performance with new gcommon types
 5. **Data Migration Errors**: Test migration thoroughly with real data
 
@@ -1004,4 +1015,6 @@ func main() {
 - **Enables**: Standardized database operations across gcommon services
 - **Blocks**: Advanced database features until migration complete
 
-This comprehensive task ensures complete migration from databasepb to gcommon database types while maintaining data integrity and improving standardization across the gcommon ecosystem.
+This comprehensive task ensures complete migration from databasepb to gcommon
+database types while maintaining data integrity and improving standardization
+across the gcommon ecosystem.
