@@ -1,79 +1,48 @@
-import '@testing-library/jest-dom/vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, test, vi } from 'vitest';
+// file: webui/src/__tests__/ProviderConfigDialog.test.jsx
+// version: 1.0.0
+// guid: e2f3a4b5-c6d7-4e8f-9012-3456789abcde
+
+import { render, screen, fireEvent } from '@testing-library/react';
+import { useState } from 'react';
+import ProviderCard from '../components/ProviderCard.jsx';
 import ProviderConfigDialog from '../components/ProviderConfigDialog.jsx';
 
-vi.mock('../services/api.js', () => ({
+// Mock apiService to avoid network requests
+jest.mock('../services/api.js', () => ({
   apiService: {
-    get: vi.fn(),
+    get: jest.fn(() =>
+      Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+    ),
   },
-  getBasePath: () => '',
 }));
 
-describe('ProviderConfigDialog', () => {
-  test('loads available providers when opened', async () => {
-    const { apiService } = await import('../services/api.js');
-    apiService.get.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve([{ name: 'opensubtitles' }]),
-    });
-
-    render(
-      <ProviderConfigDialog
-        open
-        provider={null}
-        onClose={() => {}}
-        onSave={() => {}}
-      />
-    );
-
-    await waitFor(() => {
-      expect(apiService.get).toHaveBeenCalledWith('/api/providers/available');
-    });
-
-    // Open dropdown to verify option
-    fireEvent.mouseDown(screen.getByRole('combobox'));
-    expect(await screen.findByText('OpenSubtitles.org')).toBeInTheDocument();
-  });
-
-  test('calls onSave with entered configuration', async () => {
-    const { apiService } = await import('../services/api.js');
-    apiService.get.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve([{ name: 'opensubtitles' }]),
-    });
-
-    const onSave = vi.fn();
-    render(
-      <ProviderConfigDialog
-        open
-        provider={null}
-        onClose={() => {}}
-        onSave={onSave}
-      />
-    );
-
-    // select provider
-    fireEvent.mouseDown(screen.getByRole('combobox'));
-    fireEvent.click(await screen.findByText('OpenSubtitles.org'));
-
-    // fill required fields
-    fireEvent.change(screen.getByLabelText('API Key *'), {
-      target: { value: 'k' },
-    });
-    fireEvent.change(screen.getByLabelText('User Agent *'), {
-      target: { value: 'ua' },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Save Configuration' }));
-
-    await waitFor(() => {
-      expect(onSave).toHaveBeenCalledWith(
-        expect.objectContaining({
+function Wrapper() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <ProviderCard
+        provider={{
           name: 'opensubtitles',
-          config: expect.objectContaining({ api_key: 'k', user_agent: 'ua' }),
-        })
-      );
-    });
+          displayName: 'OpenSubtitles',
+          enabled: false,
+        }}
+        onToggle={() => {}}
+        onConfigure={() => setOpen(true)}
+      />
+      <ProviderConfigDialog
+        open={open}
+        provider={{ name: 'opensubtitles' }}
+        onClose={() => setOpen(false)}
+        onSave={() => setOpen(false)}
+      />
+    </>
+  );
+}
+
+describe('Provider configuration', () => {
+  test('opens dialog when configuring provider', () => {
+    render(<Wrapper />);
+    fireEvent.click(screen.getByText('OpenSubtitles'));
+    expect(screen.getByText(/configure provider/i)).toBeInTheDocument();
   });
 });

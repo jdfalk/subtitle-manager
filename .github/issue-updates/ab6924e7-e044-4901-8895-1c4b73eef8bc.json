@@ -1,0 +1,13 @@
+{
+  "action": "comment",
+  "number": null,
+  "body": "Added back button and card-based settings interface",
+  "guid": "ab6924e7-e044-4901-8895-1c4b73eef8bc",
+  "legacy_guid": "comment-issue-null-2025-08-29",
+  "created_at": "2025-08-29T12:44:55.000Z",
+  "processed_at": null,
+  "failed_at": null,
+  "sequence": 0,
+  "parent_guid": null ,
+  "parent": "91ff2b06-a6fe-46ef-a8c9-2cd327b10d9e"
+}
