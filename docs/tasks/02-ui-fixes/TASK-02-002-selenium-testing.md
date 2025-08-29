@@ -6,7 +6,9 @@
 
 ## 🎯 Objective
 
-Implement comprehensive end-to-end testing using Selenium WebDriver with video recording capabilities for all user workflows in the subtitle-manager application.
+Implement comprehensive end-to-end testing using Selenium WebDriver with video
+recording capabilities for all user workflows in the subtitle-manager
+application.
 
 ## 📋 Acceptance Criteria
 
@@ -95,14 +97,14 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 class VideoRecorder:
     """Records screen during test execution"""
-    
+
     def __init__(self, output_path, fps=10):
         self.output_path = output_path
         self.fps = fps
         self.recording = False
         self.video_writer = None
         self.thread = None
-    
+
     def start_recording(self, screen_size=(1920, 1080)):
         """Start video recording"""
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -112,7 +114,7 @@ class VideoRecorder:
         self.recording = True
         self.thread = threading.Thread(target=self._record_loop)
         self.thread.start()
-    
+
     def stop_recording(self):
         """Stop video recording"""
         self.recording = False
@@ -120,7 +122,7 @@ class VideoRecorder:
             self.thread.join()
         if self.video_writer:
             self.video_writer.release()
-    
+
     def _record_loop(self):
         """Recording loop"""
         import pyautogui
@@ -132,14 +134,14 @@ class VideoRecorder:
 
 class DriverManager:
     """Manages WebDriver instances with video recording"""
-    
+
     def __init__(self, browser='chrome', headless=False, record_video=True):
         self.browser = browser.lower()
         self.headless = headless
         self.record_video = record_video
         self.driver = None
         self.video_recorder = None
-    
+
     def get_driver(self):
         """Create and configure WebDriver"""
         if self.browser == 'chrome':
@@ -148,14 +150,14 @@ class DriverManager:
             return self._create_firefox_driver()
         else:
             raise ValueError(f"Unsupported browser: {self.browser}")
-    
+
     def _create_chrome_driver(self):
         """Create Chrome WebDriver"""
         options = ChromeOptions()
-        
+
         if self.headless:
             options.add_argument('--headless')
-        
+
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--disable-gpu')
@@ -163,43 +165,43 @@ class DriverManager:
         options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-        
+
         service = ChromeService(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-        
+
         return driver
-    
+
     def _create_firefox_driver(self):
         """Create Firefox WebDriver"""
         options = FirefoxOptions()
-        
+
         if self.headless:
             options.add_argument('--headless')
-        
+
         options.add_argument('--width=1920')
         options.add_argument('--height=1080')
-        
+
         service = FirefoxService(GeckoDriverManager().install())
         return webdriver.Firefox(service=service, options=options)
-    
+
     def start_session(self, test_name):
         """Start WebDriver session with optional video recording"""
         self.driver = self.get_driver()
-        
+
         if self.record_video and not self.headless:
             recording_path = f"recordings/{test_name}_{int(time.time())}.mp4"
             os.makedirs(os.path.dirname(recording_path), exist_ok=True)
             self.video_recorder = VideoRecorder(recording_path)
             self.video_recorder.start_recording()
-        
+
         return self.driver
-    
+
     def end_session(self):
         """End WebDriver session and stop recording"""
         if self.video_recorder:
             self.video_recorder.stop_recording()
-        
+
         if self.driver:
             self.driver.quit()
 
@@ -234,72 +236,72 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 class BasePage:
     """Base page class with common functionality"""
-    
+
     def __init__(self, driver):
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
         self.base_url = os.getenv('SUBTITLE_MANAGER_URL', 'http://localhost:8080')
-    
+
     def navigate_to(self, path=''):
         """Navigate to specified path"""
         url = f"{self.base_url}{path}"
         self.driver.get(url)
         self.wait_for_page_load()
-    
+
     def wait_for_element(self, locator, timeout=10):
         """Wait for element to be present"""
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.presence_of_element_located(locator))
-    
+
     def wait_for_clickable(self, locator, timeout=10):
         """Wait for element to be clickable"""
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.element_to_be_clickable(locator))
-    
+
     def wait_for_visible(self, locator, timeout=10):
         """Wait for element to be visible"""
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.visibility_of_element_located(locator))
-    
+
     def wait_for_page_load(self):
         """Wait for page to fully load"""
         self.wait.until(
             lambda driver: driver.execute_script("return document.readyState") == "complete"
         )
-    
+
     def click_element(self, locator):
         """Click element with wait"""
         element = self.wait_for_clickable(locator)
         element.click()
-    
+
     def type_text(self, locator, text):
         """Type text into element"""
         element = self.wait_for_element(locator)
         element.clear()
         element.send_keys(text)
-    
+
     def get_text(self, locator):
         """Get text from element"""
         element = self.wait_for_element(locator)
         return element.text
-    
+
     def take_screenshot(self, filename):
         """Take screenshot"""
         screenshot_path = f"screenshots/{filename}"
         os.makedirs(os.path.dirname(screenshot_path), exist_ok=True)
         self.driver.save_screenshot(screenshot_path)
         return screenshot_path
-    
+
     def scroll_to_element(self, locator):
         """Scroll element into view"""
         element = self.wait_for_element(locator)
         self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
-    
+
     def hover_over_element(self, locator):
         """Hover over element"""
         element = self.wait_for_element(locator)
         ActionChains(self.driver).move_to_element(element).perform()
-    
+
     def is_element_present(self, locator):
         """Check if element is present"""
         try:
@@ -307,7 +309,7 @@ class BasePage:
             return True
         except NoSuchElementException:
             return False
-    
+
     def wait_for_url_change(self, current_url, timeout=10):
         """Wait for URL to change"""
         wait = WebDriverWait(self.driver, timeout)
@@ -327,37 +329,37 @@ from .base_page import BasePage
 
 class LoginPage(BasePage):
     """Login page object model"""
-    
+
     # Locators
     USERNAME_INPUT = (By.ID, "username")
     PASSWORD_INPUT = (By.ID, "password")
     LOGIN_BUTTON = (By.XPATH, "//button[contains(text(), 'Login')]")
     ERROR_MESSAGE = (By.CLASS_NAME, "alert-danger")
     LOGOUT_BUTTON = (By.XPATH, "//a[contains(text(), 'Logout')]")
-    
+
     def navigate_to_login(self):
         """Navigate to login page"""
         self.navigate_to('/login')
-    
+
     def login(self, username, password):
         """Perform login"""
         self.type_text(self.USERNAME_INPUT, username)
         self.type_text(self.PASSWORD_INPUT, password)
         self.click_element(self.LOGIN_BUTTON)
         self.wait_for_page_load()
-    
+
     def logout(self):
         """Perform logout"""
         self.click_element(self.LOGOUT_BUTTON)
         self.wait_for_page_load()
-    
+
     def get_error_message(self):
         """Get login error message"""
         try:
             return self.get_text(self.ERROR_MESSAGE)
         except:
             return None
-    
+
     def is_logged_in(self):
         """Check if user is logged in"""
         return self.is_element_present(self.LOGOUT_BUTTON)
@@ -382,47 +384,47 @@ from utils.test_data import TestData
 @allure.feature("Authentication")
 class TestAuthentication:
     """Authentication workflow tests"""
-    
+
     @pytest.fixture(autouse=True)
     def setup(self, driver):
         """Set up test"""
         self.login_page = LoginPage(driver)
         self.dashboard_page = DashboardPage(driver)
         self.test_data = TestData()
-    
+
     @allure.story("Valid Login")
     @pytest.mark.smoke
     def test_valid_login(self, driver):
         """Test successful login with valid credentials"""
         # Arrange
         self.login_page.navigate_to_login()
-        
+
         # Act
         self.login_page.login(
-            self.test_data.valid_username, 
+            self.test_data.valid_username,
             self.test_data.valid_password
         )
-        
+
         # Assert
         assert self.login_page.is_logged_in(), "User should be logged in"
         assert self.dashboard_page.is_dashboard_loaded(), "Dashboard should load"
-    
+
     @allure.story("Invalid Login")
     @pytest.mark.negative
     def test_invalid_login(self, driver):
         """Test login with invalid credentials"""
         # Arrange
         self.login_page.navigate_to_login()
-        
+
         # Act
         self.login_page.login("invalid_user", "invalid_password")
-        
+
         # Assert
         error_message = self.login_page.get_error_message()
         assert error_message is not None, "Error message should be displayed"
         assert "invalid" in error_message.lower(), "Error should mention invalid credentials"
         assert not self.login_page.is_logged_in(), "User should not be logged in"
-    
+
     @allure.story("Logout")
     @pytest.mark.smoke
     def test_logout(self, driver):
@@ -430,17 +432,17 @@ class TestAuthentication:
         # Arrange - Login first
         self.login_page.navigate_to_login()
         self.login_page.login(
-            self.test_data.valid_username, 
+            self.test_data.valid_username,
             self.test_data.valid_password
         )
-        
+
         # Act
         self.login_page.logout()
-        
+
         # Assert
         assert not self.login_page.is_logged_in(), "User should be logged out"
         assert "login" in driver.current_url.lower(), "Should redirect to login page"
-    
+
     @allure.story("Session Management")
     @pytest.mark.regression
     def test_session_persistence(self, driver):
@@ -448,15 +450,15 @@ class TestAuthentication:
         # Arrange
         self.login_page.navigate_to_login()
         self.login_page.login(
-            self.test_data.valid_username, 
+            self.test_data.valid_username,
             self.test_data.valid_password
         )
-        
+
         # Act - Navigate to different pages
         self.dashboard_page.navigate_to('/media')
         self.dashboard_page.navigate_to('/settings')
         self.dashboard_page.navigate_to('/')
-        
+
         # Assert
         assert self.login_page.is_logged_in(), "Session should persist across navigation"
 ```
@@ -479,28 +481,28 @@ from utils.test_data import TestData
 @allure.feature("Media Management")
 class TestMediaManagement:
     """Media management workflow tests"""
-    
+
     @pytest.fixture(autouse=True)
     def setup(self, driver):
         """Set up test with authentication"""
         self.login_page = LoginPage(driver)
         self.media_page = MediaPage(driver)
         self.test_data = TestData()
-        
+
         # Login before each test
         self.login_page.navigate_to_login()
         self.login_page.login(
-            self.test_data.valid_username, 
+            self.test_data.valid_username,
             self.test_data.valid_password
         )
-    
+
     @allure.story("Add Media Library")
     @pytest.mark.smoke
     def test_add_media_library(self, driver):
         """Test adding a new media library"""
         # Arrange
         self.media_page.navigate_to('/media')
-        
+
         # Act
         self.media_page.click_add_library()
         library_data = {
@@ -510,26 +512,26 @@ class TestMediaManagement:
         }
         self.media_page.fill_library_form(library_data)
         self.media_page.save_library()
-        
+
         # Assert
         assert self.media_page.is_library_present('Test Movies'), "Library should be added"
         assert self.media_page.get_library_path('Test Movies') == '/media/movies'
-    
+
     @allure.story("Scan Media Library")
     @pytest.mark.regression
     def test_scan_media_library(self, driver):
         """Test scanning media library for content"""
         # Arrange
         self.media_page.navigate_to('/media')
-        
+
         # Act
         self.media_page.scan_library('Test Movies')
-        
+
         # Assert
         self.media_page.wait_for_scan_complete()
         scan_status = self.media_page.get_scan_status('Test Movies')
         assert 'complete' in scan_status.lower(), "Scan should complete successfully"
-    
+
     @allure.story("Remove Media Library")
     @pytest.mark.destructive
     def test_remove_media_library(self, driver):
@@ -537,11 +539,11 @@ class TestMediaManagement:
         # Arrange
         self.media_page.navigate_to('/media')
         initial_count = self.media_page.get_library_count()
-        
+
         # Act
         self.media_page.remove_library('Test Movies')
         self.media_page.confirm_removal()
-        
+
         # Assert
         final_count = self.media_page.get_library_count()
         assert final_count == initial_count - 1, "Library count should decrease"
@@ -570,54 +572,54 @@ from utils.test_data import TestData
 @allure.feature("Visual Regression")
 class TestVisualRegression:
     """Visual regression testing suite"""
-    
+
     @pytest.fixture(autouse=True)
     def setup(self, driver):
         """Set up test"""
         self.login_page = LoginPage(driver)
         self.dashboard_page = DashboardPage(driver)
         self.test_data = TestData()
-        
+
         # Login
         self.login_page.navigate_to_login()
         self.login_page.login(
-            self.test_data.valid_username, 
+            self.test_data.valid_username,
             self.test_data.valid_password
         )
-    
+
     def compare_screenshots(self, baseline_path, current_path, threshold=0.95):
         """Compare two screenshots for visual differences"""
         baseline = Image.open(baseline_path)
         current = Image.open(current_path)
-        
+
         # Resize images to same size if needed
         if baseline.size != current.size:
             current = current.resize(baseline.size)
-        
+
         # Calculate difference
         diff = ImageChops.difference(baseline, current)
-        
+
         # Convert to numpy for analysis
         diff_array = np.array(diff)
-        
+
         # Calculate similarity
         total_pixels = diff_array.size
         different_pixels = np.count_nonzero(diff_array)
         similarity = 1 - (different_pixels / total_pixels)
-        
+
         return similarity >= threshold, similarity
-    
+
     @allure.story("Dashboard Layout")
     @pytest.mark.visual
     def test_dashboard_visual_consistency(self, driver):
         """Test dashboard visual consistency"""
         # Arrange
         self.dashboard_page.navigate_to('/')
-        
+
         # Act
         current_screenshot = self.dashboard_page.take_screenshot("dashboard_current.png")
         baseline_screenshot = "screenshots/baseline/dashboard_baseline.png"
-        
+
         # Assert
         if os.path.exists(baseline_screenshot):
             is_similar, similarity = self.compare_screenshots(
@@ -628,18 +630,18 @@ class TestVisualRegression:
             # Create baseline if it doesn't exist
             os.makedirs(os.path.dirname(baseline_screenshot), exist_ok=True)
             shutil.copy(current_screenshot, baseline_screenshot)
-    
+
     @allure.story("Settings Page Layout")
     @pytest.mark.visual
     def test_settings_visual_consistency(self, driver):
         """Test settings page visual consistency"""
         # Arrange
         self.dashboard_page.navigate_to('/settings')
-        
+
         # Act
         current_screenshot = self.dashboard_page.take_screenshot("settings_current.png")
         baseline_screenshot = "screenshots/baseline/settings_baseline.png"
-        
+
         # Assert
         if os.path.exists(baseline_screenshot):
             is_similar, similarity = self.compare_screenshots(
@@ -670,21 +672,21 @@ from utils.test_data import TestData
 @allure.feature("Performance")
 class TestPerformance:
     """Performance testing suite"""
-    
+
     @pytest.fixture(autouse=True)
     def setup(self, driver):
         """Set up test"""
         self.login_page = LoginPage(driver)
         self.dashboard_page = DashboardPage(driver)
         self.test_data = TestData()
-    
+
     def measure_page_load_time(self, url):
         """Measure page load time"""
         start_time = time.time()
         self.dashboard_page.navigate_to(url)
         end_time = time.time()
         return end_time - start_time
-    
+
     @allure.story("Page Load Performance")
     @pytest.mark.performance
     def test_dashboard_load_time(self, driver):
@@ -692,16 +694,16 @@ class TestPerformance:
         # Arrange
         self.login_page.navigate_to_login()
         self.login_page.login(
-            self.test_data.valid_username, 
+            self.test_data.valid_username,
             self.test_data.valid_password
         )
-        
+
         # Act
         load_time = self.measure_page_load_time('/')
-        
+
         # Assert
         assert load_time < 3.0, f"Dashboard should load in under 3 seconds, took {load_time:.2f}s"
-    
+
     @allure.story("API Response Performance")
     @pytest.mark.performance
     def test_api_response_times(self, driver):
@@ -713,16 +715,16 @@ class TestPerformance:
             '/api/media/libraries',
             '/api/providers',
         ]
-        
+
         for endpoint in endpoints:
             start_time = time.time()
             response = requests.get(f"{self.dashboard_page.base_url}{endpoint}")
             end_time = time.time()
-            
+
             response_time = end_time - start_time
             assert response_time < 2.0, f"{endpoint} should respond in under 2 seconds"
             assert response.status_code == 200, f"{endpoint} should return 200 OK"
-    
+
     @allure.story("UI Interaction Performance")
     @pytest.mark.performance
     def test_navigation_performance(self, driver):
@@ -730,18 +732,18 @@ class TestPerformance:
         # Login
         self.login_page.navigate_to_login()
         self.login_page.login(
-            self.test_data.valid_username, 
+            self.test_data.valid_username,
             self.test_data.valid_password
         )
-        
+
         # Test navigation between pages
         pages = ['/', '/media', '/wanted', '/history', '/settings']
-        
+
         for page in pages:
             start_time = time.time()
             self.dashboard_page.navigate_to(page)
             end_time = time.time()
-            
+
             navigation_time = end_time - start_time
             assert navigation_time < 2.0, f"Navigation to {page} should take under 2 seconds"
 ```
@@ -756,8 +758,8 @@ testpaths = tests
 python_files = test_*.py
 python_classes = Test*
 python_functions = test_*
-addopts = 
-    --html=reports/report.html 
+addopts =
+    --html=reports/report.html
     --self-contained-html
     --tb=short
     --strict-markers
@@ -798,18 +800,18 @@ def headless():
 def driver(browser, headless, request):
     """WebDriver fixture with video recording"""
     test_name = request.node.name
-    
+
     driver_mgr = get_driver_manager(browser, headless, record_video=True)
     driver = driver_mgr.start_session(test_name)
-    
+
     yield driver
-    
+
     # Take screenshot on failure
     if hasattr(request.node, 'rep_call') and request.node.rep_call.failed:
         timestamp = int(time.time())
         screenshot_path = f"screenshots/failure_{test_name}_{timestamp}.png"
         driver.save_screenshot(screenshot_path)
-    
+
     driver_mgr.end_session()
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -893,25 +895,25 @@ import string
 
 class TestData:
     """Test data management"""
-    
+
     def __init__(self):
         self.load_config()
-    
+
     def load_config(self):
         """Load test configuration"""
         config_file = os.getenv('TEST_CONFIG_FILE', 'fixtures/test_config.json')
-        
+
         if os.path.exists(config_file):
             with open(config_file, 'r') as f:
                 config = json.load(f)
         else:
             config = self.default_config()
-        
+
         self.valid_username = config.get('valid_username', 'admin')
         self.valid_password = config.get('valid_password', 'admin')
         self.base_url = config.get('base_url', 'http://localhost:8080')
         self.test_media_path = config.get('test_media_path', '/tmp/test_media')
-    
+
     def default_config(self):
         """Default test configuration"""
         return {
@@ -920,12 +922,12 @@ class TestData:
             'base_url': 'http://localhost:8080',
             'test_media_path': '/tmp/test_media'
         }
-    
+
     def generate_random_string(self, length=10):
         """Generate random string"""
         letters = string.ascii_lowercase
         return ''.join(random.choice(letters) for i in range(length))
-    
+
     def get_test_library_data(self):
         """Get test library data"""
         return {
@@ -934,7 +936,7 @@ class TestData:
             'type': random.choice(['movies', 'tv_shows']),
             'language': 'en'
         }
-    
+
     def get_test_provider_data(self):
         """Get test provider data"""
         return {
@@ -986,12 +988,16 @@ EOF
 From .github/instructions/general-coding.instructions.md:
 
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Script Language Preference
+
 **MANDATORY RULE: Prefer Python for scripts unless they are incredibly simple.**
 
 Use Python for:
+
 - API interactions (GitHub, REST APIs, etc.)
 - JSON/YAML processing
 - File manipulation beyond simple copying

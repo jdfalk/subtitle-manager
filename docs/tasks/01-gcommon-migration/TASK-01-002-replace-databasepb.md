@@ -6,11 +6,13 @@
 
 ## 🎯 Objective
 
-Replace all usage of the local `pkg/databasepb` package with the gcommon database package (`github.com/jdfalk/gcommon/sdks/go/v1/database`).
+Replace all usage of the local `pkg/databasepb` package with the gcommon
+database package (`github.com/jdfalk/gcommon/sdks/go/v1/database`).
 
 ## 📋 Acceptance Criteria
 
-- [ ] All imports of `github.com/jdfalk/subtitle-manager/pkg/databasepb` are replaced
+- [ ] All imports of `github.com/jdfalk/subtitle-manager/pkg/databasepb` are
+      replaced
 - [ ] All database-related types use gcommon protobuf types with opaque API
 - [ ] All getter/setter methods use the correct opaque API pattern
 - [ ] No compilation errors after migration
@@ -28,9 +30,13 @@ Based on codebase analysis, these files import `databasepb`:
 ### Current databasepb Types to Replace
 
 From `pkg/databasepb/databasepb.go`:
-- `SubtitleRecord` → `github.com/jdfalk/gcommon/sdks/go/v1/database.SubtitleRecord`
-- `DownloadRecord` → `github.com/jdfalk/gcommon/sdks/go/v1/database.DownloadRecord`
-- `MediaMetadata` → `github.com/jdfalk/gcommon/sdks/go/v1/database.MediaMetadata`
+
+- `SubtitleRecord` →
+  `github.com/jdfalk/gcommon/sdks/go/v1/database.SubtitleRecord`
+- `DownloadRecord` →
+  `github.com/jdfalk/gcommon/sdks/go/v1/database.DownloadRecord`
+- `MediaMetadata` →
+  `github.com/jdfalk/gcommon/sdks/go/v1/database.MediaMetadata`
 
 ## 🔧 Implementation Steps
 
@@ -43,14 +49,15 @@ gomarkdoc --output docs/gcommon-api/database.md github.com/jdfalk/gcommon/sdks/g
 
 ### Step 2: Create migration mapping
 
-Create a mapping file `docs/tasks/01-gcommon-migration/database-migration-map.md`:
+Create a mapping file
+`docs/tasks/01-gcommon-migration/database-migration-map.md`:
 
 ```markdown
-| Local Type | gcommon Type | Import Path |
-|------------|--------------|-------------|
+| Local Type                | gcommon Type            | Import Path                                   |
+| ------------------------- | ----------------------- | --------------------------------------------- |
 | databasepb.SubtitleRecord | database.SubtitleRecord | github.com/jdfalk/gcommon/sdks/go/v1/database |
 | databasepb.DownloadRecord | database.DownloadRecord | github.com/jdfalk/gcommon/sdks/go/v1/database |
-| databasepb.MediaMetadata | database.MediaMetadata | github.com/jdfalk/gcommon/sdks/go/v1/database |
+| databasepb.MediaMetadata  | database.MediaMetadata  | github.com/jdfalk/gcommon/sdks/go/v1/database |
 ```
 
 ### Step 3: Update import statements
@@ -187,10 +194,15 @@ go test ./...
 From .github/instructions/general-coding.instructions.md:
 
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Version Update Requirements
-**When modifying any file with a version header, ALWAYS update the version number:**
+
+**When modifying any file with a version header, ALWAYS update the version
+number:**
+
 - Patch version (x.y.Z): Bug fixes, typos, minor formatting changes
 - Minor version (x.Y.z): New features, significant content additions
 - Major version (X.y.z): Breaking changes, structural overhauls
@@ -243,10 +255,14 @@ func TestDatabaseIntegration(t *testing.T) {
 
 ## 🚨 Common Pitfalls
 
-1. **Opaque API Confusion**: Remember to use `SetField()` and `GetField()` methods instead of direct field access
-2. **Nil Pointer Issues**: Always check for nil before calling methods on protobuf messages
-3. **Type Conversions**: Ensure proper type conversions when moving from local types to gcommon types
-4. **Database Schema**: Verify that database schema still matches the new protobuf field names
+1. **Opaque API Confusion**: Remember to use `SetField()` and `GetField()`
+   methods instead of direct field access
+2. **Nil Pointer Issues**: Always check for nil before calling methods on
+   protobuf messages
+3. **Type Conversions**: Ensure proper type conversions when moving from local
+   types to gcommon types
+4. **Database Schema**: Verify that database schema still matches the new
+   protobuf field names
 
 ## 📖 Additional Resources
 
@@ -257,14 +273,19 @@ func TestDatabaseIntegration(t *testing.T) {
 ## 🔄 Related Tasks
 
 - **TASK-01-001**: Replace configpb (may share some database config types)
-- **TASK-01-005**: Migrate protobuf message types (will need updated database types)
+- **TASK-01-005**: Migrate protobuf message types (will need updated database
+  types)
 - **TASK-01-006**: Update import statements (will verify this task's imports)
 
 ## 📝 Notes for AI Agent
 
-- This task is independent but should be done after TASK-01-001 if there are shared config types
+- This task is independent but should be done after TASK-01-001 if there are
+  shared config types
 - Standard command-line operations throughout - no VS Code specific requirements
-- Follow the version update rules strictly - increment version numbers in all modified files
-- The opaque API is critical - never access protobuf fields directly, always use getters/setters
+- Follow the version update rules strictly - increment version numbers in all
+  modified files
+- The opaque API is critical - never access protobuf fields directly, always use
+  getters/setters
 - Pay special attention to database field mappings to ensure data integrity
-- If any step fails, document the error and continue with remaining steps where possible
+- If any step fails, document the error and continue with remaining steps where
+  possible

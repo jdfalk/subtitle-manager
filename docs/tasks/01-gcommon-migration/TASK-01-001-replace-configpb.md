@@ -6,11 +6,13 @@
 
 ## 🎯 Objective
 
-Replace all usage of the local `pkg/configpb` package with the gcommon config package (`github.com/jdfalk/gcommon/sdks/go/v1/config`).
+Replace all usage of the local `pkg/configpb` package with the gcommon config
+package (`github.com/jdfalk/gcommon/sdks/go/v1/config`).
 
 ## 📋 Acceptance Criteria
 
-- [ ] All imports of `github.com/jdfalk/subtitle-manager/pkg/configpb` are replaced
+- [ ] All imports of `github.com/jdfalk/subtitle-manager/pkg/configpb` are
+      replaced
 - [ ] All config-related types use gcommon protobuf types with opaque API
 - [ ] All getter/setter methods use the correct opaque API pattern
 - [ ] No compilation errors after migration
@@ -32,9 +34,12 @@ Based on codebase analysis, these files import `configpb`:
 ### Current configpb Types to Replace
 
 From `pkg/configpb/config.pb.go`:
+
 - `LogLevel` enum → `github.com/jdfalk/gcommon/sdks/go/v1/common.LogLevel`
-- `SubtitleManagerConfig` → `github.com/jdfalk/gcommon/sdks/go/v1/config.ApplicationConfig`
-- `DatabaseConfig` → `github.com/jdfalk/gcommon/sdks/go/v1/database.DatabaseConfig`
+- `SubtitleManagerConfig` →
+  `github.com/jdfalk/gcommon/sdks/go/v1/config.ApplicationConfig`
+- `DatabaseConfig` →
+  `github.com/jdfalk/gcommon/sdks/go/v1/database.DatabaseConfig`
 - Other config types as needed
 
 ## 🔧 Implementation Steps
@@ -51,9 +56,9 @@ gomarkdoc --output docs/gcommon-api/config.md github.com/jdfalk/gcommon/sdks/go/
 Create a mapping file `docs/tasks/01-gcommon-migration/config-migration-map.md`:
 
 ```markdown
-| Local Type | gcommon Type | Import Path |
-|------------|--------------|-------------|
-| configpb.LogLevel | common.LogLevel | github.com/jdfalk/gcommon/sdks/go/v1/common |
+| Local Type                     | gcommon Type             | Import Path                                 |
+| ------------------------------ | ------------------------ | ------------------------------------------- |
+| configpb.LogLevel              | common.LogLevel          | github.com/jdfalk/gcommon/sdks/go/v1/common |
 | configpb.SubtitleManagerConfig | config.ApplicationConfig | github.com/jdfalk/gcommon/sdks/go/v1/config |
 ```
 
@@ -160,13 +165,19 @@ func TestConfig(t *testing.T) {
 From .github/instructions/general-coding.instructions.md:
 
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## 🚨 CRITICAL: Use VS Code Tasks First
+
 **MANDATORY RULE: Always attempt to use VS Code tasks before manual commands.**
 
 ## Version Update Requirements
-**When modifying any file with a version header, ALWAYS update the version number:**
+
+**When modifying any file with a version header, ALWAYS update the version
+number:**
+
 - Patch version (x.y.Z): Bug fixes, typos, minor formatting changes
 - Minor version (x.Y.z): New features, significant content additions
 - Major version (X.y.z): Breaking changes, structural overhauls
@@ -219,10 +230,13 @@ func TestConfigIntegration(t *testing.T) {
 
 ## 🚨 Common Pitfalls
 
-1. **Opaque API Confusion**: Remember to use `SetField()` and `GetField()` methods instead of direct field access
+1. **Opaque API Confusion**: Remember to use `SetField()` and `GetField()`
+   methods instead of direct field access
 2. **Type Mismatches**: Ensure enum values match between old and new packages
-3. **Nil Pointer Issues**: Always check for nil before calling methods on protobuf messages
-4. **Import Cycles**: Be careful not to create import cycles when updating imports
+3. **Nil Pointer Issues**: Always check for nil before calling methods on
+   protobuf messages
+4. **Import Cycles**: Be careful not to create import cycles when updating
+   imports
 
 ## 📖 Additional Resources
 
@@ -233,13 +247,19 @@ func TestConfigIntegration(t *testing.T) {
 ## 🔄 Related Tasks
 
 - **TASK-01-002**: Replace databasepb (may share some config types)
-- **TASK-01-005**: Migrate protobuf message types (will need updated config types)
+- **TASK-01-005**: Migrate protobuf message types (will need updated config
+  types)
 - **TASK-01-006**: Update import statements (will verify this task's imports)
 
 ## 📝 Notes for AI Agent
 
-- This task is completely independent and can be executed without waiting for other tasks
-- Use VS Code tasks for all build operations: `Buf Generate with Output`, `Git Add All`, etc.
-- Follow the version update rules strictly - increment version numbers in all modified files
-- The opaque API is critical - never access protobuf fields directly, always use getters/setters
-- If any step fails, document the error and continue with remaining steps where possible
+- This task is completely independent and can be executed without waiting for
+  other tasks
+- Use VS Code tasks for all build operations: `Buf Generate with Output`,
+  `Git Add All`, etc.
+- Follow the version update rules strictly - increment version numbers in all
+  modified files
+- The opaque API is critical - never access protobuf fields directly, always use
+  getters/setters
+- If any step fails, document the error and continue with remaining steps where
+  possible

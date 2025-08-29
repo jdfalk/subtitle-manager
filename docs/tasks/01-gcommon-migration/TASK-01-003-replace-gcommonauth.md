@@ -6,12 +6,15 @@
 
 ## 🎯 Objective
 
-Replace all usage of the local `pkg/gcommonauth` package with the gcommon common package authentication types (`github.com/jdfalk/gcommon/sdks/go/v1/common`).
+Replace all usage of the local `pkg/gcommonauth` package with the gcommon common
+package authentication types (`github.com/jdfalk/gcommon/sdks/go/v1/common`).
 
 ## 📋 Acceptance Criteria
 
-- [ ] All imports of `github.com/jdfalk/subtitle-manager/pkg/gcommonauth` are replaced
-- [ ] All authentication-related types use gcommon protobuf types with opaque API
+- [ ] All imports of `github.com/jdfalk/subtitle-manager/pkg/gcommonauth` are
+      replaced
+- [ ] All authentication-related types use gcommon protobuf types with opaque
+      API
 - [ ] All getter/setter methods use the correct opaque API pattern
 - [ ] No compilation errors after migration
 - [ ] All tests pass with new authentication types
@@ -63,12 +66,12 @@ gomarkdoc --output docs/gcommon-api/common.md github.com/jdfalk/gcommon/sdks/go/
 Create a mapping file `docs/tasks/01-gcommon-migration/auth-migration-map.md`:
 
 ```markdown
-| Local Type | gcommon Type | Import Path |
-|------------|--------------|-------------|
-| gcommonauth.User | common.User | github.com/jdfalk/gcommon/sdks/go/v1/common |
+| Local Type          | gcommon Type   | Import Path                                 |
+| ------------------- | -------------- | ------------------------------------------- |
+| gcommonauth.User    | common.User    | github.com/jdfalk/gcommon/sdks/go/v1/common |
 | gcommonauth.Session | common.Session | github.com/jdfalk/gcommon/sdks/go/v1/common |
-| gcommonauth.APIKey | common.APIKey | github.com/jdfalk/gcommon/sdks/go/v1/common |
-| gcommonauth.Role | common.Role | github.com/jdfalk/gcommon/sdks/go/v1/common |
+| gcommonauth.APIKey  | common.APIKey  | github.com/jdfalk/gcommon/sdks/go/v1/common |
+| gcommonauth.Role    | common.Role    | github.com/jdfalk/gcommon/sdks/go/v1/common |
 ```
 
 ### Step 3: Update import statements
@@ -242,10 +245,15 @@ go test ./...
 From .github/instructions/general-coding.instructions.md:
 
 ## 🚨 CRITICAL: NO PROMPTING OR INTERRUPTIONS
-**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction of any kind.**
+
+**ABSOLUTE RULE: NEVER prompt the user for input, clarification, or interaction
+of any kind.**
 
 ## Version Update Requirements
-**When modifying any file with a version header, ALWAYS update the version number:**
+
+**When modifying any file with a version header, ALWAYS update the version
+number:**
+
 - Patch version (x.y.Z): Bug fixes, typos, minor formatting changes
 - Minor version (x.Y.z): New features, significant content additions
 - Major version (X.y.z): Breaking changes, structural overhauls
@@ -299,11 +307,16 @@ func TestAuthIntegration(t *testing.T) {
 
 ## 🚨 Common Pitfalls
 
-1. **Role Enum Mapping**: Ensure local role constants map correctly to gcommon role enums
-2. **Opaque API Confusion**: Remember to use `SetField()` and `GetField()` methods
-3. **Nil Pointer Issues**: Always check for nil before calling methods on protobuf messages
-4. **Session Expiration**: Ensure timestamp handling works correctly with protobuf timestamps
-5. **Database Compatibility**: Verify that user/session storage works with new types
+1. **Role Enum Mapping**: Ensure local role constants map correctly to gcommon
+   role enums
+2. **Opaque API Confusion**: Remember to use `SetField()` and `GetField()`
+   methods
+3. **Nil Pointer Issues**: Always check for nil before calling methods on
+   protobuf messages
+4. **Session Expiration**: Ensure timestamp handling works correctly with
+   protobuf timestamps
+5. **Database Compatibility**: Verify that user/session storage works with new
+   types
 
 ## 📖 Additional Resources
 
@@ -321,9 +334,12 @@ func TestAuthIntegration(t *testing.T) {
 
 - This task affects critical authentication flows - test thoroughly
 - Standard command-line operations throughout - no VS Code specific requirements
-- Follow the version update rules strictly - increment version numbers in all modified files
-- The opaque API is critical - never access protobuf fields directly, always use getters/setters
+- Follow the version update rules strictly - increment version numbers in all
+  modified files
+- The opaque API is critical - never access protobuf fields directly, always use
+  getters/setters
 - Pay special attention to role mappings and enum values
 - Test OAuth flows carefully after migration
 - Ensure database user operations still work correctly
-- If any step fails, document the error and continue with remaining steps where possible
+- If any step fails, document the error and continue with remaining steps where
+  possible

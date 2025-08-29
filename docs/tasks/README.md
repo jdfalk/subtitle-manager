@@ -4,12 +4,16 @@
 <!-- version: 1.0.0 -->
 <!-- guid: a1b2c3d4-e5f6-7890-abcd-ef1234567890 -->
 
-This directory contains comprehensive, independent tasks for refactoring Subtitle Manager to use gcommon packages, implementing UI improvements, comprehensive testing, and issue management.
+This directory contains comprehensive, independent tasks for refactoring
+Subtitle Manager to use gcommon packages, implementing UI improvements,
+comprehensive testing, and issue management.
 
 ## Task Categories
 
 ### 🔄 01 - gcommon Migration Tasks
-**Priority: Critical** - Replace all local protobuf packages with gcommon equivalents
+
+**Priority: Critical** - Replace all local protobuf packages with gcommon
+equivalents
 
 - [TASK-01-001: Replace configpb with gcommon config](01-gcommon-migration/TASK-01-001-replace-configpb.md)
 - [TASK-01-002: Replace databasepb with gcommon database](01-gcommon-migration/TASK-01-002-replace-databasepb.md)
@@ -21,6 +25,7 @@ This directory contains comprehensive, independent tasks for refactoring Subtitl
 - [TASK-01-008: Update go.mod dependencies](01-gcommon-migration/TASK-01-008-update-dependencies.md)
 
 ### 🎨 02 - UI/UX Fixes and Improvements
+
 **Priority: High** - Modern React UI with Bazarr-style design
 
 - [TASK-02-001: Fix navigation and routing](02-ui-fixes/TASK-02-001-fix-navigation.md)
@@ -33,6 +38,7 @@ This directory contains comprehensive, independent tasks for refactoring Subtitl
 - [TASK-02-008: Mobile responsiveness](02-ui-fixes/TASK-02-008-mobile-responsive.md)
 
 ### 🧪 03 - Comprehensive Testing Suite
+
 **Priority: High** - Complete test coverage with Selenium automation
 
 - [TASK-03-001: Unit test database layer](03-testing/TASK-03-001-unit-test-database.md)
@@ -45,6 +51,7 @@ This directory contains comprehensive, independent tasks for refactoring Subtitl
 - [TASK-03-008: CI/CD test integration](03-testing/TASK-03-008-ci-cd-integration.md)
 
 ### 📋 04 - Issue Management and Documentation
+
 **Priority: Medium** - GitHub issue cleanup and comprehensive documentation
 
 - [TASK-04-001: Audit existing GitHub issues](04-issue-management/TASK-04-001-audit-issues.md)
@@ -56,13 +63,16 @@ This directory contains comprehensive, independent tasks for refactoring Subtitl
 ## Task Execution Guidelines
 
 ### Prerequisites
-- All coding instructions from `.github/instructions/general-coding.instructions.md`
+
+- All coding instructions from
+  `.github/instructions/general-coding.instructions.md`
 - Access to gcommon v1.8.0+ documentation
 - Node.js 18+ for UI development
 - Go 1.21+ for backend development
 - Docker for testing environments
 
 ### Quality Standards
+
 - **Code Coverage**: Minimum 80% for new code
 - **Documentation**: Every public function/method documented
 - **Testing**: Unit, integration, and E2E tests for all features
@@ -70,7 +80,9 @@ This directory contains comprehensive, independent tasks for refactoring Subtitl
 - **Security**: Follow OWASP guidelines for web applications
 
 ### Progress Tracking
+
 Each task includes:
+
 - ✅ **Acceptance Criteria**: Clear, testable requirements
 - 🔧 **Implementation Steps**: Detailed step-by-step instructions
 - 📋 **Testing Requirements**: Specific test cases to implement
@@ -78,7 +90,10 @@ Each task includes:
 - 🎯 **Success Metrics**: Measurable completion criteria
 
 ### Agent Assignment
-Tasks are designed to be completely independent and can be assigned to multiple AI agents simultaneously. Each task contains all necessary context and references.
+
+Tasks are designed to be completely independent and can be assigned to multiple
+AI agents simultaneously. Each task contains all necessary context and
+references.
 
 ## Priority Execution Order
 
@@ -90,16 +105,19 @@ Tasks are designed to be completely independent and can be assigned to multiple 
 ## Resources and References
 
 ### Code Style Guides
+
 - [General Coding Instructions](./.github/instructions/general-coding.instructions.md)
 - [Commit Message Guidelines](./.github/commit-messages.md)
 - [Pull Request Guidelines](./.github/pull-request-descriptions.md)
 
 ### Documentation
+
 - [gcommon API Documentation](../gcommon-api/)
 - [Current TODO List](../TODO.md)
 - [Architecture Documentation](../ARCHITECTURE.md)
 
 ### External References
+
 - [Bazarr UI Reference](https://github.com/morpheus65535/bazarr)
 - [React Best Practices](https://react.dev/learn)
 - [Selenium WebDriver Documentation](https://selenium-python.readthedocs.io/)
@@ -107,7 +125,8 @@ Tasks are designed to be completely independent and can be assigned to multiple 
 ## Notes for AI Agents
 
 - Each task is completely self-contained with all necessary context
-- Follow the coding instructions precisely - they contain critical automation rules
+- Follow the coding instructions precisely - they contain critical automation
+  rules
 - Always update version numbers in file headers when making changes
 - Use VS Code tasks when available instead of manual terminal commands
 - Include comprehensive error handling and logging
