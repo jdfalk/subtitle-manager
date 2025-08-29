@@ -65,6 +65,9 @@ const MediaLibrary = lazy(() => import('./MediaLibrary.jsx'));
 const Wanted = lazy(() => import('./Wanted.jsx'));
 const History = lazy(() => import('./History.jsx'));
 const Settings = lazy(() => import('./Settings.jsx'));
+const SettingsOverview = lazy(
+  () => import('./components/SettingsOverview.jsx')
+);
 const System = lazy(() => import('./System.jsx'));
 const Extract = lazy(() => import('./Extract.jsx'));
 const Convert = lazy(() => import('./Convert.jsx'));
@@ -1087,8 +1090,9 @@ function App() {
                 path="/history"
                 element={<History backendAvailable={backendAvailable} />}
               />
+              <Route path="/settings" element={<SettingsOverview />} />
               <Route
-                path="/settings"
+                path="/settings/:section"
                 element={<Settings backendAvailable={backendAvailable} />}
               />
               <Route

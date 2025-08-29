@@ -1,4 +1,6 @@
 // file: webui/src/UserManagement.jsx
+// version: 1.1.0
+// guid: a8b4cf1e-ba73-44c0-89d2-e671134e8c63
 import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
@@ -167,20 +169,22 @@ export default function UserManagement({ backendAvailable = true }) {
             <TableBody>
               {users.map((user, index) => (
                 <TableRow key={user.id || index}>
-                  <TableCell>{user.username || user.name || 'N/A'}</TableCell>
-                  <TableCell>{user.email || 'N/A'}</TableCell>
+                  <TableCell>
+                    {user?.username || user?.name || user?.id || 'Unknown User'}
+                  </TableCell>
+                  <TableCell>{user?.email || 'No email'}</TableCell>
                   <TableCell>
                     <Chip
-                      label={user.role || 'user'}
+                      label={user?.role || 'user'}
                       size="small"
-                      color={user.role === 'admin' ? 'primary' : 'default'}
+                      color={user?.role === 'admin' ? 'primary' : 'default'}
                     />
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={user.active !== false ? 'Active' : 'Inactive'}
+                      label={user?.active ? 'Active' : 'Inactive'}
                       size="small"
-                      color={user.active !== false ? 'success' : 'default'}
+                      color={user?.active ? 'success' : 'default'}
                     />
                   </TableCell>
                   <TableCell>

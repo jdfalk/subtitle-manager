@@ -1,4 +1,6 @@
 // file: webui/src/Settings.jsx
+// version: 1.1.0
+// guid: b1c2d3e4-f5a6-4b7c-8d9e-0a1b2c3d4e5f
 
 import {
   Security as AuthIcon,
@@ -27,11 +29,13 @@ import {
 } from '@mui/material';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import ImportDialog from './components/ImportDialog.jsx';
 import LanguageSelector from './components/LanguageSelector.jsx';
 import LoadingComponent from './components/LoadingComponent.jsx';
 import ProviderCard from './components/ProviderCard.jsx';
 import ProviderConfigDialog from './components/ProviderConfigDialog.jsx';
+import BackButton from './components/BackButton.jsx';
 import { apiService } from './services/api.js';
 
 // Lazy load settings components for better performance
@@ -58,6 +62,7 @@ const TagManagement = lazy(() => import('./TagManagement.jsx'));
  */
 export default function Settings({ backendAvailable = true }) {
   const { t } = useTranslation();
+  const { section } = useParams();
   const [activeTab, setActiveTab] = useState(0);
   const [_config, setConfig] = useState(null);
   const [providers, setProviders] = useState([]);
@@ -581,6 +586,15 @@ export default function Settings({ backendAvailable = true }) {
     },
   ];
 
+  const sectionIndex = tabs.findIndex(
+    tab => tab.label.toLowerCase() === section
+  );
+  useEffect(() => {
+    if (sectionIndex >= 0) {
+      setActiveTab(sectionIndex);
+    }
+  }, [sectionIndex]);
+
   if (loading) {
     return (
       <Box
@@ -599,6 +613,7 @@ export default function Settings({ backendAvailable = true }) {
       <Typography variant="h4" component="h1" gutterBottom>
         Settings
       </Typography>
+      <BackButton />
 
       {/* Backend availability warning */}
       {!backendAvailable && (
