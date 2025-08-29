@@ -29,7 +29,8 @@ var userListCmd = &cobra.Command{
 			return err
 		}
 		for _, u := range users {
-			cmd.Printf("%s\t%s\t%s\t%s\n", u.ID, u.Username, u.Role, u.Email)
+			role := u.GetMetadata()["role"] // Extract role from metadata
+			cmd.Printf("%s\t%s\t%s\t%s\n", u.GetId(), u.GetUsername(), role, u.GetEmail())
 		}
 		return nil
 	},

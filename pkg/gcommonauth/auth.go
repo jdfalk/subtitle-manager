@@ -1,5 +1,5 @@
 // file: pkg/gcommonauth/auth.go
-// version: 1.0.0
+// version: 2.0.0
 // guid: ec8f6814-42cc-41ab-956a-a0ee798664a4
 package gcommonauth
 
@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // CreateUser inserts a new user with a hashed password.
@@ -195,31 +197,33 @@ func CleanupExpiredSessions(db *sql.DB) error {
 }
 
 // User represents an account in the system. ID is stored as a string for
-// convenience when printing. The JSON struct tags ensure the API returns fields
-// in lowercase so the frontend can parse them correctly.
-type User struct {
-	ID        string    `json:"id"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Role      string    `json:"role"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-// ListUsers returns all users ordered by ID.
-func ListUsers(db *sql.DB) ([]User, error) {
+// ListUsers returns all users ordered by ID using gcommon User types.
+func ListUsers(db *sql.DB) ([]*common.User, error) {
 	rows, err := db.Query(`SELECT id, username, email, role, created_at FROM users ORDER BY id`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var out []User
+	var out []*common.User
 	for rows.Next() {
-		var u User
+		u := &common.User{}
 		var id int64
-		if err := rows.Scan(&id, &u.Username, &u.Email, &u.Role, &u.CreatedAt); err != nil {
+		var username, email, role string
+		var createdAt time.Time
+		if err := rows.Scan(&id, &username, &email, &role, &createdAt); err != nil {
 			return nil, err
 		}
-		u.ID = strconv.FormatInt(id, 10)
+		// Use opaque API to set fields
+		u.SetId(strconv.FormatInt(id, 10))
+		u.SetUsername(username)
+		u.SetEmail(email)
+		u.SetCreatedAt(timestamppb.New(createdAt))
+		
+		// Store role in metadata since User doesn't have a role field
+		metadata := make(map[string]string)
+		metadata["role"] = role
+		u.SetMetadata(metadata)
+		
 		out = append(out, u)
 	}
 	return out, rows.Err()
