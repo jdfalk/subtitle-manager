@@ -1,0 +1,20 @@
+{
+  "file": "CHANGELOG.md",
+  "mode": "changelog-entry",
+  "content": "### Added\n\n- Replace local databasepb with gcommon database types",
+  "guid": "927f69b4-7112-49b8-ac31-be2dcced5733",
+  "created_at": "2025-08-29T03:48:11Z",
+  "processed_at": null,
+  "failed_at": null,
+  "sequence": 0,
+  "parent_guid": null,
+  "options": {
+    "section": null,
+    "after": null,
+    "before": null,
+    "task_id": null,
+    "badge_name": null,
+    "priority": null,
+    "category": null
+  }
+}

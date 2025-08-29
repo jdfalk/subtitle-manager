@@ -1,5 +1,5 @@
 <!-- file: CHANGELOG.md -->
-<!-- version: 1.0.2 -->
+<!-- version: 1.0.3 -->
 <!-- guid: 6a7b8c9d-0e1f-2a3b-4c5d-6e7f8a9b0c1d -->
 
 # Changelog
@@ -7,6 +7,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+### Added
+
+- Replace local databasepb with gcommon database types
 
 ### Changed
 

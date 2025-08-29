@@ -1,0 +1,13 @@
+{
+  "action": "create",
+  "title": "Replace databasepb with gcommon database",
+  "body": "Migrate codebase to use gcommon database protobuf types and remove local databasepb package",
+  "labels": ["gcommon", "database"],
+  "guid": "48383d01-ab3a-44fb-824b-3c09852a052f",
+  "legacy_guid": "create-replace-databasepb-with-gcommon-database-2025-08-29",
+  "created_at": "2025-08-29T03:48:04.000Z",
+  "processed_at": null,
+  "failed_at": null,
+  "sequence": 0,
+  "parent_guid": null
+}

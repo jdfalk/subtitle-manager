@@ -1039,3 +1039,5 @@ audio track details. The `splitLines` helper has been updated accordingly.
 Review /api/sync/batch test edge cases
 
 Validate codex-rebase.sh AI conflict resolution
+
+Verify gcommon database migration across modules
