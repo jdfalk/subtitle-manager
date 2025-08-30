@@ -1,5 +1,5 @@
 // file: cmd/grpcsetconfig.go
-// version: 1.2.0
+// version: 3.0.0
 // guid: e252459e-8583-447a-81d5-1ac0eb51979c
 
 package cmd
@@ -13,7 +13,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/jdfalk/subtitle-manager/pkg/configpb"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 )
 
@@ -34,30 +33,18 @@ var grpcSetConfigCmd = &cobra.Command{
 		}
 		defer conn.Close()
 		client := pb.NewTranslatorServiceClient(conn)
-		cfg := &configpb.SubtitleManagerConfig{}
-		switch grpcConfigKey {
-		case "google_api_key":
-			cfg.SetGoogleApiKey(grpcConfigValue)
-		case "openai_api_key":
-			cfg.SetOpenaiApiKey(grpcConfigValue)
-		case "db_path":
-			cfg.SetDbPath(grpcConfigValue)
-		case "db_backend":
-			cfg.SetDbBackend(grpcConfigValue)
-		case "sqlite3_filename":
-			cfg.SetSqlite3Filename(grpcConfigValue)
-		case "log_file":
-			cfg.SetLogFile(grpcConfigValue)
-		default:
-			return fmt.Errorf("unknown config key: %s", grpcConfigKey)
-		}
-
+		
+		// Create a SetConfigRequest using the updated protobuf
 		req := &pb.SetConfigRequest{}
-		req.SetConfig(cfg)
+		req.SetKey(grpcConfigKey)
+		req.SetValue(grpcConfigValue)
+		
 		_, err = client.SetConfig(ctx, req)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to set config: %v", err)
 		}
+		
+		cmd.Printf("Successfully set %s = %s\n", grpcConfigKey, grpcConfigValue)
 		return nil
 	},
 }

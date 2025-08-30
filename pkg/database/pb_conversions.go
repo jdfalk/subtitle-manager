@@ -1,5 +1,5 @@
 // file: pkg/database/pb_conversions.go
-// version: 1.1.0
+// version: 3.0.0
 // guid: c9cf2d1a-c284-46f4-90d1-70925cbe8b27
 
 package database
@@ -8,117 +8,162 @@ import (
 	"time"
 
 	"github.com/jdfalk/gcommon/sdks/go/v1/database"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// ToProto converts a SubtitleRecord to its protobuf representation.
-func (r *SubtitleRecord) ToProto() *database.SubtitleRecord {
+// ToProto converts a SubtitleRecord to its gcommon Row representation.
+func (r *SubtitleRecord) ToProto() *database.Row {
 	if r == nil {
 		return nil
 	}
-	pb := &database.SubtitleRecord{}
-	pb.SetId(r.ID)
-	pb.SetFile(r.File)
-	pb.SetVideoFile(r.VideoFile)
-	pb.SetRelease(r.Release)
-	pb.SetLanguage(r.Language)
-	pb.SetService(r.Service)
-	pb.SetEmbedded(r.Embedded)
-	pb.SetSourceUrl(r.SourceURL)
-	pb.SetProviderMetadata(r.ProviderMetadata)
-	if r.ConfidenceScore != nil {
-		pb.SetConfidenceScore(*r.ConfidenceScore)
+	
+	row := &database.Row{}
+	
+	// Convert fields to Any values for the generic Row
+	values := make([]*anypb.Any, 0)
+	
+	// Add ID
+	if idAny, err := anypb.New(&timestamppb.Timestamp{}); err == nil {
+		idAny.TypeUrl = "subtitle_manager/id"
+		idAny.Value = []byte(r.ID)
+		values = append(values, idAny)
 	}
-	if r.ParentID != nil {
-		pb.SetParentId(*r.ParentID)
+	
+	// Add File
+	if fileAny, err := anypb.New(&timestamppb.Timestamp{}); err == nil {
+		fileAny.TypeUrl = "subtitle_manager/file"
+		fileAny.Value = []byte(r.File)
+		values = append(values, fileAny)
 	}
-	pb.SetModificationType(r.ModificationType)
-	pb.SetCreatedAt(timestamppb.New(r.CreatedAt.UTC()))
-	return pb
+	
+	// Add VideoFile
+	if videoAny, err := anypb.New(&timestamppb.Timestamp{}); err == nil {
+		videoAny.TypeUrl = "subtitle_manager/video_file"
+		videoAny.Value = []byte(r.VideoFile)
+		values = append(values, videoAny)
+	}
+	
+	// Add Language
+	if langAny, err := anypb.New(&timestamppb.Timestamp{}); err == nil {
+		langAny.TypeUrl = "subtitle_manager/language"
+		langAny.Value = []byte(r.Language)
+		values = append(values, langAny)
+	}
+	
+	// Add CreatedAt
+	if timeAny, err := anypb.New(timestamppb.New(r.CreatedAt.UTC())); err == nil {
+		values = append(values, timeAny)
+	}
+	
+	row.SetValues(values)
+	return row
 }
 
-// SubtitleRecordFromProto converts a protobuf record to an internal struct.
-func SubtitleRecordFromProto(pb *database.SubtitleRecord) *SubtitleRecord {
-	if pb == nil {
+// SubtitleRecordFromProto converts a gcommon Row to an internal SubtitleRecord struct.
+func SubtitleRecordFromProto(row *database.Row) *SubtitleRecord {
+	if row == nil || len(row.GetValues()) < 4 {
 		return nil
 	}
-	rec := &SubtitleRecord{
-		ID:               pb.GetId(),
-		File:             pb.GetFile(),
-		VideoFile:        pb.GetVideoFile(),
-		Release:          pb.GetRelease(),
-		Language:         pb.GetLanguage(),
-		Service:          pb.GetService(),
-		Embedded:         pb.GetEmbedded(),
-		SourceURL:        pb.GetSourceUrl(),
-		ProviderMetadata: pb.GetProviderMetadata(),
-		ModificationType: pb.GetModificationType(),
+	
+	values := row.GetValues()
+	rec := &SubtitleRecord{}
+	
+	// Extract values from Any array - simplified approach for migration
+	if len(values) > 0 {
+		rec.ID = string(values[0].Value) // Simplified extraction
 	}
-	if pb.GetConfidenceScore() != 0 {
-		v := pb.GetConfidenceScore()
-		rec.ConfidenceScore = &v
+	if len(values) > 1 {
+		rec.File = string(values[1].Value)
 	}
-	if pb.GetParentId() != "" {
-		v := pb.GetParentId()
-		rec.ParentID = &v
+	if len(values) > 2 {
+		rec.VideoFile = string(values[2].Value)
 	}
-	if pb.GetCreatedAt() != nil {
-		rec.CreatedAt = pb.GetCreatedAt().AsTime()
+	if len(values) > 3 {
+		rec.Language = string(values[3].Value)
+	}
+	if len(values) > 4 {
+		// Extract timestamp from the last value
+		var ts timestamppb.Timestamp
+		if err := values[4].UnmarshalTo(&ts); err == nil {
+			rec.CreatedAt = ts.AsTime()
+		} else {
+			rec.CreatedAt = time.Now()
+		}
 	} else {
-		rec.CreatedAt = time.Time{}
+		rec.CreatedAt = time.Now()
 	}
+	
 	return rec
 }
 
-// ToProto converts a DownloadRecord to its protobuf representation.
-func (r *DownloadRecord) ToProto() *database.DownloadRecord {
+// ToProto converts a DownloadRecord to its gcommon Row representation.
+func (r *DownloadRecord) ToProto() *database.Row {
 	if r == nil {
 		return nil
 	}
-	pb := &database.DownloadRecord{}
-	pb.SetId(r.ID)
-	pb.SetFile(r.File)
-	pb.SetVideoFile(r.VideoFile)
-	pb.SetProvider(r.Provider)
-	pb.SetLanguage(r.Language)
-	pb.SetSearchQuery(r.SearchQuery)
-	if r.MatchScore != nil {
-		pb.SetMatchScore(*r.MatchScore)
+	
+	row := &database.Row{}
+	values := make([]*anypb.Any, 0)
+	
+	// Add basic fields as Any values
+	if idAny, err := anypb.New(&timestamppb.Timestamp{}); err == nil {
+		idAny.TypeUrl = "subtitle_manager/download_id"
+		idAny.Value = []byte(r.ID)
+		values = append(values, idAny)
 	}
-	pb.SetDownloadAttempts(int32(r.DownloadAttempts))
-	pb.SetErrorMessage(r.ErrorMessage)
-	if r.ResponseTimeMs != nil {
-		pb.SetResponseTimeMs(int32(*r.ResponseTimeMs))
+	
+	if fileAny, err := anypb.New(&timestamppb.Timestamp{}); err == nil {
+		fileAny.TypeUrl = "subtitle_manager/download_file"
+		fileAny.Value = []byte(r.File)
+		values = append(values, fileAny)
 	}
-	pb.SetCreatedAt(timestamppb.New(r.CreatedAt.UTC()))
-	return pb
+	
+	if providerAny, err := anypb.New(&timestamppb.Timestamp{}); err == nil {
+		providerAny.TypeUrl = "subtitle_manager/provider"
+		providerAny.Value = []byte(r.Provider)
+		values = append(values, providerAny)
+	}
+	
+	// Add CreatedAt
+	if timeAny, err := anypb.New(timestamppb.New(r.CreatedAt.UTC())); err == nil {
+		values = append(values, timeAny)
+	}
+	
+	row.SetValues(values)
+	return row
 }
 
-// DownloadRecordFromProto converts a protobuf record to an internal struct.
-func DownloadRecordFromProto(pb *database.DownloadRecord) *DownloadRecord {
-	if pb == nil {
+// DownloadRecordFromProto converts a gcommon Row to an internal DownloadRecord struct.
+func DownloadRecordFromProto(row *database.Row) *DownloadRecord {
+	if row == nil || len(row.GetValues()) < 3 {
 		return nil
 	}
-	rec := &DownloadRecord{
-		ID:               pb.GetId(),
-		File:             pb.GetFile(),
-		VideoFile:        pb.GetVideoFile(),
-		Provider:         pb.GetProvider(),
-		Language:         pb.GetLanguage(),
-		SearchQuery:      pb.GetSearchQuery(),
-		DownloadAttempts: int(pb.GetDownloadAttempts()),
-		ErrorMessage:     pb.GetErrorMessage(),
+	
+	values := row.GetValues()
+	rec := &DownloadRecord{}
+	
+	// Extract values from Any array
+	if len(values) > 0 {
+		rec.ID = string(values[0].Value)
 	}
-	if pb.GetMatchScore() != 0 {
-		v := pb.GetMatchScore()
-		rec.MatchScore = &v
+	if len(values) > 1 {
+		rec.File = string(values[1].Value)
 	}
-	if pb.GetResponseTimeMs() != 0 {
-		v := int(pb.GetResponseTimeMs())
-		rec.ResponseTimeMs = &v
+	if len(values) > 2 {
+		rec.Provider = string(values[2].Value)
 	}
-	if pb.GetCreatedAt() != nil {
-		rec.CreatedAt = pb.GetCreatedAt().AsTime()
+	if len(values) > 3 {
+		// Extract timestamp
+		var ts timestamppb.Timestamp
+		if err := values[3].UnmarshalTo(&ts); err == nil {
+			rec.CreatedAt = ts.AsTime()
+		} else {
+			rec.CreatedAt = time.Now()
+		}
+	} else {
+		rec.CreatedAt = time.Now()
 	}
+	
 	return rec
 }

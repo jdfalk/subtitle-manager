@@ -9,7 +9,6 @@
 package translatorpb
 
 import (
-	configpb "github.com/jdfalk/subtitle-manager/pkg/configpb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/gofeaturespb"
@@ -569,10 +568,10 @@ func (b0 GetConfigRequest_builder) Build() *GetConfigRequest {
 }
 
 type GetConfigResponse struct {
-	state             protoimpl.MessageState          `protogen:"opaque.v1"`
-	xxx_hidden_Config *configpb.SubtitleManagerConfig `protobuf:"bytes,1,opt,name=config"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ConfigValues map[string]string      `protobuf:"bytes,1,rep,name=config_values,json=configValues" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *GetConfigResponse) Reset() {
