@@ -1,5 +1,5 @@
 // file: cmd/grpcsetconfig.go
-// version: 2.0.0
+// version: 3.0.0
 // guid: e252459e-8583-447a-81d5-1ac0eb51979c
 
 package cmd
@@ -13,8 +13,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/jdfalk/gcommon/sdks/go/v1/common"
-	"github.com/jdfalk/gcommon/sdks/go/v1/config"
 	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 )
 
@@ -35,18 +33,18 @@ var grpcSetConfigCmd = &cobra.Command{
 		}
 		defer conn.Close()
 		client := pb.NewTranslatorServiceClient(conn)
-		// Create a gcommon ConfigValue for the setting
-		configValue := &common.ConfigValue{}
-		configValue.SetStringValue(grpcConfigValue)
 		
-		// Create a SetConfigRequest
-		req := &config.SetConfigRequest{}
+		// Create a SetConfigRequest using the updated protobuf
+		req := &pb.SetConfigRequest{}
 		req.SetKey(grpcConfigKey)
-		req.SetValue(configValue)
+		req.SetValue(grpcConfigValue)
 		
-		// Note: The actual gRPC service call would depend on the service implementation
-		// For now, this shows the pattern of using gcommon config types
-		_ = req // Placeholder to use the variable
+		_, err = client.SetConfig(ctx, req)
+		if err != nil {
+			return fmt.Errorf("failed to set config: %v", err)
+		}
+		
+		cmd.Printf("Successfully set %s = %s\n", grpcConfigKey, grpcConfigValue)
 		return nil
 	},
 }
