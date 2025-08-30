@@ -1,5 +1,5 @@
 // file: pkg/translator/translator.go
-// version: 1.1.0
+// version: 1.2.0
 // guid: 3bf0f8c4-18e8-4d30-a0f6-8e4a4f3f0f62
 
 package translator
@@ -228,7 +228,8 @@ func GRPCSetConfig(settings map[string]string, addr string) error {
 	// }
 	// defer conn.Close()
 	// client := translatorpb.NewTranslatorServiceClient(conn)
-	// cfg := &configpb.SubtitleManagerConfig{}
+	// Example of using gcommon config types for configuration
+	// configMap := make(map[string]*common.ConfigValue)
 	// for k, v := range settings {
 	// 	switch k {
 	// 	case "google_api_key":
