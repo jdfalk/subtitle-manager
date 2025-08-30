@@ -1,12 +1,11 @@
 // file: proto/subtitle/translator/v1/translator.proto
-// version: 1.6.0
+// version: 2.0.0
 // guid: 70eca88d-31fe-4044-8b76-a22bd3c9e0bd
 
 edition = "2023";
 
 package subtitle.translator.v1;
 
-import "config.proto"; // corrected import path
 import "google/protobuf/go_features.proto";
 
 option features.(pb.go).api_level = API_HYBRID;
@@ -42,15 +41,19 @@ message TranslateResponse {
   repeated Error errors = 2;
 }
 
-// Standard request/response wrappers for config operations
+// Standard request/response wrappers for config operations using gcommon types
 message GetConfigRequest {}
 
 message GetConfigResponse {
-  subtitle.config.v1.SubtitleManagerConfig config = 1;
+  // Using map of string->ConfigValue for gcommon compatibility
+  // Each key corresponds to a configuration setting
+  map<string, string> config_values = 1;
 }
 
 message SetConfigRequest {
-  subtitle.config.v1.SubtitleManagerConfig config = 1;
+  // Key-value pairs for configuration settings
+  string key = 1;
+  string value = 2;
 }
 
 message SetConfigResponse {}
