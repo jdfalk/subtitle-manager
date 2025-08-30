@@ -9,7 +9,6 @@
 package translatorpb
 
 import (
-	configpb "github.com/jdfalk/subtitle-manager/pkg/configpb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/gofeaturespb"
@@ -495,8 +494,8 @@ func (b0 GetConfigRequest_builder) Build() *GetConfigRequest {
 }
 
 type GetConfigResponse struct {
-	state         protoimpl.MessageState          `protogen:"hybrid.v1"`
-	Config        *configpb.SubtitleManagerConfig `protobuf:"bytes,1,opt,name=config" json:"config,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	ConfigValues  map[string]string      `protobuf:"bytes,1,rep,name=config_values,json=configValues" json:"config_values,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -526,15 +525,15 @@ func (x *GetConfigResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *GetConfigResponse) GetConfig() *configpb.SubtitleManagerConfig {
+func (x *GetConfigResponse) GetConfigValues() map[string]string {
 	if x != nil {
-		return x.Config
+		return x.ConfigValues
 	}
 	return nil
 }
 
-func (x *GetConfigResponse) SetConfig(v *configpb.SubtitleManagerConfig) {
-	x.Config = v
+func (x *GetConfigResponse) SetConfigValues(v map[string]string) {
+	x.ConfigValues = v
 }
 
 func (x *GetConfigResponse) HasConfig() bool {
@@ -563,8 +562,9 @@ func (b0 GetConfigResponse_builder) Build() *GetConfigResponse {
 }
 
 type SetConfigRequest struct {
-	state         protoimpl.MessageState          `protogen:"hybrid.v1"`
-	Config        *configpb.SubtitleManagerConfig `protobuf:"bytes,1,opt,name=config" json:"config,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Key           *string                `protobuf:"bytes,1,opt,name=key" json:"key,omitempty"`
+	Value         *string                `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -594,26 +594,26 @@ func (x *SetConfigRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *SetConfigRequest) GetConfig() *configpb.SubtitleManagerConfig {
-	if x != nil {
-		return x.Config
+func (x *SetConfigRequest) GetKey() string {
+	if x != nil && x.Key != nil {
+		return *x.Key
 	}
-	return nil
+	return ""
 }
 
-func (x *SetConfigRequest) SetConfig(v *configpb.SubtitleManagerConfig) {
-	x.Config = v
+func (x *SetConfigRequest) SetKey(v string) {
+	x.Key = &v
 }
 
-func (x *SetConfigRequest) HasConfig() bool {
-	if x == nil {
-		return false
+func (x *SetConfigRequest) GetValue() string {
+	if x != nil && x.Value != nil {
+		return *x.Value
 	}
-	return x.Config != nil
+	return ""
 }
 
-func (x *SetConfigRequest) ClearConfig() {
-	x.Config = nil
+func (x *SetConfigRequest) SetValue(v string) {
+	x.Value = &v
 }
 
 type SetConfigRequest_builder struct {
