@@ -1,6 +1,6 @@
 // file: pkg/gcommon/config/config.go
-// version: 2.0.0
-// guid: 9f89692c-72ac-4bc6-b7be-7ff20bbf12e3
+// version: 1.2.0
+// guid: af6f4b9b-3c1b-4c2e-99f5-d45e6b7c8d9e
 
 package config
 
@@ -59,33 +59,38 @@ func Load(cmd *cobra.Command, cfgFile string) error {
 // Returns a map of key-value pairs that can be used with SetConfigRequest.
 func ToProto() map[string]*common.ConfigValue {
 	configMap := make(map[string]*common.ConfigValue)
-	
+
 	// Create config values for each setting
 	if dbPath := viper.GetString("db_path"); dbPath != "" {
 		configMap["db_path"] = &common.ConfigValue{}
 		configMap["db_path"].SetStringValue(dbPath)
 	}
-	
+
 	if dbBackend := viper.GetString("db_backend"); dbBackend != "" {
 		configMap["db_backend"] = &common.ConfigValue{}
 		configMap["db_backend"].SetStringValue(dbBackend)
 	}
-	
+
+	if sqlite3Filename := viper.GetString("sqlite3_filename"); sqlite3Filename != "" {
+		configMap["sqlite3_filename"] = &common.ConfigValue{}
+		configMap["sqlite3_filename"].SetStringValue(sqlite3Filename)
+	}
+
 	if logFile := viper.GetString("log_file"); logFile != "" {
 		configMap["log_file"] = &common.ConfigValue{}
 		configMap["log_file"].SetStringValue(logFile)
 	}
-	
+
 	if googleKey := viper.GetString("google_api_key"); googleKey != "" {
 		configMap["google_api_key"] = &common.ConfigValue{}
 		configMap["google_api_key"].SetStringValue(googleKey)
 	}
-	
+
 	if openaiKey := viper.GetString("openai_api_key"); openaiKey != "" {
 		configMap["openai_api_key"] = &common.ConfigValue{}
 		configMap["openai_api_key"].SetStringValue(openaiKey)
 	}
-	
+
 	return configMap
 }
 
@@ -94,26 +99,28 @@ func ApplyProto(configMap map[string]*common.ConfigValue) {
 	if configMap == nil {
 		return
 	}
-	
+
 	if dbPath, ok := configMap["db_path"]; ok && dbPath.GetStringValue() != "" {
 		viper.Set("db_path", dbPath.GetStringValue())
 	}
-	
+
 	if dbBackend, ok := configMap["db_backend"]; ok && dbBackend.GetStringValue() != "" {
 		viper.Set("db_backend", dbBackend.GetStringValue())
 	}
-	
+
+	if sqlite3Filename, ok := configMap["sqlite3_filename"]; ok && sqlite3Filename.GetStringValue() != "" {
+		viper.Set("sqlite3_filename", sqlite3Filename.GetStringValue())
+	}
+
 	if logFile, ok := configMap["log_file"]; ok && logFile.GetStringValue() != "" {
 		viper.Set("log_file", logFile.GetStringValue())
 	}
-	
+
 	if googleKey, ok := configMap["google_api_key"]; ok && googleKey.GetStringValue() != "" {
 		viper.Set("google_api_key", googleKey.GetStringValue())
 	}
-	
+
 	if openaiKey, ok := configMap["openai_api_key"]; ok && openaiKey.GetStringValue() != "" {
 		viper.Set("openai_api_key", openaiKey.GetStringValue())
 	}
 }
-
-

@@ -4,9 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
-	"strconv"
 
-	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 )
 
