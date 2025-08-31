@@ -1,5 +1,5 @@
 # file: .github/workflows/release-protobuf.yml
-# version: 1.0.0
+# version: 1.1.0
 # guid: 9c2f1b18-7c4e-4c3a-9b54-2b5d9c7e2af1
 
 name: Release Protobuf Assets
@@ -62,6 +62,13 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
+          cache-dependency-path: |
+            sdks/python/requirements.txt
+            scripts/requirements-notifications.txt
+            scripts/copilot-firewall/requirements.txt
+
+      - name: Ensure pip cache directory exists
+        run: mkdir -p ~/.cache/pip
 
       - name: Install protoc
         run: |
