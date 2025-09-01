@@ -1,0 +1,6 @@
+# file: requirements.txt
+# version: 1.0.0
+# guid: e5f6a7b8-c9d0-1234-ef56-789012345678
+
+# GitHub Issue Analysis and Automation Dependencies
+requests>=2.25.0

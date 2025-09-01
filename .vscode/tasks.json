@@ -206,6 +206,76 @@
         "-m",
         "fix(deps): resolve dependabot.yml merge conflicts and add comprehensive configuration\n\nFixed merge conflicts in dependabot.yml and updated with complete language-aware configuration supporting Go, Docker, GitHub Actions, npm (webui), and Python scripts.\n\nFiles changed:\n- .github/dependabot.yml - Resolved conflicts and added comprehensive multi-language support"
       ]
+    },
+    {
+      "label": "Issue Analysis - High Priority",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "scripts/issue_automation_wrapper.py",
+        "analyze",
+        "--output",
+        "summary"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "Issue Analysis - Specific Issue",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "scripts/issue_automation_wrapper.py",
+        "analyze",
+        "--issue-number",
+        "${input:issueNumber}",
+        "--output",
+        "detailed"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "Issue Analysis - Repository Scan",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "scripts/issue_automation_wrapper.py",
+        "analyze",
+        "--min-priority",
+        "${input:minPriority}",
+        "--output",
+        "summary"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "Issue Status Check",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "scripts/issue_automation_wrapper.py",
+        "status"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": []
     }
   ],
   "inputs": [
@@ -219,6 +289,17 @@
       "id": "filePattern",
       "description": "File pattern to add (e.g., '*.proto', 'pkg/auth/', '**/*.go')",
       "default": "*.proto",
+      "type": "promptString"
+    },
+    {
+      "id": "issueNumber",
+      "description": "GitHub issue number to analyze",
+      "type": "promptString"
+    },
+    {
+      "id": "minPriority",
+      "description": "Minimum priority score for analysis (default: 60)",
+      "default": "60",
       "type": "promptString"
     }
   ]
