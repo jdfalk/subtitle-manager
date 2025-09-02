@@ -51,7 +51,8 @@ func (s *Server) Translate(ctx context.Context, req *translatorpb.TranslateReque
 		return nil, err
 	}
 
-	response := &translatorpb.TranslateResponse{}
-	response.SetTranslatedText(result)
+	response := &translatorpb.TranslateResponse{
+		TranslatedText: result,
+	}
 	return response, nil
 }
