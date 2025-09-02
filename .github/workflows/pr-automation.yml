@@ -1,0 +1,20 @@
+name: PR Automation
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  auto-labeling:
+    name: Auto Label PR
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Apply file-based labels
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+          sync-labels: true
