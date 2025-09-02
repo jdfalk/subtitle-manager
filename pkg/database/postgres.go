@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 	_ "github.com/lib/pq"
 )
 
@@ -825,4 +826,119 @@ func (p *PostgresStore) GetMonitoredItemsToCheck(interval time.Duration) ([]Moni
 		recs = append(recs, r)
 	}
 	return recs, rows.Err()
+}
+
+
+// CleanupExpiredSessions removes expired sessions.
+func (p *PostgresStore) CleanupExpiredSessions() error {
+// TODO: Implement session cleanup
+return nil
+}
+
+// CreateAPIKey creates an API key for a user.
+func (p *PostgresStore) CreateAPIKey(userID, key string) error {
+// TODO: Implement API key creation
+return nil
+}
+
+// CreateOneTimeToken creates a one-time use token.
+func (p *PostgresStore) CreateOneTimeToken(userID, token string, duration time.Duration) error {
+// TODO: Implement one-time token creation
+return nil
+}
+
+// ValidateOneTimeToken validates a one-time token and returns user ID.
+func (p *PostgresStore) ValidateOneTimeToken(token string) (string, error) {
+// TODO: Implement one-time token validation
+return "", nil
+}
+
+// SetDashboardLayout sets dashboard layout preferences for a user.
+func (p *PostgresStore) SetDashboardLayout(userID, layout string) error {
+// TODO: Implement dashboard layout storage
+return nil
+}
+
+// GetDashboardLayout gets dashboard layout preferences for a user.
+func (p *PostgresStore) GetDashboardLayout(userID string) (string, error) {
+// TODO: Implement dashboard layout retrieval
+return "", nil
+}
+
+// CreateSession creates a new user session.
+func (p *PostgresStore) CreateSession(userID, token string, duration time.Duration) error {
+// TODO: Implement session creation
+return nil
+}
+
+// ValidateSession validates a session token and returns user ID.
+func (p *PostgresStore) ValidateSession(token string) (string, error) {
+// TODO: Implement session validation
+return "", nil
+}
+
+// InvalidateSession invalidates a specific session.
+func (p *PostgresStore) InvalidateSession(token string) error {
+// TODO: Implement session invalidation
+return nil
+}
+
+// InvalidateUserSessions invalidates all sessions for a user.
+func (p *PostgresStore) InvalidateUserSessions(userID string) error {
+// TODO: Implement user session invalidation
+return nil
+}
+
+// CreateUser creates a new user with hashed password and returns user ID.
+func (p *PostgresStore) CreateUser(username, passwordHash, email, role string) (string, error) {
+// TODO: Implement user creation
+return "", nil
+}
+
+// GetUserByEmail retrieves a user by email.
+func (p *PostgresStore) GetUserByEmail(email string) (*common.User, error) {
+// TODO: Implement user retrieval by email
+return nil, nil
+}
+
+
+// GetUserByID retrieves a user by ID.
+func (p *PostgresStore) GetUserByID(userID string) (*common.User, error) {
+// TODO: Implement user retrieval by ID
+return nil, nil
+}
+
+
+// GetUserByUsername retrieves a user by username.
+func (p *PostgresStore) GetUserByUsername(username string) (*common.User, error) {
+// TODO: Implement user retrieval by username
+return nil, nil
+}
+
+
+// ListUsers retrieves all users.
+func (p *PostgresStore) ListUsers() ([]*common.User, error) {
+// TODO: Implement user listing
+return nil, nil
+}
+
+
+// UpdateUserPassword updates a user's password hash.
+func (p *PostgresStore) UpdateUserPassword(userID, passwordHash string) error {
+// TODO: Implement password update
+return nil
+}
+
+
+// UpdateUserRole updates a user's role.
+func (p *PostgresStore) UpdateUserRole(userID, role string) error {
+// TODO: Implement role update
+return nil
+}
+
+
+// ValidateAPIKey validates an API key and returns user ID.
+func (p *PostgresStore) ValidateAPIKey(key string) (string, error) {
+// TODO: Implement API key validation
+return "", nil
 }

@@ -11,6 +11,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 )
 
 // OpenSQLStore opens or creates an SQLite database and returns a SQLStore.
