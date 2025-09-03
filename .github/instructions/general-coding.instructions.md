@@ -1,6 +1,6 @@
-# file: .github/instructions/general-coding.instructions.md
-# version: 1.6.0
-# guid: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+<!-- file: .github/instructions/general-coding.instructions.md -->
+<!-- version: 2.0.0 -->
+<!-- guid: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d -->
 <!-- DO NOT EDIT: This file is managed centrally in ghcommon repository -->
 <!-- To update: Create an issue/PR in jdfalk/ghcommon -->
 
@@ -19,24 +19,19 @@ documentation, and workflow rules in this repository. They are referenced by
 language- and task-specific instructions, and are always included by default in
 Copilot customization.
 
-- Follow the [commit message standards](../commit-messages.md) and
-  [pull request description guidelines](../pull-request-descriptions.md).
+- Follow conventional commit message standards and pull request guidelines.
 - All language/framework-specific style and workflow rules are now found in
   `.github/instructions/*.instructions.md` files. These are the only canonical
   source for code style, documentation, and workflow rules for each language or
   framework.
 - Document all code, classes, functions, and tests extensively, using the
   appropriate style for the language.
-- Use the Arrange-Act-Assert pattern for tests, and follow the
-  [test generation guidelines](../test-generation.md).
-- For agent/AI-specific instructions, see [AGENTS.md](../AGENTS.md) and related
-  files.
+- Use the Arrange-Act-Assert pattern for tests.
 - Do not duplicate rules; reference this file from more specific instructions.
 - For VS Code Copilot customization, this file is included via symlink in
   `.vscode/copilot/`.
 - **ALWAYS check before doing:** Before creating files, running operations, or executing scripts, always check current state first. Make all scripts and operations idempotent by checking if the desired state already exists before making changes.
 - **USE VS CODE TASKS FIRST:** ALWAYS use VS Code tasks when available instead of manual terminal commands. Tasks provide consistent logging, error handling, and automation. Only fall back to manual commands when no appropriate task exists.
-- **NO POINTLESS ECHO COMMANDS:** Never suggest running terminal commands that only echo success messages or confirmations. The user can see the work is complete from the conversation context.
 
 For more details and the full system, see
 [copilot-instructions.md](../copilot-instructions.md).
@@ -96,6 +91,52 @@ git add . && git commit -m "message" && git push
 - **Workspace Awareness**: Tasks run in correct directory with proper context
 - **Automation**: Tasks can chain together and include pre/post operations
 - **Debugging**: Log files provide complete audit trail for troubleshooting
+
+## Script Language Preference
+
+**MANDATORY RULE: Prefer Python for scripts unless they are incredibly simple.**
+
+When creating automation scripts, configuration tools, or data processing utilities:
+
+1. **FIRST CHOICE**: Python for any script with:
+   - API interactions (GitHub, REST APIs, etc.)
+   - JSON/YAML processing
+   - File manipulation beyond simple copying
+   - Error handling and logging
+   - Data parsing or transformation
+   - More than 20-30 lines of logic
+
+2. **SECOND CHOICE**: Shell scripts (bash/sh) only for:
+   - Simple file operations (copy, move, basic checks)
+   - Basic git commands
+   - Simple environment setup
+   - Scripts under 20 lines with minimal logic
+
+3. **CONVERSION REQUIRED**: When existing shell scripts become complex:
+   - Convert to Python when adding features
+   - Rewrite in Python if error handling is insufficient
+   - Migrate when API calls or JSON processing is needed
+
+### Examples
+
+**✅ CORRECT - Use Python for:**
+- GitHub API interactions
+- Configuration file processing
+- Multi-step automation workflows
+- Scripts with error handling requirements
+- Data validation and transformation
+
+**❌ INCORRECT - Don't use shell for:**
+- Complex JSON parsing
+- API authentication and error handling
+- Multi-repository operations
+- Scripts requiring robust error recovery
+
+**✅ ACCEPTABLE - Shell scripts for:**
+- Simple `cp`, `mv`, `mkdir` operations
+- Basic git commands with minimal logic
+- Environment variable setup
+- Simple file existence checks
 
 ## Required File Header (File Identification)
 
@@ -190,57 +231,6 @@ number:**
 
 **This applies to all files with version headers including documentation,
 templates, and configuration files.**
-
-## Documentation Update System
-
-When making documentation updates to `README.md`, `CHANGELOG.md`, `TODO.md`, or
-other documentation files, use the automated documentation update system instead
-of direct edits:
-
-### Creating Documentation Updates
-
-1. **Use the script**: Always use `scripts/create-doc-update.sh` to create
-   documentation updates
-2. **Available modes**:
-   - `append` - Add content to end of file
-   - `prepend` - Add content to beginning of file
-   - `replace-section` - Replace specific section
-   - `changelog-entry` - Add properly formatted changelog entry
-   - `task-add` - Add task to TODO list
-   - `task-complete` - Mark task as complete
-
-### Examples
-
-```bash
-# Add a new changelog entry
-./scripts/create-doc-update.sh --template changelog-feature "Added user authentication system"
-
-# Add a TODO task with high priority
-./scripts/create-doc-update.sh TODO.md "Implement OAuth2 integration" task-add --priority HIGH
-
-# Update a specific section
-./scripts/create-doc-update.sh README.md "Updated installation instructions" replace-section --section "Installation"
-
-# Interactive mode for complex updates
-./scripts/create-doc-update.sh --interactive
-```
-
-### Processing Updates
-
-- Updates are stored as JSON files in `.github/doc-updates/`
-- The workflow `docs-update.yml` automatically processes these files
-- Processed files are moved to `.github/doc-updates/processed/`
-- Changes can be made via direct commit or pull request
-
-### Benefits
-
-- **Consistency**: Standardized formatting across all documentation
-- **Traceability**: Each update has a GUID and timestamp
-- **Automation**: Reduces manual errors and ensures proper formatting
-- **Conflict Resolution**: Multiple agents can create updates simultaneously
-
-**Always use this system for documentation updates instead of direct file
-edits.**
 
 ## VS Code Tasks Implementation Details
 
