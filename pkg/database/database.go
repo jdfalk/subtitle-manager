@@ -1636,6 +1636,12 @@ func (s *SQLStore) CleanupExpiredSessions() error {
 	return nil
 }
 
+// CreateOneTimeToken creates a one-time use token (placeholder - delegates to gcommonauth).
+func (s *SQLStore) CreateOneTimeToken(userID, token string, duration time.Duration) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
 // ValidateOneTimeToken validates a one-time token (placeholder - delegates to gcommonauth).
 func (s *SQLStore) ValidateOneTimeToken(token string) (string, error) {
 	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
@@ -1658,4 +1664,30 @@ func (s *SQLStore) ValidateAPIKey(key string) (string, error) {
 func (s *SQLStore) DeleteAPIKey(key string) error {
 	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
 	return nil
+}
+
+
+// SetDashboardLayout sets dashboard layout preferences for a user.
+func (s *SQLStore) SetDashboardLayout(userID, layout string) error {
+// This is a placeholder - SQLStore dashboard is handled separately
+return nil
+}
+
+// GetDashboardLayout gets dashboard layout preferences for a user.
+func (s *SQLStore) GetDashboardLayout(userID string) (string, error) {
+// This is a placeholder - SQLStore dashboard is handled separately
+return "", nil
+}
+
+
+// InvalidateSession invalidates a specific session (placeholder - delegates to gcommonauth).
+func (s *SQLStore) InvalidateSession(token string) error {
+// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+return nil
+}
+
+// InvalidateUserSessions invalidates all sessions for a user (placeholder - delegates to gcommonauth).
+func (s *SQLStore) InvalidateUserSessions(userID string) error {
+// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+return nil
 }

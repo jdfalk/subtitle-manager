@@ -35,9 +35,10 @@ var grpcSetConfigCmd = &cobra.Command{
 		client := pb.NewTranslatorServiceClient(conn)
 		
 		// Create a SetConfigRequest using the updated protobuf
-		req := &pb.SetConfigRequest{}
-		req.SetKey(grpcConfigKey)
-		req.SetValue(grpcConfigValue)
+		req := &pb.SetConfigRequest{
+			Key:   grpcConfigKey,
+			Value: grpcConfigValue,
+		}
 		
 		_, err = client.SetConfig(ctx, req)
 		if err != nil {

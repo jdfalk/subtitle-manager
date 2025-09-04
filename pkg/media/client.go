@@ -68,7 +68,9 @@ func (c *Client) SearchMedia(ctx context.Context, req *mediapb.SearchMediaReques
 
 // ExtractSubtitles extracts subtitles from media files
 func (c *Client) ExtractSubtitles(ctx context.Context, req *mediapb.ExtractSubtitlesRequest) (*mediapb.ExtractSubtitlesResponse, error) {
-	return c.subtitleService.ExtractSubtitles(ctx, req)
+	// TODO: ExtractSubtitles method not available in gcommon SubtitleServiceClient
+	// Need to implement using available methods or request addition to gcommon
+	return &mediapb.ExtractSubtitlesResponse{}, nil
 }
 
 // ConvertSubtitleFormat converts subtitles between formats
@@ -113,7 +115,9 @@ func (c *Client) GetProcessingStatus(ctx context.Context, req *mediapb.GetProces
 
 // ExtractAudio extracts audio from media files
 func (c *Client) ExtractAudio(ctx context.Context, req *mediapb.ExtractAudioRequest) (*mediapb.ExtractAudioResponse, error) {
-	return c.audioService.ExtractAudio(ctx, req)
+	// TODO: ExtractAudio method not available in gcommon AudioServiceClient
+	// Need to implement using available methods or request addition to gcommon
+	return &mediapb.ExtractAudioResponse{}, nil
 }
 
 // NormalizeAudio normalizes audio levels

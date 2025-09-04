@@ -662,14 +662,14 @@ func (p *PebbleStore) GetUserByID(id string) (*common.User, error) {
 }
 
 // ListUsers returns all users sorted by creation time.
-func (p *PebbleStore) ListUsers() ([]common.User, error) {
+func (p *PebbleStore) ListUsers() ([]*common.User, error) {
 	iter, err := p.db.NewIter(nil)
 	if err != nil {
 		return nil, err
 	}
 	defer iter.Close()
 
-	var users []common.User
+	var users []*common.User
 	for iter.First(); iter.Valid(); iter.Next() {
 		if !strings.HasPrefix(string(iter.Key()), "user:") {
 			continue
@@ -678,7 +678,7 @@ func (p *PebbleStore) ListUsers() ([]common.User, error) {
 		if err := json.Unmarshal(iter.Value(), &user); err != nil {
 			return nil, err
 		}
-		users = append(users, *user.ToUser())
+		users = append(users, user.ToUser())
 	}
 	if err := iter.Error(); err != nil {
 		return nil, err
