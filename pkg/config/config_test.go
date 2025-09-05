@@ -13,27 +13,27 @@ import (
 func TestLogLevelMigration(t *testing.T) {
 	// Test that our LogLevel alias works with gcommon types
 	var level LogLevel = common.LogLevel_LOG_LEVEL_INFO
-	
+
 	if level != LogLevel_INFO {
 		t.Errorf("Expected LogLevel_INFO, got %v", level)
 	}
-	
+
 	// Test parsing
 	parsed, err := ParseLogLevel("DEBUG")
 	if err != nil {
 		t.Errorf("Failed to parse log level: %v", err)
 	}
-	
+
 	if parsed != LogLevel_DEBUG {
 		t.Errorf("Expected LogLevel_DEBUG, got %v", parsed)
 	}
-	
+
 	// Test string conversion
 	str := LogLevelString(LogLevel_WARN)
 	if str != "WARN" {
 		t.Errorf("Expected 'WARN', got %s", str)
 	}
-	
+
 	// Test that gcommon LogLevel values work
 	if common.LogLevel_LOG_LEVEL_ERROR != LogLevel_ERROR {
 		t.Error("gcommon LogLevel constants don't match our aliases")
@@ -55,7 +55,7 @@ func TestLogLevelCompatibility(t *testing.T) {
 		{LogLevel_ERROR, common.LogLevel_LOG_LEVEL_ERROR, "ERROR"},
 		{LogLevel_FATAL, common.LogLevel_LOG_LEVEL_FATAL, "FATAL"},
 	}
-	
+
 	for _, test := range tests {
 		if test.local != test.gcommon {
 			t.Errorf("LogLevel mismatch for %s: local=%d, gcommon=%d", test.name, test.local, test.gcommon)
