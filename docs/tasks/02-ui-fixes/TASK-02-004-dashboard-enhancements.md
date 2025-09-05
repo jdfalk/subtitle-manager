@@ -304,7 +304,7 @@ export default function QuickActions() {
         <Typography variant="h6" gutterBottom>
           Quick Actions
         </Typography>
-        
+
         {status && (
           <Alert severity="info" sx={{ mb: 2 }} onClose={() => setStatus('')}>
             {status}
@@ -625,7 +625,7 @@ return (
 
     {/* New Enhanced Dashboard Widgets */}
     <StatisticsCards />
-    
+
     <Grid container spacing={3} sx={{ mb: 3 }}>
       <Grid item xs={12}>
         <QuickActions />
@@ -678,7 +678,7 @@ func (s *Server) handleRecentActivities(w http.ResponseWriter, r *http.Request) 
             limit = parsed
         }
     }
-    
+
     activities := s.getRecentActivities(limit)
     json.NewEncoder(w).Encode(activities)
 }

@@ -33,7 +33,7 @@ Currently, there are two different settings components with confusing navigation
    - Feels disconnected and limited
    - When clicking back, goes to the tabbed interface (confusing UX)
 
-2. **`/settings/:section`** → `Settings` component  
+2. **`/settings/:section`** → `Settings` component
    - Shows the proper tabbed interface with full functionality
    - Contains Providers, General, Database, Authentication, Notifications, Users, Tags, Webhooks tabs
    - This is the REAL settings page users want
@@ -121,7 +121,7 @@ Current settings are likely scattered across different components. Need to evalu
 **IMMEDIATE FIX NEEDED**: The current settings navigation is confusing users.
 
 **Current Issue:**
-- `/settings` → Shows basic 3-card overview (`SettingsOverview`)  
+- `/settings` → Shows basic 3-card overview (`SettingsOverview`)
 - `/settings/:section` → Shows full tabbed interface (`Settings`)
 - Users expect `/settings` to show the main settings page
 
@@ -133,17 +133,17 @@ Current settings are likely scattered across different components. Need to evalu
 // Remove the SettingsOverview route entirely
 ```
 
-**Alternative Solution** (Option B): 
+**Alternative Solution** (Option B):
 ```jsx
 // webui/src/components/SettingsOverview.jsx - Make it a proper landing page
 export default function SettingsOverview() {
   const navigate = useNavigate();
-  
+
   // Immediately redirect to main settings with providers tab
   useEffect(() => {
     navigate('/settings/providers', { replace: true });
   }, [navigate]);
-  
+
   return <LoadingComponent message="Loading Settings..." />;
 }
 ```
@@ -324,16 +324,16 @@ const SettingsPage = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h4">Settings</Typography>
         <Box>
-          <Button 
-            variant="outlined" 
-            onClick={handleReset} 
+          <Button
+            variant="outlined"
+            onClick={handleReset}
             disabled={!hasChanges}
             sx={{ mr: 1 }}
           >
             Reset
           </Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={handleSave}
             disabled={!hasChanges}
           >
