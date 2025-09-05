@@ -30,8 +30,11 @@ func TestSubtitleRecordConversions(t *testing.T) {
 		CreatedAt:        now,
 	}
 	pb := rec.ToProto()
-	if pb.GetId() != rec.ID || pb.GetFile() != rec.File || pb.GetVideoFile() != rec.VideoFile {
-		t.Fatalf("basic fields mismatch")
+	if pb == nil {
+		t.Fatalf("ToProto returned nil")
+	}
+	if len(pb.GetValues()) == 0 {
+		t.Fatalf("ToProto returned empty values")
 	}
 	back := SubtitleRecordFromProto(pb)
 	if !reflect.DeepEqual(rec, back) {
@@ -57,8 +60,11 @@ func TestDownloadRecordConversions(t *testing.T) {
 		CreatedAt:        now,
 	}
 	pb := rec.ToProto()
-	if pb.GetId() != rec.ID || pb.GetProvider() != rec.Provider {
-		t.Fatalf("basic fields mismatch")
+	if pb == nil {
+		t.Fatalf("ToProto returned nil")
+	}
+	if len(pb.GetValues()) == 0 {
+		t.Fatalf("ToProto returned empty values")
 	}
 	back := DownloadRecordFromProto(pb)
 	if !reflect.DeepEqual(rec, back) {
