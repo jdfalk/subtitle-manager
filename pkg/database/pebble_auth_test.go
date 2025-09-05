@@ -25,7 +25,7 @@ func TestPebbleAuthFunctionality(t *testing.T) {
 	if err != nil {
 		t.Fatal("Failed to get user by username:", err)
 	}
-	if user == nil || user.Email != "test@example.com" {
+	if user == nil || user.GetEmail() != "test@example.com" {
 		t.Fatal("User data incorrect")
 	}
 	t.Log("✅ Successfully retrieved user by username")

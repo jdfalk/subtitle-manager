@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 	"github.com/jdfalk/subtitle-manager/pkg/database"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
 )
@@ -150,6 +151,7 @@ func (m *mockSubtitleStore) GetMediaReleaseGroup(path string) (string, error)   
 func (m *mockSubtitleStore) GetMediaAltTitles(path string) ([]string, error)      { return []string{}, nil }
 func (m *mockSubtitleStore) GetMediaFieldLocks(path string) (string, error)       { return "", nil }
 func (m *mockSubtitleStore) Close() error                                         { return nil }
+func (m *mockSubtitleStore) CleanupExpiredSessions() error                        { return nil }
 
 func TestService_CreateDatabaseBackup(t *testing.T) {
 	store := newMockSubtitleStore()
@@ -212,14 +214,16 @@ func TestService_CreateConfigBackup(t *testing.T) {
 
 func TestService_RestoreBackup(t *testing.T) {
 	store := newMockSubtitleStore()
-	config := ServiceConfig{
-		BackupPath:    "/tmp/test-backups",
-		DatabaseStore: store,
-	}
 
-	service, err := NewService(config)
-	if err != nil {
-		t.Fatalf("failed to create service: %v", err)
+	// Use mock storage to avoid file system issues
+	storage := &mockStorage{data: make(map[string][]byte)}
+	compression := NewGzipCompression()
+	manager := NewBackupManager(storage, compression, nil)
+
+	service := &Service{
+		manager:     manager,
+		dbBackupper: NewDatabaseBackupper(store),
+		logger:      logging.GetLogger("backup"),
 	}
 
 	ctx := context.Background()
@@ -333,3 +337,36 @@ func (m *mockSubtitleStore) DeleteMonitoredItem(id string) error                
 func (m *mockSubtitleStore) GetMonitoredItemsToCheck(interval time.Duration) ([]database.MonitoredItem, error) {
 	return []database.MonitoredItem{}, nil
 }
+
+// User authentication and session management methods
+func (m *mockSubtitleStore) CreateUser(username, passwordHash, email, role string) (string, error) {
+	return "user-id", nil
+}
+func (m *mockSubtitleStore) GetUserByUsername(username string) (*common.User, error) {
+	return &common.User{}, nil
+}
+func (m *mockSubtitleStore) GetUserByEmail(email string) (*common.User, error) {
+	return &common.User{}, nil
+}
+func (m *mockSubtitleStore) GetUserByID(id string) (*common.User, error) {
+	return &common.User{}, nil
+}
+func (m *mockSubtitleStore) ListUsers() ([]*common.User, error) {
+	return []*common.User{}, nil
+}
+func (m *mockSubtitleStore) UpdateUserRole(username, role string) error           { return nil }
+func (m *mockSubtitleStore) UpdateUserPassword(userID, passwordHash string) error { return nil }
+func (m *mockSubtitleStore) CreateSession(userID, token string, duration time.Duration) error {
+	return nil
+}
+func (m *mockSubtitleStore) ValidateSession(token string) (string, error) { return "", nil }
+func (m *mockSubtitleStore) InvalidateSession(token string) error         { return nil }
+func (m *mockSubtitleStore) InvalidateUserSessions(userID string) error   { return nil }
+func (m *mockSubtitleStore) CreateAPIKey(userID, key string) error        { return nil }
+func (m *mockSubtitleStore) ValidateAPIKey(key string) (string, error)    { return "", nil }
+func (m *mockSubtitleStore) CreateOneTimeToken(userID, token string, duration time.Duration) error {
+	return nil
+}
+func (m *mockSubtitleStore) ValidateOneTimeToken(token string) (string, error) { return "", nil }
+func (m *mockSubtitleStore) SetDashboardLayout(userID, layout string) error    { return nil }
+func (m *mockSubtitleStore) GetDashboardLayout(userID string) (string, error)  { return "", nil }
