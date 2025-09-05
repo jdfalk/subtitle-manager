@@ -11,7 +11,7 @@ This directory contains end-to-end tests using Selenium WebDriver to validate UI
 Our E2E testing framework provides:
 
 - **Automated UI Testing**: Verify that our UI changes actually work
-- **Regression Prevention**: Catch when changes break existing functionality  
+- **Regression Prevention**: Catch when changes break existing functionality
 - **Cross-browser Validation**: Test on Chrome and Firefox
 - **Video Recording**: Capture test execution for debugging
 - **Performance Monitoring**: Track page load times and responsiveness
