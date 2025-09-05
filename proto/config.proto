@@ -8,8 +8,8 @@ package subtitle.config.v1;
 
 import "google/protobuf/go_features.proto";
 
-option go_package = "github.com/jdfalk/subtitle-manager/pkg/configpb;configpb";
 option features.(pb.go).api_level = API_HYBRID;
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/configpb;configpb";
 
 // Local LogLevel enum to replace gcommon dependency
 // TODO: Replace with gcommon/v1/common/log_level.proto when available
