@@ -1,5 +1,5 @@
 // file: proto/config.proto
-// version: 1.4.0
+// version: 1.5.0
 // guid: 5d263e60-6079-4a1e-bfcb-82e8feb6f1af
 
 edition = "2023";
@@ -11,17 +11,7 @@ import "google/protobuf/go_features.proto";
 option features.(pb.go).api_level = API_HYBRID;
 option go_package = "github.com/jdfalk/subtitle-manager/pkg/configpb;configpb";
 
-// Local LogLevel enum to replace gcommon dependency
-// TODO: Replace with gcommon/v1/common/log_level.proto when available
-enum LogLevel {
-  LOG_LEVEL_UNSPECIFIED = 0;
-  LOG_LEVEL_TRACE = 1;
-  LOG_LEVEL_DEBUG = 2;
-  LOG_LEVEL_INFO = 3;
-  LOG_LEVEL_WARN = 4;
-  LOG_LEVEL_ERROR = 5;
-  LOG_LEVEL_FATAL = 6;
-}
+// Note: LogLevel enum removed - use gcommon/v1/common.LogLevel in Go code directly
 
 // Local AppenderType enum to replace gcommon dependency
 // TODO: Replace with gcommon/v1/common/appender_type.proto when available
@@ -51,8 +41,8 @@ message SubtitleManagerConfig {
 
 // LoggingConfig defines comprehensive logging settings
 message LoggingConfig {
-  // Global log level
-  LogLevel global_level = 1;
+  // Global log level (int32 converted to gcommon.LogLevel in Go code)
+  int32 global_level = 1;
 
   // Primary appender type (console, file, etc.)
   AppenderType primary_appender = 2;
@@ -60,8 +50,8 @@ message LoggingConfig {
   // Log file path (when using file appenders)
   string log_file_path = 3;
 
-  // Component-specific log levels
-  map<string, LogLevel> component_levels = 4;
+  // Component-specific log levels (int32 converted to gcommon.LogLevel in Go code)
+  map<string, int32> component_levels = 4;
 
   // Enable structured JSON logging
   bool structured_logging = 5;

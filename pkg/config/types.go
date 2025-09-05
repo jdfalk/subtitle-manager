@@ -1,5 +1,5 @@
 // file: pkg/config/types.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
 
 package config
@@ -7,20 +7,22 @@ package config
 import (
 	"fmt"
 	"strings"
+
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 )
 
-// LogLevel represents the logging level for the application
-// TODO: Replace with gcommon protobuf LogLevel when available
-type LogLevel int32
+// LogLevel is now an alias for gcommon LogLevel to maintain compatibility
+// All new code should use common.LogLevel directly
+type LogLevel = common.LogLevel
 
 const (
-	LogLevel_UNSPECIFIED LogLevel = 0
-	LogLevel_TRACE       LogLevel = 1
-	LogLevel_DEBUG       LogLevel = 2
-	LogLevel_INFO        LogLevel = 3
-	LogLevel_WARN        LogLevel = 4
-	LogLevel_ERROR       LogLevel = 5
-	LogLevel_FATAL       LogLevel = 6
+	LogLevel_UNSPECIFIED = common.LogLevel_LOG_LEVEL_UNSPECIFIED
+	LogLevel_TRACE       = common.LogLevel_LOG_LEVEL_TRACE
+	LogLevel_DEBUG       = common.LogLevel_LOG_LEVEL_DEBUG
+	LogLevel_INFO        = common.LogLevel_LOG_LEVEL_INFO
+	LogLevel_WARN        = common.LogLevel_LOG_LEVEL_WARN
+	LogLevel_ERROR       = common.LogLevel_LOG_LEVEL_ERROR
+	LogLevel_FATAL       = common.LogLevel_LOG_LEVEL_FATAL
 )
 
 var logLevelNames = map[LogLevel]string{
@@ -43,8 +45,8 @@ var logLevelValues = map[string]LogLevel{
 	"FATAL":       LogLevel_FATAL,
 }
 
-// String returns the string representation of the log level
-func (l LogLevel) String() string {
+// LogLevelString returns the string representation of the log level
+func LogLevelString(l LogLevel) string {
 	if name, ok := logLevelNames[l]; ok {
 		return name
 	}
