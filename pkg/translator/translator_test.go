@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	translate "cloud.google.com/go/translate"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
+	pb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/text/language"
@@ -97,7 +97,7 @@ func TestGRPCTranslate(t *testing.T) {
 		t.Fatalf("listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterTranslatorServer(s, &mockServer{})
+	pb.RegisterTranslatorServiceServer(s, &mockServer{})
 	go func() {
 		if err := s.Serve(lis); err != nil {
 			t.Errorf("serve failed: %v", err)
@@ -122,7 +122,7 @@ func TestTranslateGRPCProvider(t *testing.T) {
 		t.Fatalf("listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterTranslatorServer(s, &mockServer{})
+	pb.RegisterTranslatorServiceServer(s, &mockServer{})
 	go func() {
 		if err := s.Serve(lis); err != nil {
 			t.Errorf("serve failed: %v", err)
@@ -180,11 +180,12 @@ func TestTranslateGPTProvider(t *testing.T) {
 }
 
 type mockServer struct {
-	pb.UnimplementedTranslatorServer
+	pb.UnimplementedTranslatorServiceServer
 }
 
 func (mockServer) Translate(ctx context.Context, req *pb.TranslateRequest) (*pb.TranslateResponse, error) {
-	return &pb.TranslateResponse{TranslatedText: "hola"}, nil
+	text := "hola"
+	return &pb.TranslateResponse{TranslatedText: &text}, nil
 }
 
 // TestSetOpenAIModel verifies that the model can be changed.

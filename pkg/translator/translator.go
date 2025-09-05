@@ -22,7 +22,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/jdfalk/subtitle-manager/pkg/cache"
-	translatorpb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
+	translatorpb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 )
 
 var ErrUnsupportedService = errors.New("unsupported translation service")

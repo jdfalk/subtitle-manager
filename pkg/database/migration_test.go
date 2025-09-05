@@ -8,23 +8,23 @@ import (
 	"testing"
 
 	"github.com/jdfalk/gcommon/sdks/go/v1/database"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // TestDatabaseMigration ensures gcommon types use the opaque API correctly.
 func TestDatabaseMigration(t *testing.T) {
-	rec := &database.SubtitleRecord{}
-	rec.SetId("test-id")
-	rec.SetFile("test.srt")
-	rec.SetCreatedAt(timestamppb.Now())
+	// Test that we can create and manipulate a Row with values
+	rec := &database.Row{}
 
-	if rec.GetId() != "test-id" {
-		t.Fatalf("expected id to be set")
+	// Row works with values as Any protobufs
+	testValue, err := anypb.New(&timestamppb.Timestamp{})
+	if err != nil {
+		t.Fatalf("failed to create Any value: %v", err)
 	}
-	if rec.GetFile() != "test.srt" {
-		t.Fatalf("expected file to be set")
+
+	rec.SetValues([]*anypb.Any{testValue})
+
+	if len(rec.GetValues()) != 1 {
+		t.Errorf("expected 1 value, got %d", len(rec.GetValues()))
 	}
-	if rec.GetCreatedAt() == nil {
-		t.Fatalf("expected created_at to be set")
-	}
-}

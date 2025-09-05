@@ -8,11 +8,10 @@ import (
 	"context"
 	"testing"
 
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
+	pb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 func TestNewServer(t *testing.T) {
@@ -95,24 +94,27 @@ func TestServer_SetConfig(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			server := NewServer("initial-google", "initial-gpt", tt.persistConfig, tt.configKeyPrefix)
 
-			cfg := &pb.SubtitleManagerConfig{}
+			// Set individual configuration values using the new API
 			for k, v := range tt.settings {
-				switch k {
-				case tt.configKeyPrefix + "google_api_key", "GOOGLE_API_KEY":
-					cfg.GoogleApiKey = &v
-				case tt.configKeyPrefix + "openai_api_key", "OPENAI_API_KEY":
-					cfg.OpenaiApiKey = &v
+				key := k
+				value := v
+				req := &pb.SetConfigRequest{Key: &key, Value: &value}
+				_, err := server.SetConfig(context.Background(), req)
+
+				if tt.expectError {
+					assert.Error(t, err)
+					return // Skip the rest if we expect an error
+				} else {
+					assert.NoError(t, err)
 				}
 			}
 
-			_, err := server.SetConfig(context.Background(), cfg)
-
-			_, err := server.SetConfig(context.Background(), req)
-
-			if tt.expectError {
-				assert.Error(t, err)
-			} else {
+			if !tt.expectError {
+				// Verify configuration was set by getting config
+				resp, err := server.GetConfig(context.Background(), &pb.GetConfigRequest{})
 				assert.NoError(t, err)
+				assert.NotNil(t, resp)
+				assert.NotNil(t, resp.ConfigValues)
 
 				// Verify API keys were updated correctly
 				for k, v := range tt.settings {
@@ -166,20 +168,20 @@ func TestServer_GetConfig(t *testing.T) {
 
 			server := NewServer(tt.googleKey, tt.gptKey, tt.persistConfig, "")
 
-			resp, err := server.GetConfig(context.Background(), &emptypb.Empty{})
+			resp, err := server.GetConfig(context.Background(), &pb.GetConfigRequest{})
 
 			assert.NoError(t, err)
 			assert.NotNil(t, resp)
-			assert.NotNil(t, resp.Settings)
+			assert.NotNil(t, resp.ConfigValues)
 
 			if !tt.persistConfig {
 				// For non-persistent config, should return API keys
-				assert.Equal(t, tt.googleKey, resp.Settings["GOOGLE_API_KEY"])
-				assert.Equal(t, tt.gptKey, resp.Settings["OPENAI_API_KEY"])
+				assert.Equal(t, tt.googleKey, resp.ConfigValues["GOOGLE_API_KEY"])
+				assert.Equal(t, tt.gptKey, resp.ConfigValues["OPENAI_API_KEY"])
 			} else {
 				// For persistent config, should return viper settings
 				for _, key := range tt.expectedKeys {
-					assert.Contains(t, resp.Settings, key)
+					assert.Contains(t, resp.ConfigValues, key)
 				}
 			}
 		})
@@ -211,9 +213,11 @@ func TestServer_Translate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			server := NewServer("fake-google-key", "fake-gpt-key", false, "")
 
+			text := tt.text
+			language := tt.language
 			req := &pb.TranslateRequest{
-				Text:     tt.text,
-				Language: tt.language,
+				Text:     &text,
+				Language: &language,
 			}
 
 			resp, err := server.Translate(context.Background(), req)
@@ -238,8 +242,11 @@ func TestServer_SetConfigWithPersistence_ErrorHandling(t *testing.T) {
 	// Set an invalid config file that will cause WriteConfig to fail
 	viper.SetConfigFile("/invalid/path/config.yaml")
 
-	req := &pb.SubtitleManagerConfig{
-		DbPath: protoString("invalid"),
+	key := "db_path"
+	value := "invalid"
+	req := &pb.SetConfigRequest{
+		Key:   &key,
+		Value: &value,
 	}
 
 	// Should handle the error gracefully
@@ -254,9 +261,9 @@ func TestServer_InterfaceCompliance(t *testing.T) {
 	// Verify that Server implements the required gRPC interface
 	server := NewServer("test", "test", false, "")
 
-	// This test ensures the server properly embeds the UnimplementedTranslatorServer
-	// and can be used as a pb.TranslatorServer
-	var _ pb.TranslatorServer = server
+	// This test ensures the server properly embeds the UnimplementedTranslatorServiceServer
+	// and can be used as a pb.TranslatorServiceServer
+	var _ pb.TranslatorServiceServer = server
 
 	// Test that the server can handle the basic gRPC methods
 	require.NotNil(t, server)

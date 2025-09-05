@@ -21,18 +21,20 @@ func TestAuthenticatePassword(t *testing.T) {
 	testutil.MustNoError(t, "create user", gauth.CreateUser(db, "u1", "pass", "e@example.com", "user"))
 
 	srv := NewServer(db)
-	resp, err := srv.Authenticate(context.Background(), &authpb.AuthenticateRequest{
-		Credentials: &authpb.AuthenticateRequest_Password{Password: &authpb.PasswordCredentials{
-			Username: "u1",
-			Password: "pass",
-		}},
-	})
+	req := &authpb.AuthAuthenticateRequest{}
+	creds := &authpb.PasswordCredentials{}
+	creds.SetUsername("u1")
+	creds.SetPassword("pass")
+	req.SetPassword(creds)
+	resp, err := srv.Authenticate(context.Background(), req)
 	testutil.MustNoError(t, "authenticate", err)
-	testutil.MustNotEqual(t, "token", "", resp.AccessToken)
+	testutil.MustNotEqual(t, "token", "", resp.GetAccessToken())
 
-	val, err := srv.ValidateToken(context.Background(), &authpb.ValidateTokenRequest{AccessToken: resp.AccessToken})
+	valReq := &authpb.ValidateTokenRequest{}
+	valReq.SetAccessToken(resp.GetAccessToken())
+	val, err := srv.ValidateToken(context.Background(), valReq)
 	testutil.MustNoError(t, "validate", err)
-	testutil.MustEqual(t, "valid", true, val.Valid)
+	testutil.MustEqual(t, "valid", true, val.GetValid())
 }
 
 // TestAuthenticateAPIKey verifies API key authentication
@@ -45,9 +47,16 @@ func TestAuthenticateAPIKey(t *testing.T) {
 	testutil.MustNoError(t, "generate key", err)
 
 	srv := NewServer(db)
-	resp, err := srv.Authenticate(context.Background(), &authpb.AuthenticateRequest{
-		Credentials: &authpb.AuthenticateRequest_ApiKey{ApiKey: &authpb.APIKeyCredentials{Key: key}},
-	})
+
+	// Create API key credentials
+	apiKeyCreds := &authpb.APIKeyCredentials{}
+	apiKeyCreds.SetKey(key)
+
+	// Create the request with API key credentials
+	req := &authpb.AuthAuthenticateRequest{}
+	req.SetApiKey(apiKeyCreds)
+
+	resp, err := srv.Authenticate(context.Background(), req)
 	testutil.MustNoError(t, "authenticate", err)
-	testutil.MustNotEqual(t, "token", "", resp.AccessToken)
+	testutil.MustNotEqual(t, "token", "", resp.GetAccessToken())
 }

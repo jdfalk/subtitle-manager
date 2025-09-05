@@ -15,10 +15,10 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"github.com/jdfalk/subtitle-manager/pkg/audio"
+	pb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 	"github.com/jdfalk/subtitle-manager/pkg/subtitles"
 	"github.com/jdfalk/subtitle-manager/pkg/syncer/mocks"
 	"github.com/jdfalk/subtitle-manager/pkg/transcriber"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 	"google.golang.org/grpc"
 )
 
@@ -73,11 +73,12 @@ func TestComputeOffsetMedian(t *testing.T) {
 
 // mockServer returns "hola" for any translation request.
 type mockServer struct {
-	pb.UnimplementedTranslatorServer
+	pb.UnimplementedTranslatorServiceServer
 }
 
 func (mockServer) Translate(ctx context.Context, req *pb.TranslateRequest) (*pb.TranslateResponse, error) {
-	return &pb.TranslateResponse{TranslatedText: "hola"}, nil
+	text := "hola"
+	return &pb.TranslateResponse{TranslatedText: &text}, nil
 }
 
 // TestTranslate verifies that subtitle items are translated using a gRPC provider.
@@ -87,7 +88,7 @@ func TestTranslate(t *testing.T) {
 		t.Fatalf("listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterTranslatorServer(s, &mockServer{})
+	pb.RegisterTranslatorServiceServer(s, &mockServer{})
 	go s.Serve(lis)
 	defer s.Stop()
 
@@ -108,7 +109,7 @@ func TestSyncTranslate(t *testing.T) {
 		t.Fatalf("listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterTranslatorServer(s, &mockServer{})
+	pb.RegisterTranslatorServiceServer(s, &mockServer{})
 	go s.Serve(lis)
 	defer s.Stop()
 

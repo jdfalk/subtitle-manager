@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	translatorpb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
-	translatorpb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 )
 
 // Server implements the gRPC translator service with configurable persistence.

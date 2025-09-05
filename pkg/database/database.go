@@ -1654,6 +1654,12 @@ func (s *SQLStore) ValidateAPIKey(key string) (string, error) {
 	return "", nil
 }
 
+// CreateOneTimeToken creates a one-time use token (placeholder - delegates to gcommonauth).
+func (s *SQLStore) CreateOneTimeToken(userID, token string, duration time.Duration) error {
+	// This is a placeholder - SQLStore authentication is handled by gcommonauth package
+	return nil
+}
+
 // DeleteAPIKey deletes an API key (placeholder - delegates to gcommonauth).
 func (s *SQLStore) DeleteAPIKey(key string) error {
 	// This is a placeholder - SQLStore authentication is handled by gcommonauth package

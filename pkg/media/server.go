@@ -14,18 +14,19 @@ import (
 	"github.com/asticode/go-astisub"
 	"github.com/google/uuid"
 	"github.com/jdfalk/gcommon/sdks/go/v1/media"
+	mediapb "github.com/jdfalk/gcommon/sdks/go/v1/media"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 // MediaServiceServer implements the media service gRPC server
 type MediaServiceServer struct {
-	media.UnimplementedMediaServiceServer
+	mediapb.UnimplementedMediaServiceServer
 }
 
 // SubtitleServiceServer implements the subtitle service gRPC server
 type SubtitleServiceServer struct {
-	media.UnimplementedSubtitleServiceServer
+	mediapb.UnimplementedSubtitleServiceServer
 }
 
 // NewMediaServiceServer creates a new media service server
@@ -39,7 +40,7 @@ func NewSubtitleServiceServer() *SubtitleServiceServer {
 }
 
 // ExtractSubtitles extracts subtitles from a media file
-func (s *SubtitleServiceServer) ExtractSubtitles(ctx context.Context, req *media.ExtractSubtitlesRequest) (*media.ExtractSubtitlesResponse, error) {
+func (s *SubtitleServiceServer) ExtractSubtitles(ctx context.Context, req *mediapb.ExtractSubtitlesRequest) (*mediapb.ExtractSubtitlesResponse, error) {
 	mediaFileId := req.GetMediaFileId()
 	trackIndices := req.GetTrackIndices()
 	options := req.GetOptions()
@@ -50,9 +51,9 @@ func (s *SubtitleServiceServer) ExtractSubtitles(ctx context.Context, req *media
 	_ = trackIndices
 	_ = options
 
-	return &media.ExtractSubtitlesResponse{
+	return &mediapb.ExtractSubtitlesResponse{
 		Success: true,
-		SubtitleTracks: []*media.SubtitleTrack{
+		SubtitleTracks: []*mediapb.SubtitleTrack{
 			{
 				Language: "en",
 				Format:   "srt",
@@ -62,7 +63,7 @@ func (s *SubtitleServiceServer) ExtractSubtitles(ctx context.Context, req *media
 }
 
 // ConvertSubtitleFormat converts subtitle format
-func (s *SubtitleServiceServer) ConvertSubtitleFormat(ctx context.Context, req *media.ConvertSubtitleFormatRequest) (*media.ConvertSubtitleFormatResponse, error) {
+func (s *SubtitleServiceServer) ConvertSubtitleFormat(ctx context.Context, req *mediapb.ConvertSubtitleFormatRequest) (*mediapb.ConvertSubtitleFormatResponse, error) {
 	subtitleFileId := req.GetSubtitleFileId()
 	targetFormat := req.GetTargetFormat()
 	preserveStyling := req.GetPreserveStyling()
@@ -102,7 +103,7 @@ func (s *SubtitleServiceServer) ConvertSubtitleFormat(ctx context.Context, req *
 		return nil, status.Errorf(codes.Internal, "failed to write converted subtitles: %v", err)
 	}
 
-	return &media.ConvertSubtitleFormatResponse{
+	return &mediapb.ConvertSubtitleFormatResponse{
 		Success:          true,
 		ConvertedFileId:  fmt.Sprintf("%s_converted", subtitleFileId),
 		OutputFormat:     targetFormat,
@@ -111,48 +112,48 @@ func (s *SubtitleServiceServer) ConvertSubtitleFormat(ctx context.Context, req *
 }
 
 // MergeSubtitles merges multiple subtitle files
-func (s *SubtitleServiceServer) MergeSubtitles(ctx context.Context, req *media.MergeSubtitlesRequest) (*media.MergeSubtitlesResponse, error) {
+func (s *SubtitleServiceServer) MergeSubtitles(ctx context.Context, req *mediapb.MergeSubtitlesRequest) (*mediapb.MergeSubtitlesResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.MergeSubtitlesResponse{
+	return &mediapb.MergeSubtitlesResponse{
 		Success: true,
 	}, nil
 }
 
 // SyncSubtitles synchronizes subtitle timing
-func (s *SubtitleServiceServer) SyncSubtitles(ctx context.Context, req *media.SyncSubtitlesRequest) (*media.SyncSubtitlesResponse, error) {
+func (s *SubtitleServiceServer) SyncSubtitles(ctx context.Context, req *mediapb.SyncSubtitlesRequest) (*mediapb.SyncSubtitlesResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.SyncSubtitlesResponse{
+	return &mediapb.SyncSubtitlesResponse{
 		Success: true,
 	}, nil
 }
 
 // ValidateSubtitles validates subtitle file format and content
-func (s *SubtitleServiceServer) ValidateSubtitles(ctx context.Context, req *media.ValidateSubtitlesRequest) (*media.ValidateSubtitlesResponse, error) {
+func (s *SubtitleServiceServer) ValidateSubtitles(ctx context.Context, req *mediapb.ValidateSubtitlesRequest) (*mediapb.ValidateSubtitlesResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.ValidateSubtitlesResponse{
+	return &mediapb.ValidateSubtitlesResponse{
 		IsValid: true,
 	}, nil
 }
 
 // AdjustSubtitleTiming adjusts subtitle timing
-func (s *SubtitleServiceServer) AdjustSubtitleTiming(ctx context.Context, req *media.AdjustSubtitleTimingRequest) (*media.AdjustSubtitleTimingResponse, error) {
+func (s *SubtitleServiceServer) AdjustSubtitleTiming(ctx context.Context, req *mediapb.AdjustSubtitleTimingRequest) (*mediapb.AdjustSubtitleTimingResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.AdjustSubtitleTimingResponse{
+	return &mediapb.AdjustSubtitleTimingResponse{
 		Success: true,
 	}, nil
 }
 
 // CreateMediaFile creates a new media file record
-func (s *MediaServiceServer) CreateMediaFile(ctx context.Context, req *media.CreateMediaFileRequest) (*media.CreateMediaFileResponse, error) {
+func (s *MediaServiceServer) CreateMediaFile(ctx context.Context, req *mediapb.CreateMediaFileRequest) (*mediapb.CreateMediaFileResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.CreateMediaFileResponse{
+	return &mediapb.CreateMediaFileResponse{
 		Success: true,
-		MediaFile: &media.MediaFile{
+		MediaFile: &mediapb.MediaFile{
 			Id:       "media-file-123",
 			Filename: "example.mp4",
 		},
@@ -160,11 +161,11 @@ func (s *MediaServiceServer) CreateMediaFile(ctx context.Context, req *media.Cre
 }
 
 // GetMediaFile retrieves a media file by ID
-func (s *MediaServiceServer) GetMediaFile(ctx context.Context, req *media.GetMediaFileRequest) (*media.GetMediaFileResponse, error) {
+func (s *MediaServiceServer) GetMediaFile(ctx context.Context, req *mediapb.GetMediaFileRequest) (*mediapb.GetMediaFileResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.GetMediaFileResponse{
-		MediaFile: &media.MediaFile{
+	return &mediapb.GetMediaFileResponse{
+		MediaFile: &mediapb.MediaFile{
 			Id:       "media-file-123",
 			Filename: "example.mp4",
 		},
@@ -172,11 +173,11 @@ func (s *MediaServiceServer) GetMediaFile(ctx context.Context, req *media.GetMed
 }
 
 // ListMediaFiles lists media files
-func (s *MediaServiceServer) ListMediaFiles(ctx context.Context, req *media.ListMediaFilesRequest) (*media.ListMediaFilesResponse, error) {
+func (s *MediaServiceServer) ListMediaFiles(ctx context.Context, req *mediapb.ListMediaFilesRequest) (*mediapb.ListMediaFilesResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.ListMediaFilesResponse{
-		MediaFiles: []*media.MediaFile{
+	return &mediapb.ListMediaFilesResponse{
+		MediaFiles: []*mediapb.MediaFile{
 			{
 				Id:       "media-file-123",
 				Filename: "example.mp4",
@@ -186,29 +187,29 @@ func (s *MediaServiceServer) ListMediaFiles(ctx context.Context, req *media.List
 }
 
 // UpdateMediaFile updates a media file
-func (s *MediaServiceServer) UpdateMediaFile(ctx context.Context, req *media.UpdateMediaFileRequest) (*media.UpdateMediaFileResponse, error) {
+func (s *MediaServiceServer) UpdateMediaFile(ctx context.Context, req *mediapb.UpdateMediaFileRequest) (*mediapb.UpdateMediaFileResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.UpdateMediaFileResponse{
+	return &mediapb.UpdateMediaFileResponse{
 		Success: true,
 	}, nil
 }
 
 // DeleteMediaFile deletes a media file
-func (s *MediaServiceServer) DeleteMediaFile(ctx context.Context, req *media.DeleteMediaFileRequest) (*media.DeleteMediaFileResponse, error) {
+func (s *MediaServiceServer) DeleteMediaFile(ctx context.Context, req *mediapb.DeleteMediaFileRequest) (*mediapb.DeleteMediaFileResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.DeleteMediaFileResponse{
+	return &mediapb.DeleteMediaFileResponse{
 		Success: true,
 	}, nil
 }
 
 // SearchMedia searches for media files
-func (s *MediaServiceServer) SearchMedia(ctx context.Context, req *media.SearchMediaRequest) (*media.SearchMediaResponse, error) {
+func (s *MediaServiceServer) SearchMedia(ctx context.Context, req *mediapb.SearchMediaRequest) (*mediapb.SearchMediaResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.SearchMediaResponse{
-		MediaFiles: []*media.MediaFile{
+	return &mediapb.SearchMediaResponse{
+		MediaFiles: []*mediapb.MediaFile{
 			{
 				Id:       "media-file-123",
 				Filename: "example.mp4",
@@ -218,12 +219,12 @@ func (s *MediaServiceServer) SearchMedia(ctx context.Context, req *media.SearchM
 }
 
 // UploadMedia handles media file uploads
-func (s *MediaServiceServer) UploadMedia(ctx context.Context, req *media.UploadMediaRequest) (*media.UploadMediaResponse, error) {
+func (s *MediaServiceServer) UploadMedia(ctx context.Context, req *mediapb.UploadMediaRequest) (*mediapb.UploadMediaResponse, error) {
 	// Check what methods are available on the request
 	// For now, return a basic response
-	return &media.UploadMediaResponse{
+	return &mediapb.UploadMediaResponse{
 		Success: true,
-		MediaFile: &media.MediaFile{
+		MediaFile: &mediapb.MediaFile{
 			Id:       "media-file-123",
 			Filename: "uploaded.mp4",
 		},
@@ -232,10 +233,10 @@ func (s *MediaServiceServer) UploadMedia(ctx context.Context, req *media.UploadM
 
 // NewServer creates a new server instance
 type Server struct {
-	mediapb.UnimplementedMediaServiceServer
-	mediapb.UnimplementedSubtitleServiceServer
-	mediapb.UnimplementedMediaProcessingServiceServer
-	mediapb.UnimplementedAudioServiceServer
+	media.UnimplementedMediaServiceServer
+	media.UnimplementedSubtitleServiceServer
+	media.UnimplementedMediaProcessingServiceServer
+	media.UnimplementedAudioServiceServer
 
 	// Configuration
 	mediaRoot    string
@@ -303,7 +304,7 @@ func (s *Server) ExtractSubtitles(ctx context.Context, req *mediapb.ExtractSubti
 }
 
 // ConvertSubtitleFormat converts subtitles between formats
-func (s *MediaService) ConvertSubtitleFormat(ctx context.Context, req *media.ConvertSubtitleFormatRequest) (*media.ConvertSubtitleFormatResponse, error) {
+func (s *MediaService) ConvertSubtitleFormat(ctx context.Context, req *mediapb.ConvertSubtitleFormatRequest) (*mediapb.ConvertSubtitleFormatResponse, error) {
 	// Get subtitle file ID and target format
 	subtitleFileId := req.GetSubtitleFileId()
 	targetFormat := req.GetTargetFormat()
@@ -338,7 +339,7 @@ func (s *MediaService) ConvertSubtitleFormat(ctx context.Context, req *media.Con
 		return nil, fmt.Errorf("failed to write converted subtitles: %w", err)
 	}
 
-	return &media.ConvertSubtitleFormatResponse{
+	return &mediapb.ConvertSubtitleFormatResponse{
 		Success:          true,
 		ConvertedFileId:  fmt.Sprintf("%s_converted", subtitleFileId),
 		OutputFormat:     targetFormat,
