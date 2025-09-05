@@ -53,7 +53,8 @@ help: ## Show this help message
 	@echo "  make dev-air            # Start development with live reloading (full build)"
 	@echo "  make dev-air-fast       # Start development quickly (assumes web UI built)"
 	@echo "  make webui-rebuild      # Force rebuild web UI when JS changes don't trigger"
-	@echo "  make docker             # Build Docker image"
+	@echo "  make docker             # Build Docker image (includes protobuf generation)"
+	@echo "  make proto-gen          # Generate protobuf code only"
 	@echo "  make test-all           # Run all tests"
 	@echo "  make test-all-sqlite    # Run all tests with SQLite support"
 	@echo "  make clean-all          # Clean everything"
@@ -252,7 +253,7 @@ test-e2e-all-sqlite: test-race-sqlite webui-test-e2e ## Run all tests including 
 #
 
 .PHONY: docker
-docker: ## Build Docker image
+docker: proto-gen ## Build Docker image (with protobuf generation)
 	@echo "$(COLOR_BLUE)Building Docker image...$(COLOR_RESET)"
 	docker build --pull \
 		--build-arg VERSION=$(VERSION) \
@@ -265,7 +266,7 @@ docker: ## Build Docker image
 	@echo "$(COLOR_GREEN)✓ Docker image built: $(DOCKER_IMAGE):$(DOCKER_TAG)$(COLOR_RESET)"
 
 .PHONY: docker-build-args
-docker-build-args: ## Build Docker image with build arguments
+docker-build-args: proto-gen ## Build Docker image with build arguments (with protobuf generation)
 	@echo "$(COLOR_BLUE)Building Docker image with build args...$(COLOR_RESET)"
 	docker build --pull \
 		--build-arg VERSION=$(VERSION) \
@@ -468,9 +469,9 @@ docker-benchmark:
 #
 
 .PHONY: proto-gen
-proto-gen: ## Generate protobuf code
-	@echo "$(COLOR_BLUE)Generating protobuf code...$(COLOR_RESET)"
-	cd $(PROTO_DIR) && $(PROTOC) --go_out='paths=source_relative:../pkg/jobpb' queue_job.proto
+proto-gen: ## Generate protobuf code using buf
+	@echo "$(COLOR_BLUE)Generating protobuf code with buf...$(COLOR_RESET)"
+	buf generate
 	@echo "$(COLOR_GREEN)✓ Protobuf code generated$(COLOR_RESET)"
 
 #
