@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
+	pb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 )
 
 var grpcConfigAddr string
@@ -33,17 +33,17 @@ var grpcSetConfigCmd = &cobra.Command{
 		}
 		defer conn.Close()
 		client := pb.NewTranslatorServiceClient(conn)
-		
+
 		// Create a SetConfigRequest using the updated protobuf
 		req := &pb.SetConfigRequest{}
 		req.SetKey(grpcConfigKey)
 		req.SetValue(grpcConfigValue)
-		
+
 		_, err = client.SetConfig(ctx, req)
 		if err != nil {
 			return fmt.Errorf("failed to set config: %v", err)
 		}
-		
+
 		cmd.Printf("Successfully set %s = %s\n", grpcConfigKey, grpcConfigValue)
 		return nil
 	},

@@ -8,9 +8,9 @@ import (
 
 	translate "cloud.google.com/go/translate"
 	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
+	pb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 	"github.com/jdfalk/subtitle-manager/pkg/translator"
 	translatormocks "github.com/jdfalk/subtitle-manager/pkg/translator/mocks"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
@@ -32,7 +32,7 @@ func TestServerTranslate(t *testing.T) {
 
 	s := grpc.NewServer()
 	server := grpcserver.NewServer("k", "", false, "")
-	pb.RegisterTranslatorServer(s, server)
+	pb.RegisterTranslatorServiceServer(s, server)
 	go s.Serve(lis)
 	defer s.Stop()
 
@@ -41,14 +41,16 @@ func TestServerTranslate(t *testing.T) {
 		t.Fatalf("dial: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewTranslatorClient(conn)
+	c := pb.NewTranslatorServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	resp, err := c.Translate(ctx, &pb.TranslateRequest{Text: "x", Language: "en"})
+	text := "x"
+	language := "en"
+	resp, err := c.Translate(ctx, &pb.TranslateRequest{Text: &text, Language: &language})
 	if err != nil {
 		t.Fatalf("translate: %v", err)
 	}
-	if resp.TranslatedText == "" {
+	if resp.TranslatedText == nil || *resp.TranslatedText == "" {
 		t.Fatal("empty response")
 	}
 }

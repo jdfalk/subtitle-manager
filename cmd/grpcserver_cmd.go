@@ -5,7 +5,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
+	pb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 	"github.com/jdfalk/subtitle-manager/pkg/webserver"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

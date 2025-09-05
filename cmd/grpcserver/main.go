@@ -8,7 +8,7 @@ import (
 
 	"github.com/jdfalk/subtitle-manager/pkg/grpcserver"
 	"github.com/jdfalk/subtitle-manager/pkg/logging"
-	pb "github.com/jdfalk/subtitle-manager/pkg/translatorpb"
+	pb "github.com/jdfalk/subtitle-manager/pkg/subtitle/translator/v1"
 )
 
 func main() {
