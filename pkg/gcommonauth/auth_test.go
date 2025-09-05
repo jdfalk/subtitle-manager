@@ -82,18 +82,21 @@ func TestValidateAPIKey(t *testing.T) {
 	}
 
 	// Generate an API key
-	apiKey, err := GenerateAPIKey(db, 1)
+	apiKeyObj, err := GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("generate API key: %v", err)
 	}
+	// Extract the key string from the gcommon APIKey
+	apiKeyStr := apiKeyObj.GetId()
 
 	// Test valid API key
-	userID, err := ValidateAPIKey(db, apiKey)
+	validatedAPIKey, err := ValidateAPIKey(db, apiKeyStr)
 	if err != nil {
 		t.Fatalf("validate API key: %v", err)
 	}
-	if userID != 1 {
-		t.Errorf("expected user ID 1, got %d", userID)
+	// Extract user ID from validated gcommon APIKey
+	if userIdStr := validatedAPIKey.GetUserId(); userIdStr != "1" {
+		t.Errorf("expected user ID '1', got '%s'", userIdStr)
 	}
 
 	// Test invalid API key
@@ -139,12 +142,12 @@ func TestResetPassword(t *testing.T) {
 	}
 
 	// Test that the new API key is valid
-	userID, err := ValidateAPIKey(db, newAPIKey)
+	validatedNewAPIKey, err := ValidateAPIKey(db, newAPIKey)
 	if err != nil {
 		t.Fatalf("validate new API key: %v", err)
 	}
-	if userID != 1 {
-		t.Errorf("expected user ID 1, got %d", userID)
+	if userIdStr := validatedNewAPIKey.GetUserId(); userIdStr != "1" {
+		t.Errorf("expected user ID '1', got '%s'", userIdStr)
 	}
 
 	// Test that old password no longer works
@@ -239,31 +242,31 @@ func TestValidateAPIKeyWithMultipleUsers(t *testing.T) {
 	}
 
 	// Generate API keys for both users
-	apiKey1, err := GenerateAPIKey(db, 1)
+	apiKeyObj1, err := GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("generate API key for user1: %v", err)
 	}
 
-	apiKey2, err := GenerateAPIKey(db, 2)
+	apiKeyObj2, err := GenerateAPIKey(db, 2)
 	if err != nil {
 		t.Fatalf("generate API key for user2: %v", err)
 	}
 
 	// Validate both API keys
-	userID1, err := ValidateAPIKey(db, apiKey1)
+	validatedAPIKey1, err := ValidateAPIKey(db, apiKeyObj1.GetId())
 	if err != nil {
 		t.Fatalf("validate API key 1: %v", err)
 	}
-	if userID1 != 1 {
-		t.Errorf("expected user ID 1, got %d", userID1)
+	if userIdStr := validatedAPIKey1.GetUserId(); userIdStr != "1" {
+		t.Errorf("expected user ID '1', got '%s'", userIdStr)
 	}
 
-	userID2, err := ValidateAPIKey(db, apiKey2)
+	validatedAPIKey2, err := ValidateAPIKey(db, apiKeyObj2.GetId())
 	if err != nil {
 		t.Fatalf("validate API key 2: %v", err)
 	}
-	if userID2 != 2 {
-		t.Errorf("expected user ID 2, got %d", userID2)
+	if userIdStr := validatedAPIKey2.GetUserId(); userIdStr != "2" {
+		t.Errorf("expected user ID '2', got '%s'", userIdStr)
 	}
 
 	// Ensure keys are different

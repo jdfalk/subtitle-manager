@@ -50,56 +50,95 @@ func AuthenticateUser(db *sql.DB, username, password string) (int64, error) {
 	return id, nil
 }
 
-// GenerateSession creates a new session token for the user.
-func GenerateSession(db *sql.DB, userID int64, duration time.Duration) (string, error) {
+// GenerateSession creates a new session token for the user and returns a gcommon Session.
+func GenerateSession(db *sql.DB, userID int64, duration time.Duration) (*common.Session, error) {
 	token := uuid.NewString()
 	expires := time.Now().Add(duration)
+	createdAt := time.Now()
 	_, err := db.Exec(`INSERT INTO sessions (user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?)`,
-		userID, token, expires, time.Now())
+		userID, token, expires, createdAt)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return token, nil
+
+	// Create gcommon Session with opaque API
+	session := &common.Session{}
+	session.SetId(token) // Use token as session ID
+	session.SetUserId(strconv.FormatInt(userID, 10))
+	session.SetCreatedAt(timestamppb.New(createdAt))
+	session.SetExpiresAt(timestamppb.New(expires))
+	session.SetStatus(common.SessionStatus_SESSION_STATUS_ACTIVE)
+
+	return session, nil
 }
 
-// ValidateSession returns the user ID for a valid session token.
-func ValidateSession(db *sql.DB, token string) (int64, error) {
+// ValidateSession returns a gcommon Session for a valid session token.
+func ValidateSession(db *sql.DB, token string) (*common.Session, error) {
 	var userID int64
-	var expires time.Time
-	row := db.QueryRow(`SELECT user_id, expires_at FROM sessions WHERE token = ?`, token)
-	if err := row.Scan(&userID, &expires); err != nil {
-		return 0, err
+	var expires, createdAt time.Time
+	row := db.QueryRow(`SELECT user_id, expires_at, created_at FROM sessions WHERE token = ?`, token)
+	if err := row.Scan(&userID, &expires, &createdAt); err != nil {
+		return nil, err
 	}
 	if time.Now().After(expires) {
-		return 0, sql.ErrNoRows
+		return nil, sql.ErrNoRows
 	}
-	return userID, nil
+
+	// Create gcommon Session with opaque API
+	session := &common.Session{}
+	session.SetId(token)
+	session.SetUserId(strconv.FormatInt(userID, 10))
+	session.SetCreatedAt(timestamppb.New(createdAt))
+	session.SetExpiresAt(timestamppb.New(expires))
+	session.SetStatus(common.SessionStatus_SESSION_STATUS_ACTIVE)
+
+	return session, nil
 }
 
-// GenerateAPIKey creates a new API key for the user.
-func GenerateAPIKey(db *sql.DB, userID int64) (string, error) {
+// GenerateAPIKey creates a new API key for the user and returns a gcommon APIKey.
+func GenerateAPIKey(db *sql.DB, userID int64) (*common.APIKey, error) {
 	key := uuid.NewString()
+	createdAt := time.Now()
 	_, err := db.Exec(`INSERT INTO api_keys (user_id, key, created_at) VALUES (?, ?, ?)`,
-		userID, key, time.Now())
+		userID, key, createdAt)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return key, nil
+
+	// Create gcommon APIKey with opaque API
+	apiKey := &common.APIKey{}
+	apiKey.SetId(key)      // Use key as ID
+	apiKey.SetKeyHash(key) // In a real implementation, this should be a hash
+	apiKey.SetUserId(strconv.FormatInt(userID, 10))
+	apiKey.SetCreatedAt(timestamppb.New(createdAt))
+	apiKey.SetActive(true)
+
+	return apiKey, nil
 }
 
-// ValidateAPIKey returns the user ID associated with an API key.
-func ValidateAPIKey(db *sql.DB, key string) (int64, error) {
+// ValidateAPIKey returns a gcommon APIKey for a valid API key.
+func ValidateAPIKey(db *sql.DB, key string) (*common.APIKey, error) {
 	var userID int64
-	row := db.QueryRow(`SELECT user_id FROM api_keys WHERE key = ?`, key)
-	if err := row.Scan(&userID); err != nil {
-		return 0, err
+	var createdAt time.Time
+	row := db.QueryRow(`SELECT user_id, created_at FROM api_keys WHERE key = ?`, key)
+	if err := row.Scan(&userID, &createdAt); err != nil {
+		return nil, err
 	}
-	return userID, nil
+
+	// Create gcommon APIKey with opaque API
+	apiKey := &common.APIKey{}
+	apiKey.SetId(key)      // Use key as ID
+	apiKey.SetKeyHash(key) // In a real implementation, this should be a hash
+	apiKey.SetUserId(strconv.FormatInt(userID, 10))
+	apiKey.SetCreatedAt(timestamppb.New(createdAt))
+	apiKey.SetActive(true)
+
+	return apiKey, nil
 }
 
 // ResetPassword generates a new password for the specified user ID, updates the
 // stored hash and returns the plaintext password. A new API key is also
-// generated and returned.
+// generated and returned as a string.
 func ResetPassword(db *sql.DB, userID int64) (string, string, error) {
 	pass := uuid.NewString()[:12]
 	hash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
@@ -109,11 +148,13 @@ func ResetPassword(db *sql.DB, userID int64) (string, string, error) {
 	if _, err = db.Exec(`UPDATE users SET password_hash = ? WHERE id = ?`, string(hash), userID); err != nil {
 		return "", "", err
 	}
-	key, err := GenerateAPIKey(db, userID)
+	apiKeyObj, err := GenerateAPIKey(db, userID)
 	if err != nil {
 		return "", "", err
 	}
-	return pass, key, nil
+	// Extract the key string from the gcommon APIKey object
+	keyString := apiKeyObj.GetId() // Use ID as the key string
+	return pass, keyString, nil
 }
 
 // GetOrCreateUser returns the existing user ID for email or inserts a new user
@@ -218,12 +259,12 @@ func ListUsers(db *sql.DB) ([]*common.User, error) {
 		u.SetUsername(username)
 		u.SetEmail(email)
 		u.SetCreatedAt(timestamppb.New(createdAt))
-		
+
 		// Store role in metadata since User doesn't have a role field
 		metadata := make(map[string]string)
 		metadata["role"] = role
 		u.SetMetadata(metadata)
-		
+
 		out = append(out, u)
 	}
 	return out, rows.Err()

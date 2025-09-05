@@ -40,19 +40,30 @@ func (s *Server) Authenticate(ctx context.Context, req *authpb.AuthAuthenticateR
 		userID = id
 	} else if req.HasApiKey() {
 		creds := req.GetApiKey()
-		id, err := gauth.ValidateAPIKey(s.DB, creds.GetKey())
+		apiKey, err := gauth.ValidateAPIKey(s.DB, creds.GetKey())
 		if err != nil {
 			return nil, err
 		}
-		userID = id
+		// Extract user ID from gcommon APIKey
+		if userIdStr := apiKey.GetUserId(); userIdStr != "" {
+			if uid, err := strconv.ParseInt(userIdStr, 10, 64); err == nil {
+				userID = uid
+			} else {
+				return nil, err
+			}
+		} else {
+			return nil, sql.ErrNoRows
+		}
 	} else {
 		return nil, sql.ErrNoRows
 	}
 
-	token, err := gauth.GenerateSession(s.DB, userID, 24*time.Hour)
+	session, err := gauth.GenerateSession(s.DB, userID, 24*time.Hour)
 	if err != nil {
 		return nil, err
 	}
+	// Extract session token from gcommon Session
+	token := session.GetId()
 
 	// Create UserInfo
 	userInfo := &authpb.UserInfo{}

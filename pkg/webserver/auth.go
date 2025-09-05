@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	auth "github.com/jdfalk/subtitle-manager/pkg/gcommonauth"
 )
@@ -18,14 +19,24 @@ func authMiddleware(db *sql.DB, perm string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var id int64
 		if t, err := r.Cookie("session"); err == nil {
-			if uid, err := auth.ValidateSession(db, t.Value); err == nil {
-				id = uid
+			if session, err := auth.ValidateSession(db, t.Value); err == nil {
+				// Extract user ID from gcommon Session
+				if userIdStr := session.GetUserId(); userIdStr != "" {
+					if uid, err := strconv.ParseInt(userIdStr, 10, 64); err == nil {
+						id = uid
+					}
+				}
 			}
 		}
 		if id == 0 {
 			if key := r.Header.Get("X-API-Key"); key != "" {
-				if uid, err := auth.ValidateAPIKey(db, key); err == nil {
-					id = uid
+				if apiKey, err := auth.ValidateAPIKey(db, key); err == nil {
+					// Extract user ID from gcommon APIKey
+					if userIdStr := apiKey.GetUserId(); userIdStr != "" {
+						if uid, err := strconv.ParseInt(userIdStr, 10, 64); err == nil {
+							id = uid
+						}
+					}
 				}
 			}
 		}

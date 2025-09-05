@@ -84,11 +84,13 @@ func githubCallbackHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		tokenStr, err := auth.GenerateSession(db, id, 24*time.Hour)
+		session, err := auth.GenerateSession(db, id, 24*time.Hour)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		// Extract session token from gcommon Session
+		tokenStr := session.GetId()
 
 		// Set secure session cookie with proper security attributes
 		cookie := &http.Cookie{

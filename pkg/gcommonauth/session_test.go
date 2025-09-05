@@ -4,6 +4,7 @@
 package gcommonauth
 
 import (
+	"strconv"
 	"testing"
 	"time"
 
@@ -28,22 +29,22 @@ func TestSessionLifecycle(t *testing.T) {
 	}
 
 	// Generate a session
-	token, err := GenerateSession(db, userID, 24*time.Hour)
+	sessionObj, err := GenerateSession(db, userID, 24*time.Hour)
 	if err != nil {
 		t.Fatalf("failed to generate session: %v", err)
 	}
 
 	// Validate the session
-	validatedUserID, err := ValidateSession(db, token)
+	validatedSession, err := ValidateSession(db, sessionObj.GetId())
 	if err != nil {
 		t.Fatalf("failed to validate session: %v", err)
 	}
-	if validatedUserID != userID {
-		t.Fatalf("session validation returned wrong user ID: expected %d, got %d", userID, validatedUserID)
+	if userIdStr := validatedSession.GetUserId(); userIdStr != strconv.FormatInt(userID, 10) {
+		t.Fatalf("session validation returned wrong user ID: expected %d, got %s", userID, userIdStr)
 	}
 
 	// Invalidate the session
-	err = InvalidateSession(db, token)
+	err = InvalidateSession(db, sessionObj.GetId())
 	if err != nil {
 		t.Fatalf("failed to invalidate session: %v", err)
 	}

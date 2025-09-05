@@ -467,11 +467,13 @@ func loginHandler(db *sql.DB) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		token, err := auth.GenerateSession(db, id, 24*time.Hour)
+		session, err := auth.GenerateSession(db, id, 24*time.Hour)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		// Extract session token from gcommon Session
+		token := session.GetId()
 
 		// Set secure session cookie with proper security attributes
 		cookie := &http.Cookie{
