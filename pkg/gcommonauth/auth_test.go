@@ -66,7 +66,7 @@ func TestListUsers(t *testing.T) {
 	if len(users) != 2 {
 		t.Fatalf("expected 2 users, got %d", len(users))
 	}
-	if users[0].Username != "u1" || users[1].Username != "u2" {
+	if users[0].GetUsername() != "u1" || users[1].GetUsername() != "u2" {
 		t.Fatalf("unexpected users %+v", users)
 	}
 }
@@ -212,10 +212,10 @@ func TestGetOrCreateUser(t *testing.T) {
 	// Find the user with email "new@example.com"
 	found := false
 	for _, user := range users {
-		if user.Email == "new@example.com" {
+		if user.GetEmail() == "new@example.com" {
 			found = true
-			if user.Username != "newuser" {
-				t.Errorf("expected username 'newuser', got %s", user.Username)
+			if user.GetUsername() != "newuser" {
+				t.Errorf("expected username 'newuser', got %s", user.GetUsername())
 			}
 			break
 		}
