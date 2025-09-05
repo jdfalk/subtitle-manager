@@ -68,7 +68,7 @@ func (c *Client) SearchMedia(ctx context.Context, req *mediapb.SearchMediaReques
 
 // ExtractSubtitles extracts subtitles from media files
 func (c *Client) ExtractSubtitles(ctx context.Context, req *mediapb.ExtractSubtitlesRequest) (*mediapb.ExtractSubtitlesResponse, error) {
-	return c.subtitleService.ExtractSubtitles(ctx, req)
+	return c.processingService.ExtractSubtitles(ctx, req)
 }
 
 // ConvertSubtitleFormat converts subtitles between formats
@@ -113,7 +113,7 @@ func (c *Client) GetProcessingStatus(ctx context.Context, req *mediapb.GetProces
 
 // ExtractAudio extracts audio from media files
 func (c *Client) ExtractAudio(ctx context.Context, req *mediapb.ExtractAudioRequest) (*mediapb.ExtractAudioResponse, error) {
-	return c.audioService.ExtractAudio(ctx, req)
+	return c.processingService.ExtractAudio(ctx, req)
 }
 
 // NormalizeAudio normalizes audio levels

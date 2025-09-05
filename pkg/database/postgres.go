@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jdfalk/gcommon/sdks/go/v1/common"
 	_ "github.com/lib/pq"
 )
 
@@ -118,6 +119,98 @@ func initPostgresSchema(db *sql.DB) error {
 		}
 	}
 	return nil
+}
+
+// User authentication and session management methods (placeholders - delegates to gcommonauth)
+
+// CreateUser creates a new user (placeholder).
+func (p *PostgresStore) CreateUser(username, passwordHash, email, role string) (string, error) {
+	return "", nil
+}
+
+// GetUserByUsername retrieves a user by username (placeholder).
+func (p *PostgresStore) GetUserByUsername(username string) (*common.User, error) {
+	return nil, nil
+}
+
+// GetUserByEmail retrieves a user by email (placeholder).
+func (p *PostgresStore) GetUserByEmail(email string) (*common.User, error) {
+	return nil, nil
+}
+
+// GetUserByID retrieves a user by ID (placeholder).
+func (p *PostgresStore) GetUserByID(id string) (*common.User, error) {
+	return nil, nil
+}
+
+// ListUsers retrieves all users (placeholder).
+func (p *PostgresStore) ListUsers() ([]*common.User, error) {
+	return nil, nil
+}
+
+// UpdateUserRole updates a user's role (placeholder).
+func (p *PostgresStore) UpdateUserRole(username, role string) error {
+	return nil
+}
+
+// UpdateUserPassword updates a user's password hash (placeholder).
+func (p *PostgresStore) UpdateUserPassword(userID, passwordHash string) error {
+	return nil
+}
+
+// CreateSession creates a new user session (placeholder).
+func (p *PostgresStore) CreateSession(userID, token string, duration time.Duration) error {
+	return nil
+}
+
+// ValidateSession validates a session token (placeholder).
+func (p *PostgresStore) ValidateSession(token string) (string, error) {
+	return "", nil
+}
+
+// InvalidateSession invalidates a specific session (placeholder).
+func (p *PostgresStore) InvalidateSession(token string) error {
+	return nil
+}
+
+// InvalidateUserSessions invalidates all sessions for a user (placeholder).
+func (p *PostgresStore) InvalidateUserSessions(userID string) error {
+	return nil
+}
+
+// CleanupExpiredSessions removes expired sessions (placeholder).
+func (p *PostgresStore) CleanupExpiredSessions() error {
+	return nil
+}
+
+// CreateAPIKey creates an API key for a user (placeholder).
+func (p *PostgresStore) CreateAPIKey(userID, key string) error {
+	return nil
+}
+
+// ValidateAPIKey validates an API key (placeholder).
+func (p *PostgresStore) ValidateAPIKey(key string) (string, error) {
+	return "", nil
+}
+
+// CreateOneTimeToken creates a one-time use token (placeholder).
+func (p *PostgresStore) CreateOneTimeToken(userID, token string, duration time.Duration) error {
+	return nil
+}
+
+// ValidateOneTimeToken validates a one-time token (placeholder).
+func (p *PostgresStore) ValidateOneTimeToken(token string) (string, error) {
+	return "", nil
+}
+
+// SetDashboardLayout sets dashboard layout preferences (placeholder).
+func (p *PostgresStore) SetDashboardLayout(userID, layout string) error {
+	return nil
+}
+
+// GetDashboardLayout gets dashboard layout preferences (placeholder).
+func (p *PostgresStore) GetDashboardLayout(userID string) (string, error) {
+	return "", nil
 }
 
 // Close closes the underlying PostgreSQL connection.
