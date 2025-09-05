@@ -28,3 +28,4 @@ func TestDatabaseMigration(t *testing.T) {
 	if len(rec.GetValues()) != 1 {
 		t.Errorf("expected 1 value, got %d", len(rec.GetValues()))
 	}
+}
