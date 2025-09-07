@@ -14,7 +14,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Generator
 
-import cv2
+# Optional imports for video recording
+try:
+    import cv2
+
+    HAS_CV2 = True
+except ImportError:
+    HAS_CV2 = False
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -30,7 +37,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 # Test configuration
 TEST_CONFIG = {
-    "base_url": os.getenv("TEST_BASE_URL", "http://localhost:5173"),
+    "base_url": os.getenv("TEST_BASE_URL", "http://127.0.0.1:5173"),
     "backend_url": os.getenv("TEST_BACKEND_URL", "http://localhost:8080"),
     "browser": os.getenv("TEST_BROWSER", "chrome"),
     "headless": os.getenv("TEST_HEADLESS", "false").lower() == "true",
@@ -65,6 +72,10 @@ class VideoRecorder:
 
     def start_recording(self, window_size: tuple = (1920, 1080)):
         """Start video recording."""
+        if not HAS_CV2:
+            print("Video recording disabled - cv2 not available")
+            return
+
         try:
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
             self.writer = cv2.VideoWriter(
@@ -77,7 +88,7 @@ class VideoRecorder:
 
     def add_frame(self, screenshot_path: str):
         """Add a frame to the video recording."""
-        if not self.recording or not self.writer:
+        if not self.recording or not self.writer or not HAS_CV2:
             return
 
         try:
@@ -93,6 +104,8 @@ class VideoRecorder:
             self.writer.release()
             self.recording = False
             print(f"Stopped video recording: {self.output_path}")
+        elif not HAS_CV2:
+            print("Video recording was disabled - cv2 not available")
 
 
 @pytest.fixture(scope="session")
@@ -136,7 +149,10 @@ def driver(
             options.add_argument("--start-maximized")
 
             driver_instance = webdriver.Chrome(
-                ChromeDriverManager().install(), options=options
+                service=webdriver.chrome.service.Service(
+                    ChromeDriverManager().install()
+                ),
+                options=options,
             )
         else:  # Firefox
             options = FirefoxOptions()
@@ -146,7 +162,10 @@ def driver(
             options.add_argument(f"--height={test_config['window_size'].split(',')[1]}")
 
             driver_instance = webdriver.Firefox(
-                executable_path=GeckoDriverManager().install(), options=options
+                service=webdriver.firefox.service.Service(
+                    GeckoDriverManager().install()
+                ),
+                options=options,
             )
 
         # Configure implicit wait
