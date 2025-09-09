@@ -1,0 +1,274 @@
+// file: proto/file/v1/file_service.proto
+// version: 1.0.2
+// guid: 5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b
+
+edition = "2023";
+
+package subtitle_manager.file.v1;
+
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/file/v1";
+
+// File service handles file storage, metadata, and operations
+service FileService {
+  // File management
+  rpc UploadFile (stream UploadFileRequest) returns (UploadFileResponse);
+  rpc DownloadFile (DownloadFileRequest) returns (stream DownloadFileResponse);
+  rpc DeleteFile (DeleteFileRequest) returns (DeleteFileResponse);
+  rpc GetFileInfo (GetFileInfoRequest) returns (GetFileInfoResponse);
+
+  // File operations
+  rpc CopyFile (CopyFileRequest) returns (CopyFileResponse);
+  rpc MoveFile (MoveFileRequest) returns (MoveFileResponse);
+  rpc ListFiles (ListFilesRequest) returns (ListFilesResponse);
+
+  // Metadata operations
+  rpc UpdateFileMetadata (UpdateFileMetadataRequest) returns (UpdateFileMetadataResponse);
+  rpc SearchFiles (SearchFilesRequest) returns (SearchFilesResponse);
+
+  // Storage management
+  rpc GetStorageInfo (GetStorageInfoRequest) returns (GetStorageInfoResponse);
+  rpc CleanupFiles (CleanupFilesRequest) returns (CleanupFilesResponse);
+
+  // Health check
+  rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+// File Upload/Download Messages
+message UploadFileRequest {
+  oneof request {
+    FileMetadata metadata = 1;
+    FileChunk chunk = 2;
+  }
+}
+
+message FileMetadata {
+  string filename = 1;
+  string content_type = 2;
+  int64 total_size = 3;
+  string user_id = 4;
+  map<string, string> custom_metadata = 5;
+}
+
+message FileChunk {
+  bytes data = 1;
+  int64 offset = 2;
+  bool is_last = 3;
+}
+
+message UploadFileResponse {
+  string file_id = 1;
+  string filename = 2;
+  int64 size = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+message DownloadFileRequest {
+  string request_id = 1;
+  string file_id = 2;
+  int64 offset = 3;
+  int64 length = 4;
+}
+
+message DownloadFileResponse {
+  oneof response {
+    FileInfo file_info = 1;
+    FileChunk chunk = 2;
+  }
+}
+
+message FileInfo {
+  string filename = 1;
+  string content_type = 2;
+  int64 total_size = 3;
+  map<string, string> metadata = 4;
+}
+
+// File Management Messages
+message DeleteFileRequest {
+  string request_id = 1;
+  string file_id = 2;
+  bool permanent = 3;
+}
+
+message DeleteFileResponse {
+  string file_id = 1;
+  bool deleted = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+message GetFileInfoRequest {
+  string request_id = 1;
+  string file_id = 2;
+  bool include_metadata = 3;
+}
+
+message GetFileInfoResponse {
+  string file_id = 1;
+  string filename = 2;
+  string content_type = 3;
+  int64 size = 4;
+  string created_at = 5;
+  string modified_at = 6;
+  string user_id = 7;
+  map<string, string> metadata = 8;
+  bool success = 9;
+  string error_message = 10;
+}
+
+// File Operations Messages
+message CopyFileRequest {
+  string request_id = 1;
+  string source_file_id = 2;
+  string destination_name = 3;
+  string user_id = 4;
+}
+
+message CopyFileResponse {
+  string new_file_id = 1;
+  string filename = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+message MoveFileRequest {
+  string request_id = 1;
+  string file_id = 2;
+  string new_name = 3;
+  string new_location = 4;
+}
+
+message MoveFileResponse {
+  string file_id = 1;
+  string new_filename = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+message ListFilesRequest {
+  string request_id = 1;
+  string user_id = 2;
+  string path = 3;
+  int32 limit = 4;
+  int32 offset = 5;
+  ListOptions options = 6;
+}
+
+message ListOptions {
+  bool include_metadata = 1;
+  string sort_by = 2;
+  string sort_order = 3;
+  repeated string file_types = 4;
+}
+
+message ListFilesResponse {
+  repeated FileEntry files = 1;
+  int32 total_count = 2;
+  bool has_more = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+message FileEntry {
+  string file_id = 1;
+  string filename = 2;
+  string content_type = 3;
+  int64 size = 4;
+  string created_at = 5;
+  string modified_at = 6;
+  map<string, string> metadata = 7;
+}
+
+// Metadata Operations Messages
+message UpdateFileMetadataRequest {
+  string request_id = 1;
+  string file_id = 2;
+  map<string, string> metadata = 3;
+  bool replace_all = 4;
+}
+
+message UpdateFileMetadataResponse {
+  string file_id = 1;
+  map<string, string> updated_metadata = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+message SearchFilesRequest {
+  string request_id = 1;
+  string user_id = 2;
+  string query = 3;
+  SearchOptions options = 4;
+}
+
+message SearchOptions {
+  repeated string file_types = 1;
+  string date_from = 2;
+  string date_to = 3;
+  int64 min_size = 4;
+  int64 max_size = 5;
+  map<string, string> metadata_filters = 6;
+  int32 limit = 7;
+  int32 offset = 8;
+}
+
+message SearchFilesResponse {
+  repeated FileEntry files = 1;
+  int32 total_count = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+// Storage Management Messages
+message GetStorageInfoRequest {
+  string user_id = 1;
+}
+
+message GetStorageInfoResponse {
+  int64 total_space = 1;
+  int64 used_space = 2;
+  int64 available_space = 3;
+  int32 file_count = 4;
+  map<string, int64> file_type_distribution = 5;
+  bool success = 6;
+  string error_message = 7;
+}
+
+message CleanupFilesRequest {
+  string user_id = 1;
+  CleanupOptions options = 2;
+}
+
+message CleanupOptions {
+  int32 days_old = 1;
+  bool remove_temporary = 2;
+  bool remove_orphaned = 3;
+  repeated string file_types = 4;
+}
+
+message CleanupFilesResponse {
+  int32 files_deleted = 1;
+  int64 space_freed = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+// Health Check Messages
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  string status = 1;
+  string message = 2;
+  StorageHealth storage_health = 3;
+  bool success = 4;
+}
+
+message StorageHealth {
+  int64 total_space = 1;
+  int64 available_space = 2;
+  float usage_percentage = 3;
+  bool healthy = 4;
+}

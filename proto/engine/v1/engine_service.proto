@@ -1,0 +1,230 @@
+// file: proto/engine/v1/engine_service.proto
+// version: 1.0.1
+// guid: 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a
+
+edition = "2023";
+
+package subtitle_manager.engine.v1;
+
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/engine/v1";
+
+// Engine service handles subtitle processing, transcription, and translation
+service EngineService {
+  // Transcription operations
+  rpc TranscribeAudio (TranscribeAudioRequest) returns (TranscribeAudioResponse);
+  rpc GetTranscriptionStatus (GetTranscriptionStatusRequest) returns (GetTranscriptionStatusResponse);
+  rpc CancelTranscription (CancelTranscriptionRequest) returns (CancelTranscriptionResponse);
+
+  // Translation operations
+  rpc TranslateSubtitle (TranslateSubtitleRequest) returns (TranslateSubtitleResponse);
+  rpc GetTranslationProgress (GetTranslationProgressRequest) returns (GetTranslationProgressResponse);
+  rpc CancelTranslation (CancelTranslationRequest) returns (CancelTranslationResponse);
+
+  // Subtitle processing
+  rpc ConvertSubtitle (ConvertSubtitleRequest) returns (ConvertSubtitleResponse);
+  rpc ValidateSubtitle (ValidateSubtitleRequest) returns (ValidateSubtitleResponse);
+  rpc MergeSubtitles (MergeSubtitlesRequest) returns (MergeSubtitlesResponse);
+
+  // Engine management
+  rpc GetEngineStatus (GetEngineStatusRequest) returns (GetEngineStatusResponse);
+  rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+// Transcription Messages
+message TranscribeAudioRequest {
+  string request_id = 1;
+  string audio_file_id = 2;
+  string source_language = 3;
+  repeated string target_languages = 4;
+  TranscriptionOptions options = 5;
+}
+
+message TranscriptionOptions {
+  string model = 1;
+  bool speaker_detection = 2;
+  bool word_timestamps = 3;
+  float confidence_threshold = 4;
+}
+
+message TranscribeAudioResponse {
+  string job_id = 1;
+  string status = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+message GetTranscriptionStatusRequest {
+  string request_id = 1;
+  string job_id = 2;
+}
+
+message GetTranscriptionStatusResponse {
+  string job_id = 1;
+  string status = 2;
+  float progress = 3;
+  repeated string result_file_ids = 4;
+  bool success = 5;
+  string error_message = 6;
+}
+
+message CancelTranscriptionRequest {
+  string request_id = 1;
+  string job_id = 2;
+}
+
+message CancelTranscriptionResponse {
+  string job_id = 1;
+  bool cancelled = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+// Translation Messages
+message TranslateSubtitleRequest {
+  string request_id = 1;
+  string subtitle_file_id = 2;
+  string source_language = 3;
+  string target_language = 4;
+  TranslationOptions options = 5;
+}
+
+message TranslationOptions {
+  string model = 1;
+  bool preserve_timing = 2;
+  bool preserve_formatting = 3;
+  map<string, string> custom_settings = 4;
+}
+
+message TranslateSubtitleResponse {
+  string job_id = 1;
+  string status = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+message GetTranslationProgressRequest {
+  string request_id = 1;
+  string job_id = 2;
+}
+
+message GetTranslationProgressResponse {
+  string job_id = 1;
+  string status = 2;
+  float progress = 3;
+  string result_file_id = 4;
+  bool success = 5;
+  string error_message = 6;
+}
+
+message CancelTranslationRequest {
+  string request_id = 1;
+  string job_id = 2;
+}
+
+message CancelTranslationResponse {
+  string job_id = 1;
+  bool cancelled = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+// Subtitle Processing Messages
+message ConvertSubtitleRequest {
+  string request_id = 1;
+  string source_file_id = 2;
+  string target_format = 3;
+  ConversionOptions options = 4;
+}
+
+message ConversionOptions {
+  string encoding = 1;
+  int32 framerate = 2;
+  bool preserve_metadata = 3;
+}
+
+message ConvertSubtitleResponse {
+  string result_file_id = 1;
+  string format = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+message ValidateSubtitleRequest {
+  string request_id = 1;
+  string file_id = 2;
+  ValidationOptions options = 3;
+}
+
+message ValidationOptions {
+  bool check_timing = 1;
+  bool check_encoding = 2;
+  bool check_format = 3;
+}
+
+message ValidateSubtitleResponse {
+  bool is_valid = 1;
+  repeated ValidationError errors = 2;
+  repeated ValidationWarning warnings = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+message ValidationError {
+  string code = 1;
+  string message = 2;
+  int32 line_number = 3;
+}
+
+message ValidationWarning {
+  string code = 1;
+  string message = 2;
+  int32 line_number = 3;
+}
+
+message MergeSubtitlesRequest {
+  string request_id = 1;
+  repeated string file_ids = 2;
+  MergeOptions options = 3;
+}
+
+message MergeOptions {
+  string output_format = 1;
+  bool preserve_timing = 2;
+  string merge_strategy = 3;
+}
+
+message MergeSubtitlesResponse {
+  string result_file_id = 1;
+  bool success = 2;
+  string error_message = 3;
+}
+
+// Engine Management Messages
+message GetEngineStatusRequest {
+  string service = 1;
+}
+
+message GetEngineStatusResponse {
+  string status = 1;
+  map<string, string> engines = 2;
+  repeated JobStatus active_jobs = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+message JobStatus {
+  string job_id = 1;
+  string type = 2;
+  string status = 3;
+  float progress = 4;
+}
+
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  string status = 1;
+  string message = 2;
+  bool success = 3;
+}

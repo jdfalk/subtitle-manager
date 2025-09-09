@@ -1,0 +1,305 @@
+// file: proto/web/v1/web_service_complete.proto
+// version: 2.0.0
+// guid: webservice-complete-55555555555
+
+edition = "2023";
+
+package subtitle_manager.web.v1;
+
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/proto/web/v1";
+
+import "google/protobuf/go_features.proto";
+import "google/protobuf/empty.proto";
+
+option features.(pb.go).api_level = API_OPAQUE;
+
+// =============================================================================
+// Web Service - handles all client-facing operations
+// Go implementation uses gcommon types internally for User, Session, etc.
+// =============================================================================
+
+service WebService {
+  // Authentication operations
+  rpc AuthenticateUser(AuthenticateUserRequest) returns (AuthenticateUserResponse);
+  rpc LogoutUser(LogoutUserRequest) returns (google.protobuf.Empty);
+
+  // User management
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc UpdateUserPreferences(UpdateUserPreferencesRequest) returns (UpdateUserPreferencesResponse);
+
+  // File operations
+  rpc UploadSubtitle(UploadSubtitleRequest) returns (UploadSubtitleResponse);
+  rpc DownloadSubtitle(DownloadSubtitleRequest) returns (DownloadSubtitleResponse);
+  rpc SearchSubtitles(SearchSubtitlesRequest) returns (SearchSubtitlesResponse);
+
+  // Translation operations
+  rpc TranslateSubtitle(TranslateSubtitleRequest) returns (TranslateSubtitleResponse);
+  rpc GetTranslationStatus(GetTranslationStatusRequest) returns (GetTranslationStatusResponse);
+  rpc CancelTranslation(CancelTranslationRequest) returns (CancelTranslationResponse);
+
+  // Streaming operations
+  rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse);
+  rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileResponse);
+
+  // Health check
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+// =============================================================================
+// Authentication Messages
+// =============================================================================
+
+// Authentication request - Go implementation uses gcommon patterns internally
+message AuthenticateUserRequest {
+  string request_id = 1;
+  string username = 2;
+  string password = 3;
+  bool remember_me = 4;
+  string two_factor_code = 5;
+}
+
+// Authentication response - Go implementation uses gcommon User/Session internally
+message AuthenticateUserResponse {
+  string session_id = 1;
+  string user_id = 2;
+  bool success = 3;
+  string error_message = 4;
+  string error_code = 5;
+}
+
+// Logout request
+message LogoutUserRequest {
+  string session_id = 1;
+  bool logout_all_sessions = 2;
+}
+
+// =============================================================================
+// User Management Messages
+// =============================================================================
+
+// Get user request
+message GetUserRequest {
+  string request_id = 1;
+  string user_id = 2;
+  bool include_preferences = 3;
+}
+
+// Get user response - Go implementation populates from gcommon.User
+message GetUserResponse {
+  string user_id = 1;
+  string username = 2;
+  string email = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+// Update user request
+message UpdateUserRequest {
+  string request_id = 1;
+  string user_id = 2;
+  string username = 3;
+  string email = 4;
+  map<string, string> metadata = 5;
+}
+
+// Update user response
+message UpdateUserResponse {
+  string user_id = 1;
+  string username = 2;
+  string email = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+// Update user preferences request
+message UpdateUserPreferencesRequest {
+  string request_id = 1;
+  string user_id = 2;
+  string language = 3;
+  string theme = 4;
+  string timezone = 5;
+  map<string, string> custom_settings = 6;
+}
+
+// Update user preferences response
+message UpdateUserPreferencesResponse {
+  string language = 1;
+  string theme = 2;
+  string timezone = 3;
+  map<string, string> custom_settings = 4;
+  bool success = 5;
+  string error_message = 6;
+}
+
+// =============================================================================
+// File Operation Messages
+// =============================================================================
+
+// Upload subtitle request
+message UploadSubtitleRequest {
+  string request_id = 1;
+  string filename = 2;
+  bytes content = 3;
+  string content_type = 4;
+  map<string, string> metadata = 5;
+}
+
+// Upload subtitle response
+message UploadSubtitleResponse {
+  string file_id = 1;
+  string filename = 2;
+  int64 size = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+// Download subtitle request
+message DownloadSubtitleRequest {
+  string request_id = 1;
+  string file_id = 2;
+  string format = 3;
+}
+
+// Download subtitle response
+message DownloadSubtitleResponse {
+  string filename = 1;
+  bytes content = 2;
+  string content_type = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+// Search subtitles request
+message SearchSubtitlesRequest {
+  string request_id = 1;
+  string query = 2;
+  string language = 3;
+  int32 limit = 4;
+  int32 offset = 5;
+}
+
+// Search subtitles response
+message SearchSubtitlesResponse {
+  repeated string file_ids = 1;
+  repeated string filenames = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+// =============================================================================
+// Translation Messages
+// =============================================================================
+
+// Translate subtitle request
+message TranslateSubtitleRequest {
+  string request_id = 1;
+  string file_id = 2;
+  string source_language = 3;
+  string target_language = 4;
+  map<string, string> options = 5;
+}
+
+// Translate subtitle response
+message TranslateSubtitleResponse {
+  string job_id = 1;
+  string status = 2;
+  string result_file_id = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+// Get translation status request
+message GetTranslationStatusRequest {
+  string request_id = 1;
+  string job_id = 2;
+}
+
+// Get translation status response
+message GetTranslationStatusResponse {
+  string job_id = 1;
+  string status = 2;
+  float progress = 3;
+  string result_file_id = 4;
+  bool success = 5;
+  string error_message = 6;
+}
+
+// Cancel translation request
+message CancelTranslationRequest {
+  string request_id = 1;
+  string job_id = 2;
+}
+
+// Cancel translation response
+message CancelTranslationResponse {
+  string job_id = 1;
+  bool cancelled = 2;
+  bool success = 3;
+  string error_message = 4;
+}
+
+// =============================================================================
+// Streaming Messages
+// =============================================================================
+
+// Upload file request (streaming)
+message UploadFileRequest {
+  oneof data {
+    FileMetadata metadata = 1;
+    bytes chunk = 2;
+  }
+
+  message FileMetadata {
+    string filename = 1;
+    string content_type = 2;
+    int64 total_size = 3;
+  }
+}
+
+// Upload file response
+message UploadFileResponse {
+  string file_id = 1;
+  string filename = 2;
+  int64 size = 3;
+  bool success = 4;
+  string error_message = 5;
+}
+
+// Download file request
+message DownloadFileRequest {
+  string request_id = 1;
+  string file_id = 2;
+}
+
+// Download file response (streaming)
+message DownloadFileResponse {
+  oneof data {
+    FileMetadata metadata = 1;
+    bytes chunk = 2;
+  }
+
+  message FileMetadata {
+    string filename = 1;
+    string content_type = 2;
+    int64 total_size = 3;
+  }
+}
+
+// =============================================================================
+// Health Check Messages
+// =============================================================================
+
+// Health check request
+message HealthCheckRequest {
+  string service = 1;
+}
+
+// Health check response - Go implementation uses gcommon health types internally
+message HealthCheckResponse {
+  string status = 1;
+  string service = 2;
+  string message = 3;
+  int64 timestamp = 4;
+}
