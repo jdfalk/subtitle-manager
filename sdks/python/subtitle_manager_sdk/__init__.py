@@ -35,14 +35,14 @@ __description__ = "Python SDK for Subtitle Manager API"
 __all__ = [
     "SubtitleManagerClient",
     "SubtitleManagerError",
-    "AuthenticationError", 
+    "AuthenticationError",
     "AuthorizationError",
     "NotFoundError",
     "RateLimitError",
     "APIError",
     "SystemInfo",
     "HistoryItem",
-    "ScanStatus", 
+    "ScanStatus",
     "OAuthCredentials",
     "LogEntry",
 ]

@@ -9,6 +9,7 @@ Setup configuration for the Subtitle Manager Python SDK.
 from setuptools import setup, find_packages
 import os
 
+
 # Read README file
 def read_readme():
     """Read README file for long description."""
@@ -18,14 +19,18 @@ def read_readme():
             return f.read()
     return ""
 
+
 # Read requirements
 def read_requirements():
     """Read requirements from requirements.txt."""
     req_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
     if os.path.exists(req_path):
         with open(req_path, "r", encoding="utf-8") as f:
-            return [line.strip() for line in f if line.strip() and not line.startswith("#")]
+            return [
+                line.strip() for line in f if line.strip() and not line.startswith("#")
+            ]
     return ["requests>=2.25.0"]
+
 
 setup(
     name="subtitle-manager-sdk",

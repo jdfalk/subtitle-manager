@@ -14,6 +14,7 @@ from enum import Enum
 
 class LogLevel(str, Enum):
     """Log levels."""
+
     DEBUG = "debug"
     INFO = "info"
     WARN = "warn"
@@ -22,6 +23,7 @@ class LogLevel(str, Enum):
 
 class OperationType(str, Enum):
     """Operation types for history."""
+
     DOWNLOAD = "download"
     CONVERT = "convert"
     TRANSLATE = "translate"
@@ -30,6 +32,7 @@ class OperationType(str, Enum):
 
 class OperationStatus(str, Enum):
     """Operation status for history."""
+
     SUCCESS = "success"
     FAILED = "failed"
     PENDING = "pending"
@@ -37,6 +40,7 @@ class OperationStatus(str, Enum):
 
 class UserRole(str, Enum):
     """User permission levels."""
+
     READ = "read"
     BASIC = "basic"
     ADMIN = "admin"
@@ -44,6 +48,7 @@ class UserRole(str, Enum):
 
 class TranslationProvider(str, Enum):
     """Translation providers."""
+
     GOOGLE = "google"
     OPENAI = "openai"
 
@@ -51,6 +56,7 @@ class TranslationProvider(str, Enum):
 @dataclass
 class SystemInfo:
     """System information model."""
+
     go_version: str
     os: str
     arch: str
@@ -60,9 +66,9 @@ class SystemInfo:
     memory_usage: Optional[int] = None
     uptime: Optional[str] = None
     version: Optional[str] = None
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'SystemInfo':
+    def from_dict(cls, data: Dict[str, Any]) -> "SystemInfo":
         """Create SystemInfo from dictionary."""
         return cls(
             go_version=data["go_version"],
@@ -80,6 +86,7 @@ class SystemInfo:
 @dataclass
 class HistoryItem:
     """History item model."""
+
     id: int
     type: OperationType
     file_path: str
@@ -90,9 +97,9 @@ class HistoryItem:
     created_at: datetime
     user_id: int
     error_message: Optional[str] = None
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'HistoryItem':
+    def from_dict(cls, data: Dict[str, Any]) -> "HistoryItem":
         """Create HistoryItem from dictionary."""
         return cls(
             id=data["id"],
@@ -102,7 +109,9 @@ class HistoryItem:
             language=data.get("language"),
             provider=data.get("provider"),
             status=OperationStatus(data["status"]),
-            created_at=datetime.fromisoformat(data["created_at"].replace('Z', '+00:00')),
+            created_at=datetime.fromisoformat(
+                data["created_at"].replace("Z", "+00:00")
+            ),
             user_id=data["user_id"],
             error_message=data.get("error_message"),
         )
@@ -111,6 +120,7 @@ class HistoryItem:
 @dataclass
 class ScanStatus:
     """Library scan status model."""
+
     scanning: bool
     progress: float
     current_path: Optional[str] = None
@@ -118,18 +128,22 @@ class ScanStatus:
     files_total: Optional[int] = None
     start_time: Optional[datetime] = None
     estimated_completion: Optional[datetime] = None
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'ScanStatus':
+    def from_dict(cls, data: Dict[str, Any]) -> "ScanStatus":
         """Create ScanStatus from dictionary."""
         start_time = None
         if data.get("start_time"):
-            start_time = datetime.fromisoformat(data["start_time"].replace('Z', '+00:00'))
-            
+            start_time = datetime.fromisoformat(
+                data["start_time"].replace("Z", "+00:00")
+            )
+
         estimated_completion = None
         if data.get("estimated_completion"):
-            estimated_completion = datetime.fromisoformat(data["estimated_completion"].replace('Z', '+00:00'))
-        
+            estimated_completion = datetime.fromisoformat(
+                data["estimated_completion"].replace("Z", "+00:00")
+            )
+
         return cls(
             scanning=data["scanning"],
             progress=data["progress"],
@@ -144,12 +158,13 @@ class ScanStatus:
 @dataclass
 class OAuthCredentials:
     """OAuth2 credentials model."""
+
     client_id: str
     client_secret: str
     redirect_url: Optional[str] = None
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'OAuthCredentials':
+    def from_dict(cls, data: Dict[str, Any]) -> "OAuthCredentials":
         """Create OAuthCredentials from dictionary."""
         return cls(
             client_id=data["client_id"],
@@ -161,17 +176,18 @@ class OAuthCredentials:
 @dataclass
 class LogEntry:
     """Log entry model."""
+
     timestamp: datetime
     level: LogLevel
     component: str
     message: str
     fields: Dict[str, Any]
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'LogEntry':
+    def from_dict(cls, data: Dict[str, Any]) -> "LogEntry":
         """Create LogEntry from dictionary."""
         return cls(
-            timestamp=datetime.fromisoformat(data["timestamp"].replace('Z', '+00:00')),
+            timestamp=datetime.fromisoformat(data["timestamp"].replace("Z", "+00:00")),
             level=LogLevel(data["level"]),
             component=data["component"],
             message=data["message"],
@@ -182,12 +198,13 @@ class LogEntry:
 @dataclass
 class LoginResponse:
     """Login response model."""
+
     user_id: int
     username: str
     role: UserRole
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'LoginResponse':
+    def from_dict(cls, data: Dict[str, Any]) -> "LoginResponse":
         """Create LoginResponse from dictionary."""
         return cls(
             user_id=data["user_id"],
@@ -199,12 +216,13 @@ class LoginResponse:
 @dataclass
 class DownloadResult:
     """Download operation result."""
+
     success: bool
     subtitle_path: Optional[str] = None
     provider: Optional[str] = None
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'DownloadResult':
+    def from_dict(cls, data: Dict[str, Any]) -> "DownloadResult":
         """Create DownloadResult from dictionary."""
         return cls(
             success=data["success"],
@@ -216,10 +234,11 @@ class DownloadResult:
 @dataclass
 class ScanResult:
     """Scan operation result."""
+
     scan_id: str
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'ScanResult':
+    def from_dict(cls, data: Dict[str, Any]) -> "ScanResult":
         """Create ScanResult from dictionary."""
         return cls(scan_id=data["scan_id"])
 
@@ -227,18 +246,19 @@ class ScanResult:
 @dataclass
 class PaginatedResponse:
     """Paginated response wrapper."""
+
     items: List[Any]
     total: int
     page: int
     limit: int
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any], item_class=None) -> 'PaginatedResponse':
+    def from_dict(cls, data: Dict[str, Any], item_class=None) -> "PaginatedResponse":
         """Create PaginatedResponse from dictionary."""
         items = data["items"]
-        if item_class and hasattr(item_class, 'from_dict'):
+        if item_class and hasattr(item_class, "from_dict"):
             items = [item_class.from_dict(item) for item in items]
-        
+
         return cls(
             items=items,
             total=data["total"],
