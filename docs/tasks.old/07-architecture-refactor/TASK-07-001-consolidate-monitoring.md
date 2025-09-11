@@ -6,11 +6,13 @@
 
 ## 🎯 Objective
 
-Consolidate the three redundant file monitoring services (`autoscan`, `watch`, `monitor`) into a single unified monitoring service with configurable behavior.
+Consolidate the three redundant file monitoring services (`autoscan`, `watch`,
+`monitor`) into a single unified monitoring service with configurable behavior.
 
 ## 📋 Current Problem
 
 The application currently has three overlapping monitoring services:
+
 - `autoscan` - Periodic directory scanning
 - `watch` - Real-time file system monitoring
 - `monitor` - Sonarr/Radarr integration monitoring
@@ -28,12 +30,14 @@ This creates confusion, code duplication, and maintenance overhead.
 ## 🔧 Implementation Steps
 
 ### Phase 1: Analysis and Design
+
 1. Analyze current implementations of all three services
 2. Identify common functionality and interfaces
 3. Design unified monitoring service architecture
 4. Create configuration schema for combined service
 
 ### Phase 2: Core Implementation
+
 1. Create new unified monitoring service in `pkg/monitoring/unified.go`
 2. Implement configuration-driven monitoring modes:
    - Periodic scanning (autoscan)
@@ -43,12 +47,14 @@ This creates confusion, code duplication, and maintenance overhead.
 4. Implement proper resource cleanup and shutdown
 
 ### Phase 3: Command Line Interface
+
 1. Update `cmd/monitor.go` to handle unified functionality
 2. Add subcommands for specific modes if needed
 3. Remove old `cmd/autoscan.go` and `cmd/watch.go`
 4. Update help text and documentation
 
 ### Phase 4: Migration and Testing
+
 1. Create migration guide for existing users
 2. Add comprehensive tests for unified service
 3. Test backwards compatibility
@@ -61,22 +67,22 @@ monitor:
   # Enable/disable specific monitoring modes
   periodic_scan:
     enabled: true
-    interval: "1h"
-    cron_schedule: ""  # Optional cron override
+    interval: '1h'
+    cron_schedule: '' # Optional cron override
 
   real_time_watch:
     enabled: true
     recursive: true
-    debounce_interval: "5s"
+    debounce_interval: '5s'
 
   media_server:
     enabled: true
     sonarr:
       enabled: true
-      sync_interval: "24h"
+      sync_interval: '24h'
     radarr:
       enabled: true
-      sync_interval: "24h"
+      sync_interval: '24h'
 
   # Shared settings
   scan_workers: 4
@@ -113,4 +119,6 @@ monitor:
 
 ## 📝 Notes
 
-This task eliminates redundancy while preserving all functionality. The unified service should be more efficient and easier to maintain while providing better user experience.
+This task eliminates redundancy while preserving all functionality. The unified
+service should be more efficient and easier to maintain while providing better
+user experience.

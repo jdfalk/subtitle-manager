@@ -6,14 +6,19 @@
 
 ## Overview
 
-Define complete service interface definitions for the 3-service architecture using Edition 2023 protobuf with comprehensive gcommon integration. This implementation leverages the extensive gcommon protobuf library for common types, configuration, authentication, health monitoring, and media processing instead of defining custom types.
+Define complete service interface definitions for the 3-service architecture
+using Edition 2023 protobuf with comprehensive gcommon integration. This
+implementation leverages the extensive gcommon protobuf library for common
+types, configuration, authentication, health monitoring, and media processing
+instead of defining custom types.
 
 ## Requirements
 
 ### Core Technology Requirements
 
 - **Edition 2023 Protobuf**: Latest protobuf edition with enhanced features
-- **Opaque API**: All protobuf access via getters/setters (no direct field access)
+- **Opaque API**: All protobuf access via getters/setters (no direct field
+  access)
 - **gcommon Integration**: Extensive use of gcommon protobuf types
 - **1-1-1 Pattern**: One top-level entity per protobuf file
 - **3-Service Architecture**: Web, Engine, File services with clear boundaries
@@ -112,14 +117,14 @@ import "gcommon/v1/common/metadata.proto";
 message AuthenticateUserRequest {
   // Request metadata using gcommon types
   gcommon.v1.common.Metadata metadata = 1;
-  
+
   // Authentication credentials
   string username = 2;
   string password = 3;
-  
+
   // Optional: Remember this session
   bool remember_me = 4;
-  
+
   // Optional: Two-factor authentication code
   string two_factor_code = 5;
 }
@@ -152,14 +157,14 @@ message AuthenticateUserResponse {
   // Success case: user and session from gcommon
   gcommon.v1.common.User user = 1;
   gcommon.v1.common.Session session = 2;
-  
+
   // Authentication tokens
   string access_token = 3;
   string refresh_token = 4;
-  
+
   // Token expiration info
   int64 expires_in = 5;
-  
+
   // Error case: standardized error from gcommon
   gcommon.v1.common.Error error = 6;
 }
@@ -188,10 +193,10 @@ import "gcommon/v1/common/metadata.proto";
 message GetUserRequest {
   // Request metadata from gcommon
   gcommon.v1.common.Metadata metadata = 1;
-  
+
   // User ID to retrieve (empty for current user)
   string user_id = 2;
-  
+
   // Include user preferences in response
   bool include_preferences = 3;
 }
@@ -222,10 +227,10 @@ import "gcommon/v1/common/error.proto";
 message GetUserResponse {
   // User data from gcommon (includes all standard fields)
   gcommon.v1.common.User user = 1;
-  
+
   // Optional: User preferences (if requested)
   UserPreferences preferences = 2;
-  
+
   // Error case using gcommon Error
   gcommon.v1.common.Error error = 3;
 }
@@ -236,16 +241,16 @@ message UserPreferences {
   string language = 1;
   string theme = 2;
   string timezone = 3;
-  
+
   // Subtitle preferences
   string default_subtitle_language = 4;
   string preferred_subtitle_format = 5;
   bool auto_download_subtitles = 6;
-  
+
   // Notification preferences
   bool email_notifications = 7;
   bool push_notifications = 8;
-  
+
   // Advanced preferences
   map<string, string> custom_settings = 9;
 }
@@ -324,23 +329,23 @@ import "gcommon/v1/media/language.proto";
 message ProcessTranslationRequest {
   // Request metadata from gcommon
   gcommon.v1.common.Metadata metadata = 1;
-  
+
   // Unique request identifier
   string request_id = 2;
-  
+
   // Source file using gcommon media types
   gcommon.v1.media.MediaFile source_file = 3;
-  
+
   // Language settings using gcommon media types
   gcommon.v1.media.Language source_language = 4;
   gcommon.v1.media.Language target_language = 5;
-  
+
   // Processing options
   TranslationOptions options = 6;
-  
+
   // Priority level
   string priority = 7;
-  
+
   // User ID for tracking
   string user_id = 8;
 }
@@ -349,18 +354,18 @@ message ProcessTranslationRequest {
 message TranslationOptions {
   // Translation engine to use
   string engine = 1;
-  
+
   // Quality level
   string quality = 2;
-  
+
   // Custom model or settings
   string model = 3;
-  
+
   // Post-processing options
   bool apply_formatting = 4;
   bool preserve_timing = 5;
   bool auto_correct = 6;
-  
+
   // Additional parameters
   map<string, string> custom_parameters = 7;
 }
@@ -442,20 +447,20 @@ import "gcommon/v1/media/media_file.proto";
 message WriteFileRequest {
   // Request metadata from gcommon
   gcommon.v1.common.Metadata metadata = 1;
-  
+
   // File path (absolute)
   string file_path = 2;
-  
+
   // File content
   bytes content = 3;
-  
+
   // Write options
   bool create_directories = 4;
   bool overwrite = 5;
-  
+
   // File metadata using gcommon media types when applicable
   map<string, string> file_metadata = 6;
-  
+
   // Permissions (Unix-style)
   string permissions = 7;
 }
@@ -481,7 +486,7 @@ import (
     "github.com/jdfalk/gcommon/sdks/go/v1/config"
     "github.com/jdfalk/gcommon/sdks/go/v1/health"
     "github.com/jdfalk/gcommon/sdks/go/v1/media"
-    
+
     // Our generated protobuf types
     webv1 "github.com/jdfalk/subtitle-manager/pkg/proto/web/v1"
     enginev1 "github.com/jdfalk/subtitle-manager/pkg/proto/engine/v1"
@@ -504,7 +509,7 @@ type WebServiceInterface interface {
     // File operations
     UploadSubtitle(ctx context.Context, filename string, content []byte, metadata map[string]string) (*webv1.UploadSubtitleResponse, error)
     DownloadSubtitle(ctx context.Context, subtitleID string) (*webv1.DownloadSubtitleResponse, error)
-    
+
     // Translation operations
     RequestTranslation(ctx context.Context, req *webv1.TranslateSubtitleRequest) (*webv1.TranslateSubtitleResponse, error)
     GetTranslationStatus(ctx context.Context, jobID string) (*webv1.GetTranslationStatusResponse, error)
@@ -522,7 +527,7 @@ type EngineServiceInterface interface {
 
     // Transcription using gcommon media types
     ProcessTranscription(ctx context.Context, mediaFile *media.MediaFile, options *enginev1.TranscriptionOptions) (*enginev1.ProcessTranscriptionResponse, error)
-    
+
     // Worker management
     GetWorkerStatus(ctx context.Context) (*enginev1.GetWorkerStatusResponse, error)
     ScaleWorkers(ctx context.Context, targetCount int32) error
@@ -537,11 +542,11 @@ type FileServiceInterface interface {
     WriteFile(ctx context.Context, path string, content []byte, options *filev1.WriteOptions) (*media.MediaFile, error)
     ReadFile(ctx context.Context, path string) ([]byte, *media.MediaFile, error)
     DeleteFile(ctx context.Context, path string) error
-    
+
     // Directory operations
     CreateDirectory(ctx context.Context, path string, permissions string) error
     ListFiles(ctx context.Context, directory string, filter *filev1.FileFilter) ([]*media.MediaFile, error)
-    
+
     // File monitoring
     WatchFiles(ctx context.Context, paths []string) (<-chan *filev1.FileWatchEvent, error)
     StopWatching(ctx context.Context, watchID string) error
@@ -555,15 +560,15 @@ type ConfigurationManager interface {
     // Configuration using gcommon config types
     GetApplicationConfig(ctx context.Context) (*config.ApplicationConfig, error)
     UpdateApplicationConfig(ctx context.Context, cfg *config.ApplicationConfig) error
-    
+
     // Service-specific configuration
     GetWebServiceConfig(ctx context.Context) (*WebServiceConfig, error)
     GetEngineServiceConfig(ctx context.Context) (*EngineServiceConfig, error)
     GetFileServiceConfig(ctx context.Context) (*FileServiceConfig, error)
-    
+
     // Configuration validation
     ValidateConfig(ctx context.Context, cfg interface{}) error
-    
+
     // Configuration watching
     WatchConfigChanges(ctx context.Context) (<-chan *config.ConfigChangeEvent, error)
 }
@@ -575,13 +580,13 @@ type AuthenticationManager interface {
     ValidateToken(ctx context.Context, token string) (*common.User, error)
     RefreshSession(ctx context.Context, refreshToken string) (*common.Session, error)
     RevokeSession(ctx context.Context, sessionToken string) error
-    
+
     // User management using gcommon User types
     CreateUser(ctx context.Context, user *common.User, password string) (*common.User, error)
     GetUser(ctx context.Context, userID string) (*common.User, error)
     UpdateUser(ctx context.Context, userID string, updates *common.User) (*common.User, error)
     DeleteUser(ctx context.Context, userID string) error
-    
+
     // Session management using gcommon Session types
     ListUserSessions(ctx context.Context, userID string) ([]*common.Session, error)
     RevokeUserSessions(ctx context.Context, userID string) error
@@ -593,10 +598,10 @@ type MediaProcessor interface {
     ProcessMediaFile(ctx context.Context, file *media.MediaFile, options *ProcessingOptions) (*media.MediaFile, error)
     ExtractSubtitles(ctx context.Context, videoFile *media.MediaFile) ([]*media.MediaFile, error)
     ConvertSubtitleFormat(ctx context.Context, subtitle *media.MediaFile, targetFormat string) (*media.MediaFile, error)
-    
+
     // Language detection using gcommon media types
     DetectLanguage(ctx context.Context, subtitle *media.MediaFile) (*media.Language, float32, error)
-    
+
     // Translation using gcommon media types
     TranslateSubtitle(ctx context.Context, subtitle *media.MediaFile, sourceLanguage, targetLanguage *media.Language, options *TranslationOptions) (*media.MediaFile, error)
 }
@@ -615,7 +620,7 @@ type AuthCredentials struct {
 type WebServiceConfig struct {
     // Embed gcommon application config
     *config.ApplicationConfig
-    
+
     // Service-specific settings
     Server          *ServerConfig
     Authentication  *AuthConfig
@@ -643,7 +648,7 @@ type AuthConfig struct {
 type EngineServiceConfig struct {
     // Embed gcommon application config
     *config.ApplicationConfig
-    
+
     // Engine-specific settings
     Workers         *WorkerConfig
     Translation     *TranslationConfig
@@ -654,7 +659,7 @@ type EngineServiceConfig struct {
 type FileServiceConfig struct {
     // Embed gcommon application config
     *config.ApplicationConfig
-    
+
     // File service settings
     Storage         *StorageConfig
     Monitoring      *MonitoringConfig
@@ -682,24 +687,31 @@ type TranslationOptions struct {
 
 This service interface definition provides:
 
-1. **Complete gcommon Integration**: Leverages gcommon types for User, Session, Error, Media, Config, and Health
+1. **Complete gcommon Integration**: Leverages gcommon types for User, Session,
+   Error, Media, Config, and Health
 2. **Edition 2023 Protobuf**: Modern protobuf with opaque API support
-3. **3-Service Architecture**: Clear separation of concerns with gcommon consistency
+3. **3-Service Architecture**: Clear separation of concerns with gcommon
+   consistency
 4. **Comprehensive Interfaces**: Go interfaces that use gcommon types throughout
-5. **Configuration Management**: Uses gcommon config types with service-specific extensions
+5. **Configuration Management**: Uses gcommon config types with service-specific
+   extensions
 
 **Key gcommon Leveraging**:
 
 - **Authentication**: `gcommon.User`, `gcommon.Session` instead of custom types
 - **Error Handling**: `gcommon.Error` for standardized error responses
-- **Media Processing**: `gcommon.media.MediaFile`, `gcommon.media.Language` for media operations
-- **Configuration**: `gcommon.config.ApplicationConfig` as base for all service configs
+- **Media Processing**: `gcommon.media.MediaFile`, `gcommon.media.Language` for
+  media operations
+- **Configuration**: `gcommon.config.ApplicationConfig` as base for all service
+  configs
 - **Health Monitoring**: `gcommon.health.HealthCheck` for service health
 - **Metadata**: `gcommon.common.Metadata` for request/response metadata
 
 **Next Implementation**:
+
 - TASK-02-001: Web Service Implementation (using these gcommon-based interfaces)
 - TASK-03-001: Engine Service Implementation (with gcommon media processing)
 - TASK-04-001: File Service Implementation (with gcommon file handling)
 
-This foundation ensures all services use consistent gcommon types and patterns while maintaining the opaque API throughout the system.
+This foundation ensures all services use consistent gcommon types and patterns
+while maintaining the opaque API throughout the system.

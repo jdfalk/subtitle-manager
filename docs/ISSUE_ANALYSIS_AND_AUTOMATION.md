@@ -6,7 +6,10 @@
 
 ## Overview
 
-This system enhances the existing GitHub issue management infrastructure with automated analysis, categorization, and priority scoring. It builds on the established issue update system and VS Code task integration to provide intelligent issue processing.
+This system enhances the existing GitHub issue management infrastructure with
+automated analysis, categorization, and priority scoring. It builds on the
+established issue update system and VS Code task integration to provide
+intelligent issue processing.
 
 ## System Components
 
@@ -123,11 +126,13 @@ python3 scripts/issue_analyzer.py --repo-owner jdfalk --repo-name subtitle-manag
 ### Environment Setup
 
 Set your GitHub token:
+
 ```bash
 export GITHUB_TOKEN="your_github_token_here"
 ```
 
 Or pass it directly:
+
 ```bash
 python3 scripts/issue_automation_wrapper.py analyze --github-token "your_token"
 ```
@@ -137,6 +142,7 @@ python3 scripts/issue_automation_wrapper.py analyze --github-token "your_token"
 The system uses a sophisticated multi-factor scoring algorithm:
 
 ### Base Scores by Type
+
 - **Bug**: 50 points
 - **Enhancement**: 40 points
 - **Security**: 95 points
@@ -144,6 +150,7 @@ The system uses a sophisticated multi-factor scoring algorithm:
 - **Documentation**: 20 points
 
 ### Module Criticality Multipliers
+
 - **Auth**: +80 points
 - **Database**: +70 points
 - **Web/API**: +60 points
@@ -151,12 +158,14 @@ The system uses a sophisticated multi-factor scoring algorithm:
 - **UI**: +30 points
 
 ### Activity Factors
+
 - **Recent Activity** (< 7 days): +20 points
 - **Multiple Comments** (> 5): +15 points
 - **Long Open** (> 90 days): -10 points
 - **Stale Issues**: -20 points
 
 ### Priority Thresholds
+
 - **Critical**: 80+ points
 - **High**: 60-79 points
 - **Medium**: 40-59 points
@@ -189,6 +198,7 @@ The system uses a sophisticated multi-factor scoring algorithm:
 ### Priority Weights
 
 Modify `scripts/issue_analysis_config.py` to adjust:
+
 - Module importance scores
 - Issue type base values
 - Activity factor weights
@@ -197,6 +207,7 @@ Modify `scripts/issue_analysis_config.py` to adjust:
 ### Module Keywords
 
 Update keyword mappings for better module detection:
+
 ```python
 MODULE_KEYWORDS = {
     'auth': ['auth', 'login', 'session', 'token'],
@@ -208,6 +219,7 @@ MODULE_KEYWORDS = {
 ### Automation Rules
 
 Configure automation behavior:
+
 ```python
 AUTOMATION_RULES = {
     'auto_priority_labels': True,
@@ -235,6 +247,7 @@ GitHub Issues → Analysis Engine → Update JSON Files → Existing Workflows �
 ### Logging
 
 All operations logged to:
+
 - `logs/issue_analysis.log` - Analysis results
 - VS Code task output via copilot-agent-util
 - GitHub workflow logs for update processing
@@ -244,6 +257,7 @@ All operations logged to:
 ### Regular Analysis
 
 Run high-priority analysis regularly:
+
 - Daily for active repositories
 - Weekly for maintenance mode
 - On-demand for issue triage sessions
@@ -251,6 +265,7 @@ Run high-priority analysis regularly:
 ### Custom Thresholds
 
 Adjust priority thresholds based on:
+
 - Repository activity level
 - Team capacity
 - Project phase (development vs maintenance)
@@ -258,6 +273,7 @@ Adjust priority thresholds based on:
 ### Review Recommendations
 
 Always review automation recommendations:
+
 - Verify module assignments
 - Confirm priority levels
 - Check label suggestions
@@ -265,6 +281,7 @@ Always review automation recommendations:
 ### Monitor Status
 
 Use status checks to:
+
 - Ensure automation is working
 - Track processing delays
 - Identify configuration issues
@@ -291,6 +308,7 @@ Use status checks to:
 ### Debug Mode
 
 Enable detailed logging:
+
 ```bash
 python3 scripts/issue_analyzer.py --repo-owner jdfalk --repo-name subtitle-manager --process-high-priority --output-format json
 ```
@@ -319,4 +337,5 @@ To enhance the issue analysis system:
 3. **Improve Detection**: Enhance keyword matching algorithms
 4. **Add Integrations**: Connect with additional tools and services
 
-All changes should maintain compatibility with the existing issue management infrastructure.
+All changes should maintain compatibility with the existing issue management
+infrastructure.

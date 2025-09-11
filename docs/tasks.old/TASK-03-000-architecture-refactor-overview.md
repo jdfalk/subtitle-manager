@@ -12,16 +12,21 @@
 
 ## Overview
 
-This is the master task that coordinates the complete architecture refactor of subtitle-manager to address command line complexity, service organization, and deployment flexibility issues.
+This is the master task that coordinates the complete architecture refactor of
+subtitle-manager to address command line complexity, service organization, and
+deployment flexibility issues.
 
 ## Problem Statement
 
 Current subtitle-manager has several architectural issues:
 
 1. **Command Line Chaos**: 40+ top-level commands creating confusion
-2. **Service Fragmentation**: 3 separate monitoring commands doing similar things
-3. **Deployment Complexity**: Must run 4+ separate services for full functionality
-4. **Protocol Confusion**: Service names reference implementation (grpc-server) not function
+2. **Service Fragmentation**: 3 separate monitoring commands doing similar
+   things
+3. **Deployment Complexity**: Must run 4+ separate services for full
+   functionality
+4. **Protocol Confusion**: Service names reference implementation (grpc-server)
+   not function
 5. **Poor Service Boundaries**: Functions scattered across services illogically
 
 ## Solution Architecture
@@ -179,8 +184,10 @@ subtitle-manager translator --workers 4
 
 ## Resource Requirements
 
-- **Development Time**: 26-34 hours across 3 consolidated phases (down from 6 tasks)
-- **Testing Environment**: Docker setup for multi-service testing with DMZ simulation
+- **Development Time**: 26-34 hours across 3 consolidated phases (down from 6
+  tasks)
+- **Testing Environment**: Docker setup for multi-service testing with DMZ
+  simulation
 - **Documentation Updates**: README, API docs, security guides
 
 ## Consolidated Task Benefits
@@ -191,4 +198,6 @@ subtitle-manager translator --workers 4
 4. **Testing**: Single test cycle for related changes
 5. **User Experience**: Fewer disruptive updates
 
-This refactor will transform subtitle-manager from a complex, fragmented tool into a clean, intuitive, and flexible subtitle management system suitable for both simple and enterprise deployments.
+This refactor will transform subtitle-manager from a complex, fragmented tool
+into a clean, intuitive, and flexible subtitle management system suitable for
+both simple and enterprise deployments.

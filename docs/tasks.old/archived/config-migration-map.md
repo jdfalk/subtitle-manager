@@ -4,7 +4,8 @@
 
 # Config Migration Mapping
 
-This file maps local configpb types to their gcommon equivalents for the migration process.
+This file maps local configpb types to their gcommon equivalents for the
+migration process.
 
 | Local Type                     | gcommon Type           | Import Path                                 |
 | ------------------------------ | ---------------------- | ------------------------------------------- |
@@ -13,8 +14,10 @@ This file maps local configpb types to their gcommon equivalents for the migrati
 
 ## Migration Strategy
 
-1. **LogLevel Migration**: Replace all `configpb.LogLevel` with `common.LogLevel`
-2. **SubtitleManagerConfig**: Keep as local struct but use gcommon types for fields
+1. **LogLevel Migration**: Replace all `configpb.LogLevel` with
+   `common.LogLevel`
+2. **SubtitleManagerConfig**: Keep as local struct but use gcommon types for
+   fields
 3. **Opaque API**: Convert all direct field access to getter/setter methods
 
 ## Files to Update

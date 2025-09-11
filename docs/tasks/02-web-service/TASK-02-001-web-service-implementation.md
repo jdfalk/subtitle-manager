@@ -6,7 +6,11 @@
 
 ## Overview
 
-Implement the complete Web Service that handles all client-facing operations including user authentication, API gateway functionality, file upload/download, and request routing to backend services. This service uses Edition 2023 protobuf with opaque API and serves as the single external entry point for the 3-service architecture.
+Implement the complete Web Service that handles all client-facing operations
+including user authentication, API gateway functionality, file upload/download,
+and request routing to backend services. This service uses Edition 2023 protobuf
+with opaque API and serves as the single external entry point for the 3-service
+architecture.
 
 ## Requirements
 
@@ -24,7 +28,8 @@ Implement the complete Web Service that handles all client-facing operations inc
 - **User Management**: Complete authentication and user preference handling
 - **Request Routing**: Intelligent routing to Engine and File services
 - **File Operations**: Streaming upload/download with progress tracking
-- **Error Handling**: Comprehensive error responses with proper gRPC status codes
+- **Error Handling**: Comprehensive error responses with proper gRPC status
+  codes
 - **Observability**: Metrics, logging, and health checks
 
 ## Implementation Steps
@@ -426,16 +431,13 @@ func (c *Config) Validate() error {
     return nil
 }
 ```
-// file: pkg/services/web/auth.go
-// version: 1.0.0
-// guid: web02000-1111-2222-3333-444444444444
+
+// file: pkg/services/web/auth.go // version: 1.0.0 // guid:
+web02000-1111-2222-3333-444444444444
 
 package web
 
-import (
-    "context"
-    "fmt"
-    "time"
+import ( "context" "fmt" "time"
 
     "github.com/golang-jwt/jwt/v5"
     "go.uber.org/zap"
@@ -443,40 +445,28 @@ import (
 
     commonv1 "github.com/jdfalk/subtitle-manager/pkg/proto/common/v1"
     webv1 "github.com/jdfalk/subtitle-manager/pkg/proto/web/v1"
+
 )
 
-// AuthManager handles authentication operations
-type AuthManager interface {
-    AuthenticateUser(ctx context.Context, req *webv1.AuthenticateUserRequest) (*webv1.AuthenticateUserResponse, error)
-    RefreshToken(ctx context.Context, req *webv1.RefreshTokenRequest) (*webv1.RefreshTokenResponse, error)
-    ValidateToken(token string) (*UserClaims, error)
-    LogoutUser(ctx context.Context, req *webv1.LogoutUserRequest) error
-}
+// AuthManager handles authentication operations type AuthManager interface {
+AuthenticateUser(ctx context.Context, req *webv1.AuthenticateUserRequest)
+(*webv1.AuthenticateUserResponse, error) RefreshToken(ctx context.Context, req
+*webv1.RefreshTokenRequest) (*webv1.RefreshTokenResponse, error)
+ValidateToken(token string) (*UserClaims, error) LogoutUser(ctx context.Context,
+req *webv1.LogoutUserRequest) error }
 
-// authManager implements AuthManager
-type authManager struct {
-    config      *Config
-    logger      *zap.Logger
-    userStore   UserStore
-    sessionStore SessionStore
-}
+// authManager implements AuthManager type authManager struct { config *Config
+logger *zap.Logger userStore UserStore sessionStore SessionStore }
 
-// UserClaims represents JWT token claims
-type UserClaims struct {
-    UserID      string   `json:"user_id"`
-    Username    string   `json:"username"`
-    Role        string   `json:"role"`
-    Permissions []string `json:"permissions"`
-    SessionID   string   `json:"session_id"`
-    jwt.RegisteredClaims
-}
+// UserClaims represents JWT token claims type UserClaims struct { UserID string
+`json:"user_id"` Username string `json:"username"` Role string `json:"role"`
+Permissions []string `json:"permissions"` SessionID string `json:"session_id"`
+jwt.RegisteredClaims }
 
-// NewAuthManager creates a new authentication manager
-func NewAuthManager(config *Config, logger *zap.Logger) (AuthManager, error) {
-    userStore, err := NewUserStore(config, logger)
-    if err != nil {
-        return nil, fmt.Errorf("failed to create user store: %w", err)
-    }
+// NewAuthManager creates a new authentication manager func
+NewAuthManager(config *Config, logger *zap.Logger) (AuthManager, error) {
+userStore, err := NewUserStore(config, logger) if err != nil { return nil,
+fmt.Errorf("failed to create user store: %w", err) }
 
     sessionStore, err := NewSessionStore(config, logger)
     if err != nil {
@@ -489,15 +479,14 @@ func NewAuthManager(config *Config, logger *zap.Logger) (AuthManager, error) {
         userStore:    userStore,
         sessionStore: sessionStore,
     }, nil
+
 }
 
-// AuthenticateUser handles user authentication
-func (a *authManager) AuthenticateUser(ctx context.Context, req *webv1.AuthenticateUserRequest) (*webv1.AuthenticateUserResponse, error) {
-    // Use opaque API getters
-    rememberMe := req.GetRememberMe()
-    clientInfo := req.GetClientInfo()
-    clientIP := req.GetClientIp()
-    sessionDuration := req.GetSessionDurationSeconds()
+// AuthenticateUser handles user authentication func (a *authManager)
+AuthenticateUser(ctx context.Context, req *webv1.AuthenticateUserRequest)
+(\*webv1.AuthenticateUserResponse, error) { // Use opaque API getters rememberMe
+:= req.GetRememberMe() clientInfo := req.GetClientInfo() clientIP :=
+req.GetClientIp() sessionDuration := req.GetSessionDurationSeconds()
 
     // Create response with opaque API
     resp := &webv1.AuthenticateUserResponse{}
@@ -527,13 +516,14 @@ func (a *authManager) AuthenticateUser(ctx context.Context, req *webv1.Authentic
         resp.SetError(authError)
         return resp, nil
     }
+
 }
 
-// authenticateWithPassword handles username/password authentication
-func (a *authManager) authenticateWithPassword(ctx context.Context, auth *webv1.UserPasswordAuth, rememberMe bool, clientInfo, clientIP string, sessionDuration int64) (*webv1.AuthenticateUserResponse, error) {
-    // Use opaque API getters
-    username := auth.GetUsername()
-    password := auth.GetPassword()
+// authenticateWithPassword handles username/password authentication func (a
+*authManager) authenticateWithPassword(ctx context.Context, auth
+*webv1.UserPasswordAuth, rememberMe bool, clientInfo, clientIP string,
+sessionDuration int64) (\*webv1.AuthenticateUserResponse, error) { // Use opaque
+API getters username := auth.GetUsername() password := auth.GetPassword()
 
     resp := &webv1.AuthenticateUserResponse{}
 
@@ -674,12 +664,13 @@ func (a *authManager) authenticateWithPassword(ctx context.Context, auth *webv1.
         zap.String("client_ip", clientIP))
 
     return resp, nil
+
 }
 
-// authenticateWithToken handles token-based authentication
-func (a *authManager) authenticateWithToken(ctx context.Context, auth *webv1.TokenAuth, clientInfo, clientIP string) (*webv1.AuthenticateUserResponse, error) {
-    token := auth.GetToken()
-    tokenType := auth.GetTokenType()
+// authenticateWithToken handles token-based authentication func (a
+*authManager) authenticateWithToken(ctx context.Context, auth *webv1.TokenAuth,
+clientInfo, clientIP string) (\*webv1.AuthenticateUserResponse, error) { token
+:= auth.GetToken() tokenType := auth.GetTokenType()
 
     resp := &webv1.AuthenticateUserResponse{}
 
@@ -697,12 +688,13 @@ func (a *authManager) authenticateWithToken(ctx context.Context, auth *webv1.Tok
         resp.SetError(authError)
         return resp, nil
     }
+
 }
 
-// authenticateWithAPIKey handles API key authentication
-func (a *authManager) authenticateWithAPIKey(ctx context.Context, auth *webv1.ApiKeyAuth, clientInfo, clientIP string) (*webv1.AuthenticateUserResponse, error) {
-    apiKey := auth.GetApiKey()
-    apiSecret := auth.GetApiSecret()
+// authenticateWithAPIKey handles API key authentication func (a *authManager)
+authenticateWithAPIKey(ctx context.Context, auth *webv1.ApiKeyAuth, clientInfo,
+clientIP string) (\*webv1.AuthenticateUserResponse, error) { apiKey :=
+auth.GetApiKey() apiSecret := auth.GetApiSecret()
 
     resp := &webv1.AuthenticateUserResponse{}
 
@@ -714,12 +706,13 @@ func (a *authManager) authenticateWithAPIKey(ctx context.Context, auth *webv1.Ap
     resp.SetSuccess(false)
     resp.SetError(authError)
     return resp, nil
+
 }
 
-// RefreshToken handles token refresh requests
-func (a *authManager) RefreshToken(ctx context.Context, req *webv1.RefreshTokenRequest) (*webv1.RefreshTokenResponse, error) {
-    refreshToken := req.GetRefreshToken()
-    clientInfo := req.GetClientInfo()
+// RefreshToken handles token refresh requests func (a *authManager)
+RefreshToken(ctx context.Context, req *webv1.RefreshTokenRequest)
+(\*webv1.RefreshTokenResponse, error) { refreshToken := req.GetRefreshToken()
+clientInfo := req.GetClientInfo()
 
     resp := &webv1.RefreshTokenResponse{}
 
@@ -798,16 +791,15 @@ func (a *authManager) RefreshToken(ctx context.Context, req *webv1.RefreshTokenR
     resp.SetExpiresAt(expiresAt)
 
     return resp, nil
+
 }
 
-// ValidateToken validates a JWT token and returns claims
-func (a *authManager) ValidateToken(tokenString string) (*UserClaims, error) {
-    token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
-        if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-            return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-        }
-        return []byte(a.config.JWTSecret), nil
-    })
+// ValidateToken validates a JWT token and returns claims func (a *authManager)
+ValidateToken(tokenString string) (*UserClaims, error) { token, err :=
+jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token)
+(interface{}, error) { if \_, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"]) }
+return []byte(a.config.JWTSecret), nil })
 
     if err != nil {
         return nil, fmt.Errorf("failed to parse token: %w", err)
@@ -823,13 +815,13 @@ func (a *authManager) ValidateToken(tokenString string) (*UserClaims, error) {
     }
 
     return claims, nil
+
 }
 
-// LogoutUser handles user logout
-func (a *authManager) LogoutUser(ctx context.Context, req *webv1.LogoutUserRequest) error {
-    sessionID := req.GetSessionId()
-    invalidateAll := req.GetInvalidateAllSessions()
-    refreshToken := req.GetRefreshToken()
+// LogoutUser handles user logout func (a *authManager) LogoutUser(ctx
+context.Context, req *webv1.LogoutUserRequest) error { sessionID :=
+req.GetSessionId() invalidateAll := req.GetInvalidateAllSessions() refreshToken
+:= req.GetRefreshToken()
 
     if sessionID != "" {
         // Invalidate specific session
@@ -857,29 +849,26 @@ func (a *authManager) LogoutUser(ctx context.Context, req *webv1.LogoutUserReque
     }
 
     return nil
+
 }
 
-// generateJWT creates a JWT token with claims
-func (a *authManager) generateJWT(claims *UserClaims) (string, error) {
-    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-    return token.SignedString([]byte(a.config.JWTSecret))
-}
+// generateJWT creates a JWT token with claims func (a *authManager)
+generateJWT(claims *UserClaims) (string, error) { token :=
+jwt.NewWithClaims(jwt.SigningMethodHS256, claims) return
+token.SignedString([]byte(a.config.JWTSecret)) }
 
-// generateRefreshToken creates a refresh token
-func (a *authManager) generateRefreshToken(userID, sessionID string) (string, error) {
-    // TODO: Implement secure refresh token generation
-    return fmt.Sprintf("refresh_%s_%s_%d", userID, sessionID, time.Now().Unix()), nil
-}
+// generateRefreshToken creates a refresh token func (a \*authManager)
+generateRefreshToken(userID, sessionID string) (string, error) { // TODO:
+Implement secure refresh token generation return
+fmt.Sprintf("refresh*%s*%s\_%d", userID, sessionID, time.Now().Unix()), nil }
 
-// generateSessionID creates a unique session ID
-func (a *authManager) generateSessionID() (string, error) {
-    // TODO: Implement secure session ID generation
-    return fmt.Sprintf("session_%d", time.Now().UnixNano()), nil
-}
+// generateSessionID creates a unique session ID func (a \*authManager)
+generateSessionID() (string, error) { // TODO: Implement secure session ID
+generation return fmt.Sprintf("session\_%d", time.Now().UnixNano()), nil }
 
-// convertUserToProto converts internal user model to protobuf
-func (a *authManager) convertUserToProto(user *User) *webv1.User {
-    userProto := &webv1.User{}
+// convertUserToProto converts internal user model to protobuf func (a
+*authManager) convertUserToProto(user *User) \*webv1.User { userProto :=
+&webv1.User{}
 
     // Use opaque API setters
     userProto.SetUserId(user.GetUserId())
@@ -907,11 +896,12 @@ func (a *authManager) convertUserToProto(user *User) *webv1.User {
     }
 
     return userProto
+
 }
 
-// convertPreferencesToProto converts user preferences to protobuf
-func (a *authManager) convertPreferencesToProto(prefs *UserPreferences) *webv1.UserPreferences {
-    prefsProto := &webv1.UserPreferences{}
+// convertPreferencesToProto converts user preferences to protobuf func (a
+*authManager) convertPreferencesToProto(prefs *UserPreferences)
+\*webv1.UserPreferences { prefsProto := &webv1.UserPreferences{}
 
     // Use opaque API setters
     prefsProto.SetTheme(prefs.Theme)
@@ -937,11 +927,12 @@ func (a *authManager) convertPreferencesToProto(prefs *UserPreferences) *webv1.U
     }
 
     return prefsProto
+
 }
 
-// convertLanguageToProto converts language model to protobuf
-func (a *authManager) convertLanguageToProto(lang *Language) *commonv1.Language {
-    langProto := &commonv1.Language{}
+// convertLanguageToProto converts language model to protobuf func (a
+*authManager) convertLanguageToProto(lang *Language) \*commonv1.Language {
+langProto := &commonv1.Language{}
 
     // Use opaque API setters
     langProto.SetCode(lang.Code)
@@ -951,7 +942,9 @@ func (a *authManager) convertLanguageToProto(lang *Language) *commonv1.Language 
     langProto.SetDirection(lang.Direction)
 
     return langProto
+
 }
+
 ```
 // file: pkg/services/web/middleware.go
 // version: 1.0.0
@@ -1606,16 +1599,13 @@ func (c *corsHandler) matchWildcard(pattern, str string) bool {
     return pattern == str
 }
 ```
-// file: pkg/services/web/handlers.go
-// version: 1.0.0
-// guid: web06000-1111-2222-3333-444444444444
+
+// file: pkg/services/web/handlers.go // version: 1.0.0 // guid:
+web06000-1111-2222-3333-444444444444
 
 package web
 
-import (
-    "context"
-    "fmt"
-    "io"
+import ( "context" "fmt" "io"
 
     "go.uber.org/zap"
     "google.golang.org/grpc/codes"
@@ -1624,21 +1614,21 @@ import (
 
     commonv1 "github.com/jdfalk/subtitle-manager/pkg/proto/common/v1"
     webv1 "github.com/jdfalk/subtitle-manager/pkg/proto/web/v1"
+
 )
 
-// AuthenticateUser handles user authentication
-func (s *Server) AuthenticateUser(ctx context.Context, req *webv1.AuthenticateUserRequest) (*webv1.AuthenticateUserResponse, error) {
-    return s.authManager.AuthenticateUser(ctx, req)
-}
+// AuthenticateUser handles user authentication func (s *Server)
+AuthenticateUser(ctx context.Context, req *webv1.AuthenticateUserRequest)
+(\*webv1.AuthenticateUserResponse, error) { return
+s.authManager.AuthenticateUser(ctx, req) }
 
-// RefreshToken handles token refresh
-func (s *Server) RefreshToken(ctx context.Context, req *webv1.RefreshTokenRequest) (*webv1.RefreshTokenResponse, error) {
-    return s.authManager.RefreshToken(ctx, req)
-}
+// RefreshToken handles token refresh func (s *Server) RefreshToken(ctx
+context.Context, req *webv1.RefreshTokenRequest) (\*webv1.RefreshTokenResponse,
+error) { return s.authManager.RefreshToken(ctx, req) }
 
-// GetUser retrieves user information
-func (s *Server) GetUser(ctx context.Context, req *webv1.GetUserRequest) (*webv1.GetUserResponse, error) {
-    userID := req.GetUserId()
+// GetUser retrieves user information func (s *Server) GetUser(ctx
+context.Context, req *webv1.GetUserRequest) (\*webv1.GetUserResponse, error) {
+userID := req.GetUserId()
 
     // If no user ID specified, use current user
     if userID == "" {
@@ -1668,11 +1658,12 @@ func (s *Server) GetUser(ctx context.Context, req *webv1.GetUserRequest) (*webv1
     resp.SetUser(s.convertUserToProto(user))
 
     return resp, nil
+
 }
 
-// UpdateUser updates user information
-func (s *Server) UpdateUser(ctx context.Context, req *webv1.UpdateUserRequest) (*webv1.UpdateUserResponse, error) {
-    userID := req.GetUserId()
+// UpdateUser updates user information func (s *Server) UpdateUser(ctx
+context.Context, req *webv1.UpdateUserRequest) (\*webv1.UpdateUserResponse,
+error) { userID := req.GetUserId()
 
     // If no user ID specified, use current user
     if userID == "" {
@@ -1706,11 +1697,13 @@ func (s *Server) UpdateUser(ctx context.Context, req *webv1.UpdateUserRequest) (
     resp.SetUser(s.convertUserToProto(updatedUser))
 
     return resp, nil
+
 }
 
-// UpdateUserPreferences updates user preferences
-func (s *Server) UpdateUserPreferences(ctx context.Context, req *webv1.UpdateUserPreferencesRequest) (*webv1.UpdateUserPreferencesResponse, error) {
-    userID := req.GetUserId()
+// UpdateUserPreferences updates user preferences func (s *Server)
+UpdateUserPreferences(ctx context.Context, req
+*webv1.UpdateUserPreferencesRequest) (\*webv1.UpdateUserPreferencesResponse,
+error) { userID := req.GetUserId()
 
     // If no user ID specified, use current user
     if userID == "" {
@@ -1739,22 +1732,23 @@ func (s *Server) UpdateUserPreferences(ctx context.Context, req *webv1.UpdateUse
     resp.SetPreferences(s.convertPreferencesToProto(updatedPrefs))
 
     return resp, nil
+
 }
 
-// LogoutUser handles user logout
-func (s *Server) LogoutUser(ctx context.Context, req *webv1.LogoutUserRequest) (*emptypb.Empty, error) {
-    if err := s.authManager.LogoutUser(ctx, req); err != nil {
-        s.logger.Error("Failed to logout user", zap.Error(err))
-        return nil, status.Error(codes.Internal, "Failed to logout user")
-    }
+// LogoutUser handles user logout func (s *Server) LogoutUser(ctx
+context.Context, req *webv1.LogoutUserRequest) (\*emptypb.Empty, error) { if err
+:= s.authManager.LogoutUser(ctx, req); err != nil { s.logger.Error("Failed to
+logout user", zap.Error(err)) return nil, status.Error(codes.Internal, "Failed
+to logout user") }
 
     return &emptypb.Empty{}, nil
+
 }
 
-// UploadSubtitle handles subtitle file uploads
-func (s *Server) UploadSubtitle(ctx context.Context, req *webv1.UploadSubtitleRequest) (*webv1.UploadSubtitleResponse, error) {
-    // Extract user information
-    userID := ctx.Value("user_id").(string)
+// UploadSubtitle handles subtitle file uploads func (s *Server)
+UploadSubtitle(ctx context.Context, req *webv1.UploadSubtitleRequest)
+(\*webv1.UploadSubtitleResponse, error) { // Extract user information userID :=
+ctx.Value("user_id").(string)
 
     // Use opaque API getters
     filename := req.GetFilename()
@@ -1793,13 +1787,13 @@ func (s *Server) UploadSubtitle(ctx context.Context, req *webv1.UploadSubtitleRe
     resp.SetUploadedAt(now)
 
     return resp, nil
+
 }
 
-// DownloadSubtitle handles subtitle file downloads
-func (s *Server) DownloadSubtitle(ctx context.Context, req *webv1.DownloadSubtitleRequest) (*webv1.DownloadSubtitleResponse, error) {
-    // Use opaque API getters
-    subtitleID := req.GetSubtitleId()
-    format := req.GetFormat()
+// DownloadSubtitle handles subtitle file downloads func (s *Server)
+DownloadSubtitle(ctx context.Context, req *webv1.DownloadSubtitleRequest)
+(\*webv1.DownloadSubtitleResponse, error) { // Use opaque API getters subtitleID
+:= req.GetSubtitleId() format := req.GetFormat()
 
     s.logger.Info("Downloading subtitle",
         zap.String("subtitle_id", subtitleID),
@@ -1842,15 +1836,14 @@ func (s *Server) DownloadSubtitle(ctx context.Context, req *webv1.DownloadSubtit
     resp.SetSize(fileResp.GetBytesRead())
 
     return resp, nil
+
 }
 
-// SearchSubtitles handles subtitle search requests
-func (s *Server) SearchSubtitles(ctx context.Context, req *webv1.SearchSubtitlesRequest) (*webv1.SearchSubtitlesResponse, error) {
-    // Use opaque API getters
-    query := req.GetQuery()
-    language := req.GetLanguage()
-    limit := req.GetLimit()
-    offset := req.GetOffset()
+// SearchSubtitles handles subtitle search requests func (s *Server)
+SearchSubtitles(ctx context.Context, req *webv1.SearchSubtitlesRequest)
+(\*webv1.SearchSubtitlesResponse, error) { // Use opaque API getters query :=
+req.GetQuery() language := req.GetLanguage() limit := req.GetLimit() offset :=
+req.GetOffset()
 
     s.logger.Info("Searching subtitles",
         zap.String("query", query),
@@ -1867,15 +1860,14 @@ func (s *Server) SearchSubtitles(ctx context.Context, req *webv1.SearchSubtitles
     resp.SetSubtitles([]*webv1.SubtitleInfo{})
 
     return resp, nil
+
 }
 
-// TranslateSubtitle handles subtitle translation requests
-func (s *Server) TranslateSubtitle(ctx context.Context, req *webv1.TranslateSubtitleRequest) (*webv1.TranslateSubtitleResponse, error) {
-    // Use opaque API getters
-    subtitleID := req.GetSubtitleId()
-    sourceLanguage := req.GetSourceLanguage()
-    targetLanguage := req.GetTargetLanguage()
-    options := req.GetOptions()
+// TranslateSubtitle handles subtitle translation requests func (s *Server)
+TranslateSubtitle(ctx context.Context, req *webv1.TranslateSubtitleRequest)
+(\*webv1.TranslateSubtitleResponse, error) { // Use opaque API getters
+subtitleID := req.GetSubtitleId() sourceLanguage := req.GetSourceLanguage()
+targetLanguage := req.GetTargetLanguage() options := req.GetOptions()
 
     s.logger.Info("Translation request",
         zap.String("subtitle_id", subtitleID),
@@ -1908,11 +1900,13 @@ func (s *Server) TranslateSubtitle(ctx context.Context, req *webv1.TranslateSubt
     resp.SetEstimatedCompletion(engineResp.GetEstimatedCompletion())
 
     return resp, nil
+
 }
 
-// GetTranslationStatus retrieves translation job status
-func (s *Server) GetTranslationStatus(ctx context.Context, req *webv1.GetTranslationStatusRequest) (*webv1.GetTranslationStatusResponse, error) {
-    jobID := req.GetJobId()
+// GetTranslationStatus retrieves translation job status func (s *Server)
+GetTranslationStatus(ctx context.Context, req
+*webv1.GetTranslationStatusRequest) (\*webv1.GetTranslationStatusResponse,
+error) { jobID := req.GetJobId()
 
     // Forward to engine service
     engineReq := &enginev1.GetTranslationProgressRequest{}
@@ -1937,11 +1931,12 @@ func (s *Server) GetTranslationStatus(ctx context.Context, req *webv1.GetTransla
     }
 
     return resp, nil
+
 }
 
-// CancelTranslation cancels a translation job
-func (s *Server) CancelTranslation(ctx context.Context, req *webv1.CancelTranslationRequest) (*webv1.CancelTranslationResponse, error) {
-    jobID := req.GetJobId()
+// CancelTranslation cancels a translation job func (s *Server)
+CancelTranslation(ctx context.Context, req *webv1.CancelTranslationRequest)
+(\*webv1.CancelTranslationResponse, error) { jobID := req.GetJobId()
 
     // Forward to engine service
     engineReq := &enginev1.CancelTranslationRequest{}
@@ -1959,15 +1954,13 @@ func (s *Server) CancelTranslation(ctx context.Context, req *webv1.CancelTransla
     resp.SetMessage(engineResp.GetMessage())
 
     return resp, nil
+
 }
 
-// UploadFile handles streaming file uploads
-func (s *Server) UploadFile(stream webv1.WebService_UploadFileServer) error {
-    // Receive first message with metadata
-    req, err := stream.Recv()
-    if err != nil {
-        return status.Error(codes.InvalidArgument, "Failed to receive upload metadata")
-    }
+// UploadFile handles streaming file uploads func (s \*Server) UploadFile(stream
+webv1.WebService_UploadFileServer) error { // Receive first message with
+metadata req, err := stream.Recv() if err != nil { return
+status.Error(codes.InvalidArgument, "Failed to receive upload metadata") }
 
     metadata := req.GetMetadata()
     if metadata == nil {
@@ -1989,28 +1982,28 @@ func (s *Server) UploadFile(stream webv1.WebService_UploadFileServer) error {
     resp.SetSize(totalSize)
 
     return stream.SendAndClose(resp)
+
 }
 
-// DownloadFile handles streaming file downloads
-func (s *Server) DownloadFile(req *webv1.DownloadFileRequest, stream webv1.WebService_DownloadFileServer) error {
-    filePath := req.GetFilePath()
+// DownloadFile handles streaming file downloads func (s *Server)
+DownloadFile(req *webv1.DownloadFileRequest, stream
+webv1.WebService_DownloadFileServer) error { filePath := req.GetFilePath()
 
     s.logger.Info("Starting file download", zap.String("file_path", filePath))
 
     // TODO: Implement streaming download from file service
 
     return nil
+
 }
 
 // Helper functions
 
-// checkUserPermission checks if user has permission for action
-func (s *Server) checkUserPermission(ctx context.Context, userID, action string) error {
-    // Get current user from context
-    currentUserID := ctx.Value("user_id")
-    if currentUserID == nil {
-        return status.Error(codes.Unauthenticated, "User not authenticated")
-    }
+// checkUserPermission checks if user has permission for action func (s
+\*Server) checkUserPermission(ctx context.Context, userID, action string) error
+{ // Get current user from context currentUserID := ctx.Value("user_id") if
+currentUserID == nil { return status.Error(codes.Unauthenticated, "User not
+authenticated") }
 
     // Check if user is trying to modify their own data
     if currentUserID.(string) == userID {
@@ -2024,44 +2017,36 @@ func (s *Server) checkUserPermission(ctx context.Context, userID, action string)
     }
 
     return status.Error(codes.PermissionDenied, "Permission denied")
+
 }
 
-// generateSubtitleID generates a unique subtitle ID
-func generateSubtitleID() string {
-    // TODO: Implement proper ID generation
-    return fmt.Sprintf("sub_%d", time.Now().UnixNano())
-}
+// generateSubtitleID generates a unique subtitle ID func generateSubtitleID()
+string { // TODO: Implement proper ID generation return fmt.Sprintf("sub\_%d",
+time.Now().UnixNano()) }
 
-// generateRequestID generates a unique request ID
-func generateRequestID() string {
-    // TODO: Implement proper request ID generation
-    return fmt.Sprintf("req_%d", time.Now().UnixNano())
-}
+// generateRequestID generates a unique request ID func generateRequestID()
+string { // TODO: Implement proper request ID generation return
+fmt.Sprintf("req\_%d", time.Now().UnixNano()) }
 
-// getFilePathFromSubtitleID maps subtitle ID to file path
-func (s *Server) getFilePathFromSubtitleID(subtitleID string) string {
-    // TODO: Implement proper subtitle ID to file path mapping
-    return fmt.Sprintf("/subtitles/%s.srt", subtitleID)
-}
+// getFilePathFromSubtitleID maps subtitle ID to file path func (s \*Server)
+getFilePathFromSubtitleID(subtitleID string) string { // TODO: Implement proper
+subtitle ID to file path mapping return fmt.Sprintf("/subtitles/%s.srt",
+subtitleID) }
 
-// getFilenameFromPath extracts filename from file path
-func getFilenameFromPath(filePath string) string {
-    parts := strings.Split(filePath, "/")
-    return parts[len(parts)-1]
-}
+// getFilenameFromPath extracts filename from file path func
+getFilenameFromPath(filePath string) string { parts := strings.Split(filePath,
+"/") return parts[len(parts)-1] }
 
-// convertUserToProto converts internal user model to protobuf
-func (s *Server) convertUserToProto(user *User) *webv1.User {
-    // This would be implemented similar to the auth manager version
-    // but using the web service's user model
-    return &webv1.User{} // TODO: Implement conversion
-}
+// convertUserToProto converts internal user model to protobuf func (s *Server)
+convertUserToProto(user *User) \*webv1.User { // This would be implemented
+similar to the auth manager version // but using the web service's user model
+return &webv1.User{} // TODO: Implement conversion }
 
-// convertPreferencesToProto converts user preferences to protobuf
-func (s *Server) convertPreferencesToProto(prefs *UserPreferences) *webv1.UserPreferences {
-    // This would be implemented similar to the auth manager version
-    return &webv1.UserPreferences{} // TODO: Implement conversion
-}
+// convertPreferencesToProto converts user preferences to protobuf func (s
+*Server) convertPreferencesToProto(prefs *UserPreferences)
+\*webv1.UserPreferences { // This would be implemented similar to the auth
+manager version return &webv1.UserPreferences{} // TODO: Implement conversion }
+
 ```
 
 ### Step 6: Implementation Summary
@@ -2092,3 +2077,4 @@ This completes the Web Service implementation with the following key features:
 - Add performance monitoring and alerting
 
 This Web Service serves as the single entry point for all client interactions and properly routes requests to the appropriate backend services while maintaining security and observability.
+```

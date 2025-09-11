@@ -266,10 +266,7 @@
       "label": "Issue Status Check",
       "type": "shell",
       "command": "python3",
-      "args": [
-        "scripts/issue_automation_wrapper.py",
-        "status"
-      ],
+      "args": ["scripts/issue_automation_wrapper.py", "status"],
       "options": {
         "cwd": "${workspaceFolder}"
       },

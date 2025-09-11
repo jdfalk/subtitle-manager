@@ -6,11 +6,14 @@
 
 ## 🎯 Objective
 
-Enhance the existing dashboard with modern widgets, better visual organization, real-time statistics, and improved user experience for monitoring and managing subtitle operations.
+Enhance the existing dashboard with modern widgets, better visual organization,
+real-time statistics, and improved user experience for monitoring and managing
+subtitle operations.
 
 ## 📋 Acceptance Criteria
 
-- [ ] Add statistics cards showing key metrics (files processed, success rate, etc.)
+- [ ] Add statistics cards showing key metrics (files processed, success rate,
+      etc.)
 - [ ] Implement real-time activity feed with recent operations
 - [ ] Create overview widgets for different service statuses
 - [ ] Add charts for subtitle download statistics and trends
@@ -25,7 +28,8 @@ Enhance the existing dashboard with modern widgets, better visual organization, 
 
 **Current Implementation** (`webui/src/Dashboard.jsx` - 614 lines):
 
-1. **✅ Scan Controls**: Directory selection, provider selection, language settings
+1. **✅ Scan Controls**: Directory selection, provider selection, language
+   settings
 2. **✅ Task Monitoring**: Progress tracking with TaskProgressIndicator
 3. **✅ Quick Links**: Navigation buttons to main sections
 4. **✅ System Info**: Basic system information display
@@ -34,7 +38,8 @@ Enhance the existing dashboard with modern widgets, better visual organization, 
 
 ### Areas for Enhancement
 
-1. **Visual Organization**: Current layout is functional but could be more visually appealing
+1. **Visual Organization**: Current layout is functional but could be more
+   visually appealing
 2. **Statistics**: Missing key metrics and insights
 3. **Activity Monitoring**: No recent activity overview
 4. **Service Status**: No overview of Sonarr/Radarr/Plex integrations
@@ -88,20 +93,33 @@ import {
   Grid,
   Chip,
   Skeleton,
-  Box
+  Box,
 } from '@mui/material';
 import {
   TrendingUp as TrendIcon,
   CheckCircle as SuccessIcon,
   CloudDownload as DownloadIcon,
-  PlayCircleOutline as ActiveIcon
+  PlayCircleOutline as ActiveIcon,
 } from '@mui/icons-material';
 import { apiService } from '../../services/api.js';
 
-const StatCard = ({ title, value, icon, color = 'primary', trend, loading }) => (
+const StatCard = ({
+  title,
+  value,
+  icon,
+  color = 'primary',
+  trend,
+  loading,
+}) => (
   <Card>
     <CardContent>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <Box>
           <Typography color="textSecondary" gutterBottom variant="body2">
             {title}
@@ -123,9 +141,7 @@ const StatCard = ({ title, value, icon, color = 'primary', trend, loading }) => 
             />
           )}
         </Box>
-        <Box sx={{ color: `${color}.main`, opacity: 0.7 }}>
-          {icon}
-        </Box>
+        <Box sx={{ color: `${color}.main`, opacity: 0.7 }}>{icon}</Box>
       </Box>
     </CardContent>
   </Card>
@@ -137,7 +153,7 @@ export default function StatisticsCards() {
     successRate: 0,
     downloadedToday: 0,
     activeTasks: 0,
-    trends: {}
+    trends: {},
   });
   const [loading, setLoading] = useState(true);
 
@@ -167,29 +183,34 @@ export default function StatisticsCards() {
       value: stats.totalFiles.toLocaleString(),
       icon: <DownloadIcon fontSize="large" />,
       color: 'primary',
-      trend: stats.trends.totalFiles
+      trend: stats.trends.totalFiles,
     },
     {
       title: 'Success Rate',
       value: `${stats.successRate}%`,
       icon: <SuccessIcon fontSize="large" />,
-      color: stats.successRate > 90 ? 'success' : stats.successRate > 70 ? 'warning' : 'error',
-      trend: stats.trends.successRate
+      color:
+        stats.successRate > 90
+          ? 'success'
+          : stats.successRate > 70
+            ? 'warning'
+            : 'error',
+      trend: stats.trends.successRate,
     },
     {
       title: 'Downloaded Today',
       value: stats.downloadedToday.toLocaleString(),
       icon: <TrendIcon fontSize="large" />,
       color: 'info',
-      trend: stats.trends.downloadedToday
+      trend: stats.trends.downloadedToday,
     },
     {
       title: 'Active Tasks',
       value: stats.activeTasks.toString(),
       icon: <ActiveIcon fontSize="large" />,
       color: stats.activeTasks > 0 ? 'warning' : 'success',
-      trend: stats.trends.activeTasks
-    }
+      trend: stats.trends.activeTasks,
+    },
   ];
 
   return (
@@ -217,7 +238,7 @@ import {
   Button,
   Alert,
   CircularProgress,
-  Box
+  Box,
 } from '@mui/material';
 import {
   Sync as SyncIcon,
@@ -226,7 +247,7 @@ import {
   FolderOpen as ScanIcon,
   Search as SearchIcon,
   Settings as SettingsIcon,
-  Assessment as StatsIcon
+  Assessment as StatsIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api.js';
@@ -259,43 +280,43 @@ export default function QuickActions() {
       icon: <TvIcon />,
       color: 'primary',
       action: () => handleAction('Sonarr Sync', '/api/sonarr/sync'),
-      disabled: loading.sonarr
+      disabled: loading.sonarr,
     },
     {
       label: 'Sync Radarr',
       icon: <MovieIcon />,
       color: 'primary',
       action: () => handleAction('Radarr Sync', '/api/radarr/sync'),
-      disabled: loading.radarr
+      disabled: loading.radarr,
     },
     {
       label: 'Scan Library',
       icon: <ScanIcon />,
       color: 'secondary',
       action: () => navigate('/scan'),
-      disabled: false
+      disabled: false,
     },
     {
       label: 'Search Subtitles',
       icon: <SearchIcon />,
       color: 'secondary',
       action: () => navigate('/search'),
-      disabled: false
+      disabled: false,
     },
     {
       label: 'Settings',
       icon: <SettingsIcon />,
       color: 'default',
       action: () => navigate('/settings'),
-      disabled: false
+      disabled: false,
     },
     {
       label: 'Statistics',
       icon: <StatsIcon />,
       color: 'default',
       action: () => navigate('/statistics'),
-      disabled: false
-    }
+      disabled: false,
+    },
   ];
 
   return (
@@ -351,14 +372,14 @@ import {
   Chip,
   Box,
   IconButton,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import {
   CheckCircle as SuccessIcon,
   Warning as WarningIcon,
   Error as ErrorIcon,
   Refresh as RefreshIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api.js';
@@ -389,7 +410,7 @@ export default function ServiceStatus() {
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = status => {
     switch (status) {
       case 'connected':
         return <SuccessIcon color="success" />;
@@ -402,7 +423,7 @@ export default function ServiceStatus() {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
       case 'connected':
         return 'success';
@@ -418,10 +439,15 @@ export default function ServiceStatus() {
   return (
     <Card>
       <CardContent>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h6">
-            Service Status
-          </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: 2,
+          }}
+        >
+          <Typography variant="h6">Service Status</Typography>
           <Tooltip title="Refresh Status">
             <IconButton onClick={loadServiceStatus} size="small">
               <RefreshIcon />
@@ -444,7 +470,9 @@ export default function ServiceStatus() {
                   <Tooltip title="Configure">
                     <IconButton
                       size="small"
-                      onClick={() => navigate(`/settings/${service.name.toLowerCase()}`)}
+                      onClick={() =>
+                        navigate(`/settings/${service.name.toLowerCase()}`)
+                      }
                     >
                       <SettingsIcon fontSize="small" />
                     </IconButton>
@@ -489,7 +517,7 @@ import {
   ListItemText,
   Avatar,
   Box,
-  Chip
+  Chip,
 } from '@mui/material';
 import {
   CloudDownload as DownloadIcon,
@@ -497,7 +525,7 @@ import {
   Person as UserIcon,
   CheckCircle as SuccessIcon,
   Error as ErrorIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
 } from '@mui/icons-material';
 import { apiService } from '../../services/api.js';
 
@@ -525,7 +553,7 @@ export default function ActivityFeed() {
     }
   };
 
-  const getActivityIcon = (type) => {
+  const getActivityIcon = type => {
     switch (type) {
       case 'download':
         return <DownloadIcon color="primary" />;
@@ -542,7 +570,7 @@ export default function ActivityFeed() {
     }
   };
 
-  const formatTime = (timestamp) => {
+  const formatTime = timestamp => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
@@ -565,14 +593,14 @@ export default function ActivityFeed() {
               <ListItemText
                 primary={
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body2">
-                      {activity.message}
-                    </Typography>
+                    <Typography variant="body2">{activity.message}</Typography>
                     {activity.status && (
                       <Chip
                         label={activity.status}
                         size="small"
-                        color={activity.status === 'success' ? 'success' : 'error'}
+                        color={
+                          activity.status === 'success' ? 'success' : 'error'
+                        }
                         variant="outlined"
                       />
                     )}
@@ -687,17 +715,20 @@ func (s *Server) handleRecentActivities(w http.ResponseWriter, r *http.Request) 
 ## 🧪 Testing Requirements
 
 ### Component Tests
+
 - Statistics cards data display
 - Quick actions functionality
 - Service status indicators
 - Activity feed updates
 
 ### Integration Tests
+
 - Dashboard API endpoints
 - Real-time data updates
 - Error handling scenarios
 
 ### E2E Tests
+
 - Complete dashboard workflow
 - Quick action execution
 - Service status monitoring

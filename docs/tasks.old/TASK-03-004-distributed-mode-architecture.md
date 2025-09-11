@@ -12,7 +12,10 @@
 
 ## Overview
 
-**CONSOLIDATED TASK**: Design and implement secure distributed architecture with proper network segmentation AND redistribute functions for optimal service boundaries. This combines architecture design with function movement for efficiency.
+**CONSOLIDATED TASK**: Design and implement secure distributed architecture with
+proper network segmentation AND redistribute functions for optimal service
+boundaries. This combines architecture design with function movement for
+efficiency.
 
 ## Architecture Vision: DMZ + Backend Security Model
 
@@ -51,8 +54,10 @@
 - **DMZ Isolation**: Web servers in DMZ handle all user interaction
 - **No File Server Web Access**: File servers only expose gRPC internally
 - **Firewall Protection**: Only specific gRPC ports allowed through firewall
-- **Service Isolation**: Backend services can't be reached directly from internet
-- **Upload Security**: File uploads go through DMZ web server, then gRPC to file server
+- **Service Isolation**: Backend services can't be reached directly from
+  internet
+- **Upload Security**: File uploads go through DMZ web server, then gRPC to file
+  server
 
 ## Part A: Secure Service Architecture
 
@@ -126,7 +131,8 @@ subtitle-manager discovery --port 50050
 
 **From Web Service:**
 
-- File upload storage (keep HTTP interface in web, actual storage in file service)
+- File upload storage (keep HTTP interface in web, actual storage in file
+  service)
 - Subtitle file serving (web proxies requests)
 - Directory scanning operations
 - File validation and format checking
@@ -139,7 +145,8 @@ subtitle-manager discovery --port 50050
 - File writing operations for translation output
 - Subtitle format conversion with file I/O
 
-**Rationale:** All disk operations centralized for security and deployment flexibility
+**Rationale:** All disk operations centralized for security and deployment
+flexibility
 
 ### Functions Staying in Translator Service
 

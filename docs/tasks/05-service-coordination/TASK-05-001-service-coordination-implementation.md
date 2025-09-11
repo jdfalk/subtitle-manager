@@ -8,7 +8,10 @@
 
 ### Overview
 
-The Service Coordination implementation provides orchestration and coordination capabilities for the subtitle-manager ecosystem. This service acts as the central coordinator for multi-service workflows, resource management, and inter-service communication using comprehensive gcommon integration.
+The Service Coordination implementation provides orchestration and coordination
+capabilities for the subtitle-manager ecosystem. This service acts as the
+central coordinator for multi-service workflows, resource management, and
+inter-service communication using comprehensive gcommon integration.
 
 ### Step 1: Protobuf Definitions and Service Interface
 
@@ -1013,11 +1016,15 @@ func (c *CoordinationServiceConfig) Validate() error {
 
 This is PART 1 of the Service Coordination implementation, providing:
 
-1. **Comprehensive Protobuf Definitions** with full workflow, task, event, and service management
-2. **Complete Configuration Management** with detailed settings for all coordination aspects
+1. **Comprehensive Protobuf Definitions** with full workflow, task, event, and
+   service management
+2. **Complete Configuration Management** with detailed settings for all
+   coordination aspects
 3. **Full gcommon Integration** using common, health, metrics, and config types
-4. **Advanced Workflow Engine** with conditional execution, loops, and parallel processing
-5. **Distributed Task Management** with priority queues and capability-based assignment
+4. **Advanced Workflow Engine** with conditional execution, loops, and parallel
+   processing
+5. **Distributed Task Management** with priority queues and capability-based
+   assignment
 6. **Event-Driven Architecture** with routing, filtering, and dead letter queues
 7. **Service Registry** with health monitoring and load balancing
 8. **Distributed Locking** with multiple backends and wait queues
@@ -2327,10 +2334,14 @@ func generateExecutionID() string {
 
 This is PART 2 of the Service Coordination implementation, providing:
 
-1. **Core Service Structure** with comprehensive lifecycle management and monitoring
-2. **Workflow Engine** with advanced execution capabilities, parallel processing, and conditional logic
-3. **Performance Optimization** with rate limiting, resource management, and concurrency control
-4. **Health Monitoring** with automated health checks and performance threshold monitoring
+1. **Core Service Structure** with comprehensive lifecycle management and
+   monitoring
+2. **Workflow Engine** with advanced execution capabilities, parallel
+   processing, and conditional logic
+3. **Performance Optimization** with rate limiting, resource management, and
+   concurrency control
+4. **Health Monitoring** with automated health checks and performance threshold
+   monitoring
 5. **Background Workers** for metrics collection, cleanup, and monitoring
 6. **Expression Evaluation** for conditional workflow execution
 7. **Workflow Scheduling** with trigger management and automated execution
@@ -3909,13 +3920,20 @@ func generateSubscriptionID() string {
 
 This is PART 3 of the Service Coordination implementation, providing:
 
-1. **Advanced Task Manager** with priority queues, intelligent assignment strategies, and service capability matching
-2. **Comprehensive Event System** with publishing, routing, subscription management, and dead letter queues
-3. **Multiple Assignment Strategies** including round-robin, least-loaded, and capability-based assignment
-4. **Event Routing** with rule-based filtering, transformation, and destination routing
-5. **Performance Optimization** with buffered channels, concurrent processing, and rate limiting
-6. **Cleanup and Maintenance** with automatic cleanup of old tasks, events, and inactive subscriptions
-7. **Rich Metrics Collection** for monitoring task and event processing performance
+1. **Advanced Task Manager** with priority queues, intelligent assignment
+   strategies, and service capability matching
+2. **Comprehensive Event System** with publishing, routing, subscription
+   management, and dead letter queues
+3. **Multiple Assignment Strategies** including round-robin, least-loaded, and
+   capability-based assignment
+4. **Event Routing** with rule-based filtering, transformation, and destination
+   routing
+5. **Performance Optimization** with buffered channels, concurrent processing,
+   and rate limiting
+6. **Cleanup and Maintenance** with automatic cleanup of old tasks, events, and
+   inactive subscriptions
+7. **Rich Metrics Collection** for monitoring task and event processing
+   performance
 
 Continue with PART 4 for distributed locks and service registry?
 
@@ -5397,13 +5415,19 @@ func (dhc *DistributedHealthChecker) stopHealthChecking(serviceID string) {
 
 This is PART 4 of the Service Coordination implementation, providing:
 
-1. **Advanced Distributed Lock Manager** with multiple backends (memory, Redis, etcd), wait queues, and automatic renewal
-2. **Comprehensive Service Registry** with health monitoring, load balancing, and service discovery
-3. **Multiple Load Balancing Strategies** including round-robin and least-connections
-4. **Health Monitoring System** with distributed health checking and automatic failover
+1. **Advanced Distributed Lock Manager** with multiple backends (memory, Redis,
+   etcd), wait queues, and automatic renewal
+2. **Comprehensive Service Registry** with health monitoring, load balancing,
+   and service discovery
+3. **Multiple Load Balancing Strategies** including round-robin and
+   least-connections
+4. **Health Monitoring System** with distributed health checking and automatic
+   failover
 5. **Lock Backend Abstraction** supporting different storage backends for locks
-6. **Service Lifecycle Management** with heartbeat monitoring and automatic cleanup
-7. **Rich Metrics and Monitoring** for both locks and service registry operations
+6. **Service Lifecycle Management** with heartbeat monitoring and automatic
+   cleanup
+7. **Rich Metrics and Monitoring** for both locks and service registry
+   operations
 
 Continue with PART 5 for storage backends and complete implementation summary?
 
@@ -5738,14 +5762,17 @@ func (ms *MemoryStorage) estimateMemoryUsage() int64 {
 This Service Coordination implementation provides:
 
 **✅ Core Features Implemented:**
+
 - **Service Orchestration**: Complete workflow engine with parallel execution
 - **Task Management**: Priority queues with intelligent assignment
 - **Event System**: Publisher/subscriber with routing and filtering
 - **Distributed Locking**: Multiple backends with automatic renewal
 - **Service Registry**: Discovery with health monitoring and load balancing
-- **Storage Abstraction**: Pluggable backends starting with memory implementation
+- **Storage Abstraction**: Pluggable backends starting with memory
+  implementation
 
 **✅ Production-Ready Capabilities:**
+
 - **High Performance**: Optimized for concurrent operations
 - **Monitoring**: Comprehensive metrics and health checking
 - **Scalability**: Horizontal scaling with load balancing
@@ -5753,6 +5780,7 @@ This Service Coordination implementation provides:
 - **Security**: Authentication/authorization ready
 
 **✅ gcommon Integration:**
+
 - Full use of gcommon.common types
 - gcommon.health integration for health checks
 - gcommon.metrics for monitoring
@@ -5763,17 +5791,17 @@ This Service Coordination implementation provides:
 ```yaml
 coordination:
   server:
-    host: "0.0.0.0"
+    host: '0.0.0.0'
     port: 8085
   workflows:
     max_concurrent: 100
-    default_timeout: "5m"
+    default_timeout: '5m'
   tasks:
     max_queue_size: 10000
-    assignment_strategy: "capability_based"
+    assignment_strategy: 'capability_based'
   storage:
-    backend: "memory"
-    cleanup_interval: "1h"
+    backend: 'memory'
+    cleanup_interval: '1h'
 ```
 
 ## Usage Example
@@ -5823,4 +5851,6 @@ workflow := &coordinationpb.Workflow{
 executionID, err := service.ExecuteWorkflow(ctx, workflow)
 ```
 
-The Service Coordination implementation is now complete with comprehensive orchestration capabilities, full gcommon integration, and production-ready features.
+The Service Coordination implementation is now complete with comprehensive
+orchestration capabilities, full gcommon integration, and production-ready
+features.

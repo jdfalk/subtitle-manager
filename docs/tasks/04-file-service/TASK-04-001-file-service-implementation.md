@@ -6,17 +6,23 @@
 
 ## Overview
 
-This task implements a comprehensive File Service that handles all file system operations, media processing, storage management, and file watching capabilities. The implementation fully leverages gcommon protobuf types and opaque API patterns for consistency with the existing architecture.
+This task implements a comprehensive File Service that handles all file system
+operations, media processing, storage management, and file watching
+capabilities. The implementation fully leverages gcommon protobuf types and
+opaque API patterns for consistency with the existing architecture.
 
 ## Implementation Structure
 
 ### Core Responsibilities
+
 - **File Operations**: Complete CRUD operations with streaming support
-- **Media Processing**: Subtitle extraction, format conversion, metadata analysis
+- **Media Processing**: Subtitle extraction, format conversion, metadata
+  analysis
 - **File Watching**: Real-time directory monitoring with event streaming
 - **Storage Management**: Cleanup, validation, backup, and organization
 - **Format Support**: Comprehensive subtitle and media format handling
-- **gcommon Integration**: Full integration with gcommon file, media, and queue types
+- **gcommon Integration**: Full integration with gcommon file, media, and queue
+  types
 
 ### Architecture Overview
 
@@ -451,9 +457,11 @@ message DirectoryStats {
 This is PART 1 of the File Service implementation, providing:
 
 1. **Complete protobuf service definition** with comprehensive file operations
-2. **Full gcommon integration** using media, common, health, metrics, and queue types
+2. **Full gcommon integration** using media, common, health, metrics, and queue
+   types
 3. **Streaming support** for large file operations
-4. **Advanced file operations** including comparison, deduplication, and synchronization
+4. **Advanced file operations** including comparison, deduplication, and
+   synchronization
 5. **Comprehensive directory operations** with deep scanning and analysis
 6. **Media-aware file handling** with quality assessment and metadata extraction
 7. **Storage management** operations for cleanup, validation, and backup
@@ -1446,7 +1454,8 @@ This is PART 2 of the File Service implementation, providing:
 1. **Comprehensive Configuration Structure** with all service aspects covered
 2. **Core Service Implementation** with proper component architecture
 3. **Full gcommon Integration** using health, metrics, and common types
-4. **Component-based Architecture** with separate managers for different concerns
+4. **Component-based Architecture** with separate managers for different
+   concerns
 5. **Proper Error Handling** and validation throughout
 6. **Health Monitoring** with detailed component status reporting
 7. **Metrics Collection** for observability and monitoring
@@ -2582,17 +2591,21 @@ func (fs *FileService) WatchFiles(req *filev1.WatchFilesRequest, stream filev1.F
 
 This is PART 3 of the File Service implementation, providing:
 
-1. **Complete CRUD Operations** with comprehensive error handling and security validation
-2. **Streaming Upload/Download** with efficient chunked transfer and progress tracking
+1. **Complete CRUD Operations** with comprehensive error handling and security
+   validation
+2. **Streaming Upload/Download** with efficient chunked transfer and progress
+   tracking
 3. **Real-time File Watching** with event streaming capabilities
-4. **Security Integration** throughout all operations with path validation and permission checks
+4. **Security Integration** throughout all operations with path validation and
+   permission checks
 5. **Comprehensive Metrics** and operation tracking for monitoring
 6. **Proper Error Handling** with appropriate gRPC status codes
 7. **Performance Optimizations** with configurable buffer sizes and timeouts
 
 The implementation includes:
 
-- Full file lifecycle operations (create, read, update, delete, copy, move, list)
+- Full file lifecycle operations (create, read, update, delete, copy, move,
+  list)
 - Efficient streaming for large file transfers
 - Real-time file system monitoring with event streaming
 - Complete security validation and access control
@@ -3715,7 +3728,8 @@ func (fw *FileWatcher) eventMatchesSubscription(event *FileEvent, subscription *
 
 This is PART 4 of the File Service implementation, providing:
 
-1. **Comprehensive Media Processing** with FFmpeg integration, metadata extraction, and job management
+1. **Comprehensive Media Processing** with FFmpeg integration, metadata
+   extraction, and job management
 2. **Advanced File Watching** with debouncing, batching, and pattern filtering
 3. **Full gcommon Integration** using media types for metadata structures
 4. **Worker Pool Architecture** for concurrent media processing
@@ -3732,4 +3746,5 @@ The implementation includes:
 - Worker-based architecture for scalable media processing
 - Comprehensive configuration for all processing aspects
 
-Continue with PART 5 for the final consolidation and complete implementation summary?
+Continue with PART 5 for the final consolidation and complete implementation
+summary?

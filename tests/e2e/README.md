@@ -1,10 +1,13 @@
 # file: tests/e2e/README.md
+
 # version: 1.0.0
+
 # guid: b3c4d5e6-f7a8-b9c0-d1e2-f3a4b5c6d7e8
 
 # E2E Testing for Subtitle Manager
 
-This directory contains end-to-end tests using Selenium WebDriver to validate UI functionality and user workflows.
+This directory contains end-to-end tests using Selenium WebDriver to validate UI
+functionality and user workflows.
 
 ## 🎯 Purpose
 
@@ -38,6 +41,7 @@ pip install -r requirements.txt
 ### Running Tests
 
 #### Quick Smoke Test
+
 ```bash
 # Start frontend server first
 cd webui && npm run dev
@@ -48,6 +52,7 @@ python test_simple.py
 ```
 
 #### Full Test Suite
+
 ```bash
 # Using the test runner (starts services automatically)
 cd tests/e2e
@@ -58,6 +63,7 @@ python run_tests.py --frontend-only --critical
 ```
 
 #### Specific Test Categories
+
 ```bash
 # Settings navigation tests (our recent fix)
 python run_tests.py --settings
@@ -93,23 +99,27 @@ tests/e2e/
 ## 🧪 Test Categories
 
 ### Smoke Tests (`@pytest.mark.smoke`)
+
 - Basic application loading
 - Navigation menu presence
 - No obvious errors
 - **Purpose**: Quick validation that app is functional
 
 ### Critical Tests (`@pytest.mark.critical`)
+
 - Settings navigation (our recent fix)
 - Main user workflows
 - Core functionality
 - **Purpose**: Must-pass tests for essential features
 
 ### Regression Tests (`@pytest.mark.regression`)
+
 - Known bug fixes
 - Previously failing scenarios
 - **Purpose**: Ensure fixed issues don't reoccur
 
 ### Slow Tests (`@pytest.mark.slow`)
+
 - Performance testing
 - Load time validation
 - **Purpose**: Performance regression detection
@@ -168,21 +178,25 @@ When a test fails:
 ## 🚨 Common Issues
 
 ### Tests Can't Find Elements
+
 - Elements may load slowly - increase timeout
 - Check selectors in browser dev tools
 - Verify CSS classes haven't changed
 
 ### Browser Doesn't Start
+
 - Install Chrome/Firefox
 - Check webdriver installation
 - Try headless mode: `--headless`
 
 ### Frontend Not Running
+
 - Start with: `cd webui && npm run dev`
 - Check port availability (default 5173)
 - Verify in browser first
 
 ### Backend API Errors
+
 - Some tests need backend running
 - Start with: `go run . web`
 - Check backend logs for errors
@@ -191,7 +205,8 @@ When a test fails:
 
 ### Settings Navigation Fix
 
-Our recent fix changed `/settings` routing to show the tabbed interface instead of the 3-card overview. Test this with:
+Our recent fix changed `/settings` routing to show the tabbed interface instead
+of the 3-card overview. Test this with:
 
 ```bash
 # Specific test for settings fix
@@ -202,6 +217,7 @@ python test_simple.py
 ```
 
 **What we're testing**:
+
 - ✓ Clicking "Settings" goes to tabbed interface
 - ✓ URL shows `/settings`
 - ✓ Multiple tabs are visible (Providers, General, etc.)

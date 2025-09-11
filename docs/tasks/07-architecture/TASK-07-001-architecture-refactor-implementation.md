@@ -6,7 +6,9 @@
 
 ## Overview
 
-Refactor the subtitle-manager architecture to implement a clean, microservices-based design with full gcommon integration, improved separation of concerns, and enhanced maintainability.
+Refactor the subtitle-manager architecture to implement a clean,
+microservices-based design with full gcommon integration, improved separation of
+concerns, and enhanced maintainability.
 
 ## Implementation Plan
 
@@ -908,4 +910,7 @@ func (sg *ServiceGraph) GetStopOrder() []string {
 }
 ```
 
-This architecture refactor provides a comprehensive framework for microservices with dependency injection, service lifecycle management, and clean separation of concerns. The implementation includes full gcommon integration and supports complex dependency graphs with validation.
+This architecture refactor provides a comprehensive framework for microservices
+with dependency injection, service lifecycle management, and clean separation of
+concerns. The implementation includes full gcommon integration and supports
+complex dependency graphs with validation.

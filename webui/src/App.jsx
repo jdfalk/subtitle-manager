@@ -1087,7 +1087,10 @@ function App() {
                 path="/history"
                 element={<History backendAvailable={backendAvailable} />}
               />
-              <Route path="/settings" element={<Settings backendAvailable={backendAvailable} />} />
+              <Route
+                path="/settings"
+                element={<Settings backendAvailable={backendAvailable} />}
+              />
               <Route
                 path="/settings/:section"
                 element={<Settings backendAvailable={backendAvailable} />}

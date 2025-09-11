@@ -6,8 +6,8 @@
 
 ## Engine Service Interface Design
 
-**Part**: 2 of 4 (Engine Service Interface)
-**Focus**: Translation, Monitoring, and Coordination with Leader Election
+**Part**: 2 of 4 (Engine Service Interface) **Focus**: Translation, Monitoring,
+and Coordination with Leader Election
 
 ### Step 4: Define Engine Service Interface
 
@@ -37,31 +37,31 @@ service EngineService {
   rpc BatchTranslate(BatchTranslateRequest) returns (stream BatchTranslateResponse);
   rpc GetTranslationStatus(GetTranslationStatusRequest) returns (GetTranslationStatusResponse);
   rpc CancelTranslation(CancelTranslationRequest) returns (google.protobuf.Empty);
-  
+
   // Job queue services (Active-Active)
   rpc SubmitJob(SubmitJobRequest) returns (SubmitJobResponse);
   rpc GetJobStatus(GetJobStatusRequest) returns (GetJobStatusResponse);
   rpc ListJobs(ListJobsRequest) returns (ListJobsResponse);
   rpc CancelJob(CancelJobRequest) returns (google.protobuf.Empty);
-  
+
   // Monitoring services (Active-Active)
   rpc StartMonitoring(StartMonitoringRequest) returns (StartMonitoringResponse);
   rpc StopMonitoring(StopMonitoringRequest) returns (google.protobuf.Empty);
   rpc GetMonitoringStatus(GetMonitoringStatusRequest) returns (GetMonitoringStatusResponse);
   rpc ProcessFileEvent(ProcessFileEventRequest) returns (ProcessFileEventResponse);
-  
+
   // Coordination services (Leader Only)
   rpc DistributeWork(DistributeWorkRequest) returns (DistributeWorkResponse);
   rpc CoordinateMonitoring(CoordinateMonitoringRequest) returns (CoordinateMonitoringResponse);
   rpc GetSystemStatus(GetSystemStatusRequest) returns (GetSystemStatusResponse);
   rpc ScheduleTask(ScheduleTaskRequest) returns (ScheduleTaskResponse);
-  
+
   // Leader election services
   rpc RequestLeadership(RequestLeadershipRequest) returns (RequestLeadershipResponse);
   rpc HeartbeatLeader(HeartbeatLeaderRequest) returns (HeartbeatLeaderResponse);
   rpc GetLeaderInfo(GetLeaderInfoRequest) returns (GetLeaderInfoResponse);
   rpc TransferLeadership(TransferLeadershipRequest) returns (TransferLeadershipResponse);
-  
+
   // Health and discovery
   rpc Health(common.v1.HealthCheckRequest) returns (common.v1.HealthCheckResponse);
   rpc GetServiceInfo(GetServiceInfoRequest) returns (GetServiceInfoResponse);
@@ -452,4 +452,6 @@ message RegisterServiceResponse {
 }
 ```
 
-This completes Part 2 with the comprehensive Engine Service interface. Part 3 will cover the File Service interface, and Part 4 will provide the Go implementations.
+This completes Part 2 with the comprehensive Engine Service interface. Part 3
+will cover the File Service interface, and Part 4 will provide the Go
+implementations.

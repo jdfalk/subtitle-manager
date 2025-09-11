@@ -6,11 +6,14 @@
 
 ## 🎯 Objective
 
-Redesign the settings page with improved organization, modern UI components, and better user experience. Create a tabbed interface with logical grouping of settings and enhanced validation.
+Redesign the settings page with improved organization, modern UI components, and
+better user experience. Create a tabbed interface with logical grouping of
+settings and enhanced validation.
 
 ## 📋 Acceptance Criteria
 
-- [ ] Fix settings navigation routing issue (settings overview vs tabbed interface)
+- [ ] Fix settings navigation routing issue (settings overview vs tabbed
+      interface)
 - [ ] Implement tabbed settings interface with logical grouping
 - [ ] Add real-time validation for all form fields
 - [ ] Create modern form components with proper styling
@@ -26,7 +29,8 @@ Redesign the settings page with improved organization, modern UI components, and
 
 **PRIORITY 1: Routing Confusion**
 
-Currently, there are two different settings components with confusing navigation:
+Currently, there are two different settings components with confusing
+navigation:
 
 1. **`/settings`** → `SettingsOverview` component
    - Shows a "blocky" three-box layout with cards for General, Providers, Users
@@ -35,19 +39,24 @@ Currently, there are two different settings components with confusing navigation
 
 2. **`/settings/:section`** → `Settings` component
    - Shows the proper tabbed interface with full functionality
-   - Contains Providers, General, Database, Authentication, Notifications, Users, Tags, Webhooks tabs
+   - Contains Providers, General, Database, Authentication, Notifications,
+     Users, Tags, Webhooks tabs
    - This is the REAL settings page users want
 
-**Problem**: When users click "Settings" in navigation, they get the overview page instead of the main tabbed interface.
+**Problem**: When users click "Settings" in navigation, they get the overview
+page instead of the main tabbed interface.
 
 **Solution**: Either:
+
 - Option A: Make `/settings` route directly to the tabbed `Settings` component
-- Option B: Improve the `SettingsOverview` to be a proper landing page with better UX
+- Option B: Improve the `SettingsOverview` to be a proper landing page with
+  better UX
 - Option C: Remove `SettingsOverview` entirely and always show tabbed interface
 
 ### Existing Settings Implementation
 
-Current settings are likely scattered across different components. Need to evaluate:
+Current settings are likely scattered across different components. Need to
+evaluate:
 
 1. **Settings Organization**: How settings are currently grouped
 2. **Form Components**: Quality of form inputs and validation
@@ -121,11 +130,13 @@ Current settings are likely scattered across different components. Need to evalu
 **IMMEDIATE FIX NEEDED**: The current settings navigation is confusing users.
 
 **Current Issue:**
+
 - `/settings` → Shows basic 3-card overview (`SettingsOverview`)
 - `/settings/:section` → Shows full tabbed interface (`Settings`)
 - Users expect `/settings` to show the main settings page
 
 **Recommended Solution** (Option A):
+
 ```jsx
 // webui/src/App.jsx - Update routing
 <Route path="/settings" element={<Settings backendAvailable={backendAvailable} />} />
@@ -134,6 +145,7 @@ Current settings are likely scattered across different components. Need to evalu
 ```
 
 **Alternative Solution** (Option B):
+
 ```jsx
 // webui/src/components/SettingsOverview.jsx - Make it a proper landing page
 export default function SettingsOverview() {
@@ -149,6 +161,7 @@ export default function SettingsOverview() {
 ```
 
 **Files to modify:**
+
 - `webui/src/App.jsx` (routing)
 - Consider removing `webui/src/components/SettingsOverview.jsx` entirely
 
@@ -177,9 +190,9 @@ const settingsReducer = (state, action) => {
         ...state,
         [action.category]: {
           ...state[action.category],
-          [action.key]: action.value
+          [action.key]: action.value,
         },
-        hasChanges: true
+        hasChanges: true,
       };
     case 'SAVE_SETTINGS':
       return { ...state, hasChanges: false, saving: false };
@@ -199,7 +212,7 @@ export const SettingsProvider = ({ children }) => {
     advanced: {},
     loading: true,
     saving: false,
-    hasChanges: false
+    hasChanges: false,
   });
 
   // Settings API functions
@@ -223,7 +236,7 @@ export const SettingsProvider = ({ children }) => {
       await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(state)
+        body: JSON.stringify(state),
       });
       dispatch({ type: 'SAVE_SETTINGS' });
     } catch (error) {
@@ -232,12 +245,14 @@ export const SettingsProvider = ({ children }) => {
   };
 
   return (
-    <SettingsContext.Provider value={{
-      ...state,
-      loadSettings,
-      updateSetting,
-      saveSettings
-    }}>
+    <SettingsContext.Provider
+      value={{
+        ...state,
+        loadSettings,
+        updateSetting,
+        saveSettings,
+      }}
+    >
       {children}
     </SettingsContext.Provider>
   );
@@ -260,14 +275,14 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Alert
+  Alert,
 } from '@mui/material';
 import {
   Settings as SettingsIcon,
   Folder as FolderIcon,
   CloudDownload as ProvidersIcon,
   Link as IntegrationIcon,
-  Code as AdvancedIcon
+  Code as AdvancedIcon,
 } from '@mui/icons-material';
 
 import { useSettings } from '../../contexts/SettingsContext';
@@ -297,9 +312,17 @@ const SettingsPage = () => {
   const tabs = [
     { label: 'General', icon: <SettingsIcon />, component: GeneralSettings },
     { label: 'Library', icon: <FolderIcon />, component: LibrarySettings },
-    { label: 'Providers', icon: <ProvidersIcon />, component: ProviderSettings },
-    { label: 'Integration', icon: <IntegrationIcon />, component: IntegrationSettings },
-    { label: 'Advanced', icon: <AdvancedIcon />, component: AdvancedSettings }
+    {
+      label: 'Providers',
+      icon: <ProvidersIcon />,
+      component: ProviderSettings,
+    },
+    {
+      label: 'Integration',
+      icon: <IntegrationIcon />,
+      component: IntegrationSettings,
+    },
+    { label: 'Advanced', icon: <AdvancedIcon />, component: AdvancedSettings },
   ];
 
   const handleSave = async () => {
@@ -382,7 +405,9 @@ const SettingsPage = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowResetDialog(false)}>Cancel</Button>
-          <Button onClick={confirmReset} color="error">Reset</Button>
+          <Button onClick={confirmReset} color="error">
+            Reset
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -427,30 +452,37 @@ export const useSettingsValidation = (initialValues = {}) => {
 
     setErrors(prev => ({
       ...prev,
-      [name]: error
+      [name]: error,
     }));
 
     return error === '';
   }, []);
 
-  const validateForm = useCallback((values, validationRules) => {
-    let isValid = true;
-    const newErrors = {};
+  const validateForm = useCallback(
+    (values, validationRules) => {
+      let isValid = true;
+      const newErrors = {};
 
-    Object.keys(validationRules).forEach(field => {
-      const fieldValid = validateField(field, values[field], validationRules[field]);
-      if (!fieldValid) {
-        isValid = false;
-      }
-    });
+      Object.keys(validationRules).forEach(field => {
+        const fieldValid = validateField(
+          field,
+          values[field],
+          validationRules[field]
+        );
+        if (!fieldValid) {
+          isValid = false;
+        }
+      });
 
-    return isValid;
-  }, [validateField]);
+      return isValid;
+    },
+    [validateField]
+  );
 
-  const setFieldTouched = useCallback((name) => {
+  const setFieldTouched = useCallback(name => {
     setTouched(prev => ({
       ...prev,
-      [name]: true
+      [name]: true,
     }));
   }, []);
 
@@ -465,7 +497,7 @@ export const useSettingsValidation = (initialValues = {}) => {
     validateField,
     validateForm,
     setFieldTouched,
-    resetValidation
+    resetValidation,
   };
 };
 ```
@@ -503,16 +535,19 @@ func (s *Server) handleUpdateSettings(w http.ResponseWriter, r *http.Request) {
 ## 🧪 Testing Requirements
 
 ### Unit Tests
+
 - Settings context and state management
 - Form validation logic
 - Individual setting component behavior
 
 ### Integration Tests
+
 - Settings API endpoints
 - Data persistence
 - Form submission workflows
 
 ### E2E Tests
+
 - Complete settings configuration workflow
 - Settings backup/restore functionality
 - Cross-tab settings synchronization
@@ -520,11 +555,13 @@ func (s *Server) handleUpdateSettings(w http.ResponseWriter, r *http.Request) {
 ## 📚 Documentation
 
 ### User Documentation
+
 - Settings reference guide
 - Configuration best practices
 - Troubleshooting common issues
 
 ### Developer Documentation
+
 - Settings architecture overview
 - Adding new settings categories
 - Validation patterns and examples

@@ -12,11 +12,14 @@
 
 ## Overview
 
-Create a single binary mode that runs all services (web, monitoring, translation) in one process without requiring gRPC communication between components. This should be the default deployment mode for simple installations.
+Create a single binary mode that runs all services (web, monitoring,
+translation) in one process without requiring gRPC communication between
+components. This should be the default deployment mode for simple installations.
 
 ## Current Problem
 
 Currently users must run multiple services separately:
+
 - `subtitle-manager web` - Web UI and API
 - `subtitle-manager grpc-server` - Translation service
 - `subtitle-manager monitor` - File monitoring

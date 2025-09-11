@@ -6,7 +6,9 @@
 
 ## Overview
 
-Implement comprehensive monitoring and observability for the subtitle-manager ecosystem with full gcommon integration, providing metrics, logging, tracing, and alerting capabilities.
+Implement comprehensive monitoring and observability for the subtitle-manager
+ecosystem with full gcommon integration, providing metrics, logging, tracing,
+and alerting capabilities.
 
 ## Implementation Plan
 
@@ -921,4 +923,7 @@ func (am *AlertManager) alertMatchesFilters(alert *monitoringpb.Alert, filters m
 }
 ```
 
-This monitoring implementation provides comprehensive observability with metrics collection, alerting, and full gcommon integration. The system includes customizable metrics, alert rules, multiple notification channels, and dashboard capabilities.
+This monitoring implementation provides comprehensive observability with metrics
+collection, alerting, and full gcommon integration. The system includes
+customizable metrics, alert rules, multiple notification channels, and dashboard
+capabilities.

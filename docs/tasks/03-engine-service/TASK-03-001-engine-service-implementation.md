@@ -6,7 +6,10 @@
 
 ## Overview
 
-Implement the complete Engine Service responsible for translation processing, transcription, and media analysis using comprehensive gcommon integration. This service handles all compute-intensive operations with worker management, job queuing, and progress tracking using gcommon types throughout.
+Implement the complete Engine Service responsible for translation processing,
+transcription, and media analysis using comprehensive gcommon integration. This
+service handles all compute-intensive operations with worker management, job
+queuing, and progress tracking using gcommon types throughout.
 
 ## Requirements
 
@@ -959,7 +962,9 @@ This is PART 1 of the comprehensive Engine Service implementation. It includes:
 6. **Job queue management** using gcommon types
 7. **Detailed configuration options** for every aspect of the service
 
-The implementation provides all the details needed for actual implementation including:
+The implementation provides all the details needed for actual implementation
+including:
+
 - Complete configuration structures with defaults and environment variables
 - Provider-specific configurations for all translation services
 - Worker scaling and resource management
@@ -1676,6 +1681,7 @@ This is PART 2 of the Engine Service implementation, providing:
 8. **Job management** using gcommon queue types
 
 The implementation includes:
+
 - Complete subtitle file processing with timing preservation
 - Batch translation with progress updates
 - Provider-specific optimizations
@@ -2683,7 +2689,8 @@ The implementation includes:
 - Complete statistics and metrics collection
 - Provider capability reporting and feature detection
 
-Continue with PART 4 for the remaining service handlers and final implementation?
+Continue with PART 4 for the remaining service handlers and final
+implementation?
 
 **Create `pkg/services/engine/service_handlers.go`**:
 
@@ -3555,4 +3562,6 @@ The complete implementation includes:
 - Proper resource management and cleanup
 - Detailed logging and observability throughout
 
-This provides a production-ready Engine Service with full gcommon integration, comprehensive error handling, and support for all translation and transcription operations.
+This provides a production-ready Engine Service with full gcommon integration,
+comprehensive error handling, and support for all translation and transcription
+operations.

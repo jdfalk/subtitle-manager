@@ -6,12 +6,12 @@
 
 ## 🎯 Task Overview
 
-**Primary Objective**: Design and implement the core service interfaces for the 3-service active-active architecture with gRPC communication protocols.
+**Primary Objective**: Design and implement the core service interfaces for the
+3-service active-active architecture with gRPC communication protocols.
 
-**Task Type**: Core Architecture - Interface Design
-**Estimated Effort**: 12-16 hours
-**Prerequisites**: Architecture overview understanding
-**Part**: 1 of 4 (Interface Design)
+**Task Type**: Core Architecture - Interface Design **Estimated Effort**: 12-16
+hours **Prerequisites**: Architecture overview understanding **Part**: 1 of 4
+(Interface Design)
 
 ## 📋 Acceptance Criteria
 
@@ -30,11 +30,13 @@
 The subtitle-manager currently has basic gRPC infrastructure:
 
 **Existing Files to Analyze:**
+
 - `proto/config.proto` - Configuration service definitions
 - `pkg/grpcserver/server.go` - Current gRPC server implementation
 - `pkg/grpcserver/` - gRPC service implementations
 
 **Current Service Structure (TO BE REPLACED):**
+
 ```go
 // Current monolithic approach
 type TranslatorServer struct {
@@ -44,6 +46,7 @@ type TranslatorServer struct {
 ```
 
 **Target Service Structure (NEW):**
+
 ```go
 // New distributed approach
 type WebService interface {
@@ -121,7 +124,7 @@ message Error {
     UNAVAILABLE = 6;
     DEADLINE_EXCEEDED = 7;
   }
-  
+
   Code code = 1;
   string message = 2;
   string details = 3;
@@ -140,7 +143,7 @@ message HealthCheckResponse {
     NOT_SERVING = 2;
     SERVICE_UNKNOWN = 3;
   }
-  
+
   Status status = 1;
   string message = 2;
   map<string, string> details = 3;
@@ -210,20 +213,20 @@ service WebService {
   rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse);
   rpc ValidateSession(ValidateSessionRequest) returns (ValidateSessionResponse);
   rpc Logout(LogoutRequest) returns (google.protobuf.Empty);
-  
+
   // File upload/download
   rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse);
   rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileResponse);
   rpc GetFileInfo(GetFileInfoRequest) returns (GetFileInfoResponse);
-  
+
   // Client API endpoints
   rpc GetStatus(google.protobuf.Empty) returns (StatusResponse);
   rpc ListMediaFiles(ListMediaFilesRequest) returns (ListMediaFilesResponse);
   rpc SearchSubtitles(SearchSubtitlesRequest) returns (SearchSubtitlesResponse);
-  
+
   // Real-time updates
   rpc Subscribe(SubscribeRequest) returns (stream EventResponse);
-  
+
   // Health checking
   rpc Health(common.v1.HealthCheckRequest) returns (common.v1.HealthCheckResponse);
 }
@@ -414,9 +417,12 @@ message JobStatusEvent {
 }
 ```
 
-This completes Part 1 of the service interface definitions. The next parts will cover:
+This completes Part 1 of the service interface definitions. The next parts will
+cover:
+
 - Part 2: Engine Service Interface
-- Part 3: File Service Interface  
+- Part 3: File Service Interface
 - Part 4: Go Interface Implementations
 
-Each part will be detailed with complete code examples, testing procedures, and integration guidelines.
+Each part will be detailed with complete code examples, testing procedures, and
+integration guidelines.

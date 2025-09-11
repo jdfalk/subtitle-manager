@@ -12,7 +12,9 @@
 
 ## Overview
 
-**CONSOLIDATED TASK**: This combines unified monitoring service creation with service renaming for efficiency. Instead of doing these as separate tasks, we'll rename services while refactoring monitoring functionality.
+**CONSOLIDATED TASK**: This combines unified monitoring service creation with
+service renaming for efficiency. Instead of doing these as separate tasks, we'll
+rename services while refactoring monitoring functionality.
 
 ## Part A: Unified Monitoring Service
 
@@ -24,7 +26,8 @@ Currently we have three confusing, overlapping commands:
 - `watch` - Real-time file system event monitoring
 - `monitor` - Sonarr/Radarr integration with sub-commands
 
-This creates confusion and requires users to understand the differences and run multiple services.
+This creates confusion and requires users to understand the differences and run
+multiple services.
 
 ### Unified Monitoring Solution
 

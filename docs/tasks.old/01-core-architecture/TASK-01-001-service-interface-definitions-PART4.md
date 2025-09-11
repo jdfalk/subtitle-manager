@@ -6,8 +6,8 @@
 
 ## Go Interface Implementations
 
-**Part**: 4 of 4 (Go Interfaces and Implementation Guidelines)
-**Focus**: Concrete Go interfaces, service abstractions, and implementation patterns
+**Part**: 4 of 4 (Go Interfaces and Implementation Guidelines) **Focus**:
+Concrete Go interfaces, service abstractions, and implementation patterns
 
 ### Step 6: Define Go Service Interfaces
 
@@ -38,12 +38,12 @@ type ServiceManager interface {
 	StopServices(ctx context.Context) error
 	RestartService(ctx context.Context, serviceName string) error
 	GetServiceStatus(serviceName string) (*commonv1.ServiceStatus, error)
-	
+
 	// Service discovery
 	RegisterService(service Service) error
 	UnregisterService(serviceID string) error
 	DiscoverServices(serviceType string) ([]Service, error)
-	
+
 	// Health monitoring
 	HealthCheck(ctx context.Context) (*commonv1.HealthCheckResponse, error)
 	GetAllServiceHealth(ctx context.Context) (map[string]*commonv1.HealthCheckResponse, error)
@@ -57,11 +57,11 @@ type Service interface {
 	Start(ctx context.Context) error
 	Stop(ctx context.Context) error
 	Health(ctx context.Context) (*commonv1.HealthCheckResponse, error)
-	
+
 	// Configuration
 	Configure(config interface{}) error
 	GetConfig() interface{}
-	
+
 	// Metrics and monitoring
 	GetMetrics() (*commonv1.ServiceMetrics, error)
 	GetEvents(since time.Time) ([]*commonv1.ServiceEvent, error)
@@ -70,31 +70,31 @@ type Service interface {
 // WebService handles all web-facing operations
 type WebService interface {
 	Service
-	
+
 	// User management
 	AuthenticateUser(ctx context.Context, req *webv1.AuthenticateUserRequest) (*webv1.AuthenticateUserResponse, error)
 	GetUser(ctx context.Context, req *webv1.GetUserRequest) (*webv1.GetUserResponse, error)
 	UpdateUserPreferences(ctx context.Context, req *webv1.UpdateUserPreferencesRequest) (*webv1.UpdateUserPreferencesResponse, error)
-	
+
 	// Subtitle management
 	UploadSubtitle(ctx context.Context, req *webv1.UploadSubtitleRequest) (*webv1.UploadSubtitleResponse, error)
 	DownloadSubtitle(ctx context.Context, req *webv1.DownloadSubtitleRequest) (*webv1.DownloadSubtitleResponse, error)
 	SearchSubtitles(ctx context.Context, req *webv1.SearchSubtitlesRequest) (*webv1.SearchSubtitlesResponse, error)
 	GetSubtitleMetadata(ctx context.Context, req *webv1.GetSubtitleMetadataRequest) (*webv1.GetSubtitleMetadataResponse, error)
-	
+
 	// Translation operations
 	TranslateSubtitle(ctx context.Context, req *webv1.TranslateSubtitleRequest) (*webv1.TranslateSubtitleResponse, error)
 	GetTranslationStatus(ctx context.Context, req *webv1.GetTranslationStatusRequest) (*webv1.GetTranslationStatusResponse, error)
-	
+
 	// File operations
 	UploadFile(stream webv1.WebService_UploadFileServer) error
 	DownloadFile(req *webv1.DownloadFileRequest, stream webv1.WebService_DownloadFileServer) error
 	GetFileInfo(ctx context.Context, req *webv1.GetFileInfoRequest) (*webv1.GetFileInfoResponse, error)
-	
+
 	// Library management
 	GetLibraries(ctx context.Context, req *webv1.GetLibrariesRequest) (*webv1.GetLibrariesResponse, error)
 	ScanLibrary(ctx context.Context, req *webv1.ScanLibraryRequest) (*webv1.ScanLibraryResponse, error)
-	
+
 	// System operations
 	GetSystemStatus(ctx context.Context, req *webv1.GetSystemStatusRequest) (*webv1.GetSystemStatusResponse, error)
 	UpdateConfiguration(ctx context.Context, req *webv1.UpdateConfigurationRequest) (*webv1.UpdateConfigurationResponse, error)
@@ -103,29 +103,29 @@ type WebService interface {
 // EngineService handles core processing, translation, and coordination
 type EngineService interface {
 	Service
-	
+
 	// Translation operations
 	ProcessTranslation(ctx context.Context, req *enginev1.ProcessTranslationRequest) (*enginev1.ProcessTranslationResponse, error)
 	GetTranslationProgress(ctx context.Context, req *enginev1.GetTranslationProgressRequest) (*enginev1.GetTranslationProgressResponse, error)
 	CancelTranslation(ctx context.Context, req *enginev1.CancelTranslationRequest) (*enginev1.CancelTranslationResponse, error)
-	
+
 	// Monitoring operations
 	StartMonitoring(ctx context.Context, req *enginev1.StartMonitoringRequest) (*enginev1.StartMonitoringResponse, error)
 	StopMonitoring(ctx context.Context, req *enginev1.StopMonitoringRequest) (*enginev1.StopMonitoringResponse, error)
 	GetMonitoringStatus(ctx context.Context, req *enginev1.GetMonitoringStatusRequest) (*enginev1.GetMonitoringStatusResponse, error)
 	GetMonitoringEvents(req *enginev1.GetMonitoringEventsRequest, stream enginev1.EngineService_GetMonitoringEventsServer) error
-	
+
 	// Processing operations
 	ProcessMedia(ctx context.Context, req *enginev1.ProcessMediaRequest) (*enginev1.ProcessMediaResponse, error)
 	ExtractSubtitles(ctx context.Context, req *enginev1.ExtractSubtitlesRequest) (*enginev1.ExtractSubtitlesResponse, error)
 	ConvertFormat(ctx context.Context, req *enginev1.ConvertFormatRequest) (*enginev1.ConvertFormatResponse, error)
-	
+
 	// Coordination operations
 	RegisterWorker(ctx context.Context, req *enginev1.RegisterWorkerRequest) (*enginev1.RegisterWorkerResponse, error)
 	HeartbeatWorker(ctx context.Context, req *enginev1.HeartbeatWorkerRequest) (*enginev1.HeartbeatWorkerResponse, error)
 	AssignTask(ctx context.Context, req *enginev1.AssignTaskRequest) (*enginev1.AssignTaskResponse, error)
 	CompleteTask(ctx context.Context, req *enginev1.CompleteTaskRequest) (*enginev1.CompleteTaskResponse, error)
-	
+
 	// Leader election operations
 	RequestLeadership(ctx context.Context, req *enginev1.RequestLeadershipRequest) (*enginev1.RequestLeadershipResponse, error)
 	ReleaseLeadership(ctx context.Context, req *enginev1.ReleaseLeadershipRequest) (*enginev1.ReleaseLeadershipResponse, error)
@@ -136,33 +136,33 @@ type EngineService interface {
 // FileService handles all file system operations
 type FileService interface {
 	Service
-	
+
 	// Basic file operations
 	ReadFile(ctx context.Context, req *filev1.ReadFileRequest) (*filev1.ReadFileResponse, error)
 	WriteFile(ctx context.Context, req *filev1.WriteFileRequest) (*filev1.WriteFileResponse, error)
 	DeleteFile(ctx context.Context, req *filev1.DeleteFileRequest) error
 	MoveFile(ctx context.Context, req *filev1.MoveFileRequest) (*filev1.MoveFileResponse, error)
 	CopyFile(ctx context.Context, req *filev1.CopyFileRequest) (*filev1.CopyFileResponse, error)
-	
+
 	// Streaming operations
 	StreamRead(req *filev1.StreamReadRequest, stream filev1.FileService_StreamReadServer) error
 	StreamWrite(stream filev1.FileService_StreamWriteServer) error
-	
+
 	// Directory operations
 	CreateDirectory(ctx context.Context, req *filev1.CreateDirectoryRequest) (*filev1.CreateDirectoryResponse, error)
 	DeleteDirectory(ctx context.Context, req *filev1.DeleteDirectoryRequest) error
 	ScanDirectory(req *filev1.ScanDirectoryRequest, stream filev1.FileService_ScanDirectoryServer) error
-	
+
 	// File watching
 	StartWatching(ctx context.Context, req *filev1.StartWatchingRequest) (*filev1.StartWatchingResponse, error)
 	StopWatching(ctx context.Context, req *filev1.StopWatchingRequest) error
 	GetFileEvents(req *filev1.GetFileEventsRequest, stream filev1.FileService_GetFileEventsServer) error
-	
+
 	// Media operations
 	ExtractSubtitles(ctx context.Context, req *filev1.ExtractSubtitlesRequest) (*filev1.ExtractSubtitlesResponse, error)
 	GetMediaMetadata(ctx context.Context, req *filev1.GetMediaMetadataRequest) (*filev1.GetMediaMetadataResponse, error)
 	ConvertSubtitleFormat(ctx context.Context, req *filev1.ConvertSubtitleFormatRequest) (*filev1.ConvertSubtitleFormatResponse, error)
-	
+
 	// Storage management
 	GetStorageInfo(ctx context.Context, req *filev1.GetStorageInfoRequest) (*filev1.GetStorageInfoResponse, error)
 	CleanupFiles(ctx context.Context, req *filev1.CleanupFilesRequest) (*filev1.CleanupFilesResponse, error)
@@ -174,12 +174,12 @@ type ServiceClient interface {
 	// Service discovery
 	ConnectToService(ctx context.Context, serviceName, serviceType string) error
 	DisconnectFromService(serviceName string) error
-	
+
 	// Client instances
 	GetWebClient() (webv1.WebServiceClient, error)
 	GetEngineClient() (enginev1.EngineServiceClient, error)
 	GetFileClient() (filev1.FileServiceClient, error)
-	
+
 	// Health monitoring
 	PingService(ctx context.Context, serviceName string) error
 	WatchServiceHealth(ctx context.Context, serviceName string) (<-chan *commonv1.HealthCheckResponse, error)
@@ -440,26 +440,20 @@ type FileInfo struct {
 ## Service Architecture Patterns
 
 ### 1. Service Structure
+
 Each service should follow this directory structure:
 ```
-pkg/services/
-├── web/
-│   ├── server.go       # Web service implementation
-│   ├── handlers.go     # HTTP/gRPC handlers
-│   ├── middleware.go   # Authentication, logging, etc.
-│   └── config.go       # Service configuration
-├── engine/
-│   ├── server.go       # Engine service implementation
-│   ├── translation/    # Translation workers
-│   ├── monitoring/     # Monitoring workers
-│   ├── coordination/   # Task coordination
-│   └── leader/         # Leader election
-└── file/
-    ├── server.go       # File service implementation
-    ├── operations.go   # File operations
-    ├── watcher.go      # File watching
-    └── media.go        # Media processing
-```
+
+pkg/services/ ├── web/ │ ├── server.go # Web service implementation │ ├──
+handlers.go # HTTP/gRPC handlers │ ├── middleware.go # Authentication, logging,
+etc. │ └── config.go # Service configuration ├── engine/ │ ├── server.go #
+Engine service implementation │ ├── translation/ # Translation workers │ ├──
+monitoring/ # Monitoring workers │ ├── coordination/ # Task coordination │ └──
+leader/ # Leader election └── file/ ├── server.go # File service implementation
+├── operations.go # File operations ├── watcher.go # File watching └──
+media.go # Media processing
+
+````
 
 ### 2. Service Initialization
 ```go
@@ -477,33 +471,38 @@ func NewService(opts ServiceOptions) (Service, error) {
     // Setup monitoring
     // Register with discovery
 }
-```
+````
 
 ### 3. Error Handling
+
 - Use structured errors with context
 - Implement proper error wrapping
 - Return gRPC status codes correctly
 - Log errors with appropriate levels
 
 ### 4. Configuration Management
+
 - Use environment variables for secrets
 - Support configuration hot-reloading
 - Validate configurations on startup
 - Provide sensible defaults
 
 ### 5. Monitoring and Observability
+
 - Implement structured logging
 - Export Prometheus metrics
 - Add distributed tracing
 - Health check endpoints
 
 ### 6. Testing Strategy
+
 - Unit tests for business logic
 - Integration tests for service interactions
 - Contract tests for gRPC interfaces
 - End-to-end tests for workflows
 
 ## Implementation Priority
+
 1. Core interfaces and common types
 2. File service (foundational)
 3. Engine service (processing)
@@ -511,6 +510,8 @@ func NewService(opts ServiceOptions) (Service, error) {
 5. Service discovery and coordination
 6. Monitoring and observability
 7. Integration testing
+
 ```
 
 This completes the comprehensive service interface definitions. All four parts can now be merged into the final TASK-01-001 document.
+```

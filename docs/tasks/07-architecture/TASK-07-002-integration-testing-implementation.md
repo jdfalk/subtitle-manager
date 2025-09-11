@@ -6,7 +6,9 @@
 
 ## Overview
 
-Implement comprehensive integration testing for the subtitle-manager ecosystem with full gcommon integration, covering service-to-service communication, end-to-end workflows, and system reliability testing.
+Implement comprehensive integration testing for the subtitle-manager ecosystem
+with full gcommon integration, covering service-to-service communication,
+end-to-end workflows, and system reliability testing.
 
 ## Implementation Plan
 
@@ -782,4 +784,8 @@ func (te *TestEnvironment) IsReady() bool {
 }
 ```
 
-This integration testing implementation provides comprehensive testing capabilities with environment management, service proxies, and support for local, Docker, and Kubernetes environments. The framework includes test suites for health checks, service integration, end-to-end scenarios, and performance testing.
+This integration testing implementation provides comprehensive testing
+capabilities with environment management, service proxies, and support for
+local, Docker, and Kubernetes environments. The framework includes test suites
+for health checks, service integration, end-to-end scenarios, and performance
+testing.

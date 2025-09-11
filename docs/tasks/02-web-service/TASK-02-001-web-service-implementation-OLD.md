@@ -6,7 +6,11 @@
 
 ## Overview
 
-Implement the complete Web Service that handles all client-facing operations including user authentication, API gateway functionality, file upload/download, and request routing to backend services. This service uses Edition 2023 protobuf with opaque API and serves as the single external entry point for the 3-service architecture.
+Implement the complete Web Service that handles all client-facing operations
+including user authentication, API gateway functionality, file upload/download,
+and request routing to backend services. This service uses Edition 2023 protobuf
+with opaque API and serves as the single external entry point for the 3-service
+architecture.
 
 ## Requirements
 
@@ -24,7 +28,8 @@ Implement the complete Web Service that handles all client-facing operations inc
 - **User Management**: Complete authentication and user preference handling
 - **Request Routing**: Intelligent routing to Engine and File services
 - **File Operations**: Streaming upload/download with progress tracking
-- **Error Handling**: Comprehensive error responses with proper gRPC status codes
+- **Error Handling**: Comprehensive error responses with proper gRPC status
+  codes
 - **Observability**: Metrics, logging, and health checks
 
 ## Implementation Steps
@@ -426,6 +431,7 @@ func (c *Config) Validate() error {
     return nil
 }
 ```
+
 ### Step 2: Implement Authentication Manager
 
 **Create `pkg/services/web/auth.go`**:
@@ -958,6 +964,7 @@ func (a *authManager) convertLanguageToProto(lang *Language) *commonv1.Language 
     return langProto
 }
 ```
+
 ### Step 3: Implement HTTP Middleware and Handlers
 
 **Create `pkg/services/web/middleware.go`**:
@@ -1616,6 +1623,7 @@ func (c *corsHandler) matchWildcard(pattern, str string) bool {
     return pattern == str
 }
 ```
+
 ### Step 5: Implement Service Handlers
 
 **Create `pkg/services/web/handlers.go`**:
@@ -2086,7 +2094,8 @@ This completes the Web Service implementation with the following key features:
 1. **Complete gRPC Service**: Full implementation of all Web Service endpoints
 2. **HTTP Gateway**: REST API gateway for web clients using grpc-gateway
 3. **Authentication System**: JWT-based authentication with session management
-4. **Middleware Stack**: Comprehensive middleware for logging, rate limiting, CORS, recovery
+4. **Middleware Stack**: Comprehensive middleware for logging, rate limiting,
+   CORS, recovery
 5. **Static File Serving**: WebUI and static asset serving capability
 6. **Backend Integration**: Proper forwarding to Engine and File services
 7. **Opaque API Usage**: Consistent use of getters/setters throughout
@@ -2095,15 +2104,19 @@ This completes the Web Service implementation with the following key features:
 
 - **Opaque API**: All protobuf message access uses `Get*()` and `Set*()` methods
 - **Error Handling**: Structured error responses with proper gRPC status codes
-- **Context Propagation**: User authentication and request context properly passed through
+- **Context Propagation**: User authentication and request context properly
+  passed through
 - **Metrics Collection**: Comprehensive metrics for monitoring and observability
 - **Configuration**: Environment-based configuration with validation
 - **Logging**: Structured logging with appropriate log levels
 
 **Next Steps**:
+
 - Implement user and session stores
 - Add comprehensive unit and integration tests
 - Implement remaining TODO items for complete functionality
 - Add performance monitoring and alerting
 
-This Web Service serves as the single entry point for all client interactions and properly routes requests to the appropriate backend services while maintaining security and observability.
+This Web Service serves as the single entry point for all client interactions
+and properly routes requests to the appropriate backend services while
+maintaining security and observability.

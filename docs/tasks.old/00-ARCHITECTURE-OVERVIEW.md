@@ -6,7 +6,9 @@
 
 ## 🎯 Architecture Overview
 
-This document defines the complete architecture for subtitle-manager's transition to a 3-service active-active distributed system with simplified deployment options.
+This document defines the complete architecture for subtitle-manager's
+transition to a 3-service active-active distributed system with simplified
+deployment options.
 
 ## 🏗️ Service Architecture
 
@@ -42,7 +44,7 @@ This document defines the complete architecture for subtitle-manager's transitio
 │  │  Standby    │   Standby           │   │
 │  └─────────────┴─────────────────────┘   │
 └─────────┬──────────────────┬─────────────┘
-          │ gRPC             │ gRPC  
+          │ gRPC             │ gRPC
 ┌─────────▼──────────────────▼─────────────┐
 │           File Services                  │
 │  ┌─────────────┬─────────────────────┐   │
@@ -57,6 +59,7 @@ This document defines the complete architecture for subtitle-manager's transitio
 ### **Service Responsibilities**
 
 #### **1. Web Service (Pure Client Interface)**
+
 - **Purpose**: HTTP/WebSocket API for all clients (web UI, CLI, mobile apps)
 - **Responsibilities**:
   - HTTP API endpoints and WebSocket connections
@@ -71,7 +74,9 @@ This document defines the complete architecture for subtitle-manager's transitio
   - Coordination logic
 
 #### **2. Engine Service (Active-Active + Leader Election)**
-- **Purpose**: Core processing with distributed translation and coordinated monitoring
+
+- **Purpose**: Core processing with distributed translation and coordinated
+  monitoring
 - **Active-Active Responsibilities** (ALL instances):
   - ✅ Translation processing (Whisper, AI, Google Translate)
   - ✅ Job queue processing
@@ -85,6 +90,7 @@ This document defines the complete architecture for subtitle-manager's transitio
 - **Scaling**: Add more instances for more translation/processing capacity
 
 #### **3. File Service (Pure File Operations)**
+
 - **Purpose**: All file system operations and media processing
 - **Responsibilities**:
   - File system watching (inotify, polling)
@@ -97,15 +103,17 @@ This document defines the complete architecture for subtitle-manager's transitio
 ## 🔄 Service Communication Patterns
 
 ### **Translation Workload Distribution**
+
 ```
 Client Request → Web Service → Engine Load Balancer
                               ├─→ Engine S1 (Whisper Instance 1)
-                              ├─→ Engine S2 (Whisper Instance 2) 👑 
+                              ├─→ Engine S2 (Whisper Instance 2) 👑
                               ├─→ Engine S3 (AI Translation)
                               └─→ Engine S4 (Google Translate)
 ```
 
 ### **File Operation Flow**
+
 ```
 Upload Request → Web Service → File Service (validate & store)
                             → Engine Service (process if needed)
@@ -115,6 +123,7 @@ File Change → File Service (detect) → Engine Service Leader (coordinate)
 ```
 
 ### **Monitoring Flow**
+
 ```
 Engine Leader → File Services (scan requests)
              → Engine Services (distribute work)
@@ -124,6 +133,7 @@ Engine Leader → File Services (scan requests)
 ## 📋 Task Breakdown Structure
 
 ### **Phase 1: Core Architecture (01-core-architecture/)**
+
 - **TASK-01-001**: Service Interface Definitions
 - **TASK-01-002**: gRPC Protocol Design
 - **TASK-01-003**: Service Discovery Framework
@@ -131,6 +141,7 @@ Engine Leader → File Services (scan requests)
 - **TASK-01-005**: Error Handling Standards
 
 ### **Phase 2: Web Service (02-web-service/)**
+
 - **TASK-02-001**: HTTP API Refactoring
 - **TASK-02-002**: File Upload/Download Handlers
 - **TASK-02-003**: WebSocket Implementation
@@ -138,6 +149,7 @@ Engine Leader → File Services (scan requests)
 - **TASK-02-005**: Request Routing Logic
 
 ### **Phase 3: Engine Service (03-engine-service/)**
+
 - **TASK-03-001**: Translation Engine Core
 - **TASK-03-002**: Job Queue System
 - **TASK-03-003**: Monitoring Integration
@@ -145,6 +157,7 @@ Engine Leader → File Services (scan requests)
 - **TASK-03-005**: Load Balancing Logic
 
 ### **Phase 4: File Service (04-file-service/)**
+
 - **TASK-04-001**: File System Watching
 - **TASK-04-002**: Media Processing Pipeline
 - **TASK-04-003**: Storage Management
@@ -152,6 +165,7 @@ Engine Leader → File Services (scan requests)
 - **TASK-04-005**: Cleanup and Maintenance
 
 ### **Phase 5: Service Communication (05-service-communication/)**
+
 - **TASK-05-001**: gRPC Service Implementation
 - **TASK-05-002**: Message Protocols
 - **TASK-05-003**: Error Handling and Retries
@@ -159,6 +173,7 @@ Engine Leader → File Services (scan requests)
 - **TASK-05-005**: Connection Management
 
 ### **Phase 6: Leader Election (06-leader-election/)**
+
 - **TASK-06-001**: Election Algorithm Implementation
 - **TASK-06-002**: Failover Mechanisms
 - **TASK-06-003**: Split-Brain Prevention
@@ -166,6 +181,7 @@ Engine Leader → File Services (scan requests)
 - **TASK-06-005**: Recovery Procedures
 
 ### **Phase 7: Testing (07-testing/)**
+
 - **TASK-07-001**: Unit Testing Framework
 - **TASK-07-002**: Integration Testing
 - **TASK-07-003**: End-to-End Testing
@@ -173,6 +189,7 @@ Engine Leader → File Services (scan requests)
 - **TASK-07-005**: Chaos Engineering
 
 ### **Phase 8: Deployment (08-deployment/)**
+
 - **TASK-08-001**: All-in-One Mode
 - **TASK-08-002**: Distributed Deployment
 - **TASK-08-003**: Container Configuration
@@ -182,21 +199,27 @@ Engine Leader → File Services (scan requests)
 ## 🎯 Key Benefits
 
 ### **Scalability**
+
 - **Horizontal Scaling**: Add Engine instances for more translation capacity
-- **Specialized Workers**: Different instances can run different translation engines
-- **Geographic Distribution**: File services can be deployed per region/datacenter
+- **Specialized Workers**: Different instances can run different translation
+  engines
+- **Geographic Distribution**: File services can be deployed per
+  region/datacenter
 
 ### **Reliability**
+
 - **Active-Active Translation**: No single point of failure for processing
 - **Leader Election**: Coordination continues if leader fails
 - **Service Isolation**: Web/File/Engine failures don't cascade
 
 ### **Performance**
+
 - **Load Distribution**: Multiple Whisper/AI instances running simultaneously
 - **Efficient I/O**: File services optimize disk operations
 - **Smart Routing**: Work goes to most appropriate service instance
 
 ### **Flexibility**
+
 - **All-in-One Mode**: Single binary for simple deployments
 - **Distributed Mode**: Full microservices for enterprise scale
 - **Mixed Deployment**: Scale individual components as needed
@@ -204,6 +227,7 @@ Engine Leader → File Services (scan requests)
 ## 🛠️ Development Standards
 
 ### **Each Task Must Include**:
+
 1. **Detailed Implementation Steps** (500-1000+ lines)
 2. **Complete Code Examples** with file-by-file changes
 3. **Testing Procedures** for each component
@@ -213,10 +237,13 @@ Engine Leader → File Services (scan requests)
 7. **Beginner-Friendly Explanations**
 
 ### **Code Quality Requirements**:
+
 - **File Headers**: All files must include standard headers
 - **Version Management**: Semantic versioning for all components
 - **Documentation**: Inline code documentation required
 - **Testing**: Minimum 80% test coverage per service
 - **Error Handling**: Comprehensive error handling and logging
 
-This architecture provides a clean, scalable foundation that can grow from single-server deployments to enterprise-scale distributed systems while maintaining simplicity and reliability.
+This architecture provides a clean, scalable foundation that can grow from
+single-server deployments to enterprise-scale distributed systems while
+maintaining simplicity and reliability.

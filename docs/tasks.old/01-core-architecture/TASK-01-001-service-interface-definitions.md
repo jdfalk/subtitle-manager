@@ -6,12 +6,12 @@
 
 ## 🎯 Task Overview
 
-**Primary Objective**: Design and implement the core service interfaces for the 3-service active-active architecture with gRPC communication protocols.
+**Primary Objective**: Design and implement the core service interfaces for the
+3-service active-active architecture with gRPC communication protocols.
 
-**Task Type**: Core Architecture - Interface Design
-**Estimated Effort**: 12-16 hours
-**Prerequisites**: Architecture overview understanding
-**Part**: 1 of 4 (Interface Design)
+**Task Type**: Core Architecture - Interface Design **Estimated Effort**: 12-16
+hours **Prerequisites**: Architecture overview understanding **Part**: 1 of 4
+(Interface Design)
 
 ## 📋 Acceptance Criteria
 
@@ -860,7 +860,10 @@ message RegisterServiceResponse {
 }
 ```
 
-This completes Part 2 with the comprehensive Engine Service interface. Part 3 will cover the File Service interface, and Part 4 will provide the Go implementations.
+This completes Part 2 with the comprehensive Engine Service interface. Part 3
+will cover the File Service interface, and Part 4 will provide the Go
+implementations.
+
 <!-- file: docs/tasks/01-core-architecture/TASK-01-001-service-interface-definitions-PART3.md -->
 <!-- version: 1.0.0 -->
 <!-- guid: 01001003-1111-2222-3333-444444444444 -->
@@ -869,8 +872,8 @@ This completes Part 2 with the comprehensive Engine Service interface. Part 3 wi
 
 ## File Service Interface Design
 
-**Part**: 3 of 4 (File Service Interface)
-**Focus**: File Operations, Media Processing, and Storage Management
+**Part**: 3 of 4 (File Service Interface) **Focus**: File Operations, Media
+Processing, and Storage Management
 
 ### Step 5: Define File Service Interface
 
@@ -1416,7 +1419,9 @@ message GetServiceInfoResponse {
 }
 ```
 
-This completes Part 3 with the comprehensive File Service interface. Part 4 will provide the Go implementations and integration guidelines.
+This completes Part 3 with the comprehensive File Service interface. Part 4 will
+provide the Go implementations and integration guidelines.
+
 <!-- file: docs/tasks/01-core-architecture/TASK-01-001-service-interface-definitions-PART4.md -->
 <!-- version: 1.0.0 -->
 <!-- guid: 01001004-1111-2222-3333-444444444444 -->
@@ -1425,8 +1430,8 @@ This completes Part 3 with the comprehensive File Service interface. Part 4 will
 
 ## Go Interface Implementations
 
-**Part**: 4 of 4 (Go Interfaces and Implementation Guidelines)
-**Focus**: Concrete Go interfaces, service abstractions, and implementation patterns
+**Part**: 4 of 4 (Go Interfaces and Implementation Guidelines) **Focus**:
+Concrete Go interfaces, service abstractions, and implementation patterns
 
 ### Step 6: Define Go Service Interfaces
 
@@ -1856,28 +1861,20 @@ type FileInfo struct {
 ## Service Architecture Patterns
 
 ### 1. Service Structure
+
 Each service should follow this directory structure:
 ```
 
-pkg/services/
-├── web/
-│   ├── server.go       # Web service implementation
-│   ├── handlers.go     # HTTP/gRPC handlers
-│   ├── middleware.go   # Authentication, logging, etc.
-│   └── config.go       # Service configuration
-├── engine/
-│   ├── server.go       # Engine service implementation
-│   ├── translation/    # Translation workers
-│   ├── monitoring/     # Monitoring workers
-│   ├── coordination/   # Task coordination
-│   └── leader/         # Leader election
-└── file/
-    ├── server.go       # File service implementation
-    ├── operations.go   # File operations
-    ├── watcher.go      # File watching
-    └── media.go        # Media processing
+pkg/services/ ├── web/ │ ├── server.go # Web service implementation │ ├──
+handlers.go # HTTP/gRPC handlers │ ├── middleware.go # Authentication, logging,
+etc. │ └── config.go # Service configuration ├── engine/ │ ├── server.go #
+Engine service implementation │ ├── translation/ # Translation workers │ ├──
+monitoring/ # Monitoring workers │ ├── coordination/ # Task coordination │ └──
+leader/ # Leader election └── file/ ├── server.go # File service implementation
+├── operations.go # File operations ├── watcher.go # File watching └──
+media.go # Media processing
 
-```
+````
 
 ### 2. Service Initialization
 ```go
@@ -1895,7 +1892,7 @@ func NewService(opts ServiceOptions) (Service, error) {
     // Setup monitoring
     // Register with discovery
 }
-```
+````
 
 ### 3. Error Handling
 
@@ -1938,3 +1935,4 @@ func NewService(opts ServiceOptions) (Service, error) {
 ```
 
 This completes the comprehensive service interface definitions. All four parts can now be merged into the final TASK-01-001 document.
+```

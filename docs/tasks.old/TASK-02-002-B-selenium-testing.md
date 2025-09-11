@@ -12,7 +12,9 @@
 
 ## Overview
 
-Create a comprehensive Selenium testing suite that validates all web functionality with multiple screenshots, video recording, and multi-platform testing (desktop and mobile) to prove all web functions are working correctly.
+Create a comprehensive Selenium testing suite that validates all web
+functionality with multiple screenshots, video recording, and multi-platform
+testing (desktop and mobile) to prove all web functions are working correctly.
 
 ## Requirements
 
@@ -21,6 +23,7 @@ Create a comprehensive Selenium testing suite that validates all web functionali
 Test every web interface function with full user workflows:
 
 #### Authentication & User Management
+
 - User registration flow
 - Login/logout process
 - Password reset functionality
@@ -28,6 +31,7 @@ Test every web interface function with full user workflows:
 - API key generation and management
 
 #### Subtitle Operations
+
 - File upload (various formats: SRT, VTT, ASS, etc.)
 - Subtitle search across all providers
 - Subtitle download and preview
@@ -36,6 +40,7 @@ Test every web interface function with full user workflows:
 - Subtitle synchronization with media
 
 #### Media Management
+
 - Media file upload and processing
 - Metadata extraction and display
 - Media library browsing
@@ -43,6 +48,7 @@ Test every web interface function with full user workflows:
 - Media player integration
 
 #### Configuration Management
+
 - Provider configuration (OpenSubtitles, etc.)
 - API key management
 - Language profile setup
@@ -50,12 +56,14 @@ Test every web interface function with full user workflows:
 - Storage provider setup (local, S3, GCS, Azure)
 
 #### Monitoring & Automation
+
 - Directory monitoring setup
 - Automatic subtitle downloading
 - Scheduled scan configuration
 - Webhook configuration for Sonarr/Radarr
 
 #### System Operations
+
 - System health monitoring
 - Performance metrics display
 - Download history viewing
@@ -65,12 +73,14 @@ Test every web interface function with full user workflows:
 ### 2. Multi-Platform Testing
 
 #### Desktop Browsers
+
 - **Chrome** (latest, desktop resolution 1920x1080)
 - **Firefox** (latest, desktop resolution 1920x1080)
 - **Safari** (if possible, macOS only)
 - **Edge** (latest, desktop resolution 1920x1080)
 
 #### Mobile Testing
+
 - **Chrome Mobile** (Android simulation, 375x667)
 - **Safari Mobile** (iOS simulation, 375x812)
 - **Responsive breakpoints** (768px, 1024px, 1440px)
@@ -78,6 +88,7 @@ Test every web interface function with full user workflows:
 ### 3. Documentation Requirements
 
 #### Screenshots
+
 - **Before/After screenshots** for every action
 - **Error state screenshots** when things go wrong
 - **Success state screenshots** for completed operations
@@ -85,12 +96,14 @@ Test every web interface function with full user workflows:
 - **Different browser rendering** comparisons
 
 #### Video Recording
+
 - **Complete workflow videos** (5-10 minutes each)
 - **Individual feature demos** (1-2 minutes each)
 - **Error scenario recordings**
 - **Performance testing videos**
 
 #### Test Reports
+
 - **HTML test reports** with embedded screenshots
 - **Performance metrics** (page load times, API response times)
 - **Cross-browser compatibility matrix**
@@ -99,22 +112,27 @@ Test every web interface function with full user workflows:
 ### 4. Test Scenarios
 
 #### Critical User Journeys
+
 1. **New User Onboarding**
-   - Registration → Email verification → First login → Profile setup → First subtitle download
+   - Registration → Email verification → First login → Profile setup → First
+     subtitle download
 
 2. **Daily Usage Workflow**
    - Login → Upload media → Extract subtitles → Translate → Download → Logout
 
 3. **Power User Configuration**
-   - Setup all providers → Configure monitoring → Setup automation → Test webhooks
+   - Setup all providers → Configure monitoring → Setup automation → Test
+     webhooks
 
 4. **Media Server Integration**
-   - Configure Sonarr → Test webhook → Verify automatic processing → Check results
+   - Configure Sonarr → Test webhook → Verify automatic processing → Check
+     results
 
 5. **Troubleshooting Workflow**
    - Identify problem → Check logs → Modify configuration → Retry operation
 
 #### Error Scenarios
+
 - Invalid file uploads
 - Network timeouts
 - API key failures
@@ -122,6 +140,7 @@ Test every web interface function with full user workflows:
 - Database connection issues
 
 #### Performance Scenarios
+
 - Large file uploads (100MB+ media files)
 - Batch operations (100+ subtitle files)
 - Concurrent user simulation
@@ -130,6 +149,7 @@ Test every web interface function with full user workflows:
 ### 5. Test Infrastructure
 
 #### Test Environment Setup
+
 ```python
 # Selenium Grid configuration for parallel testing
 selenium_grid_config = {
@@ -141,12 +161,14 @@ selenium_grid_config = {
 ```
 
 #### Test Data Management
+
 - **Sample media files** (various formats and sizes)
 - **Test subtitle files** (different languages and formats)
 - **Mock API responses** for external services
 - **Test user accounts** with different permission levels
 
 #### Reporting Framework
+
 - **Allure reporting** for detailed test results
 - **Screenshots on failure** automatically captured
 - **Video recording** of entire test sessions

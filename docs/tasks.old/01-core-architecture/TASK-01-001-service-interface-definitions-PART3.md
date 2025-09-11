@@ -6,8 +6,8 @@
 
 ## File Service Interface Design
 
-**Part**: 3 of 4 (File Service Interface)
-**Focus**: File Operations, Media Processing, and Storage Management
+**Part**: 3 of 4 (File Service Interface) **Focus**: File Operations, Media
+Processing, and Storage Management
 
 ### Step 5: Define File Service Interface
 
@@ -39,35 +39,35 @@ service FileService {
   rpc CopyFile(CopyFileRequest) returns (CopyFileResponse);
   rpc GetFileInfo(GetFileInfoRequest) returns (GetFileInfoResponse);
   rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
-  
+
   // Streaming file operations
   rpc StreamRead(StreamReadRequest) returns (stream StreamReadResponse);
   rpc StreamWrite(stream StreamWriteRequest) returns (StreamWriteResponse);
-  
+
   // Directory operations
   rpc CreateDirectory(CreateDirectoryRequest) returns (CreateDirectoryResponse);
   rpc DeleteDirectory(DeleteDirectoryRequest) returns (google.protobuf.Empty);
   rpc ScanDirectory(ScanDirectoryRequest) returns (stream ScanDirectoryResponse);
   rpc GetDirectoryInfo(GetDirectoryInfoRequest) returns (GetDirectoryInfoResponse);
-  
+
   // File watching and monitoring
   rpc StartWatching(StartWatchingRequest) returns (StartWatchingResponse);
   rpc StopWatching(StopWatchingRequest) returns (google.protobuf.Empty);
   rpc GetWatchStatus(GetWatchStatusRequest) returns (GetWatchStatusResponse);
   rpc GetFileEvents(GetFileEventsRequest) returns (stream FileEventResponse);
-  
+
   // Media file operations
   rpc ExtractSubtitles(ExtractSubtitlesRequest) returns (ExtractSubtitlesResponse);
   rpc GetMediaMetadata(GetMediaMetadataRequest) returns (GetMediaMetadataResponse);
   rpc ConvertSubtitleFormat(ConvertSubtitleFormatRequest) returns (ConvertSubtitleFormatResponse);
   rpc EmbedSubtitles(EmbedSubtitlesRequest) returns (EmbedSubtitlesResponse);
-  
+
   // Storage management
   rpc GetStorageInfo(GetStorageInfoRequest) returns (GetStorageInfoResponse);
   rpc CleanupFiles(CleanupFilesRequest) returns (CleanupFilesResponse);
   rpc ValidateFiles(ValidateFilesRequest) returns (stream ValidateFilesResponse);
   rpc BackupFiles(BackupFilesRequest) returns (stream BackupFilesResponse);
-  
+
   // Health and service info
   rpc Health(common.v1.HealthCheckRequest) returns (common.v1.HealthCheckResponse);
   rpc GetServiceInfo(GetServiceInfoRequest) returns (GetServiceInfoResponse);
@@ -553,4 +553,5 @@ message GetServiceInfoResponse {
 }
 ```
 
-This completes Part 3 with the comprehensive File Service interface. Part 4 will provide the Go implementations and integration guidelines.
+This completes Part 3 with the comprehensive File Service interface. Part 4 will
+provide the Go implementations and integration guidelines.

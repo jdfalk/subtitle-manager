@@ -6,14 +6,19 @@
 
 ## Overview
 
-Define complete service interface definitions for the 3-service architecture using Edition 2023 protobuf with comprehensive gcommon integration. This implementation leverages the extensive gcommon protobuf library for common types, configuration, authentication, health monitoring, and media processing instead of defining custom types.
+Define complete service interface definitions for the 3-service architecture
+using Edition 2023 protobuf with comprehensive gcommon integration. This
+implementation leverages the extensive gcommon protobuf library for common
+types, configuration, authentication, health monitoring, and media processing
+instead of defining custom types.
 
 ## Requirements
 
 ### Core Technology Requirements
 
 - **Edition 2023 Protobuf**: Latest protobuf edition with enhanced features
-- **Opaque API**: All protobuf access via getters/setters (no direct field access)
+- **Opaque API**: All protobuf access via getters/setters (no direct field
+  access)
 - **gcommon Integration**: Extensive use of gcommon protobuf types
 - **1-1-1 Pattern**: One top-level entity per protobuf file
 - **3-Service Architecture**: Web, Engine, File services with clear boundaries
@@ -682,24 +687,31 @@ type TranslationOptions struct {
 
 This service interface definition provides:
 
-1. **Complete gcommon Integration**: Leverages gcommon types for User, Session, Error, Media, Config, and Health
+1. **Complete gcommon Integration**: Leverages gcommon types for User, Session,
+   Error, Media, Config, and Health
 2. **Edition 2023 Protobuf**: Modern protobuf with opaque API support
-3. **3-Service Architecture**: Clear separation of concerns with gcommon consistency
+3. **3-Service Architecture**: Clear separation of concerns with gcommon
+   consistency
 4. **Comprehensive Interfaces**: Go interfaces that use gcommon types throughout
-5. **Configuration Management**: Uses gcommon config types with service-specific extensions
+5. **Configuration Management**: Uses gcommon config types with service-specific
+   extensions
 
 **Key gcommon Leveraging**:
 
 - **Authentication**: `gcommon.User`, `gcommon.Session` instead of custom types
 - **Error Handling**: `gcommon.Error` for standardized error responses
-- **Media Processing**: `gcommon.media.MediaFile`, `gcommon.media.Language` for media operations
-- **Configuration**: `gcommon.config.ApplicationConfig` as base for all service configs
+- **Media Processing**: `gcommon.media.MediaFile`, `gcommon.media.Language` for
+  media operations
+- **Configuration**: `gcommon.config.ApplicationConfig` as base for all service
+  configs
 - **Health Monitoring**: `gcommon.health.HealthCheck` for service health
 - **Metadata**: `gcommon.common.Metadata` for request/response metadata
 
 **Next Implementation**:
+
 - TASK-02-001: Web Service Implementation (using these gcommon-based interfaces)
 - TASK-03-001: Engine Service Implementation (with gcommon media processing)
 - TASK-04-001: File Service Implementation (with gcommon file handling)
 
-This foundation ensures all services use consistent gcommon types and patterns while maintaining the opaque API throughout the system.
+This foundation ensures all services use consistent gcommon types and patterns
+while maintaining the opaque API throughout the system.

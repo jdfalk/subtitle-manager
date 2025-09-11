@@ -6,7 +6,10 @@
 
 ## Executive Summary
 
-This document defines the complete architectural redesign from the original 6-service DMZ model to a simplified 3-service active-active architecture. The new design eliminates unnecessary complexity while providing better scalability, security, and maintainability.
+This document defines the complete architectural redesign from the original
+6-service DMZ model to a simplified 3-service active-active architecture. The
+new design eliminates unnecessary complexity while providing better scalability,
+security, and maintainability.
 
 ## Service Architecture
 
@@ -18,7 +21,8 @@ This document defines the complete architectural redesign from the original 6-se
 
 ### Service Communication
 
-- **Internal Network Only**: All services communicate via gRPC on internal network
+- **Internal Network Only**: All services communicate via gRPC on internal
+  network
 - **No DMZ Complexity**: Single Web service handles external exposure
 - **Service Discovery**: Automatic service registration and discovery
 - **Load Balancing**: Built-in support for horizontal scaling
@@ -26,12 +30,15 @@ This document defines the complete architectural redesign from the original 6-se
 ## Active-Active Translation Design
 
 ### Translation Workers
-- **Multiple Active Instances**: All translation workers are active simultaneously
+
+- **Multiple Active Instances**: All translation workers are active
+  simultaneously
 - **Horizontal Scaling**: Add more translation workers for increased capacity
 - **Work Distribution**: Tasks distributed across all available workers
 - **No Single Point of Failure**: System continues if workers fail
 
 ### Leader Election for Coordination Only
+
 - **Coordination Leader**: Single leader coordinates task assignment
 - **Not for Translation**: Leader does NOT perform translation work
 - **Automatic Failover**: New leader elected if current leader fails
@@ -40,6 +47,7 @@ This document defines the complete architectural redesign from the original 6-se
 ## Service Responsibilities
 
 ### Web Service
+
 - **User Authentication**: Login, session management, JWT tokens
 - **API Gateway**: REST/GraphQL endpoints for client applications
 - **File Upload/Download**: Handle client file transfers
@@ -48,6 +56,7 @@ This document defines the complete architectural redesign from the original 6-se
 - **WebUI Serving**: Serve static web assets and SPA
 
 ### Engine Service
+
 - **Translation Processing**: Perform subtitle translation work
 - **Worker Coordination**: Distribute translation tasks among workers
 - **Progress Monitoring**: Track translation job progress
@@ -56,6 +65,7 @@ This document defines the complete architectural redesign from the original 6-se
 - **Leader Election**: Coordinate work distribution
 
 ### File Service
+
 - **File Operations**: Read, write, move, delete files
 - **Media Processing**: Extract subtitles, convert formats
 - **File Watching**: Monitor directories for changes
@@ -77,6 +87,7 @@ This document defines the complete architectural redesign from the original 6-se
 8. **08-deployment**: Docker, Kubernetes, and production deployment
 
 ### Task Characteristics
+
 - **Extremely Detailed**: Each task 500-1000+ lines with complete specifications
 - **Self-Contained**: Each task can be implemented independently
 - **Parallel Development**: Multiple AI agents can work simultaneously
@@ -85,6 +96,7 @@ This document defines the complete architectural redesign from the original 6-se
 ## Technology Stack
 
 ### Core Technologies
+
 - **Go 1.24+**: Primary development language
 - **gRPC**: Service-to-service communication
 - **Protocol Buffers Edition 2023**: Message definitions
@@ -93,6 +105,7 @@ This document defines the complete architectural redesign from the original 6-se
 - **Kubernetes**: Orchestration (optional)
 
 ### Supporting Technologies
+
 - **Prometheus**: Metrics collection
 - **Grafana**: Monitoring dashboards
 - **Jaeger**: Distributed tracing
@@ -102,11 +115,13 @@ This document defines the complete architectural redesign from the original 6-se
 ## Deployment Models
 
 ### Development
+
 - **Docker Compose**: Single machine deployment
 - **Local File Storage**: Files stored on local filesystem
 - **SQLite Database**: Embedded database for simplicity
 
 ### Production
+
 - **Kubernetes**: Multi-node deployment
 - **Persistent Volumes**: Shared storage for file service
 - **PostgreSQL**: Dedicated database instance
@@ -115,12 +130,14 @@ This document defines the complete architectural redesign from the original 6-se
 ## Security Model
 
 ### Network Security
+
 - **Internal Network**: Services communicate on private network
 - **Single Entry Point**: Only web service exposed externally
 - **TLS Everywhere**: All gRPC communication encrypted
 - **API Authentication**: JWT tokens for all API access
 
 ### File Security
+
 - **Path Validation**: Prevent directory traversal attacks
 - **Permission Checks**: Validate file access permissions
 - **Content Scanning**: Scan uploaded files for malware
@@ -129,12 +146,14 @@ This document defines the complete architectural redesign from the original 6-se
 ## Scalability Design
 
 ### Horizontal Scaling
+
 - **Stateless Services**: All services designed to be stateless
 - **Shared Storage**: File service uses shared storage backend
 - **Load Distribution**: Work distributed across multiple instances
 - **Auto-scaling**: Kubernetes HPA for automatic scaling
 
 ### Performance Optimization
+
 - **Caching**: Redis for frequently accessed data
 - **Connection Pooling**: Efficient database connections
 - **Batch Processing**: Batch similar operations
@@ -143,12 +162,14 @@ This document defines the complete architectural redesign from the original 6-se
 ## Migration Strategy
 
 ### From Current System
+
 - **Gradual Migration**: Migrate one service at a time
 - **Feature Parity**: Maintain all existing functionality
 - **Data Migration**: Preserve all existing data
 - **Zero Downtime**: Rolling deployment strategy
 
 ### Rollback Plan
+
 - **Blue-Green Deployment**: Keep old version running during migration
 - **Database Compatibility**: Maintain backward compatibility
 - **Configuration Rollback**: Quick configuration reversion
@@ -157,12 +178,14 @@ This document defines the complete architectural redesign from the original 6-se
 ## Success Criteria
 
 ### Functional Requirements
+
 - **All Features**: 100% feature parity with current system
 - **Performance**: Equal or better performance than current system
 - **Reliability**: 99.9% uptime target
 - **Scalability**: Support 10x current load
 
 ### Non-Functional Requirements
+
 - **Maintainability**: Simplified codebase and architecture
 - **Testability**: Comprehensive test coverage
 - **Observability**: Complete monitoring and logging
@@ -176,4 +199,6 @@ This document defines the complete architectural redesign from the original 6-se
 4. **Integration Testing**: Comprehensive testing
 5. **Production Migration**: Gradual migration to new system
 
-This architecture provides a solid foundation for scalable, maintainable, and secure subtitle management services while eliminating the complexity of the previous design.
+This architecture provides a solid foundation for scalable, maintainable, and
+secure subtitle management services while eliminating the complexity of the
+previous design.
