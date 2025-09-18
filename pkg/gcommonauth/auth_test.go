@@ -1,5 +1,5 @@
 // file: pkg/gcommonauth/auth_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: fb1a0786-29d8-4305-8c9c-8762fb8845c7
 package gcommonauth
 
@@ -270,7 +270,7 @@ func TestValidateAPIKeyWithMultipleUsers(t *testing.T) {
 	}
 
 	// Ensure keys are different
-	if apiKey1 == apiKey2 {
+	if apiKeyObj1.GetId() == apiKeyObj2.GetId() {
 		t.Error("expected different API keys for different users")
 	}
 }

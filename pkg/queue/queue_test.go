@@ -1,5 +1,5 @@
 // file: pkg/queue/queue_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 123e4567-e89b-12d3-a456-426614174003
 package queue
 
@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	gqueue "github.com/jdfalk/gcommon/sdks/go/v1/queue"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -41,8 +42,10 @@ func (m *mockJob) Execute(ctx context.Context) error {
 	return nil
 }
 
-func (m *mockJob) QueueMessage() (*QueueMessage, error) {
-	return &QueueMessage{Id: m.id}, nil
+func (m *mockJob) QueueMessage() (*gqueue.QueueMessage, error) {
+	qm := &gqueue.QueueMessage{}
+	qm.SetId(m.id)
+	return qm, nil
 }
 
 func TestNewQueue(t *testing.T) {

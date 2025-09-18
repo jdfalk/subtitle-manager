@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"github.com/jdfalk/subtitle-manager/pkg/database"
+	gcommon "github.com/jdfalk/gcommon/sdks/go/v1/common"
 )
 
 // MockSubtitleStore implements database.SubtitleStore for testing
@@ -201,6 +202,30 @@ func (m *MockSubtitleStore) Close() error {
 	args := m.Called()
 	return args.Error(0)
 }
+
+// Add missing method from database.SubtitleStore interface to satisfy tests
+func (m *MockSubtitleStore) CleanupExpiredSessions() error { return nil }
+
+// Auth and session related methods (stubs) to satisfy the SubtitleStore interface
+func (m *MockSubtitleStore) CreateUser(username, passwordHash, email, role string) (string, error) {
+	return "", nil
+}
+func (m *MockSubtitleStore) GetUserByUsername(username string) (*gcommon.User, error) { return nil, nil }
+func (m *MockSubtitleStore) GetUserByEmail(email string) (*gcommon.User, error) { return nil, nil }
+func (m *MockSubtitleStore) GetUserByID(id string) (*gcommon.User, error) { return nil, nil }
+func (m *MockSubtitleStore) ListUsers() ([]*gcommon.User, error) { return nil, nil }
+func (m *MockSubtitleStore) UpdateUserRole(username, role string) error { return nil }
+func (m *MockSubtitleStore) UpdateUserPassword(userID, passwordHash string) error { return nil }
+func (m *MockSubtitleStore) CreateSession(userID, token string, duration time.Duration) error { return nil }
+func (m *MockSubtitleStore) ValidateSession(token string) (string, error) { return "", nil }
+func (m *MockSubtitleStore) InvalidateSession(token string) error { return nil }
+func (m *MockSubtitleStore) InvalidateUserSessions(userID string) error { return nil }
+func (m *MockSubtitleStore) CreateAPIKey(userID, key string) error { return nil }
+func (m *MockSubtitleStore) ValidateAPIKey(key string) (string, error) { return "", nil }
+func (m *MockSubtitleStore) CreateOneTimeToken(userID, token string, duration time.Duration) error { return nil }
+func (m *MockSubtitleStore) ValidateOneTimeToken(token string) (string, error) { return "", nil }
+func (m *MockSubtitleStore) SetDashboardLayout(userID, layout string) error { return nil }
+func (m *MockSubtitleStore) GetDashboardLayout(userID string) (string, error) { return "", nil }
 
 func TestEpisodeMonitor_NewEpisodeMonitor(t *testing.T) {
 	store := &MockSubtitleStore{}

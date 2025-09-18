@@ -1,5 +1,5 @@
 // file: pkg/authserver/server_test.go
-// version: 1.1.0
+// version: 1.2.0
 // guid: c5c8d260-2641-45dc-80d2-4dbb941bdb7e
 
 package authserver
@@ -50,7 +50,7 @@ func TestAuthenticateAPIKey(t *testing.T) {
 
 	// Create API key credentials
 	apiKeyCreds := &authpb.APIKeyCredentials{}
-	apiKeyCreds.SetKey(key)
+	apiKeyCreds.SetKey(key.GetId())
 
 	// Create the request with API key credentials
 	req := &authpb.AuthAuthenticateRequest{}

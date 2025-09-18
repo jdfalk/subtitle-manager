@@ -1,5 +1,5 @@
 // file: pkg/webserver/health_test.go
-// version: 1.1.0
+// version: 1.2.0
 // guid: a1b2c3d4-e5f6-7a8b-9c0d-ef1234567890
 
 package webserver
@@ -30,8 +30,8 @@ func TestInitializeHealth(t *testing.T) {
 	if err != nil {
 		t.Fatalf("check failed: %v", err)
 	}
-	if res.Status() != "up" {
-		t.Errorf("expected status up, got %v", res.Status())
+	if string(res.Status) != "up" {
+		t.Errorf("expected status up, got %v", res.Status)
 	}
 }
 

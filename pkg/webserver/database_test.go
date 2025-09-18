@@ -45,7 +45,7 @@ func TestDatabaseHandlers(t *testing.T) {
 	defer srv.Close()
 
 	req, _ := http.NewRequest("GET", srv.URL+"/api/database/info", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", key.GetId())
 	r1, err := srv.Client().Do(req)
 	if err != nil || r1.StatusCode != http.StatusOK {
 		t.Fatalf("info: %v %d", err, r1.StatusCode)
@@ -60,7 +60,7 @@ func TestDatabaseHandlers(t *testing.T) {
 	}
 
 	req2, _ := http.NewRequest("GET", srv.URL+"/api/database/stats", nil)
-	req2.Header.Set("X-API-Key", key)
+	req2.Header.Set("X-API-Key", key.GetId())
 	r2, err := srv.Client().Do(req2)
 	if err != nil || r2.StatusCode != http.StatusOK {
 		t.Fatalf("stats: %v %d", err, r2.StatusCode)
@@ -68,7 +68,7 @@ func TestDatabaseHandlers(t *testing.T) {
 	r2.Body.Close()
 
 	req3, _ := http.NewRequest("POST", srv.URL+"/api/database/backup", nil)
-	req3.Header.Set("X-API-Key", key)
+	req3.Header.Set("X-API-Key", key.GetId())
 	r3, err := srv.Client().Do(req3)
 	if err != nil || r3.StatusCode != http.StatusOK {
 		t.Fatalf("backup: %v %d", err, r3.StatusCode)
@@ -85,7 +85,7 @@ func TestDatabaseHandlers(t *testing.T) {
 	// simulate missing database file to trigger error path
 	viper.Set("sqlite3_filename", "missing.db")
 	req4, _ := http.NewRequest("POST", srv.URL+"/api/database/backup", nil)
-	req4.Header.Set("X-API-Key", key)
+	req4.Header.Set("X-API-Key", key.GetId())
 	r4, err := srv.Client().Do(req4)
 	if err != nil {
 		t.Fatalf("backup err: %v", err)

@@ -1,5 +1,5 @@
 // file: pkg/gcommonauth/session_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 619fb89c-869d-43ba-baf7-167d4345cc8d
 package gcommonauth
 
@@ -50,7 +50,7 @@ func TestSessionLifecycle(t *testing.T) {
 	}
 
 	// Try to validate the invalidated session (should fail)
-	_, err = ValidateSession(db, token)
+	_, err = ValidateSession(db, sessionObj.GetId())
 	if err == nil {
 		t.Fatal("session validation should have failed after invalidation")
 	}
@@ -74,23 +74,24 @@ func TestInvalidateUserSessions(t *testing.T) {
 	}
 
 	// Generate multiple sessions
-	token1, err := GenerateSession(db, userID, 24*time.Hour)
+	// Generate multiple sessions
+	sess1, err := GenerateSession(db, userID, 24*time.Hour)
 	if err != nil {
 		t.Fatalf("failed to generate session 1: %v", err)
 	}
 
-	token2, err := GenerateSession(db, userID, 24*time.Hour)
+	sess2, err := GenerateSession(db, userID, 24*time.Hour)
 	if err != nil {
 		t.Fatalf("failed to generate session 2: %v", err)
 	}
 
 	// Validate both sessions work
-	_, err = ValidateSession(db, token1)
+	_, err = ValidateSession(db, sess1.GetId())
 	if err != nil {
 		t.Fatalf("session 1 should be valid: %v", err)
 	}
 
-	_, err = ValidateSession(db, token2)
+	_, err = ValidateSession(db, sess2.GetId())
 	if err != nil {
 		t.Fatalf("session 2 should be valid: %v", err)
 	}
@@ -102,12 +103,12 @@ func TestInvalidateUserSessions(t *testing.T) {
 	}
 
 	// Both sessions should now be invalid
-	_, err = ValidateSession(db, token1)
+	_, err = ValidateSession(db, sess1.GetId())
 	if err == nil {
 		t.Fatal("session 1 should be invalid after user session invalidation")
 	}
 
-	_, err = ValidateSession(db, token2)
+	_, err = ValidateSession(db, sess2.GetId())
 	if err == nil {
 		t.Fatal("session 2 should be invalid after user session invalidation")
 	}
@@ -131,25 +132,25 @@ func TestCleanupExpiredSessions(t *testing.T) {
 	}
 
 	// Generate an expired session (expires 1 second ago)
-	expiredToken, err := GenerateSession(db, userID, -1*time.Second)
+	expiredSess, err := GenerateSession(db, userID, -1*time.Second)
 	if err != nil {
 		t.Fatalf("failed to generate expired session: %v", err)
 	}
 
 	// Generate a valid session
-	validToken, err := GenerateSession(db, userID, 24*time.Hour)
+	validSess, err := GenerateSession(db, userID, 24*time.Hour)
 	if err != nil {
 		t.Fatalf("failed to generate valid session: %v", err)
 	}
 
 	// Validate that the expired session is indeed invalid
-	_, err = ValidateSession(db, expiredToken)
+	_, err = ValidateSession(db, expiredSess.GetId())
 	if err == nil {
 		t.Fatal("expired session should not validate")
 	}
 
 	// Validate that the valid session works
-	_, err = ValidateSession(db, validToken)
+	_, err = ValidateSession(db, validSess.GetId())
 	if err != nil {
 		t.Fatalf("valid session should validate: %v", err)
 	}
@@ -161,7 +162,7 @@ func TestCleanupExpiredSessions(t *testing.T) {
 	}
 
 	// Valid session should still work
-	_, err = ValidateSession(db, validToken)
+	_, err = ValidateSession(db, validSess.GetId())
 	if err != nil {
 		t.Fatalf("valid session should still work after cleanup: %v", err)
 	}
