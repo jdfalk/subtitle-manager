@@ -175,6 +175,106 @@ func TestRBAC(t *testing.T) {
 	}
 }
 
+// TestAuthMiddleware_Unauthorized ensures requests without credentials get 401.
+func TestAuthMiddleware_Unauthorized(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	// Create a protected handler and start server
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	// No X-API-Key and no session cookie
+	req, _ := http.NewRequest("GET", srv.URL+"/api/config", nil)
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("request: %v", err)
+	}
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("expected 401, got %d", resp.StatusCode)
+	}
+}
+
+// TestAuthMiddleware_Forbidden ensures wrong role gets 403.
+func TestAuthMiddleware_Forbidden(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	// Create a viewer (insufficient permissions)
+	if err := auth.CreateUser(db, "viewer", "p", "", "viewer"); err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+	keyObj, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("api key: %v", err)
+	}
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest("GET", srv.URL+"/api/config", nil)
+	req.Header.Set("X-API-Key", keyObj.GetId())
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("request: %v", err)
+	}
+	if resp.StatusCode != http.StatusForbidden {
+		t.Fatalf("expected 403, got %d", resp.StatusCode)
+	}
+}
+
+// TestAuthMiddleware_SessionCookie ensures session cookie authenticates.
+func TestAuthMiddleware_SessionCookie(t *testing.T) {
+	skipIfNoSQLite(t)
+	db, err := database.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer db.Close()
+
+	// Create admin and session
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+	sess, err := auth.GenerateSession(db, 1, time.Hour)
+	if err != nil {
+		t.Fatalf("session: %v", err)
+	}
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	req, _ := http.NewRequest("GET", srv.URL+"/api/config", nil)
+	req.AddCookie(&http.Cookie{Name: "session", Value: sess.GetId()})
+	resp, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("request: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200, got %d", resp.StatusCode)
+	}
+}
+
 // TestConfigUpdate verifies that POST /api/config updates and persists values.
 func TestConfigUpdate(t *testing.T) {
 	skipIfNoSQLite(t)

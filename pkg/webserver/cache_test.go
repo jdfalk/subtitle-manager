@@ -1,5 +1,5 @@
 // file: pkg/webserver/cache_test.go
-// version: 1.0.1
+// version: 1.1.0
 // guid: 123e4567-e89b-12d3-a456-426614174011
 
 package webserver
@@ -54,6 +54,22 @@ func TestCacheStatsHandler(t *testing.T) {
 
 	if stats.Entries != 1 {
 		t.Errorf("expected 1 entry, got %d", stats.Entries)
+	}
+}
+
+// TestCacheStatsHandler_MethodNotAllowed ensures non-GET methods are rejected.
+func TestCacheStatsHandler_MethodNotAllowed(t *testing.T) {
+	req, err := http.NewRequest("POST", "/api/cache/stats", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := cacheStatsHandler()
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusMethodNotAllowed {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusMethodNotAllowed)
 	}
 }
 
@@ -126,6 +142,22 @@ func TestCacheClearHandler(t *testing.T) {
 	}
 }
 
+// TestCacheClearHandler_MethodNotAllowed ensures only POST/DELETE are accepted.
+func TestCacheClearHandler_MethodNotAllowed(t *testing.T) {
+	req, err := http.NewRequest("GET", "/api/cache/clear", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := cacheClearHandler()
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusMethodNotAllowed {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusMethodNotAllowed)
+	}
+}
+
 // TestCacheClearHandler_WithPrefix tests clearing cache by prefix.
 func TestCacheClearHandler_WithPrefix(t *testing.T) {
 	// Initialize a test cache manager
@@ -175,6 +207,50 @@ func TestCacheClearHandler_WithPrefix(t *testing.T) {
 	_, err = manager.GetTMDBMetadata(ctx, "test2")
 	if err != nil {
 		t.Error("TMDB cache should not be cleared")
+	}
+}
+
+// TestCacheClearHandler_InvalidJSON ensures invalid JSON in body does not crash and defaults to clear all.
+func TestCacheClearHandler_InvalidJSON(t *testing.T) {
+	// Initialize a test cache manager
+	config := cache.DefaultConfig()
+	manager, err := cache.NewManager(config)
+	if err != nil {
+		t.Fatalf("failed to create cache manager: %v", err)
+	}
+	defer manager.Close()
+	cacheManager = manager
+
+	// Seed some entries
+	ctx := context.Background()
+	if err := manager.SetProviderSearchResults(ctx, "x", []byte("1")); err != nil {
+		t.Fatalf("seed provider: %v", err)
+	}
+	if err := manager.SetTMDBMetadata(ctx, "y", []byte("2")); err != nil {
+		t.Fatalf("seed tmdb: %v", err)
+	}
+
+	// Send invalid JSON with application/json content type
+	req, err := http.NewRequest("POST", "/api/cache/clear", bytes.NewBufferString("{invalid"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	handler := cacheClearHandler()
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	// Both entries should be cleared (default behavior when prefix parsing fails)
+	if _, err := manager.GetProviderSearchResults(ctx, "x"); err != cache.ErrNotFound {
+		t.Errorf("expected provider entry cleared")
+	}
+	if _, err := manager.GetTMDBMetadata(ctx, "y"); err != cache.ErrNotFound {
+		t.Errorf("expected tmdb entry cleared")
 	}
 }
 
@@ -237,6 +313,35 @@ func TestCacheHealthHandler(t *testing.T) {
 
 	if response["status"] != "up" {
 		t.Errorf("expected status to be 'up', got %v", response["status"])
+	}
+}
+
+// TestCacheHealthHandler_Uninitialized verifies status down when cache is not initialized.
+func TestCacheHealthHandler_Uninitialized(t *testing.T) {
+	// Ensure cacheManager is nil to simulate uninitialized state
+	orig := cacheManager
+	cacheManager = nil
+	defer func() { cacheManager = orig }()
+
+	req, err := http.NewRequest("GET", "/api/cache/health", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := cacheHealthHandler()
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusServiceUnavailable {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusServiceUnavailable)
+	}
+
+	var body map[string]any
+	if err := json.Unmarshal(rr.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if body["status"] != "down" {
+		t.Errorf("expected status 'down', got %v", body["status"])
 	}
 }
 
@@ -325,5 +430,52 @@ func TestCacheTypedOperationsHandler_InvalidType(t *testing.T) {
 
 	if status := rr.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusBadRequest)
+	}
+}
+
+// TestCacheTypedOperationsHandler_UnknownOperation ensures bad operations are rejected.
+func TestCacheTypedOperationsHandler_UnknownOperation(t *testing.T) {
+	// Initialize a test cache manager
+	config := cache.DefaultConfig()
+	manager, err := cache.NewManager(config)
+	if err != nil {
+		t.Fatalf("failed to create cache manager: %v", err)
+	}
+	defer manager.Close()
+	cacheManager = manager
+
+	req, err := http.NewRequest("POST", "/api/cache/types/provider/unknown", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := cacheTypedOperationsHandler()
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusBadRequest {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusBadRequest)
+	}
+}
+
+// TestCacheTypedOperationsHandler_MethodNotAllowed ensures clear requires POST/DELETE.
+func TestCacheTypedOperationsHandler_MethodNotAllowed(t *testing.T) {
+	config := cache.DefaultConfig()
+	manager, err := cache.NewManager(config)
+	if err != nil {
+		t.Fatalf("failed to create cache manager: %v", err)
+	}
+	defer manager.Close()
+	cacheManager = manager
+
+	req, err := http.NewRequest("GET", "/api/cache/types/provider/clear", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := cacheTypedOperationsHandler()
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusMethodNotAllowed {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusMethodNotAllowed)
 	}
 }
