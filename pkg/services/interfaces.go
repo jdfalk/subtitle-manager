@@ -6,6 +6,7 @@ package services
 
 import (
 	"context"
+
 	enginev1 "github.com/jdfalk/subtitle-manager/pkg/engine/v1"
 	filev1 "github.com/jdfalk/subtitle-manager/pkg/file/v1"
 	webv1 "github.com/jdfalk/subtitle-manager/pkg/web/v1"
@@ -67,4 +68,3 @@ type ServiceRegistry interface {
 	FileService() FileServiceInterface
 	HealthCheck(ctx context.Context) error
 }
-

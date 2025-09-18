@@ -7,4 +7,3 @@ package cmd
 // This command placeholder intentionally left minimal.
 // The unified monitoring command will be implemented in a future change.
 // Current monitoring commands are defined in cmd/monitor.go.
-

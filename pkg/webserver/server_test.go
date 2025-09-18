@@ -262,8 +262,8 @@ func TestScanHandlers(t *testing.T) {
 	// poll status until not running
 	for i := 0; i < 10; i++ {
 		time.Sleep(100 * time.Millisecond)
-	req2, _ := http.NewRequest("GET", srv.URL+"/api/scan/status", nil)
-	req2.Header.Set("X-API-Key", keyObj.GetId())
+		req2, _ := http.NewRequest("GET", srv.URL+"/api/scan/status", nil)
+		req2.Header.Set("X-API-Key", keyObj.GetId())
 		r2, err := srv.Client().Do(req2)
 		if err != nil {
 			t.Fatalf("status: %v", err)

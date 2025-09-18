@@ -8,4 +8,3 @@ package monitoring
 // This file exists to reserve the package path and avoid build errors while
 // the feature is being designed. See pkg/monitoring/monitor.go and
 // pkg/monitoring/scheduler.go for the active implementation.
-
