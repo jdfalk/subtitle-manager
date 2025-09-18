@@ -1,6 +1,6 @@
-// file: proto/web/v1/web_service_complete.proto
-// version: 2.0.0
-// guid: webservice-complete-55555555555
+// file: proto/web/v1/web_service.proto
+// version: 2.0.1
+// guid: webservice-1111-2222-3333-444444444444
 
 edition = "2023";
 
@@ -9,7 +9,6 @@ package subtitle_manager.web.v1;
 option go_package = "github.com/jdfalk/subtitle-manager/pkg/proto/web/v1";
 
 import "google/protobuf/go_features.proto";
-import "google/protobuf/empty.proto";
 
 option features.(pb.go).api_level = API_OPAQUE;
 
@@ -21,7 +20,7 @@ option features.(pb.go).api_level = API_OPAQUE;
 service WebService {
   // Authentication operations
   rpc AuthenticateUser(AuthenticateUserRequest) returns (AuthenticateUserResponse);
-  rpc LogoutUser(LogoutUserRequest) returns (google.protobuf.Empty);
+  rpc LogoutUser(LogoutUserRequest) returns (LogoutUserResponse);
 
   // User management
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
@@ -72,6 +71,12 @@ message AuthenticateUserResponse {
 message LogoutUserRequest {
   string session_id = 1;
   bool logout_all_sessions = 2;
+}
+
+// Logout response
+message LogoutUserResponse {
+  bool success = 1;
+  string error_message = 2;
 }
 
 // =============================================================================

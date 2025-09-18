@@ -1,12 +1,11 @@
 // file: pkg/services/interfaces.go
-// version: 1.8.0
+// version: 1.9.0
 // guid: 789e0123-e45b-12d3-a456-426614174000
 
 package services
 
 import (
 	"context"
-	"google.golang.org/protobuf/types/known/emptypb"
 	enginev1 "github.com/jdfalk/subtitle-manager/pkg/engine/v1"
 	filev1 "github.com/jdfalk/subtitle-manager/pkg/file/v1"
 	webv1 "github.com/jdfalk/subtitle-manager/pkg/web/v1"
@@ -15,7 +14,7 @@ import (
 // WebServiceInterface - basic interface for web service operations
 type WebServiceInterface interface {
 	AuthenticateUser(ctx context.Context, req *webv1.AuthenticateUserRequest) (*webv1.AuthenticateUserResponse, error)
-	LogoutUser(ctx context.Context, req *webv1.LogoutUserRequest) (*emptypb.Empty, error)
+	LogoutUser(ctx context.Context, req *webv1.LogoutUserRequest) (*webv1.LogoutUserResponse, error)
 	GetUser(ctx context.Context, req *webv1.GetUserRequest) (*webv1.GetUserResponse, error)
 	UpdateUser(ctx context.Context, req *webv1.UpdateUserRequest) (*webv1.UpdateUserResponse, error)
 	UpdateUserPreferences(ctx context.Context, req *webv1.UpdateUserPreferencesRequest) (*webv1.UpdateUserPreferencesResponse, error)

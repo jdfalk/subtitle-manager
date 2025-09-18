@@ -1,5 +1,5 @@
 // file: pkg/services/implementations.go
-// version: 1.1.0
+// version: 1.2.0
 // guid: 9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d
 
 package services
@@ -15,7 +15,6 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // WebServiceImpl provides a basic implementation for the web service
@@ -32,8 +31,10 @@ func (w *WebServiceImpl) AuthenticateUser(ctx context.Context, req *webv1.Authen
 	return &webv1.AuthenticateUserResponse{}, status.Errorf(codes.Unimplemented, "AuthenticateUser not implemented")
 }
 
-func (w *WebServiceImpl) LogoutUser(ctx context.Context, req *webv1.LogoutUserRequest) (*emptypb.Empty, error) {
-	return &emptypb.Empty{}, nil
+func (w *WebServiceImpl) LogoutUser(ctx context.Context, req *webv1.LogoutUserRequest) (*webv1.LogoutUserResponse, error) {
+	resp := &webv1.LogoutUserResponse{}
+	resp.SetSuccess(true)
+	return resp, nil
 }
 
 // User management

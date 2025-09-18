@@ -1,0 +1,12 @@
+// file: proto/web/v1/authenticate_user_request.proto
+// version: 1.0.0
+// guid: web-auth-req-1111-2222-3333-aaaaaaaaaaaa
+
+edition = "2023";
+
+package subtitle_manager.web.v1;
+
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/proto/web/v1";
+
+// Placeholder file to satisfy buf lint. Message definitions consolidated in web_service.proto.
+

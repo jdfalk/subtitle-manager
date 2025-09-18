@@ -1,5 +1,5 @@
 <!-- file: docs/tasks/00-ARCHITECTURE-OVERVIEW.md -->
-<!-- version: 1.0.0 -->
+<!-- version: 1.1.0 -->
 <!-- guid: arch0000-1111-2222-3333-444444444444 -->
 
 # 00-ARCHITECTURE-OVERVIEW: 3-Service Active-Active Architecture
@@ -10,6 +10,8 @@ This document defines the complete architectural redesign from the original
 6-service DMZ model to a simplified 3-service active-active architecture. The
 new design eliminates unnecessary complexity while providing better scalability,
 security, and maintainability.
+
+> Status (Sept 2025): Core task set aligned around 3 services with gcommon-first protobuf strategy. Config and metrics have migrated to gcommon; health endpoints remain to be wired using gcommon/health across Web/Engine/File.
 
 ## Service Architecture
 

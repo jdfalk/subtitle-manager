@@ -1,0 +1,12 @@
+// file: proto/web/v1/web_service_complete.proto
+// version: 1.0.0
+// guid: web-service-complete-1111-2222-3333-131313131313
+
+edition = "2023";
+
+package subtitle_manager.web.v1;
+
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/proto/web/v1";
+
+// Placeholder file retained for backward compatibility. Prefer web_service.proto.
+
