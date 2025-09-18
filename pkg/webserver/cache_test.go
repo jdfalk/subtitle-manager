@@ -1,5 +1,5 @@
 // file: pkg/webserver/cache_test.go
-// version: 1.0.0
+// version: 1.0.1
 // guid: 123e4567-e89b-12d3-a456-426614174011
 
 package webserver
@@ -235,8 +235,8 @@ func TestCacheHealthHandler(t *testing.T) {
 		t.Fatalf("failed to unmarshal response: %v", err)
 	}
 
-	if response["status"] != "healthy" {
-		t.Errorf("expected status to be 'healthy', got %v", response["status"])
+	if response["status"] != "up" {
+		t.Errorf("expected status to be 'up', got %v", response["status"])
 	}
 }
 

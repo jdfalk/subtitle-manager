@@ -22,7 +22,7 @@ func TestDashboardLayout(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create user: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("key: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestDashboardLayout(t *testing.T) {
 	layout := `{"widgets":[]}`
 	body, _ := json.Marshal(map[string]string{"layout": layout})
 	req, _ := http.NewRequest(http.MethodPost, srv.URL+"/api/widgets/layout", bytes.NewReader(body))
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	req.Header.Set("Content-Type", "application/json")
 	r1, err := srv.Client().Do(req)
 	if err != nil || r1.StatusCode != http.StatusNoContent {
@@ -45,7 +45,7 @@ func TestDashboardLayout(t *testing.T) {
 	}
 
 	req2, _ := http.NewRequest(http.MethodGet, srv.URL+"/api/widgets/layout", nil)
-	req2.Header.Set("X-API-Key", key)
+	req2.Header.Set("X-API-Key", keyObj.GetId())
 	r2, err := srv.Client().Do(req2)
 	if err != nil || r2.StatusCode != http.StatusOK {
 		t.Fatalf("get: %v %d", err, r2.StatusCode)
@@ -70,7 +70,7 @@ func TestWidgetsList(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create user: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("key: %v", err)
 	}
@@ -83,7 +83,7 @@ func TestWidgetsList(t *testing.T) {
 	defer srv.Close()
 
 	req, _ := http.NewRequest(http.MethodGet, srv.URL+"/api/widgets", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	r, err := srv.Client().Do(req)
 	if err != nil || r.StatusCode != http.StatusOK {
 		t.Fatalf("get: %v %d", err, r.StatusCode)
@@ -108,7 +108,7 @@ func TestWidgetsListMethodNotAllowed(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create user: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("key: %v", err)
 	}
@@ -121,7 +121,7 @@ func TestWidgetsListMethodNotAllowed(t *testing.T) {
 	defer srv.Close()
 
 	req, _ := http.NewRequest(http.MethodPost, srv.URL+"/api/widgets", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	r, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("post: %v", err)

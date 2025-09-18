@@ -20,7 +20,7 @@ func TestSystemHandlers(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create user: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("key: %v", err)
 	}
@@ -36,7 +36,7 @@ func TestSystemHandlers(t *testing.T) {
 	defer srv.Close()
 
 	req, _ := http.NewRequest("GET", srv.URL+"/api/logs", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	r, err := srv.Client().Do(req)
 	if err != nil || r.StatusCode != http.StatusOK {
 		t.Fatalf("logs: %v %d", err, r.StatusCode)
@@ -51,7 +51,7 @@ func TestSystemHandlers(t *testing.T) {
 	}
 
 	req2, _ := http.NewRequest("GET", srv.URL+"/api/system", nil)
-	req2.Header.Set("X-API-Key", key)
+	req2.Header.Set("X-API-Key", keyObj.GetId())
 	r2, err := srv.Client().Do(req2)
 	if err != nil || r2.StatusCode != http.StatusOK {
 		t.Fatalf("system: %v %d", err, r2.StatusCode)
@@ -68,7 +68,7 @@ func TestSystemHandlers(t *testing.T) {
 	}
 
 	req3, _ := http.NewRequest("GET", srv.URL+"/api/announcements", nil)
-	req3.Header.Set("X-API-Key", key)
+	req3.Header.Set("X-API-Key", keyObj.GetId())
 	r3, err := srv.Client().Do(req3)
 	if err != nil || r3.StatusCode != http.StatusOK {
 		t.Fatalf("announcements: %v %d", err, r3.StatusCode)
