@@ -74,7 +74,7 @@ func TestGitHubOAuthReset(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create user: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("api key: %v", err)
 	}
@@ -98,7 +98,7 @@ func TestGitHubOAuthReset(t *testing.T) {
 	defer srv.Close()
 
 	req, _ := http.NewRequest("POST", srv.URL+"/api/oauth/github/reset", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("post: %v", err)

@@ -24,7 +24,13 @@ func TestGitHubOAuthGenerate(t *testing.T) {
 	defer db.Close()
 
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
-	key := testutil.MustGet(t, "api key", func() (string, error) { return auth.GenerateAPIKey(db, 1) })
+	key := testutil.MustGet(t, "api key", func() (string, error) {
+		k, err := auth.GenerateAPIKey(db, 1)
+		if err != nil {
+			return "", err
+		}
+		return k.GetId(), nil
+	})
 
 	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
 	viper.SetConfigFile(tmp)
@@ -73,7 +79,13 @@ func TestGitHubOAuthRegenerate(t *testing.T) {
 	defer db.Close()
 
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
-	key := testutil.MustGet(t, "api key", func() (string, error) { return auth.GenerateAPIKey(db, 1) })
+	key := testutil.MustGet(t, "api key", func() (string, error) {
+		k, err := auth.GenerateAPIKey(db, 1)
+		if err != nil {
+			return "", err
+		}
+		return k.GetId(), nil
+	})
 
 	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
 	viper.SetConfigFile(tmp)

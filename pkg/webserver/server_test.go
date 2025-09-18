@@ -49,7 +49,7 @@ func TestHandler(t *testing.T) {
 
 	// create test user and api key
 	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	testutil.MustNoError(t, "generate key", err)
 
 	h, err := Handler(db)
@@ -57,7 +57,7 @@ func TestHandler(t *testing.T) {
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 	req, _ := http.NewRequest("GET", srv.URL+"/", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("http get: %v", err)
@@ -76,7 +76,7 @@ func TestSPAIndexFallback(t *testing.T) {
 	defer db.Close()
 
 	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	testutil.MustNoError(t, "generate key", err)
 
 	h, err := Handler(db)
@@ -85,7 +85,7 @@ func TestSPAIndexFallback(t *testing.T) {
 	defer srv.Close()
 
 	req, _ := http.NewRequest("GET", srv.URL+"/settings", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("http get: %v", err)
@@ -103,7 +103,13 @@ func TestBaseURL(t *testing.T) {
 	defer db.Close()
 
 	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
-	key := testutil.MustGet(t, "key", func() (string, error) { return auth.GenerateAPIKey(db, 1) })
+	key := testutil.MustGet(t, "key", func() (string, error) {
+		k, err := auth.GenerateAPIKey(db, 1)
+		if err != nil {
+			return "", err
+		}
+		return k.GetId(), nil
+	})
 
 	viper.Set("base_url", "sub")
 	defer viper.Reset()
@@ -135,12 +141,12 @@ func TestRBAC(t *testing.T) {
 
 	// viewer role should not access /api/config
 	testutil.MustNoError(t, "create viewer", auth.CreateUser(db, "viewer", "p", "", "viewer"))
-	vkey, err := auth.GenerateAPIKey(db, 1)
+	vkeyObj, err := auth.GenerateAPIKey(db, 1)
 	testutil.MustNoError(t, "viewer key", err)
 
 	// admin role can access
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
-	akey, err := auth.GenerateAPIKey(db, 2)
+	akeyObj, err := auth.GenerateAPIKey(db, 2)
 	testutil.MustNoError(t, "admin key", err)
 
 	h, err := Handler(db)
@@ -149,7 +155,7 @@ func TestRBAC(t *testing.T) {
 	defer srv.Close()
 
 	req, _ := http.NewRequest("GET", srv.URL+"/api/config", nil)
-	req.Header.Set("X-API-Key", vkey)
+	req.Header.Set("X-API-Key", vkeyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("http get: %v", err)
@@ -159,7 +165,7 @@ func TestRBAC(t *testing.T) {
 	}
 
 	req2, _ := http.NewRequest("GET", srv.URL+"/api/config", nil)
-	req2.Header.Set("X-API-Key", akey)
+	req2.Header.Set("X-API-Key", akeyObj.GetId())
 	resp2, err := srv.Client().Do(req2)
 	if err != nil {
 		t.Fatalf("admin get: %v", err)
@@ -177,7 +183,7 @@ func TestConfigUpdate(t *testing.T) {
 	defer db.Close()
 
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
-	akey, err := auth.GenerateAPIKey(db, 1)
+	akeyObj, err := auth.GenerateAPIKey(db, 1)
 	testutil.MustNoError(t, "admin key", err)
 
 	tmp := filepath.Join(t.TempDir(), "cfg.yaml")
@@ -193,7 +199,7 @@ func TestConfigUpdate(t *testing.T) {
 
 	body := strings.NewReader(`{"test_key":"new"}`)
 	req, _ := http.NewRequest("POST", srv.URL+"/api/config", body)
-	req.Header.Set("X-API-Key", akey)
+	req.Header.Set("X-API-Key", akeyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("post: %v", err)
@@ -222,7 +228,7 @@ func TestScanHandlers(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create admin: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("api key: %v", err)
 	}
@@ -248,7 +254,7 @@ func TestScanHandlers(t *testing.T) {
 	// trigger scan
 	body := strings.NewReader(`{"provider":"generic","directory":"` + dir + `","lang":"en"}`)
 	req, _ := http.NewRequest("POST", srv.URL+"/api/scan", body)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil || resp.StatusCode != http.StatusAccepted {
 		t.Fatalf("scan start: %v %d", err, resp.StatusCode)
@@ -256,8 +262,8 @@ func TestScanHandlers(t *testing.T) {
 	// poll status until not running
 	for i := 0; i < 10; i++ {
 		time.Sleep(100 * time.Millisecond)
-		req2, _ := http.NewRequest("GET", srv.URL+"/api/scan/status", nil)
-		req2.Header.Set("X-API-Key", key)
+	req2, _ := http.NewRequest("GET", srv.URL+"/api/scan/status", nil)
+	req2.Header.Set("X-API-Key", keyObj.GetId())
 		r2, err := srv.Client().Do(req2)
 		if err != nil {
 			t.Fatalf("status: %v", err)
@@ -292,7 +298,7 @@ func TestExtract(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create admin: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("api key: %v", err)
 	}
@@ -318,7 +324,7 @@ func TestExtract(t *testing.T) {
 	body := strings.NewReader(fmt.Sprintf(`{"path":%q}`, dummyPath))
 	req, _ := http.NewRequest("POST", srv.URL+"/api/extract", body)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("post: %v", err)
@@ -519,7 +525,7 @@ func TestHistory(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create admin: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("api key: %v", err)
 	}
@@ -532,7 +538,7 @@ func TestHistory(t *testing.T) {
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 	req, _ := http.NewRequest("GET", srv.URL+"/api/history", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("history: %v", err)
@@ -552,7 +558,7 @@ func TestHistory(t *testing.T) {
 		t.Fatalf("unexpected counts %d %d", len(out.Translations), len(out.Downloads))
 	}
 	req2, _ := http.NewRequest("GET", srv.URL+"/api/history?lang=fr", nil)
-	req2.Header.Set("X-API-Key", key)
+	req2.Header.Set("X-API-Key", keyObj.GetId())
 	resp2, _ := srv.Client().Do(req2)
 	var out2 struct {
 		Translations []database.SubtitleRecord `json:"translations"`
@@ -578,14 +584,14 @@ func TestHistoryVideoFilter(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create admin: %v", err)
 	}
-	key, _ := auth.GenerateAPIKey(db, 1)
+	keyObj, _ := auth.GenerateAPIKey(db, 1)
 	_ = database.InsertSubtitle(db, "a.srt", "a.mkv", "en", "google", "", false)
 	_ = database.InsertSubtitle(db, "b.srt", "b.mkv", "en", "google", "", false)
 	h, _ := Handler(db)
 	srv := httptest.NewServer(h)
 	defer srv.Close()
 	req, _ := http.NewRequest("GET", srv.URL+"/api/history?video=b.mkv", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("history: %v", err)
@@ -615,7 +621,7 @@ func TestDownload(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create admin: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("api key: %v", err)
 	}
@@ -644,7 +650,7 @@ func TestDownload(t *testing.T) {
 	body := strings.NewReader(`{"provider":"generic","path":"` + vid + `","lang":"en"}`)
 	req, _ := http.NewRequest("POST", srv.URL+"/api/download", body)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("post: %v", err)
@@ -730,7 +736,7 @@ func TestConvertUpload(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create admin: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("api key: %v", err)
 	}
@@ -750,7 +756,7 @@ func TestConvertUpload(t *testing.T) {
 	mw.Close()
 
 	req, _ := http.NewRequest("POST", srv.URL+"/api/convert", buf)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	req.Header.Set("Content-Type", mw.FormDataContentType())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
@@ -786,7 +792,7 @@ func TestTranslateUpload(t *testing.T) {
 	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
 		t.Fatalf("create admin: %v", err)
 	}
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	if err != nil {
 		t.Fatalf("api key: %v", err)
 	}
@@ -811,7 +817,7 @@ func TestTranslateUpload(t *testing.T) {
 	mw.Close()
 
 	req, _ := http.NewRequest("POST", srv.URL+"/api/translate", buf)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	req.Header.Set("Content-Type", mw.FormDataContentType())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
@@ -1161,7 +1167,13 @@ func TestExtractLanguageFromFilename(t *testing.T) {
 // setupTestUser creates a test user with an API key and returns the key.
 func setupTestUser(t *testing.T, db *sql.DB) string {
 	testutil.MustNoError(t, "create admin", auth.CreateUser(db, "admin", "p", "", "admin"))
-	return testutil.MustGet(t, "api key", func() (string, error) { return auth.GenerateAPIKey(db, 1) })
+	return testutil.MustGet(t, "api key", func() (string, error) {
+		k, err := auth.GenerateAPIKey(db, 1)
+		if err != nil {
+			return "", err
+		}
+		return k.GetId(), nil
+	})
 }
 
 // TestSecurityHeaders ensures that the server sets common security headers.
@@ -1315,7 +1327,7 @@ func TestLibraryBrowsePathTraversal(t *testing.T) {
 	defer db.Close()
 
 	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	testutil.MustNoError(t, "generate key", err)
 
 	h, err := Handler(db)
@@ -1338,7 +1350,7 @@ func TestLibraryBrowsePathTraversal(t *testing.T) {
 		t.Run("path_traversal_"+sanitizedPath, func(t *testing.T) {
 			escapedPath := url.QueryEscape(maliciousPath)
 			req, _ := http.NewRequest("GET", srv.URL+"/api/library/browse?path="+escapedPath, nil)
-			req.Header.Set("X-API-Key", key)
+			req.Header.Set("X-API-Key", keyObj.GetId())
 			resp, err := srv.Client().Do(req)
 			if err != nil {
 				t.Fatalf("request failed: %v", err)
@@ -1365,7 +1377,7 @@ func TestLibraryBrowseJSONStructure(t *testing.T) {
 	defer db.Close()
 
 	testutil.MustNoError(t, "create user", auth.CreateUser(db, "test", "pass", "", "admin"))
-	key, err := auth.GenerateAPIKey(db, 1)
+	keyObj, err := auth.GenerateAPIKey(db, 1)
 	testutil.MustNoError(t, "generate key", err)
 
 	h, err := Handler(db)
@@ -1374,7 +1386,7 @@ func TestLibraryBrowseJSONStructure(t *testing.T) {
 	defer srv.Close()
 
 	req, _ := http.NewRequest("GET", srv.URL+"/api/library/browse?path=/", nil)
-	req.Header.Set("X-API-Key", key)
+	req.Header.Set("X-API-Key", keyObj.GetId())
 	resp, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("request failed: %v", err)
