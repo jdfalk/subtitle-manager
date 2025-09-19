@@ -1,0 +1,66 @@
+all: false
+dir: "{{.InterfaceDir}}"
+filename: "{{.InterfaceName | lower}}_mock.go"
+force-file-write: true
+formatter: goimports
+include-auto-generated: false
+log-level: info
+structname: "{{.Mock}}{{.InterfaceName}}"
+pkgname: "{{.SrcPackageName}}"
+recursive: false
+require-template-schema-exists: true
+template: testify
+template-schema: "{{.Template}}.schema.json"
+
+packages:
+  # Services module: gRPC service interfaces
+  github.com/jdfalk/subtitle-manager/pkg/services:
+    interfaces:
+      WebServiceInterface:
+        config:
+          dir: pkg/services/mocks
+          pkgname: mocks
+          filename: web_service_interface.go
+      EngineServiceInterface:
+        config:
+          dir: pkg/services/mocks
+          pkgname: mocks
+          filename: engine_service_interface.go
+      FileServiceInterface:
+        config:
+          dir: pkg/services/mocks
+          pkgname: mocks
+          filename: file_service_interface.go
+      ServiceRegistry:
+        config:
+          dir: pkg/services/mocks
+          pkgname: mocks
+          filename: service_registry.go
+
+  # Providers module: subtitle provider interfaces
+  github.com/jdfalk/subtitle-manager/pkg/providers:
+    interfaces:
+      Provider:
+        config:
+          dir: pkg/providers/mocks
+          pkgname: mocks
+          filename: provider.go
+      Searcher:
+        config:
+          dir: pkg/providers/mocks
+          pkgname: mocks
+          filename: searcher.go
+
+  # Translator module: external API client wrappers
+  github.com/jdfalk/subtitle-manager/pkg/translator:
+    interfaces:
+      GoogleClient:
+        config:
+          dir: pkg/translator/mocks
+          pkgname: mocks
+          filename: google_client.go
+      OpenAIClient:
+        config:
+          dir: pkg/translator/mocks
+          pkgname: mocks
+          filename: openai_client.go
