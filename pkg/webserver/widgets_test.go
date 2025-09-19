@@ -60,6 +60,68 @@ func TestDashboardLayout(t *testing.T) {
 	}
 }
 
+// TestDashboardLayout_InvalidMethodAndBody covers negative paths for layout handler.
+func TestDashboardLayout_InvalidMethodAndBody(t *testing.T) {
+	skipIfNoSQLite(t)
+
+	db := testutil.GetTestDB(t)
+	defer db.Close()
+
+	if err := auth.CreateUser(db, "admin", "p", "", "admin"); err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+	keyObj, err := auth.GenerateAPIKey(db, 1)
+	if err != nil {
+		t.Fatalf("key: %v", err)
+	}
+
+	h, err := Handler(db)
+	if err != nil {
+		t.Fatalf("handler: %v", err)
+	}
+	srv := httptest.NewServer(h)
+	defer srv.Close()
+
+	// Invalid method
+	req, _ := http.NewRequest(http.MethodDelete, srv.URL+"/api/widgets/layout", nil)
+	req.Header.Set("X-API-Key", keyObj.GetId())
+	r1, err := srv.Client().Do(req)
+	if err != nil {
+		t.Fatalf("delete: %v", err)
+	}
+	if r1.StatusCode != http.StatusMethodNotAllowed {
+		t.Fatalf("expected 405, got %d", r1.StatusCode)
+	}
+	r1.Body.Close()
+
+	// Invalid JSON body
+	req2, _ := http.NewRequest(http.MethodPost, srv.URL+"/api/widgets/layout", bytes.NewReader([]byte("{")))
+	req2.Header.Set("X-API-Key", keyObj.GetId())
+	req2.Header.Set("Content-Type", "application/json")
+	r2, err := srv.Client().Do(req2)
+	if err != nil {
+		t.Fatalf("post invalid: %v", err)
+	}
+	if r2.StatusCode != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", r2.StatusCode)
+	}
+	r2.Body.Close()
+
+	// Missing layout field
+	badBody, _ := json.Marshal(map[string]string{"layout": ""})
+	req3, _ := http.NewRequest(http.MethodPost, srv.URL+"/api/widgets/layout", bytes.NewReader(badBody))
+	req3.Header.Set("X-API-Key", keyObj.GetId())
+	req3.Header.Set("Content-Type", "application/json")
+	r3, err := srv.Client().Do(req3)
+	if err != nil {
+		t.Fatalf("post missing layout: %v", err)
+	}
+	if r3.StatusCode != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", r3.StatusCode)
+	}
+	r3.Body.Close()
+}
+
 // TestWidgetsList ensures the API returns available dashboard widgets.
 func TestWidgetsList(t *testing.T) {
 	skipIfNoSQLite(t)

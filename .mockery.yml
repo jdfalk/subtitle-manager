@@ -64,3 +64,250 @@ packages:
           dir: pkg/translator/mocks
           pkgname: mocks
           filename: openai_client.go
+
+  # Additional packages: enable all interface mocks to land in pkg/<name>/mocks
+  github.com/jdfalk/subtitle-manager/pkg/audio:
+    config:
+      all: true
+      dir: pkg/audio/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/authserver:
+    config:
+      all: true
+      dir: pkg/authserver/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/backups:
+    config:
+      all: true
+      dir: pkg/backups/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/bazarr:
+    config:
+      all: true
+      dir: pkg/bazarr/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/cache:
+    config:
+      all: true
+      dir: pkg/cache/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/captcha:
+    config:
+      all: true
+      dir: pkg/captcha/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/cli:
+    config:
+      all: true
+      dir: pkg/cli/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/config:
+    config:
+      all: true
+      dir: pkg/config/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/database:
+    config:
+      all: true
+      dir: pkg/database/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/engine:
+    config:
+      all: true
+      dir: pkg/engine/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/errors:
+    config:
+      all: true
+      dir: pkg/errors/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/events:
+    config:
+      all: true
+      dir: pkg/events/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/file:
+    config:
+      all: true
+      dir: pkg/file/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/grpcserver:
+    config:
+      all: true
+      dir: pkg/grpcserver/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/i18n:
+    config:
+      all: true
+      dir: pkg/i18n/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/jobpb:
+    config:
+      all: true
+      dir: pkg/jobpb/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/logging:
+    config:
+      all: true
+      dir: pkg/logging/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/maintenance:
+    config:
+      all: true
+      dir: pkg/maintenance/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/media:
+    config:
+      all: true
+      dir: pkg/media/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/metadata:
+    config:
+      all: true
+      dir: pkg/metadata/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/metrics:
+    config:
+      all: true
+      dir: pkg/metrics/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/metricspb:
+    config:
+      all: true
+      dir: pkg/metricspb/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/monitoring:
+    config:
+      all: true
+      dir: pkg/monitoring/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/notifications:
+    config:
+      all: true
+      dir: pkg/notifications/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/plex:
+    config:
+      all: true
+      dir: pkg/plex/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/profiles:
+    config:
+      all: true
+      dir: pkg/profiles/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/queue:
+    config:
+      all: true
+      dir: pkg/queue/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/radarr:
+    config:
+      all: true
+      dir: pkg/radarr/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/renamer:
+    config:
+      all: true
+      dir: pkg/renamer/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/scanner:
+    config:
+      all: true
+      dir: pkg/scanner/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/scheduler:
+    config:
+      all: true
+      dir: pkg/scheduler/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/scoring:
+    config:
+      all: true
+      dir: pkg/scoring/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/security:
+    config:
+      all: true
+      dir: pkg/security/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/selftest:
+    config:
+      all: true
+      dir: pkg/selftest/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/sonarr:
+    config:
+      all: true
+      dir: pkg/sonarr/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/storage:
+    config:
+      all: true
+      dir: pkg/storage/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/subtitle:
+    config:
+      all: true
+      dir: pkg/subtitle/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/subtitles:
+    config:
+      all: true
+      dir: pkg/subtitles/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/syncer:
+    config:
+      all: true
+      dir: pkg/syncer/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/tagging:
+    config:
+      all: true
+      dir: pkg/tagging/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/tasks:
+    config:
+      all: true
+      dir: pkg/tasks/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/testutil:
+    config:
+      all: true
+      dir: pkg/testutil/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/types:
+    config:
+      all: true
+      dir: pkg/types/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/updater:
+    config:
+      all: true
+      dir: pkg/updater/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/video:
+    config:
+      all: true
+      dir: pkg/video/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/watcher:
+    config:
+      all: true
+      dir: pkg/watcher/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/web:
+    config:
+      all: true
+      dir: pkg/web/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/webhooks:
+    config:
+      all: true
+      dir: pkg/webhooks/mocks
+      pkgname: mocks
+  github.com/jdfalk/subtitle-manager/pkg/webserver:
+    config:
+      all: true
+      dir: pkg/webserver/mocks
+      pkgname: mocks
