@@ -10,6 +10,7 @@ This document provides a complete analysis of the current test status in the sub
 
 **IMPORTANT: Repository Status Confirmed**
 - ✅ All required protobuf packages are generated and present in `pkg/engine/v1/`, `pkg/file/v1/`, `pkg/subtitle/translator/v1/`, `pkg/web/v1/`
+- ✅ Generated protobuf files are now tracked in git (removed `*.pb.go` from `.gitignore`)
 - ✅ The Go build system works correctly: `go build ./...` succeeds
 - ✅ Tests can be executed: `go test ./...` runs (with expected failures)
 - ✅ `buf generate` is working and protobuf files are up to date
