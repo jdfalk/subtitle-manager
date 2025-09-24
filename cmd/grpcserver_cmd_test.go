@@ -23,7 +23,7 @@ func TestServerTranslate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("listen: %v", err)
 	}
-	m := translatormocks.NewGoogleClient(t)
+	m := translatormocks.NewMockGoogleClient(t)
 	translator.SetGoogleClientFactory(func(ctx context.Context, apiKey string) (translator.GoogleClient, error) { return m, nil })
 	defer translator.ResetGoogleClientFactory()
 
