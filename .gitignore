@@ -344,8 +344,7 @@ webui/playwright-report/
 webui/coverage/
 
 # Generated files
-*_gen.go
-webui/dist/
+
 test
 test/*
 subtitle-manager.yaml
