@@ -190,7 +190,7 @@ func TestOAuthUserInfoRetrievalError(t *testing.T) {
 		"token_type":   "Bearer",
 		"expires_in":   3600,
 	})
-	mockProvider.On("userinfo", "Bearer invalid_token").Return(nil)
+	mockProvider.On("handleUserInfo", "Bearer invalid_token").Return(nil)
 
 	config := mockProvider.GetConfig()
 	ctx := context.Background()
