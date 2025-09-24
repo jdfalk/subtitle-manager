@@ -29,7 +29,7 @@ func TestScanDirectory(t *testing.T) {
 	}
 	defer store.Close()
 	// first scan creates subtitle and library entry
-	m := providersmocks.NewProvider(t)
+	m := providersmocks.NewMockProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("a"), nil)
 	if err := ScanDirectory(context.Background(), dir, "en", "test", m, false, 2, store); err != nil {
 		t.Fatalf("scan: %v", err)
@@ -51,7 +51,7 @@ func TestScanDirectory(t *testing.T) {
 		t.Fatalf("expected 1 media item, got %d", count)
 	}
 	// second scan without upgrade should keep existing subtitle and not fail
-	m2 := providersmocks.NewProvider(t)
+	m2 := providersmocks.NewMockProvider(t)
 	if err := ScanDirectory(context.Background(), dir, "en", "test", m2, false, 2, store); err != nil {
 		t.Fatalf("scan 2: %v", err)
 	}
@@ -60,7 +60,7 @@ func TestScanDirectory(t *testing.T) {
 		t.Fatalf("subtitle overwritten without upgrade")
 	}
 	// scan with upgrade should replace subtitle
-	m3 := providersmocks.NewProvider(t)
+	m3 := providersmocks.NewMockProvider(t)
 	m3.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("cc"), nil)
 	if err := ScanDirectory(context.Background(), dir, "en", "test", m3, true, 2, store); err != nil {
 		t.Fatalf("scan upgrade: %v", err)
@@ -101,7 +101,7 @@ func TestProcessFile_UpgradeQuality(t *testing.T) {
 	if err := os.WriteFile(sub, []byte("existing subtitle"), 0644); err != nil {
 		t.Fatalf("create sub: %v", err)
 	}
-	m := providersmocks.NewProvider(t)
+	m := providersmocks.NewMockProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("a"), nil)
 	if err := ProcessFile(context.Background(), vid, "en", "test", m, true, nil); err != nil {
 		t.Fatalf("process: %v", err)
@@ -187,7 +187,7 @@ func TestProcessFilePathValidation(t *testing.T) {
 	}
 
 	// Mock provider that returns a larger subtitle
-	m := providersmocks.NewProvider(t)
+	m := providersmocks.NewMockProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("new larger subtitle content"), nil)
 
 	// Test ProcessFile with upgrade=true, which should replace the subtitle if new content is larger

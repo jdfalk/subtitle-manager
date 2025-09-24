@@ -8,7 +8,7 @@ import (
 )
 
 func TestRegisterFactoryAndGet(t *testing.T) {
-	p := &mocks.Provider{}
+	p := mocks.NewMockProvider(t)
 	RegisterFactory("mockreg", func() Provider { return p })
 	t.Cleanup(func() { delete(factories, "mockreg") })
 

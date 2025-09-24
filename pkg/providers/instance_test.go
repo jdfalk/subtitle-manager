@@ -19,8 +19,8 @@ import (
 func TestFetchFromAllInstances(t *testing.T) {
 	// Setup mock provider factory returning different mocks sequentially.
 	cnt := 0
-	m1 := &mocks.Provider{}
-	m2 := &mocks.Provider{}
+	m1 := mocks.NewMockProvider(t)
+	m2 := mocks.NewMockProvider(t)
 	RegisterFactory("mock", func() Provider {
 		cnt++
 		if cnt == 1 {
@@ -201,7 +201,7 @@ func TestFetchFromTagged(t *testing.T) {
 	tag, _ := tm.CreateTag("fast", "user", "provider", "", "")
 	tagID, _ := strconv.ParseInt(tag.ID, 10, 64)
 
-	m2 := &mocks.Provider{}
+	m2 := mocks.NewMockProvider(t)
 	RegisterFactory("mock", func() Provider { return m2 })
 	t.Cleanup(func() {
 		delete(factories, "mock")

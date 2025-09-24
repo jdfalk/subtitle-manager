@@ -17,7 +17,7 @@ func TestWatchDirectory(t *testing.T) {
 	viper.Set("media_directory", dir)
 	defer viper.Reset()
 	ctx, cancel := context.WithCancel(context.Background())
-	m := providersmocks.NewProvider(t)
+	m := providersmocks.NewMockProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("sub"), nil)
 	done := make(chan struct{})
 	go func() {
@@ -55,7 +55,7 @@ func TestWatchDirectoryRecursive(t *testing.T) {
 	viper.Set("media_directory", dir)
 	defer viper.Reset()
 	ctx, cancel := context.WithCancel(context.Background())
-	m := providersmocks.NewProvider(t)
+	m := providersmocks.NewMockProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("sub"), nil)
 	done := make(chan struct{})
 	go func() {

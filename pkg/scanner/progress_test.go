@@ -23,7 +23,7 @@ func TestScanDirectoryProgress(t *testing.T) {
 	defer viper.Reset()
 	var called int
 	cb := func(string) { called++ }
-	m := providersmocks.NewProvider(t)
+	m := providersmocks.NewMockProvider(t)
 	m.On("Fetch", mock.Anything, mock.Anything, "en").Return([]byte("a"), nil)
 	err := ScanDirectoryProgress(context.Background(), dir, "en", "test", m, false, 1, nil, cb)
 	if err != nil {

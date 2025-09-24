@@ -26,7 +26,7 @@ import (
 // TestGoogleTranslate verifies that GoogleTranslate returns the translated text
 // provided by the injected Google client.
 func TestGoogleTranslate(t *testing.T) {
-	m := mocks.NewGoogleClient(t)
+	m := mocks.NewMockGoogleClient(t)
 	SetGoogleClientFactory(func(ctx context.Context, apiKey string) (GoogleClient, error) { return m, nil })
 	defer ResetGoogleClientFactory()
 
@@ -44,7 +44,7 @@ func TestGoogleTranslate(t *testing.T) {
 
 // TestGoogleTranslateBatch verifies that multiple strings can be translated in one call.
 func TestGoogleTranslateBatch(t *testing.T) {
-	m := mocks.NewGoogleClient(t)
+	m := mocks.NewMockGoogleClient(t)
 	SetGoogleClientFactory(func(ctx context.Context, apiKey string) (GoogleClient, error) { return m, nil })
 	defer ResetGoogleClientFactory()
 
@@ -73,7 +73,7 @@ func TestUnsupportedServiceError(t *testing.T) {
 // TestTranslate validates that Translate delegates to the correct provider and
 // returns the expected translation.
 func TestTranslate(t *testing.T) {
-	m := mocks.NewGoogleClient(t)
+	m := mocks.NewMockGoogleClient(t)
 	SetGoogleClientFactory(func(ctx context.Context, apiKey string) (GoogleClient, error) { return m, nil })
 	defer ResetGoogleClientFactory()
 
@@ -142,7 +142,7 @@ func TestTranslateGRPCProvider(t *testing.T) {
 // TestGPTTranslate verifies that GPTTranslate uses the injected OpenAI client
 // to obtain a translation.
 func TestGPTTranslate(t *testing.T) {
-	m := mocks.NewOpenAIClient(t)
+	m := mocks.NewMockOpenAIClient(t)
 	SetOpenAIClientFactory(func(apiKey string) OpenAIClient { return m })
 	defer ResetOpenAIClientFactory()
 
@@ -162,7 +162,7 @@ func TestGPTTranslate(t *testing.T) {
 // TestTranslateGPTProvider ensures the GPT provider works when selected via
 // Translate.
 func TestTranslateGPTProvider(t *testing.T) {
-	m := mocks.NewOpenAIClient(t)
+	m := mocks.NewMockOpenAIClient(t)
 	SetOpenAIClientFactory(func(apiKey string) OpenAIClient { return m })
 	defer ResetOpenAIClientFactory()
 
