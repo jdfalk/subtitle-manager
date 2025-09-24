@@ -32,6 +32,9 @@ func TestSearchHandlerMethodValidation(t *testing.T) {
 }
 
 func TestSearchHandlerPostValidation(t *testing.T) {
+	// Reset rate limiter for this test
+	resetSearchRateLimiter()
+
 	handler := searchHandler()
 
 	// Test with empty body - should return 400
@@ -51,6 +54,9 @@ func TestSearchHandlerPostValidation(t *testing.T) {
 }
 
 func TestSearchHandlerPostValidRequest(t *testing.T) {
+	// Reset rate limiter for this test
+	resetSearchRateLimiter()
+
 	handler := searchHandler()
 
 	// Set TEST_SAFE_MEDIA_DIR so the handler accepts the test path
@@ -87,6 +93,9 @@ func TestSearchHandlerPostValidRequest(t *testing.T) {
 }
 
 func TestSearchHandlerGetValidation(t *testing.T) {
+	// Reset rate limiter for this test
+	resetSearchRateLimiter()
+
 	handler := searchHandler()
 
 	// Test GET without required path parameter - should return 400
