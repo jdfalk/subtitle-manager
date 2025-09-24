@@ -344,7 +344,6 @@ webui/playwright-report/
 webui/coverage/
 
 # Generated files
-*.pb.go
 *_gen.go
 webui/dist/
 test
