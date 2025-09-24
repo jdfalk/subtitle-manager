@@ -1,5 +1,5 @@
 // file: pkg/authserver/oauth_flow_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: e8f7d6c5-b4a3-9281-7f6e-5d4c3b2a1908
 
 package authserver
@@ -67,7 +67,11 @@ func (m *MockOAuthProvider) handleAuthorize(w http.ResponseWriter, r *http.Reque
 }
 
 func (m *MockOAuthProvider) handleToken(w http.ResponseWriter, r *http.Request) {
-	args := m.Called("token", r.PostForm)
+	// Parse the form data
+	r.ParseForm()
+
+	// Call with just the form values for simpler mocking
+	args := m.Called(r.Form)
 
 	if tokenResp := args.Get(0); tokenResp != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -79,7 +83,7 @@ func (m *MockOAuthProvider) handleToken(w http.ResponseWriter, r *http.Request) 
 
 func (m *MockOAuthProvider) handleUserInfo(w http.ResponseWriter, r *http.Request) {
 	authHeader := r.Header.Get("Authorization")
-	args := m.Called("userinfo", authHeader)
+	args := m.Called(authHeader)
 
 	if userInfo := args.Get(0); userInfo != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -121,7 +125,9 @@ func TestOAuthAuthorizationFlowPositivePath(t *testing.T) {
 
 	// Configure successful OAuth flow
 	mockProvider.On("authorize", mock.Anything).Return(true)
-	mockProvider.On("token", mock.Anything).Return(map[string]interface{}{
+	mockProvider.On("handleToken", mock.MatchedBy(func(form url.Values) bool {
+		return form.Get("code") == "test_auth_code" && form.Get("grant_type") == "authorization_code"
+	})).Return(map[string]interface{}{
 		"access_token": "oauth_access_token_123",
 		"token_type":   "Bearer",
 		"expires_in":   3600,
@@ -158,7 +164,9 @@ func TestOAuthTokenExchangeError(t *testing.T) {
 	defer mockProvider.Close()
 
 	// Configure OAuth provider to return error
-	mockProvider.On("token", mock.Anything).Return(nil)
+	mockProvider.On("handleToken", mock.MatchedBy(func(form url.Values) bool {
+		return form.Get("code") == "invalid_code"
+	})).Return(nil)
 
 	config := mockProvider.GetConfig()
 	ctx := context.Background()
@@ -175,7 +183,9 @@ func TestOAuthUserInfoRetrievalError(t *testing.T) {
 	defer mockProvider.Close()
 
 	// Configure successful token exchange but failed user info
-	mockProvider.On("token", mock.Anything).Return(map[string]interface{}{
+	mockProvider.On("handleToken", mock.MatchedBy(func(form url.Values) bool {
+		return form.Get("code") == "test_auth_code"
+	})).Return(map[string]interface{}{
 		"access_token": "invalid_token",
 		"token_type":   "Bearer",
 		"expires_in":   3600,
@@ -262,7 +272,9 @@ func TestOAuthCallbackHandlerSuccess(t *testing.T) {
 	defer mockProvider.Close()
 
 	// Setup successful OAuth response
-	mockProvider.On("token", mock.Anything).Return(map[string]interface{}{
+	mockProvider.On("handleToken", mock.MatchedBy(func(form url.Values) bool {
+		return form.Get("code") == "test_auth_code"
+	})).Return(map[string]interface{}{
 		"access_token": "callback_token_123",
 		"token_type":   "Bearer",
 		"expires_in":   3600,
@@ -332,7 +344,9 @@ func TestOAuthFlowWithInvalidClientCredentials(t *testing.T) {
 		RedirectURL: "http://localhost:8080/callback",
 	}
 
-	mockProvider.On("token", mock.Anything).Return(nil) // Return error
+	mockProvider.On("handleToken", mock.MatchedBy(func(form url.Values) bool {
+		return form.Get("code") == "any_code"
+	})).Return(nil) // Return error
 
 	ctx := context.Background()
 	_, err := invalidConfig.Exchange(ctx, "any_code")
@@ -372,7 +386,7 @@ func TestOAuthRefreshTokenFlow(t *testing.T) {
 	}
 
 	// Mock refresh token exchange
-	mockProvider.On("token", mock.MatchedBy(func(form url.Values) bool {
+	mockProvider.On("handleToken", mock.MatchedBy(func(form url.Values) bool {
 		return form.Get("grant_type") == "refresh_token" && form.Get("refresh_token") == "refresh_token_123"
 	})).Return(map[string]interface{}{
 		"access_token":  "refreshed_access_token",
