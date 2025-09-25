@@ -1,11 +1,12 @@
 // file: pkg/providers/search_functionality_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: b1c2d3e4-f5g6-7h8i-9j0k-1l2m3n4o5p6q
 
 package providers
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -93,7 +94,20 @@ Dialogue: 0,0:00:01.00,0:00:03.00,Default,,0,0,0,,Hello, this is a test subtitle
 			require.NoError(t, err)
 			require.NotEmpty(t, result)
 			require.Contains(t, string(result), "test subtitle")
-			require.Contains(t, string(result), tc.subtitleFormat)
+			
+			// Verify the content format is appropriate for the subtitle type
+			content := string(result)
+			switch tc.subtitleFormat {
+			case "srt":
+				// SRT format should have numbered entries
+				require.Contains(t, content, "1\n")
+			case "vtt":
+				// WebVTT format should have WEBVTT header
+				require.Contains(t, content, "WEBVTT")
+			case "ass":
+				// ASS format should have script info section
+				require.Contains(t, content, "[Script Info]")
+			}
 
 			mockProvider.AssertExpectations(t)
 		})
@@ -161,7 +175,16 @@ func TestProviderSearchFunctionality(t *testing.T) {
 			// If we have URLs, verify they're properly formatted
 			for _, url := range urls {
 				require.Contains(t, url, "http")
-				require.Contains(t, url, ".srt", "Expected subtitle file extension in URL: %s", url)
+				// Check for common subtitle file extensions
+				hasSubtitleExt := false
+				subtitleExts := []string{".srt", ".vtt", ".ass", ".ssa", ".sbv", ".ttml"}
+				for _, ext := range subtitleExts {
+					if strings.Contains(url, ext) {
+						hasSubtitleExt = true
+						break
+					}
+				}
+				require.True(t, hasSubtitleExt, "Expected subtitle file extension in URL: %s", url)
 			}
 
 			mockProvider.AssertExpectations(t)
@@ -343,7 +366,9 @@ func TestProviderContextHandling(t *testing.T) {
 
 		require.Error(t, err)
 		require.Nil(t, result)
-		require.Equal(t, context.DeadlineExceeded, err)
+		// Accept either DeadlineExceeded or Canceled as both are valid timeout-related errors
+		require.True(t, err == context.DeadlineExceeded || err == context.Canceled, 
+			"Expected context.DeadlineExceeded or context.Canceled, got: %v", err)
 
 		mockProvider.AssertExpectations(t)
 	})

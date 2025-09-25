@@ -1,5 +1,5 @@
 // file: pkg/gcommon/subtitle_format.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
 
 package gcommon
@@ -20,7 +20,13 @@ func NewSubtitleFormatHelper() *SubtitleFormatHelper {
 
 // FormatFromExtension determines the subtitle format from a file extension
 func (h *SubtitleFormatHelper) FormatFromExtension(filename string) common.SubtitleFormat {
-	ext := strings.ToLower(strings.TrimPrefix(strings.ToLower(filename), "."))
+	// Extract the file extension properly
+	filename = strings.ToLower(filename)
+	dotIndex := strings.LastIndex(filename, ".")
+	if dotIndex == -1 {
+		return common.SubtitleFormat_SUBTITLE_FORMAT_UNSPECIFIED
+	}
+	ext := filename[dotIndex+1:]
 
 	switch ext {
 	case "srt":
