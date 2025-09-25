@@ -1,5 +1,5 @@
 // file: pkg/cache/interface.go
-// version: 1.1.0
+// version: 1.2.0
 // guid: 123e4567-e89b-12d3-a456-426614174000
 
 package cache
@@ -12,8 +12,9 @@ import (
 
 // Common errors for cache operations
 var (
-	ErrNotFound = errors.New("cache key not found")
-	ErrExpired  = errors.New("cache entry expired")
+	ErrNotFound    = errors.New("cache key not found")
+	ErrExpired     = errors.New("cache entry expired")
+	ErrCacheClosed = errors.New("cache is closed")
 )
 
 // Cache provides a unified interface for caching operations with TTL support.

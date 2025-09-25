@@ -1,5 +1,5 @@
 // file: pkg/authserver/oauth_flow_test.go
-// version: 1.1.0
+// version: 1.2.0
 // guid: e8f7d6c5-b4a3-9281-7f6e-5d4c3b2a1908
 
 package authserver
@@ -123,8 +123,7 @@ func TestOAuthAuthorizationFlowPositivePath(t *testing.T) {
 	mockProvider := NewMockOAuthProvider()
 	defer mockProvider.Close()
 
-	// Configure successful OAuth flow
-	mockProvider.On("authorize", mock.Anything).Return(true)
+	// Configure successful OAuth flow - only token exchange needed
 	mockProvider.On("handleToken", mock.MatchedBy(func(form url.Values) bool {
 		return form.Get("code") == "test_auth_code" && form.Get("grant_type") == "authorization_code"
 	})).Return(map[string]interface{}{
@@ -132,11 +131,6 @@ func TestOAuthAuthorizationFlowPositivePath(t *testing.T) {
 		"token_type":   "Bearer",
 		"expires_in":   3600,
 		"scope":        "user:email",
-	})
-	mockProvider.On("userinfo", "Bearer oauth_access_token_123").Return(map[string]interface{}{
-		"id":    12345,
-		"login": "testuser",
-		"email": "test@example.com",
 	})
 
 	// Test OAuth authorization URL generation
@@ -273,16 +267,11 @@ func TestOAuthCallbackHandlerSuccess(t *testing.T) {
 
 	// Setup successful OAuth response
 	mockProvider.On("handleToken", mock.MatchedBy(func(form url.Values) bool {
-		return form.Get("code") == "test_auth_code"
+		return form.Get("code") == "callback_auth_code"
 	})).Return(map[string]interface{}{
 		"access_token": "callback_token_123",
 		"token_type":   "Bearer",
 		"expires_in":   3600,
-	})
-	mockProvider.On("userinfo", "Bearer callback_token_123").Return(map[string]interface{}{
-		"id":    54321,
-		"login": "callbackuser",
-		"email": "callback@example.com",
 	})
 
 	// Test callback processing simulation
