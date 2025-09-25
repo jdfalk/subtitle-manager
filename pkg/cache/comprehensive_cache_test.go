@@ -1,5 +1,5 @@
 // file: pkg/cache/comprehensive_cache_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: f9e8d7c6-b5a4-3291-8f7e-6d5c4b3a2109
 
 package cache
@@ -54,7 +54,8 @@ func TestCacheHitMissScenarios(t *testing.T) {
 			// Test if Redis is actually available
 			ctx := context.Background()
 			if err := cache.Set(ctx, "test_connection", []byte("test"), 1*time.Second); err != nil {
-				t.Skip("Redis not available, skipping Redis cache tests")
+				cache.Close()
+				return nil // Return nil instead of calling t.Skip()
 			}
 			return cache
 		}},

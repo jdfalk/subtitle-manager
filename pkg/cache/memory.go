@@ -1,5 +1,5 @@
 // file: pkg/cache/memory.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 123e4567-e89b-12d3-a456-426614174001
 
 package cache
@@ -64,6 +64,10 @@ func NewMemoryCache(config MemoryConfig) *MemoryCache {
 // Get retrieves a value by key.
 func (m *MemoryCache) Get(ctx context.Context, key string) ([]byte, error) {
 	m.mu.RLock()
+	if m.stopped {
+		m.mu.RUnlock()
+		return nil, ErrCacheClosed
+	}
 	entry, exists := m.data[key]
 	m.mu.RUnlock()
 
@@ -123,6 +127,10 @@ func (m *MemoryCache) Set(ctx context.Context, key string, value []byte, ttl tim
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
+	if m.stopped {
+		return ErrCacheClosed
+	}
+
 	// Check if we need to evict existing entry
 	if existing, exists := m.data[key]; exists {
 		m.stats.MemoryUsage -= existing.size
@@ -153,6 +161,10 @@ func (m *MemoryCache) Delete(ctx context.Context, key string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
+	if m.stopped {
+		return ErrCacheClosed
+	}
+
 	if entry, exists := m.data[key]; exists {
 		delete(m.data, key)
 		delete(m.accessTime, key)
@@ -168,6 +180,10 @@ func (m *MemoryCache) Clear(ctx context.Context) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
+	if m.stopped {
+		return ErrCacheClosed
+	}
+
 	m.data = make(map[string]*cacheEntry)
 	m.accessTime = make(map[string]time.Time)
 	m.stats.MemoryUsage = 0
@@ -179,6 +195,10 @@ func (m *MemoryCache) Clear(ctx context.Context) error {
 // Exists checks if a key exists and is not expired.
 func (m *MemoryCache) Exists(ctx context.Context, key string) (bool, error) {
 	m.mu.RLock()
+	if m.stopped {
+		m.mu.RUnlock()
+		return false, ErrCacheClosed
+	}
 	entry, exists := m.data[key]
 	m.mu.RUnlock()
 
@@ -203,6 +223,10 @@ func (m *MemoryCache) Exists(ctx context.Context, key string) (bool, error) {
 // TTL returns the remaining time-to-live for a key.
 func (m *MemoryCache) TTL(ctx context.Context, key string) (time.Duration, error) {
 	m.mu.RLock()
+	if m.stopped {
+		m.mu.RUnlock()
+		return 0, ErrCacheClosed
+	}
 	entry, exists := m.data[key]
 	m.mu.RUnlock()
 
