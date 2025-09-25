@@ -94,7 +94,7 @@ Dialogue: 0,0:00:01.00,0:00:03.00,Default,,0,0,0,,Hello, this is a test subtitle
 			require.NoError(t, err)
 			require.NotEmpty(t, result)
 			require.Contains(t, string(result), "test subtitle")
-			
+
 			// Verify the content format is appropriate for the subtitle type
 			content := string(result)
 			switch tc.subtitleFormat {
@@ -367,7 +367,7 @@ func TestProviderContextHandling(t *testing.T) {
 		require.Error(t, err)
 		require.Nil(t, result)
 		// Accept either DeadlineExceeded or Canceled as both are valid timeout-related errors
-		require.True(t, err == context.DeadlineExceeded || err == context.Canceled, 
+		require.True(t, err == context.DeadlineExceeded || err == context.Canceled,
 			"Expected context.DeadlineExceeded or context.Canceled, got: %v", err)
 
 		mockProvider.AssertExpectations(t)
