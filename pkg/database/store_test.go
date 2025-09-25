@@ -1,5 +1,5 @@
 // file: pkg/database/store_test.go
-// version: 1.2.0
+// version: 1.3.0
 // guid: 8c7d6e5f-4a3b-2c1d-0e9f-8a7b6c5d4e3f
 
 package database
@@ -13,11 +13,26 @@ import (
 )
 
 // getTestStoreForInterface creates a test store for interface testing
+// Uses SQLite when available (CGO build), falls back to Pebble for pure Go builds
 func getTestStoreForInterface(t *testing.T) SubtitleStore {
-	store, err := OpenStore(t.TempDir(), "pebble")
-	if err != nil {
-		t.Fatalf("Failed to open test store: %v", err)
+	tempDir := t.TempDir()
+	
+	// Try SQLite first if available (CGO build with 'sqlite' tag)
+	if HasSQLite() {
+		store, err := OpenStore(tempDir, "sqlite")
+		if err == nil {
+			t.Logf("Using SQLite backend for interface testing")
+			return store
+		}
+		t.Logf("SQLite backend failed, falling back to Pebble: %v", err)
 	}
+	
+	// Fall back to Pebble (works with pure Go builds)
+	store, err := OpenStore(tempDir, "pebble")
+	if err != nil {
+		t.Fatalf("Failed to open test store with Pebble backend: %v", err)
+	}
+	t.Logf("Using Pebble backend for interface testing")
 	return store
 }
 

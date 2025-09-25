@@ -1,5 +1,5 @@
 // file: pkg/database/store_factory_test.go
-// version: 1.0.0
+// version: 1.1.0
 // guid: 9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d
 
 package database
@@ -13,10 +13,12 @@ import (
 
 // TestOpenStore tests the OpenStore factory function with different backends
 func TestOpenStore(t *testing.T) {
+	// Dynamic test cases based on SQLite availability
 	tests := []struct {
 		name    string
 		backend string
 		wantErr bool
+		skipMsg string
 	}{
 		{
 			name:    "pebble backend",
@@ -28,20 +30,66 @@ func TestOpenStore(t *testing.T) {
 			backend: "postgres",
 			wantErr: true, // Will fail without proper postgres connection string
 		},
-		{
-			name:    "default backend (may be sqlite or pebble)",
-			backend: "unknown",
-			wantErr: false, // Should work with either default
-		},
-		{
-			name:    "empty backend uses default",
-			backend: "",
-			wantErr: false,
-		},
 	}
+
+	// Add SQLite test case only if SQLite is available
+	if HasSQLite() {
+		tests = append(tests, struct {
+			name    string
+			backend string
+			wantErr bool
+			skipMsg string
+		}{
+			name:    "sqlite backend (CGO enabled)",
+			backend: "sqlite",
+			wantErr: false,
+		})
+	} else {
+		tests = append(tests, struct {
+			name    string
+			backend string
+			wantErr bool
+			skipMsg string
+		}{
+			name:    "sqlite backend unavailable (no CGO)",
+			backend: "sqlite",
+			wantErr: true, // Should fail when SQLite not available
+		})
+	}
+
+	// Test default backend behavior
+	defaultBackendTest := struct {
+		name    string
+		backend string
+		wantErr bool
+		skipMsg string
+	}{
+		name:    "default backend",
+		backend: "unknown",
+		wantErr: !HasSQLite(), // Should fail if SQLite not available since default is SQLite
+	}
+	if !HasSQLite() {
+		defaultBackendTest.skipMsg = "Default backend is SQLite which is not available"
+	}
+	tests = append(tests, defaultBackendTest)
+
+	tests = append(tests, struct {
+		name    string
+		backend string
+		wantErr bool
+		skipMsg string
+	}{
+		name:    "empty backend uses default",
+		backend: "",
+		wantErr: !HasSQLite(), // Should fail if SQLite not available since default is SQLite
+	})
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.skipMsg != "" {
+				t.Logf("Test condition: %s", tt.skipMsg)
+			}
+
 			// Create temporary directory for each test
 			tempDir := t.TempDir()
 
@@ -262,4 +310,59 @@ func TestStoreCleanup(t *testing.T) {
 	err = store.Close()
 	// This may or may not error depending on implementation
 	t.Logf("Second close result: %v", err)
+}
+
+// TestSQLiteAvailability tests the HasSQLite function and SQLite backend behavior
+func TestSQLiteAvailability(t *testing.T) {
+	hasSQLite := HasSQLite()
+	t.Logf("SQLite support available: %t", hasSQLite)
+
+	tempDir := t.TempDir()
+
+	if hasSQLite {
+		// When SQLite is available, it should work
+		t.Run("SQLite backend should work when available", func(t *testing.T) {
+			store, err := OpenStore(tempDir, "sqlite")
+			require.NoError(t, err, "SQLite backend should work when HasSQLite() returns true")
+			defer store.Close()
+
+			// Basic functionality test
+			err = store.InsertTag("sqlite-test")
+			assert.NoError(t, err)
+
+			tags, err := store.ListTags()
+			require.NoError(t, err)
+			require.Len(t, tags, 1)
+			assert.Equal(t, "sqlite-test", tags[0].Name)
+		})
+	} else {
+		// When SQLite is not available, it should fail with a clear error
+		t.Run("SQLite backend should fail when unavailable", func(t *testing.T) {
+			store, err := OpenStore(tempDir, "sqlite")
+			require.Error(t, err, "SQLite backend should fail when HasSQLite() returns false")
+			assert.Nil(t, store)
+			assert.Contains(t, err.Error(), "SQLite support not available", 
+				"Error should clearly indicate SQLite is unavailable")
+			assert.Contains(t, err.Error(), "CGO", 
+				"Error should mention CGO dependency")
+			assert.Contains(t, err.Error(), "Pebble", 
+				"Error should suggest Pebble alternative")
+		})
+	}
+
+	// Pebble should always work regardless of SQLite availability
+	t.Run("Pebble backend should always work", func(t *testing.T) {
+		store, err := OpenStore(tempDir+"/pebble", "pebble")
+		require.NoError(t, err, "Pebble backend should always work")
+		defer store.Close()
+
+		// Basic functionality test
+		err = store.InsertTag("pebble-test")
+		assert.NoError(t, err)
+
+		tags, err := store.ListTags()
+		require.NoError(t, err)
+		require.Len(t, tags, 1)
+		assert.Equal(t, "pebble-test", tags[0].Name)
+	})
 }
