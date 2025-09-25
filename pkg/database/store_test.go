@@ -16,7 +16,7 @@ import (
 // Uses SQLite when available (CGO build), falls back to Pebble for pure Go builds
 func getTestStoreForInterface(t *testing.T) SubtitleStore {
 	tempDir := t.TempDir()
-	
+
 	// Try SQLite first if available (CGO build with 'sqlite' tag)
 	if HasSQLite() {
 		store, err := OpenStore(tempDir, "sqlite")
@@ -26,7 +26,7 @@ func getTestStoreForInterface(t *testing.T) SubtitleStore {
 		}
 		t.Logf("SQLite backend failed, falling back to Pebble: %v", err)
 	}
-	
+
 	// Fall back to Pebble (works with pure Go builds)
 	store, err := OpenStore(tempDir, "pebble")
 	if err != nil {

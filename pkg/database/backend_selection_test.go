@@ -16,7 +16,7 @@ func TestBackendSelectionAndCGOSupport(t *testing.T) {
 	t.Run("SQLite availability detection", func(t *testing.T) {
 		hasSQL := HasSQLite()
 		t.Logf("Build configuration: SQLite support = %t", hasSQL)
-		
+
 		// The HasSQLite() function should accurately reflect build configuration
 		if hasSQL {
 			t.Log("✓ Built with CGO and 'sqlite' build tag - SQLite should be available")
@@ -27,7 +27,7 @@ func TestBackendSelectionAndCGOSupport(t *testing.T) {
 
 	t.Run("Backend compatibility matrix", func(t *testing.T) {
 		tempDir := t.TempDir()
-		
+
 		tests := []struct {
 			backend     string
 			shouldWork  func() bool
@@ -51,18 +51,22 @@ func TestBackendSelectionAndCGOSupport(t *testing.T) {
 		}
 
 		for _, tt := range tests {
-			testDir := tempDir + "/" + tt.backend
+			testPath := tempDir + "/" + tt.backend
+			if tt.backend == "sqlite" {
+				// Use in-memory SQLite for testing (common pattern)
+				testPath = ":memory:"
+			}
 			t.Run(tt.description, func(t *testing.T) {
-				store, err := OpenStore(testDir, tt.backend)
-				
+				store, err := OpenStore(testPath, tt.backend)
+
 				if tt.shouldWork() {
 					require.NoError(t, err, "Backend %s should work in current build configuration", tt.backend)
 					require.NotNil(t, store, "Store should not be nil when backend works")
-					
+
 					// Test basic functionality
 					err = store.InsertTag("test-tag-" + tt.backend)
 					assert.NoError(t, err, "Basic store operation should work")
-					
+
 					store.Close()
 				} else {
 					require.Error(t, err, "Backend %s should fail in current build configuration", tt.backend)
@@ -75,10 +79,17 @@ func TestBackendSelectionAndCGOSupport(t *testing.T) {
 
 	t.Run("Default backend behavior", func(t *testing.T) {
 		tempDir := t.TempDir()
-		
+
+		// Use in-memory SQLite for testing when available
+		testPath := ":memory:"
+		if !HasSQLite() {
+			// For pure Go builds, use a directory path for Pebble fallback test
+			testPath = tempDir + "/test.db"
+		}
+
 		// Test default backend (should be SQLite, but will fall back based on availability)
-		store, err := OpenStore(tempDir, "default")
-		
+		store, err := OpenStore(testPath, "default")
+
 		if HasSQLite() {
 			require.NoError(t, err, "Default backend should work when SQLite is available")
 			require.NotNil(t, store)
@@ -88,9 +99,9 @@ func TestBackendSelectionAndCGOSupport(t *testing.T) {
 			require.Error(t, err, "Default backend should fail when SQLite is not available")
 			assert.Nil(t, store)
 			t.Log("✓ Default backend fails without SQLite (pure Go build)")
-			
+
 			// In pure Go builds, explicitly use Pebble
-			store, err = OpenStore(tempDir, "pebble")
+			store, err = OpenStore(tempDir+"/pebble", "pebble")
 			require.NoError(t, err, "Pebble should work as fallback in pure Go builds")
 			require.NotNil(t, store)
 			store.Close()
@@ -122,53 +133,53 @@ func TestCrossBackendCompatibility(t *testing.T) {
 	}
 
 	tempDir := t.TempDir()
-	
+
 	// Test data that should work across all backends
 	testTag := "cross-backend-test"
-	
+
 	t.Run("SQLite to Pebble migration simulation", func(t *testing.T) {
 		// This would test migration scenarios, but for now just test basic compatibility
 		sqliteDir := tempDir + "/sqlite"
 		pebbleDir := tempDir + "/pebble"
-		
+
 		// Create data in SQLite
 		{
 			store, err := OpenStore(sqliteDir, "sqlite")
 			require.NoError(t, err)
-			
+
 			err = store.InsertTag(testTag)
 			require.NoError(t, err)
-			
+
 			store.Close()
 		}
-		
+
 		// Create same data in Pebble
 		{
 			store, err := OpenStore(pebbleDir, "pebble")
 			require.NoError(t, err)
-			
+
 			err = store.InsertTag(testTag)
 			require.NoError(t, err)
-			
+
 			store.Close()
 		}
-		
+
 		// Both should persist the data correctly
 		{
 			sqliteStore, err := OpenStore(sqliteDir, "sqlite")
 			require.NoError(t, err)
 			defer sqliteStore.Close()
-			
+
 			pebbleStore, err := OpenStore(pebbleDir, "pebble")
 			require.NoError(t, err)
 			defer pebbleStore.Close()
-			
+
 			sqliteTags, err := sqliteStore.ListTags()
 			require.NoError(t, err)
-			
+
 			pebbleTags, err := pebbleStore.ListTags()
 			require.NoError(t, err)
-			
+
 			// Both backends should have the same tag
 			require.Len(t, sqliteTags, 1)
 			require.Len(t, pebbleTags, 1)
