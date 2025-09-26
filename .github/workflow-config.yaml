@@ -13,7 +13,6 @@ build:
     - "1.24"
 
   python_versions:
-
     - "3.13"
 
   node_versions:

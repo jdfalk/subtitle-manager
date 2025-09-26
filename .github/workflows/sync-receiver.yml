@@ -197,12 +197,7 @@ jobs:
           }
 
           # Create symlinks for linters
-          echo "🔗 Setting up linter symlinks..."
-          mkdir -p .vscode
-          if [ -d ".github/linters" ] && [ ! -e ".vscode/linters" ]; then
-            ln -sf ../.github/linters .vscode/linters
-            echo "✅ Created symlink: .vscode/linters -> ../.github/linters"
-          fi
+          echo "🔗 Linter config files are now in root directory (no symlinks needed)"
 
           # Clean up the source directory
           echo "🧹 Cleaning up source directory..."

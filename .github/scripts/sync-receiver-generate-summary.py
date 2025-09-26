@@ -63,7 +63,7 @@ def get_changed_files_summary():
             categories["scripts"].append(file_path)
         elif ".github/prompts/" in file_path:
             categories["prompts"].append(file_path)
-        elif ".github/linters/" in file_path:
+        elif ".github/linters/" in file_path or any(file_path.endswith(f) for f in ['.eslintrc.yml', '.prettierrc', '.pylintrc', 'clippy.toml', '.golangci.yml', '.yaml-lint.yml', '.markdownlint.json', 'super-linter-ci.env', 'super-linter-pr.env']):
             categories["linters"].append(file_path)
         else:
             categories["other"].append(file_path)

@@ -327,13 +327,16 @@ def sync_linters():
         print("⏭️  Linters directory excluded from sync")
         return
 
-    # List linter files to copy first
+    # List linter files to copy to root directory
     src_dir = Path("ghcommon-source/.github/linters")
     if src_dir.exists():
         linter_files = list(src_dir.glob("*"))
-        print(f"📋 Copying {len(linter_files)} linter files...")
-        copy_directory_safe("ghcommon-source/.github/linters", ".github/linters")
-        print("✅ Linter files copied")
+        print(f"📋 Copying {len(linter_files)} linter files to root directory...")
+        for file_path in src_dir.iterdir():
+            if file_path.is_file():
+                dest_path = Path(".") / file_path.name
+                copy_file_safe(str(file_path), str(dest_path))
+                print(f"✅ Copied {file_path.name} to root")
     else:
         print(f"⚠️  Source not found for linter files: {src_dir}/*")
 
@@ -396,7 +399,6 @@ def sync_other_files():
         ".github/workflows/",
         ".github/instructions/",
         ".github/prompts/",
-        ".github/linters/",
         "scripts/",
         ".github/scripts/",
         "labels.json",
