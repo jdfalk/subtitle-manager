@@ -451,7 +451,6 @@ def main():
         ".github/instructions",
         ".github/prompts",
         ".github/scripts",
-        ".github/linters",
         "scripts",
     ]
 
