@@ -102,7 +102,7 @@ jobs:
 
             # Fallback to manual sync if Python script fails
             echo "📁 Creating directory structure..."
-            mkdir -p .github/workflows .github/instructions .github/prompts scripts .github/linters .github/scripts
+            mkdir -p .github/workflows .github/instructions .github/prompts scripts .github/scripts
 
             case "$sync_type" in
               "all"|"workflows")
@@ -161,8 +161,8 @@ jobs:
                 if [ -d "ghcommon-source/.github/linters" ]; then
                   for file in ghcommon-source/.github/linters/*; do
                     if [ -f "$file" ]; then
-                      cp "$file" ".github/linters/"
-                      echo "✅ Copied $(basename "$file")"
+                      cp "$file" "."
+                      echo "✅ Copied $(basename "$file") to root"
                     fi
                   done
                 fi

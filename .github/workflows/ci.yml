@@ -276,8 +276,8 @@ jobs:
         id: super-linter-config
         run: |
           # Load environment variables from CI-specific config file
-          if [ -f .github/linters/super-linter-ci.env ]; then
-            echo "Loading CI Super Linter configuration from .github/linters/super-linter-ci.env"
+          if [ -f super-linter-ci.env ]; then
+            echo "Loading CI Super Linter configuration from super-linter-ci.env"
             # Export all variables from the env file to GitHub environment
             while IFS='=' read -r key value; do
               # Skip comments and empty lines
@@ -288,7 +288,7 @@ jobs:
                 # Export to GitHub environment for use in subsequent steps
                 echo "$key=$value" >> $GITHUB_ENV
               fi
-            done < .github/linters/super-linter-ci.env
+            done < super-linter-ci.env
           elif [ -f .github/linters/super-linter.env ]; then
             echo "CI config not found, falling back to .github/linters/super-linter.env"
             # Export all variables from the env file to GitHub environment
