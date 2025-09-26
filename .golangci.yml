@@ -20,14 +20,11 @@ linters:
   enable:
     # Essential linters for Go code quality
     - errcheck
-    - gosimple
     - govet
     - ineffassign
     - staticcheck
-    - typecheck
     - unused
-    - gofmt
-    - goimports
+
     - revive
     - gocyclo
     - funlen
@@ -49,3 +46,8 @@ linters:
     - paralleltest
     - gochecknoglobals
     - gochecknoinits
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
