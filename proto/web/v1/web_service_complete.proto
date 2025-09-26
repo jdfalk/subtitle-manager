@@ -6,7 +6,7 @@ edition = "2023";
 
 package subtitle_manager.web.v1;
 
-option go_package = "github.com/jdfalk/subtitle-manager/pkg/proto/web/v1";
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/proto/web/";
 
 // Placeholder file retained for backward compatibility. Prefer web_service.proto.
 

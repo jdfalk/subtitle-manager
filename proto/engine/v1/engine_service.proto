@@ -6,7 +6,7 @@ edition = "2023";
 
 package subtitle_manager.engine.v1;
 
-option go_package = "github.com/jdfalk/subtitle-manager/pkg/engine/v1";
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/engine/";
 
 // Engine service handles subtitle processing, transcription, and translation
 service EngineService {

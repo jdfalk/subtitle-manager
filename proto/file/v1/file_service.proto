@@ -6,7 +6,7 @@ edition = "2023";
 
 package subtitle_manager.file.v1;
 
-option go_package = "github.com/jdfalk/subtitle-manager/pkg/file/v1";
+option go_package = "github.com/jdfalk/subtitle-manager/pkg/file/";
 
 // File service handles file storage, metadata, and operations
 service FileService {
