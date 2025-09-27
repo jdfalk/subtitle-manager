@@ -88,7 +88,7 @@ mkdir -p proto/common/v1
 // version: 1.0.0
 // guid: common01-1111-2222-3333-444444444444
 
-syntax = "proto3";
+edition = "2023";
 
 package subtitle_manager.common.v1;
 
@@ -198,7 +198,7 @@ message TranslationResult {
 // version: 1.0.0
 // guid: web00001-1111-2222-3333-444444444444
 
-syntax = "proto3";
+edition = "2023";
 
 package subtitle_manager.web.v1;
 

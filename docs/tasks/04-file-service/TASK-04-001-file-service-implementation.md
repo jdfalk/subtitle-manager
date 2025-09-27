@@ -62,7 +62,7 @@ opaque API patterns for consistency with the existing architecture.
 // version: 2.0.0
 // guid: file-proto-1111-2222-3333-444444444444
 
-syntax = "proto3";
+edition = "2023";
 
 package file.v1;
 

@@ -18,7 +18,7 @@ Processing, and Storage Management
 // version: 1.0.0
 // guid: file0001-1111-2222-3333-444444444444
 
-syntax = "proto3";
+edition = "2023";
 
 package subtitle_manager.file.v1;
 

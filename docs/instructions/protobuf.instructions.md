@@ -719,7 +719,7 @@ message UserInfo {
 
 ### From Proto2/Proto3 to Edition 2023
 
-1. Change `syntax = "proto3";` to `edition = "2023";`
+1. Change `edition = "2023";` to `edition = "2023";`
 2. Update package structure to follow 1-1-1 pattern
 3. Move shared types to `types/` directory
 4. **Apply module prefixes to all messages**

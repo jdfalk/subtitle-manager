@@ -22,7 +22,7 @@ inter-service communication using comprehensive gcommon integration.
 // version: 2.0.0
 // guid: coord-proto-2222-3333-4444-555555555555
 
-syntax = "proto3";
+edition = "2023";
 
 package coordination.v1;
 

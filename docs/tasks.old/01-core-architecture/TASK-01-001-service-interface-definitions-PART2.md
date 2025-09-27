@@ -18,7 +18,7 @@ and Coordination with Leader Election
 // version: 1.0.0
 // guid: engine01-1111-2222-3333-444444444444
 
-syntax = "proto3";
+edition = "2023";
 
 package subtitle_manager.engine.v1;
 

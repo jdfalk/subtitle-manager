@@ -217,7 +217,7 @@ To enable remote processing or integration with other services, Subtitle Manager
 defines a gRPC service in `proto/translator.proto`. Generated code is committed
 to `pkg/translatorpb`.
 
-\```protobuf syntax = "proto3"; package translator; service Translator { rpc
+\```protobuf edition = "2023"; package translator; service Translator { rpc
 Translate(TranslateRequest) returns (TranslateResponse); } message
 TranslateRequest { string text = 1; string language = 2; } message
 TranslateResponse { string translated_text = 1; } \```
