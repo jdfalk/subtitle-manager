@@ -1,8 +1,6 @@
-# file: systemd/README.md
-
-# version: 1.0.0
-
-# guid: 789e1234-e89b-12d3-a456-426614174002
+<!-- file: systemd/README.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 789e1234-e89b-12d3-a456-426614174002 -->
 
 # Systemd Service Installation Guide
 

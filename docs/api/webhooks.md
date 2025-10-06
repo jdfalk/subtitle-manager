@@ -1,8 +1,6 @@
-# file: docs/api/webhooks.md
-
-# version: 1.0.0
-
-# guid: 550e8400-e29b-41d4-a716-446655440021
+<!-- file: docs/api/webhooks.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 550e8400-e29b-41d4-a716-446655440021 -->
 
 # Webhook Integration Guide
 

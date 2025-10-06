@@ -1,8 +1,6 @@
-# file: docs/api/rate-limiting.md
-
-# version: 1.0.0
-
-# guid: 550e8400-e29b-41d4-a716-446655440030
+<!-- file: docs/api/rate-limiting.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 550e8400-e29b-41d4-a716-446655440030 -->
 
 # Rate Limiting Guide
 

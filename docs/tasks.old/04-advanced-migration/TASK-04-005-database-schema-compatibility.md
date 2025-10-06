@@ -1,8 +1,6 @@
-# file: docs/tasks/04-advanced-migration/TASK-04-005-database-schema-compatibility.md
-
-# version: 1.0.0
-
-# guid: e8f9a0b1-2c3d-4e5f-6a7b-8c9d0e1f2a3b
+<!-- file: docs/tasks/04-advanced-migration/TASK-04-005-database-schema-compatibility.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: e8f9a0b1-2c3d-4e5f-6a7b-8c9d0e1f2a3b -->
 
 # TASK-04-005: Database Schema Compatibility
 

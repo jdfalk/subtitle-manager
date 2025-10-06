@@ -1,8 +1,6 @@
-# file: docs/tasks/05-package-replacements/TASK-05-003-health-monitoring-integration.md
-
-# version: 1.0.0
-
-# guid: c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f
+<!-- file: docs/tasks/05-package-replacements/TASK-05-003-health-monitoring-integration.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f -->
 
 # TASK-05-003: Health Monitoring Integration
 

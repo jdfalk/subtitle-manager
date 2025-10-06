@@ -1,8 +1,6 @@
-# file: docs/PROJECT_PLAN_AND_TECHNICAL_ANALYSIS.md
-
-# version: 1.0.0
-
-# guid: 12345678-9abc-def0-1234-567890abcdef
+<!-- file: docs/PROJECT_PLAN_AND_TECHNICAL_ANALYSIS.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 12345678-9abc-def0-1234-567890abcdef -->
 
 # Subtitle Manager - Complete Project Plan and Technical Analysis
 

@@ -1,8 +1,6 @@
-# file: webui/FRONTEND_IMPLEMENTATION_COMPLETE_GUIDE.md
-
-# version: 1.0.0
-
-# guid: 11111111-2222-3333-4444-555555555555
+<!-- file: webui/FRONTEND_IMPLEMENTATION_COMPLETE_GUIDE.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 11111111-2222-3333-4444-555555555555 -->
 
 # Frontend Implementation Complete Guide
 

@@ -1,8 +1,6 @@
-# file: tests/e2e/README.md
-
-# version: 1.0.0
-
-# guid: b3c4d5e6-f7a8-b9c0-d1e2-f3a4b5c6d7e8
+<!-- file: tests/e2e/README.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: b3c4d5e6-f7a8-b9c0-d1e2-f3a4b5c6d7e8 -->
 
 # E2E Testing for Subtitle Manager
 

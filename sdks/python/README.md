@@ -1,8 +1,6 @@
-# file: sdks/python/README.md
-
-# version: 1.0.0
-
-# guid: 550e8400-e29b-41d4-a716-446655440011
+<!-- file: sdks/python/README.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 550e8400-e29b-41d4-a716-446655440011 -->
 
 # Subtitle Manager Python SDK
 

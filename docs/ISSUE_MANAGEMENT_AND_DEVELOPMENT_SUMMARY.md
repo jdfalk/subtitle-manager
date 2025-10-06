@@ -1,8 +1,6 @@
-# file: docs/ISSUE_MANAGEMENT_AND_DEVELOPMENT_SUMMARY.md
-
-# version: 1.0.0
-
-# guid: 98765432-1abc-2def-3456-789012345678
+<!-- file: docs/ISSUE_MANAGEMENT_AND_DEVELOPMENT_SUMMARY.md -->
+<!-- version: 1.0.0 -->
+<!-- guid: 98765432-1abc-2def-3456-789012345678 -->
 
 # Issue Management and Development Workflow Summary
 
