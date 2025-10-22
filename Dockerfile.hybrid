@@ -2,7 +2,7 @@
 # Hybrid approach: Install Node.js in Go builder for go generate compatibility
 
 # Stage 1: Node.js build stage (can be cached separately)
-FROM node:24-bookworm AS node-builder
+FROM node:25-bookworm AS node-builder
 WORKDIR /src/webui
 
 # Copy package files first for better caching
