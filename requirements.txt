@@ -12,7 +12,7 @@ beautifulsoup4==4.12.3
 bidict==0.23.1
 blessed==1.21.0
 blinker==1.9.0
-Brotli==1.1.0
+Brotli==1.2.0
 cel-python==0.2.0
 certifi==2024.12.14
 cffi==1.17.1
@@ -78,7 +78,7 @@ pysubs2==1.8.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 python-engineio==4.11.2
-python-socketio==5.14.0
+python-socketio==5.14.3
 PyYAML==6.0.2
 rarfile==4.2
 readchar==4.2.1
