@@ -18,7 +18,7 @@ COPY webui/ ./
 RUN npm run build
 
 # Stage 2: Go dependencies (can be cached separately)
-FROM golang:1.25.3-bookworm AS go-deps
+FROM golang:1.25.4-bookworm AS go-deps
 WORKDIR /src
 
 # Install build dependencies
@@ -64,7 +64,7 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     fi
 
 # Stage 4: Final runtime image
-FROM golang:1.25.3-bookworm AS final
+FROM golang:1.25.4-bookworm AS final
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
