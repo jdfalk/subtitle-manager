@@ -35,7 +35,7 @@ jobs:
       artifacts_available: ${{ steps.set-output.outputs.artifacts_available }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Quick change detection
         id: changes
