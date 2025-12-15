@@ -30,10 +30,10 @@
     "i18next": "^25.7.2",
     "js-yaml": "^4.1.1",
     "jsdom": "^26.1.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-i18next": "^15.7.4",
-    "react-router-dom": "^7.9.6"
+    "react-router-dom": "^7.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
