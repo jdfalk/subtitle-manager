@@ -1,5 +1,5 @@
 <!-- file: .github/CLAUDE.md -->
-<!-- version: 2.1.0 -->
+<!-- version: 2.2.0 -->
 <!-- guid: 3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f -->
 
 # CLAUDE.md
@@ -15,7 +15,7 @@ This repository no longer uses doc-update scripts. Follow these rules instead:
 - Edit documentation directly in the target files.
 - Keep the required header (file path, version, guid) and bump the version on any change.
 - Do not use create-doc-update.sh or related scripts; they are retired.
-- Prefer VS Code tasks for git operations (Git Add All, Git Commit, Git Push) when available.
+- For git operations: 1) MCP GitHub tools (preferred), 2) safe-ai-util (fallback), 3) native git (last resort). Use VS Code tasks for non-git operations only.
 - Follow the guidance in `.github/instructions/general-coding.instructions.md`.
 
 ## Canonical Source for Agent Instructions
