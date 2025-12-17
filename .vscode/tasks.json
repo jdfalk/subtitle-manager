@@ -5,7 +5,10 @@
       "label": "Buf Generate with Output",
       "type": "shell",
       "command": "copilot-agent-util",
-      "args": ["buf", "generate"],
+      "args": [
+        "buf",
+        "generate"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -17,7 +20,12 @@
       "label": "Buf Generate Module",
       "type": "shell",
       "command": "copilot-agent-util",
-      "args": ["buf", "generate", "--module", "${input:module}"],
+      "args": [
+        "buf",
+        "generate",
+        "--module",
+        "${input:module}"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -29,7 +37,10 @@
       "label": "Buf Lint with Output",
       "type": "shell",
       "command": "copilot-agent-util",
-      "args": ["buf", "lint"],
+      "args": [
+        "buf",
+        "lint"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -41,79 +52,12 @@
       "label": "Buf Lint Module",
       "type": "shell",
       "command": "copilot-agent-util",
-      "args": ["buf", "lint", "--module", "${input:module}"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Add All",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["git", "add"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Add Selective",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["git", "add", "${input:filePattern}"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Push",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["git", "push"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Status",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["git", "status"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Add All Auto",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["git", "add", "."],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Commit Auto",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["git", "commit", "-m", "fix: systematic protobuf import fixes"],
+      "args": [
+        "buf",
+        "lint",
+        "--module",
+        "${input:module}"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -140,7 +84,12 @@
       "label": "Buf Generate with Args File",
       "type": "shell",
       "command": "copilot-agent-util",
-      "args": ["--args-file", "copilot-util-args", "buf", "generate"],
+      "args": [
+        "--args-file",
+        "copilot-util-args",
+        "buf",
+        "generate"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -152,60 +101,18 @@
       "label": "Buf Lint with Args File",
       "type": "shell",
       "command": "copilot-agent-util",
-      "args": ["--args-file", "copilot-util-args", "buf", "lint"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Add All with Args File",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["--args-file", "copilot-util-args", "git", "add"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Push with Args File",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["--args-file", "copilot-util-args", "git", "push"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Status with Args File",
-      "type": "shell",
-      "command": "copilot-agent-util",
-      "args": ["--args-file", "copilot-util-args", "git", "status"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": []
-    },
-    {
-      "label": "Git Commit Dependabot Fix",
-      "type": "shell",
-      "command": "copilot-agent-util",
       "args": [
-        "git",
-        "commit",
-        "-m",
-        "fix(deps): resolve dependabot.yml merge conflicts and add comprehensive configuration\n\nFixed merge conflicts in dependabot.yml and updated with complete language-aware configuration supporting Go, Docker, GitHub Actions, npm (webui), and Python scripts.\n\nFiles changed:\n- .github/dependabot.yml - Resolved conflicts and added comprehensive multi-language support"
-      ]
+        "--args-file",
+        "copilot-util-args",
+        "buf",
+        "lint"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": []
     },
     {
       "label": "Issue Analysis - High Priority",
@@ -266,7 +173,10 @@
       "label": "Issue Status Check",
       "type": "shell",
       "command": "python3",
-      "args": ["scripts/issue_automation_wrapper.py", "status"],
+      "args": [
+        "scripts/issue_automation_wrapper.py",
+        "status"
+      ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
