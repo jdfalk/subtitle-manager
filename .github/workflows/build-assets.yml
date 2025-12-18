@@ -47,7 +47,7 @@ jobs:
           echo "ASSET_VERSION=$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Upload to GitHub Packages
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: webui-assets-${{ env.ASSET_VERSION }}
           path: webui-assets.tar.gz
