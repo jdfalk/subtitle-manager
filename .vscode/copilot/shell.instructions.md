@@ -1,0 +1,1 @@
+../../.github/instructions/shell.instructions.md

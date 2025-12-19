@@ -1,0 +1,1 @@
+../../.github/instructions/typescript.instructions.md
