@@ -1,16 +1,16 @@
 <!-- file: WORKFLOW_FAILURES_ANALYSIS.md -->
-<!-- version: 1.0.0 -->
+<!-- version: 1.1.0 -->
 <!-- guid: a1b2c3d4-e5f6-7890-abcd-ef1234567890 -->
 
 # Workflow Failures Analysis and Fix Documentation
 
 ## Problem Summary
 
-The CI workflows are failing because of mismatched workflow configurations between the local repository and the upstream ghcommon repository.
+The CI workflows were failing because of a broken reference to a reusable workflow in the upstream ghcommon repository. The workflow has since been properly implemented in ghcommon and is now available.
 
 ## Root Cause Analysis
 
-### Issue 1: Reusable Workflow Call Mismatch
+### Original Issue
 
 **Location:** `.github/workflows/ci.yml` line 47
 
@@ -21,161 +21,79 @@ check-overrides:
   uses: jdfalk/ghcommon/.github/workflows/commit-override-handler.yml@main
 ```
 
-The CI workflow attempts to call a reusable workflow from ghcommon, but:
+The CI workflow was calling `jdfalk/ghcommon/.github/workflows/commit-override-handler.yml@main`, but at the time this issue was discovered, the workflow either:
+1. Didn't exist in the ghcommon repository
+2. Had an incompatible signature
+3. Was not properly configured
 
-1. **The local `commit-override-handler.yml` has required inputs** that aren't being passed:
-   - `override_token` (required)
-   - `commit_message` (required)
-   - `skip_validation` (optional, default: false)
+## Solution Implemented
 
-2. **The ghcommon repository likely doesn't have this workflow** or has a different signature that doesn't match what's expected.
+### Final Solution (Current Implementation)
 
-### Issue 2: Local Workflow Definition Conflict
+**Use the ghcommon Reusable Workflow**
 
-**Location:** `.github/workflows/commit-override-handler.yml`
+The commit-override-handler has been properly implemented in the ghcommon repository as a reusable workflow and is now available for use.
 
-The local repository has its own `commit-override-handler.yml` workflow that defines a reusable workflow with specific inputs, but this is not being used - instead, the CI workflow is trying to call an external version from ghcommon.
-
-## Solutions
-
-### Option 1: Use Local Workflow (RECOMMENDED)
-
-**Change in `.github/workflows/ci.yml`:**
+**Implementation in `.github/workflows/ci.yml`:**
 ```yaml
-# OLD (line 45-47):
-check-overrides:
-  name: Check Commit Overrides
-  uses: jdfalk/ghcommon/.github/workflows/commit-override-handler.yml@main
-
-# NEW:
-check-overrides:
-  name: Check Commit Overrides
-  uses: ./.github/workflows/commit-override-handler.yml
-  with:
-    override_token: ${{ secrets.GITHUB_TOKEN }}
-    commit_message: ${{ github.event.head_commit.message || '' }}
-    skip_validation: false
+jobs:
+  # Check for commit override flags using the reusable workflow from ghcommon
+  check-overrides:
+    name: Check Commit Overrides
+    uses: jdfalk/ghcommon/.github/workflows/commit-override-handler.yml@main
 ```
 
-**Pros:**
-- Uses the existing local workflow that's already properly configured
-- No dependency on external repository
-- Immediate fix without waiting for ghcommon updates
+**Workflow Capabilities:**
 
-**Cons:**
-- Diverges from centralized workflow management if that was the intent
+The ghcommon commit-override-handler workflow provides:
+- `skip-tests`: Whether to skip test execution
+- `skip-validation`: Whether to skip validation/linting
+- `skip-ci`: Whether to skip CI entirely
+- `skip-build`: Whether to skip build steps
+- `commit-message`: The commit message(s) analyzed
 
-### Option 2: Remove the Override Check Entirely
+**Supported Override Flags:**
+- `[skip-tests]` or `[SKIP-TESTS]` - Skip test execution
+- `[skip-validation]` or `[SKIP-VALIDATION]` - Skip validation/linting
+- `[skip-ci]` or `[SKIP-CI]` - Skip CI entirely
+- `[skip-build]` or `[SKIP-BUILD]` - Skip build steps
 
-If the commit override functionality isn't actively used:
+## Timeline
 
-```yaml
-# Remove the check-overrides job entirely and update the needs array
-# in other jobs from:
-needs: [detect-changes, check-overrides]
+1. **Initial Problem**: CI workflow referenced non-existent ghcommon reusable workflow
+2. **Temporary Fix (Commit b3c58c7)**: Implemented inline local solution as a workaround
+3. **Final Fix (Current)**: Updated to use the now-available ghcommon reusable workflow
 
-# to:
-needs: [detect-changes]
-```
+## Benefits of Current Solution
 
-Also update the `ci-summary` job's needs array.
-
-**Pros:**
-- Simplifies the workflow
-- Removes a potential point of failure
-
-**Cons:**
-- Loses commit override functionality if it's needed
-
-### Option 3: Create Stub Outputs (TEMPORARY FIX)
-
-Add a simple local job that provides the expected outputs without external dependency:
-
-```yaml
-check-overrides:
-  name: Check Commit Overrides
-  runs-on: ubuntu-latest
-  outputs:
-    skip-tests: ${{ steps.check.outputs.skip-tests }}
-    skip-build: ${{ steps.check.outputs.skip-build }}
-  steps:
-    - name: Check commit message for overrides
-      id: check
-      run: |
-        COMMIT_MSG="${{ github.event.head_commit.message || '' }}"
-        
-        if [[ "$COMMIT_MSG" =~ \[skip-tests\] ]] || [[ "$COMMIT_MSG" =~ \[SKIP-TESTS\] ]]; then
-          echo "skip-tests=true" >> $GITHUB_OUTPUT
-        else
-          echo "skip-tests=false" >> $GITHUB_OUTPUT
-        fi
-        
-        if [[ "$COMMIT_MSG" =~ \[skip-build\] ]] || [[ "$COMMIT_MSG" =~ \[SKIP-BUILD\] ]]; then
-          echo "skip-build=true" >> $GITHUB_OUTPUT
-        else
-          echo "skip-build=false" >> $GITHUB_OUTPUT
-        fi
-```
-
-**Pros:**
-- Quick fix that maintains expected outputs
-- No external dependencies
-
-**Cons:**
-- Simplified functionality compared to full commit-override-handler
-
-## What Needs to Change in ghcommon (if Option 1 is not chosen)
-
-If the intention is to use a centralized workflow from ghcommon:
-
-1. **Create the workflow in ghcommon repository** at:
-   `jdfalk/ghcommon/.github/workflows/commit-override-handler.yml`
-
-2. **The workflow signature should be:**
-   ```yaml
-   on:
-     workflow_call:
-       outputs:
-         skip-tests:
-           description: "Whether to skip tests"
-           value: ${{ jobs.check.outputs.skip-tests }}
-         skip-build:
-           description: "Whether to skip build"
-           value: ${{ jobs.check.outputs.skip-build }}
-   ```
-
-3. **Or simplify to not require inputs:**
-   - Make it read from the caller's context directly
-   - Provide outputs that the CI workflow expects
-
-## Recommended Action
-
-**Implement Option 1 (Use Local Workflow)** because:
-
-1. The local workflow already exists and is properly configured
-2. It provides immediate fix without external dependencies
-3. The workflow can be tested and validated locally
-4. No need to wait for ghcommon repository updates
-
-After fixing, the workflow should:
-- ✅ Successfully call the local commit-override-handler
-- ✅ Provide the expected outputs (skip-tests, skip-build, etc.)
-- ✅ Continue with the rest of the CI pipeline
+- ✅ Uses centralized workflow management from ghcommon
+- ✅ Consistent behavior across all repositories using ghcommon
+- ✅ Maintained and updated centrally
+- ✅ More features than the temporary inline implementation (skip-validation, skip-ci)
+- ✅ Proper error handling and base branch fetching for PRs
+- ✅ No local code to maintain
 
 ## Testing the Fix
 
 After implementing the fix:
 
-1. Create a test PR to verify the workflow runs
-2. Check that the `check-overrides` job completes successfully
-3. Verify that subsequent jobs receive the correct outputs
-4. Test with different commit messages:
+1. Push a commit to verify the workflow runs successfully
+2. Verify that the `check-overrides` job completes without errors
+3. Test with different commit message flags:
    - Normal commit: should run all tests
    - Commit with `[skip-tests]`: should skip test jobs
-   - Commit with `[skip ci]`: should skip entire CI
+   - Commit with `[skip-validation]`: should skip linting/validation
+   - Commit with `[skip-build]`: should skip build steps
+   - Commit with `[skip-ci]`: should skip entire CI pipeline
 
 ## Additional Notes
 
-- The local `commit-override-handler.yml` appears to be a full-featured workflow with token validation, logging, and status creation
-- Consider whether this functionality is needed or if a simpler stub is sufficient
-- If ghcommon is meant to be a centralized source, coordinate with that repository's maintainers to align workflow definitions
+- The ghcommon workflow uses a Python script (`scripts/workflows/check_commit_overrides.py`) for robust commit message parsing
+- It properly handles PR scenarios with full git history and base branch fetching
+- The workflow includes a notification job that displays override status in the GitHub Actions summary
+- All override flags support both lowercase and uppercase variants
+
+## References
+
+- ghcommon repository: https://github.com/jdfalk/ghcommon
+- Reusable workflow: https://github.com/jdfalk/ghcommon/blob/main/.github/workflows/commit-override-handler.yml

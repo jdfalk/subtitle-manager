@@ -1,5 +1,5 @@
 # file: .github/workflows/ci.yml
-# version: 1.19.0
+# version: 1.20.0
 # guid: f1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6
 
 name: Continuous Integration
@@ -41,39 +41,10 @@ permissions:
   attestations: write
 
 jobs:
-  # Check for commit override flags
+  # Check for commit override flags using the reusable workflow from ghcommon
   check-overrides:
     name: Check Commit Overrides
-    runs-on: ubuntu-latest
-    outputs:
-      skip-tests: ${{ steps.check.outputs.skip-tests }}
-      skip-build: ${{ steps.check.outputs.skip-build }}
-    steps:
-      - name: Check commit message for overrides
-        id: check
-        run: |
-          COMMIT_MSG="${{ github.event.head_commit.message || '' }}"
-
-          # Check for skip-tests flag
-          if [[ "$COMMIT_MSG" =~ \[skip-tests\] ]] || [[ "$COMMIT_MSG" =~ \[SKIP-TESTS\] ]]; then
-            echo "skip-tests=true" >> $GITHUB_OUTPUT
-            echo "::notice::Tests will be skipped due to commit message flag"
-          else
-            echo "skip-tests=false" >> $GITHUB_OUTPUT
-          fi
-
-          # Check for skip-build flag
-          if [[ "$COMMIT_MSG" =~ \[skip-build\] ]] || [[ "$COMMIT_MSG" =~ \[SKIP-BUILD\] ]]; then
-            echo "skip-build=true" >> $GITHUB_OUTPUT
-            echo "::notice::Build will be skipped due to commit message flag"
-          else
-            echo "skip-build=false" >> $GITHUB_OUTPUT
-          fi
-
-          # Log the commit message for debugging
-          echo "Commit message: $COMMIT_MSG"
-          echo "Skip tests: $(if [[ "$COMMIT_MSG" =~ \[skip-tests\] ]] || [[ "$COMMIT_MSG" =~ \[SKIP-TESTS\] ]]; then echo 'true'; else echo 'false'; fi)"
-          echo "Skip build: $(if [[ "$COMMIT_MSG" =~ \[skip-build\] ]] || [[ "$COMMIT_MSG" =~ \[SKIP-BUILD\] ]]; then echo 'true'; else echo 'false'; fi)"
+    uses: jdfalk/ghcommon/.github/workflows/commit-override-handler.yml@main
 
   # Detect what files changed to optimize workflow execution
   detect-changes:
