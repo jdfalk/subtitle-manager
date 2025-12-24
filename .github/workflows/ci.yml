@@ -1,5 +1,5 @@
 # file: .github/workflows/ci.yml
-# version: 1.18.1
+# version: 1.20.0
 # guid: f1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6
 
 name: Continuous Integration
@@ -41,7 +41,7 @@ permissions:
   attestations: write
 
 jobs:
-  # Check for commit override flags
+  # Check for commit override flags using the reusable workflow from ghcommon
   check-overrides:
     name: Check Commit Overrides
     uses: jdfalk/ghcommon/.github/workflows/commit-override-handler.yml@main
