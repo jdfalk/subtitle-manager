@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go/storage v1.57.2
 	cloud.google.com/go/translate v1.12.7
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.3
-	github.com/asticode/go-astisub v0.34.0
+	github.com/asticode/go-astisub v0.38.0
 	github.com/aws/aws-sdk-go v1.55.8
 	github.com/cockroachdb/pebble v1.1.5
 	github.com/docker/docker v28.5.2+incompatible
