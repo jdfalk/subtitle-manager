@@ -1,5 +1,5 @@
 # file: .github/workflows/release.yml
-# version: 3.3.1
+# version: 3.3.2
 # guid: f1a2b3c4-d5e6-7f8a-9b0c-1d2e3f4a5b6c
 
 name: Release Coordinator
@@ -73,7 +73,6 @@ permissions:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  RUN_PYTHON_TESTS: "false"
 
 jobs:
   # Detect what languages/technologies are present
@@ -134,7 +133,7 @@ jobs:
   build-python:
     name: Build Python Project
     needs: [detect-languages]
-    if: needs.detect-languages.outputs.has-python == 'true' && env.RUN_PYTHON_TESTS == 'true'
+    if: needs.detect-languages.outputs.has-python == 'true' && vars.RUN_PYTHON_TESTS == 'true'
     uses: ./.github/workflows/release-python.yml
     with:
       python-matrix: ${{ needs.detect-languages.outputs.python-matrix }}
