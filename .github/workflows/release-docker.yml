@@ -1,5 +1,5 @@
 # file: .github/workflows/release-docker.yml
-# version: 1.1.0
+# version: 1.1.1
 # guid: a4b5c6d7-e8f9-0a1b-2c3d-4e5f6a7b8c9d
 
 name: Docker Release Build
@@ -101,6 +101,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ github.sha }},enable={{ github.event_name != 'pull_request' }}
             type=sha,prefix={{branch}}-,enable={{is_default_branch}}
             type=sha,enable=${{ github.event_name != 'pull_request' }}
           labels: |
@@ -192,7 +193,10 @@ jobs:
               print(f'Found compose files: {found_files}')
               for compose_file in found_files:
                   print(f'Validating {compose_file}...')
-                  result = subprocess.run(['docker-compose', '-f', compose_file, 'config'], capture_output=True, text=True)
+                  try:
+                      result = subprocess.run(['docker-compose', '-f', compose_file, 'config'], capture_output=True, text=True)
+                  except FileNotFoundError:
+                      result = subprocess.run(['docker', 'compose', '-f', compose_file, 'config'], capture_output=True, text=True)
                   if result.returncode == 0:
                       print(f'{compose_file} is valid')
                   else:

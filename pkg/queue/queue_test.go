@@ -1,5 +1,5 @@
 // file: pkg/queue/queue_test.go
-// version: 1.1.0
+// version: 1.1.1
 // guid: 123e4567-e89b-12d3-a456-426614174003
 package queue
 
@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -104,13 +105,13 @@ func TestQueueProcessJob(t *testing.T) {
 	require.NoError(t, err)
 	defer q.Stop()
 
-	executed := false
+	var executed atomic.Bool
 	job := &mockJob{
 		id:          "test-job",
 		jobType:     JobTypeSingleFile,
 		description: "test execution",
 		executeFunc: func(ctx context.Context) error {
-			executed = true
+			executed.Store(true)
 			return nil
 		},
 	}
@@ -118,9 +119,13 @@ func TestQueueProcessJob(t *testing.T) {
 	_, err = q.Add(job)
 	require.NoError(t, err)
 
-	// Wait for job to be processed
-	time.Sleep(200 * time.Millisecond)
-	assert.True(t, executed, "job should have been executed")
+	require.Eventually(
+		t,
+		func() bool { return executed.Load() },
+		time.Second,
+		10*time.Millisecond,
+		"job should have been executed",
+	)
 }
 
 func TestQueueStatus(t *testing.T) {
