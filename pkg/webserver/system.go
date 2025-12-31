@@ -1,5 +1,5 @@
 // file: pkg/webserver/system.go
-// version: 1.0.1
+// version: 1.0.2
 // guid: 37c23ec8-b8b9-4086-be5c-8058fee3fd54
 
 package webserver
@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"syscall"
 	"time"
 
 	"github.com/jdfalk/subtitle-manager/pkg/backups"
@@ -55,16 +54,14 @@ func systemHandler() http.Handler {
 		DiskTotal  uint64 `json:"disk_total"`
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var statfs syscall.Statfs_t
-		root := "/"
-		_ = syscall.Statfs(root, &statfs)
+		free, total := diskUsage()
 		data := info{
 			GoVersion:  runtime.Version(),
 			OS:         runtime.GOOS,
 			Arch:       runtime.GOARCH,
 			Goroutines: runtime.NumGoroutine(),
-			DiskFree:   statfs.Bfree * uint64(statfs.Bsize),
-			DiskTotal:  statfs.Blocks * uint64(statfs.Bsize),
+			DiskFree:   free,
+			DiskTotal:  total,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(data)
