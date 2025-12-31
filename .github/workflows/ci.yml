@@ -1,5 +1,5 @@
 # file: .github/workflows/ci.yml
-# version: 1.18.3
+# version: 1.18.4
 # guid: f1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6
 
 name: Continuous Integration
@@ -587,6 +587,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: go
 
       - name: Run CodeQL Analysis
         uses: github/codeql-action/analyze@v4
