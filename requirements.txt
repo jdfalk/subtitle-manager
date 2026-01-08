@@ -78,7 +78,7 @@ pysubs2==1.8.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 python-engineio==4.11.2
-python-socketio==5.15.0
+python-socketio==5.16.0
 PyYAML==6.0.2
 rarfile==4.2
 readchar==4.2.1
@@ -105,7 +105,7 @@ types-PyYAML==6.0.12.20241230
 types-requests==2.32.0.20241016
 typing-inspection==0.4.1
 typing_extensions==4.12.2
-urllib3==2.5.0
+urllib3==2.6.3
 userpath==1.9.2
 wcwidth==0.2.13
 Werkzeug==3.1.4
