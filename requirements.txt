@@ -108,7 +108,7 @@ typing_extensions==4.12.2
 urllib3==2.6.3
 userpath==1.9.2
 wcwidth==0.2.13
-Werkzeug==3.1.4
+Werkzeug==3.1.5
 wsproto==1.2.0
 xmod==1.8.1
 yubikey-manager==5.5.1
