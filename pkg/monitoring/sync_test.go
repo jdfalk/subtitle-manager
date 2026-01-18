@@ -1,5 +1,5 @@
 // file: pkg/monitoring/sync_test.go
-// version: 1.0.0
+// version: 1.0.1
 // guid: bebb472c-0502-46ec-8a5d-58ff63261068
 
 package monitoring
@@ -29,6 +29,33 @@ func createTempMediaFile(t *testing.T) string {
 	return mediaPath
 }
 
+func sameStringSet(expected, actual []string) bool {
+	if len(expected) != len(actual) {
+		return false
+	}
+
+	counts := make(map[string]int, len(expected))
+	for _, value := range expected {
+		counts[value]++
+	}
+
+	for _, value := range actual {
+		count, ok := counts[value]
+		if !ok || count == 0 {
+			return false
+		}
+		counts[value]--
+	}
+
+	for _, count := range counts {
+		if count != 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
 func TestAddToMonitoring(t *testing.T) {
 	t.Run("adds new item", func(t *testing.T) {
 		mediaPath := createTempMediaFile(t)
@@ -48,7 +75,7 @@ func TestAddToMonitoring(t *testing.T) {
 			if err := json.Unmarshal([]byte(item.Languages), &languages); err != nil {
 				return false
 			}
-			return assert.ElementsMatch(t, opts.Languages, languages)
+			return sameStringSet(opts.Languages, languages)
 		})).Return(nil)
 
 		err := monitor.addToMonitoring(database.MediaItem{ID: "media-1", Path: mediaPath}, opts)
@@ -75,7 +102,7 @@ func TestAddToMonitoring(t *testing.T) {
 			if err := json.Unmarshal([]byte(item.Languages), &languages); err != nil {
 				return false
 			}
-			return item.MaxRetries == opts.MaxRetries && assert.ElementsMatch(t, opts.Languages, languages)
+			return item.MaxRetries == opts.MaxRetries && sameStringSet(opts.Languages, languages)
 		})).Return(nil)
 
 		err = monitor.addToMonitoring(database.MediaItem{ID: "media-2", Path: mediaPath}, opts)
