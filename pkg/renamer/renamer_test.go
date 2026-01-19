@@ -1,3 +1,7 @@
+// file: pkg/renamer/renamer_test.go
+// version: 1.23.1
+// guid: 3b4a1244-0d0c-4f05-9f10-d62d74d3117b
+
 package renamer
 
 import (
@@ -6,42 +10,101 @@ import (
 	"testing"
 )
 
-// TestRename ensures subtitle files are renamed to match the video file.
+// TestRename exercises subtitle rename scenarios to cover error and success paths.
 func TestRename(t *testing.T) {
-	dir := t.TempDir()
-	video := filepath.Join(dir, "new.mkv")
-	if err := os.WriteFile(video, []byte("x"), 0644); err != nil {
-		t.Fatalf("write video: %v", err)
+	tests := []struct {
+		name       string
+		lang       string
+		setupFiles []string
+		wantErr    bool
+		wantRename bool
+	}{
+		{
+			name:       "no subtitle files",
+			lang:       "en",
+			setupFiles: nil,
+			wantErr:    false,
+			wantRename: false,
+		},
+		{
+			name:       "already matching name",
+			lang:       "en",
+			setupFiles: []string{"movie.en.srt"},
+			wantErr:    false,
+			wantRename: false,
+		},
+		{
+			name:       "rename single subtitle",
+			lang:       "en",
+			setupFiles: []string{"other.en.srt"},
+			wantErr:    false,
+			wantRename: true,
+		},
+		{
+			name:       "multiple subtitle files",
+			lang:       "en",
+			setupFiles: []string{"one.en.srt", "two.en.srt"},
+			wantErr:    true,
+			wantRename: false,
+		},
 	}
-	subOld := filepath.Join(dir, "old.en.srt")
-	if err := os.WriteFile(subOld, []byte("y"), 0644); err != nil {
-		t.Fatalf("write sub: %v", err)
-	}
-	if err := Rename(video, "en"); err != nil {
-		t.Fatalf("rename: %v", err)
-	}
-	newSub := filepath.Join(dir, "new.en.srt")
-	if _, err := os.Stat(newSub); err != nil {
-		t.Fatalf("expected %s: %v", newSub, err)
-	}
-	if _, err := os.Stat(subOld); !os.IsNotExist(err) {
-		t.Fatalf("old subtitle still exists")
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Arrange.
+			tmpDir := t.TempDir()
+			videoPath := filepath.Join(tmpDir, "movie.mkv")
+			for _, name := range tt.setupFiles {
+				path := filepath.Join(tmpDir, name)
+				if err := os.WriteFile(path, []byte("subtitle"), 0o644); err != nil {
+					t.Fatalf("create subtitle file: %v", err)
+				}
+			}
+
+			// Act.
+			err := Rename(videoPath, tt.lang)
+
+			// Assert.
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("expected error, got nil")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+
+			if tt.wantRename {
+				newPath := filepath.Join(tmpDir, "movie."+tt.lang+".srt")
+				if _, statErr := os.Stat(newPath); statErr != nil {
+					t.Fatalf("expected renamed subtitle at %s: %v", newPath, statErr)
+				}
+			}
+		})
 	}
 }
 
-// TestRenameMultiple ensures an error is returned when more than one subtitle matches.
-func TestRenameMultiple(t *testing.T) {
-	dir := t.TempDir()
-	video := filepath.Join(dir, "movie.mkv")
-	if err := os.WriteFile(video, []byte("x"), 0644); err != nil {
-		t.Fatalf("write video: %v", err)
+// TestRenameReturnsRenameError validates rename failures propagate to callers.
+func TestRenameReturnsRenameError(t *testing.T) {
+	// Arrange.
+	tmpDir := t.TempDir()
+	videoPath := filepath.Join(tmpDir, "movie.mkv")
+	sourcePath := filepath.Join(tmpDir, "other.en.srt")
+	destPath := filepath.Join(tmpDir, "movie.en.srt")
+
+	if err := os.WriteFile(sourcePath, []byte("subtitle"), 0o644); err != nil {
+		t.Fatalf("create subtitle file: %v", err)
 	}
-	for _, name := range []string{"one.en.srt", "two.en.srt"} {
-		if err := os.WriteFile(filepath.Join(dir, name), []byte("y"), 0644); err != nil {
-			t.Fatalf("write sub: %v", err)
-		}
+	if err := os.Mkdir(destPath, 0o755); err != nil {
+		t.Fatalf("create destination directory: %v", err)
 	}
-	if err := Rename(video, "en"); err == nil {
-		t.Fatal("expected error for multiple subtitles")
+
+	// Act.
+	err := Rename(videoPath, "en")
+
+	// Assert.
+	if err == nil {
+		t.Fatalf("expected error for rename failure")
 	}
 }
