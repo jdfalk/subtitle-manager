@@ -1,52 +1,38 @@
 <!-- file: AGENTS.md -->
-<!-- version: 2.2.2 -->
+<!-- version: 2.3.1 -->
 <!-- guid: 2e7c1a4b-5d3f-4b8c-9e1f-7a6b2c3d4e5f -->
 
 # AGENTS.md
 
-> **NOTE:** This is a pointer file. All detailed Copilot, agent, and workflow instructions are in
-> the [.github/](.github/) directory.
+This file is a **local index** of the canonical Copilot/AI agent instructions.
+The actual rules live in the shared, reusable instruction system synced from
+`ghcommon` under `.github/instructions/`. Do **not** duplicate those rules
+locally unless they are explicitly present in this repository.
 
-## 🚨 CRITICAL: Documentation Update Protocol
+## Canonical Instruction Sources (Use These)
 
-This repository uses a direct-edit documentation workflow. The legacy doc-update scripts and
-workflows are retired.
+These files are the canonical rules and **must** be followed as-is:
 
-- Edit documentation directly in the target files.
-- Always keep the required header (file path, version, guid) and bump the version on any change.
-- Do not use create-doc-update.sh, doc_update_manager.py, or .github/doc-updates/.
-- Prefer VS Code tasks for git operations (Git Add All, Git Commit, Git Push) when available.
-  - These tasks use the `copilot-agent-util` Rust utility for enhanced logging, error handling, and
-    safety.
-  - Download: <https://github.com/jdfalk/copilot-agent-util-rust/releases/latest>
+- `.github/copilot-instructions.md`
+- `.github/instructions/general-coding.instructions.md`
+- `.github/instructions/commit-messages.instructions.md`
+- `.github/instructions/pull-request-descriptions.instructions.md`
+- `.github/instructions/security.instructions.md`
+- `.github/instructions/test-generation.instructions.md`
+- `.github/instructions/github-actions.instructions.md`
+- `.github/instructions/protobuf.instructions.md`
+- Language-specific rules in `.github/instructions/*.instructions.md`
+  (Go, Python, JavaScript, TypeScript, Rust, Shell, R, HTML/CSS, JSON, Markdown)
 
-## ⚠️ CRITICAL: File Version Updates
+## Local Notes (Only If Present Here)
 
-**When modifying any file with a version header, ALWAYS update the version number:**
+The only local overrides or additions should be repository-specific guidance
+that is **not** available in the shared instruction system. If a rule is already
+covered by the shared `ghcommon` instruction files, do not restate it here.
 
-- **Patch version** (x.y.Z): Bug fixes, typos, minor formatting changes
-- **Minor version** (x.Y.z): New features, significant content additions, template changes
-- **Major version** (X.y.z): Breaking changes, structural overhauls, format changes
+## Documentation Update Protocol (Local Reminder)
 
-**Examples:**
-
-- Fix typo: `1.2.3` → `1.2.4`
-- Add new section: `1.2.3` → `1.3.0`
-- Change template structure: `1.2.3` → `2.0.0`
-
-**This applies to ALL files with version headers including documentation, templates, and
-configuration files.**
-
-## Key Copilot/Agent Documents
-
-- [Copilot Instructions](.github/copilot-instructions.md)
-- [Commit Message Standards](.github/commit-messages.md)
-- [Pull Request Description Guidelines](.github/pull-request-descriptions.md)
-- [Code Review Guidelines](.github/review-selection.md)
-- [Test Generation Guidelines](.github/test-generation.md)
-- [Security Guidelines](.github/security-guidelines.md)
-- [Repository Setup Guide](.github/repository-setup.md)
-- [Workflow Usage](.github/workflow-usage.md)
-- [All Code Style Guides](.github/)
-
-> For any agent, Copilot, or workflow task, **always refer to the above files.**
+- Edit documentation directly in target files.
+- Keep the file header and bump the version on changes.
+- Do not use legacy doc-update scripts:
+  `create-doc-update.sh`, `doc_update_manager.py`, or `.github/doc-updates/`.
