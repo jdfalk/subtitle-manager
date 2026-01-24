@@ -1,5 +1,5 @@
 # file: .github/workflows/release-protobuf.yml
-# version: 1.1.0
+# version: 1.1.2
 # guid: 9c2f1b18-7c4e-4c3a-9b54-2b5d9c7e2af1
 
 name: Release Protobuf Assets
@@ -35,7 +35,7 @@ jobs:
       artifacts_available: ${{ steps.set-output.outputs.artifacts_available }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Quick change detection
         id: changes
@@ -52,13 +52,13 @@ jobs:
           echo "Build target input: '${{ inputs.build_target }}'"
 
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
         with:
           go-version: ${{ env.GO_VERSION }}
           check-latest: true
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
