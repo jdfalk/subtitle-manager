@@ -20,7 +20,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.33
 	github.com/oz/osdb v0.0.0-20221214175751-f169057712ec
 	github.com/prometheus/client_golang v1.23.2
-	github.com/redis/go-redis/v9 v9.17.2
+	github.com/redis/go-redis/v9 v9.17.3
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sashabaranov/go-openai v1.41.2
 	github.com/sirupsen/logrus v1.9.4
