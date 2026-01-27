@@ -1,6 +1,3 @@
-# Smart Dependabot configuration for subtitle-manager
-# Automatically detected: go, python, nodejs, docker, github-actions
-
 version: 2
 updates:
   - package-ecosystem: npm
@@ -10,7 +7,7 @@ updates:
       day: monday
       time: 09:00
       timezone: America/New_York
-    open-pull-requests-limit: 8
+    open-pull-requests-limit: 5
     commit-message:
       prefix: npm
       include: scope
@@ -20,10 +17,6 @@ updates:
     allow:
       - dependency-type: direct
       - dependency-type: indirect
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - version-update:semver-major
     groups:
       dev-dependencies:
         patterns:
@@ -31,9 +24,15 @@ updates:
           - "*prettier*"
           - "*commitlint*"
           - "@types/*"
+      testing-libraries:
+        patterns:
+          - "*jest*"
+          - "*testing-library*"
+      major-updates:
+        patterns:
+          - "*"
         update-types:
-          - minor
-          - patch
+          - version-update:semver-major
   - package-ecosystem: pip
     directory: /
     schedule:
