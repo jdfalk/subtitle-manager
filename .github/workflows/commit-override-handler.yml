@@ -28,7 +28,7 @@ jobs:
     if: contains(inputs.commit_message, '[OVERRIDE-CI]') || contains(inputs.commit_message, '[SKIP-CI]')
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           token: ${{ inputs.override_token }}
           fetch-depth: 0
